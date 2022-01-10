@@ -1,0 +1,64 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+import("//build/ohos.gni")
+import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
+
+config("bgtaskmgr_public_config") {
+    include_dirs = [
+        "common/include",
+        "ipc/include",
+        "${bgtaskmgr_interfaces_path}/innerkits/include",
+        "//utils/native/base/include",
+        "//utils/system/safwk/native/include",
+    ]
+}
+
+ohos_shared_library("bgtaskmgr_fwk") {
+    sources = [
+        "${bgtaskmgr_interfaces_path}/innerkits/src/delay_suspend_info.cpp",
+        "${bgtaskmgr_interfaces_path}/innerkits/src/expired_callback.cpp",
+        "${bgtaskmgr_interfaces_path}/innerkits/src/transient_task_app_info.cpp",
+        "${bgtaskmgr_interfaces_path}/innerkits/src/background_task_subscriber.cpp",
+        "common/src/bgtaskmgr_log_wrapper.cpp",
+        "ipc/src/background_task_mgr_stub.cpp",
+        "ipc/src/background_task_mgr_proxy.cpp",
+        "ipc/src/background_task_manager.cpp",
+        "ipc/src/expired_callback_proxy.cpp",
+        "ipc/src/expired_callback_stub.cpp",
+        "ipc/src/background_task_subscriber_proxy.cpp",
+        "ipc/src/background_task_subscriber_stub.cpp",
+    ]
+
+    public_configs = [ ":bgtaskmgr_public_config" ]
+
+    deps = [
+        "//utils/native/base:utils",
+    ]
+
+    external_deps = [
+        "aafwk_standard:base",
+        "aafwk_standard:want",
+        "appexecfwk_standard:appexecfwk_base",
+        "appexecfwk_standard:appexecfwk_core",
+        "hiviewdfx_hilog_native:libhilog",
+        "ipc:ipc_core",
+        "safwk:system_ability_fwk",
+        "samgr_standard:samgr_proxy",
+        "startup_l2:syspara",
+    ]
+
+    subsystem_name = "resourceschedule"
+    part_name = "background_task_mgr"
+}

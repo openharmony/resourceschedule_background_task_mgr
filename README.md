@@ -1,39 +1,63 @@
-# resourceschedule_backgroundtaskmanager
+# Background Task Manager
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+-   [Introduction](#section11660541593)
+-   [Directory Structure](#section161941989596)
+-   [Transient Tasks](#section1312121216216)
+    -   [Available APIs](#section114564657874)
+    -   [Usage Guidelines](#section129654513264)
+        -   [Restrictions on Using Transient Tasks](#section1551164914237)
 
-#### 软件架构
-软件架构说明
+-   [Repositories Involved](#section1371113476307)
 
+## Introduction<a name="section11660541593"></a>
 
-#### 安装教程
+In the resource scheduling subsystem, the background task management is responsible for managing background tasks, and provides interfaces for application, cancellation and query of background tasks.
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## Directory Structure<a name="section161941989596"></a>
 
-#### 使用说明
+```
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+├── frameworks   # Frameworks
+├── interfaces
+│   ├── innerkits    # Internal APIs
+│   └── kits         # External APIs
+├── sa_profile   # SA profile
+├── services     # Services
+└── utils        # Utilities
 
-#### 参与贡献
+```
+## Transient Tasks<a name="section1312121216216"></a>
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+### Available APIs<a name="section114564657874"></a>
 
+API                                                      |     Description                         
+---------------------------------------------------------|-----------------------------------------
+function requestSuspendDelay(reason:string, callback:Callback\<void>): DelaySuspendInfo; | Request suspend delay 
+function cancelSuspendDelay(requestId:number): void;        | Cancel suspend delay 
+function getRemainingDelayTime(requestId:number, callback:AsyncCallback\<number>):void; | Get remaining delay time(callback) 
+function getRemainingDelayTime(requestId:number): Promise\<number>; | Get remaining delay time(Promise) 
 
-#### 特技
+### Usage Guidelines<a name="section129654513264"></a>
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+As mentioned above, applications and service modules with transient tasks have their suspension delayed so that their running is not affected by background lifecycle management within the specified time frame.
+
+- Note: Applications and service modules can request transient tasks only for temporary tasks. The time quota is 3 minutes per time and 10 minutes per day. The system allocates the time frame based on the application scenario and system status.
+
+#### Restrictions on Using Transient Tasks<a name="section1551164914237"></a>
+
+Adhere to the following constraints and rules when using transient tasks:
+
+- **When to request**：An application can request a transient task only when it is running in the foreground or before it is suspended in the background. Otherwise, the application may be suspended, resulting in request failure. By default, an application has 6–12 seconds of running time (subject to the application scenario) before it is suspended in the background.
+- **Timeout**：The system notifies the application of the suspension delay timeout by using a callback. The application must then cancel the delayed suspension or apply for delayed suspension again. Otherwise, the application will be forcibly suspended.
+- **When to cancel**：The requesting application shall cancel the request when the transient task is complete. If the request is forcibly canceled by the system, the time frame allowed for the application to run in the background will be affected.
+- **Quota mechanism**：To prevent abuse of the keepalive, each application has a certain quota every day (dynamically adjusted based on user habits). After using up the quota, an application cannot request transient tasks. Therefore, applications should cancel their request immediately after the transient tasks are complete, to avoid quota consumption. (Note: The quota refers to the requested duration and does not include the time when the application runs in the background.)
+
+## Repositories Involved<a name="section1371113476307"></a>
+
+Resource Schedule subsystem
+
+**background\_task\_mgr**
+
+notification_ces_standard
+
+appexecfwk_standard

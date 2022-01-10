@@ -1,0 +1,121 @@
+/*
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+ #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUNDTASKMANAGER_SERVICES_TRANSIENT_TASK_INCLUDE_BG_TRANSIENT_TASK_MGR_H
+ #define FOUNDATION_RESOURCESCHEDULE_BACKGROUNDTASKMANAGER_SERVICES_TRANSIENT_TASK_INCLUDE_BG_TRANSIENT_TASK_MGR_H
+
+#include <functional>
+#include <mutex>
+#include <memory>
+#include <set>
+
+#include <iremote_object.h>
+#include <nocopyable.h>
+#include <singleton.h>
+#include <string_ex.h>
+#include <system_ability.h>
+
+#include "background_task_mgr_stub.h"
+#include "decision_maker.h"
+#include "delay_suspend_info.h"
+#include "device_info_manager.h"
+#include "event_handler.h"
+#include "event_info.h"
+#include "ibackground_task_mgr.h"
+#include "iexpired_callback.h"
+#include "ibackground_task_subscriber.h"
+#include "timer_manager.h"
+#include "watchdog.h"
+
+namespace OHOS {
+namespace BackgroundTaskMgr {
+class SubscriberDeathRecipient;
+class ExpiredCallbackDeathRecipient;
+
+enum class TransientTaskEventType: uint32_t {
+    TASK_START,
+    TASK_END,
+};
+class BgTransientTaskMgr {
+    DECLARE_DELAYED_SINGLETON(BgTransientTaskMgr);
+public:
+    void Init();
+    std::shared_ptr<DelaySuspendInfo> RequestSuspendDelay(const std::u16string& reason, 
+        const sptr<IExpiredCallback>& callback);
+    void CancelSuspendDelay(int32_t requestId);
+    int32_t GetRemainingDelayTime(int32_t requestId);
+    bool SubscribeTransientTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
+    bool UnsubscribeTransientTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
+    void ForceCancelSuspendDelay(int32_t requestId);
+    void HandleExpiredCallbackDeath(const wptr<IRemoteObject>& remote);
+    void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
+    void HandleRequestExpired(const int32_t requestId);
+    bool ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+
+private:
+    bool GetBundleNamesForUid(int32_t uid, std::string &bundleName);
+    bool VerifyCallingInfo(int32_t uid, int32_t pid);
+    bool VerifyRequestIdLocked(const std::string& name, int32_t uid, int32_t requestId);
+    void CancelSuspendDelayLocked(int32_t requestId);
+    void NotifyTransientTaskSuscriber(shared_ptr<TransientTaskAppInfo>& appInfo,
+        TransientTaskEventType type);
+    bool DumpAllRequestId(std::vector<std::string> &dumpInfo);
+    void SendLowBatteryEvent(std::vector<std::string> &dumpInfo);
+    void SendOkayBatteryEvent(std::vector<std::string> &dumpInfo);
+    void SendScreenOnEvent(std::vector<std::string> &dumpInfo);
+    void SendScreenOffEvent(std::vector<std::string> &dumpInfo);
+    void InitNecessaryState();
+
+    std::mutex suscriberLock_;
+    sptr<SubscriberDeathRecipient> susriberDeathRecipient_ {nullptr};
+    std::mutex expiredCallbackLock_;
+    std::map<int32_t, sptr<IExpiredCallback>> expiredCallbackMap_;
+    std::map<int32_t, std::shared_ptr<KeyInfo>> keyInfoMap_;
+    sptr<ExpiredCallbackDeathRecipient> callbackDeathRecipient_ {nullptr};
+    std::list<sptr<IBackgroundTaskSubscriber>> subscriberList_;
+
+    std::shared_ptr<TimerManager> timerManager_ {nullptr};
+    std::shared_ptr<Watchdog> watchdog_ {nullptr};
+    std::shared_ptr<InputManager> inputManager_ {nullptr};
+    std::shared_ptr<DeviceInfoManager> deviceInfoManeger_ {nullptr};
+    std::shared_ptr<DecisionMaker> decisionMaker_ {nullptr};
+    std::shared_ptr<AppExecFwk::EventRunner> runner_;
+    std::shared_ptr<AppExecFwk::EventHandler> handler_;
+};
+
+class SubscriberDeathRecipient final : public IRemoteObject::DeathRecipient {
+public:
+    explicit SubscriberDeathRecipient(const wptr<BackgroundTaskMgrService>& service);
+    ~SubscriberDeathRecipient() override;
+    DISALLOW_COPY_AND_MOVE(SubscriberDeathRecipient);
+    void OnRemoteDied(const wptr<IRemoteObject>& remote) override;
+
+private:
+    wptr<BackgroundTaskMgrService> service_;
+};
+
+class ExpiredCallbackDeathRecipient final : public IRemoteObject::DeathRecipient {
+public:
+    explicit ExpiredCallbackDeathRecipient(const wptr<BackgroundTaskMgrService>& service);
+    ~ExpiredCallbackDeathRecipient() override;
+    DISALLOW_COPY_AND_MOVE(ExpiredCallbackDeathRecipient);
+    void OnRemoteDied(const wptr<IRemoteObject>& remote) override;
+
+private:
+    wptr<BackgroundTaskMgrService> service_;
+};
+} // namespace BackgroundTaskMgr
+} // namespace OHOS
+#endif

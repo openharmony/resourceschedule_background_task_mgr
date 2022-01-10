@@ -1,0 +1,68 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
+
+config("bgtaskmgr_service_public_config") {
+    include_dirs = [
+        "core/include",
+        "transient_task/include",
+        "test/include",
+        "//utils/native/base/include",
+        "//utils/system/safwk/native/include",
+    ]
+}
+
+ohos_shared_library("bgtaskmgr_service") {
+    sources = [
+        "core/src/background_task_mgr_service.cpp",
+        "transient_task/src/bg_transient_task_mgr.cpp",
+        "transient_task/src/delay_suspend_info_ex.cpp",
+        "transient_task/src/pkg_delay_suspend_info.cpp",
+        "transient_task/src/suspend_controller.cpp",
+        "transient_task/src/decision_maker.cpp",
+        "transient_task/src/time_provider.cpp",
+        "transient_task/src/timer_manager.cpp",
+        "transient_task/src/watchdog.cpp",
+        "transient_task/src/event_hub.cpp",
+        "transient_task/src/input_manager.cpp",
+        "transient_task/src/device_info_manager.cpp",
+        "transient_task/src/bgtask_common.cpp",
+    ]
+
+    public_configs = [ ":bgtaskmgr_service_public_config" ]
+
+    public_deps =[
+        "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
+        "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
+        "//utils/native/base:utils",
+    ]
+
+    external_deps = [
+        "aafwk_standard:base",
+        "aafwk_standard:want",
+        "appexecfwk_standard:appexecfwk_base",
+        "appexecfwk_standard:appexecfwk_core",
+        "appexecfwk_standard:libeventhandler",
+        "ces_standard:cesfwk_innerkits",
+        "dmsfwk_standard:zuri",
+        "hiviewdfx_hilog_native:libhilog",
+        "ipc:ipc_core",
+        "safwk:system_ability_fwk",
+        "samgr_standard:samgr_proxy",
+        "startup_l2:syspara",
+    ]
+
+    part_name = "background_task_mgr"
+}

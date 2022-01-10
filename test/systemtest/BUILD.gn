@@ -1,0 +1,64 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
+import("//build/test.gni")
+
+config("system_test_config") {
+  include_dirs = [ "//third_party/json/include" ]
+
+  configs = []
+}
+
+module_output_path = "background_task_manager/systemtest"
+ohos_systemtest("BgtaskDumpTest") {
+  module_out_path = module_output_path
+
+  sources = [ "bgtask_dump_test.cpp" ]
+
+  include_dirs = [
+    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "//third_party/json/single_include",
+    "//utils/native/base/include",
+    "//utils/system/safwk/native/include",
+  ]
+
+  cflags = []
+
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  deps = [
+    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
+    "${bgtaskmgr_services_path}:bgtaskmgr_service",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "aafwk_standard:want",
+    "appexecfwk_standard:appexecfwk_core",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "samgr_standard:samgr_proxy",
+  ]
+}
+
+group("systemtest") {
+  testonly = true
+
+  deps = [
+    ":BgtaskDumpTest"
+  ]
+}
