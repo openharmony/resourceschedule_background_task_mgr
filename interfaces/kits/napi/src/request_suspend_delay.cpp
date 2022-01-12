@@ -74,7 +74,6 @@ napi_value GetExpiredCallback(
 napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     std::u16string &reason, CallbackInstance *&callback)
 {
-    BGTASK_LOGI("init ParseParameters start lkk");
     size_t argc = REQUEST_SUSPEND_DELAY_PARAMS;
     napi_value argv[REQUEST_SUSPEND_DELAY_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
