@@ -18,7 +18,7 @@ import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 config("bgtaskmgr_public_config") {
     include_dirs = [
         "common/include",
-        "ipc/include",
+        "include",
         "${bgtaskmgr_interfaces_path}/innerkits/include",
     ]
 }
@@ -30,13 +30,13 @@ ohos_shared_library("bgtaskmgr_fwk") {
         "${bgtaskmgr_interfaces_path}/innerkits/src/transient_task_app_info.cpp",
         "${bgtaskmgr_interfaces_path}/innerkits/src/background_task_subscriber.cpp",
         "common/src/bgtaskmgr_log_wrapper.cpp",
-        "ipc/src/background_task_mgr_stub.cpp",
-        "ipc/src/background_task_mgr_proxy.cpp",
-        "ipc/src/background_task_manager.cpp",
-        "ipc/src/expired_callback_proxy.cpp",
-        "ipc/src/expired_callback_stub.cpp",
-        "ipc/src/background_task_subscriber_proxy.cpp",
-        "ipc/src/background_task_subscriber_stub.cpp",
+        "src/background_task_mgr_stub.cpp",
+        "src/background_task_mgr_proxy.cpp",
+        "src/background_task_manager.cpp",
+        "src/expired_callback_proxy.cpp",
+        "src/expired_callback_stub.cpp",
+        "src/background_task_subscriber_proxy.cpp",
+        "src/background_task_subscriber_stub.cpp",
     ]
 
     public_configs = [ ":bgtaskmgr_public_config" ]
