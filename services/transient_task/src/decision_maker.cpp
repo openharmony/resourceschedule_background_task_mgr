@@ -157,7 +157,7 @@ bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::share
         BGTASK_LOGE("Request not allow by its info");
         return false;
     }
-    
+
     if (delayInfo == nullptr) {
         BGTASK_LOGE("Invalid delayInfo");
         return false;
@@ -339,5 +339,5 @@ void DecisionMaker::HandleScreenOff()
         }
     }
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

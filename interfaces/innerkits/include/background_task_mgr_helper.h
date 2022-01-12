@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUNDTASKMANAGER_INTERFACES_INNERKITS_CORE_INCLUDE_BACKGROUND_TASK_MGR_HELPER_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUNDTASKMANAGER_INTERFACES_INNERKITS_CORE_INCLUDE_BACKGROUND_TASK_MGR_HELPER_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_TASK_MGR_HELPER_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_TASK_MGR_HELPER_H
 
 #include "background_task_subscriber.h"
 
@@ -29,7 +29,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     static ErrCode SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
-    
+
     /**
      * Unsubscribes background task event.
      *
@@ -39,6 +39,6 @@ public:
     static ErrCode UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 };
 
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_TASK_MGR_HELPER_H

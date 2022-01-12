@@ -21,13 +21,12 @@ group("btm_target") {
 ohos_executable("bgtask") {
     include_dirs = [
         "include",
-        "//foundation/aafwk/standard/tools/aa/include",
     ]
 
     sources = [
-        "//foundation/aafwk/standard/tools/aa/src/shell_command.cpp",
         "src/bgtaskmgr_shell_command.cpp",
         "src/main.cpp",
+        "src/shell_command.cpp",
     ]
 
     cflags = []
@@ -42,12 +41,9 @@ ohos_executable("bgtask") {
     ]
 
     configs = [
-        "//foundation/aafwk/standard/tools/aa:ability_command_config",
-        "//foundation/aafwk/standard/services/common:common_config",
     ]
 
     external_deps = [
-        "aafwk_standard:base",
         "aafwk_standard:want",
         "hiviewdfx_hilog_native:libhilog",
         "ipc:ipc_core",

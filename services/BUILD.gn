@@ -19,8 +19,6 @@ config("bgtaskmgr_service_public_config") {
         "core/include",
         "transient_task/include",
         "test/include",
-        "//utils/native/base/include",
-        "//utils/system/safwk/native/include",
     ]
 }
 
@@ -50,9 +48,7 @@ ohos_shared_library("bgtaskmgr_service") {
     ]
 
     external_deps = [
-        "aafwk_standard:base",
         "aafwk_standard:want",
-        "appexecfwk_standard:appexecfwk_base",
         "appexecfwk_standard:appexecfwk_core",
         "appexecfwk_standard:libeventhandler",
         "ces_standard:cesfwk_innerkits",

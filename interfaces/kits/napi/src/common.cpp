@@ -140,7 +140,6 @@ napi_value Common::GetInt32NumberValue(const napi_env &env, const napi_value &va
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     NAPI_ASSERT(env, valuetype == napi_number, "Wrong argument type. Number or function expected.");
     napi_get_value_int32(env, value, &result);
-   
     BGTASK_LOGI("number result: %{public}d", result);
 
     return Common::NapiGetNull(env);
@@ -179,5 +178,5 @@ napi_value Common::SetDelaySuspendInfo(
 
     return NapiGetboolean(env, true);
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

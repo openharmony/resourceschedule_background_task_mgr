@@ -31,7 +31,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
     napi_value argv[CANCEL_SUSPEND_DELAY_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     NAPI_ASSERT(env, argc == 1, "Wrong number of arguments");
-    
+
     // argv[0] :requestId
     if (Common::GetInt32NumberValue(env, argv[0], requestId) == nullptr) {
         BGTASK_LOGE("ParseParameters failed, requestId is nullptr ");
@@ -50,5 +50,5 @@ napi_value CancelSuspendDelay(napi_env env, napi_callback_info info)
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(requestId);
     return Common::NapiGetNull(env);
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

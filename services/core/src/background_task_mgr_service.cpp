@@ -130,5 +130,5 @@ ErrCode BackgroundTaskMgrService::ShellDump(const std::vector<std::string> &dump
     return ERR_OK;
 }
 
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

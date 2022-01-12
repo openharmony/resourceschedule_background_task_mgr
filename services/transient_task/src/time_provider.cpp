@@ -23,6 +23,6 @@ int64_t TimeProvider::GetCurrentTime(ClockType type)
     clock_gettime(type, &ts);
     return ((static_cast<int64_t>(ts.tv_sec) * MSEC_PER_SEC) + (static_cast<int64_t>(ts.tv_nsec) / NSEC_PER_MSEC));
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
 

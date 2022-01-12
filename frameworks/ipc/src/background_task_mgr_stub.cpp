@@ -174,5 +174,5 @@ ErrCode BackgroundTaskMgrStub::HandleShellDump(MessageParcel& data, MessageParce
     }
     return ERR_OK;
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

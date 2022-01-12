@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUNDTASKMANAGER_FRAMEWORKS_IPC_INCLUDE_BACKGROUND_TASK_MGR_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUNDTASKMANAGER_FRAMEWORKS_IPC_INCLUDE_BACKGROUND_TASK_MGR_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_IPC_INCLUDE_BACKGROUND_TASK_MANAGER_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_IPC_INCLUDE_BACKGROUND_TASK_MANAGER_H
 
 #include "background_task_subscriber.h"
 #include "expired_callback.h"
@@ -33,7 +33,7 @@ public:
 
     ErrCode RequestSuspendDelay(const std::u16string &reason,
         const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo);
-    
+
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime);
 
     void ResetBackgroundTaskManagerProxy();
@@ -41,7 +41,7 @@ public:
     ErrCode SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 
     ErrCode UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
-    
+
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 
 private:
@@ -66,6 +66,6 @@ private:
     sptr<BgTaskMgrDeathRecipient> recipient_;
 };
 
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_IPC_INCLUDE_BACKGROUND_TASK_MANAGER_H

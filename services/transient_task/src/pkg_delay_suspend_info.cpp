@@ -138,5 +138,5 @@ void PkgDelaySuspendInfo::UpdateQuota(bool reset)
     }
     BGTASK_LOGD("%{public}s Lastest quota: %{public}d", pkg_.c_str(), quota_);
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

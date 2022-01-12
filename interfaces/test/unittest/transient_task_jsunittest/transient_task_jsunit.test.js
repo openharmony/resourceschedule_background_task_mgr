@@ -23,21 +23,21 @@ describe("TransientTaskJsTest", function () {
          */
          console.info('beforeAll caled')
     })
-    
+
     afterAll(function() {
         /*
          * @tc.teardown: teardown invoked after all testcases
          */
          console.info('afterAll caled')
     })
-    
+
     beforeEach(function() {
         /*
          * @tc.setup: setup invoked before each testcases
          */
          console.info('beforeEach caled')
     })
-    
+
     afterEach(function() {
         /*
          * @tc.teardown: teardown invoked after each testcases
@@ -150,7 +150,7 @@ describe("TransientTaskJsTest", function () {
             }
             backgroundTaskManager.cancelSuspendDelay(info.requestId)
         });
-        
+
         setTimeout(()=>{
             done();
         }, 500);

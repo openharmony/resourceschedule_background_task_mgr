@@ -54,5 +54,5 @@ void TimerManager::ProcessEvent(const AppExecFwk::InnerEvent::Pointer& event)
     }
     bgTask->HandleRequestExpired(requestId);
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

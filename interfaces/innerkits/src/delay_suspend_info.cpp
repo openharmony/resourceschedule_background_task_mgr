@@ -44,5 +44,5 @@ bool DelaySuspendInfo::ReadFromParcel(Parcel& in)
     READ_PARCEL_WITH_RET(in, Int32, actualDelayTime_, false);
     return true;
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

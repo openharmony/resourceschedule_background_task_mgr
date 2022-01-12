@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUNDTASKMANAGER_SERVICES_TRANSIENT_TASK_INCLUDE_WATCHDOG_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUNDTASKMANAGER_SERVICES_TRANSIENT_TASK_INCLUDE_WATCHDOG_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TRANSIENT_TASK_INCLUDE_WATCHDOG_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TRANSIENT_TASK_INCLUDE_WATCHDOG_H
 
 #include <event_handler.h>
 #include <event_runner.h>
@@ -44,6 +44,6 @@ private:
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_;
     std::shared_ptr<DecisionMaker> decision_ {nullptr};
 };
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TRANSIENT_TASK_INCLUDE_WATCHDOG_H

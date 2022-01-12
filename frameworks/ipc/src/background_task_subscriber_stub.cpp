@@ -79,5 +79,5 @@ int32_t BackgroundTaskSubscriberStub::HandleOnTransientTaskEnd(MessageParcel& da
     OnTransientTaskEnd(info);
     return ERR_NONE;
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

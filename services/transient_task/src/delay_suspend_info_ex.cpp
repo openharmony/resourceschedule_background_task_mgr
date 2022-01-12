@@ -61,5 +61,5 @@ void DelaySuspendInfoEx::Dump(std::string& result)
     result.append(", reaminTime: " + std::to_string(GetRemainDelayTime()));
     result.append(", advanceCallbackTime: " + std::to_string(GetAdvanceCallbackTime()) + "}");
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

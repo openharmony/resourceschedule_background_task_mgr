@@ -46,5 +46,5 @@ std::shared_ptr<TransientTaskAppInfo> TransientTaskAppInfo::Unmarshalling(Messag
     }
     return transientAppInfo;
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

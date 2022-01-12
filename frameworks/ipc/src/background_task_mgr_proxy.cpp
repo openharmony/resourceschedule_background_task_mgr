@@ -240,5 +240,5 @@ ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flag
         }
     }
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

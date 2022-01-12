@@ -32,5 +32,5 @@ void SuspendController::CancelSuspendDelay(const std::shared_ptr<KeyInfo>& key)
     // cancel delayed suspend
     BGTASK_LOGI("Remove delayed suspend app uid: %{public}d, name: %{public}s",key->GetUid(), key->GetPkg().c_str());
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

@@ -45,5 +45,5 @@ int32_t ExpiredCallbackStub::HandleOnExpired(MessageParcel& data)
     OnExpired();
     return ERR_NONE;
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

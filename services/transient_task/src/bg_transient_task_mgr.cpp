@@ -609,5 +609,5 @@ void SubscriberDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
     }
     service->HandleSubscriberDeath(remote);
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

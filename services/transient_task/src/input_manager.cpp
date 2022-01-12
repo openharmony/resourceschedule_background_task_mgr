@@ -90,5 +90,5 @@ void InputManager::ProcessEvent(const AppExecFwk::InnerEvent::Pointer& event)
         listener->OnInputEvent(*eventInfo);
     }
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

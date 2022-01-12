@@ -16,26 +16,26 @@
 ## 目录<a name="section161941989596"></a>
 
 ```
-
-├── frameworks   # 接口实现
+/foundation/resourceschedule/background_task_mgr
+├── frameworks       # 接口实现
 ├── interfaces
 │   ├── innerkits    # 对内接口目录
 │   └── kits         # 对外接口目录
-├── sa_profile   # 组件服务配置
-├── services     # 组件服务实现
-└── utils        # 组件工具实现
+├── sa_profile       # 组件服务配置
+├── services         # 组件服务实现
+└── utils            # 组件工具实现
 
 ```
 ## 短时任务<a name="section1312121216216"></a>
 
 ### 接口说明<a name="section114564657874"></a>
 
-接口名                                                    |     接口描述                            
----------------------------------------------------------|-----------------------------------------
-function requestSuspendDelay(reason:string, callback:Callback\<void>): DelaySuspendInfo; | 申请延迟挂起 
-function cancelSuspendDelay(requestId:number): void;        | 取消延迟挂起 
-function getRemainingDelayTime(requestId:number, callback:AsyncCallback\<number>):void; | 获取延迟挂起剩余时间（callback形式） 
-function getRemainingDelayTime(requestId:number): Promise\<number>; | 获取延迟挂起剩余时间（Promise形式） 
+| 接口名                                                                                   | 接口描述     |
+|------------------------------------------------------------------------------------------|-------------|
+| function requestSuspendDelay(reason:string, callback:Callback\<void>): DelaySuspendInfo; | 申请延迟挂起 |
+| function cancelSuspendDelay(requestId:number): void;                                     | 取消延迟挂起 |
+| function getRemainingDelayTime(requestId:number, callback:AsyncCallback\<number>):void;  | 获取延迟挂起剩余时间（callback形式） |
+| function getRemainingDelayTime(requestId:number): Promise\<number>;                      | 获取延迟挂起剩余时间（Promise形式） |
 
 ### 使用说明<a name="section129654513264"></a>
 

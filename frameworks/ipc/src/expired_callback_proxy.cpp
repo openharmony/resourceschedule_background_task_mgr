@@ -43,5 +43,5 @@ void ExpiredCallbackProxy::OnExpired()
     }
     remote->SendRequest(ON_EXPIRED, data, reply, option);
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

@@ -20,8 +20,6 @@ config("bgtaskmgr_public_config") {
         "common/include",
         "ipc/include",
         "${bgtaskmgr_interfaces_path}/innerkits/include",
-        "//utils/native/base/include",
-        "//utils/system/safwk/native/include",
     ]
 }
 
@@ -48,15 +46,10 @@ ohos_shared_library("bgtaskmgr_fwk") {
     ]
 
     external_deps = [
-        "aafwk_standard:base",
-        "aafwk_standard:want",
-        "appexecfwk_standard:appexecfwk_base",
-        "appexecfwk_standard:appexecfwk_core",
         "hiviewdfx_hilog_native:libhilog",
         "ipc:ipc_core",
         "safwk:system_ability_fwk",
         "samgr_standard:samgr_proxy",
-        "startup_l2:syspara",
     ]
 
     subsystem_name = "resourceschedule"

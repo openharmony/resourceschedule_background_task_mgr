@@ -58,5 +58,5 @@ __attribute__((constructor)) void RegisterModule(void)
 }
 EXTERN_C_END
 
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

@@ -44,5 +44,5 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskEnd(
     subscriber_.OnTransientTaskEnd(info);
 }
 
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

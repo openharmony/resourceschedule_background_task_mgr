@@ -37,5 +37,5 @@ void ExpiredCallback::ExpiredCallbackImpl::OnExpired()
 {
     callback_.OnExpired();
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

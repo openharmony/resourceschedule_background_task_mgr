@@ -79,7 +79,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     napi_value argv[REQUEST_SUSPEND_DELAY_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     NAPI_ASSERT(env, argc == REQUEST_SUSPEND_DELAY_PARAMS, "Wrong number of arguments");
-    
+
     // argv[0] : reason
     if (Common::GetU16StringValue(env, argv[0], reason) == nullptr) {
         BGTASK_LOGE("ParseParameters failed, reason is nullptr ");
@@ -90,7 +90,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
     NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Object expected.");
-    
+
     CallbackInstancesInfo callbackInstancesInfo;
     if (GetExpiredCallback(env, argv[1], callbackInstancesInfo) == nullptr) {
         BGTASK_LOGE("CallbackInstancesInfo parse failed");
@@ -125,5 +125,5 @@ napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
     return result;
 }
 
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

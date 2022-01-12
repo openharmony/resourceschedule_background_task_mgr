@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUNDTASKMANAGER_UTILS_DUMP_INCLUDE_BGTASKMGR_SHELL_COMMAND_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUNDTASKMANAGER_UTILS_DUMP_INCLUDE_BGTASKMGR_SHELL_COMMAND_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_UTILS_DUMP_INCLUDE_BGTASKMGR_SHELL_COMMAND_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_UTILS_DUMP_INCLUDE_BGTASKMGR_SHELL_COMMAND_H
 
 #include "shell_command.h"
 
@@ -23,7 +23,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 
-class BgtaskmgrShellCommand : public OHOS::AAFwk::ShellCommand {
+class BgtaskmgrShellCommand : public ShellCommand {
 public:
     BgtaskmgrShellCommand(int argc, char *argv[]);
     ~BgtaskmgrShellCommand() override{};
@@ -39,6 +39,6 @@ private:
     std::shared_ptr<BackgroundTaskManager> btm_;
 };
 
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
-#endif  // RESOURCESCHEDULE_BGTASKMGR_SHELL_COMMAND_H
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_UTILS_DUMP_INCLUDE_BGTASKMGR_SHELL_COMMAND_H

@@ -96,5 +96,5 @@ bool Watchdog::KillApplicationByUid(const std::string &bundleName, const int uid
 
     return true;
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

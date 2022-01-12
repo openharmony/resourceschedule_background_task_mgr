@@ -151,5 +151,5 @@ void BackgroundTaskManager::BgTaskMgrDeathRecipient::OnRemoteDied(const wptr<IRe
 {
     backgroundTaskManager_.ResetBackgroundTaskManagerProxy();
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

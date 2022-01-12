@@ -66,5 +66,5 @@ void EventHub::OnReceiveEvent(const EventFwk::CommonEventData &event)
     eventInfoEx->SetEventId(g_actionMap[action]);
     inputManager_.SendEventInfo(eventInfoEx);
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

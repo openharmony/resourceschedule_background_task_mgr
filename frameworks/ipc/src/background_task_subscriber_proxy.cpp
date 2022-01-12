@@ -78,5 +78,5 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskEnd(const std::shared_ptr<Tra
         return;
     }
 }
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

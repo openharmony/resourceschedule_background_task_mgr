@@ -52,5 +52,5 @@ void DeviceInfoManager::OnInputEvent(const EventInfo& eventInfo)
     }
 }
 
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

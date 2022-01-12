@@ -40,5 +40,5 @@ const int32_t DELAY_TIME_LOW_POWER = DELAY_TIME_LOW_POWER_DEFAULT;
 const int32_t ALLOW_REQUEST_TIME_BG = ALLOW_REQUEST_TIME_BG_DEFAULT;
 const int32_t INIT_QUOTA = GetIntParameter(INIT_QUOTA_PARAM, INIT_QUOTA_DEFAULT);
 const int32_t QUOTA_UPDATE = GetIntParameter(QUOTA_UPDATE_PARAM, QUOTA_UPDATE_DEFAULT);
-} // namespace BackgroundTaskMgr
-} // namespace OHOS
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
