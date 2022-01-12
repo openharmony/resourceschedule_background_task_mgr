@@ -13,6 +13,8 @@
 
 In the resource scheduling subsystem, the background task management is responsible for managing background tasks, and provides interfaces for application, cancellation and query of background tasks.
 
+![](figures/en-us_image_0000001115940671.png)
+
 ## Directory Structure<a name="section161941989596"></a>
 
 ```
@@ -44,8 +46,6 @@ As mentioned above, applications and service modules with transient tasks have t
 - Note: Applications and service modules can request transient tasks only for temporary tasks. The time quota is 3 minutes per time and 10 minutes per day. The system allocates the time frame based on the application scenario and system status.
 
 #### Restrictions on Using Transient Tasks<a name="section1551164914237"></a>
-
-Adhere to the following constraints and rules when using transient tasks:
 
 - **When to request**：An application can request a transient task only when it is running in the foreground or before it is suspended in the background. Otherwise, the application may be suspended, resulting in request failure. By default, an application has 6–12 seconds of running time (subject to the application scenario) before it is suspended in the background.
 - **Timeout**：The system notifies the application of the suspension delay timeout by using a callback. The application must then cancel the delayed suspension or apply for delayed suspension again. Otherwise, the application will be forcibly suspended.
