@@ -1,0 +1,56 @@
+{
+    "name": "@ohos/background_task_mgr",
+    "description": "background task manager service",
+    "version": "3.1",
+    "license": "Apache License 2.0",
+    "publishAs": "code-segment",
+    "segment": {
+      "destPath" : "https://gitee.com/openharmony/resourceschedule_background_task_mgr"
+    },
+    "scripts": {},
+    "component": {
+      "name": "background_task_mgr",
+      "subsystem": "resourceschedule",
+      "syscap": [ "SystemCapability.Ressched.BackgroundTaskMgr" ],
+      "features": [],
+      "adapted_system_type": [ "mini", "small", "standard" ],
+      "rom": "1024KB",
+      "ram": "2048KB",
+      "deps": {
+        "components": [
+          "appexecfwk_core",
+          "cesfwk_innerkits",
+          "libeventhandler",
+          "libhilog",
+          "ipc_core",
+          "system_ability_fwk",
+          "samgr_proxy",
+          "syspara",
+          "utils_base",
+          "want",
+          "zuri"
+        ],
+        "third_party": [ 
+          "openssl",
+          "bounds_checking_function"
+        ]
+      },
+      "build": {
+        "sub_component": [
+          "//foundation/resourceschedule/background_task_mgr/interfaces:bgtaskmgr_interfaces",
+          "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_fwk",
+          "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service",
+          "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_sa_profile",
+          "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_service_init",
+          "//foundation/resourceschedule/background_task_mgr/utils:bgtaskmgr_dump"
+        ],
+        "inner_kits": [
+        ],
+        "test": [ 
+          "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest:js_unittest",
+          "//foundation/resourceschedule/background_task_mgr/services/test/unittest:unittest",
+          "//foundation/resourceschedule/background_task_mgr/test/systemtest:systemtest"
+        ]
+      }
+    }
+  }

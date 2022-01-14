@@ -11,27 +11,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 import("//build/ohos.gni")
 import("//build/test.gni")
+import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
 module_output_path = "background_task_manager/unittest"
 
 ohos_unittest("bgtask_unit_test") {
   module_out_path = module_output_path
   include_dirs = [
-    "mock/include",
-    "//foundation/appexecfwk/standard/libs/libeventhandler/src",
     "${bgtaskmgr_services_path}/transient_task/inlcude",
     "${bgtaskmgr_services_path}/core/inlcude",
-    "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include"
+    "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
   ]
 
   sources = [
+    "background_task_mgr_service_test.cpp",
+    "bg_transient_task_mgr_test.cpp",
     "mock/mock_event_handler.cpp",
     "mock/mock_ipc.cpp",
-    "background_task_mgr_service_test.cpp",
-    "bg_transient_task_mgr_test.cpp"
   ]
 
   configs = [ "//utils/native/base:utils_config" ]
@@ -64,7 +62,5 @@ ohos_unittest("bgtask_unit_test") {
 group("unittest") {
   testonly = true
 
-  deps = [
-      ":bgtask_unit_test"
-  ]
+  deps = [ ":bgtask_unit_test" ]
 }

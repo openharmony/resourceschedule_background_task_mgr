@@ -40,12 +40,12 @@ public:
  * @tc.type: FUNC
  * @tc.require: Issue Number
  */
-// HWTEST_F(BackgroundTaskMgrServiceTest, BackgroundTaskMgrServiceTest_001, TestSize.Level1)
-// {
-//     sptr<ISystemAbilityManager> sm = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-//     EXPECT_TRUE(sm != nullptr) << "BackgroundTaskMgrServiceTest fail to get GetSystemAbilityManager";
-//     sptr<IRemoteObject> remoteObject = sm->CheckSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID);
-//     EXPECT_TRUE(remoteObject != nullptr) << "GetSystemAbility failed";
-// }
+HWTEST_F(BackgroundTaskMgrServiceTest, BackgroundTaskMgrServiceTest_001, TestSize.Level1)
+{
+    sptr<ISystemAbilityManager> sm = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    EXPECT_TRUE(sm != nullptr) << "BackgroundTaskMgrServiceTest fail to get GetSystemAbilityManager";
+    sptr<IRemoteObject> remoteObject = sm->CheckSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID);
+    EXPECT_TRUE(remoteObject != nullptr) << "GetSystemAbility failed";
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

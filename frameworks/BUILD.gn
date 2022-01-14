@@ -11,47 +11,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import("//build/ohos.gni")
 import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
 config("bgtaskmgr_public_config") {
-    include_dirs = [
-        "common/include",
-        "include",
-        "${bgtaskmgr_interfaces_path}/innerkits/include",
-    ]
+  include_dirs = [
+    "common/include",
+    "include",
+    "${bgtaskmgr_interfaces_path}/innerkits/include",
+  ]
 }
 
 ohos_shared_library("bgtaskmgr_fwk") {
-    sources = [
-        "${bgtaskmgr_interfaces_path}/innerkits/src/delay_suspend_info.cpp",
-        "${bgtaskmgr_interfaces_path}/innerkits/src/expired_callback.cpp",
-        "${bgtaskmgr_interfaces_path}/innerkits/src/transient_task_app_info.cpp",
-        "${bgtaskmgr_interfaces_path}/innerkits/src/background_task_subscriber.cpp",
-        "common/src/bgtaskmgr_log_wrapper.cpp",
-        "src/background_task_mgr_stub.cpp",
-        "src/background_task_mgr_proxy.cpp",
-        "src/background_task_manager.cpp",
-        "src/expired_callback_proxy.cpp",
-        "src/expired_callback_stub.cpp",
-        "src/background_task_subscriber_proxy.cpp",
-        "src/background_task_subscriber_stub.cpp",
-    ]
+  sources = [
+    "${bgtaskmgr_interfaces_path}/innerkits/src/background_task_subscriber.cpp",
+    "${bgtaskmgr_interfaces_path}/innerkits/src/delay_suspend_info.cpp",
+    "${bgtaskmgr_interfaces_path}/innerkits/src/expired_callback.cpp",
+    "${bgtaskmgr_interfaces_path}/innerkits/src/transient_task_app_info.cpp",
+    "common/src/bgtaskmgr_log_wrapper.cpp",
+    "src/background_task_manager.cpp",
+    "src/background_task_mgr_proxy.cpp",
+    "src/background_task_mgr_stub.cpp",
+    "src/background_task_subscriber_proxy.cpp",
+    "src/background_task_subscriber_stub.cpp",
+    "src/expired_callback_proxy.cpp",
+    "src/expired_callback_stub.cpp",
+  ]
 
-    public_configs = [ ":bgtaskmgr_public_config" ]
+  public_configs = [ ":bgtaskmgr_public_config" ]
 
-    deps = [
-        "//utils/native/base:utils",
-    ]
+  deps = [ "//utils/native/base:utils" ]
 
-    external_deps = [
-        "hiviewdfx_hilog_native:libhilog",
-        "ipc:ipc_core",
-        "safwk:system_ability_fwk",
-        "samgr_standard:samgr_proxy",
-    ]
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+  ]
 
-    subsystem_name = "resourceschedule"
-    part_name = "background_task_mgr"
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
 }

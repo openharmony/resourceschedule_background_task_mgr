@@ -14,7 +14,6 @@
  */
 
 #include "event_handler.h"
-#include "event_handler_utils.h"
 #include <iostream>
 
 namespace OHOS {

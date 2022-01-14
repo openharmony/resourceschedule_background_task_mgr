@@ -11,8 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 import("//build/test.gni")
+import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
 config("system_test_config") {
   include_dirs = [ "//third_party/json/include" ]
@@ -58,7 +58,5 @@ ohos_systemtest("BgtaskDumpTest") {
 group("systemtest") {
   testonly = true
 
-  deps = [
-    ":BgtaskDumpTest"
-  ]
+  deps = [ ":BgtaskDumpTest" ]
 }

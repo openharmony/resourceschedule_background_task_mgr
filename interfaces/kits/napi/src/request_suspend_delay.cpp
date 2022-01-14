@@ -101,7 +101,6 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
 
 napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
 {
-    BGTASK_LOGI("init RequestSuspendDelay start ");
     CallbackInstance *objectInfo = nullptr;
     std::u16string reason;
     if (ParseParameters(env, info, reason, objectInfo) == nullptr) {

@@ -26,7 +26,7 @@
 
 #include "app_mgr_constants.h"
 #include "app_mgr_proxy.h"
-// #include "application_state_observer_stub.h"
+#include "application_state_observer_stub.h"
 #include "delay_suspend_info_ex.h"
 #include "device_info_manager.h"
 #include "input_manager.h"
@@ -50,24 +50,24 @@ public:
     bool IsFrontApp(const string& pkgName, int32_t uid);
     void ResetAppMgrProxy();
 
-// private:
-//     class ApplicationStateObserver : public AppExecFwk::ApplicationStateObserverStub {
-//     public:
-//         ApplicationStateObserver(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
-//         ~ApplicationStateObserver() {};
-//         void OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData) override;
-//         void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
-//         {}
-//         void OnExtensionStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
-//         {}
-//         void OnProcessCreated(const AppExecFwk::ProcessData &processData) override
-//         {}
-//         void OnProcessDied(const AppExecFwk::ProcessData &processData) override
-//         {}
+private:
+    class ApplicationStateObserver : public AppExecFwk::ApplicationStateObserverStub {
+    public:
+        ApplicationStateObserver(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
+        ~ApplicationStateObserver() {};
+        void OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData) override;
+        void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
+        {}
+        void OnExtensionStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
+        {}
+        void OnProcessCreated(const AppExecFwk::ProcessData &processData) override
+        {}
+        void OnProcessDied(const AppExecFwk::ProcessData &processData) override
+        {}
 
-//     private:
-//         DecisionMaker &decisionMaker_;
-//     };
+    private:
+        DecisionMaker &decisionMaker_;
+    };
 
     private:
         class AppMgrDeathRecipient : public IRemoteObject::DeathRecipient {
@@ -107,7 +107,7 @@ private:
     std::map<std::shared_ptr<KeyInfo>, int32_t, KeyInfoComp> pkgBgDurationMap_;
     sptr<AppExecFwk::IAppMgr> appMgrProxy_ {nullptr};
     sptr<AppMgrDeathRecipient> recipient_;
-    // sptr<ApplicationStateObserver> observer_ {nullptr};
+    sptr<ApplicationStateObserver> observer_ {nullptr};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

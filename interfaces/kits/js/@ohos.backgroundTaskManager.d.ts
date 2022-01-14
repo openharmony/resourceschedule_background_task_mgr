@@ -12,12 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import { AsyncCallback , Callback} from './basic';
+
+/**
+ * Manages background tasks.
+ *
+ * @since 7
+ * @sysCap SystemCapability.Ressched.BackgroundTaskMgr
+ * @devices phone, tv, wearable, tablet, car
+ */
 declare namespace backgroundTaskManager {
     /**
      * The info of delay suspend.
-     * 
+     *
      * @name DelaySuspendInfo
      * @since 7
+     * @sysCap SystemCapability.Ressched.BackgroundTaskMgr
+     * @devices phone, tv, wearable, tablet, car
      */
     interface DelaySuspendInfo {
         /**
@@ -32,18 +44,21 @@ declare namespace backgroundTaskManager {
 
     /**
      * Cancels delayed transition to the suspended state.
-     * 
+     *
      * @since 7
+     * @sysCap SystemCapability.Ressched.BackgroundTaskMgr
+     * @devices phone, tv, wearable, tablet, car
      * @param requestId Indicates the identifier of the delay request.
      */
     function cancelSuspendDelay(requestId: number): void;
 
     /**
      * Obtains the remaining time before an application enters the suspended state.
-     * 
+     *
      * @since 7
+     * @sysCap SystemCapability.Ressched.BackgroundTaskMgr
+     * @devices phone, tv, wearable, tablet, car
      * @param requestId Indicates the identifier of the delay request.
-     * @param callback Indicates the callback for reporting the result.
      * @return The remaining delay time
      */
     function getRemainingDelayTime(requestId: number, callback: AsyncCallback<number>): void;
@@ -51,11 +66,15 @@ declare namespace backgroundTaskManager {
 
     /**
      * Requests delayed transition to the suspended state.
-     * 
+     *
      * @since 7
+     * @sysCap SystemCapability.Ressched.BackgroundTaskMgr
+     * @devices phone, tv, wearable, tablet, car
      * @param reason Indicates the reason for delayed transition to the suspended state.
      * @param callback The callback delay time expired.
      * @return Info of delay request
      */
     function requestSuspendDelay(reason: string, callback: Callback<void>): DelaySuspendInfo;
 }
+
+export default backgroundTaskManager;

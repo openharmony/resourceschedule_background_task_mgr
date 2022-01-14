@@ -61,32 +61,32 @@ void BgtaskDumpTest::TearDown()
  * @tc.name: Get Service Object
  * @tc.desc:
  */
-// HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_GetServiceObject_001, Function | MediumTest | Level0)
-// {
-//     sptr<ISystemAbilityManager> systemAbilityManager =
-//         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-//     EXPECT_NE(systemAbilityManager, nullptr);
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_GetServiceObject_001, Function | MediumTest | Level0)
+{
+    sptr<ISystemAbilityManager> systemAbilityManager =
+        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    EXPECT_NE(systemAbilityManager, nullptr);
 
-//     sptr<IRemoteObject> remoteObject =
-//         systemAbilityManager->GetSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID);
-//     EXPECT_NE(remoteObject, nullptr);
-// }
+    sptr<IRemoteObject> remoteObject =
+        systemAbilityManager->GetSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID);
+    EXPECT_NE(remoteObject, nullptr);
+}
 
-// /*
-//  * @tc.number: BgtaskDumpTest_ShellDump_001
-//  * @tc.name: Shell Dump
-//  * @tc.desc:
-//  */
-// HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_001, Function | MediumTest | Level0)
-// {
-//     std::vector<std::string> infos;
-//     std::vector<std::string> options;
-//     options.push_back("-T");
-//     options.push_back("All");
-//     if (bgtaskMgr_ != nullptr) {
-//         auto ret = bgtaskMgr_->ShellDump(options, infos);
-//         EXPECT_EQ(ret, 0);
-//     }
-// }
+/*
+ * @tc.number: BgtaskDumpTest_ShellDump_001
+ * @tc.name: Shell Dump
+ * @tc.desc:
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_001, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-T");
+    options.push_back("All");
+    if (bgtaskMgr_ != nullptr) {
+        auto ret = bgtaskMgr_->ShellDump(options, infos);
+        EXPECT_EQ(ret, 0);
+    }
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -16,6 +16,7 @@
 #include "init.h"
 
 #include "cancel_suspend_delay.h"
+#include "get_remaining_delay_time.h"
 #include "request_suspend_delay.h"
 #include "transient_task_log.h"
 
@@ -30,6 +31,7 @@ napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_FUNCTION("requestSuspendDelay", RequestSuspendDelay),
         DECLARE_NAPI_FUNCTION("cancelSuspendDelay", CancelSuspendDelay),
+        DECLARE_NAPI_FUNCTION("getRemainingDelayTime", GetRemainingDelayTime),
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));

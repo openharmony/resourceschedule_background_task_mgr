@@ -45,7 +45,7 @@ DecisionMaker::~DecisionMaker()
         BGTASK_LOGE("GetAppMgrProxy failed");
         return;
     }
-    // appMgrProxy_->UnregisterApplicationStateObserver(iface_cast<AppExecFwk::IApplicationStateObserver>(observer_));
+    appMgrProxy_->UnregisterApplicationStateObserver(iface_cast<AppExecFwk::IApplicationStateObserver>(observer_));
 }
 
 bool DecisionMaker::GetAppMgrProxy()
@@ -73,8 +73,8 @@ bool DecisionMaker::GetAppMgrProxy()
         BGTASK_LOGE("iface_cast remoteObject failed.");
         return false;
     }
-    // observer_ = new (std::nothrow) ApplicationStateObserver(*this);
-    // appMgrProxy_->RegisterApplicationStateObserver(iface_cast<AppExecFwk::IApplicationStateObserver>(observer_));
+    observer_ = new (std::nothrow) ApplicationStateObserver(*this);
+    appMgrProxy_->RegisterApplicationStateObserver(iface_cast<AppExecFwk::IApplicationStateObserver>(observer_));
 
     recipient_ = new AppMgrDeathRecipient(*this);
     if (recipient_ == nullptr) {
@@ -98,33 +98,33 @@ void DecisionMaker::AppMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>
     decisionMaker_.GetAppMgrProxy();
 }
 
-// void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData)
-// {
-//     lock_guard<mutex> lock(decisionMaker_.lock_);
+void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData)
+{
+    lock_guard<mutex> lock(decisionMaker_.lock_);
 
-//     auto key = std::make_shared<KeyInfo>(appStateData.bundleName, appStateData.uid);
-//     if (appStateData.state == (int32_t)AppExecFwk::ApplicationState::APP_STATE_FOREGROUND) {
-//         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
-//         if (it != decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
-//             auto pkgInfo = it->second;
-//             pkgInfo->StopAccountingAll();
-//         }
-//         auto itBg = decisionMaker_.pkgBgDurationMap_.find(key);
-//         if (itBg != decisionMaker_.pkgBgDurationMap_.end()) {
-//             decisionMaker_.pkgBgDurationMap_.erase(itBg);
-//         }
-//     } else if (appStateData.state == (int32_t)AppExecFwk::ApplicationState::APP_STATE_BACKGROUND) {
-//         decisionMaker_.pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
-//         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
-//         if (it == decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
-//             return;
-//         }
-//         auto pkgInfo = it->second;
-//         if (decisionMaker_.CanStartAccountingLocked(pkgInfo)) {
-//             pkgInfo->StartAccounting();
-//         }
-//     }
-// }
+    auto key = std::make_shared<KeyInfo>(appStateData.bundleName, appStateData.uid);
+    if (appStateData.state == (int32_t)AppExecFwk::ApplicationState::APP_STATE_FOREGROUND) {
+        auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
+        if (it != decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
+            auto pkgInfo = it->second;
+            pkgInfo->StopAccountingAll();
+        }
+        auto itBg = decisionMaker_.pkgBgDurationMap_.find(key);
+        if (itBg != decisionMaker_.pkgBgDurationMap_.end()) {
+            decisionMaker_.pkgBgDurationMap_.erase(itBg);
+        }
+    } else if (appStateData.state == (int32_t)AppExecFwk::ApplicationState::APP_STATE_BACKGROUND) {
+        decisionMaker_.pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
+        auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
+        if (it == decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
+            return;
+        }
+        auto pkgInfo = it->second;
+        if (decisionMaker_.CanStartAccountingLocked(pkgInfo)) {
+            pkgInfo->StartAccounting();
+        }
+    }
+}
 
 bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::shared_ptr<DelaySuspendInfoEx>& delayInfo)
 {
@@ -227,13 +227,17 @@ int32_t DecisionMaker::GetQuota(const std::shared_ptr<KeyInfo>& key)
 
 bool DecisionMaker::IsFrontApp(const string& pkgName, int32_t uid)
 {
-    // vector<AppExecFwk::AppStateData> fgAppList;
-    // appMgrProxy_->GetForegroundApplications(fgAppList);
-    // for (auto fgApp : fgAppList) {
-    //     if (fgApp.bundleName == pkgName && fgApp.uid == uid) {
-    //         return true;
-    //     }
-    // }
+    if (!GetAppMgrProxy()) {
+        BGTASK_LOGE("GetAppMgrProxy failed");
+        return false;
+    }
+    vector<AppExecFwk::AppStateData> fgAppList;
+    appMgrProxy_->GetForegroundApplications(fgAppList);
+    for (auto fgApp : fgAppList) {
+        if (fgApp.bundleName == pkgName && fgApp.uid == uid) {
+            return true;
+        }
+    }
     return false;
 }
 
@@ -247,13 +251,13 @@ bool DecisionMaker::CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspe
         BGTASK_LOGE("GetAppMgrProxy failed");
         return false;
     }
-    // vector<AppExecFwk::AppStateData> fgAppList;
-    // appMgrProxy_->GetForegroundApplications(fgAppList);
-    // for (auto fgApp : fgAppList) {
-    //     if (fgApp.bundleName == pkgInfo->GetPkg() && fgApp.uid == pkgInfo->GetUid()) {
-    //         return false;
-    //     }
-    // }
+    vector<AppExecFwk::AppStateData> fgAppList;
+    appMgrProxy_->GetForegroundApplications(fgAppList);
+    for (auto fgApp : fgAppList) {
+        if (fgApp.bundleName == pkgInfo->GetPkg() && fgApp.uid == pkgInfo->GetUid()) {
+            return false;
+        }
+    }
     return true;
 }
 
@@ -317,16 +321,20 @@ void DecisionMaker::OnInputEvent(const EventInfo& eventInfo)
 void DecisionMaker::HandleScreenOn()
 {
     lock_guard<mutex> lock(lock_);
-    // vector<AppExecFwk::AppStateData> fgAppList;
-    // appMgrProxy_->GetForegroundApplications(fgAppList);
-    // for (auto fgApp : fgAppList) {
-    //     auto key = std::make_shared<KeyInfo>(fgApp.bundleName, fgApp.uid);
-    //     auto it = pkgDelaySuspendInfoMap_.find(key);
-    //     if (it != pkgDelaySuspendInfoMap_.end()) {
-    //         auto pkgInfo = it->second;
-    //         pkgInfo->StopAccountingAll();
-    //     }
-    // }
+    if (!GetAppMgrProxy()) {
+        BGTASK_LOGE("GetAppMgrProxy failed");
+        return;
+    }
+    vector<AppExecFwk::AppStateData> fgAppList;
+    appMgrProxy_->GetForegroundApplications(fgAppList);
+    for (auto fgApp : fgAppList) {
+        auto key = std::make_shared<KeyInfo>(fgApp.bundleName, fgApp.uid);
+        auto it = pkgDelaySuspendInfoMap_.find(key);
+        if (it != pkgDelaySuspendInfoMap_.end()) {
+            auto pkgInfo = it->second;
+            pkgInfo->StopAccountingAll();
+        }
+    }
 }
 
 void DecisionMaker::HandleScreenOff()

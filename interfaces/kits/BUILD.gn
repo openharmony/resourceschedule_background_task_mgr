@@ -17,48 +17,45 @@ import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 cflags = []
 
 config("bgtaskmgr_public_config") {
-    include_dirs = [
-        "napi/include",
-    ]
+  include_dirs = [ "napi/include" ]
 }
 
 ohos_shared_library("backgroundtaskmanager") {
-    sources = [
-        "napi/src/request_suspend_delay.cpp",
-        "napi/src/cancel_suspend_delay.cpp",
-        "napi/src/common.cpp",
-        "napi/src/init.cpp",
-    ]
+  sources = [
+    "napi/src/cancel_suspend_delay.cpp",
+    "napi/src/common.cpp",
+    "napi/src/get_remaining_delay_time.cpp",
+    "napi/src/init.cpp",
+    "napi/src/request_suspend_delay.cpp",
+  ]
 
+  include_dirs = [
+    "//base/notification/ans_standard/frameworks/ans/core/common/include",
+    "//utils/native/base/include",
+    "//utils/system/safwk/native/include",
+    "//third_party/node/src",
+  ]
 
-    include_dirs = [
-        "//base/notification/ans_standard/frameworks/ans/core/common/include",
-        "//utils/native/base/include",
-        "//utils/system/safwk/native/include",
-        "//third_party/node/src",
-    ]
+  public_configs = [ ":bgtaskmgr_public_config" ]
 
-    public_configs = [ ":bgtaskmgr_public_config" ]
+  deps = [
+    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
+    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "//foundation/ace/napi:ace_napi",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/multimedia/image_standard/interfaces/innerkits:image",
+    "//utils/native/base:utils",
+  ]
 
-    deps = [
-        "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-        "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
-        "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-        "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
-        "//foundation/ace/napi:ace_napi",
-        "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
-        "//foundation/multimedia/image_standard/interfaces/innerkits:image",
-        "//utils/native/base:utils",
-    ]
-
-    external_deps = [
-        "hiviewdfx_hilog_native:libhilog",
-        "ipc:ipc_core",
-        "safwk:system_ability_fwk",
-        "samgr_standard:samgr_proxy",
-    ]
-    relative_install_dir = "module"
-    subsystem_name = "resourceschedule"
-    part_name = "background_task_mgr"
-
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+  ]
+  relative_install_dir = "module"
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
 }
