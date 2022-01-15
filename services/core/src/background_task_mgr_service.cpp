@@ -74,20 +74,17 @@ void BackgroundTaskMgrService::OnStop()
 ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::u16string& reason, 
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
-    delayInfo = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RequestSuspendDelay(reason, callback);
-    return ERR_OK;
+    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RequestSuspendDelay(reason, callback, delayInfo);
 }
 
 ErrCode BackgroundTaskMgrService::CancelSuspendDelay(int32_t requestId)
 {
-    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->CancelSuspendDelay(requestId);
-    return ERR_OK;
+    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->CancelSuspendDelay(requestId);
 }
 
 ErrCode BackgroundTaskMgrService::GetRemainingDelayTime(int32_t requestId, int32_t &delayTime)
 {
-    delayTime = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetRemainingDelayTime(requestId);
-    return ERR_OK;
+    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetRemainingDelayTime(requestId, delayTime);
 }
 
 void BackgroundTaskMgrService::ForceCancelSuspendDelay(int32_t requestId)
@@ -97,14 +94,12 @@ void BackgroundTaskMgrService::ForceCancelSuspendDelay(int32_t requestId)
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeTransientTask(subscriber);
-    return ERR_OK;
+    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber);
 }
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeTransientTask(subscriber);
-    return ERR_OK;
+    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber);
 }
 
 void BackgroundTaskMgrService::HandleRequestExpired(const int32_t requestId)
@@ -124,10 +119,11 @@ void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& 
 
 ErrCode BackgroundTaskMgrService::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
+    ErrCode ret = ERR_OK;
     if (dumpOption[0] == TRANSIENT_TASK_DUMP) {
-        DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ShellDump(dumpOption, dumpInfo);
+        ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ShellDump(dumpOption, dumpInfo);
     }
-    return ERR_OK;
+    return ret;
 }
 
 }  // namespace BackgroundTaskMgr

@@ -13,27 +13,16 @@
       "subsystem": "resourceschedule",
       "syscap": [ "SystemCapability.Ressched.BackgroundTaskMgr" ],
       "features": [],
-      "adapted_system_type": [ "mini", "small", "standard" ],
-      "rom": "1024KB",
-      "ram": "2048KB",
+      "adapted_system_type": [
+        "mini",
+        "small",
+        "standard"
+      ],
+      "rom": "",
+      "ram": "",
       "deps": {
-        "components": [
-          "appexecfwk_core",
-          "cesfwk_innerkits",
-          "libeventhandler",
-          "libhilog",
-          "ipc_core",
-          "system_ability_fwk",
-          "samgr_proxy",
-          "syspara",
-          "utils_base",
-          "want",
-          "zuri"
-        ],
-        "third_party": [ 
-          "openssl",
-          "bounds_checking_function"
-        ]
+        "components": [],
+        "third_party": []
       },
       "build": {
         "sub_component": [

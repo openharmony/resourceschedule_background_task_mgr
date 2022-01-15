@@ -52,25 +52,25 @@ class BgTransientTaskMgr {
     DECLARE_DELAYED_SINGLETON(BgTransientTaskMgr);
 public:
     void Init();
-    std::shared_ptr<DelaySuspendInfo> RequestSuspendDelay(const std::u16string& reason, 
-        const sptr<IExpiredCallback>& callback);
-    void CancelSuspendDelay(int32_t requestId);
-    int32_t GetRemainingDelayTime(int32_t requestId);
-    bool SubscribeTransientTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
-    bool UnsubscribeTransientTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
+    ErrCode RequestSuspendDelay(const std::u16string& reason,
+        const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo);
+    ErrCode CancelSuspendDelay(int32_t requestId);
+    ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime);
+    ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
+    ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
+    ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+
     void ForceCancelSuspendDelay(int32_t requestId);
     void HandleExpiredCallbackDeath(const wptr<IRemoteObject>& remote);
     void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
     void HandleRequestExpired(const int32_t requestId);
-    bool ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 
 private:
     bool GetBundleNamesForUid(int32_t uid, std::string &bundleName);
     bool VerifyCallingInfo(int32_t uid, int32_t pid);
     bool VerifyRequestIdLocked(const std::string& name, int32_t uid, int32_t requestId);
-    void CancelSuspendDelayLocked(int32_t requestId);
-    void NotifyTransientTaskSuscriber(shared_ptr<TransientTaskAppInfo>& appInfo,
-        TransientTaskEventType type);
+    ErrCode CancelSuspendDelayLocked(int32_t requestId);
+    void NotifyTransientTaskSuscriber(shared_ptr<TransientTaskAppInfo>& appInfo, TransientTaskEventType type);
     bool DumpAllRequestId(std::vector<std::string> &dumpInfo);
     void SendLowBatteryEvent(std::vector<std::string> &dumpInfo);
     void SendOkayBatteryEvent(std::vector<std::string> &dumpInfo);

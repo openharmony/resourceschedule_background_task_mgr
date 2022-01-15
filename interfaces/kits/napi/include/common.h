@@ -15,6 +15,7 @@
 
 #include <string_ex.h>
 
+#include "errors.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 
@@ -58,7 +59,7 @@ public:
     static void SetCallback(
         const napi_env &env, const napi_ref &callbackIn, const napi_value &result);
 
-    static void SetPromise(const napi_env &env, const napi_deferred &deferred, const napi_value &result);
+    static napi_value SetPromise(const napi_env &env, const CallbackPromiseInfo &info, const napi_value &result);
 
     static napi_value JSParaError(const napi_env &env, const napi_ref &callback);
 

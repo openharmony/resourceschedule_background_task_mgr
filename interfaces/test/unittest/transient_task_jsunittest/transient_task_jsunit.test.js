@@ -46,8 +46,8 @@ describe("TransientTaskJsTest", function () {
     })
 
     /*
-     * @tc.name:TransientTaskJsTest001
-     * @tc.desc:verify app info is not null
+     * @tc.name: TransientTaskJsTest001
+     * @tc.desc: test request a suspend delay
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -66,8 +66,8 @@ describe("TransientTaskJsTest", function () {
     })
 
     /*
-     * @tc.name:TransientTaskJsTest002
-     * @tc.desc:verify app info is not null
+     * @tc.name: TransientTaskJsTest002
+     * @tc.desc: test transient task more than three
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -91,8 +91,8 @@ describe("TransientTaskJsTest", function () {
     })
 
     /*
-     * @tc.name:TransientTaskJsTest003
-     * @tc.desc:verify app info is not null
+     * @tc.name: TransientTaskJsTest003
+     * @tc.desc: test getRemainingDelayTime Promise
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -123,8 +123,8 @@ describe("TransientTaskJsTest", function () {
     })
 
     /*
-     * @tc.name:TransientTaskJsTest004
-     * @tc.desc:verify app info is not null
+     * @tc.name: TransientTaskJsTest004
+     * @tc.desc: test getRemainingDelayTime Callback
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */

@@ -40,7 +40,7 @@ void Common::ReturnCallbackPromise(const napi_env &env, const CallbackPromiseInf
     if (info.isCallback) {
         SetCallback(env, info.callback, info.errorCode, result);
     } else {
-        SetPromise(env, info.deferred, result);
+        SetPromise(env, info, result);
     }
 }
 
@@ -83,9 +83,20 @@ napi_value Common::GetExpireCallbackValue(napi_env env, int errCode, const napi_
     return result;
 }
 
-void Common::SetPromise(const napi_env &env, const napi_deferred &deferred, const napi_value &result)
+napi_value Common::SetPromise(
+    const napi_env &env, const CallbackPromiseInfo &info, const napi_value &result)
 {
-    napi_resolve_deferred(env, deferred, result);
+    if (info.errorCode == ERR_OK) {
+        napi_resolve_deferred(env, info.deferred, result);
+    } else {
+        napi_value res = nullptr;
+        napi_value eCode = nullptr;
+        NAPI_CALL(env, napi_create_int32(env, info.errorCode, &eCode));
+        NAPI_CALL(env, napi_create_object(env, &res));
+        NAPI_CALL(env, napi_set_named_property(env, res, "data", eCode));
+        napi_reject_deferred(env, info.deferred, res);
+    }
+    return result;
 }
 
 napi_value Common::GetCallbackErrorValue(napi_env env, int errCode)
