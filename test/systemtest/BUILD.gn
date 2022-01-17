@@ -43,7 +43,6 @@ ohos_systemtest("BgtaskDumpTest") {
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
@@ -52,6 +51,7 @@ ohos_systemtest("BgtaskDumpTest") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
 }
 

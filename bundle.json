@@ -3,9 +3,10 @@
     "description": "background task manager service",
     "version": "3.1",
     "license": "Apache License 2.0",
+    "repository": "https://gitee.com/openharmony/resourceschedule_background_task_mgr",
     "publishAs": "code-segment",
     "segment": {
-      "destPath" : "https://gitee.com/openharmony/resourceschedule_background_task_mgr"
+      "destPath" : "foundation/resourceschedule/background_task_mgr"
     },
     "scripts": {},
     "component": {
@@ -21,8 +22,19 @@
       "rom": "",
       "ram": "",
       "deps": {
-        "components": [],
-        "third_party": []
+        "components": [
+          "aafwk_standard",
+          "appexecfwk_standard",
+          "ces_standard",
+          "hiviewdfx_hilog_native",
+          "ipc",
+          "napi",
+          "safwk",
+          "samgr_standard",
+          "startup_l2",
+          "utils_base"
+        ],
+        "third_party": [ "googletest" ]
       },
       "build": {
         "sub_component": [
@@ -34,8 +46,21 @@
           "//foundation/resourceschedule/background_task_mgr/utils:bgtaskmgr_dump"
         ],
         "inner_kits": [
+          {
+            "header": {
+              "header_base": "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits/include",
+              "header_files": [
+                "background_task_mgr_helper.h",
+                "background_task_subscriber.h",
+                "delay_suspend_info.h",
+                "expired_callback.h",
+                "transient_task_app_info.h"
+              ]
+            },
+            "name": "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits:bgtaskmgr_innerkits"
+          }
         ],
-        "test": [ 
+        "test": [
           "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest:js_unittest",
           "//foundation/resourceschedule/background_task_mgr/services/test/unittest:unittest",
           "//foundation/resourceschedule/background_task_mgr/test/systemtest:systemtest"

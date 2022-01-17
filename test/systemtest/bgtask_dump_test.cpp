@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+#include <gtest/gtest.h>
+
 #define private public
 #define protected public
 
@@ -23,8 +25,6 @@
 
 #undef private
 #undef protected
-
-#include <gtest/gtest.h>
 
 using namespace testing::ext;
 

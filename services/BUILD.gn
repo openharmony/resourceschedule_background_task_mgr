@@ -44,7 +44,6 @@ ohos_shared_library("bgtaskmgr_service") {
   public_deps = [
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
@@ -52,12 +51,12 @@ ohos_shared_library("bgtaskmgr_service") {
     "appexecfwk_standard:appexecfwk_core",
     "appexecfwk_standard:libeventhandler",
     "ces_standard:cesfwk_innerkits",
-    "dmsfwk_standard:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "startup_l2:syspara",
+    "utils_base:utils",
   ]
 
   part_name = "background_task_mgr"
