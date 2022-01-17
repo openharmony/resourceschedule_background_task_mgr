@@ -51,8 +51,8 @@ public:
 HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_001, TestSize.Level1)
 {
     auto subscriber = std::make_shared<TestBackgroundTaskSubscriber>();
-    bool ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
-    EXPECT_TRUE(ret);
+    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
+    EXPECT_TRUE(ret == ERR_OK);
 }
 
 /**
@@ -63,8 +63,8 @@ HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_001, TestSize.Level1)
  */
 HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_002, TestSize.Level1)
 {
-    bool ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(nullptr);
-    EXPECT_FALSE(ret);
+    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(nullptr);
+    EXPECT_FALSE(ret == ERR_OK);
 }
 
 /**
@@ -76,11 +76,11 @@ HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_002, TestSize.Level1)
 HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_003, TestSize.Level1)
 {
     auto subscriber = std::make_shared<TestBackgroundTaskSubscriber>();
-    bool ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
-    EXPECT_TRUE(ret);
+    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
+    EXPECT_TRUE(ret == ERR_OK);
 
     ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
-    EXPECT_FALSE(ret);
+    EXPECT_FALSE(ret == ERR_OK);
 }
 
 /**
@@ -92,13 +92,13 @@ HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_003, TestSize.Level1)
 HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_001, TestSize.Level1)
 {
     auto subscriber = std::make_shared<TestBackgroundTaskSubscriber>();
-    bool ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
-    EXPECT_TRUE(ret);
+    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
+    EXPECT_TRUE(ret == ERR_OK);
 
     usleep(1000);
 
     ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber->GetImpl());
-    EXPECT_TRUE(ret);
+    EXPECT_TRUE(ret == ERR_OK);
 }
 
 /**
@@ -110,8 +110,8 @@ HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_001, TestSize.Level1)
 HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_002, TestSize.Level1)
 {
     auto subscriber = std::make_shared<TestBackgroundTaskSubscriber>();
-    bool ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber->GetImpl());
-    EXPECT_FALSE(ret);
+    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber->GetImpl());
+    EXPECT_FALSE(ret == ERR_OK);
 }
 
 /**
@@ -122,8 +122,8 @@ HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_002, TestSize.Level1)
  */
 HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_003, TestSize.Level1)
 {
-    bool ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(nullptr);
-    EXPECT_FALSE(ret);
+    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(nullptr);
+    EXPECT_FALSE(ret == ERR_OK);
 }
 
 /**

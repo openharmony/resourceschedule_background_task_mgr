@@ -139,9 +139,9 @@ describe("TransientTaskJsTest", function () {
             done();
         }
 
-        backgroundTaskManager.getRemainingDelayTime(info.requestId, (error, data) => {
-            if (error.code == 0) {
-                console.info('TransientTaskJsTest004  backgroundTaskManager success, delaytime:' + data);
+        backgroundTaskManager.getRemainingDelayTime(info.requestId, (err, res) => {
+            if (err.data === 0) {
+                console.info('TransientTaskJsTest004  backgroundTaskManager success, delaytime:' + res);
                 expect(true).assertTrue();
 
             } else {

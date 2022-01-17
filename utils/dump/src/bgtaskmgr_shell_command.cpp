@@ -42,11 +42,12 @@ static const std::string DUMP_HELP_MSG =
     "usage: bgtask dump [<options>]\n"
     "options list:\n"
     "  -h                                       help menu\n"
-    "  -T       BATTARY_LOW                     battary low mode\n"
+    "  -T                                       transient task commands:\n"
+    "           BATTARY_LOW                     battary low mode\n"
     "           BATTARY_OKAY                    battary okay mode\n"
-    "           SCREEN_ON                       sreen on mode\n" 
+    "           SCREEN_ON                       sreen on mode\n"
     "           SCREEN_OFF                      sreen off mode\n"
-    "           DUMP_CANCEL                     cancel dump mode\n" 
+    "           DUMP_CANCEL                     cancel dump mode\n"
     "           All                             list all request\n";
 }  // namespace
 
@@ -108,17 +109,12 @@ ErrCode BgtaskmgrShellCommand::RunAsDumpCommand()
             resultReceiver_.append(DUMP_HELP_MSG);
             break;
         case 'T':
-            if (argc_ != 4 || btm_ == nullptr) {
-                resultReceiver_.append(DUMP_HELP_MSG);
-                ret = ERR_BGTASK_SERVICE_NOT_CONNECTED;
-                break;
+            if (btm_ != nullptr) {
+                ret = btm_->ShellDump(argList_, infos);
             }
-            ret = btm_->ShellDump(argList_, infos);
             break;
         default:
-            std::cout << __LINE__ << " " << option << " " << ind << " " << std::endl;
-            if (optarg)
-                std::cout << optarg << std::endl;
+            resultReceiver_.append("Please input correct command!\n");
             resultReceiver_.append(DUMP_HELP_MSG);
             break;
     }

@@ -3,11 +3,11 @@
     "description": "background task manager service",
     "version": "3.1",
     "license": "Apache License 2.0",
-    "repository": "https://gitee.com/openharmony/resourceschedule_background_task_mgr",
     "publishAs": "code-segment",
     "segment": {
       "destPath" : "foundation/resourceschedule/background_task_mgr"
     },
+    "dirs": {},
     "scripts": {},
     "component": {
       "name": "background_task_mgr",
@@ -19,8 +19,8 @@
         "small",
         "standard"
       ],
-      "rom": "",
-      "ram": "",
+      "rom": "2048KB",
+      "ram": "10240KB",
       "deps": {
         "components": [
           "aafwk_standard",

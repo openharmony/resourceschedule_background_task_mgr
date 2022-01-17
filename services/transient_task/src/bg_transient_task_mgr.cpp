@@ -483,7 +483,7 @@ ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption
         deviceInfoManeger_->SetDump(false);
         result = true;
     } else {
-        dumpInfo.push_back("Error Dump Cmd!\n");
+        dumpInfo.push_back("Error transient dump command!\n");
     }
 
     return result ? ERR_OK : ERR_BGTASK_NOT_ALLOWED;
