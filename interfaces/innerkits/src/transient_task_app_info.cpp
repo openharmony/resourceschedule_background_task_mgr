@@ -41,7 +41,7 @@ bool TransientTaskAppInfo::ReadFromParcel(MessageParcel& in)
 std::shared_ptr<TransientTaskAppInfo> TransientTaskAppInfo::Unmarshalling(MessageParcel& in)
 {
     auto transientAppInfo = std::make_shared<TransientTaskAppInfo>();
-    if(!transientAppInfo->ReadFromParcel(in)) {
+    if (!transientAppInfo->ReadFromParcel(in)) {
         return nullptr;
     }
     return transientAppInfo;

@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_COMMON_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_COMMON_H
+
 #include <string_ex.h>
 
 #include "errors.h"
@@ -21,13 +24,8 @@
 
 #include "delay_suspend_info.h"
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_COMMON_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_COMMON_H
-
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const std::int32_t STR_MAX_SIZE = 64;
-
 struct CallbackPromiseInfo {
     napi_ref callback = nullptr;
     napi_deferred deferred = nullptr;
@@ -36,7 +34,6 @@ struct CallbackPromiseInfo {
 };
 
 class Common {
-
 public:
     static napi_value NapiGetboolean(napi_env env, const bool &isValue);
 
@@ -70,7 +67,6 @@ public:
     static napi_value SetDelaySuspendInfo(
         const napi_env &env, std::shared_ptr<DelaySuspendInfo>& delaySuspendInfo, napi_value &result);
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_COMMON_H

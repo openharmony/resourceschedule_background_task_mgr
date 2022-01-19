@@ -66,7 +66,7 @@ void Watchdog::ProcessEvent(const AppExecFwk::InnerEvent::Pointer& event)
     } else {
         BGTASK_LOGI("handle application background, kill it, requestId: %{public}d", requestId);
         // do kill
-        if(!KillApplicationByUid(info->GetPkg(), info->GetUid())) {
+        if (!KillApplicationByUid(info->GetPkg(), info->GetUid())) {
             BGTASK_LOGE("fail to kill running application");
         }
     }

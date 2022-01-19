@@ -38,7 +38,6 @@ public:
      */
     static ErrCode UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_TASK_MGR_HELPER_H

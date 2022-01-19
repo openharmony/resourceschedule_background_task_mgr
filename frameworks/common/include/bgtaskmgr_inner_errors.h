@@ -37,7 +37,7 @@ enum : int {
 
 // Offset of background task manager sub-system's errcode base.
 constexpr ErrCode BGTASK_COMMON_ERR_OFFSET = ErrCodeOffset(SUBSYS_IAWARE, BGTASK_MODULE_COMMON);
-//Bgtask Common Error Code Defined.
+// Bgtask Common Error Code Defined.
 enum : int {
     ERR_BGTASK_SERVICE_NOT_READY = BGTASK_COMMON_ERR_OFFSET + 1,
     ERR_BGTASK_SERVICE_NOT_CONNECTED,
@@ -48,7 +48,6 @@ enum : int {
     ERR_BGTASK_NOT_ALLOWED,
     ERR_BGTASK_OBJECT_EXISTS,
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_COMMON_INCLUDE_BGTASKMGR_INNER_ERRORS_H

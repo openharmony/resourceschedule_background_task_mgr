@@ -24,7 +24,8 @@ namespace BackgroundTaskMgr {
 ExpiredCallbackStub::ExpiredCallbackStub() {}
 ExpiredCallbackStub::~ExpiredCallbackStub() {}
 
-int ExpiredCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option)
+int ExpiredCallbackStub::OnRemoteRequest(uint32_t code,
+    MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
     std::u16string descriptor = ExpiredCallbackStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();

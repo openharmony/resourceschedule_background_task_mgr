@@ -36,13 +36,13 @@ int BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
     std::u16string descriptor = BackgroundTaskSubscriberStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        BGTASK_LOGE("BackgroundTaskSubscriberStub::%{public}s local descriptor not match remote.", __func__);
+        BGTASK_LOGE("Local descriptor not match remote.");
         return ERR_TRANSACTION_FAILED;
     }
 
     auto uid = IPCSkeleton::GetCallingUid();
     if (uid >= APP_FIRST_UID) {
-        BGTASK_LOGE("BackgroundTaskSubscriberStub::OnRemoteRequest failed, illegal calling uid %d.", uid);
+        BGTASK_LOGE("OnRemoteRequest failed, illegal calling uid %d.", uid);
         return ERR_INVALID_DATA;
     }
 
@@ -62,7 +62,7 @@ int32_t BackgroundTaskSubscriberStub::HandleOnTransientTaskStart(MessageParcel& 
 {
     auto info = TransientTaskAppInfo::Unmarshalling(data);
     if (info == nullptr) {
-        BGTASK_LOGE("BackgroundTaskSubscriberStub::%{public}s read parcel failed.",__func__);
+        BGTASK_LOGE("Read parcel failed.");
         return ERR_INVALID_DATA;
     }
     OnTransientTaskStart(info);
@@ -73,7 +73,7 @@ int32_t BackgroundTaskSubscriberStub::HandleOnTransientTaskEnd(MessageParcel& da
 {
     auto info = TransientTaskAppInfo::Unmarshalling(data);
     if (info == nullptr) {
-        BGTASK_LOGE("BackgroundTaskSubscriberStub::%{public}s read parcel failed.",__func__);
+        BGTASK_LOGE("Read parcel failed.");
         return ERR_INVALID_DATA;
     }
     OnTransientTaskEnd(info);

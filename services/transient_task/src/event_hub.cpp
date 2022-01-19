@@ -38,7 +38,7 @@ static std::map<std::string, EventId> g_actionMap = {
 std::shared_ptr<EventHub> EventHub::RegisterEvent(InputManager& inputManager)
 {
     auto skill = std::make_shared<EventFwk::MatchingSkills>();
-    for(auto &actionPair : g_actionMap) {
+    for (auto &actionPair : g_actionMap) {
         skill->AddEvent(actionPair.first);
     }
     auto info = std::make_shared<EventFwk::CommonEventSubscribeInfo>(*skill);

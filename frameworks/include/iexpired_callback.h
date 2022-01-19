@@ -37,7 +37,6 @@ protected:
         ON_EXPIRED = FIRST_CALL_TRANSACTION,
     };
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_INCLUDE_IEXPIRED_CALLBACK_H

@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 static const int32_t GET_REMAINING_DELAY_TIME_MIN_PARAMS = 1;
 static const int32_t GET_REMAINING_DELAY_TIME_PARAMS = 2;
 
@@ -37,7 +36,7 @@ struct AsyncCallbackInfoGetRemainingDelayTime {
 struct GetRemainingDelayTimeParamsInfo {
     int32_t requestId;
     napi_ref callback = nullptr;
-};    
+};
 
 napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, GetRemainingDelayTimeParamsInfo &params)
 {

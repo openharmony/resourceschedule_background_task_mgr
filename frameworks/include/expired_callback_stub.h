@@ -22,7 +22,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class ExpiredCallbackStub : public IRemoteStub<IExpiredCallback>{
+class ExpiredCallbackStub : public IRemoteStub<IExpiredCallback> {
 public:
     ExpiredCallbackStub();
     ~ExpiredCallbackStub() override;
@@ -32,7 +32,6 @@ public:
 private:
     int32_t HandleOnExpired(MessageParcel& data);
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_INCLUDE_EXPIRED_CALLBACK_STUB_H

@@ -40,7 +40,7 @@ enum class ServiceRunningState {
 };
 
 class BackgroundTaskMgrService final : public SystemAbility, public BackgroundTaskMgrStub,
-    public std::enable_shared_from_this<BackgroundTaskMgrService>{
+    public std::enable_shared_from_this<BackgroundTaskMgrService> {
     DISALLOW_COPY_AND_MOVE(BackgroundTaskMgrService);
     DECLARE_SYSTEM_ABILITY(BackgroundTaskMgrService);
     DECLARE_DELAYED_SINGLETON(BackgroundTaskMgrService);
@@ -49,7 +49,7 @@ public:
     void OnStart() override final;
     void OnStop() override final;
 
-    ErrCode RequestSuspendDelay(const std::u16string& reason, 
+    ErrCode RequestSuspendDelay(const std::u16string& reason,
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo) override;
     ErrCode CancelSuspendDelay(int32_t requestId) override;
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime) override;
@@ -68,7 +68,6 @@ private:
 private:
     ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CORE_INCLUDE_BACKGROUND_TASK_MGR_SERVICE_H

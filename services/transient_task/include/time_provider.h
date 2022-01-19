@@ -26,7 +26,7 @@ enum ClockType {
     CLOCK_TYPE_MONOTONIC = CLOCK_MONOTONIC,
 };
 
-enum TimeConstant : int64_t { 
+enum TimeConstant : int64_t {
     NSEC_PER_MIN = 60000000000LL,
     NSEC_PER_SEC = 1000000000LL,
     NSEC_PER_MSEC = 1000000LL,

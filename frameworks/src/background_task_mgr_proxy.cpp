@@ -28,8 +28,8 @@ BackgroundTaskMgrProxy::BackgroundTaskMgrProxy(const sptr<IRemoteObject>& impl)
     :IRemoteProxy<IBackgroundTaskMgr>(impl) {}
 BackgroundTaskMgrProxy::~BackgroundTaskMgrProxy() {}
     
-ErrCode BackgroundTaskMgrProxy::RequestSuspendDelay(const std::u16string& reason, 
-        const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
+ErrCode BackgroundTaskMgrProxy::RequestSuspendDelay(const std::u16string& reason,
+    const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
     if (callback == nullptr) {
         BGTASK_LOGE(" BackgroundTaskMgrProxy::%{public}s callback is null", __func__);
@@ -187,7 +187,8 @@ ErrCode BackgroundTaskMgrProxy::UnsubscribeBackgroundTask(const sptr<IBackground
     return result;
 }
 
-ErrCode BackgroundTaskMgrProxy::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
+ErrCode BackgroundTaskMgrProxy::ShellDump(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -218,7 +219,8 @@ ErrCode BackgroundTaskMgrProxy::ShellDump(const std::vector<std::string> &dumpOp
     return result;
 }
 
-ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flags, MessageParcel &data, MessageParcel &reply)
+ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flags,
+    MessageParcel &data, MessageParcel &reply)
 {
     auto remote = Remote();
     if (remote == nullptr) {

@@ -48,7 +48,7 @@ public:
     }
 
 private:
-    const int32_t ADVANCE_TIME = 6 * MSEC_PER_SEC; //6s
+    const int32_t ADVANCE_TIME = 6 * MSEC_PER_SEC; // 6s
     int32_t pid_ {-1};
     int64_t baseTime_ {0};
     int64_t spendTime_ {0};

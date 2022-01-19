@@ -29,7 +29,7 @@ public:
     ~BackgroundTaskMgrProxy() override;
     DISALLOW_COPY_AND_MOVE(BackgroundTaskMgrProxy);
 
-    ErrCode RequestSuspendDelay(const std::u16string& reason, 
+    ErrCode RequestSuspendDelay(const std::u16string& reason,
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo) override;
     ErrCode CancelSuspendDelay(int32_t requestId) override;
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime) override;

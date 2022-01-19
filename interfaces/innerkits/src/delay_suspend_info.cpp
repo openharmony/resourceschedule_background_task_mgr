@@ -15,8 +15,6 @@
 
 #include "delay_suspend_info.h"
 
-#include <memory>
-
 #include "ipc_util.h"
 
 #include "transient_task_log.h"

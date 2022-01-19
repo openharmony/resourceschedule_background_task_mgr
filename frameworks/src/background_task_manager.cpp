@@ -24,9 +24,9 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-BackgroundTaskManager::BackgroundTaskManager(){}
+BackgroundTaskManager::BackgroundTaskManager() {}
 
-BackgroundTaskManager::~BackgroundTaskManager(){}
+BackgroundTaskManager::~BackgroundTaskManager() {}
 
 ErrCode BackgroundTaskManager::CancelSuspendDelay(int32_t requestId)
 {
@@ -38,7 +38,7 @@ ErrCode BackgroundTaskManager::CancelSuspendDelay(int32_t requestId)
 }
 
 ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reason,
-        const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
+    const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
     if (!GetBackgroundTaskManagerProxy()) {
         BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
@@ -120,7 +120,7 @@ bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
     if (recipient_ == nullptr) {
         return false;
     }
-    backgroundTaskMgrProxy_->AsObject()->AddDeathRecipient(recipient_);    
+    backgroundTaskMgrProxy_->AsObject()->AddDeathRecipient(recipient_);
     return true;
 }
 
@@ -145,7 +145,7 @@ ErrCode BackgroundTaskManager::ShellDump(const std::vector<std::string> &dumpOpt
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {};
 
-BackgroundTaskManager::BgTaskMgrDeathRecipient::~BgTaskMgrDeathRecipient(){};
+BackgroundTaskManager::BgTaskMgrDeathRecipient::~BgTaskMgrDeathRecipient() {};
 
 void BackgroundTaskManager::BgTaskMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {

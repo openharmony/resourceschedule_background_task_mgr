@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 class CallbackInstance : public ExpiredCallback {
 public:
     CallbackInstance();
@@ -49,10 +48,7 @@ struct CallbackInstancesInfo {
     CallbackInstance *callback = nullptr;
 };
 
-static std::mutex mutex_;
-
 napi_value RequestSuspendDelay(napi_env env, napi_callback_info info);
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_REQUEST_SUSPEND_DELAY_H

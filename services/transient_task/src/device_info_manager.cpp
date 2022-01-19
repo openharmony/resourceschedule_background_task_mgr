@@ -31,26 +31,25 @@ void DeviceInfoManager::OnInputEvent(const EventInfo& eventInfo)
     }
     
     switch (eventInfo.GetEventId()) {
-    case EVENT_SCREEN_ON:
-        isScreenOn_ = true;
-        break;
-    case EVENT_SCREEN_OFF:
-        isScreenOn_ = false;
-        isScreenUnlock_ = false;
-        break;
-    case EVENT_SCREEN_UNLOCK:
-        isScreenUnlock_ = true;
-        break;
-    case EVENT_BATTERY_LOW:
-        isLowPowerMode_ = true;
-        break;
-    case EVENT_BATTERY_OKAY:
-        isLowPowerMode_ = false;
-        break;
-    default:
-        break;
+        case EVENT_SCREEN_ON:
+            isScreenOn_ = true;
+            break;
+        case EVENT_SCREEN_OFF:
+            isScreenOn_ = false;
+            isScreenUnlock_ = false;
+            break;
+        case EVENT_SCREEN_UNLOCK:
+            isScreenUnlock_ = true;
+            break;
+        case EVENT_BATTERY_LOW:
+            isLowPowerMode_ = true;
+            break;
+        case EVENT_BATTERY_OKAY:
+            isLowPowerMode_ = false;
+            break;
+        default:
+            break;
     }
 }
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

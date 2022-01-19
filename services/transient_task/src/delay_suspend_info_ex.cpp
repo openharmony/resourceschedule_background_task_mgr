@@ -42,14 +42,14 @@ int32_t DelaySuspendInfoEx::GetAdvanceCallbackTime()
 
 void DelaySuspendInfoEx::StartAccounting()
 {
-    if(baseTime_ == 0) {
+    if (baseTime_ == 0) {
         baseTime_ = TimeProvider::GetCurrentTime();
     }
 }
 
 void DelaySuspendInfoEx::StopAccounting()
 {
-    if(baseTime_ != 0) {
+    if (baseTime_ != 0) {
         spendTime_ += TimeProvider::GetCurrentTime() - baseTime_;
         baseTime_ = 0;
     }

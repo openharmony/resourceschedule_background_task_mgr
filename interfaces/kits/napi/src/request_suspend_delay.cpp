@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 static const int32_t REQUEST_SUSPEND_DELAY_PARAMS = 2;
 
 CallbackInstance::CallbackInstance()
@@ -122,6 +121,5 @@ napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
     }
     return result;
 }
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

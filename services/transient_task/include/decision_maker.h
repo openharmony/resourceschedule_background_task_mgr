@@ -69,18 +69,18 @@ private:
         DecisionMaker &decisionMaker_;
     };
 
+private:
+    class AppMgrDeathRecipient : public IRemoteObject::DeathRecipient {
+    public:
+        AppMgrDeathRecipient(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
+
+        ~AppMgrDeathRecipient() {};
+
+        virtual void OnRemoteDied(const wptr<IRemoteObject> &object) override;
+
     private:
-        class AppMgrDeathRecipient : public IRemoteObject::DeathRecipient {
-        public:
-            AppMgrDeathRecipient(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
-
-            ~AppMgrDeathRecipient() {};
-
-            virtual void OnRemoteDied(const wptr<IRemoteObject> &object) override;
-
-        private:
-            DecisionMaker &decisionMaker_;
-        };
+        DecisionMaker &decisionMaker_;
+    };
 
 private:
     int32_t NewDelaySuspendRequestId();

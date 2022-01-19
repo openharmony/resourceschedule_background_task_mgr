@@ -169,8 +169,8 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
         BGTASK_LOGE("request suspend failed, callback is already exists, not allow.");
         return ERR_BGTASK_NOT_ALLOWED;
     }
-    BGTASK_LOGI("request suspend success, pkg : %{public}s, uid : %{public}d, requestId: %{public}d, delayTime: %{public}d",
-        name.c_str(), uid, infoEx->GetRequestId(), infoEx->GetActualDelayTime());
+    BGTASK_LOGI("request suspend success, pkg : %{public}s, uid : %{public}d, requestId: %{public}d,"
+        "delayTime: %{public}d", name.c_str(), uid, infoEx->GetRequestId(), infoEx->GetActualDelayTime());
     expiredCallbackMap_[infoEx->GetRequestId()] = callback;
     keyInfoMap_[infoEx->GetRequestId()] = keyInfo;
     if (callbackDeathRecipient_ != nullptr) {
@@ -382,7 +382,7 @@ void BgTransientTaskMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& remote
 void BgTransientTaskMgr::HandleRequestExpired(const int32_t requestId)
 {
     BGTASK_LOGI("request expired, id : %{public}d", requestId);
-    
+
     std::lock_guard<std::mutex> lock(expiredCallbackLock_);
     auto callbackIter = expiredCallbackMap_.find(requestId);
     if (callbackIter == expiredCallbackMap_.end()) {

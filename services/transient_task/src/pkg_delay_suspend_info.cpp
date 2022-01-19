@@ -36,7 +36,7 @@ bool PkgDelaySuspendInfo::IsAllowRequest()
     }
 
     UpdateQuota();
-    if(quota_ >= MIN_ALLOW_QUOTA_TIME) {
+    if (quota_ >= MIN_ALLOW_QUOTA_TIME) {
         return true;
     }
 
@@ -125,7 +125,7 @@ void PkgDelaySuspendInfo::StopAccountingAll()
     isCounting_ = false;
 }
 
-void PkgDelaySuspendInfo::UpdateQuota(bool reset) 
+void PkgDelaySuspendInfo::UpdateQuota(bool reset)
 {
     spendTime_ = isCounting_ ? (TimeProvider::GetCurrentTime() - baseTime_) : 0;
     quota_ -= spendTime_;

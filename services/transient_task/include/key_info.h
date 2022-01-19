@@ -16,12 +16,11 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TRANSIENT_TASK_INCLUDE_KEY_INFO_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TRANSIENT_TASK_INCLUDE_KEY_INFO_H
 
-#include <memory>
 #include <string>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class KeyInfo{
+class KeyInfo {
 public:
     KeyInfo(const std::string& pkg, const int32_t& uid, const int32_t& pid = -1): pkg_(pkg), uid_(uid), pid_(pid) {}
     ~KeyInfo() = default;
@@ -41,7 +40,7 @@ public:
         return (pkg == pkg_ && uid == uid_);
     }
 
-    inline const std::string& GetPkg() const 
+    inline const std::string& GetPkg() const
     {
         return pkg_;
     }
@@ -67,14 +66,12 @@ private:
     int32_t pid_ {-1};
 };
 
-struct KeyInfoComp
-{
+struct KeyInfoComp {
     bool operator()(const std::shared_ptr<KeyInfo> x, const std::shared_ptr<KeyInfo> y) const
     {
         return (x->GetPkg() < y->GetPkg()) || ((x->GetPkg() == y->GetPkg()) && (x->GetUid() < y->GetUid()));
     }
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TRANSIENT_TASK_INCLUDE_KEY_INFO_H

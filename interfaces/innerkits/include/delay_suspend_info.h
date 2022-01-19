@@ -26,17 +26,36 @@ public:
 
     bool Marshalling(Parcel& out) const override;
 
-    inline bool IsSameRequestId(int32_t requestId) const { return requestId_ == requestId; }
-    inline int32_t GetRequestId() const { return requestId_; }
-    inline int32_t GetActualDelayTime() const { return actualDelayTime_; }
-    inline void SetRequestId(int32_t id) { requestId_ = id; }
-    inline void SetActualDelayTime(int32_t time) { actualDelayTime_ = time; }
+    inline bool IsSameRequestId(int32_t requestId) const
+    {
+        return requestId_ == requestId;
+    }
+
+    inline int32_t GetRequestId() const
+    {
+        return requestId_;
+    }
+
+    inline int32_t GetActualDelayTime() const
+    {
+        return actualDelayTime_;
+    }
+
+    inline void SetRequestId(int32_t id)
+    {
+        requestId_ = id;
+    }
+
+    inline void SetActualDelayTime(int32_t time)
+    {
+        actualDelayTime_ = time;
+    }
 
 private:
     bool ReadFromParcel(Parcel& in);
 
-    int32_t requestId_{-1};
-    int32_t actualDelayTime_{0};
+    int32_t requestId_ {-1};
+    int32_t actualDelayTime_ {0};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

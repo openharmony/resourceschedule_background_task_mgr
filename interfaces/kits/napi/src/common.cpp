@@ -20,6 +20,9 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+const std::int32_t STR_MAX_SIZE = 64;
+const std::int32_t EXPIRE_CALLBACK_PARAM_NUM = 1;
+const std::int32_t ASYNC_CALLBACK_PARAM_NUM = 2;
 
 napi_value Common::NapiGetboolean(napi_env env, const bool &isValue)
 {
@@ -53,10 +56,11 @@ void Common::SetCallback(
     napi_value callback = nullptr;
     napi_value resultout = nullptr;
     napi_get_reference_value(env, callbackIn, &callback);
-    napi_value results[2] = {nullptr};
+    napi_value results[ASYNC_CALLBACK_PARAM_NUM] = {nullptr};
     results[0] = GetCallbackErrorValue(env, errorCode);
     results[1] = result;
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, 2, &results[0], &resultout));
+    NAPI_CALL_RETURN_VOID(env,
+        napi_call_function(env, undefined, callback, ASYNC_CALLBACK_PARAM_NUM, &results[0], &resultout));
 }
 
 void Common::SetCallback(const napi_env &env, const napi_ref &callbackIn, const napi_value &result)
@@ -69,7 +73,8 @@ void Common::SetCallback(const napi_env &env, const napi_ref &callbackIn, const 
     napi_value res = nullptr;
     res = GetExpireCallbackValue(env, 0, result);
     napi_get_reference_value(env, callbackIn, &callback);
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, 1, &res, &resultout));
+    NAPI_CALL_RETURN_VOID(env,
+        napi_call_function(env, undefined, callback, EXPIRE_CALLBACK_PARAM_NUM, &res, &resultout));
 }
 
 napi_value Common::GetExpireCallbackValue(napi_env env, int errCode, const napi_value &value)
@@ -171,7 +176,7 @@ void Common::PaddingCallbackPromiseInfo(
 }
 
 napi_value Common::SetDelaySuspendInfo(
-        const napi_env &env, std::shared_ptr<DelaySuspendInfo>& delaySuspendInfo, napi_value &result)
+    const napi_env &env, std::shared_ptr<DelaySuspendInfo>& delaySuspendInfo, napi_value &result)
 {
     if (delaySuspendInfo == nullptr) {
         BGTASK_LOGI("delaySuspendInfo is nullptr");

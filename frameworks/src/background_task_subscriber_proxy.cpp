@@ -52,7 +52,7 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskStart(const std::shared_ptr<T
     }
 }
 
-void BackgroundTaskSubscriberProxy::OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) 
+void BackgroundTaskSubscriberProxy::OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {

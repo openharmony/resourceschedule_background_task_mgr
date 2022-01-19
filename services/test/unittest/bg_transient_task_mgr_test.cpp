@@ -15,7 +15,7 @@
 
 #include <functional>
 #include <gtest/gtest.h>
-#include <time.h>
+#include <ctime>
 
 #define private public
 #include "bg_transient_task_mgr.h"
@@ -25,7 +25,6 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
 public:
     void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override
@@ -36,10 +35,10 @@ public:
 
 class BgTransientTaskMgrTest : public testing::Test {
 public:
-    static void SetUpTestCase(){};
-    static void TearDownTestCase(){};
-    void SetUp(){};
-    void TearDown(){};
+    static void SetUpTestCase() {};
+    static void TearDownTestCase() {};
+    void SetUp() {};
+    void TearDown() {};
 };
 
 /**

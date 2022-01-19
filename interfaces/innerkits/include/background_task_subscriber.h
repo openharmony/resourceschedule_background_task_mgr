@@ -53,7 +53,7 @@ private:
     class BackgroundTaskSubscriberImpl final : public BackgroundTaskSubscriberStub {
     public:
         BackgroundTaskSubscriberImpl(BackgroundTaskSubscriber &subscriber);
-        ~BackgroundTaskSubscriberImpl(){};
+        ~BackgroundTaskSubscriberImpl() {};
         void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override;
         void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
 
@@ -69,7 +69,6 @@ private:
 
     friend class BackgroundTaskManager;
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_TASK_SUBSCRIBER_H

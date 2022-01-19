@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 #ifndef LOG_DOMAIN
 #define LOG_DOMAIN 0xD001800
 #endif

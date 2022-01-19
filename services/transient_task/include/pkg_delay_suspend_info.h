@@ -76,7 +76,7 @@ private:
     int32_t baseTime_ {0};
     bool isCounting_ {false};
     shared_ptr<TimerManager> timerManager_ {nullptr};
-    vector<shared_ptr<DelaySuspendInfoEx>> requestList_; 
+    vector<shared_ptr<DelaySuspendInfoEx>> requestList_;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

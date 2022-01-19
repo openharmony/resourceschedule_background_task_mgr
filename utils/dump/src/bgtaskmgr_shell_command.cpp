@@ -28,7 +28,6 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-
 static const struct option OPTIONS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"transient", no_argument, nullptr, 'T'},
@@ -125,6 +124,5 @@ ErrCode BgtaskmgrShellCommand::RunAsDumpCommand()
 
     return ret;
 }
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

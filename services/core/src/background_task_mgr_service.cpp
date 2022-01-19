@@ -16,8 +16,6 @@
 #include "background_task_mgr_service.h"
 
 #include <functional>
-#include <iomanip>
-#include <sstream>
 
 #include "ability_manager_client.h"
 #include "bundle_constants.h"
@@ -29,7 +27,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 namespace {
 static const std::string TRANSIENT_TASK_DUMP = "-T";
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
@@ -71,8 +68,8 @@ void BackgroundTaskMgrService::OnStop()
     BGTASK_LOGI("background task manager stop");
 }
 
-ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::u16string& reason, 
-        const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
+ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::u16string& reason,
+    const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
     return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RequestSuspendDelay(reason, callback, delayInfo);
 }
@@ -117,7 +114,8 @@ void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& 
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->HandleSubscriberDeath(remote);
 }
 
-ErrCode BackgroundTaskMgrService::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
+ErrCode BackgroundTaskMgrService::ShellDump(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
 {
     ErrCode ret = ERR_OK;
     if (dumpOption[0] == TRANSIENT_TASK_DUMP) {
@@ -125,6 +123,5 @@ ErrCode BackgroundTaskMgrService::ShellDump(const std::vector<std::string> &dump
     }
     return ret;
 }
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

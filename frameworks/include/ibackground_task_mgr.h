@@ -35,7 +35,7 @@ public:
     ~IBackgroundTaskMgr() override = default;
     DISALLOW_COPY_AND_MOVE(IBackgroundTaskMgr);
 
-    virtual ErrCode RequestSuspendDelay(const std::u16string& reason, 
+    virtual ErrCode RequestSuspendDelay(const std::u16string& reason,
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo) = 0;
     virtual ErrCode  CancelSuspendDelay(int32_t requestId) = 0;
     virtual ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime) = 0;

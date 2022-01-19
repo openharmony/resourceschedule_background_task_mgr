@@ -27,7 +27,6 @@ using namespace std;
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 DecisionMaker::DecisionMaker(const shared_ptr<TimerManager>& timerManager, const shared_ptr<DeviceInfoManager>& device)
 {
     timerManager_ = timerManager;
@@ -98,7 +97,8 @@ void DecisionMaker::AppMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>
     decisionMaker_.GetAppMgrProxy();
 }
 
-void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData)
+void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
+    const AppExecFwk::AppStateData &appStateData)
 {
     lock_guard<mutex> lock(decisionMaker_.lock_);
 

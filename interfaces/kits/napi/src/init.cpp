@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 EXTERN_C_START
 
 napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
@@ -59,6 +58,5 @@ __attribute__((constructor)) void RegisterModule(void)
     napi_module_register(&_module);
 }
 EXTERN_C_END
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

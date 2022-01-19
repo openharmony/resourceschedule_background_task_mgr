@@ -44,7 +44,7 @@ private:
     class ExpiredCallbackImpl final : public ExpiredCallbackStub {
     public:
         ExpiredCallbackImpl(ExpiredCallback &callback);
-        ~ExpiredCallbackImpl(){};
+        ~ExpiredCallbackImpl() {};
         void OnExpired() override;
 
     public:
@@ -59,7 +59,6 @@ private:
 
     friend class BackgroundTaskManager;
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_EXPIRED_CALLBACK_H

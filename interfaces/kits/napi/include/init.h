@@ -45,7 +45,6 @@ napi_module _module = {
     .nm_priv = ((void *)0),
     .reserved = {0}
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_INIT_H

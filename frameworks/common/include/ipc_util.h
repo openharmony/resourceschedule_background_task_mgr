@@ -30,7 +30,7 @@ namespace BackgroundTaskMgr {
             BGTASK_LOGE("Failed to read "#data);            \
             return;                                         \
         }                                                   \
-    } while(0)                                              \
+    } while (0)
 
 #define READ_PARCEL_WITH_RET(in, type, data, ret)           \
     do {                                                    \
@@ -38,7 +38,7 @@ namespace BackgroundTaskMgr {
             BGTASK_LOGE("Failed to read "#data);            \
             return (ret);                                   \
         }                                                   \
-    } while(0)                                              \
+    } while (0)
 
 #define WRITE_PARCEL(out, type, data)                       \
     do {                                                    \
@@ -46,7 +46,7 @@ namespace BackgroundTaskMgr {
             BGTASK_LOGE("Failed to write "#data);           \
             return;                                         \
         }                                                   \
-    } while(0)                                              \
+    } while (0)
 
 #define WRITE_PARCEL_WITH_RET(out, type, data, ret)         \
     do {                                                    \
@@ -54,7 +54,7 @@ namespace BackgroundTaskMgr {
             BGTASK_LOGE("Failed to write "#data);           \
             return (ret);                                   \
         }                                                   \
-    } while(0)                                              \
+    } while (0)
 
 static inline sptr<IRemoteObject> GetSystemService(const std::string &name)
 {

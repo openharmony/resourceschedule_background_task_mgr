@@ -22,11 +22,10 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 class BgtaskmgrShellCommand : public ShellCommand {
 public:
     BgtaskmgrShellCommand(int argc, char *argv[]);
-    ~BgtaskmgrShellCommand() override{};
+    ~BgtaskmgrShellCommand() override {};
 
 private:
     ErrCode CreateCommandMap() override;
@@ -38,7 +37,6 @@ private:
 private:
     std::shared_ptr<BackgroundTaskManager> btm_;
 };
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_UTILS_DUMP_INCLUDE_BGTASKMGR_SHELL_COMMAND_H

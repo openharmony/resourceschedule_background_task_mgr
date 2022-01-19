@@ -29,20 +29,27 @@ namespace BackgroundTaskMgr {
 const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageParcel &, MessageParcel &)>>
     BackgroundTaskMgrStub::interfaces_ = {
         {BackgroundTaskMgrStub::REQUEST_SUSPEND_DELAY,
-            std::bind(&BackgroundTaskMgrStub::HandleRequestSuspendDelay, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+            std::bind(&BackgroundTaskMgrStub::HandleRequestSuspendDelay,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
         {BackgroundTaskMgrStub::CANCEL_SUSPEND_DELAY,
-            std::bind(&BackgroundTaskMgrStub::HandleCancelSuspendDelay, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+            std::bind(&BackgroundTaskMgrStub::HandleCancelSuspendDelay,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
         {BackgroundTaskMgrStub::GET_REMAINING_DELAY_TIME,
-            std::bind(&BackgroundTaskMgrStub::HandleGetRemainingDelayTime, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+            std::bind(&BackgroundTaskMgrStub::HandleGetRemainingDelayTime,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
         {BackgroundTaskMgrStub::SUBSCRIBE_BACKGROUND_TASK,
-            std::bind(&BackgroundTaskMgrStub::HandleSubscribeBackgroundTask, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+            std::bind(&BackgroundTaskMgrStub::HandleSubscribeBackgroundTask,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
         {BackgroundTaskMgrStub::UNSUBSCRIBE_BACKGROUND_TASK,
-            std::bind(&BackgroundTaskMgrStub::HandleUnsubscribeBackgroundTask, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+            std::bind(&BackgroundTaskMgrStub::HandleUnsubscribeBackgroundTask,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
         {BackgroundTaskMgrStub::SHELL_DUMP,
-            std::bind(&BackgroundTaskMgrStub::HandleShellDump, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+            std::bind(&BackgroundTaskMgrStub::HandleShellDump,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
 };
 
-ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option)
+ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
+    MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
     std::u16string descriptor = BackgroundTaskMgrStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
@@ -95,9 +102,7 @@ ErrCode BackgroundTaskMgrStub::HandleRequestSuspendDelay(MessageParcel& data, Me
 ErrCode BackgroundTaskMgrStub::HandleCancelSuspendDelay(MessageParcel& data, MessageParcel& reply)
 {
     int32_t id = data.ReadInt32();
-
     ErrCode result = CancelSuspendDelay(id);
-    
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("Write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;
@@ -163,7 +168,6 @@ ErrCode BackgroundTaskMgrStub::HandleShellDump(MessageParcel& data, MessageParce
 
     std::vector<std::string> bgtaskmgrInfo;
     ErrCode result = ShellDump(dumpOption, bgtaskmgrInfo);
-    
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("Write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;

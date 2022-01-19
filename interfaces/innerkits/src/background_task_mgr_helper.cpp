@@ -31,6 +31,5 @@ ErrCode BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(const BackgroundTaskS
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->UnsubscribeBackgroundTask(subscriber);
 }
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
