@@ -117,12 +117,19 @@ napi_value Common::GetCallbackErrorValue(napi_env env, int errCode)
 napi_value Common::JSParaError(const napi_env &env, const napi_ref &callback)
 {
     if (callback) {
+        SetCallback(env, callback, ERR_BGTASK_INVALID_PARAM, nullptr);
         return Common::NapiGetNull(env);
     } else {
         napi_value promise = nullptr;
         napi_deferred deferred = nullptr;
         napi_create_promise(env, &deferred, &promise);
-        napi_resolve_deferred(env, deferred, Common::NapiGetNull(env));
+
+        napi_value res = nullptr;
+        napi_value eCode = nullptr;
+        NAPI_CALL(env, napi_create_int32(env, ERR_BGTASK_INVALID_PARAM, &eCode));
+        NAPI_CALL(env, napi_create_object(env, &res));
+        NAPI_CALL(env, napi_set_named_property(env, res, "data", eCode));
+        napi_reject_deferred(env, deferred, res);
         return promise;
     }
 }

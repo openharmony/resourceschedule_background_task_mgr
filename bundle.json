@@ -23,7 +23,7 @@
       "ram": "10240KB",
       "deps": {
         "components": [
-          "aafwk_standard",
+          "ability_runtime",
           "appexecfwk_standard",
           "ces_standard",
           "hiviewdfx_hilog_native",

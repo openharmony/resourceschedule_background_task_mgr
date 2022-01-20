@@ -18,10 +18,10 @@
 
 #include <string_ex.h>
 
-#include "errors.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 
+#include "bgtaskmgr_inner_errors.h"
 #include "delay_suspend_info.h"
 
 namespace OHOS {

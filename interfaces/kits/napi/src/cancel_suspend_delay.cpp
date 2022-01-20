@@ -33,7 +33,11 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
 
     // argv[0] :requestId
     if (Common::GetInt32NumberValue(env, argv[0], requestId) == nullptr) {
-        BGTASK_LOGE("ParseParameters failed, requestId is nullptr ");
+        BGTASK_LOGE("ParseParameters failed, requestId is nullptr.");
+        return nullptr;
+    }
+    if (requestId <= 0) {
+        BGTASK_LOGE("ParseParameters failed, requestId is illegal.");
         return nullptr;
     }
     return Common::NapiGetNull(env);

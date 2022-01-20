@@ -23,8 +23,9 @@
 
 #include "common_event_manager.h"
 #include "common_event_support.h"
-#include "event_info.h"
 #include "want.h"
+
+#include "event_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {

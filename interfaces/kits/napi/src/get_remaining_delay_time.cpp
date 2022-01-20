@@ -48,7 +48,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
 
     // argv[0] : requestId
     if (Common::GetInt32NumberValue(env, argv[0], params.requestId) == nullptr) {
-        BGTASK_LOGE("ParseParameters failed, requestId is nullptr ");
+        BGTASK_LOGE("ParseParameters failed, requestId is nullptr.");
         return nullptr;
     }
 
@@ -58,6 +58,11 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         napi_create_reference(env, argv[1], 1, &params.callback);
+    }
+
+    if (params.requestId <= 0) {
+        BGTASK_LOGE("ParseParameters failed, requestId is illegal.");
+        return nullptr;
     }
     return Common::NapiGetNull(env);
 }

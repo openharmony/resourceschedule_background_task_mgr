@@ -27,7 +27,7 @@ namespace BackgroundTaskMgr {
 BackgroundTaskMgrProxy::BackgroundTaskMgrProxy(const sptr<IRemoteObject>& impl)
     :IRemoteProxy<IBackgroundTaskMgr>(impl) {}
 BackgroundTaskMgrProxy::~BackgroundTaskMgrProxy() {}
-    
+
 ErrCode BackgroundTaskMgrProxy::RequestSuspendDelay(const std::u16string& reason,
     const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
