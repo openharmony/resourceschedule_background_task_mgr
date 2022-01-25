@@ -49,9 +49,9 @@ ohos_shared_library("bgtaskmgr_service") {
   external_deps = [
     "ability_runtime:app_manager",
     "ability_runtime:want",
-    "appexecfwk_standard:libeventhandler",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
