@@ -57,9 +57,10 @@ void BgtaskDumpTest::TearDown()
 {}
 
 /*
- * @tc.number: BgtaskDumpTest_GetServiceObject_001
- * @tc.name: Get Service Object
- * @tc.desc:
+ * @tc.name: BgtaskDumpTest_GetServiceObject_001
+ * @tc.desc: Get Service Object
+ * @tc.type: FUNC
+ * @tc.require: AR000GH86Q
  */
 HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_GetServiceObject_001, Function | MediumTest | Level0)
 {
@@ -73,9 +74,10 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_GetServiceObject_001, Function | MediumT
 }
 
 /*
- * @tc.number: BgtaskDumpTest_ShellDump_001
- * @tc.name: Shell Dump
- * @tc.desc:
+ * @tc.name: BgtaskDumpTest_ShellDump_001
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: AR000GH86V
  */
 HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_001, Function | MediumTest | Level0)
 {

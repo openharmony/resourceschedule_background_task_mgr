@@ -49,7 +49,7 @@ static const std::string CANCEL_DUMP_OPTION = "DUMP_CANCEL";
 
 constexpr int32_t BG_INVALID_REMAIN_TIME = -1;
 constexpr int32_t WATCHDOG_DELAY_TIME = 6 * MSEC_PER_SEC;
-constexpr int32_t SERVICE_WAIT_TIME = 5000;
+constexpr int32_t SERVICE_WAIT_TIME = 2000;
 }
 
 BgTransientTaskMgr::BgTransientTaskMgr() {}
@@ -75,6 +75,7 @@ void BgTransientTaskMgr::InitNecessaryState()
         = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityManager == nullptr
         || systemAbilityManager->CheckSystemAbility(APP_MGR_SERVICE_ID) == nullptr
+        || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr) {
         BGTASK_LOGI("request system service is not ready yet!");
         std::function <void()> InitNecessaryStateFunc = std::bind(&BgTransientTaskMgr::InitNecessaryState, this);
