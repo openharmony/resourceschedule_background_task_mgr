@@ -20,7 +20,7 @@ config("system_test_config") {
   configs = []
 }
 
-module_output_path = "background_task_manager/systemtest"
+module_output_path = "background_task_mgr/systemtest"
 ohos_systemtest("BgtaskDumpTest") {
   module_out_path = module_output_path
 
