@@ -19,8 +19,7 @@ import { AsyncCallback , Callback} from './basic';
  * Manages background tasks.
  *
  * @since 7
- * @sysCap SystemCapability.Ressched.BackgroundTaskMgr
- * @devices phone, tv, wearable, tablet, car
+ * @sysCap SystemCapability.ResourceSchedule.BackgroundTaskMgr.TransientTask
  */
 declare namespace backgroundTaskManager {
     /**
