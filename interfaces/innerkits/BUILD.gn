@@ -14,7 +14,7 @@
 import("//build/ohos.gni")
 import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
-config("bgtaskmgr_public_config") {
+config("bgtaskmgr_innerkits_public_config") {
   include_dirs = [ "include" ]
 }
 
@@ -22,16 +22,26 @@ ohos_shared_library("bgtaskmgr_innerkits") {
   sources = [
     "src/background_task_mgr_helper.cpp",
     "src/background_task_subscriber.cpp",
+    "src/continuous_task_callback_info.cpp",
+    "src/continuous_task_param.cpp",
     "src/delay_suspend_info.cpp",
     "src/expired_callback.cpp",
     "src/transient_task_app_info.cpp",
   ]
 
-  public_configs = [ ":bgtaskmgr_public_config" ]
+  public_configs = [
+    ":bgtaskmgr_innerkits_public_config",
+    "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_public_config",
+  ]
 
-  deps = [ "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk" ]
+  public_deps = [
+    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
+    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
+  ]
 
   external_deps = [
+    "ability_runtime:want",
+    "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",

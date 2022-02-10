@@ -90,5 +90,23 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_001, Function | MediumTest | L
         EXPECT_EQ(ret, 0);
     }
 }
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_002
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: AR000GH6EQ
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_002, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-C");
+    options.push_back("--all");
+    if (bgtaskMgr_ != nullptr) {
+        auto ret = bgtaskMgr_->ShellDump(options, infos);
+        EXPECT_EQ(ret, 0);
+    }
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

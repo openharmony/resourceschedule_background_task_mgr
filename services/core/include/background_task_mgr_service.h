@@ -29,6 +29,7 @@
 #include "system_ability_definition.h"
 
 #include "background_task_mgr_stub.h"
+#include "bg_continuous_task_mgr.h"
 #include "bg_transient_task_mgr.h"
 #include "bgtaskmgr_inner_errors.h"
 
@@ -53,6 +54,8 @@ public:
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo) override;
     ErrCode CancelSuspendDelay(int32_t requestId) override;
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime) override;
+    ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam) override;
+    ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken) override;
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo) override;

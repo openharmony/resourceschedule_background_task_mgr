@@ -36,36 +36,86 @@ public:
     virtual ~BackgroundTaskSubscriber();
 
     /**
+     * Called back when the subscriber is connected to Background Task Manager Service.
+     */
+    virtual void OnConnected();
+
+    /**
+     * Called back when the subscriber is disconnected from Background Task Manager Service.
+     */
+    virtual void OnDisconnected();
+
+    /**
      * Called back when a transient task start.
      *
      * @param info Transient task app info.
      **/
-    virtual void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) = 0;
+    virtual void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info);
 
     /**
      * Called back when a transient task end.
      *
      * @param info Transient task app info.
      **/
-    virtual void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) = 0;
+    virtual void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info);
+
+    /**
+     * Called back when a continuous task start.
+     *
+     * @param info Transient task app info.
+     **/
+    virtual void OnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+
+    /**
+     * Called back when a continuous task end.
+     *
+     * @param info Transient task app info.
+     **/
+    virtual void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+
+    /**
+     * Called back when the Background Task Manager Service has died.
+     */
+    virtual void OnRemoteDied(const wptr<IRemoteObject> &object);
 
 private:
     class BackgroundTaskSubscriberImpl final : public BackgroundTaskSubscriberStub {
     public:
+        class DeathRecipient final : public IRemoteObject::DeathRecipient {
+        public:
+            DeathRecipient(BackgroundTaskSubscriberImpl &subscriberImpl);
+
+            ~DeathRecipient();
+
+            void OnRemoteDied(const wptr<IRemoteObject> &object) override;
+
+        private:
+            BackgroundTaskSubscriberImpl &subscriberImpl_;
+        };
+
+    public:
         BackgroundTaskSubscriberImpl(BackgroundTaskSubscriber &subscriber);
         ~BackgroundTaskSubscriberImpl() {};
+        void OnConnected() override;
+        void OnDisconnected() override;
         void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override;
         void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+        void OnContinuousTaskStart(const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+        void OnContinuousTaskStop(const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+        bool GetBackgroundTaskMgrProxy();
 
     public:
         BackgroundTaskSubscriber &subscriber_;
+        sptr<DeathRecipient> recipient_ {nullptr};
+        sptr<IBackgroundTaskMgr> proxy_ {nullptr};
+        std::mutex mutex_ {};
     };
 
 private:
     const sptr<BackgroundTaskSubscriberImpl> GetImpl() const;
 
 private:
-    sptr<BackgroundTaskSubscriberImpl> impl_ = nullptr;
+    sptr<BackgroundTaskSubscriberImpl> impl_ {nullptr};
 
     friend class BackgroundTaskManager;
 };

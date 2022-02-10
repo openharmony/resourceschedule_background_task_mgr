@@ -37,6 +37,12 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::GET_REMAINING_DELAY_TIME,
             std::bind(&BackgroundTaskMgrStub::HandleGetRemainingDelayTime,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+        {BackgroundTaskMgrStub::START_BACKGROUND_RUNNING,
+            std::bind(&BackgroundTaskMgrStub::HandleStartBackgroundRunning,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+        {BackgroundTaskMgrStub::STOP_BACKGROUND_RUNNING,
+            std::bind(&BackgroundTaskMgrStub::HandleStopBackgroundRunning,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
         {BackgroundTaskMgrStub::SUBSCRIBE_BACKGROUND_TASK,
             std::bind(&BackgroundTaskMgrStub::HandleSubscribeBackgroundTask,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
@@ -121,6 +127,36 @@ ErrCode BackgroundTaskMgrStub::HandleGetRemainingDelayTime(MessageParcel& data, 
     }
     if (!reply.WriteInt32(time)) {
         BGTASK_LOGE("Write result fail.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<ContinuousTaskParam> taskParam = data.ReadParcelable<ContinuousTaskParam>();
+    if (taskParam == nullptr) {
+        BGTASK_LOGE("ContinuousTaskParam ReadParcelable failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    ErrCode result = StartBackgroundRunning(taskParam);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("write result failed, ErrCode=%{public}d", result);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleStopBackgroundRunning(MessageParcel &data, MessageParcel &reply)
+{
+    std::string abilityName;
+    if (!data.ReadString(abilityName)) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    sptr<IRemoteObject> abilityToken = data.ReadParcelable<IRemoteObject>();
+    ErrCode result = StopBackgroundRunning(abilityName, abilityToken);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;

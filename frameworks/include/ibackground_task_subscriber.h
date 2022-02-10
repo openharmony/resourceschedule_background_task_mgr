@@ -20,6 +20,7 @@
 #include <iremote_broker.h>
 #include <nocopyable.h>
 
+#include "continuous_task_callback_info.h"
 #include "transient_task_app_info.h"
 
 namespace OHOS {
@@ -30,15 +31,23 @@ public:
     ~IBackgroundTaskSubscriber() override = default;
     DISALLOW_COPY_AND_MOVE(IBackgroundTaskSubscriber);
 
+    virtual void OnConnected() = 0;
+    virtual void OnDisconnected() = 0;
     virtual void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) = 0;
     virtual void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) = 0;
+    virtual void OnContinuousTaskStart(const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) = 0;
+    virtual void OnContinuousTaskStop(const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) = 0;
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskSubscriber");
 
 protected:
     enum InterfaceId : uint32_t {
-        ON_TRANSIENT_TASK_START = FIRST_CALL_TRANSACTION,
-        ON_TRANSIENT_TASK_END
+        ON_CONNECTED = FIRST_CALL_TRANSACTION,
+        ON_DISCONNECTED,
+        ON_TRANSIENT_TASK_START,
+        ON_TRANSIENT_TASK_END,
+        ON_CONTINUOUS_TASK_START,
+        ON_CONTINUOUS_TASK_STOP,
     };
 };
 }  // namespace BackgroundTaskMgr

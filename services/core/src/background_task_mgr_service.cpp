@@ -18,6 +18,7 @@
 #include <functional>
 
 #include "ability_manager_client.h"
+#include "bgtaskmgr_inner_errors.h"
 #include "bundle_constants.h"
 #include "common_event_manager.h"
 #include "common_event_support.h"
@@ -28,6 +29,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
+static const std::string CONTINUOUS_TASK_DUMP = "-C";
 static const std::string TRANSIENT_TASK_DUMP = "-T";
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
@@ -60,10 +62,12 @@ void BackgroundTaskMgrService::OnStart()
 void BackgroundTaskMgrService::Init()
 {
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->Init();
+    BgContinuousTaskMgr::GetInstance()->Init();
 }
 
 void BackgroundTaskMgrService::OnStop()
 {
+    BgContinuousTaskMgr::GetInstance()->Clear();
     state_ = ServiceRunningState::STATE_NOT_START;
     BGTASK_LOGI("background task manager stop");
 }
@@ -89,14 +93,31 @@ void BackgroundTaskMgrService::ForceCancelSuspendDelay(int32_t requestId)
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ForceCancelSuspendDelay(requestId);
 }
 
+ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam)
+{
+    return BgContinuousTaskMgr::GetInstance()->StartBackgroundRunning(taskParam);
+}
+
+ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abilityName,
+    const sptr<IRemoteObject> &abilityToken)
+{
+    return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName, abilityToken);
+}
+
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber);
+    ErrCode ret = ERR_OK;
+    ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber);
+    ret = BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber);
+    return ret;
 }
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber);
+    ErrCode ret = ERR_OK;
+    ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber);
+    ret = BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber);
+    return ret;
 }
 
 void BackgroundTaskMgrService::HandleRequestExpired(const int32_t requestId)
@@ -120,6 +141,11 @@ ErrCode BackgroundTaskMgrService::ShellDump(const std::vector<std::string> &dump
     ErrCode ret = ERR_OK;
     if (dumpOption[0] == TRANSIENT_TASK_DUMP) {
         ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ShellDump(dumpOption, dumpInfo);
+    } else if (dumpOption[0] == CONTINUOUS_TASK_DUMP) {
+        ret = BgContinuousTaskMgr::GetInstance()->ShellDump(dumpOption, dumpInfo);
+    } else {
+        BGTASK_LOGI("invalid dump param");
+        ret = ERR_BGTASK_INVALID_PARAM;
     }
     return ret;
 }

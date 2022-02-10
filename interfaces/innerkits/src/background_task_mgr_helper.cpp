@@ -22,6 +22,17 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+ErrCode BackgroundTaskMgrHelper::RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStartBackgroundRunning(taskParam);
+}
+
+ErrCode BackgroundTaskMgrHelper::RequestStopBackgroundRunning(const std::string &abilityName,
+    const sptr<IRemoteObject> &abilityToken)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        RequestStopBackgroundRunning(abilityName, abilityToken);
+}
 ErrCode BackgroundTaskMgrHelper::SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SubscribeBackgroundTask(subscriber);
