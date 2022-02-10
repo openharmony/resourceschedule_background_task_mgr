@@ -40,7 +40,7 @@ ohos_executable("bgtask") {
   configs = []
 
   external_deps = [
-    "ability_runtime:want",
+    "ability_base:want",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "samgr_standard:samgr_proxy",
