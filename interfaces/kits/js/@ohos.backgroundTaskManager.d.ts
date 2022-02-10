@@ -28,8 +28,7 @@ declare namespace backgroundTaskManager {
      *
      * @name DelaySuspendInfo
      * @since 7
-     * @sysCap SystemCapability.Ressched.BackgroundTaskMgr
-     * @devices phone, tv, wearable, tablet, car
+     * @sysCap SystemCapability.ResourceSchedule.BackgroundTaskMgr.TransientTask
      */
     interface DelaySuspendInfo {
         /**
@@ -46,8 +45,7 @@ declare namespace backgroundTaskManager {
      * Cancels delayed transition to the suspended state.
      *
      * @since 7
-     * @sysCap SystemCapability.Ressched.BackgroundTaskMgr
-     * @devices phone, tv, wearable, tablet, car
+     * @sysCap SystemCapability.ResourceSchedule.BackgroundTaskMgr.TransientTask
      * @param requestId Indicates the identifier of the delay request.
      */
     function cancelSuspendDelay(requestId: number): void;
@@ -56,8 +54,7 @@ declare namespace backgroundTaskManager {
      * Obtains the remaining time before an application enters the suspended state.
      *
      * @since 7
-     * @sysCap SystemCapability.Ressched.BackgroundTaskMgr
-     * @devices phone, tv, wearable, tablet, car
+     * @sysCap SystemCapability.ResourceSchedule.BackgroundTaskMgr.TransientTask
      * @param requestId Indicates the identifier of the delay request.
      * @return The remaining delay time
      */
@@ -68,8 +65,7 @@ declare namespace backgroundTaskManager {
      * Requests delayed transition to the suspended state.
      *
      * @since 7
-     * @sysCap SystemCapability.Ressched.BackgroundTaskMgr
-     * @devices phone, tv, wearable, tablet, car
+     * @sysCap SystemCapability.ResourceSchedule.BackgroundTaskMgr.TransientTask
      * @param reason Indicates the reason for delayed transition to the suspended state.
      * @param callback The callback delay time expired.
      * @return Info of delay request
