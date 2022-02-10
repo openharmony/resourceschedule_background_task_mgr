@@ -29,8 +29,12 @@ public:
     ~BackgroundTaskSubscriberProxy() override;
     DISALLOW_COPY_AND_MOVE(BackgroundTaskSubscriberProxy);
 
+    void OnConnected() override;
+    void OnDisconnected() override;
     void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override;
     void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+    void OnContinuousTaskStart(const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+    void OnContinuousTaskStop(const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
 
 private:
     static inline BrokerDelegator<BackgroundTaskSubscriberProxy> delegator_;

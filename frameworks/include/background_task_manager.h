@@ -20,6 +20,7 @@
 #include "expired_callback.h"
 #include "ibackground_task_mgr.h"
 #include "iremote_object.h"
+#include "want_agent.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -35,6 +36,10 @@ public:
         const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo);
 
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime);
+
+    ErrCode RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam);
+
+    ErrCode RequestStopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken);
 
     void ResetBackgroundTaskManagerProxy();
 

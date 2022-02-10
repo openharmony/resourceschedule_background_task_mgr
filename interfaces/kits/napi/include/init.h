@@ -26,7 +26,9 @@ extern "C" {
 #endif
 
 __attribute__((constructor)) void RegisterModule(void);
+void SetNamedPropertyByInteger(napi_env env, napi_value dstObj, int32_t objName, const char *propName);
 napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports);
+napi_value BackgroundModeInit(napi_env env, napi_value exports);
 static napi_value Init(napi_env env, napi_value exports);
 
 #ifdef __cplusplus

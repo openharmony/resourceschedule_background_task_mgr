@@ -22,6 +22,7 @@ config("bgtaskmgr_public_config") {
 
 ohos_shared_library("backgroundtaskmanager") {
   sources = [
+    "napi/src/bg_continuous_task_napi_module.cpp",
     "napi/src/cancel_suspend_delay.cpp",
     "napi/src/common.cpp",
     "napi/src/get_remaining_delay_time.cpp",
@@ -34,9 +35,14 @@ ohos_shared_library("backgroundtaskmanager") {
   deps = [
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
+    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
   ]
 
   external_deps = [
+    "ability_runtime:abilitykit_native",
+    "ability_runtime:want",
+    "bundle_framework:appexecfwk_base",
+    "dmsfwk_standard:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",

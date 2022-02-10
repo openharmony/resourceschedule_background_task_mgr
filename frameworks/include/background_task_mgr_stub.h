@@ -38,6 +38,8 @@ private:
     ErrCode HandleRequestSuspendDelay(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleCancelSuspendDelay(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetRemainingDelayTime(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleStartBackgroundRunning(MessageParcel &data, MessageParcel &reply);
+    ErrCode HandleStopBackgroundRunning(MessageParcel &data, MessageParcel &reply);
     ErrCode HandleSubscribeBackgroundTask(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleUnsubscribeBackgroundTask(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleShellDump(MessageParcel& data, MessageParcel& reply);

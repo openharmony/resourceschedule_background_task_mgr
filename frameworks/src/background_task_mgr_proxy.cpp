@@ -125,6 +125,72 @@ ErrCode BackgroundTaskMgrProxy::GetRemainingDelayTime(int32_t requestId, int32_t
     return result;
 }
 
+ErrCode BackgroundTaskMgrProxy::StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam)
+{
+    BGTASK_LOGI("begin");
+    if (taskParam == nullptr) {
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteParcelable(taskParam)) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+
+    ErrCode result = InnerTransact(START_BACKGROUND_RUNNING, option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGI("fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGI("fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGI("end");
+    return result;
+}
+
+ErrCode BackgroundTaskMgrProxy::StopBackgroundRunning(const std::string &abilityName,
+    const sptr<IRemoteObject> &abilityToken)
+{
+    BGTASK_LOGI("begin");
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteString(abilityName)) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteParcelable(abilityToken)) {
+        BGTASK_LOGE("parcel ability token failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+
+    ErrCode result = InnerTransact(STOP_BACKGROUND_RUNNING, option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("[StopBackgroundRunning] fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("[StopBackgroundRunning] fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGI("end");
+    return result;
+}
+
 ErrCode BackgroundTaskMgrProxy::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
     if (subscriber == nullptr) {

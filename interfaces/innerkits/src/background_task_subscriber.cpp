@@ -15,6 +15,9 @@
 
 #include "background_task_subscriber.h"
 
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 BackgroundTaskSubscriber::BackgroundTaskSubscriber()
@@ -25,13 +28,55 @@ BackgroundTaskSubscriber::BackgroundTaskSubscriber()
 BackgroundTaskSubscriber::~BackgroundTaskSubscriber()
 {}
 
+void BackgroundTaskSubscriber::OnConnected()
+{}
+
+void BackgroundTaskSubscriber::OnDisconnected()
+{}
+
+void BackgroundTaskSubscriber::OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info)
+{}
+
+void BackgroundTaskSubscriber::OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info)
+{}
+
+void BackgroundTaskSubscriber::OnContinuousTaskStart(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{}
+
+void BackgroundTaskSubscriber::OnContinuousTaskStop(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{}
+
+void BackgroundTaskSubscriber::OnRemoteDied(const wptr<IRemoteObject> &object)
+{}
+
 const sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> BackgroundTaskSubscriber::GetImpl() const
 {
     return impl_;
 }
 
 BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::BackgroundTaskSubscriberImpl(
-    BackgroundTaskSubscriber &subscriber) : subscriber_(subscriber) {}
+    BackgroundTaskSubscriber &subscriber) : subscriber_(subscriber)
+{
+    recipient_ = new (std::nothrow) DeathRecipient(*this);
+}
+
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnConnected()
+{
+    if (GetBackgroundTaskMgrProxy()) {
+        proxy_->AsObject()->AddDeathRecipient(recipient_);
+    }
+    subscriber_.OnConnected();
+}
+
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnDisconnected()
+{
+    if (GetBackgroundTaskMgrProxy()) {
+        proxy_->AsObject()->RemoveDeathRecipient(recipient_);
+    }
+    subscriber_.OnDisconnected();
+}
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskStart(
     const std::shared_ptr<TransientTaskAppInfo>& info)
@@ -43,6 +88,55 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskEnd(
     const std::shared_ptr<TransientTaskAppInfo>& info)
 {
     subscriber_.OnTransientTaskEnd(info);
+}
+
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStart(
+    const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    subscriber_.OnContinuousTaskStart(std::make_shared<ContinuousTaskCallbackInfo>(*continuousTaskCallbackInfo));
+}
+
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStop(
+    const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    subscriber_.OnContinuousTaskStop(std::make_shared<ContinuousTaskCallbackInfo>(*continuousTaskCallbackInfo));
+}
+
+bool BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::GetBackgroundTaskMgrProxy()
+{
+    if (proxy_) {
+        return true;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    sptr<ISystemAbilityManager> systemAbilityManager =
+        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (!systemAbilityManager) {
+        return false;
+    }
+
+    sptr<IRemoteObject> remoteObject =
+        systemAbilityManager->GetSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID);
+    if (!remoteObject) {
+        return false;
+    }
+
+    proxy_ = iface_cast<IBackgroundTaskMgr>(remoteObject);
+    if ((!proxy_) || (proxy_->AsObject() == nullptr)) {
+        return false;
+    }
+    return true;
+}
+
+BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::DeathRecipient(
+    BackgroundTaskSubscriberImpl &subscriberImpl) : subscriberImpl_(subscriberImpl) {}
+
+BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::~DeathRecipient() {}
+
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::OnRemoteDied(
+    const wptr<IRemoteObject> &object)
+{
+    subscriberImpl_.proxy_ = nullptr;
+    subscriberImpl_.subscriber_.OnRemoteDied(object);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

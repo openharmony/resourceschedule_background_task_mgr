@@ -25,6 +25,50 @@ BackgroundTaskSubscriberProxy::BackgroundTaskSubscriberProxy(const sptr<IRemoteO
     : IRemoteProxy<IBackgroundTaskSubscriber>(impl) {}
 BackgroundTaskSubscriberProxy::~BackgroundTaskSubscriberProxy() {}
 
+void BackgroundTaskSubscriberProxy::OnConnected()
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        BGTASK_LOGE("remote is dead.");
+        return;
+    }
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor())) {
+        BGTASK_LOGE("[OnConnected] fail: write interface token failed.");
+        return;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    ErrCode ret = remote->SendRequest(ON_CONNECTED, data, reply, option);
+    if (ret!= ERR_OK) {
+        BGTASK_LOGE("SendRequest failed, error code: %d", ret);
+        return;
+    }
+}
+
+void BackgroundTaskSubscriberProxy::OnDisconnected()
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        BGTASK_LOGE("remote is dead.");
+        return;
+    }
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor())) {
+        BGTASK_LOGE("[OnDisconnected] fail: write interface token failed.");
+        return;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    ErrCode ret = remote->SendRequest(ON_DISCONNECTED, data, reply, option);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("SendRequest failed, error code: %d", ret);
+        return;
+    }
+}
+
 void BackgroundTaskSubscriberProxy::OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info)
 {
     sptr<IRemoteObject> remote = Remote();
@@ -77,6 +121,76 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskEnd(const std::shared_ptr<Tra
         BGTASK_LOGE("BackgroundTaskSubscriberProxy::%{public}s, SendRequest failed, error code: %d", __func__, ret);
         return;
     }
+}
+
+void BackgroundTaskSubscriberProxy::OnContinuousTaskStart(
+    const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    BGTASK_LOGI("begin");
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        BGTASK_LOGE("remote is dead.");
+        return;
+    }
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskCallbackInfo is nullptr.");
+        return;
+    }
+
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor())) {
+        BGTASK_LOGE("write interface token failed.");
+        return;
+    }
+
+    if (!data.WriteParcelable(continuousTaskCallbackInfo)) {
+        BGTASK_LOGI("write continuousTaskCallbackInfo failed.");
+        return;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    ErrCode result = remote->SendRequest(ON_CONTINUOUS_TASK_START, data, reply, option);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("SendRequest error");
+        return;
+    }
+    BGTASK_LOGI("end");
+}
+
+void BackgroundTaskSubscriberProxy::OnContinuousTaskStop(
+    const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    BGTASK_LOGI("begin");
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        BGTASK_LOGE("remote is dead.");
+        return;
+    }
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskCallbackInfo is nullptr.");
+        return;
+    }
+
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor())) {
+        BGTASK_LOGE("write interface token failed.");
+        return;
+    }
+
+    if (!data.WriteParcelable(continuousTaskCallbackInfo)) {
+        BGTASK_LOGE("write notification failed.");
+        return;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    ErrCode result = remote->SendRequest(ON_CONTINUOUS_TASK_STOP, data, reply, option);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("SendRequest error");
+        return;
+    }
+    BGTASK_LOGI("end");
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
