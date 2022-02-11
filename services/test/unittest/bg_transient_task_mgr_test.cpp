@@ -27,10 +27,8 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
 public:
-    void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override
-    {}
-    void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override
-    {}
+    void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
+    void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
 };
 
 class BgTransientTaskMgrTest : public testing::Test {

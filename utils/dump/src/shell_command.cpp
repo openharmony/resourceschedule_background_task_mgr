@@ -37,8 +37,7 @@ ShellCommand::ShellCommand(int argc, char *argv[], std::string name)
     }
 }
 
-ShellCommand::~ShellCommand()
-{}
+ShellCommand::~ShellCommand() {}
 
 ErrCode ShellCommand::OnCommand()
 {

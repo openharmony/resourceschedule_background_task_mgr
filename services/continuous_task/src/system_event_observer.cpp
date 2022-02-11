@@ -29,8 +29,7 @@ const std::string TASK_ON_BUNDLEINFO_CHANGED = "OnBundleInfoChanged";
 }
 
 SystemEventObserver::SystemEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo)
-    : EventFwk::CommonEventSubscriber(subscribeInfo)
-{}
+    : EventFwk::CommonEventSubscriber(subscribeInfo) {}
 
 bool SystemEventObserver::Subscribe()
 {

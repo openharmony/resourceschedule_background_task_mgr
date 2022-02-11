@@ -68,11 +68,9 @@ static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr int BGMODE_NUMS = 10;
 }
 
-BgContinuousTaskMgr::BgContinuousTaskMgr()
-{}
+BgContinuousTaskMgr::BgContinuousTaskMgr() {}
 
-BgContinuousTaskMgr::~BgContinuousTaskMgr()
-{}
+BgContinuousTaskMgr::~BgContinuousTaskMgr() {}
 
 bool BgContinuousTaskMgr::Init()
 {
@@ -136,7 +134,8 @@ void BgContinuousTaskMgr::InitNecessaryState()
     }
 }
 
-void BgContinuousTaskMgr::InitNotificationPrompt() {
+void BgContinuousTaskMgr::InitNotificationPrompt()
+{
     if (!GetContinuousTaskText()) {
         BGTASK_LOGW("init continuous task notification prompt failed. will try again");
         isSysReady_.store(false);

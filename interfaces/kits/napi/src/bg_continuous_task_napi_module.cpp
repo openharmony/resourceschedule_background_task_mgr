@@ -144,6 +144,13 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         return;
     }
 
+    sptr<IRemoteObject> token {nullptr};
+    auto abilityContext = asyncCallbackInfo->ability->GetAbilityContext();
+    if (abilityContext) {
+        BGTASK_LOGI("get ability context succeed");
+        token = abilityContext->GetToken();
+    }
+
     if (asyncCallbackInfo->bgMode < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgMode > BG_MODE_ID_END) {
         BGTASK_LOGE("request background mode id: %{public}d out of range", asyncCallbackInfo->bgMode);
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
@@ -151,7 +158,7 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
     }
 
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
-        std::make_shared<Notification::WantAgent::WantAgent>(*asyncCallbackInfo->wantAgent), info->name, nullptr);
+        std::make_shared<Notification::WantAgent::WantAgent>(*asyncCallbackInfo->wantAgent), info->name, token);
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
 
     BGTASK_LOGI("end");
@@ -356,7 +363,14 @@ void StopBackgroundRunningExecuteCB(napi_env env, void *data)
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
         return;
     }
-    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStopBackgroundRunning(info->name, nullptr);
+
+    sptr<IRemoteObject> token {nullptr};
+    auto abilityContext = asyncCallbackInfo->ability->GetAbilityContext();
+    if (abilityContext) {
+        BGTASK_LOGI("get ability context succeed");
+        token = abilityContext->GetToken();
+    }
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStopBackgroundRunning(info->name, token);
 }
 
 napi_value StopBackgroundRunningAsync(napi_env env, napi_value *argv,

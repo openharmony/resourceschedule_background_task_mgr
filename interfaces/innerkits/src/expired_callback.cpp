@@ -22,8 +22,7 @@ ExpiredCallback::ExpiredCallback()
     impl_ = new ExpiredCallbackImpl(*this);
 };
 
-ExpiredCallback::~ExpiredCallback()
-{}
+ExpiredCallback::~ExpiredCallback() {}
 
 const sptr<ExpiredCallback::ExpiredCallbackImpl> ExpiredCallback::GetImpl() const
 {

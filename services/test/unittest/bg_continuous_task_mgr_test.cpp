@@ -61,8 +61,7 @@ void BgContinuousTaskMgrTest::TearDownTestCase()
     bgContinuousTaskMgr_ = nullptr;
 }
 
-void BgContinuousTaskMgrTest::SetUp()
-{}
+void BgContinuousTaskMgrTest::SetUp() {}
 
 void BgContinuousTaskMgrTest::TearDown()
 {
@@ -76,12 +75,10 @@ void BgContinuousTaskMgrTest::TearDown()
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
 public:
     virtual void OnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo>
-        &continuousTaskCallbackInfo) override
-    {}
+        &continuousTaskCallbackInfo) override {}
 
     virtual void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo>
-        &continuousTaskCallbackInfo) override
-    {}
+        &continuousTaskCallbackInfo) override {}
 };
 
 /**

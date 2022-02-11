@@ -36,8 +36,7 @@ ContinuousTaskRecord::ContinuousTaskRecord(const std::string &bundleName, const 
     const std::shared_ptr<Notification::WantAgent::WantAgent> &wantAgent, const sptr<IRemoteObject> &abilityToken,
     int32_t userId, uid_t uid, pid_t pid, uint32_t bgModeId, bool isNewApi)
     : bundleName_(bundleName), abilityName_(abilityName), wantAgent_(wantAgent), abilityToken_(abilityToken),
-    userId_(userId), uid_(uid), pid_(pid), bgModeId_(bgModeId), isNewApi_(isNewApi)
-{}
+    userId_(userId), uid_(uid), pid_(pid), bgModeId_(bgModeId), isNewApi_(isNewApi) {}
 
 std::string ContinuousTaskRecord::GetBundleName() const
 {

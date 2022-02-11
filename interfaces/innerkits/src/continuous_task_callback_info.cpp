@@ -18,30 +18,28 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo()
-{}
+ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo() {}
 
 ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo(int32_t typeId, uid_t creatorUid,
     pid_t creatorPid, std::string abilityName)
-    : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), abilityName_(abilityName)
-{}
+    : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), abilityName_(abilityName) {}
 
-int32_t ContinuousTaskCallbackInfo::GetTypeId()
+int32_t ContinuousTaskCallbackInfo::GetTypeId() const
 {
     return typeId_;
 }
 
-uid_t ContinuousTaskCallbackInfo::GetCreatorUid()
+uid_t ContinuousTaskCallbackInfo::GetCreatorUid() const
 {
     return creatorUid_;
 }
 
-pid_t ContinuousTaskCallbackInfo::GetCreatorPid()
+pid_t ContinuousTaskCallbackInfo::GetCreatorPid() const
 {
     return creatorPid_;
 }
 
-std::string ContinuousTaskCallbackInfo::GetAbilityName()
+std::string ContinuousTaskCallbackInfo::GetAbilityName() const
 {
     return abilityName_;
 }

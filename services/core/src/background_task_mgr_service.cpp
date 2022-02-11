@@ -36,11 +36,9 @@ const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
 }
 
 BackgroundTaskMgrService::BackgroundTaskMgrService()
-    : SystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID, true)
-{}
+    : SystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID, true) {}
 
-BackgroundTaskMgrService::~BackgroundTaskMgrService()
-{}
+BackgroundTaskMgrService::~BackgroundTaskMgrService() {}
 
 void BackgroundTaskMgrService::OnStart()
 {

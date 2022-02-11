@@ -39,13 +39,13 @@ public:
 
     virtual ErrCode RequestSuspendDelay(const std::u16string& reason,
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo) = 0;
-    virtual ErrCode  CancelSuspendDelay(int32_t requestId) = 0;
+    virtual ErrCode CancelSuspendDelay(int32_t requestId) = 0;
     virtual ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime) = 0;
     virtual ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam) = 0;
     virtual ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken) = 0;
-    virtual ErrCode  SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) = 0;
-    virtual ErrCode  UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) = 0;
-    virtual ErrCode  ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo) = 0;
+    virtual ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber> &subscriber) = 0;
+    virtual ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber> &subscriber) = 0;
+    virtual ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo) = 0;
 
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskMgr");
