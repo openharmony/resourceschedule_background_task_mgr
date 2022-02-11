@@ -12,8 +12,8 @@
 # limitations under the License.
 
 group("bgtaskmgr_interfaces") {
-    deps = [
-        "kits:backgroundtaskmanager",
-        "innerkits:bgtaskmgr_innerkits",
-    ]
+  deps = [
+    "innerkits:bgtaskmgr_innerkits",
+    "kits:backgroundtaskmanager",
+  ]
 }
