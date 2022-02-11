@@ -45,7 +45,7 @@ public:
  * @tc.name: SubscribeTransientTask_001
  * @tc.desc: subscribe transient task event.
  * @tc.type: FUNC
- * @tc.require: AR000GH86P AR000GH86O
+ * @tc.require: SR000GGTET AR000GH86P AR000GH86O
  */
 HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_001, TestSize.Level1)
 {
@@ -58,7 +58,7 @@ HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_001, TestSize.Level1)
  * @tc.name: SubscribeTransientTask_002
  * @tc.desc: subscribe transient task event.
  * @tc.type: FUNC
- * @tc.require: AR000GH86P AR000GH86O
+ * @tc.require: SR000GGTET AR000GH86P AR000GH86O
  */
 HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_002, TestSize.Level1)
 {
@@ -70,7 +70,7 @@ HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_002, TestSize.Level1)
  * @tc.name: SubscribeTransientTask_003
  * @tc.desc: subscribe transient task event.
  * @tc.type: FUNC
- * @tc.require: AR000GH86P AR000GH86O
+ * @tc.require: SR000GGTET AR000GH86P AR000GH86O
  */
 HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_003, TestSize.Level1)
 {
@@ -86,7 +86,7 @@ HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_003, TestSize.Level1)
  * @tc.name: UnsubscribeTransientTask_001
  * @tc.desc: unsubscribe transient task event.
  * @tc.type: FUNC
- * @tc.require: AR000GH86P AR000GH86O
+ * @tc.require: SR000GGTET AR000GH86P AR000GH86O
  */
 HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_001, TestSize.Level1)
 {
@@ -104,7 +104,7 @@ HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_001, TestSize.Level1)
  * @tc.name: UnsubscribeTransientTask_002
  * @tc.desc: unsubscribe transient task event.
  * @tc.type: FUNC
- * @tc.require: AR000GH86P AR000GH86O
+ * @tc.require: SR000GGTET AR000GH86P AR000GH86O
  */
 HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_002, TestSize.Level1)
 {
@@ -117,7 +117,7 @@ HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_002, TestSize.Level1)
  * @tc.name: UnsubscribeTransientTask_003
  * @tc.desc: unsubscribe transient task event.
  * @tc.type: FUNC
- * @tc.require: AR000GH86P AR000GH86O
+ * @tc.require: SR000GGTET AR000GH86P AR000GH86O
  */
 HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_003, TestSize.Level1)
 {
@@ -129,7 +129,7 @@ HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_003, TestSize.Level1)
  * @tc.name: Marshalling_001
  * @tc.desc: marshalling transient task app info.
  * @tc.type: FUNC
- * @tc.require: AR000GH86Q
+ * @tc.require: SR000GGTET AR000GH86Q
  */
 HWTEST_F(BgTransientTaskMgrTest, Marshalling_001, TestSize.Level1)
 {
@@ -144,7 +144,7 @@ HWTEST_F(BgTransientTaskMgrTest, Marshalling_001, TestSize.Level1)
  * @tc.name: Unmarshalling_001
  * @tc.desc: unmarshalling transient task app info.
  * @tc.type: FUNC
- * @tc.require: AR000GH86Q
+ * @tc.require: SR000GGTET AR000GH86Q
  */
 HWTEST_F(BgTransientTaskMgrTest, Unmarshalling_001, TestSize.Level1)
 {
