@@ -47,7 +47,7 @@ ohos_shared_library("bgtaskmgr_fwk") {
   public_configs = [ ":bgtaskmgr_public_config" ]
 
   external_deps = [
-    "ability_runtime:want",
+    "ability_base:want",
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
