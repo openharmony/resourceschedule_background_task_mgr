@@ -43,14 +43,12 @@ BackgroundTaskMgrService::~BackgroundTaskMgrService() {}
 void BackgroundTaskMgrService::OnStart()
 {
     if (state_ == ServiceRunningState::STATE_RUNNING) {
-        BGTASK_LOGI("Service has already started.");
+        BGTASK_LOGW("Service has already started.");
         return;
     }
-
     Init();
-
     if (!Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get())) {
-        BGTASK_LOGI("Service start failed!");
+        BGTASK_LOGE("Service start failed!");
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
@@ -142,7 +140,7 @@ ErrCode BackgroundTaskMgrService::ShellDump(const std::vector<std::string> &dump
     } else if (dumpOption[0] == CONTINUOUS_TASK_DUMP) {
         ret = BgContinuousTaskMgr::GetInstance()->ShellDump(dumpOption, dumpInfo);
     } else {
-        BGTASK_LOGI("invalid dump param");
+        BGTASK_LOGW("invalid dump param");
         ret = ERR_BGTASK_INVALID_PARAM;
     }
     return ret;

@@ -38,7 +38,6 @@ public:
 private:
     bool Connect();
     void Disconnect();
-
     void OnRemoteDied(const wptr<IRemoteObject> &object);
 
 private:

@@ -32,7 +32,6 @@ public:
     AppStateObserver();
     ~AppStateObserver();
     void OnProcessDied(const AppExecFwk::ProcessData &processData) override;
-
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
     void SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr_);
     bool Subscribe();

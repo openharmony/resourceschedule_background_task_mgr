@@ -63,7 +63,7 @@ void BgTaskObserver::OnContinuousTaskStop(const std::shared_ptr<OHOS::Background
 
 void BgTaskObserver::OnRemoteDied(const wptr<IRemoteObject> &object)
 {
-    BGTASK_LOGI("remote service died");
+    BGTASK_LOGW("remote service died");
     isRemoteDied_.store(true);
 }
 }

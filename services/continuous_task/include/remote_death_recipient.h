@@ -28,6 +28,7 @@ public:
     {
         callback_ = callback;
     }
+
     ~RemoteDeathRecipient()
     {
         callback_ = nullptr;

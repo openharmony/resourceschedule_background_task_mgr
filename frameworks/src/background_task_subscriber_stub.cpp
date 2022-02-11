@@ -114,7 +114,6 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskStart(MessageParcel 
     }
 
     OnContinuousTaskStart(continuousTaskCallbackInfo);
-    BGTASK_LOGI("end");
     return ERR_OK;
 }
 
@@ -128,7 +127,6 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskCancel(MessageParcel
     }
 
     OnContinuousTaskStop(continuousTaskCallbackInfo);
-    BGTASK_LOGI("end");
     return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr

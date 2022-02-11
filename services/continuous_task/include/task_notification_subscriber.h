@@ -25,27 +25,17 @@ class BgContinuousTaskMgr;
 class TaskNotificationSubscriber : public Notification::NotificationSubscriber {
 public:
     TaskNotificationSubscriber();
-
     virtual ~TaskNotificationSubscriber();
-
     virtual void OnConnected() override;
-
     virtual void OnDisconnected() override;
-
     virtual void OnCanceled(const std::shared_ptr<Notification::Notification> &request) override;
-
     virtual void OnCanceled(const std::shared_ptr<Notification::Notification> &request,
         const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap, int deleteReason) override;
-
     virtual void OnConsumed(const std::shared_ptr<Notification::Notification> &request) override;
-
     virtual void OnConsumed(const std::shared_ptr<Notification::Notification> &request,
         const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap) override;
-
     virtual void OnUpdate(const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap) override;
-
     virtual void OnDied() override;
-
     virtual void OnDoNotDisturbDateChange(
         const std::shared_ptr<Notification::NotificationDoNotDisturbDate> &date) override;
 
