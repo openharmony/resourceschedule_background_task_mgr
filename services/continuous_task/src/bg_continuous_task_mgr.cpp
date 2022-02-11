@@ -86,8 +86,8 @@ bool BgContinuousTaskMgr::Init()
         BGTASK_LOGE("BgContinuousTaskMgr handler create failed!");
         return false;
     }
-    auto task = [this]() { this->InitNecessaryState(); };
-    handler_->PostSyncTask(task);
+    auto registerTask = [this]() { this->InitNecessaryState(); };
+    handler_->PostSyncTask(registerTask);
     return true;
 }
 
@@ -130,11 +130,21 @@ void BgContinuousTaskMgr::InitNecessaryState()
         BGTASK_LOGE("RegisterSysCommEventListener failed");
         isInitSucceed = false;
     }
-    if (!GetContinuousTaskText()) {
-        BGTASK_LOGE("GetContinuousTaskText failed");
-        isInitSucceed = false;
+    if (isInitSucceed) {
+        auto getPromptTask = [this]() { this->InitNotificationPrompt(); };
+        handler_->PostTask(getPromptTask, DELAY_TIME);
     }
-    isSysReady_.store(isInitSucceed);
+}
+
+void BgContinuousTaskMgr::InitNotificationPrompt() {
+    if (!GetContinuousTaskText()) {
+        BGTASK_LOGW("init continuous task notification prompt failed. will try again");
+        isSysReady_.store(false);
+        auto task = [this]() { this->InitNotificationPrompt(); };
+        handler_->PostTask(task, DELAY_TIME);
+        return;
+    }
+    isSysReady_.store(true);
 }
 
 bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
