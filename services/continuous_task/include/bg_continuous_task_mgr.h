@@ -74,6 +74,8 @@ public:
 
     void InitNecessaryState();
 
+    void InitNotificationPrompt();
+
     void Clear();
 
 private:
