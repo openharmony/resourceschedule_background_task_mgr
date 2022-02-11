@@ -53,76 +53,41 @@ class BgContinuousTaskMgr : public DelayedSingleton<BgContinuousTaskMgr>,
                             public std::enable_shared_from_this<BgContinuousTaskMgr> {
 public:
     ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam);
-
     ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken);
-
     ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
-
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
-
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
-
     bool StopContinuousTaskByUser(const std::string &mapKey);
-
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, uid_t uid);
-
     void OnProcessDied(int32_t pid);
-
     void OnRemoteSubscriberDied(const wptr<IRemoteObject> &object);
-
     bool Init();
-
     void InitNecessaryState();
-
     void InitNotificationPrompt();
-
     void Clear();
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
-
     ErrCode StopBackgroundRunningInner(uid_t uid, const std::string &abilityName,
         const sptr<IRemoteObject> &abilityToken);
-
     ErrCode AddSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);
-
     ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);
-
     ErrCode ShellDumpInner(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
-
-    void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
-
-    void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
-
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
-
+    void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
+    void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);
-
-    bool InitAllBundleBriefInfos();
-
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
-
     std::string CreateNotificationLabel(uid_t uid, const std::string &bundleName,
         const std::string &abilityName, sptr<IRemoteObject> abilityToken);
-
     uint32_t GetBackgroundModeInfo(uid_t uid, std::string &abilityName);
-
     bool AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
-
     bool RegisterNotificationSubscriber();
-
     bool RegisterSysCommEventListener();
-
     bool RegisterAppStateObserver();
-
     bool GetContinuousTaskText();
-
     bool SetCachedBundleInfo(uid_t uid, int32_t userId, std::string &bundleName);
-
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
-
-    std::string CreateNotificationText(int32_t typeId);
-
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);
 

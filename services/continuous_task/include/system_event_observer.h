@@ -29,14 +29,10 @@ class SystemEventObserver : public EventFwk::CommonEventSubscriber,
 public:
     SystemEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo);
     ~SystemEventObserver() = default;
-
     void OnReceiveEvent(const EventFwk::CommonEventData &eventData) override;
-
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
     void SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr_);
-
     bool Subscribe();
-
     bool Unsubscribe();
 
 private:

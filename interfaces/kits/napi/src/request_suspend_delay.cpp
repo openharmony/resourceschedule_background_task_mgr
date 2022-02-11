@@ -38,7 +38,7 @@ void CallbackInstance::OnExpired()
     BGTASK_LOGI("enter");
 
     if (expiredCallbackInfo_.ref == nullptr) {
-        BGTASK_LOGI("expired callback unset");
+        BGTASK_LOGE("expired callback unset");
         return;
     }
 
@@ -116,7 +116,7 @@ napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
     napi_value result = nullptr;
     napi_create_object(env, &result);
     if (!Common::SetDelaySuspendInfo(env, delaySuspendInfo, result)) {
-        BGTASK_LOGI("Set DelaySuspendInfo object failed");
+        BGTASK_LOGW("Set DelaySuspendInfo object failed");
     }
     return result;
 }

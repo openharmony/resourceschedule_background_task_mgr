@@ -68,7 +68,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
 
     if (labelSplits.empty() || labelSplits[LABEL_BGMODE_PREFIX_POS] != NOTIFICATION_PREFIX
         || labelSplits.size() != LABEL_SIZE) {
-        BGTASK_LOGW("notification callback label is invalid");
+        BGTASK_LOGW("callback notification label is invalid");
         return;
     }
 
@@ -77,13 +77,12 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         return;
     }
 
-    BGTASK_LOGI("stop continuous task by user, the label is : %{public}s", notificationLabel.c_str());
     std::shared_ptr<AAFwk::WantParams> extraInfo = request.GetAdditionalData();
-
     if (extraInfo == nullptr) {
-        BGTASK_LOGI("notification extraInfo is null");
+        BGTASK_LOGE("notification extraInfo is null");
         return;
     }
+    BGTASK_LOGI("stop continuous task by user, the label is : %{public}s", notificationLabel.c_str());
 
     std::string abilityName = AAFwk::String::Unbox(AAFwk::IString::Query(extraInfo->GetParam("abilityName")));
     std::string taskInfoMapKey = labelSplits[LABEL_APP_UID_POS] + LABEL_SPLITER + abilityName

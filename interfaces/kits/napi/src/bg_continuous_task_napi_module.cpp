@@ -72,7 +72,7 @@ AsyncCallbackInfo *CreateAsyncCallbackInfo(napi_env env)
 {
     BGTASK_LOGI("begin");
     if (env == nullptr) {
-        BGTASK_LOGE("env == nullptr.");
+        BGTASK_LOGE("env is nullptr.");
         return nullptr;
     }
 
@@ -101,7 +101,7 @@ AsyncCallbackInfo *CreateAsyncCallbackInfo(napi_env env)
 
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo;
     if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo == nullptr");
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
         return nullptr;
     }
     asyncCallbackInfo->env = env;
@@ -119,7 +119,7 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
     BGTASK_LOGI("begin");
     AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
     if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo == nullptr");
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
         return;
     }
     if (asyncCallbackInfo->errCode != ERR_OK) {
@@ -128,12 +128,12 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
     }
     if (asyncCallbackInfo->ability == nullptr) {
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
-        BGTASK_LOGE("ability == nullptr");
+        BGTASK_LOGE("ability is nullptr");
         return;
     }
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->ability->GetAbilityInfo();
     if (info == nullptr) {
-        BGTASK_LOGE("info == nullptr");
+        BGTASK_LOGE("info is nullptr");
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
         return;
     }
@@ -216,7 +216,7 @@ napi_value StartBackgroundRunningAsync(
 {
     BGTASK_LOGI("begin");
     if (argv == nullptr || asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("param == nullptr");
+        BGTASK_LOGE("param is nullptr");
         return nullptr;
     }
     napi_value resourceName = 0;
@@ -244,7 +244,7 @@ napi_value StartBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncC
 {
     BGTASK_LOGI("begin");
     if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("param == nullptr");
+        BGTASK_LOGE("param is nullptr");
         return nullptr;
     }
     napi_value resourceName;
@@ -271,13 +271,11 @@ napi_value GetBackgroundMode(const napi_env &env, const napi_value &value, int32
     BGTASK_LOGI("begin");
 
     napi_valuetype valuetype = napi_undefined;
-
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     NAPI_ASSERT(env, valuetype == napi_number, "Wrong argument type. Number expected.");
     napi_get_value_int32(env, value, &bgMode);
 
     BGTASK_LOGI("get bgmode info: %{public}d", bgMode);
-
     return WrapVoidToJS(env);
 }
 
@@ -333,7 +331,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
     }
 
     if (ret == nullptr) {
-        BGTASK_LOGE("ret == nullpter");
+        BGTASK_LOGE("ret is nullpter");
         if (asyncCallbackInfo != nullptr) {
             delete asyncCallbackInfo;
             asyncCallbackInfo = nullptr;
@@ -349,17 +347,17 @@ void StopBackgroundRunningExecuteCB(napi_env env, void *data)
     BGTASK_LOGI("begin");
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo == nullptr");
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
         return;
     }
     if (asyncCallbackInfo->ability == nullptr) {
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
-        BGTASK_LOGE("ability == nullptr");
+        BGTASK_LOGE("ability is nullptr");
         return;
     }
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->ability->GetAbilityInfo();
     if (info == nullptr) {
-        BGTASK_LOGE("abilityInfo == nullptr");
+        BGTASK_LOGE("abilityInfo is nullptr");
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
         return;
     }
@@ -378,7 +376,7 @@ napi_value StopBackgroundRunningAsync(napi_env env, napi_value *argv,
 {
     BGTASK_LOGI("begin");
     if (argv == nullptr || asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("param == nullptr");
+        BGTASK_LOGE("param is nullptr");
         return nullptr;
     }
     napi_value resourceName = 0;
@@ -406,7 +404,7 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
 {
     BGTASK_LOGI("begin");
     if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("param == nullptr");
+        BGTASK_LOGE("param is nullptr");
         return nullptr;
     }
     napi_value resourceName = 0;
@@ -435,7 +433,7 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
     BGTASK_LOGI("begin");
     AsyncCallbackInfo *asyncCallbackInfo = CreateAsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo == nullpter");
+        BGTASK_LOGE("asyncCallbackInfo is nullpter");
         return WrapVoidToJS(env);
     }
 
@@ -458,7 +456,7 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
     }
 
     if (ret == nullptr) {
-        BGTASK_LOGE("ret == nullpter");
+        BGTASK_LOGE("ret is nullpter");
         if (asyncCallbackInfo != nullptr) {
             delete asyncCallbackInfo;
             asyncCallbackInfo = nullptr;

@@ -228,7 +228,7 @@ bool BgContinuousTaskMgr::SetCachedBundleInfo(uid_t uid, int32_t userId, std::st
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
         AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId)) {
-        BGTASK_LOGW("get bundle info: %{public}s failure!", bundleName.c_str());
+        BGTASK_LOGE("get bundle info: %{public}s failure!", bundleName.c_str());
         return false;
     }
 
@@ -296,7 +296,7 @@ bool checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool
         uint32_t recordedBgMode = BG_MODE_INDEX_HEAD << (requestedBgModeId - 1);
         if ((recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION || recordedBgMode == SYSTEM_APP_BGMODE_VOIP)
             && !BundleManagerHelper::GetInstance()->IsSystemApp(uid)) {
-            BGTASK_LOGW("voip and wifiInteraction background mode only support for system app");
+            BGTASK_LOGE("voip and wifiInteraction background mode only support for system app");
             return false;
         }
         if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode
@@ -468,7 +468,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     notificationRequest.SetCreatorUserId(-2);
 
     if (Notification::NotificationHelper::PublishContinuousTaskNotification(notificationRequest) != ERR_OK) {
-        BGTASK_LOGI("publish notification error");
+        BGTASK_LOGE("publish notification error");
         return ERR_BGTASK_NOTIFICATION_ERR;
     }
     continuousTaskRecord->notificationLabel_ = notificationLabel;
