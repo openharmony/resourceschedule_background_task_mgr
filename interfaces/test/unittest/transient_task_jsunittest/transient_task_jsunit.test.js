@@ -49,7 +49,7 @@ describe("TransientTaskJsTest", function () {
      * @tc.name: TransientTaskJsTest001
      * @tc.desc: test request a suspend delay
      * @tc.type: FUNC
-     * @tc.require: AR000GH86K AR000GH86N AR000GH86L
+     * @tc.require: SR000GGTES AR000GH86K AR000GH86N AR000GH86L
      */
     it("TransientTaskJsTest001", 0, async function (done) {
         console.info('----------------------TransientTaskJsTest001---------------------------');
@@ -69,7 +69,7 @@ describe("TransientTaskJsTest", function () {
      * @tc.name: TransientTaskJsTest002
      * @tc.desc: test transient task more than three
      * @tc.type: FUNC
-     * @tc.require: AR000GH86K AR000GH86L AR000GH86N
+     * @tc.require: SR000GGTES AR000GH86K AR000GH86L AR000GH86N
      */
     it("TransientTaskJsTest002", 0, async function (done) {
         console.info('----------------------TransientTaskJsTest002---------------------------');
@@ -94,7 +94,7 @@ describe("TransientTaskJsTest", function () {
      * @tc.name: TransientTaskJsTest003
      * @tc.desc: test getRemainingDelayTime Promise
      * @tc.type: FUNC
-     * @tc.require: AR000GH86M AR000GH860 AR000GH86L
+     * @tc.require: SR000GGTJV AR000GH86M AR000GH860 AR000GH86L
      */
     it("TransientTaskJsTest003", 0, async function (done) {
         function callback() {}
@@ -126,7 +126,7 @@ describe("TransientTaskJsTest", function () {
      * @tc.name: TransientTaskJsTest004
      * @tc.desc: test getRemainingDelayTime Callback
      * @tc.type: FUNC
-     * @tc.require: AR000GH86M AR000GH860 AR000GH86L
+     * @tc.require: SR000GGTJV AR000GH86M AR000GH860 AR000GH86L
      */
     it("TransientTaskJsTest004", 0, async function (done) {
         function callback() {}
