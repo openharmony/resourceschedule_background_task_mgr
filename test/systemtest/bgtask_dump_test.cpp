@@ -92,7 +92,7 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_001, Function | MediumTest | L
  * @tc.name: BgtaskDumpTest_ShellDump_002
  * @tc.desc: Shell dump
  * @tc.type: FUNC
- * @tc.require: AR000GH6EQ
+ * @tc.require: SR000GGT80 AR000GH6EQ
  */
 HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_002, Function | MediumTest | Level0)
 {
