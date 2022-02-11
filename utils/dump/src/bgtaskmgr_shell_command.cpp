@@ -55,8 +55,7 @@ static const std::string DUMP_HELP_MSG =
     "           --cancel <continuous task key>  cancel one task by specifying task key\n";
 }  // namespace
 
-BgtaskmgrShellCommand::BgtaskmgrShellCommand(int argc, char *argv[]) : ShellCommand(argc, argv, "bgtask")
-{}
+BgtaskmgrShellCommand::BgtaskmgrShellCommand(int argc, char *argv[]) : ShellCommand(argc, argv, "bgtask") {}
 
 ErrCode BgtaskmgrShellCommand::CreateCommandMap()
 {

@@ -24,8 +24,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 static const int32_t REQUEST_SUSPEND_DELAY_PARAMS = 2;
 
-CallbackInstance::CallbackInstance()
-{}
+CallbackInstance::CallbackInstance() {}
 
 CallbackInstance::~CallbackInstance()
 {

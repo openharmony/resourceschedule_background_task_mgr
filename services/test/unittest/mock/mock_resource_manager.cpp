@@ -24,14 +24,11 @@ ResourceManager *CreateResourceManager()
     return impl;
 }
 
-ResourceManager::~ResourceManager()
-{}
+ResourceManager::~ResourceManager() {}
 
-ResourceManagerImpl::ResourceManagerImpl()
-{}
+ResourceManagerImpl::ResourceManagerImpl() {}
 
-ResourceManagerImpl::~ResourceManagerImpl()
-{}
+ResourceManagerImpl::~ResourceManagerImpl() {}
 
 bool ResourceManagerImpl::AddResource(const char *path)
 {
@@ -43,8 +40,7 @@ RState ResourceManagerImpl::UpdateResConfig(ResConfig &resConfig)
     return SUCCESS;
 }
 
-void ResourceManagerImpl::GetResConfig(ResConfig &resConfig)
-{}
+void ResourceManagerImpl::GetResConfig(ResConfig &resConfig) {}
 
 RState ResourceManagerImpl::GetStringById(uint32_t id, std::string &outValue)
 {

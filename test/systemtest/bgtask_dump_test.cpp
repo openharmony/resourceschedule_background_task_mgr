@@ -40,11 +40,9 @@ public:
     std::shared_ptr<BackgroundTaskManager> bgtaskMgr_;
 };
 
-void BgtaskDumpTest::SetUpTestCase()
-{}
+void BgtaskDumpTest::SetUpTestCase() {}
 
-void BgtaskDumpTest::TearDownTestCase()
-{}
+void BgtaskDumpTest::TearDownTestCase() {}
 
 void BgtaskDumpTest::SetUp()
 {
@@ -53,8 +51,7 @@ void BgtaskDumpTest::SetUp()
     }
 }
 
-void BgtaskDumpTest::TearDown()
-{}
+void BgtaskDumpTest::TearDown() {}
 
 /*
  * @tc.name: BgtaskDumpTest_GetServiceObject_001

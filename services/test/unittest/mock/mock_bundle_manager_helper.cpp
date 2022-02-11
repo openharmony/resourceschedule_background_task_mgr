@@ -25,11 +25,9 @@ namespace {
 static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
 }
 
-BundleManagerHelper::BundleManagerHelper()
-{}
+BundleManagerHelper::BundleManagerHelper() {}
 
-BundleManagerHelper::~BundleManagerHelper()
-{}
+BundleManagerHelper::~BundleManagerHelper() {}
 
 std::string BundleManagerHelper::GetClientBundleName(uid_t uid)
 {
@@ -63,10 +61,8 @@ bool BundleManagerHelper::Connect()
     return true;
 }
 
-void BundleManagerHelper::Disconnect()
-{}
+void BundleManagerHelper::Disconnect() {}
 
-void BundleManagerHelper::OnRemoteDied(const wptr<IRemoteObject> &object)
-{}
+void BundleManagerHelper::OnRemoteDied(const wptr<IRemoteObject> &object) {}
 }
 }

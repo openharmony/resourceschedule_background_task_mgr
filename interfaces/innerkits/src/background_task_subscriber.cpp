@@ -25,31 +25,23 @@ BackgroundTaskSubscriber::BackgroundTaskSubscriber()
     impl_ = new BackgroundTaskSubscriberImpl(*this);
 };
 
-BackgroundTaskSubscriber::~BackgroundTaskSubscriber()
-{}
+BackgroundTaskSubscriber::~BackgroundTaskSubscriber() {}
 
-void BackgroundTaskSubscriber::OnConnected()
-{}
+void BackgroundTaskSubscriber::OnConnected() {}
 
-void BackgroundTaskSubscriber::OnDisconnected()
-{}
+void BackgroundTaskSubscriber::OnDisconnected() {}
 
-void BackgroundTaskSubscriber::OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info)
-{}
+void BackgroundTaskSubscriber::OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) {}
 
-void BackgroundTaskSubscriber::OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info)
-{}
+void BackgroundTaskSubscriber::OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) {}
 
 void BackgroundTaskSubscriber::OnContinuousTaskStart(
-    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
-{}
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) {}
 
 void BackgroundTaskSubscriber::OnContinuousTaskStop(
-    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
-{}
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) {}
 
-void BackgroundTaskSubscriber::OnRemoteDied(const wptr<IRemoteObject> &object)
-{}
+void BackgroundTaskSubscriber::OnRemoteDied(const wptr<IRemoteObject> &object) {}
 
 const sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> BackgroundTaskSubscriber::GetImpl() const
 {

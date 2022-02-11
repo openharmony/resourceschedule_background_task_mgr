@@ -27,10 +27,10 @@ public:
     ContinuousTaskCallbackInfo();
     ContinuousTaskCallbackInfo(int32_t typeId, uid_t creatorUid, pid_t creatorPid, std::string abilityName);
 
-    int32_t GetTypeId();
-    uid_t GetCreatorUid();
-    pid_t GetCreatorPid();
-    std::string GetAbilityName();
+    int32_t GetTypeId() const;
+    uid_t GetCreatorUid() const;
+    pid_t GetCreatorPid() const;
+    std::string GetAbilityName() const;
     bool Marshalling(Parcel &parcel) const;
     static ContinuousTaskCallbackInfo *Unmarshalling(Parcel &parcel);
 

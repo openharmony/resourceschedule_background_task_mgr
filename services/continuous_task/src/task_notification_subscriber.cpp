@@ -39,20 +39,15 @@ static constexpr uint32_t LABEL_SIZE = 4;
 std::shared_ptr<BgContinuousTaskMgr> TaskNotificationSubscriber::continuousTaskMgr_
     = BgContinuousTaskMgr::GetInstance();
 
-TaskNotificationSubscriber::TaskNotificationSubscriber()
-{}
+TaskNotificationSubscriber::TaskNotificationSubscriber() {}
 
-TaskNotificationSubscriber::~TaskNotificationSubscriber()
-{}
+TaskNotificationSubscriber::~TaskNotificationSubscriber() {}
 
-void TaskNotificationSubscriber::OnConnected()
-{}
+void TaskNotificationSubscriber::OnConnected() {}
 
-void TaskNotificationSubscriber::OnDisconnected()
-{}
+void TaskNotificationSubscriber::OnDisconnected() {}
 
-void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::Notification> &notification)
-{}
+void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::Notification> &notification) {}
 
 void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::Notification> &notification,
     const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap, int deleteReason)
@@ -99,23 +94,18 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
     }
 }
 
-void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::Notification> &notification)
-{}
+void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::Notification> &notification) {}
 
 void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::Notification> &notification,
-    const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap)
-{}
+    const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap) {}
 
 void TaskNotificationSubscriber::OnUpdate(
-    const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap)
-{}
+    const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap) {}
 
-void TaskNotificationSubscriber::OnDied()
-{}
+void TaskNotificationSubscriber::OnDied() {}
 
 void TaskNotificationSubscriber::OnDoNotDisturbDateChange(
-    const std::shared_ptr<Notification::NotificationDoNotDisturbDate> &date)
-{}
+    const std::shared_ptr<Notification::NotificationDoNotDisturbDate> &date) {}
 
 std::vector<std::string> TaskNotificationSubscriber::StringSplit(const std::string &str, const char *delim)
 {
