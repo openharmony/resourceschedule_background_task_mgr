@@ -58,7 +58,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.name:ContinuousTaskJsTest001
      * @tc.desc:verify new startBackgroundrunning interface promise mode work properly
      * @tc.type: FUNC
-     * @tc.require: AR000GH6ER AR000GH6EM AR000GH6EN AR000GH6EO
+     * @tc.require: SR000GGT7U AR000GH6ER AR000GH6EM AR000GH6EN AR000GH6EO
      */
     it("ContinuousTaskJsTest001", 0, async function (done) {
         let wantAgentInfo = {
@@ -94,7 +94,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.name:ContinuousTaskJsTest002
      * @tc.desc:verify new startBackgroundrunning interface callback mode work properly
      * @tc.type: FUNC
-     * @tc.require: AR000GH6ER AR000GH6EP AR000GJ9PR AR000GH6G8
+     * @tc.require: SR000GGT7T AR000GH6ER AR000GH6EP AR000GJ9PR AR000GH6G8
      */
     it("ContinuousTaskJsTest002", 0, async function (done) {
         function conTaskCallback(err, data) {
@@ -130,7 +130,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.name:ContinuousTaskJsTest003
      * @tc.desc:verify old startBackgroundrunning interface promise mode work properly
      * @tc.type: FUNC
-     * @tc.require: AR000GH6ER AR000GH6EM AR000GH6G9 AR000GH56K
+     * @tc.require: SR000GGT7V AR000GH6ER AR000GH6EM AR000GH6G9 AR000GH56K
      */
     it("ContinuousTaskJsTest003", 0, async function (done) {
         let wantAgentInfo = {
@@ -182,7 +182,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.name:ContinuousTaskJsTest004
      * @tc.desc:verify old startBackgroundrunning interface callback mode work properly
      * @tc.type: FUNC
-     * @tc.require: AR000GH6ER AR000GH6EM AR000GH6G9 AR000GH6ET
+     * @tc.require: SR000GGT81 AR000GH6ER AR000GH6EM AR000GH6G9 AR000GH6ET
      */
     it("ContinuousTaskJsTest004", 0, async function (done) {
         function conTaskCallback(err, data) {
@@ -234,7 +234,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.name:ContinuousTaskJsTest005
      * @tc.desc:verify new api stopBackgroundrunning interface promise mode work properly
      * @tc.type: FUNC
-     * @tc.require: AR000GH6ES AR000GH6EM AR000GH6EN AR000GH6EO
+     * @tc.require: SR000GGT7U AR000GH6ES AR000GH6EM AR000GH6EN AR000GH6EO
      */
     it("ContinuousTaskJsTest005", 0, async function (done) {
         let wantAgentInfo = {
@@ -272,7 +272,7 @@ describe("ContinuousTaskJsTest", function () {
         * @tc.name:ContinuousTaskJsTest006
         * @tc.desc:verify new api stopBackgroundrunning interface callback mode work properly
         * @tc.type: FUNC
-        * @tc.require: AR000GH6ES AR000GH6EP AR000GJ9PR AR000GH6G8
+        * @tc.require: SR000GGT7T AR000GH6ES AR000GH6EP AR000GJ9PR AR000GH6G8
         */
     it("ContinuousTaskJsTest006", 0, async function (done) {
         function conTaskCallback(err, data) {
@@ -310,7 +310,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.name:ContinuousTaskJsTest007
      * @tc.desc:verify old api cancelBackgroundrunning interface promise mode work properly
      * @tc.type: FUNC
-     * @tc.require: AR000GH6ES AR000GH6EM AR000GH6G9 AR000GH56K
+     * @tc.require: SR000GGT7V AR000GH6ES AR000GH6EM AR000GH6G9 AR000GH56K
      */
     it("ContinuousTaskJsTest007", 0, async function (done) {
         let wantAgentInfo = {
@@ -349,7 +349,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.name:ContinuousTaskJsTest008
      * @tc.desc:verify old cancelBackgroundrunning interface callback mode work properly
      * @tc.type: FUNC
-     * @tc.require: AR000GH6ES AR000GH6EM AR000GH6G9 AR000GH6ET
+     * @tc.require: SR000GGT81 AR000GH6ES AR000GH6EM AR000GH6G9 AR000GH6ET
      */
     it("ContinuousTaskJsTest008", 0, async function (done) {
         function conTaskCallback(err, data) {

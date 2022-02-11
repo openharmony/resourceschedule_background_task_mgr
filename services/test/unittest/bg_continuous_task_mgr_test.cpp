@@ -85,7 +85,7 @@ public:
  * @tc.name: StartBackgroundRunning_001
  * @tc.desc: start background runnging use new api test.
  * @tc.type: FUNC
- * @tc.require: AR000GH6ER AR000GH6EM AR000GH6EN AR000GH6EO
+ * @tc.require: SR000GGT7U AR000GH6ER AR000GH6EM AR000GH6EN AR000GH6EO
  */
 HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
 {
@@ -111,7 +111,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
  * @tc.name: StartBackgroundRunning_002
  * @tc.desc: start background runnging use old api test.
  * @tc.type: FUNC
- * @tc.require: AR000GH6ER AR000GH6EP AR000GJ9PR AR000GH6G8
+ * @tc.require: SR000GGT7T AR000GH6ER AR000GH6EP AR000GJ9PR AR000GH6G8
  */
 HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
 {
@@ -129,7 +129,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
  * @tc.name: StopBackgroundRunning_001
  * @tc.desc: start background runnging use new api test.
  * @tc.type: FUNC
- * @tc.require: AR000GH6ES AR000GH6EM AR000GH6G9 AR000GH56K
+ * @tc.require: SR000GGT7V AR000GH6ES AR000GH6EM AR000GH6G9 AR000GH56K
  */
 HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
 {
@@ -150,7 +150,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
  * @tc.name: StartBackgroundRunning_001
  * @tc.desc: subscribe continuous task event callback test.
  * @tc.type: FUNC
- * @tc.require: AR000GH6EM AR000GH6G9 AR000GH6ET
+ * @tc.require: SR000GGT81 AR000GH6EM AR000GH6G9 AR000GH6ET
  */
 HWTEST_F(BgContinuousTaskMgrTest, SubscribeContinuousTask_001, TestSize.Level1)
 {
@@ -166,7 +166,7 @@ HWTEST_F(BgContinuousTaskMgrTest, SubscribeContinuousTask_001, TestSize.Level1)
  * @tc.name: UnsubscribeContinuousTask_001
  * @tc.desc: unsubscribe continuous task event callback test.
  * @tc.type: FUNC
- * @tc.require: AR000GH6EM AR000GH6G9 AR000GH6ET
+ * @tc.require: SR000GGT7U AR000GH6EM AR000GH6G9 AR000GH6ET
  */
 HWTEST_F(BgContinuousTaskMgrTest, UnsubscribeContinuousTask_001, TestSize.Level1)
 {
