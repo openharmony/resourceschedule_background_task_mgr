@@ -55,6 +55,7 @@ ohos_unittest("bgtask_unit_test") {
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",
+    "dmsfwk_standard:zuri",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
