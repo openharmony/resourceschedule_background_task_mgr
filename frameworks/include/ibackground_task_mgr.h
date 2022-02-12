@@ -23,9 +23,11 @@
 #include <nocopyable.h>
 
 #include "bgtaskmgr_inner_errors.h"
+#include "continuous_task_param.h"
 #include "delay_suspend_info.h"
 #include "iexpired_callback.h"
 #include "ibackground_task_subscriber.h"
+#include "want_agent.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -37,11 +39,13 @@ public:
 
     virtual ErrCode RequestSuspendDelay(const std::u16string& reason,
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo) = 0;
-    virtual ErrCode  CancelSuspendDelay(int32_t requestId) = 0;
+    virtual ErrCode CancelSuspendDelay(int32_t requestId) = 0;
     virtual ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime) = 0;
-    virtual ErrCode  SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) = 0;
-    virtual ErrCode  UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) = 0;
-    virtual ErrCode  ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo) = 0;
+    virtual ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam) = 0;
+    virtual ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken) = 0;
+    virtual ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber> &subscriber) = 0;
+    virtual ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber> &subscriber) = 0;
+    virtual ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo) = 0;
 
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskMgr");
@@ -51,6 +55,8 @@ protected:
         REQUEST_SUSPEND_DELAY = MIN_TRANSACTION_ID,
         CANCEL_SUSPEND_DELAY,
         GET_REMAINING_DELAY_TIME,
+        START_BACKGROUND_RUNNING,
+        STOP_BACKGROUND_RUNNING,
         SUBSCRIBE_BACKGROUND_TASK,
         UNSUBSCRIBE_BACKGROUND_TASK,
         SHELL_DUMP,

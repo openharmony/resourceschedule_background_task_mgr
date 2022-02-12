@@ -1,0 +1,44 @@
+{
+    "string": [
+        {
+            "name": "ohos_bgmode_prompt_data_transfer",
+            "value": "Running data transfer task"
+        },
+        {
+            "name": "ohos_bgmode_prompt_audio_playback",
+            "value": "Running audio playback task"
+        },
+        {
+            "name": "ohos_bgmode_prompt_audio_recording",
+            "value": "Running recording task"
+        },
+        {
+            "name": "ohos_bgmode_prompt_location",
+            "value": "Running location task"
+        },
+        {
+            "name": "ohos_bgmode_prompt_bluetooth_interaction",
+            "value": "Running bluetooth related task"
+        },
+        {
+            "name": "ohos_bgmode_prompt_multidevice_connection",
+            "value": "Running distributed task"
+        },
+        {
+            "name": "ohos_bgmode_prompt_wifi_interaction",
+            "value": "Running WLAN related task"
+        },
+        {
+            "name": "ohos_bgmode_prompt_voip",
+            "value": "Running voip task"
+        },
+        {
+            "name": "ohos_bgmode_prompt_task_keeping",
+            "value": "Running computing task"
+        },
+        {
+            "name": "ohos_bgmode_prompt_default_value",
+            "value": "Running continuous task"
+        }
+    ]
+}

@@ -23,11 +23,9 @@ std::shared_ptr<EventHandler> EventHandler::Current()
     return wp.lock();
 }
 
-EventHandler::EventHandler(const std::shared_ptr<EventRunner> &runner) : eventRunner_(runner)
-{}
+EventHandler::EventHandler(const std::shared_ptr<EventRunner> &runner) : eventRunner_(runner) {}
 
-EventHandler::~EventHandler()
-{}
+EventHandler::~EventHandler() {}
 
 bool EventHandler::SendEvent(InnerEvent::Pointer &event, int64_t delayTime, Priority priority)
 {
@@ -48,17 +46,13 @@ bool EventHandler::SendSyncEvent(InnerEvent::Pointer &event, Priority priority)
     return true;
 }
 
-void EventHandler::RemoveAllEvents()
-{}
+void EventHandler::RemoveAllEvents() {}
 
-void EventHandler::RemoveEvent(uint32_t innerEventId)
-{}
+void EventHandler::RemoveEvent(uint32_t innerEventId) {}
 
-void EventHandler::RemoveEvent(uint32_t innerEventId, int64_t param)
-{}
+void EventHandler::RemoveEvent(uint32_t innerEventId, int64_t param) {}
 
-void EventHandler::RemoveTask(const std::string &name)
-{}
+void EventHandler::RemoveTask(const std::string &name) {}
 
 ErrCode EventHandler::AddFileDescriptorListener(
     int32_t fileDescriptor, uint32_t events, const std::shared_ptr<FileDescriptorListener> &listener)
@@ -66,20 +60,15 @@ ErrCode EventHandler::AddFileDescriptorListener(
     return EVENT_HANDLER_ERR_INVALID_PARAM;
 }
 
-void EventHandler::RemoveAllFileDescriptorListeners()
-{}
+void EventHandler::RemoveAllFileDescriptorListeners() {}
 
-void EventHandler::RemoveFileDescriptorListener(int32_t fileDescriptor)
-{}
+void EventHandler::RemoveFileDescriptorListener(int32_t fileDescriptor) {}
 
-void EventHandler::SetEventRunner(const std::shared_ptr<EventRunner> &runner)
-{}
+void EventHandler::SetEventRunner(const std::shared_ptr<EventRunner> &runner) {}
 
-void EventHandler::DistributeEvent(const InnerEvent::Pointer &event)
-{}
+void EventHandler::DistributeEvent(const InnerEvent::Pointer &event) {}
 
-void EventHandler::Dump(Dumper &dumper)
-{}
+void EventHandler::Dump(Dumper &dumper) {}
 
 bool EventHandler::HasInnerEvent(uint32_t innerEventId)
 {
@@ -101,7 +90,6 @@ bool EventHandler::IsIdle()
     return true;
 }
 
-void EventHandler::ProcessEvent(const InnerEvent::Pointer &)
-{}
+void EventHandler::ProcessEvent(const InnerEvent::Pointer &) {}
 }  // namespace AppExecFwk
 }  // namespace OHOS

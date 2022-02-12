@@ -37,8 +37,7 @@ ShellCommand::ShellCommand(int argc, char *argv[], std::string name)
     }
 }
 
-ShellCommand::~ShellCommand()
-{}
+ShellCommand::~ShellCommand() {}
 
 ErrCode ShellCommand::OnCommand()
 {
@@ -105,7 +104,6 @@ std::string ShellCommand::GetUnknownOptionMsg(std::string &unknownOption) const
 
 std::string ShellCommand::GetMessageFromCode(const int32_t code) const
 {
-    BGTASK_LOGI("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
     BGTASK_LOGI("code = %{public}d", code);
 
     std::string result = "";

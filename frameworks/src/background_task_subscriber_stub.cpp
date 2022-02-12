@@ -47,18 +47,42 @@ int BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
     }
 
     switch (code) {
+        case ON_CONNECTED: {
+            return HandleOnConnected(data);
+        }
+        case ON_DISCONNECTED: {
+            return HandleOnDisconnected(data);
+        }
         case ON_TRANSIENT_TASK_START: {
             return HandleOnTransientTaskStart(data);
         }
         case ON_TRANSIENT_TASK_END: {
             return HandleOnTransientTaskEnd(data);
         }
+        case ON_CONTINUOUS_TASK_START: {
+            return HandleOnContinuousTaskStart(data);
+        }
+        case ON_CONTINUOUS_TASK_STOP: {
+            return HandleOnContinuousTaskCancel(data);
+        }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
 }
 
-int32_t BackgroundTaskSubscriberStub::HandleOnTransientTaskStart(MessageParcel& data)
+ErrCode BackgroundTaskSubscriberStub::HandleOnConnected(MessageParcel &data)
+{
+    OnConnected();
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnDisconnected(MessageParcel &data)
+{
+    OnDisconnected();
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnTransientTaskStart(MessageParcel& data)
 {
     auto info = TransientTaskAppInfo::Unmarshalling(data);
     if (info == nullptr) {
@@ -69,7 +93,7 @@ int32_t BackgroundTaskSubscriberStub::HandleOnTransientTaskStart(MessageParcel& 
     return ERR_NONE;
 }
 
-int32_t BackgroundTaskSubscriberStub::HandleOnTransientTaskEnd(MessageParcel& data)
+ErrCode BackgroundTaskSubscriberStub::HandleOnTransientTaskEnd(MessageParcel& data)
 {
     auto info = TransientTaskAppInfo::Unmarshalling(data);
     if (info == nullptr) {
@@ -78,6 +102,32 @@ int32_t BackgroundTaskSubscriberStub::HandleOnTransientTaskEnd(MessageParcel& da
     }
     OnTransientTaskEnd(info);
     return ERR_NONE;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskStart(MessageParcel &data)
+{
+    BGTASK_LOGI("begin");
+    sptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo = data.ReadParcelable<ContinuousTaskCallbackInfo>();
+    if (!continuousTaskCallbackInfo) {
+        BGTASK_LOGE("ContinuousTaskCallbackInfo ReadParcelable failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    OnContinuousTaskStart(continuousTaskCallbackInfo);
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskCancel(MessageParcel &data)
+{
+    BGTASK_LOGI("begin");
+    sptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo = data.ReadParcelable<ContinuousTaskCallbackInfo>();
+    if (!continuousTaskCallbackInfo) {
+        BGTASK_LOGE("ContinuousTaskCallbackInfo ReadParcelable failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    OnContinuousTaskStop(continuousTaskCallbackInfo);
+    return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

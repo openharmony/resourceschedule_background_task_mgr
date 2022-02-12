@@ -23,13 +23,19 @@ ohos_unittest("bgtask_unit_test") {
     "${bgtaskmgr_services_path}/transient_task/inlcude",
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
+    "//base/global/resmgr_standard/frameworks/resmgr/include",
+    "//third_party/icu/icu4c/source/i18n",
   ]
 
   sources = [
     "background_task_mgr_service_test.cpp",
+    "bg_continuous_task_mgr_test.cpp",
     "bg_transient_task_mgr_test.cpp",
+    "mock/mock_bundle_manager_helper.cpp",
     "mock/mock_event_handler.cpp",
     "mock/mock_ipc.cpp",
+    "mock/mock_notification_helper.cpp",
+    "mock/mock_resource_manager.cpp",
   ]
 
   configs = [ "//utils/native/base:utils_config" ]
@@ -38,6 +44,8 @@ ohos_unittest("bgtask_unit_test") {
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
+    "//base/notification/ans_standard/frameworks/ans/core:ans_core",
+    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -47,9 +55,11 @@ ohos_unittest("bgtask_unit_test") {
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",
+    "dmsfwk_standard:zuri",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "multimedia_image_standard:image_native",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",

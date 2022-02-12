@@ -62,6 +62,35 @@ ErrCode BackgroundTaskManager::GetRemainingDelayTime(int32_t requestId, int32_t 
     return backgroundTaskMgrProxy_->GetRemainingDelayTime(requestId, delayTime);
 }
 
+ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam)
+{
+    BGTASK_LOGI("begin");
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
+    }
+
+    sptr<ContinuousTaskParam> taskParamPtr = new (std::nothrow) ContinuousTaskParam(taskParam);
+    if (taskParamPtr == nullptr) {
+        BGTASK_LOGE("Failed to create continuous task param");
+        return ERR_BGTASK_NO_MEMORY;
+    }
+    BGTASK_LOGI("end");
+    return backgroundTaskMgrProxy_->StartBackgroundRunning(taskParamPtr);
+}
+
+ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &abilityName,
+    const sptr<IRemoteObject> &abilityToken)
+{
+    BGTASK_LOGI("begin");
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
+    }
+    BGTASK_LOGI("end");
+    return backgroundTaskMgrProxy_->StopBackgroundRunning(abilityName, abilityToken);
+}
+
 ErrCode BackgroundTaskManager::SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)
 {
     if (!GetBackgroundTaskManagerProxy()) {

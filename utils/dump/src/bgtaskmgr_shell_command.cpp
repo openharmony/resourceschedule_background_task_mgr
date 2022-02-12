@@ -28,9 +28,11 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
+static constexpr int32_t MIN_CONTINUOUS_TASK_DUMP_PARAMS_NUM = 4;
 static const struct option OPTIONS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"transient", no_argument, nullptr, 'T'},
+    {"continuous", no_argument, nullptr, 'C'},
 };
 
 static const std::string HELP_MSG = "usage: bgtask <command> [<options>]\n"
@@ -47,11 +49,13 @@ static const std::string DUMP_HELP_MSG =
     "           SCREEN_ON                       sreen on mode\n"
     "           SCREEN_OFF                      sreen off mode\n"
     "           DUMP_CANCEL                     cancel dump mode\n"
-    "           All                             list all request\n";
+    "           All                             list all request\n"
+    "  -C,      --all                           list all running continuous task infos\n"
+    "           --cancel_all                    cancel all running continuous task\n"
+    "           --cancel <continuous task key>  cancel one task by specifying task key\n";
 }  // namespace
 
-BgtaskmgrShellCommand::BgtaskmgrShellCommand(int argc, char *argv[]) : ShellCommand(argc, argv, "bgtask")
-{}
+BgtaskmgrShellCommand::BgtaskmgrShellCommand(int argc, char *argv[]) : ShellCommand(argc, argv, "bgtask") {}
 
 ErrCode BgtaskmgrShellCommand::CreateCommandMap()
 {
@@ -95,7 +99,7 @@ ErrCode BgtaskmgrShellCommand::RunAsHelpCommand()
 ErrCode BgtaskmgrShellCommand::RunAsDumpCommand()
 {
     int ind = 0;
-    int option = getopt_long(argc_, argv_, "hT", OPTIONS, &ind);
+    int option = getopt_long(argc_, argv_, "hTC", OPTIONS, &ind);
 
     ErrCode ret = ERR_OK;
     if (btm_ == nullptr) {
@@ -111,6 +115,14 @@ ErrCode BgtaskmgrShellCommand::RunAsDumpCommand()
             if (btm_ != nullptr) {
                 ret = btm_->ShellDump(argList_, infos);
             }
+            break;
+        case 'C':
+            if (argc_ < MIN_CONTINUOUS_TASK_DUMP_PARAMS_NUM || btm_ == nullptr) {
+                resultReceiver_.append(DUMP_HELP_MSG);
+                ret = ERR_BGTASK_SERVICE_NOT_CONNECTED;
+                break;
+            }
+            ret = btm_->ShellDump(argList_, infos);
             break;
         default:
             resultReceiver_.append("Please input correct command!\n");

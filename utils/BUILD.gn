@@ -16,4 +16,5 @@ import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
 group("bgtaskmgr_dump") {
   deps = [ "dump:btm_target" ]
+  deps += [ "bgtask_observer:bgtask_observer_target" ]
 }

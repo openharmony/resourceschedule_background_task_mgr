@@ -18,6 +18,7 @@
 
 #include <iremote_stub.h>
 
+#include "bgtaskmgr_inner_errors.h"
 #include "ibackground_task_subscriber.h"
 
 namespace OHOS {
@@ -30,8 +31,12 @@ public:
     int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
 
 private:
-    int32_t HandleOnTransientTaskStart(MessageParcel& data);
-    int32_t HandleOnTransientTaskEnd(MessageParcel& data);
+    ErrCode HandleOnConnected(MessageParcel &data);
+    ErrCode HandleOnDisconnected(MessageParcel &data);
+    ErrCode HandleOnTransientTaskStart(MessageParcel& data);
+    ErrCode HandleOnTransientTaskEnd(MessageParcel& data);
+    ErrCode HandleOnContinuousTaskStart(MessageParcel &data);
+    ErrCode HandleOnContinuousTaskCancel(MessageParcel &data);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

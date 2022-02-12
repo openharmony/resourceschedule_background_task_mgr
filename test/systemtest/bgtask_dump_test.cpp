@@ -40,11 +40,9 @@ public:
     std::shared_ptr<BackgroundTaskManager> bgtaskMgr_;
 };
 
-void BgtaskDumpTest::SetUpTestCase()
-{}
+void BgtaskDumpTest::SetUpTestCase() {}
 
-void BgtaskDumpTest::TearDownTestCase()
-{}
+void BgtaskDumpTest::TearDownTestCase() {}
 
 void BgtaskDumpTest::SetUp()
 {
@@ -53,8 +51,7 @@ void BgtaskDumpTest::SetUp()
     }
 }
 
-void BgtaskDumpTest::TearDown()
-{}
+void BgtaskDumpTest::TearDown() {}
 
 /*
  * @tc.name: BgtaskDumpTest_GetServiceObject_001
@@ -85,6 +82,24 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_001, Function | MediumTest | L
     std::vector<std::string> options;
     options.push_back("-T");
     options.push_back("All");
+    if (bgtaskMgr_ != nullptr) {
+        auto ret = bgtaskMgr_->ShellDump(options, infos);
+        EXPECT_EQ(ret, 0);
+    }
+}
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_002
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: SR000GGT80 AR000GH6EQ
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_002, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-C");
+    options.push_back("--all");
     if (bgtaskMgr_ != nullptr) {
         auto ret = bgtaskMgr_->ShellDump(options, infos);
         EXPECT_EQ(ret, 0);
