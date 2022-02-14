@@ -106,6 +106,9 @@ void TaskNotificationSubscriber::OnDied() {}
 void TaskNotificationSubscriber::OnDoNotDisturbDateChange(
     const std::shared_ptr<Notification::NotificationDoNotDisturbDate> &date) {}
 
+void TaskNotificationSubscriber::OnEnabledNotificationChanged(
+    const std::shared_ptr<Notification::EnabledNotificationCallbackData> &callbackData) {}
+
 std::vector<std::string> TaskNotificationSubscriber::StringSplit(const std::string &str, const char *delim)
 {
     std::vector <std::string> strlist;
