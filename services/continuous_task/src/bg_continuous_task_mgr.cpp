@@ -116,27 +116,24 @@ void BgContinuousTaskMgr::InitNecessaryState()
         return;
     }
 
-    bool isInitSucceed = true;
     if (!RegisterNotificationSubscriber()) {
         BGTASK_LOGE("RegisterNotificationSubscriber failed");
-        isInitSucceed = false;
+        return;
     }
     if (!RegisterAppStateObserver()) {
         BGTASK_LOGE("RegisterAppStateObserver failed");
-        isInitSucceed = false;
+        return;
     }
     if (!RegisterSysCommEventListener()) {
         BGTASK_LOGE("RegisterSysCommEventListener failed");
-        isInitSucceed = false;
+        return;
     }
     if (!RegisterOsAccountObserver()) {
         BGTASK_LOGE("RegisterOsAccountObserver failed");
-        isInitSucceed = false;
+        return;
     }
-    if (isInitSucceed) {
-        auto getPromptTask = [this]() { this->InitNotificationPrompt(); };
-        handler_->PostTask(getPromptTask, DELAY_TIME);
-    }
+    auto getPromptTask = [this]() { this->InitNotificationPrompt(); };
+    handler_->PostTask(getPromptTask, DELAY_TIME);
 }
 
 void BgContinuousTaskMgr::InitNotificationPrompt()
