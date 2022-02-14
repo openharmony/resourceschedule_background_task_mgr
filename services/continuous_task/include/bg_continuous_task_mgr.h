@@ -32,6 +32,7 @@
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
 #include "ibackground_task_subscriber.h"
+#include "os_account_observer.h"
 #include "remote_death_recipient.h"
 #include "system_event_observer.h"
 
@@ -58,6 +59,7 @@ public:
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     bool StopContinuousTaskByUser(const std::string &mapKey);
+    void OnAccountsStateChanged(int id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, uid_t uid);
     void OnProcessDied(int32_t pid);
     void OnRemoteSubscriberDied(const wptr<IRemoteObject> &object);
@@ -85,6 +87,7 @@ private:
     bool RegisterNotificationSubscriber();
     bool RegisterSysCommEventListener();
     bool RegisterAppStateObserver();
+    bool RegisterOsAccountObserver();
     bool GetContinuousTaskText();
     bool SetCachedBundleInfo(uid_t uid, int32_t userId, std::string &bundleName);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
@@ -99,6 +102,7 @@ private:
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
     std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
+    std::shared_ptr<OsAccountObserver> osAccountObserver_ {nullptr};
     std::list<sptr<IBackgroundTaskSubscriber>> bgTaskSubscribers_ {};
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> subscriberRecipients_ {};
     std::unordered_map<uid_t, CachedBundleInfo> cachedBundleInfos_ {};

@@ -108,6 +108,7 @@ void BgContinuousTaskMgr::InitNecessaryState()
         || systemAbilityManager->CheckSystemAbility(APP_MGR_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(ADVANCED_NOTIFICATION_SERVICE_ABILITY_ID) == nullptr
+        || systemAbilityManager->CheckSystemAbility(SUBSYS_ACCOUNT_SYS_ABILITY_ID_BEGIN) == nullptr
         || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr) {
         BGTASK_LOGW("request system service is not ready yet!");
         auto task = [this]() { this->InitNecessaryState(); };
@@ -115,23 +116,24 @@ void BgContinuousTaskMgr::InitNecessaryState()
         return;
     }
 
-    bool isInitSucceed = true;
     if (!RegisterNotificationSubscriber()) {
         BGTASK_LOGE("RegisterNotificationSubscriber failed");
-        isInitSucceed = false;
+        return;
     }
     if (!RegisterAppStateObserver()) {
         BGTASK_LOGE("RegisterAppStateObserver failed");
-        isInitSucceed = false;
+        return;
     }
     if (!RegisterSysCommEventListener()) {
         BGTASK_LOGE("RegisterSysCommEventListener failed");
-        isInitSucceed = false;
+        return;
     }
-    if (isInitSucceed) {
-        auto getPromptTask = [this]() { this->InitNotificationPrompt(); };
-        handler_->PostTask(getPromptTask, DELAY_TIME);
+    if (!RegisterOsAccountObserver()) {
+        BGTASK_LOGE("RegisterOsAccountObserver failed");
+        return;
     }
+    auto getPromptTask = [this]() { this->InitNotificationPrompt(); };
+    handler_->PostTask(getPromptTask, DELAY_TIME);
 }
 
 void BgContinuousTaskMgr::InitNotificationPrompt()
@@ -219,6 +221,21 @@ bool BgContinuousTaskMgr::RegisterSysCommEventListener()
         systemEventListener_->SetEventHandler(handler_);
         systemEventListener_->SetBgContinuousTaskMgr(shared_from_this());
         res = systemEventListener_->Subscribe();
+    }
+    return res;
+}
+
+bool BgContinuousTaskMgr::RegisterOsAccountObserver()
+{
+    bool res = true;
+    OHOS::AccountSA::OsAccountSubscribeInfo osAccountSubscribeInfo;
+    osAccountSubscribeInfo.SetOsAccountSubscribeType(OHOS::AccountSA::OS_ACCOUNT_SUBSCRIBE_TYPE::ACTIVED);
+    osAccountSubscribeInfo.SetName("background_task_manager_service");
+    osAccountObserver_ = std::make_shared<OsAccountObserver>(osAccountSubscribeInfo);
+    if (osAccountObserver_ != nullptr) {
+        osAccountObserver_->SetEventHandler(handler_);
+        osAccountObserver_->SetBgContinuousTaskMgr(shared_from_this());
+        res = osAccountObserver_->Subscribe();
     }
     return res;
 }
@@ -377,7 +394,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
         + continuousTaskRecord->abilityName_ + SEPARATOR + abilityTokeLabel;
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
-        BGTASK_LOGI("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
+        BGTASK_LOGW("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
 
@@ -544,7 +561,7 @@ ErrCode BgContinuousTaskMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber>
         return ERR_BGTASK_SYS_NOT_READY;
     }
     if (subscriber == nullptr) {
-        BGTASK_LOGI("subscriber is null.");
+        BGTASK_LOGE("subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;
     }
 
@@ -759,7 +776,7 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDied(const wptr<IRemoteObject> &obje
         return;
     }
     if (object == nullptr) {
-        BGTASK_LOGI("remote object is null.");
+        BGTASK_LOGE("remote object is null.");
         return;
     }
 
@@ -857,6 +874,28 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
     } else {
         BGTASK_LOGW("get unregister common event!");
         return;
+    }
+}
+
+void BgContinuousTaskMgr::OnAccountsStateChanged(int id)
+{
+    std::vector<int> activatedOsAccountIds;
+
+    if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
+        BGTASK_LOGE("query activated account failed");
+        return;
+    }
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        auto idIter = find(activatedOsAccountIds.begin(), activatedOsAccountIds.end(), iter->second->GetUserId());
+        if (idIter == activatedOsAccountIds.end()) {
+            OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            Notification::NotificationHelper::CancelContinuousTaskNotification(
+                iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+            iter = continuousTaskInfosMap_.erase(iter);
+        } else {
+            iter++;
+        }
     }
 }
 }
