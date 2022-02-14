@@ -34,13 +34,13 @@ ohos_executable("bgtask_observer") {
   deps = [
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
   ]
 
   configs = []
 
   external_deps = [
     "ability_base:want",
+    "ability_runtime:wantagent_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "samgr_standard:samgr_proxy",

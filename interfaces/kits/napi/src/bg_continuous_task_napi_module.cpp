@@ -40,7 +40,7 @@ struct AsyncCallbackInfo {
     napi_deferred deferred {nullptr};
     AppExecFwk::Ability *ability {nullptr};
     int32_t bgMode {0};
-    Notification::WantAgent::WantAgent *wantAgent {nullptr};
+    AbilityRuntime::WantAgent::WantAgent *wantAgent {nullptr};
     int errCode {0};
 };
 
@@ -158,7 +158,7 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
     }
 
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
-        std::make_shared<Notification::WantAgent::WantAgent>(*asyncCallbackInfo->wantAgent), info->name, token);
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*asyncCallbackInfo->wantAgent), info->name, token);
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
 
     BGTASK_LOGI("end");
@@ -279,7 +279,7 @@ napi_value GetBackgroundMode(const napi_env &env, const napi_value &value, int32
     return WrapVoidToJS(env);
 }
 
-napi_value GetWantAgent(const napi_env &env, const napi_value &value, Notification::WantAgent::WantAgent *&wantAgent)
+napi_value GetWantAgent(const napi_env &env, const napi_value &value, AbilityRuntime::WantAgent::WantAgent *&wantAgent)
 {
     BGTASK_LOGI("begin");
     napi_valuetype valuetype = napi_undefined;

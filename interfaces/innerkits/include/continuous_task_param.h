@@ -25,13 +25,13 @@ namespace BackgroundTaskMgr {
 struct ContinuousTaskParam : public Parcelable {
     bool isNewApi_ {false};
     uint32_t bgModeId_ {0};
-    std::shared_ptr<Notification::WantAgent::WantAgent> wantAgent_ {nullptr};
+    std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
     std::string abilityName_ {""};
     sptr<IRemoteObject> abilityToken_ {nullptr};
     
     ContinuousTaskParam() = default;
     ContinuousTaskParam(bool isNewApi, uint32_t bgModeId,
-        const std::shared_ptr<Notification::WantAgent::WantAgent> wantAgent, const std::string abilityName,
+        const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent, const std::string abilityName,
         const sptr<IRemoteObject> abilityToken)
         : isNewApi_(isNewApi), bgModeId_(bgModeId), wantAgent_(wantAgent),
         abilityName_(abilityName), abilityToken_(abilityToken) {}

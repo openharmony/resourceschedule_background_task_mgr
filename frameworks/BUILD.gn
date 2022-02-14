@@ -40,14 +40,11 @@ ohos_shared_library("bgtaskmgr_fwk") {
     "src/expired_callback_stub.cpp",
   ]
 
-  deps = [
-    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
-  ]
-
   public_configs = [ ":bgtaskmgr_public_config" ]
 
   external_deps = [
     "ability_base:want",
+    "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

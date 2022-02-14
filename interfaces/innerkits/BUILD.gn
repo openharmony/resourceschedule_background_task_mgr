@@ -34,13 +34,11 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_public_config",
   ]
 
-  public_deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
-    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
-  ]
+  public_deps = [ "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk" ]
 
   external_deps = [
     "ability_base:want",
+    "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
