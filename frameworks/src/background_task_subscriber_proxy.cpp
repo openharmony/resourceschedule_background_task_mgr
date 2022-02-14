@@ -43,7 +43,6 @@ void BackgroundTaskSubscriberProxy::OnConnected()
     ErrCode ret = remote->SendRequest(ON_CONNECTED, data, reply, option);
     if (ret!= ERR_OK) {
         BGTASK_LOGE("SendRequest failed, error code: %d", ret);
-        return;
     }
 }
 
@@ -65,7 +64,6 @@ void BackgroundTaskSubscriberProxy::OnDisconnected()
     ErrCode ret = remote->SendRequest(ON_DISCONNECTED, data, reply, option);
     if (ret != ERR_OK) {
         BGTASK_LOGE("SendRequest failed, error code: %d", ret);
-        return;
     }
 }
 
@@ -92,7 +90,6 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskStart(const std::shared_ptr<T
     int ret = remote->SendRequest(ON_TRANSIENT_TASK_START, data, reply, option);
     if (ret != ERR_NONE) {
         BGTASK_LOGE("SendRequest failed, error code: %d", ret);
-        return;
     }
 }
 
@@ -119,7 +116,6 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskEnd(const std::shared_ptr<Tra
     int ret = remote->SendRequest(ON_TRANSIENT_TASK_END, data, reply, option);
     if (ret != ERR_NONE) {
         BGTASK_LOGE("SendRequest failed, error code: %d", ret);
-        return;
     }
 }
 
@@ -153,7 +149,6 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStart(
     ErrCode result = remote->SendRequest(ON_CONTINUOUS_TASK_START, data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("SendRequest error");
-        return;
     }
 }
 
@@ -187,7 +182,6 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStop(
     ErrCode result = remote->SendRequest(ON_CONTINUOUS_TASK_STOP, data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("SendRequest error");
-        return;
     }
 }
 }  // namespace BackgroundTaskMgr
