@@ -35,6 +35,11 @@ bool ResourceManagerImpl::AddResource(const char *path)
     return true;
 }
 
+bool ResourceManagerImpl::AddResource(const std::string &path, const std::vector<std::string> &overlayPaths)
+{
+    return true;
+}
+
 RState ResourceManagerImpl::UpdateResConfig(ResConfig &resConfig)
 {
     return SUCCESS;
