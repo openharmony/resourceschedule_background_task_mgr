@@ -80,10 +80,12 @@ void SystemEventObserver::OnReceiveEvent(const EventFwk::CommonEventData &eventD
     }
     AAFwk::Want want = eventData.GetWant();
     std::string action = want.GetAction();
-    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED) {
-        int activatedUserId = eventData.GetCode();
-        BGTASK_LOGI("user of id :%{public}d is activated", activatedUserId);
-        auto task = [=]() { bgContinuousTaskMgr->OnAccountsStateChanged(activatedUserId); };
+    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED
+        || action == EventFwk::CommonEventSupport::COMMON_EVENT_USER_ADDED
+        || action == EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED) {
+        int userId = eventData.GetCode();
+        BGTASK_LOGI("user of id :%{public}d state is changed, action is : %{public}s", userId, action.c_str());
+        auto task = [=]() { bgContinuousTaskMgr->OnAccountsStateChanged(userId); };
         handler->PostTask(task, TASK_ON_OS_ACCOUNT_CHANGED);
         return;
     }

@@ -210,6 +210,9 @@ bool BgContinuousTaskMgr::RegisterSysCommEventListener()
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REPLACED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_ADDED);
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
     EventFwk::CommonEventSubscribeInfo commonEventSubscribeInfo(matchingSkills);
     systemEventListener_ = std::make_shared<SystemEventObserver>(commonEventSubscribeInfo);
@@ -865,6 +868,7 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED
+        || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REPLACED) {
         cachedBundleInfos_.erase(uid);
     } else {
