@@ -108,7 +108,6 @@ void BgContinuousTaskMgr::InitNecessaryState()
         || systemAbilityManager->CheckSystemAbility(APP_MGR_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(ADVANCED_NOTIFICATION_SERVICE_ABILITY_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(SUBSYS_ACCOUNT_SYS_ABILITY_ID_BEGIN) == nullptr
         || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr) {
         BGTASK_LOGW("request system service is not ready yet!");
         auto task = [this]() { this->InitNecessaryState(); };
@@ -126,10 +125,6 @@ void BgContinuousTaskMgr::InitNecessaryState()
     }
     if (!RegisterSysCommEventListener()) {
         BGTASK_LOGE("RegisterSysCommEventListener failed");
-        return;
-    }
-    if (!RegisterOsAccountObserver()) {
-        BGTASK_LOGE("RegisterOsAccountObserver failed");
         return;
     }
     auto getPromptTask = [this]() { this->InitNotificationPrompt(); };
@@ -215,6 +210,7 @@ bool BgContinuousTaskMgr::RegisterSysCommEventListener()
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REPLACED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
     EventFwk::CommonEventSubscribeInfo commonEventSubscribeInfo(matchingSkills);
     systemEventListener_ = std::make_shared<SystemEventObserver>(commonEventSubscribeInfo);
     if (systemEventListener_ != nullptr) {
