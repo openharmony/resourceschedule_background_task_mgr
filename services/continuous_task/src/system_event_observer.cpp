@@ -26,6 +26,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 const std::string TASK_ON_BUNDLEINFO_CHANGED = "OnBundleInfoChanged";
+const std::string TASK_ON_OS_ACCOUNT_CHANGED = "OnOsAccountChanged";
 }
 
 SystemEventObserver::SystemEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo)
@@ -79,6 +80,13 @@ void SystemEventObserver::OnReceiveEvent(const EventFwk::CommonEventData &eventD
     }
     AAFwk::Want want = eventData.GetWant();
     std::string action = want.GetAction();
+    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED) {
+        int activatedUserId = eventData.GetCode();
+        BGTASK_LOGI("user of id :%{public}d is activated", activatedUserId);
+        auto task = [=]() { bgContinuousTaskMgr->OnAccountsStateChanged(activatedUserId); };
+        handler->PostTask(task, TASK_ON_OS_ACCOUNT_CHANGED);
+        return;
+    }
     std::string bundleName = want.GetElement().GetBundleName();
     int uid = want.GetIntParam(AppExecFwk::Constants::UID, -1);
     BGTASK_LOGI("OnReceiveEvent action = %{public}s, bundle = %{public}s", action.c_str(), bundleName.c_str());
