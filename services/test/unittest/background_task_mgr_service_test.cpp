@@ -37,7 +37,7 @@ public:
  * @tc.name: BackgroundTaskMgrServiceTest_001
  * @tc.desc: Test BackgroundTaskMgrService service ready.
  * @tc.type: FUNC
- * @tc.require: SR000GGTET AR000GH86O AR000GH86Q
+ * @tc.require: SR000GGTET SR000GMUG8 AR000GH86O AR000GH86Q AR000GMUIA AR000GMUHN
  */
 HWTEST_F(BackgroundTaskMgrServiceTest, BackgroundTaskMgrServiceTest_001, TestSize.Level1)
 {
