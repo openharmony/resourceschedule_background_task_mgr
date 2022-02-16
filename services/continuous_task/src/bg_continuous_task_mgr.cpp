@@ -397,7 +397,8 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         return ERR_BGTASK_OBJECT_EXISTS;
     }
 
-    if (!BundleManagerHelper::GetInstance()->CheckPermission(continuousTaskRecord->bundleName_, BGMODE_PERMISSION)) {
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(continuousTaskRecord->bundleName_, BGMODE_PERMISSION,
+        continuousTaskRecord->userId_)) {
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
@@ -555,10 +556,6 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(uid_t uid, const std::st
 ErrCode BgContinuousTaskMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
     BGTASK_LOGI("begin");
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     if (subscriber == nullptr) {
         BGTASK_LOGE("subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;
@@ -606,10 +603,6 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscr
 ErrCode BgContinuousTaskMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
     BGTASK_LOGI("begin");
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     if (subscriber == nullptr) {
         BGTASK_LOGE("subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;

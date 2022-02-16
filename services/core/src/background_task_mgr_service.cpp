@@ -102,18 +102,20 @@ ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abili
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    ErrCode ret = ERR_OK;
-    ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber);
-    ret = BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber);
-    return ret;
+    if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
+        && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
+        return ERR_OK;
+    }
+    return ERR_BGTASK_SYS_NOT_READY;
 }
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    ErrCode ret = ERR_OK;
-    ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber);
-    ret = BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber);
-    return ret;
+    if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
+        && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
+        return ERR_OK;
+    }
+    return ERR_BGTASK_SYS_NOT_READY;
 }
 
 void BackgroundTaskMgrService::HandleRequestExpired(const int32_t requestId)

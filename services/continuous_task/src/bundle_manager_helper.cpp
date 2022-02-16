@@ -49,12 +49,12 @@ std::string BundleManagerHelper::GetClientBundleName(uid_t uid)
 }
 
 bool BundleManagerHelper::CheckPermission(const std::string &bundleName,
-    const std::string &permission)
+    const std::string &permission, int userId)
 {
     std::lock_guard<std::mutex> lock(connectionMutex_);
     Connect();
     if (bundleMgr_ != nullptr) {
-        auto result = bundleMgr_->CheckPermission(bundleName, permission);
+        auto result = bundleMgr_->CheckPermissionByUid(bundleName, permission, userId);
         BGTASK_LOGI("permission check result: %{public}d", result);
         if (result == PERMISSION_GRANTED) {
             return true;
