@@ -35,7 +35,7 @@ std::string BundleManagerHelper::GetClientBundleName(uid_t uid)
 }
 
 bool BundleManagerHelper::CheckPermission(const std::string &bundleName,
-    const std::string &permission)
+    const std::string &permission, int userId)
 {
     return true;
 }
