@@ -66,6 +66,11 @@ void BgTransientTaskMgr::Init()
     if (!handler_) {
         BGTASK_LOGE("Failed to init due to create handler error");
     }
+    callbackDeathRecipient_ =
+        new ExpiredCallbackDeathRecipient(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
+    susriberDeathRecipient_ =
+        new SubscriberDeathRecipient(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
+
     InitNecessaryState();
 }
 
@@ -77,16 +82,12 @@ void BgTransientTaskMgr::InitNecessaryState()
         || systemAbilityManager->CheckSystemAbility(APP_MGR_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr) {
+        isReady_.store(false);
         BGTASK_LOGI("request system service is not ready yet!");
         std::function <void()> InitNecessaryStateFunc = std::bind(&BgTransientTaskMgr::InitNecessaryState, this);
         handler_->PostTask(InitNecessaryStateFunc, SERVICE_WAIT_TIME);
         return;
     }
-
-    callbackDeathRecipient_ =
-        new ExpiredCallbackDeathRecipient(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
-    susriberDeathRecipient_ =
-        new SubscriberDeathRecipient(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
 
     deviceInfoManeger_ = make_shared<DeviceInfoManager>();
     timerManager_ = make_shared<TimerManager>(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
@@ -96,6 +97,7 @@ void BgTransientTaskMgr::InitNecessaryState()
     inputManager_ = make_shared<InputManager>();
     inputManager_->RegisterEventListener(deviceInfoManeger_);
     inputManager_->RegisterEventListener(decisionMaker_);
+    isReady_.store(true);
 }
 
 bool BgTransientTaskMgr::GetBundleNamesForUid(int32_t uid, std::string &bundleName)
@@ -125,35 +127,51 @@ bool BgTransientTaskMgr::GetBundleNamesForUid(int32_t uid, std::string &bundleNa
     return true;
 }
 
+bool BgTransientTaskMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
+    const sptr<IExpiredCallback>& callback)
+{
+    if (!VerifyCallingInfo(uid, pid)) {
+        BGTASK_LOGE("pid or uid is invalid.");
+        return false;
+    }
+
+    if (!GetBundleNamesForUid(uid, name)) {
+        BGTASK_LOGE("GetBundleNamesForUid fail.");
+        return false;
+    }
+
+    if (callback == nullptr) {
+        BGTASK_LOGE("callback is null.");
+        return false;
+    }
+
+    if (callback->AsObject() == nullptr) {
+        BGTASK_LOGE("remote in callback is null.");
+        return false;
+    }
+    return true;
+}
+
 ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
     const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
+    if (!isReady_.load()) {
+        BGTASK_LOGE("Transient task manager is not ready.");
+        return ERR_BGTASK_SERVICE_NOT_READY;
+    }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
-    auto infoEx = make_shared<DelaySuspendInfoEx>(pid);
-    delayInfo = infoEx;
-    if (!VerifyCallingInfo(uid, pid)) {
-        BGTASK_LOGE("request suspend delay failed, pid or uid is invalid.");
-        return ERR_BGTASK_INVALID_PARAM;
-    }
-
     std::string name = "";
-    if (!GetBundleNamesForUid(uid, name)) {
-        BGTASK_LOGE("GetBundleNamesForUid fail.");
+    if (!IsCallingInfoLegal(uid, pid, name, callback)) {
+        BGTASK_LOGE("Request suspend delay failed, calling info is illegal.");
         return ERR_BGTASK_INVALID_PARAM;
     }
     BGTASK_LOGI("request suspend delay pkg : %{public}s, reason : %{public}s, uid : %{public}d, pid : %{public}d",
         name.c_str(), Str16ToStr8(reason).c_str(), uid, pid);
 
-    if (callback == nullptr) {
-        BGTASK_LOGE("request suspend delay failed, callback is null.");
-        return ERR_BGTASK_NOT_ALLOWED;
-    }
+    auto infoEx = make_shared<DelaySuspendInfoEx>(pid);
+    delayInfo = infoEx;
     auto remote = callback->AsObject();
-    if (remote == nullptr) {
-        BGTASK_LOGE("request suspend delay failed, remote in callback is null.");
-        return ERR_BGTASK_INVALID_PARAM;
-    }
     lock_guard<mutex> lock(expiredCallbackLock_);
     auto findCallback = [&callback](const auto& callbackMap) {
         return callback->AsObject() == callbackMap.second->AsObject();
@@ -213,6 +231,10 @@ void BgTransientTaskMgr::NotifyTransientTaskSuscriber(shared_ptr<TransientTaskAp
 
 ErrCode BgTransientTaskMgr::CancelSuspendDelay(int32_t requestId)
 {
+    if (!isReady_.load()) {
+        BGTASK_LOGE("Transient task manager is not ready.");
+        return ERR_BGTASK_SERVICE_NOT_READY;
+    }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
     if (!VerifyCallingInfo(uid, pid)) {
@@ -279,6 +301,10 @@ void BgTransientTaskMgr::ForceCancelSuspendDelay(int32_t requestId)
 
 ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &delayTime)
 {
+    if (!isReady_.load()) {
+        BGTASK_LOGE("Transient task manager is not ready.");
+        return ERR_BGTASK_SERVICE_NOT_READY;
+    }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
     if (!VerifyCallingInfo(uid, pid)) {
@@ -424,8 +450,11 @@ ErrCode BgTransientTaskMgr::SubscribeBackgroundTask(const sptr<IBackgroundTaskSu
             return;
         }
 
-        remote->AddDeathRecipient(susriberDeathRecipient_);
+        if (susriberDeathRecipient_ != nullptr) {
+            remote->AddDeathRecipient(susriberDeathRecipient_);
+        }
         subscriberList_.emplace_back(subscriber);
+        BGTASK_LOGI("subscribe transient task success.");
     });
     return result;
 }
@@ -455,12 +484,17 @@ ErrCode BgTransientTaskMgr::UnsubscribeBackgroundTask(const sptr<IBackgroundTask
         }
         remote->RemoveDeathRecipient(susriberDeathRecipient_);
         subscriberList_.erase(subscriberIter);
+        BGTASK_LOGI("unsubscribe transient task success.");
     });
     return result;
 }
 
 ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
+    if (!isReady_.load()) {
+        BGTASK_LOGE("Transient task manager is not ready.");
+        return ERR_BGTASK_SERVICE_NOT_READY;
+    }
     bool result = false;
     if (dumpOption[1] == All_BGTASKMGR_OPTION) {
         result = DumpAllRequestId(dumpInfo);
