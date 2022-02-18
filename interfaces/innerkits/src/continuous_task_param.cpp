@@ -32,8 +32,8 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
     bool valid = false;
     valid = parcel.ReadBool();
     if (valid) {
-        wantAgent_ = std::shared_ptr<Notification::WantAgent::WantAgent>(
-            parcel.ReadParcelable<Notification::WantAgent::WantAgent>());
+        wantAgent_ = std::shared_ptr<AbilityRuntime::WantAgent::WantAgent>(
+            parcel.ReadParcelable<AbilityRuntime::WantAgent::WantAgent>());
         if (!wantAgent_) {
             BGTASK_LOGE("Failed to read wantAgent");
             return false;

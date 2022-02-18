@@ -45,13 +45,13 @@ ohos_unittest("bgtask_unit_test") {
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
     "//base/notification/ans_standard/frameworks/ans/core:ans_core",
-    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
     "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "ability_base:want",
     "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",

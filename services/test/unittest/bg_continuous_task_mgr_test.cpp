@@ -93,7 +93,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
     sptr<ContinuousTaskParam> taskParam = new ContinuousTaskParam();
     taskParam->isNewApi_ = true;
     EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_BGTASK_INVALID_PARAM);
-    taskParam->wantAgent_ = std::make_shared<Notification::WantAgent::WantAgent>();
+    taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_BGTASK_INVALID_PARAM);
     taskParam->abilityName_ = "";
     EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_BGTASK_INVALID_PARAM);
@@ -134,7 +134,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
 HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
 {
     sptr<ContinuousTaskParam> taskParam = new ContinuousTaskParam();
-    taskParam->wantAgent_ = std::make_shared<Notification::WantAgent::WantAgent>();
+    taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     taskParam->abilityName_ = "ability1";
     taskParam->bgModeId_ = 1;
     EXPECT_EQ((int)bgContinuousTaskMgr_->StopBackgroundRunning("", nullptr), (int)ERR_BGTASK_INVALID_PARAM);

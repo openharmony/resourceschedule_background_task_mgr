@@ -53,7 +53,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "//base/notification/ans_standard/frameworks/ans/native:ans_innerkits",
-    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
   ]
 
@@ -62,6 +61,7 @@ ohos_shared_library("bgtaskmgr_service") {
     "ability_base:want",
     "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",

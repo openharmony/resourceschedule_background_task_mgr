@@ -30,7 +30,7 @@ class ContinuousTaskRecord {
 public:
     ContinuousTaskRecord() = default;
     ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
-        const std::shared_ptr<Notification::WantAgent::WantAgent> &wantAgent, const sptr<IRemoteObject> &abilityToken,
+        const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent, const sptr<IRemoteObject> &abilityToken,
         int32_t userId, uid_t uid, pid_t pid, uint32_t bgModeId, bool isNewApi);
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
@@ -40,13 +40,13 @@ public:
     uid_t GetUid() const;
     pid_t GetPid() const;
     std::string GetNotificationLabel() const;
-    std::shared_ptr<Notification::WantAgent::WantAgent> GetWantAgent() const;
+    std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
     sptr<IRemoteObject> GetAbilityToken() const;
 
 private:
     std::string bundleName_ {""};
     std::string abilityName_ {""};
-    std::shared_ptr<Notification::WantAgent::WantAgent> wantAgent_ {nullptr};
+    std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
     sptr<IRemoteObject> abilityToken_ {nullptr};
     int32_t userId_ {0};
     uid_t uid_ {0};
