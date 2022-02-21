@@ -35,8 +35,10 @@ public:
     virtual void OnDisconnected() = 0;
     virtual void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) = 0;
     virtual void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) = 0;
-    virtual void OnContinuousTaskStart(const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) = 0;
-    virtual void OnContinuousTaskStop(const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) = 0;
+    virtual void OnContinuousTaskStart(
+        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) = 0;
+    virtual void OnContinuousTaskStop(
+        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) = 0;
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskSubscriber");
 

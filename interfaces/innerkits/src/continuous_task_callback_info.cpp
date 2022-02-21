@@ -20,7 +20,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo() {}
 
-ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo(int32_t typeId, uid_t creatorUid,
+ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo(int32_t typeId, int32_t creatorUid,
     pid_t creatorPid, std::string abilityName)
     : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), abilityName_(abilityName) {}
 
@@ -29,7 +29,7 @@ int32_t ContinuousTaskCallbackInfo::GetTypeId() const
     return typeId_;
 }
 
-uid_t ContinuousTaskCallbackInfo::GetCreatorUid() const
+int32_t ContinuousTaskCallbackInfo::GetCreatorUid() const
 {
     return creatorUid_;
 }
@@ -83,7 +83,7 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
 {
     typeId_ = parcel.ReadInt32();
 
-    creatorUid_ = static_cast<uid_t>(parcel.ReadInt32());
+    creatorUid_ = static_cast<int32_t>(parcel.ReadInt32());
     creatorPid_ = static_cast<pid_t>(parcel.ReadInt32());
 
     if (!parcel.ReadString(abilityName_)) {

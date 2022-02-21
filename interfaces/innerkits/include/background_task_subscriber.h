@@ -100,8 +100,10 @@ private:
         void OnDisconnected() override;
         void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override;
         void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
-        void OnContinuousTaskStart(const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
-        void OnContinuousTaskStop(const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+        void OnContinuousTaskStart(
+            const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+        void OnContinuousTaskStop(
+            const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
         bool GetBackgroundTaskMgrProxy();
 
     public:

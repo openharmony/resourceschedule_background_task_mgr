@@ -107,7 +107,8 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnTransientTaskEnd(MessageParcel& da
 ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskStart(MessageParcel &data)
 {
     BGTASK_LOGI("begin");
-    sptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo = data.ReadParcelable<ContinuousTaskCallbackInfo>();
+    std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo
+        = std::shared_ptr<ContinuousTaskCallbackInfo>(data.ReadParcelable<ContinuousTaskCallbackInfo>());
     if (!continuousTaskCallbackInfo) {
         BGTASK_LOGE("ContinuousTaskCallbackInfo ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
@@ -120,7 +121,8 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskStart(MessageParcel 
 ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskCancel(MessageParcel &data)
 {
     BGTASK_LOGI("begin");
-    sptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo = data.ReadParcelable<ContinuousTaskCallbackInfo>();
+    std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo
+        = std::shared_ptr<ContinuousTaskCallbackInfo>(data.ReadParcelable<ContinuousTaskCallbackInfo>());
     if (!continuousTaskCallbackInfo) {
         BGTASK_LOGE("ContinuousTaskCallbackInfo ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;

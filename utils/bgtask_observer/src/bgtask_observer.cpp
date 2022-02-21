@@ -27,7 +27,7 @@ void BgTaskObserver::OnContinuousTaskStart(const std::shared_ptr<OHOS::Backgroun
     BGTASK_LOGI("Continuous Task Start");
     std::stringstream stream;
     int32_t typeId = continuousTaskCallbackInfo->GetTypeId();
-    uid_t uid = continuousTaskCallbackInfo->GetCreatorUid();
+    int32_t uid = continuousTaskCallbackInfo->GetCreatorUid();
     pid_t pid = continuousTaskCallbackInfo->GetCreatorPid();
     std::string abiliytName = continuousTaskCallbackInfo->GetAbilityName();
     stream.str("");
@@ -47,7 +47,7 @@ void BgTaskObserver::OnContinuousTaskStop(const std::shared_ptr<OHOS::Background
     BGTASK_LOGI("Continuous Task Stop");
     std::stringstream stream;
     int32_t typeId = continuousTaskCallbackInfo->GetTypeId();
-    uid_t uid = continuousTaskCallbackInfo->GetCreatorUid();
+    int32_t uid = continuousTaskCallbackInfo->GetCreatorUid();
     pid_t pid = continuousTaskCallbackInfo->GetCreatorPid();
     std::string abiliytName = continuousTaskCallbackInfo->GetAbilityName();
     stream.str("");

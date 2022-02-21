@@ -36,7 +36,7 @@ BundleManagerHelper::~BundleManagerHelper()
     Disconnect();
 }
 
-std::string BundleManagerHelper::GetClientBundleName(uid_t uid)
+std::string BundleManagerHelper::GetClientBundleName(int32_t uid)
 {
     std::string bundle {""};
     std::lock_guard<std::mutex> lock(connectionMutex_);
@@ -63,7 +63,7 @@ bool BundleManagerHelper::CheckPermission(const std::string &bundleName,
     return false;
 }
 
-bool BundleManagerHelper::IsSystemApp(uid_t uid)
+bool BundleManagerHelper::IsSystemApp(int32_t uid)
 {
     bool isSystemApp = false;
     std::lock_guard<std::mutex> lock(connectionMutex_);

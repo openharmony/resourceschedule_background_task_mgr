@@ -29,9 +29,9 @@ namespace BackgroundTaskMgr {
 using OHOS::AppExecFwk::Constants::UNSPECIFIED_USERID;
 class BundleManagerHelper : public DelayedSingleton<BundleManagerHelper> {
 public:
-    std::string GetClientBundleName(uid_t uid);
+    std::string GetClientBundleName(int32_t uid);
     bool CheckPermission(const std::string &bundleName, const std::string &permission, int userId);
-    bool IsSystemApp(uid_t uid);
+    bool IsSystemApp(int32_t uid);
     bool GetBundleInfo(const std::string &bundleName, const AppExecFwk::BundleFlag flag,
         AppExecFwk::BundleInfo &bundleInfo, int32_t userId = UNSPECIFIED_USERID);
 

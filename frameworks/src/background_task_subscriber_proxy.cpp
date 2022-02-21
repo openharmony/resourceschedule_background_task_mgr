@@ -120,7 +120,7 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskEnd(const std::shared_ptr<Tra
 }
 
 void BackgroundTaskSubscriberProxy::OnContinuousTaskStart(
-    const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("begin");
     sptr<IRemoteObject> remote = Remote();
@@ -139,7 +139,7 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStart(
         return;
     }
 
-    if (!data.WriteParcelable(continuousTaskCallbackInfo)) {
+    if (!data.WriteParcelable(continuousTaskCallbackInfo.get())) {
         BGTASK_LOGE("write continuousTaskCallbackInfo failed.");
         return;
     }
@@ -153,7 +153,7 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStart(
 }
 
 void BackgroundTaskSubscriberProxy::OnContinuousTaskStop(
-    const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("begin");
     sptr<IRemoteObject> remote = Remote();
@@ -172,7 +172,7 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStop(
         return;
     }
 
-    if (!data.WriteParcelable(continuousTaskCallbackInfo)) {
+    if (!data.WriteParcelable(continuousTaskCallbackInfo.get())) {
         BGTASK_LOGE("write notification failed.");
         return;
     }
