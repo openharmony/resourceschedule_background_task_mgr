@@ -31,13 +31,13 @@ public:
     ContinuousTaskRecord() = default;
     ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
         const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent, const sptr<IRemoteObject> &abilityToken,
-        int32_t userId, uid_t uid, pid_t pid, uint32_t bgModeId, bool isNewApi);
+        int32_t userId, int32_t uid, pid_t pid, uint32_t bgModeId, bool isNewApi);
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
     bool IsNewApi() const;
     uint32_t GetBgModeId() const;
     int32_t GetUserId() const;
-    uid_t GetUid() const;
+    int32_t GetUid() const;
     pid_t GetPid() const;
     std::string GetNotificationLabel() const;
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
@@ -49,7 +49,7 @@ private:
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
     sptr<IRemoteObject> abilityToken_ {nullptr};
     int32_t userId_ {0};
-    uid_t uid_ {0};
+    int32_t uid_ {0};
     pid_t pid_ {0};
     uint32_t bgModeId_ {0};
     bool isNewApi_ {false};

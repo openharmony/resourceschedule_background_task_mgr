@@ -83,15 +83,15 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskEnd(
 }
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStart(
-    const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
-    subscriber_.OnContinuousTaskStart(std::make_shared<ContinuousTaskCallbackInfo>(*continuousTaskCallbackInfo));
+    subscriber_.OnContinuousTaskStart(continuousTaskCallbackInfo);
 }
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStop(
-    const sptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
-    subscriber_.OnContinuousTaskStop(std::make_shared<ContinuousTaskCallbackInfo>(*continuousTaskCallbackInfo));
+    subscriber_.OnContinuousTaskStop(continuousTaskCallbackInfo);
 }
 
 bool BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::GetBackgroundTaskMgrProxy()

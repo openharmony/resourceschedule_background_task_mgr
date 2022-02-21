@@ -239,7 +239,7 @@ bool BgContinuousTaskMgr::RegisterOsAccountObserver()
     return res;
 }
 
-bool BgContinuousTaskMgr::SetCachedBundleInfo(uid_t uid, int32_t userId, std::string &bundleName)
+bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName)
 {
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
@@ -299,7 +299,7 @@ bool BgContinuousTaskMgr::AddAppNameInfos(const AppExecFwk::BundleInfo &bundleIn
     return true;
 }
 
-bool checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, uid_t uid)
+bool checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, int32_t uid)
 {
     if (!isNewApi) {
         if (configuredBgMode == INVALID_BGMODE) {
@@ -324,7 +324,7 @@ bool checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool
     return true;
 }
 
-uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(uid_t uid, std::string &abilityName)
+uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, std::string &abilityName)
 {
     if (cachedBundleInfos_.find(uid) != cachedBundleInfos_.end()) {
         auto cachedBundleInfo = cachedBundleInfos_.at(uid);
@@ -363,7 +363,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 
     ErrCode result = ERR_OK;
 
-    uid_t callingUid = IPCSkeleton::GetCallingUid();
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     int32_t userId = -1;
@@ -494,7 +494,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     return ERR_OK;
 }
 
-std::string BgContinuousTaskMgr::CreateNotificationLabel(uid_t uid, const std::string &bundleName,
+std::string BgContinuousTaskMgr::CreateNotificationLabel(int32_t uid, const std::string &bundleName,
     const std::string &abilityName, const sptr<IRemoteObject> abilityToken)
 {
     std::stringstream stream;
@@ -519,7 +519,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityNam
         BGTASK_LOGE("abilityName is empty!");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    uid_t callingUid = IPCSkeleton::GetCallingUid();
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
 
     ErrCode result = ERR_OK;
 
@@ -530,7 +530,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityNam
     return result;
 }
 
-ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(uid_t uid, const std::string &abilityName,
+ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken)
 {
     BGTASK_LOGI("begin");
@@ -829,9 +829,9 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
         return;
     }
 
-    sptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo = new ContinuousTaskCallbackInfo(
-        continuousTaskInfo->GetBgModeId(), continuousTaskInfo->GetUid(),
-        continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName());
+    std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo
+        = std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskInfo->GetBgModeId(),
+        continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName());
 
     switch (changeEventType) {
         case ContinuousTaskEventTriggerType::TASK_START:
@@ -849,7 +849,7 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
     }
 }
 
-void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const std::string &bundleName, uid_t uid)
+void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid)
 {
     BGTASK_LOGI("begin");
     if (!isSysReady_.load()) {
@@ -861,9 +861,21 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED
-        || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REPLACED) {
         cachedBundleInfos_.erase(uid);
+    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED) {
+        cachedBundleInfos_.erase(uid);
+        auto iter = continuousTaskInfosMap_.begin();
+        while (iter != continuousTaskInfosMap_.end()) {
+            if (iter->second->GetUid() == uid) {
+                OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+                Notification::NotificationHelper::CancelContinuousTaskNotification(
+                    iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+                iter = continuousTaskInfosMap_.erase(iter);
+            } else {
+                iter++;
+            }
+        }
     } else {
         BGTASK_LOGW("get unregister common event!");
         return;

@@ -25,10 +25,10 @@ namespace BackgroundTaskMgr {
 class ContinuousTaskCallbackInfo : public Parcelable {
 public:
     ContinuousTaskCallbackInfo();
-    ContinuousTaskCallbackInfo(int32_t typeId, uid_t creatorUid, pid_t creatorPid, std::string abilityName);
+    ContinuousTaskCallbackInfo(int32_t typeId, int32_t creatorUid, pid_t creatorPid, std::string abilityName);
 
     int32_t GetTypeId() const;
-    uid_t GetCreatorUid() const;
+    int32_t GetCreatorUid() const;
     pid_t GetCreatorPid() const;
     std::string GetAbilityName() const;
     bool Marshalling(Parcel &parcel) const;
@@ -38,10 +38,10 @@ private:
     bool ReadFromParcel(Parcel &parcel);
 
 private:
-    int32_t typeId_ ;
-    uid_t creatorUid_ ;
-    pid_t creatorPid_ ;
-    std::string abilityName_ ;
+    int32_t typeId_ {0};
+    int32_t creatorUid_ {0};
+    pid_t creatorPid_ {0};
+    std::string abilityName_ {""};
 };
 }
 }

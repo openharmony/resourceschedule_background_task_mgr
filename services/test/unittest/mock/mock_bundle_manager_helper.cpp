@@ -29,7 +29,7 @@ BundleManagerHelper::BundleManagerHelper() {}
 
 BundleManagerHelper::~BundleManagerHelper() {}
 
-std::string BundleManagerHelper::GetClientBundleName(uid_t uid)
+std::string BundleManagerHelper::GetClientBundleName(int32_t uid)
 {
     return TEST_DEFAULT_BUNDLE;
 }
@@ -40,7 +40,7 @@ bool BundleManagerHelper::CheckPermission(const std::string &bundleName,
     return true;
 }
 
-bool BundleManagerHelper::IsSystemApp(uid_t uid)
+bool BundleManagerHelper::IsSystemApp(int32_t uid)
 {
     return true;
 }
