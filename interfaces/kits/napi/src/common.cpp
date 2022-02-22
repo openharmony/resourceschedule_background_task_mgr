@@ -146,7 +146,7 @@ napi_value Common::GetU16StringValue(const napi_env &env, const napi_value &valu
         size_t strLen = 0;
         NAPI_CALL(env, napi_get_value_string_utf8(env, value, str, STR_MAX_SIZE - 1, &strLen));
         
-        result = Str8ToStr16(str);
+        result = Str8ToStr16((std::string)str);
         BGTASK_LOGI("string result: %{public}s", Str16ToStr8(result).c_str());
     } else {
         return nullptr;
