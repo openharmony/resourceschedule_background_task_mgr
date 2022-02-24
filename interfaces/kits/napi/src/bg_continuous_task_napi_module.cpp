@@ -14,14 +14,16 @@
  */
 
 #include "bg_continuous_task_napi_module.h"
+
+#include "ability.h"
+#include "want_agent.h"
+#include "napi_base_context.h"
+
+#include "background_mode.h"
+#include "background_task_mgr_helper.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_log.h"
-#include "background_mode.h"
 #include "continuous_task_param.h"
-#include "ability.h"
-#include "background_task_mgr_helper.h"
-#include "fcntl.h"
-#include "want_agent.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -38,7 +40,7 @@ struct AsyncCallbackInfo {
     napi_ref callback {nullptr};
     napi_async_work asyncWork {nullptr};
     napi_deferred deferred {nullptr};
-    AppExecFwk::Ability *ability {nullptr};
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
     int32_t bgMode {0};
     AbilityRuntime::WantAgent::WantAgent *wantAgent {nullptr};
     int errCode {0};
@@ -68,50 +70,40 @@ napi_value GetCallbackErrorValue(napi_env env, int errCode)
     return jsObject;
 }
 
-AsyncCallbackInfo *CreateAsyncCallbackInfo(napi_env env)
+napi_value GetAbilityContext(const napi_env &env, const napi_value &value,
+   std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext)
 {
-    BGTASK_LOGI("begin");
-    if (env == nullptr) {
-        BGTASK_LOGE("env is nullptr.");
-        return nullptr;
-    }
+    bool stageMode = false;
+    napi_status status = OHOS::AbilityRuntime::IsStageContext(env, value, stageMode);
+    BGTASK_LOGI("is stage mode: %{public}s", stageMode ? "true" : "false");
 
-    napi_status ret;
-    napi_value global = 0;
-    const napi_extended_error_info *errorInfo = nullptr;
-    ret = napi_get_global(env, &global);
-    if (ret != napi_ok) {
-        napi_get_last_error_info(env, &errorInfo);
-        BGTASK_LOGE("get_global=%{public}d err:%{public}s", ret, errorInfo->error_message);
+    if (status != napi_ok || !stageMode) {
+        BGTASK_LOGI("Getting context with FA model");
+        auto ability = OHOS::AbilityRuntime::GetCurrentAbility(env);
+        if (!ability) {
+            BGTASK_LOGE("Failed to get native ability instance");
+            return nullptr;
+        }
+        abilityContext = ability->GetAbilityContext();
+        if (!abilityContext) {
+            BGTASK_LOGE("get FA model ability context failed");
+            return nullptr;
+        }
+        return WrapVoidToJS(env);
+    } else {
+        BGTASK_LOGI("Getting context with stage model");
+        auto context = AbilityRuntime::GetStageModeContext(env, value);
+        if (!context) {
+            BGTASK_LOGE("get context failed");
+            return nullptr;
+        }
+        abilityContext = AbilityRuntime::Context::ConvertTo<AbilityRuntime::AbilityContext>(context);
+        if (!abilityContext) {
+            BGTASK_LOGE("get Stage model ability context failed");
+            return nullptr;
+        }
+        return WrapVoidToJS(env);
     }
-
-    napi_value abilityObj = 0;
-    ret = napi_get_named_property(env, global, "ability", &abilityObj);
-    if (ret != napi_ok) {
-        napi_get_last_error_info(env, &errorInfo);
-        BGTASK_LOGE("get_named_property=%{public}d err:%{public}s", ret, errorInfo->error_message);
-    }
-
-    OHOS::AppExecFwk::Ability *ability = nullptr;
-    ret = napi_get_value_external(env, abilityObj, (void **)&ability);
-    if (ret != napi_ok) {
-        napi_get_last_error_info(env, &errorInfo);
-        BGTASK_LOGE("get_value_external=%{public}d err:%{public}s", ret, errorInfo->error_message);
-    }
-
-    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo;
-    if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo is nullptr");
-        return nullptr;
-    }
-    asyncCallbackInfo->env = env;
-    asyncCallbackInfo->asyncWork = nullptr;
-    asyncCallbackInfo->deferred = nullptr;
-    asyncCallbackInfo->ability = ability;
-    asyncCallbackInfo->errCode = ERR_OK;
-
-    BGTASK_LOGI("end");
-    return asyncCallbackInfo;
 }
 
 void StartBackgroundRunningExecuteCB(napi_env env, void *data)
@@ -126,14 +118,14 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         BGTASK_LOGE("input params parse failed");
         return;
     }
-    if (asyncCallbackInfo->ability == nullptr) {
+    if (asyncCallbackInfo->abilityContext == nullptr) {
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
-        BGTASK_LOGE("ability is nullptr");
+        BGTASK_LOGE("abilityContext is null");
         return;
     }
-    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->ability->GetAbilityInfo();
+    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     if (info == nullptr) {
-        BGTASK_LOGE("info is nullptr");
+        BGTASK_LOGE("ability info is null");
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
         return;
     }
@@ -144,11 +136,11 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         return;
     }
 
-    sptr<IRemoteObject> token {nullptr};
-    auto abilityContext = asyncCallbackInfo->ability->GetAbilityContext();
-    if (abilityContext) {
-        BGTASK_LOGI("get ability context succeed");
-        token = abilityContext->GetToken();
+    sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
+    if (!token) {
+        BGTASK_LOGE("get ability token info failed");
+        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        return;
     }
 
     if (asyncCallbackInfo->bgMode < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgMode > BG_MODE_ID_END) {
@@ -294,7 +286,7 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value, AbilityRun
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
 {
     BGTASK_LOGI("begin");
-    AsyncCallbackInfo *asyncCallbackInfo = CreateAsyncCallbackInfo(env);
+    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo {.env = env};
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo == nullpter");
         return WrapVoidToJS(env);
@@ -308,6 +300,12 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
         return nullptr;
+    }
+
+    // argv[0] : context : AbilityContext
+    if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
+        BGTASK_LOGE("Get ability context failed");
+        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
     }
 
     // argv[1] : bgMode : BackgroundMode
@@ -350,23 +348,23 @@ void StopBackgroundRunningExecuteCB(napi_env env, void *data)
         BGTASK_LOGE("asyncCallbackInfo is nullptr");
         return;
     }
-    if (asyncCallbackInfo->ability == nullptr) {
+    if (asyncCallbackInfo->abilityContext == nullptr) {
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
-        BGTASK_LOGE("ability is nullptr");
+        BGTASK_LOGE("ability context is null");
         return;
     }
-    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->ability->GetAbilityInfo();
+    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     if (info == nullptr) {
-        BGTASK_LOGE("abilityInfo is nullptr");
+        BGTASK_LOGE("abilityInfo is null");
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
         return;
     }
 
-    sptr<IRemoteObject> token {nullptr};
-    auto abilityContext = asyncCallbackInfo->ability->GetAbilityContext();
-    if (abilityContext) {
-        BGTASK_LOGI("get ability context succeed");
-        token = abilityContext->GetToken();
+    sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
+    if (!token) {
+        BGTASK_LOGE("get ability token info failed");
+        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        return;
     }
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStopBackgroundRunning(info->name, token);
 }
@@ -431,7 +429,7 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
 napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
 {
     BGTASK_LOGI("begin");
-    AsyncCallbackInfo *asyncCallbackInfo = CreateAsyncCallbackInfo(env);
+    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo {.env = env};
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo is nullpter");
         return WrapVoidToJS(env);
@@ -446,6 +444,12 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
         return nullptr;
+    }
+
+    // argv[0] : context : AbilityContext
+    if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
+        BGTASK_LOGE("Get ability context failed");
+        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
     }
 
     napi_value ret = 0;
