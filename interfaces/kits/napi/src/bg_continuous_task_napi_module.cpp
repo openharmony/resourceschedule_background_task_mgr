@@ -71,7 +71,7 @@ napi_value GetCallbackErrorValue(napi_env env, int errCode)
 }
 
 napi_value GetAbilityContext(const napi_env &env, const napi_value &value,
-   std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext)
+    std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext)
 {
     bool stageMode = false;
     napi_status status = OHOS::AbilityRuntime::IsStageContext(env, value, stageMode);
