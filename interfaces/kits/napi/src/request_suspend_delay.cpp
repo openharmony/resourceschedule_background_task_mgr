@@ -15,8 +15,9 @@
 
 #include "request_suspend_delay.h"
 
-#include "singleton.h"
 #include <uv.h>
+
+#include "singleton.h"
 
 #include "background_task_manager.h"
 #include "transient_task_log.h"
