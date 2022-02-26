@@ -15,6 +15,8 @@
 
 #include "request_suspend_delay.h"
 
+#include <uv.h>
+
 #include "singleton.h"
 
 #include "background_task_manager.h"
@@ -24,6 +26,11 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 static const int32_t REQUEST_SUSPEND_DELAY_PARAMS = 2;
 
+struct CallbackReceiveDataWorker {
+    napi_env env = nullptr;
+    napi_ref ref = nullptr;
+};
+
 CallbackInstance::CallbackInstance() {}
 
 CallbackInstance::~CallbackInstance()
@@ -31,6 +38,31 @@ CallbackInstance::~CallbackInstance()
     if (expiredCallbackInfo_.ref != nullptr) {
         napi_delete_reference(expiredCallbackInfo_.env, expiredCallbackInfo_.ref);
     }
+}
+
+void UvQueueWorkOnExpired(uv_work_t *work, int status)
+{
+    BGTASK_LOGI("OnExpired uv_work_t start");
+
+    if (work == nullptr) {
+        BGTASK_LOGE("work is null");
+        return;
+    }
+
+    CallbackReceiveDataWorker *dataWorkerData = (CallbackReceiveDataWorker *)work->data;
+    if (dataWorkerData == nullptr) {
+        BGTASK_LOGE("dataWorkerData is null");
+        delete work;
+        work = nullptr;
+        return;
+    }
+
+    Common::SetCallback(dataWorkerData->env, dataWorkerData->ref, Common::NapiGetNull(dataWorkerData->env));
+
+    delete dataWorkerData;
+    dataWorkerData = nullptr;
+    delete work;
+    work = nullptr;
 }
 
 void CallbackInstance::OnExpired()
@@ -42,8 +74,39 @@ void CallbackInstance::OnExpired()
         return;
     }
 
-    Common::SetCallback(expiredCallbackInfo_.env, expiredCallbackInfo_.ref,
-        Common::NapiGetNull(expiredCallbackInfo_.env));
+    uv_loop_s *loop = nullptr;
+    napi_get_uv_event_loop(expiredCallbackInfo_.env, &loop);
+    if (loop == nullptr) {
+        BGTASK_LOGE("loop instance is nullptr");
+        return;
+    }
+
+    CallbackReceiveDataWorker *dataWorker = new (std::nothrow) CallbackReceiveDataWorker();
+    if (dataWorker == nullptr) {
+        BGTASK_LOGE("new dataWorker failed");
+        return;
+    }
+
+    dataWorker->env = expiredCallbackInfo_.env;
+    dataWorker->ref = expiredCallbackInfo_.ref;
+
+    uv_work_t *work = new (std::nothrow) uv_work_t;
+    if (work == nullptr) {
+        BGTASK_LOGE("new work failed");
+        delete dataWorker;
+        dataWorker = nullptr;
+        return;
+    }
+
+    work->data = (void *)dataWorker;
+
+    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnExpired);
+    if (ret != 0) {
+        delete dataWorker;
+        dataWorker = nullptr;
+        delete work;
+        work = nullptr;
+    }
 }
 
 void CallbackInstance::SetCallbackInfo(const napi_env &env, const napi_ref &ref)
