@@ -26,7 +26,7 @@ using OHOS::AppExecFwk::Constants::PERMISSION_GRANTED;
 
 BundleManagerHelper::BundleManagerHelper()
 {
-    bundleMgrDeathRecipient_ = new RemoteDeathRecipient(
+    bundleMgrDeathRecipient_ = new (std::nothrow) RemoteDeathRecipient(
         [this](const wptr<IRemoteObject> &object) { this->OnRemoteDied(object); });
 }
 
@@ -107,7 +107,7 @@ bool BundleManagerHelper::Connect()
     }
 
     bundleMgr_ = iface_cast<AppExecFwk::IBundleMgr>(remoteObject);
-    if (bundleMgr_ != nullptr) {
+    if (bundleMgr_ != nullptr && bundleMgrDeathRecipient_ != nullptr) {
         bundleMgr_->AsObject()->AddDeathRecipient(bundleMgrDeathRecipient_);
         return true;
     }
@@ -117,7 +117,7 @@ bool BundleManagerHelper::Connect()
 
 void BundleManagerHelper::Disconnect()
 {
-    if (bundleMgr_ != nullptr) {
+    if (bundleMgr_ != nullptr && bundleMgrDeathRecipient_ != nullptr) {
         bundleMgr_->AsObject()->RemoveDeathRecipient(bundleMgrDeathRecipient_);
         bundleMgr_ = nullptr;
     }
