@@ -22,7 +22,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 BackgroundTaskSubscriber::BackgroundTaskSubscriber()
 {
-    impl_ = new BackgroundTaskSubscriberImpl(*this);
+    impl_ = new (std::nothrow) BackgroundTaskSubscriberImpl(*this);
 };
 
 BackgroundTaskSubscriber::~BackgroundTaskSubscriber() {}

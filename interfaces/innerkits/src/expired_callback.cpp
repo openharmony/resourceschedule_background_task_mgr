@@ -19,7 +19,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 ExpiredCallback::ExpiredCallback()
 {
-    impl_ = new ExpiredCallbackImpl(*this);
+    impl_ = new (std::nothrow) ExpiredCallbackImpl(*this);
 };
 
 ExpiredCallback::~ExpiredCallback() {}

@@ -66,10 +66,10 @@ void BgTransientTaskMgr::Init()
     if (!handler_) {
         BGTASK_LOGE("Failed to init due to create handler error");
     }
-    callbackDeathRecipient_ =
-        new ExpiredCallbackDeathRecipient(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
-    susriberDeathRecipient_ =
-        new SubscriberDeathRecipient(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
+    callbackDeathRecipient_ = new (std::nothrow)
+        ExpiredCallbackDeathRecipient(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
+    susriberDeathRecipient_ = new (std::nothrow)
+        SubscriberDeathRecipient(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
 
     InitNecessaryState();
 }
