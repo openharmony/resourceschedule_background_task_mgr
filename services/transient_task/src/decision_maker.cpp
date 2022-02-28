@@ -73,6 +73,9 @@ bool DecisionMaker::GetAppMgrProxy()
         return false;
     }
     observer_ = new (std::nothrow) ApplicationStateObserver(*this);
+    if (observer_ == nullptr) {
+        return false;
+    }
     appMgrProxy_->RegisterApplicationStateObserver(iface_cast<AppExecFwk::IApplicationStateObserver>(observer_));
 
     recipient_ = new (std::nothrow) AppMgrDeathRecipient(*this);
