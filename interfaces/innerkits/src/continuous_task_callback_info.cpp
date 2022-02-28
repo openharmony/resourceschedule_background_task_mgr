@@ -70,7 +70,7 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
 
 ContinuousTaskCallbackInfo *ContinuousTaskCallbackInfo::Unmarshalling(Parcel &parcel)
 {
-    auto object = new ContinuousTaskCallbackInfo();
+    auto object = new (std::nothrow) ContinuousTaskCallbackInfo();
     if ((object != nullptr) && !object->ReadFromParcel(parcel)) {
         delete object;
         object = nullptr;

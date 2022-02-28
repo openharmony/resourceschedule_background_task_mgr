@@ -28,7 +28,7 @@ const std::string TASK_ON_PROCESS_DIED = "OnProcessDiedTask";
 
 AppStateObserver::AppStateObserver()
 {
-    appMgrDeathRecipient_ = new RemoteDeathRecipient(std::bind(&AppStateObserver::OnRemoteDied,
+    appMgrDeathRecipient_ = new (std::nothrow) RemoteDeathRecipient(std::bind(&AppStateObserver::OnRemoteDied,
         this, std::placeholders::_1));
 }
 

@@ -591,8 +591,12 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscr
     if (subscriberRecipients_.find(subscriber->AsObject()) != subscriberRecipients_.end()) {
         return ERR_BGTASK_OBJECT_EXISTS;
     }
-    sptr<RemoteDeathRecipient> deathRecipient =
-        new RemoteDeathRecipient([this](const wptr<IRemoteObject> &remote) { this->OnRemoteSubscriberDied(remote); });
+    sptr<RemoteDeathRecipient> deathRecipient = new (std::nothrow) RemoteDeathRecipient(
+        [this](const wptr<IRemoteObject> &remote) { this->OnRemoteSubscriberDied(remote); });
+    if (!deathRecipient) {
+        BGTASK_LOGE("create death recipient failed");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
     subscriber->AsObject()->AddDeathRecipient(deathRecipient);
     subscriberRecipients_.emplace(subscriber->AsObject(), deathRecipient);
     subscriber->OnConnected();

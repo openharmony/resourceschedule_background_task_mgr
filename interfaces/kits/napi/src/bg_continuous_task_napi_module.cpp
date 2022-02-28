@@ -199,8 +199,9 @@ void PromiseCompletedCB(napi_env env, napi_status status, void *data)
     }
 
     napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-    BGTASK_LOGI("end");
     delete asyncCallbackInfo;
+    asyncCallbackInfo = nullptr;
+    BGTASK_LOGI("end");
 }
 
 napi_value StartBackgroundRunningAsync(
