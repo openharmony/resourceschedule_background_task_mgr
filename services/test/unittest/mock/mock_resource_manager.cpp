@@ -203,6 +203,11 @@ RState ResourceManagerImpl::GetRawFilePathByName(const std::string &name, std::s
 {
     return SUCCESS;
 }
+
+RState ResourceManagerImpl::GetRawFileDescriptor(const std::string &name, RawFileDescriptor &descriptor)
+{
+    return SUCCESS;
+}
 }
 }
 }
