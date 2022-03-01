@@ -145,7 +145,7 @@ bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
         return false;
     }
 
-    recipient_ = new BgTaskMgrDeathRecipient(*this);
+    recipient_ = new (std::nothrow) BgTaskMgrDeathRecipient(*this);
     if (recipient_ == nullptr) {
         return false;
     }
