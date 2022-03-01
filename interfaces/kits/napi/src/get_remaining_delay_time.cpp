@@ -28,13 +28,13 @@ static const int32_t GET_REMAINING_DELAY_TIME_PARAMS = 2;
 struct AsyncCallbackInfoGetRemainingDelayTime {
     napi_env env = nullptr;
     napi_async_work asyncWork = nullptr;
-    int32_t requestId;
-    int32_t delayTime;
+    int32_t requestId = 0;
+    int32_t delayTime = 0;
     CallbackPromiseInfo info;
 };
 
 struct GetRemainingDelayTimeParamsInfo {
-    int32_t requestId;
+    int32_t requestId = 0;
     napi_ref callback = nullptr;
 };
 
