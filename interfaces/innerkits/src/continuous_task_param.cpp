@@ -79,7 +79,7 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         return false;
     }
     bool valid = false;
-    valid = wantAgent_ ? true : false;
+    valid = wantAgent_ != nullptr;
     if (!parcel.WriteBool(valid)) {
         BGTASK_LOGE("Failed to write the flag which indicate whether wantAgent is null");
         return false;
@@ -96,7 +96,7 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         return false;
     }
 
-    valid = abilityToken_ ? true : false;
+    valid = abilityToken_ != nullptr;
     if (!parcel.WriteBool(valid)) {
         BGTASK_LOGE("Failed to write the flag which indicate whether ability token is null");
         return false;
