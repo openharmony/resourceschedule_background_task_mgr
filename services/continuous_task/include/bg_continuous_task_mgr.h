@@ -32,7 +32,6 @@
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
 #include "ibackground_task_subscriber.h"
-#include "os_account_observer.h"
 #include "remote_death_recipient.h"
 #include "system_event_observer.h"
 
@@ -61,11 +60,12 @@ public:
     bool StopContinuousTaskByUser(const std::string &mapKey);
     void OnAccountsStateChanged(int id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
+    void OnAbilityStateChanged(const sptr<IRemoteObject> &token);
     void OnProcessDied(int32_t pid);
     void OnRemoteSubscriberDied(const wptr<IRemoteObject> &object);
     bool Init();
     void InitNecessaryState();
-    void InitNotificationPrompt();
+    void InitRequiredResourceInfo();
     void Clear();
 
 private:
@@ -87,22 +87,22 @@ private:
     bool RegisterNotificationSubscriber();
     bool RegisterSysCommEventListener();
     bool RegisterAppStateObserver();
-    bool RegisterOsAccountObserver();
-    bool GetContinuousTaskText();
+    bool GetNotificationPrompt();
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);
+    bool checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, int32_t uid);
 
 private:
     std::atomic<bool> isSysReady_ {false};
+    std::string deviceType_ {""};
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
     std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
-    std::shared_ptr<OsAccountObserver> osAccountObserver_ {nullptr};
     std::list<sptr<IBackgroundTaskSubscriber>> bgTaskSubscribers_ {};
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> subscriberRecipients_ {};
     std::unordered_map<int32_t, CachedBundleInfo> cachedBundleInfos_ {};

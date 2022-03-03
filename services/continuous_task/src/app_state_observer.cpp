@@ -15,6 +15,7 @@
 
 #include "app_state_observer.h"
 
+#include "app_mgr_constants.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 
@@ -24,6 +25,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 const std::string TASK_ON_PROCESS_DIED = "OnProcessDiedTask";
+const std::string TASK_ON_ABILITY_STATE_CHANGED = "OnAbilityStateChangedTask";
 }
 
 AppStateObserver::AppStateObserver()
@@ -36,6 +38,31 @@ AppStateObserver::~AppStateObserver()
 {
     std::lock_guard<std::mutex> lock(mutex_);
     Disconnect();
+}
+
+void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData)
+{
+    BGTASK_LOGI("ability state changed, abilityName: %{public}s, abilityState: %{public}d",
+        abilityStateData.abilityName.c_str(), abilityStateData.abilityState);
+    if ((int32_t) AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED != abilityStateData.abilityState) {
+        return;
+    }
+    if (!abilityStateData.token) {
+        BGTASK_LOGE("ability token is null");
+        return;
+    }
+    auto handler = handler_.lock();
+    if (!handler) {
+        BGTASK_LOGE("handler is null");
+        return;
+    }
+    auto bgContinuousTaskMgr = bgContinuousTaskMgr_.lock();
+    if (!bgContinuousTaskMgr) {
+        BGTASK_LOGE("bgContinuousTaskMgr is null");
+        return;
+    }
+    auto task = [=]() { bgContinuousTaskMgr->OnAbilityStateChanged(abilityStateData.token); };
+    handler->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
 }
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)

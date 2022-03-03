@@ -27,6 +27,7 @@
 #include "iservice_registry.h"
 #include "ohos/aafwk/base/string_wrapper.h"
 #include "os_account_manager.h"
+#include "parameters.h"
 #include "system_ability_definition.h"
 
 #include "bgtaskmgr_inner_errors.h"
@@ -58,8 +59,10 @@ static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
 static constexpr char NOTIFICATION_PREFIX[] = "bgmode";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "ohos.global.backgroundtaskres";
+static constexpr char DEVICE_TYPE_PC[] = "pc";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
+static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr unsigned int SYSTEM_UID = 1000;
 static constexpr int32_t DEFAULT_NOTIFICATION_ID = 0;
 static constexpr int DELAY_TIME = 2000;
@@ -127,16 +130,18 @@ void BgContinuousTaskMgr::InitNecessaryState()
         BGTASK_LOGE("RegisterSysCommEventListener failed");
         return;
     }
-    auto getPromptTask = [this]() { this->InitNotificationPrompt(); };
-    handler_->PostTask(getPromptTask, DELAY_TIME);
+    deviceType_ = OHOS::system::GetParameter("const.build.characteristics", "");
+    BGTASK_LOGI("current device type is: %{public}s", deviceType_.c_str());
+    auto getResInfoTask = [this]() { this->InitRequiredResourceInfo(); };
+    handler_->PostTask(getResInfoTask, DELAY_TIME);
 }
 
-void BgContinuousTaskMgr::InitNotificationPrompt()
+void BgContinuousTaskMgr::InitRequiredResourceInfo()
 {
-    if (!GetContinuousTaskText()) {
-        BGTASK_LOGW("init continuous task notification prompt failed. will try again");
+    if (!GetNotificationPrompt()) {
+        BGTASK_LOGW("init required resource info failed. will try again");
         isSysReady_.store(false);
-        auto task = [this]() { this->InitNotificationPrompt(); };
+        auto task = [this]() { this->InitRequiredResourceInfo(); };
         handler_->PostTask(task, DELAY_TIME);
         return;
     }
@@ -167,7 +172,7 @@ bool BgContinuousTaskMgr::RegisterAppStateObserver()
     return res;
 }
 
-bool BgContinuousTaskMgr::GetContinuousTaskText()
+bool BgContinuousTaskMgr::GetNotificationPrompt()
 {
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(BG_TASK_RES_BUNDLE_NAME,
@@ -224,21 +229,6 @@ bool BgContinuousTaskMgr::RegisterSysCommEventListener()
     return res;
 }
 
-bool BgContinuousTaskMgr::RegisterOsAccountObserver()
-{
-    bool res = true;
-    OHOS::AccountSA::OsAccountSubscribeInfo osAccountSubscribeInfo;
-    osAccountSubscribeInfo.SetOsAccountSubscribeType(OHOS::AccountSA::OS_ACCOUNT_SUBSCRIBE_TYPE::ACTIVED);
-    osAccountSubscribeInfo.SetName("background_task_manager_service");
-    osAccountObserver_ = std::make_shared<OsAccountObserver>(osAccountSubscribeInfo);
-    if (osAccountObserver_ != nullptr) {
-        osAccountObserver_->SetEventHandler(handler_);
-        osAccountObserver_->SetBgContinuousTaskMgr(shared_from_this());
-        res = osAccountObserver_->Subscribe();
-    }
-    return res;
-}
-
 bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName)
 {
     AppExecFwk::BundleInfo bundleInfo;
@@ -274,7 +264,8 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
     return true;
 }
 
-bool BgContinuousTaskMgr::AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo)
+bool BgContinuousTaskMgr::AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo,
+    CachedBundleInfo &cachedBundleInfo)
 {
     std::shared_ptr<Global::Resource::ResourceManager> resourceManager(Global::Resource::CreateResourceManager());
     if (resourceManager == nullptr) {
@@ -299,7 +290,8 @@ bool BgContinuousTaskMgr::AddAppNameInfos(const AppExecFwk::BundleInfo &bundleIn
     return true;
 }
 
-bool checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, int32_t uid)
+bool BgContinuousTaskMgr::checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId,
+    bool isNewApi, int32_t uid)
 {
     if (!isNewApi) {
         if (configuredBgMode == INVALID_BGMODE) {
@@ -313,6 +305,11 @@ bool checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool
         if ((recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION || recordedBgMode == SYSTEM_APP_BGMODE_VOIP)
             && !BundleManagerHelper::GetInstance()->IsSystemApp(uid)) {
             BGTASK_LOGE("voip and wifiInteraction background mode only support for system app");
+            return false;
+        }
+        if (recordedBgMode == PC_BGMODE_TASK_KEEPING
+            && deviceType_ != DEVICE_TYPE_PC) {
+            BGTASK_LOGE("task keeping background mode only support for pc device");
             return false;
         }
         if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode
@@ -796,6 +793,26 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
         }
     }
     subscriberRecipients_.erase(objectProxy);
+}
+
+void BgContinuousTaskMgr::OnAbilityStateChanged(const sptr<IRemoteObject> &token)
+{
+    BGTASK_LOGI("begin");
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        if (iter->second->GetAbilityToken() == token) {
+            OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            Notification::NotificationHelper::CancelContinuousTaskNotification(
+                iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+            iter = continuousTaskInfosMap_.erase(iter);
+        } else {
+            iter++;
+        }
+    }
 }
 
 void BgContinuousTaskMgr::OnProcessDied(int32_t pid)
