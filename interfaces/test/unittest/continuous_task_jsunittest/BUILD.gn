@@ -16,20 +16,11 @@ module_output_path = "background_task_mgr/interfaces"
 
 ohos_js_unittest("ContinuousTaskJsTest") {
   module_out_path = module_output_path
-  hap_profile = "./continuous_task_jsunittest/config.json"
-  certificate_profile = "//test/developertest/signature/openharmony_sx.p7b"
-}
-
-ohos_js_unittest("TransientTaskJsTest") {
-  module_out_path = module_output_path
-  hap_profile = "./transient_task_jsunittest/config.json"
+  hap_profile = "./config.json"
   certificate_profile = "//test/developertest/signature/openharmony_sx.p7b"
 }
 
 group("js_unittest") {
   testonly = true
-  deps = [
-    ":ContinuousTaskJsTest",
-    ":TransientTaskJsTest",
-  ]
+  deps = [ ":ContinuousTaskJsTest" ]
 }
