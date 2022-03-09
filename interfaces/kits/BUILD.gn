@@ -44,7 +44,6 @@ ohos_shared_library("backgroundtaskmanager") {
     "ability_runtime:napi_base_context",
     "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_base",
-    "dmsfwk_standard:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
