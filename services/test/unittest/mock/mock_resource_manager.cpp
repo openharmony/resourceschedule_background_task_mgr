@@ -208,6 +208,11 @@ RState ResourceManagerImpl::GetRawFileDescriptor(const std::string &name, RawFil
 {
     return SUCCESS;
 }
+
+RState ResourceManagerImpl::CloseRawFileDescriptor(const std::string &name)
+{
+    return SUCCESS;
+}
 }
 }
 }
