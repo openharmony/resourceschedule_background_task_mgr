@@ -112,12 +112,12 @@ void TaskNotificationSubscriber::OnEnabledNotificationChanged(
 std::vector<std::string> TaskNotificationSubscriber::StringSplit(const std::string &str, const char *delim)
 {
     std::vector <std::string> strlist;
-    char *saveptr = NULL;
+    char *saveptr = nullptr;
     char *p = const_cast<char*>(str.c_str());
     char *input = strdup(p);
-    while ((input = strtok_r(input, delim, &saveptr)) != NULL) {
+    while ((input = strtok_r(input, delim, &saveptr)) != nullptr) {
         strlist.emplace_back(input);
-        input = NULL;
+        input = nullptr;
     }
     free(input);
     return strlist;
