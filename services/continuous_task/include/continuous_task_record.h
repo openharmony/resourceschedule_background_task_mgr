@@ -18,6 +18,7 @@
 
 #include "iremote_object.h"
 #include "parcel.h"
+#include "json/json.h"
 #include "want_agent.h"
 
 #include "task_notification_subscriber.h"
@@ -25,6 +26,11 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 extern const char *ContinuousTaskModeName[10];
+
+struct WantAgentInfo {
+    std::string bundleName_ {""};
+    std::string abilityName_ {""};
+};
 
 class ContinuousTaskRecord {
 public:
@@ -42,6 +48,8 @@ public:
     std::string GetNotificationLabel() const;
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
     sptr<IRemoteObject> GetAbilityToken() const;
+    std::string ParseToJsonStr();
+    bool ParseFromJson(const Json::Value value);
 
 private:
     std::string bundleName_ {""};
@@ -54,6 +62,7 @@ private:
     uint32_t bgModeId_ {0};
     bool isNewApi_ {false};
     std::string notificationLabel_ {""};
+    std::shared_ptr<WantAgentInfo> wantAgentInfo_ {nullptr};
 
     friend class BgContinuousTaskMgr;
 };

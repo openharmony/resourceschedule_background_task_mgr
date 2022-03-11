@@ -55,6 +55,7 @@ enum : int {
     ERR_BGTASK_NOTIFICATION_ERR,
     ERR_BGTASK_INVALID_BGMODE,
     ERR_BGTASK_NO_MEMORY,
+    ERR_BGTASK_DATA_STORAGE_ERR,
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

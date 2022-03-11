@@ -32,8 +32,7 @@ static constexpr char NOTIFICATION_PREFIX[] = "bgmode";
 static constexpr uint32_t SYSTEM_UID = 1000;
 static constexpr uint32_t LABEL_BGMODE_PREFIX_POS = 0;
 static constexpr uint32_t LABEL_APP_UID_POS = 1;
-static constexpr uint32_t LABEL_ABILITY_TOKEN_POS = 3;
-static constexpr uint32_t LABEL_SIZE = 4;
+static constexpr uint32_t LABEL_SIZE = 3;
 }
 
 std::shared_ptr<BgContinuousTaskMgr> TaskNotificationSubscriber::continuousTaskMgr_
@@ -62,7 +61,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         return;
     }
 
-    // continuous task notification label is consisted of bgmode prefix, app uid, abilityName hash code, ability token.
+    // continuous task notification label is consisted of bgmode prefix, app uid, abilityName hash code.
     std::string notificationLabel = request.GetLabel();
     std::vector<std::string> labelSplits = StringSplit(notificationLabel, LABEL_SPLITER);
 
@@ -85,8 +84,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
     BGTASK_LOGI("stop continuous task by user, the label is : %{public}s", notificationLabel.c_str());
 
     std::string abilityName = AAFwk::String::Unbox(AAFwk::IString::Query(extraInfo->GetParam("abilityName")));
-    std::string taskInfoMapKey = labelSplits[LABEL_APP_UID_POS] + LABEL_SPLITER + abilityName
-        + LABEL_SPLITER + labelSplits[LABEL_ABILITY_TOKEN_POS];
+    std::string taskInfoMapKey = labelSplits[LABEL_APP_UID_POS] + LABEL_SPLITER + abilityName;
 
     if (continuousTaskMgr_->StopContinuousTaskByUser(taskInfoMapKey)) {
         BGTASK_LOGI("remove continuous task record Key: %{public}s", taskInfoMapKey.c_str());
