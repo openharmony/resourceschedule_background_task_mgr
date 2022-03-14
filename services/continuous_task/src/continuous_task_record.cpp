@@ -16,6 +16,7 @@
 #include "continuous_task_record.h"
 
 #include "iremote_object.h"
+#include "json/value.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
