@@ -67,7 +67,7 @@ static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr unsigned int SYSTEM_UID = 1000;
 static constexpr int32_t DEFAULT_NOTIFICATION_ID = 0;
-static constexpr int32_t DELAY_TIME_INTERVAL = 500;
+static constexpr int32_t DELAY_TIME = 2000;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr int BGMODE_NUMS = 10;
@@ -116,7 +116,7 @@ void BgContinuousTaskMgr::InitNecessaryState()
         || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr) {
         BGTASK_LOGW("request system service is not ready yet!");
         auto task = [this]() { this->InitNecessaryState(); };
-        handler_->PostTask(task, DELAY_TIME_INTERVAL * 4);
+        handler_->PostTask(task, DELAY_TIME);
         return;
     }
 
@@ -208,7 +208,7 @@ void BgContinuousTaskMgr::InitRequiredResourceInfo()
         BGTASK_LOGW("init required resource info failed. will try again");
         isSysReady_.store(false);
         auto task = [this]() { this->InitRequiredResourceInfo(); };
-        handler_->PostTask(task, DELAY_TIME_INTERVAL);
+        handler_->PostTask(task, DDELAY_TIME);
         return;
     }
     HandlePersistenceData();

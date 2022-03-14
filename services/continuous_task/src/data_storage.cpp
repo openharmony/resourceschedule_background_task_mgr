@@ -34,7 +34,8 @@ static constexpr char TASK_RECORD_FILE_PATH[] = "/data/service/el1/public/backgr
 static constexpr int32_t MAX_BUFFER = 512;
 }
 
-int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> &allRecord)
+int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
+    std::shared_ptr<ContinuousTaskRecord>> &allRecord)
 {
     Json::Value root;
     for (auto &iter : allRecord) {
@@ -67,7 +68,9 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string, std
     fout.close();
     return ERR_OK;
 }
-int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> &allRecord)
+
+int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
+    std::shared_ptr<ContinuousTaskRecord>> &allRecord)
 {
     std::ifstream fin;
     std::string realPath;

@@ -112,8 +112,8 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     jsonWriter->write(root, &os);
     std::string result = os.str();
     return result;
-
 }
+
 bool ContinuousTaskRecord::ParseFromJson(const Json::Value value)
 {
     if (value.empty()) {
