@@ -28,6 +28,7 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_info.h"
 #include "continuous_task_callback_info.h"
+#include "data_storage.h"
 #include "task_notification_subscriber.h"
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
@@ -60,7 +61,7 @@ public:
     bool StopContinuousTaskByUser(const std::string &mapKey);
     void OnAccountsStateChanged(int id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
-    void OnAbilityStateChanged(const sptr<IRemoteObject> &token);
+    void OnAbilityStateChanged(int32_t uid, const std::string &abilityName);
     void OnProcessDied(int32_t pid);
     void OnRemoteSubscriberDied(const wptr<IRemoteObject> &object);
     bool Init();
@@ -76,12 +77,15 @@ private:
     ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDumpInner(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
+    void HandlePersistenceData();
+    void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
+        const std::vector<sptr<Notification::Notification>> &allNotifications);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     std::string CreateNotificationLabel(int32_t uid, const std::string &bundleName,
-        const std::string &abilityName, sptr<IRemoteObject> abilityToken);
+        const std::string &abilityName);
     uint32_t GetBackgroundModeInfo(int32_t uid, std::string &abilityName);
     bool AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool RegisterNotificationSubscriber();
@@ -93,6 +97,7 @@ private:
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);
     bool checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, int32_t uid);
+    int32_t RefreshTaskRecord();
 
 private:
     std::atomic<bool> isSysReady_ {false};
@@ -107,6 +112,7 @@ private:
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> subscriberRecipients_ {};
     std::unordered_map<int32_t, CachedBundleInfo> cachedBundleInfos_ {};
     std::vector<std::string> continuousTaskText_ {};
+    std::shared_ptr<DataStorage> dataStorage_ {nullptr};
 
     DECLARE_DELAYED_SINGLETON(BgContinuousTaskMgr);
 };

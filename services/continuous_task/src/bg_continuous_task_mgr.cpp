@@ -17,6 +17,7 @@
 
 #include <sstream>
 
+#include "app_mgr_client.h"
 #include "bundle_constants.h"
 #include "bundle_manager_helper.h"
 #include "common_event_support.h"
@@ -28,6 +29,7 @@
 #include "ohos/aafwk/base/string_wrapper.h"
 #include "os_account_manager.h"
 #include "parameters.h"
+#include "running_process_info.h"
 #include "system_ability_definition.h"
 
 #include "bgtaskmgr_inner_errors.h"
@@ -65,7 +67,7 @@ static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr unsigned int SYSTEM_UID = 1000;
 static constexpr int32_t DEFAULT_NOTIFICATION_ID = 0;
-static constexpr int DELAY_TIME = 2000;
+static constexpr int32_t DELAY_TIME = 2000;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr int BGMODE_NUMS = 10;
@@ -132,8 +134,72 @@ void BgContinuousTaskMgr::InitNecessaryState()
     }
     deviceType_ = OHOS::system::GetParameter("const.build.characteristics", "");
     BGTASK_LOGI("current device type is: %{public}s", deviceType_.c_str());
-    auto getResInfoTask = [this]() { this->InitRequiredResourceInfo(); };
-    handler_->PostTask(getResInfoTask, DELAY_TIME);
+    InitRequiredResourceInfo();
+}
+
+void BgContinuousTaskMgr::HandlePersistenceData()
+{
+    dataStorage_ = std::make_shared<DataStorage>();
+    if (dataStorage_ == nullptr) {
+        BGTASK_LOGE("get data storage failed");
+        return;
+    }
+    BGTASK_LOGI("service restart, restore data");
+    dataStorage_->RestoreTaskRecord(continuousTaskInfosMap_);
+    auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
+    std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
+    if (appMgrClient == nullptr || appMgrClient->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGW("connect to app mgr service failed");
+        return;
+    }
+    appMgrClient->GetAllRunningProcesses(allAppProcessInfos);
+    std::vector<sptr<Notification::Notification>> notifications;
+    Notification::NotificationHelper::GetAllActiveNotifications(notifications);
+    CheckPersistenceData(allAppProcessInfos, notifications);
+    dataStorage_->RefreshTaskRecord(continuousTaskInfosMap_);
+}
+
+void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
+    const std::vector<sptr<Notification::Notification>> &allNotifications)
+{
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        int32_t recordPid = iter->second->GetPid();
+        auto findPid = [recordPid](const auto &target) {
+            return recordPid == target.pid_;
+        };
+        auto findPidIter = find_if(allProcesses.begin(), allProcesses.end(), findPid);
+
+        std::string recordLabel = iter->second->GetNotificationLabel();
+        auto findLabel = [recordLabel](const auto &target) {
+            return target != nullptr ? recordLabel == target->GetLabel() : false;
+        };
+        auto findLabelIter = find_if(allNotifications.begin(), allNotifications.end(), findLabel);
+        if (findPidIter != allProcesses.end() && findLabelIter != allNotifications.end()) {
+            BGTASK_LOGI("target continuous task exist");
+            iter++;
+            continue;
+        }
+
+        if (findPidIter == allProcesses.end() && findLabelIter != allNotifications.end()) {
+            BGTASK_LOGI("pid: %{public}d not exist, label: %{public}s exist", recordPid, recordLabel.c_str());
+            Notification::NotificationHelper::CancelContinuousTaskNotification(recordLabel, DEFAULT_NOTIFICATION_ID);
+            iter = continuousTaskInfosMap_.erase(iter);
+            continue;
+        }
+
+        if (findPidIter != allProcesses.end() && findLabelIter == allNotifications.end()) {
+            BGTASK_LOGI("pid: %{public}d exist, label: %{public}s not exist", recordPid, recordLabel.c_str());
+            iter = continuousTaskInfosMap_.erase(iter);
+            continue;
+        }
+
+        if (findPidIter == allProcesses.end() && findLabelIter == allNotifications.end()) {
+            BGTASK_LOGI("pid: %{public}d not exist, label: %{public}s not exist", recordPid, recordLabel.c_str());
+            iter = continuousTaskInfosMap_.erase(iter);
+            continue;
+        }
+    }
 }
 
 void BgContinuousTaskMgr::InitRequiredResourceInfo()
@@ -145,6 +211,7 @@ void BgContinuousTaskMgr::InitRequiredResourceInfo()
         handler_->PostTask(task, DELAY_TIME);
         return;
     }
+    HandlePersistenceData();
     isSysReady_.store(true);
 }
 
@@ -370,6 +437,17 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
         taskParam->abilityName_, taskParam->wantAgent_, taskParam->abilityToken_, userId, callingUid, callingPid,
         taskParam->bgModeId_, taskParam->isNewApi_);
 
+    if (taskParam->wantAgent_ != nullptr && taskParam->wantAgent_->GetPendingWant() != nullptr) {
+        auto target = taskParam->wantAgent_->GetPendingWant()->GetTarget();
+        auto want = taskParam->wantAgent_->GetPendingWant()->GetWant(target);
+        if (want != nullptr) {
+            std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+            info->bundleName_ = want->GetOperation().GetBundleName();
+            info->abilityName_ = want->GetOperation().GetAbilityName();
+            continuousTaskRecord->wantAgentInfo_ = info;
+        }
+    }
+
     handler_->PostSyncTask([this, continuousTaskRecord, &result]() mutable {
         result = this->StartBackgroundRunningInner(continuousTaskRecord);
         }, AppExecFwk::EventQueue::Priority::HIGH);
@@ -381,14 +459,8 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
     BGTASK_LOGI("begin");
-
-    std::stringstream stream;
-    stream.clear();
-    stream.str("");
-    continuousTaskRecord->abilityToken_ ? stream << continuousTaskRecord->abilityToken_ : stream << 0;
-    std::string abilityTokeLabel = stream.str();
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
-        + continuousTaskRecord->abilityName_ + SEPARATOR + abilityTokeLabel;
+        + continuousTaskRecord->abilityName_;
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
@@ -419,6 +491,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     }
     continuousTaskInfosMap_.emplace(taskInfoMapKey, continuousTaskRecord);
     OnContinuousTaskChanged(continuousTaskRecord, ContinuousTaskEventTriggerType::TASK_START);
+    if (RefreshTaskRecord() != ERR_OK) {
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
     return ERR_OK;
 }
 
@@ -461,7 +536,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     extraInfo->SetParam("abilityName", AAFwk::String::Box(continuousTaskRecord->abilityName_));
 
     std::string notificationLabel = CreateNotificationLabel(continuousTaskRecord->uid_,
-        continuousTaskRecord->bundleName_, continuousTaskRecord->abilityName_, continuousTaskRecord->abilityToken_);
+        continuousTaskRecord->bundleName_, continuousTaskRecord->abilityName_);
 
     // set extraInfo to save abilityname Info.
     notificationRequest.SetAdditionalData(extraInfo);
@@ -492,13 +567,12 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
 }
 
 std::string BgContinuousTaskMgr::CreateNotificationLabel(int32_t uid, const std::string &bundleName,
-    const std::string &abilityName, const sptr<IRemoteObject> abilityToken)
+    const std::string &abilityName)
 {
     std::stringstream stream;
     stream.clear();
     stream.str("");
-    stream << NOTIFICATION_PREFIX << SEPARATOR << uid << SEPARATOR << std::hash<std::string>()(abilityName)
-        << SEPARATOR << (abilityToken ? (abilityToken) : 0);
+    stream << NOTIFICATION_PREFIX << SEPARATOR << uid << SEPARATOR << std::hash<std::string>()(abilityName);
     std::string label = stream.str();
     BGTASK_LOGI("notification label: %{public}s", label.c_str());
     return label;
@@ -531,12 +605,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     const sptr<IRemoteObject> &abilityToken)
 {
     BGTASK_LOGI("begin");
-    std::stringstream stream;
-    stream.clear();
-    stream.str("");
-    abilityToken ? stream << abilityToken : stream << 0;
-    std::string abilityTokeLabel = stream.str();
-    std::string mapKey = std::to_string(uid) + SEPARATOR + abilityName + SEPARATOR + abilityTokeLabel;
+    std::string mapKey = std::to_string(uid) + SEPARATOR + abilityName;
 
     auto iter = continuousTaskInfosMap_.find(mapKey);
     if (iter == continuousTaskInfosMap_.end()) {
@@ -695,13 +764,9 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
         stream << "\t\tuserId: " << iter->second->GetUserId() << "\n";
         stream << "\t\tpid: " << iter->second->GetPid() << "\n";
         stream << "\t\tnotificationLabel: " << iter->second->GetNotificationLabel() << "\n";
-        auto wantAgent = iter->second->GetWantAgent();
-        if (wantAgent != nullptr && wantAgent->GetPendingWant() != nullptr) {
-            auto want = wantAgent->GetPendingWant()->GetWant(wantAgent->GetPendingWant()->GetTarget());
-            if (want != nullptr) {
-                stream << "\t\twantAgentBundleName: " << want->GetOperation().GetBundleName() << "\n";
-                stream << "\t\twantAgentAbilityName: " << want->GetOperation().GetAbilityName() << "\n";
-            }
+        if (iter->second->wantAgentInfo_ != nullptr) {
+            stream << "\t\twantAgentBundleName: " << iter->second->wantAgentInfo_->bundleName_ << "\n";
+            stream << "\t\twantAgentAbilityName: " << iter->second->wantAgentInfo_->abilityName_ << "\n";
         } else {
             stream << "\t\twantAgentBundleName: " << "NULL" << "\n";
             stream << "\t\twantAgentAbilityName: " << "NULL" << "\n";
@@ -722,6 +787,7 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
             OnContinuousTaskChanged(item.second, ContinuousTaskEventTriggerType::TASK_CANCEL);
         }
         continuousTaskInfosMap_.clear();
+        RefreshTaskRecord();
     } else {
         std::string taskKey = dumpOption[2];
         auto iter = continuousTaskInfosMap_.find(taskKey);
@@ -743,6 +809,7 @@ bool BgContinuousTaskMgr::RemoveContinuousTaskRecord(const std::string &mapKey)
     }
     OnContinuousTaskChanged(continuousTaskInfosMap_.at(mapKey), ContinuousTaskEventTriggerType::TASK_CANCEL);
     continuousTaskInfosMap_.erase(mapKey);
+    RefreshTaskRecord();
     BGTASK_LOGI("end");
     return true;
 }
@@ -795,7 +862,7 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
     subscriberRecipients_.erase(objectProxy);
 }
 
-void BgContinuousTaskMgr::OnAbilityStateChanged(const sptr<IRemoteObject> &token)
+void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &abilityName)
 {
     BGTASK_LOGI("begin");
     if (!isSysReady_.load()) {
@@ -804,11 +871,12 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(const sptr<IRemoteObject> &token
     }
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
-        if (iter->second->GetAbilityToken() == token) {
+        if (iter->second->uid_ == uid && iter->second->abilityName_ == abilityName) {
             OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
             Notification::NotificationHelper::CancelContinuousTaskNotification(
                 iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
             iter = continuousTaskInfosMap_.erase(iter);
+            RefreshTaskRecord();
         } else {
             iter++;
         }
@@ -830,6 +898,7 @@ void BgContinuousTaskMgr::OnProcessDied(int32_t pid)
             Notification::NotificationHelper::CancelContinuousTaskNotification(
                 iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
             iter = continuousTaskInfosMap_.erase(iter);
+            RefreshTaskRecord();
         } else {
             iter++;
         }
@@ -893,6 +962,7 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
                 Notification::NotificationHelper::CancelContinuousTaskNotification(
                     iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
                 iter = continuousTaskInfosMap_.erase(iter);
+                RefreshTaskRecord();
             } else {
                 iter++;
             }
@@ -919,10 +989,24 @@ void BgContinuousTaskMgr::OnAccountsStateChanged(int id)
             Notification::NotificationHelper::CancelContinuousTaskNotification(
                 iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
             iter = continuousTaskInfosMap_.erase(iter);
+            RefreshTaskRecord();
         } else {
             iter++;
         }
     }
+}
+
+int32_t BgContinuousTaskMgr::RefreshTaskRecord()
+{
+    if (dataStorage_ == nullptr) {
+        BGTASK_LOGE("data storage object is null");
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
+    if (dataStorage_->RefreshTaskRecord(continuousTaskInfosMap_) != ERR_OK) {
+        BGTASK_LOGE("refresh data failed");
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
+    return ERR_OK;
 }
 }
 }

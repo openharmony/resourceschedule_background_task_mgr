@@ -42,15 +42,11 @@ AppStateObserver::~AppStateObserver()
 
 void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData)
 {
-    BGTASK_LOGI("ability state changed, abilityName: %{public}s, abilityState: %{public}d",
-        abilityStateData.abilityName.c_str(), abilityStateData.abilityState);
     if ((int32_t) AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED != abilityStateData.abilityState) {
         return;
     }
-    if (!abilityStateData.token) {
-        BGTASK_LOGE("ability token is null");
-        return;
-    }
+    BGTASK_LOGI("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d",
+        abilityStateData.uid, abilityStateData.abilityName.c_str(), abilityStateData.abilityState);
     auto handler = handler_.lock();
     if (!handler) {
         BGTASK_LOGE("handler is null");
@@ -61,7 +57,9 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
         BGTASK_LOGE("bgContinuousTaskMgr is null");
         return;
     }
-    auto task = [=]() { bgContinuousTaskMgr->OnAbilityStateChanged(abilityStateData.token); };
+    auto task = [=]() {
+        bgContinuousTaskMgr->OnAbilityStateChanged(abilityStateData.uid, abilityStateData.abilityName);
+    };
     handler->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
 }
 
