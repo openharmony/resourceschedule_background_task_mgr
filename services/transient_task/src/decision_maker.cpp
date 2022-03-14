@@ -134,7 +134,7 @@ bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::share
     BGTASK_LOGI("enter");
     lock_guard<mutex> lock(lock_);
     if (key == nullptr) {
-        BGTASK_LOGE("Invaild key");
+        BGTASK_LOGE("Invalid key");
         return false;
     }
 
@@ -180,7 +180,7 @@ void DecisionMaker::RemoveRequest(const std::shared_ptr<KeyInfo>& key, const int
 {
     lock_guard<mutex> lock(lock_);
     if (key == nullptr) {
-        BGTASK_LOGE("Invaild key");
+        BGTASK_LOGE("Invalid key");
         return;
     }
 

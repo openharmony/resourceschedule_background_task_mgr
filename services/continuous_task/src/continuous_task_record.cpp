@@ -87,5 +87,54 @@ sptr<IRemoteObject> ContinuousTaskRecord::GetAbilityToken() const
 {
     return abilityToken_;
 }
+
+std::string ContinuousTaskRecord::ParseToJsonStr()
+{
+    Json::Value root;
+    root["bundleName"] = bundleName_;
+    root["abilityName"] = abilityName_;
+    root["userId"] = userId_;
+    root["uid"] = uid_;
+    root["pid"] = pid_;
+    root["bgModeId"] = bgModeId_;
+    root["isNewApi"] = isNewApi_;
+    root["notificationLabel"] = notificationLabel_;
+    if (wantAgentInfo_ != nullptr) {
+        Json::Value info;
+        info["bundleName"] = wantAgentInfo_->bundleName_;
+        info["abilityName"] = wantAgentInfo_->abilityName_;
+        root["wantAgentInfo"] = info;
+    }
+    Json::StreamWriterBuilder writerBuilder;
+    std::ostringstream os;
+    std::unique_ptr<Json::StreamWriter> jsonWriter(writerBuilder.newStreamWriter());
+    jsonWriter->write(root, &os);
+    std::string result = os.str();
+    return result;
+}
+
+bool ContinuousTaskRecord::ParseFromJson(const Json::Value value)
+{
+    if (value.empty()) {
+        return false;
+    }
+    this->bundleName_ = value["bundleName"].asString();
+    this->abilityName_ = value["abilityName"].asString();
+    this->userId_ = value["userId"].asInt();
+    this->uid_ = value["uid"].asInt();
+    this->pid_ = value["pid"].asInt();
+    this->bgModeId_ = value["bgModeId"].asInt();
+    this->isNewApi_ = value["isNewApi"].asBool();
+    this->notificationLabel_ = value["notificationLabel"].asString();
+
+    if (value.isMember("wantAgentInfo")) {
+        Json::Value infoVal = value["wantAgentInfo"];
+        std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+        info->bundleName_ = infoVal["bundleName"].asString();
+        info->abilityName_ = infoVal["abilityName"].asString();
+        this->wantAgentInfo_ = info;
+    }
+    return true;
+}
 }
 }
