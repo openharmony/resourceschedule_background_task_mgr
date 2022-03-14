@@ -208,7 +208,7 @@ void BgContinuousTaskMgr::InitRequiredResourceInfo()
         BGTASK_LOGW("init required resource info failed. will try again");
         isSysReady_.store(false);
         auto task = [this]() { this->InitRequiredResourceInfo(); };
-        handler_->PostTask(task, DDELAY_TIME);
+        handler_->PostTask(task, DELAY_TIME);
         return;
     }
     HandlePersistenceData();
