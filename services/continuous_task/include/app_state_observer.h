@@ -31,9 +31,10 @@ class AppStateObserver : public AppExecFwk::ApplicationStateObserverStub {
 public:
     AppStateObserver();
     ~AppStateObserver();
+    void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override;
     void OnProcessDied(const AppExecFwk::ProcessData &processData) override;
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
-    void SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr_);
+    void SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr);
     bool Subscribe();
     bool Unsubscribe();
 
