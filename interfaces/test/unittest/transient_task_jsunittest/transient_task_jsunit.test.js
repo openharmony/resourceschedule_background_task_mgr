@@ -14,35 +14,35 @@
  */
 import backgroundTaskManager from '@ohos.backgroundTaskManager'
 
-import {describe, beforeAll, beforeEach, afterEach, afterAll, it, expect} from 'deccjsunit/index'
+import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from 'deccjsunit/index'
 
 describe("TransientTaskJsTest", function () {
     beforeAll(function() {
         /*
          * @tc.setup: setup invoked before all testcases
          */
-         console.info('beforeAll caled')
+        console.info('beforeAll caled')
     })
 
     afterAll(function() {
         /*
          * @tc.teardown: teardown invoked after all testcases
          */
-         console.info('afterAll caled')
+        console.info('afterAll caled')
     })
 
     beforeEach(function() {
         /*
          * @tc.setup: setup invoked before each testcases
          */
-         console.info('beforeEach caled')
+        console.info('beforeEach caled')
     })
 
     afterEach(function() {
         /*
          * @tc.teardown: teardown invoked after each testcases
          */
-         console.info('afterEach caled')
+        console.info('afterEach caled')
     })
 
     /*
@@ -53,7 +53,7 @@ describe("TransientTaskJsTest", function () {
      */
     it("TransientTaskJsTest001", 0, async function (done) {
         console.info('----------------------TransientTaskJsTest001---------------------------');
-        function callback() {}
+        function callback() { }
         var info = backgroundTaskManager.requestSuspendDelay("test", callback);
         if (info.requestId != -1) {
             console.info('TransientTaskJsTest001  backgroundTaskManager success, requestId:' + info.requestId);
@@ -73,11 +73,11 @@ describe("TransientTaskJsTest", function () {
      */
     it("TransientTaskJsTest002", 0, async function (done) {
         console.info('----------------------TransientTaskJsTest002---------------------------');
-        function callback() {}
-        var info1 =  backgroundTaskManager.requestSuspendDelay("test", callback);
-        var info2 =  backgroundTaskManager.requestSuspendDelay("test", callback);
-        var info3 =  backgroundTaskManager.requestSuspendDelay("test", callback);
-        var info4 =  backgroundTaskManager.requestSuspendDelay("test", callback);
+        function callback() { }
+        var info1 = backgroundTaskManager.requestSuspendDelay("test", callback);
+        var info2 = backgroundTaskManager.requestSuspendDelay("test", callback);
+        var info3 = backgroundTaskManager.requestSuspendDelay("test", callback);
+        var info4 = backgroundTaskManager.requestSuspendDelay("test", callback);
         if (info4.requestId == -1) {
             console.info('TransientTaskJsTest002 backgroundTaskManager more than three');
             expect(true).assertTrue();
@@ -97,7 +97,7 @@ describe("TransientTaskJsTest", function () {
      * @tc.require: SR000GGTJV AR000GH86M AR000GH860 AR000GH86L
      */
     it("TransientTaskJsTest003", 0, async function (done) {
-        function callback() {}
+        function callback() { }
         var info = backgroundTaskManager.requestSuspendDelay("test", callback);
         if (info.requestId != -1) {
             console.info('TransientTaskJsTest003  backgroundTaskManager success, requestId:' + info.requestId);
@@ -117,7 +117,7 @@ describe("TransientTaskJsTest", function () {
                 expect(false).assertTrue();
             });
 
-        setTimeout(()=>{
+        setTimeout(() => {
             done();
         }, 500);
     })
@@ -129,7 +129,7 @@ describe("TransientTaskJsTest", function () {
      * @tc.require: SR000GGTJV AR000GH86M AR000GH860 AR000GH86L
      */
     it("TransientTaskJsTest004", 0, async function (done) {
-        function callback() {}
+        function callback() { }
         var info = backgroundTaskManager.requestSuspendDelay("test", callback);
         if (info.requestId != -1) {
             console.info('TransientTaskJsTest004  backgroundTaskManager success, requestId:' + info.requestId);
@@ -151,9 +151,123 @@ describe("TransientTaskJsTest", function () {
             backgroundTaskManager.cancelSuspendDelay(info.requestId)
         });
 
-        setTimeout(()=>{
+        setTimeout(() => {
             done();
         }, 500);
+    })
+
+    /*
+     * @tc.name: TransientTaskJsTest005
+     * @tc.desc: test requestSuspendDelay workTime 
+     * @tc.type: FUNC 
+     */
+    it("TransientTaskJsTest005", 0, async function (done) {
+        function callback() { }
+        let startTime = (new Date()).valueOf()
+        var info = backgroundTaskManager.requestSuspendDelay("test", callback);
+        if (info.requestId != -1) {
+            let endTime = (new Date()).valueOf()
+            let workTime = endTime - startTime
+            if (workTime < 50) {
+                expect(true).assertTrue()
+            } else {
+                expect(false).assertTrue()
+            }
+            backgroundTaskManager.cancelSuspendDelay(info.requestId)
+        } else {
+            expect(false).assertTrue();
+        }
+        done();
+    })
+ 
+    /*
+     * @tc.name: TransientTaskJsTest006
+     * @tc.desc: test getRemainingDelayTime Promise workTime 
+     * @tc.type: FUNC 
+     */
+    it("TransientTaskJsTest006 ", 0, async function (done) {
+        function callback() { }
+        var info = backgroundTaskManager.requestSuspendDelay("test", callback);
+        if (info.requestId != -1) {
+            expect(true).assertTrue();
+        } else {
+            expect(false).assertTrue();
+            done();
+        }
+        let endTime = 0
+        let startTime = (new Date()).valueOf()
+        backgroundTaskManager.getRemainingDelayTime(info.requestId)
+            .then(data => {
+                endTime = (new Date()).valueOf()
+                let workTime = endTime - startTime
+                if (workTime < 50) {
+                    expect(true).assertTrue()
+                } else {
+                    expect(false).assertTrue()
+                }
+                backgroundTaskManager.cancelSuspendDelay(info.requestId);
+            })
+            .catch(error => {
+                expect(false).assertTrue();
+            });
+        setTimeout(() => {
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name: TransientTaskJsTest007
+     * @tc.desc: test getRemainingDelayTime callback workTime
+     * @tc.type: FUNC
+     */
+    it("TransientTaskJsTest007", 0, async function (done) {
+        function callback() { }
+        var info = backgroundTaskManager.requestSuspendDelay("test", callback);
+        if (info.requestId != -1) {
+            console.info('TransientTaskJsTest007  backgroundTaskManager success, requestId:' + info.requestId);
+            expect(true).assertTrue();
+        } else {
+            expect(false).assertTrue();
+            done();
+        }
+        let startTime = (new Date()).valueOf()
+        backgroundTaskManager.getRemainingDelayTime(info.requestId, (err, res) => {
+            let endTime = (new Date()).valueOf()
+            let workTime = endTime - startTime
+            if (workTime < 50) {
+                expect(true).assertTrue()
+            } else {
+                expect(false).assertTrue()
+            }
+            backgroundTaskManager.cancelSuspendDelay(info.requestId)
+        });
+        setTimeout(() => {
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name: TransientTaskJsTest008
+     * @tc.desc: test cancelSuspendDelay workTime
+     * @tc.type: FUNC
+     */
+    it("TransientTaskJsTest008", 0, async function (done) {
+        function callback() { }
+        var info = backgroundTaskManager.requestSuspendDelay("test", callback);
+        if (info.requestId != -1) {
+            let startTime = (new Date()).valueOf()
+            backgroundTaskManager.cancelSuspendDelay(info.requestId)
+            let endTime = (new Date()).valueOf()
+            let workTime = endTime - startTime
+            if (workTime < 50) {
+                expect(true).assertTrue()
+            } else {
+                expect(false).assertTrue()
+            }
+        } else {
+            expect(false).assertTrue()
+        }
+        done();
     })
 
 })
