@@ -19,39 +19,39 @@ import particleAbility from '@ohos.ability.particleAbility'
 import backgroundTaskManager from '@ohos.backgroundTaskManager'
 import featureAbility from '@ohos.ability.featureAbility'
 
-import {describe, beforeAll, beforeEach, afterEach, afterAll, it, expect} from 'deccjsunit/index'
+import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from 'deccjsunit/index'
 
 describe("ContinuousTaskJsTest", function () {
     beforeAll(function() {
         /*
          * @tc.setup: setup invoked before all testcases
          */
-         console.info('beforeAll called')
+        console.info('beforeAll called')
     })
-    
+
     afterAll(function() {
         /*
          * @tc.teardown: teardown invoked after all testcases
          */
-         console.info('afterAll called')
+        console.info('afterAll called')
     })
-    
+
     beforeEach(function() {
         /*
          * @tc.setup: setup invoked before each testcases
          */
-         console.info('beforeEach called')
+        console.info('beforeEach called')
     })
-    
+
     afterEach(function() {
         /*
          * @tc.teardown: teardown invoked after each testcases
          */
-         console.info('afterEach called')
-         particleAbility.cancelBackgroundRunning();
-         setTimeout(() => {}, 500);
-         backgroundTaskManager.stopBackgroundRunning(featureAbility.getContext());
-         setTimeout(() => {}, 500);
+        console.info('afterEach called')
+        particleAbility.cancelBackgroundRunning();
+        setTimeout(() => { }, 500);
+        backgroundTaskManager.stopBackgroundRunning(featureAbility.getContext());
+        setTimeout(() => { }, 500);
     })
 
     /*
@@ -75,18 +75,18 @@ describe("ContinuousTaskJsTest", function () {
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
             backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
                 backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then(() => {
-                console.log("ContinuousTaskJsTest001 startBackgroundRunning success");
-                expect(true).assertTrue();
-                setTimeout(() => {
-                    done();
-                }, 500);
-            }).catch((err) => {
-                expect(false).assertTrue();
-                console.log("ContinuousTaskJsTest001 startBackgroundRunning failure");
-                setTimeout(() => {
-                    done();
-                }, 500);
-            });
+                    console.log("ContinuousTaskJsTest001 startBackgroundRunning success");
+                    expect(true).assertTrue();
+                    setTimeout(() => {
+                        done();
+                    }, 500);
+                }).catch((err) => {
+                    expect(false).assertTrue();
+                    console.log("ContinuousTaskJsTest001 startBackgroundRunning failure");
+                    setTimeout(() => {
+                        done();
+                    }, 500);
+                });
         });
     })
 
@@ -105,7 +105,7 @@ describe("ContinuousTaskJsTest", function () {
                 console.info('ContinuousTaskJsTest002 startBackgroundRunning succeed');
                 expect(true).assertTrue();
             }
-            setTimeout(()=>{
+            setTimeout(() => {
                 done();
             }, 500);
         }
@@ -193,7 +193,7 @@ describe("ContinuousTaskJsTest", function () {
                 console.info('ContinuousTaskJsTest004 startBackgroundRunning success');
                 expect(true).assertTrue();
             }
-            setTimeout(()=>{
+            setTimeout(() => {
                 done();
             }, 500);
         }
@@ -251,29 +251,29 @@ describe("ContinuousTaskJsTest", function () {
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
             backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
                 backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then((data) => {
-                backgroundTaskManager.stopBackgroundRunning(featureAbility.getContext()).then((data) => {
-                    console.log("ContinuousTaskJsTest005 cancelBackgroundRunning success");
-                    expect(true).assertTrue();
-                    setTimeout(() => {
-                        done();
-                    }, 500);
-                }).catch((err) => {
-                    expect(false).assertTrue();
-                    console.log("ContinuousTaskJsTest005 cancelBackgroundRunning failure");
-                    setTimeout(() => {
-                        done();
-                    }, 500);
-                });
-            })
+                    backgroundTaskManager.stopBackgroundRunning(featureAbility.getContext()).then((data) => {
+                        console.log("ContinuousTaskJsTest005 cancelBackgroundRunning success");
+                        expect(true).assertTrue();
+                        setTimeout(() => {
+                            done();
+                        }, 500);
+                    }).catch((err) => {
+                        expect(false).assertTrue();
+                        console.log("ContinuousTaskJsTest005 cancelBackgroundRunning failure");
+                        setTimeout(() => {
+                            done();
+                        }, 500);
+                    });
+                })
         });
     })
 
     /*
-        * @tc.name:ContinuousTaskJsTest006
-        * @tc.desc:verify new api stopBackgroundrunning interface callback mode work properly
-        * @tc.type: FUNC
-        * @tc.require: SR000GGT7T AR000GH6ES AR000GH6EP AR000GJ9PR AR000GH6G8
-        */
+     * @tc.name:ContinuousTaskJsTest006
+     * @tc.desc:verify new api stopBackgroundrunning interface callback mode work properly
+     * @tc.type: FUNC
+     * @tc.require: SR000GGT7T AR000GH6ES AR000GH6EP AR000GJ9PR AR000GH6G8
+     */
     it("ContinuousTaskJsTest006", 0, async function (done) {
         function conTaskCallback(err, data) {
             if (err) {
@@ -283,7 +283,7 @@ describe("ContinuousTaskJsTest", function () {
                 console.info('ContinuousTaskJsTest006 startBackgroundRunning success');
                 expect(true).assertTrue();
             }
-            setTimeout(()=>{
+            setTimeout(() => {
                 done();
             }, 500);
         }
@@ -301,8 +301,8 @@ describe("ContinuousTaskJsTest", function () {
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
             backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
                 backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then((data) => {
-                backgroundTaskManager.stopBackgroundRunning(featureAbility.getContext(), conTaskCallback);
-            })
+                    backgroundTaskManager.stopBackgroundRunning(featureAbility.getContext(), conTaskCallback);
+                })
         });
     })
 
@@ -326,7 +326,7 @@ describe("ContinuousTaskJsTest", function () {
         };
         await wantAgent.getWantAgent(wantAgentInfo).then((data) => {
             particleAbility.startBackgroundRunning(data);
-            setTimeout(()=>{
+            setTimeout(() => {
             }, 500);
         });
 
@@ -336,7 +336,7 @@ describe("ContinuousTaskJsTest", function () {
             setTimeout(() => {
                 done();
             }, 500);
-        }).catch( (err) => {
+        }).catch((err) => {
             expect(false).assertTrue();
             console.log("ContinuousTaskJsTest007 cancelBackgroundRunning failure");
             setTimeout(() => {
@@ -360,7 +360,7 @@ describe("ContinuousTaskJsTest", function () {
                 console.info('ContinuousTaskJsTest008 startBackgroundRunning success');
                 expect(true).assertTrue();
             }
-            setTimeout(()=>{
+            setTimeout(() => {
                 done();
             }, 500);
         }
@@ -377,10 +377,180 @@ describe("ContinuousTaskJsTest", function () {
         };
         await wantAgent.getWantAgent(wantAgentInfo).then((data) => {
             particleAbility.startBackgroundRunning(data);
-            setTimeout(()=>{
+            setTimeout(() => {
             }, 500);
         });
 
         particleAbility.cancelBackgroundRunning(conTaskCallback);
+    })
+
+    /*
+     * @tc.name:ContinuousTaskJsTest009
+     * @tc.desc:verify startBackgroundRunning promise workTime
+     * @tc.type: FUNC
+     */
+    it("ContinuousTaskJsTest009", 0, async function (done) {
+        let wantAgentInfo = {
+            wants: [
+                {
+                    bundleName: "com.continuoustask.test",
+                    abilityName: "com.continuoustask.test.MainAbility"
+                }
+            ],
+            operationType: 2,
+            requestCode: 0,
+            wantAgentFlags: [3]
+        };
+        let startTime = (new Date()).valueOf()
+        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+            backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
+                backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then(() => {
+                    let endTime = (new Date()).valueOf()
+                    let workTime = endTime - startTime
+                    if (workTime < 50) {
+                        expect(true).assertTrue()
+                    } else {
+                        expect(false).assertTrue()
+                    }
+                    expect(true).assertTrue();
+                    setTimeout(() => {
+                        done();
+                    }, 500);
+                }).catch((err) => {
+                    expect(false).assertTrue();
+                    setTimeout(() => {
+                        done();
+                    }, 500);
+                });
+        });
+    })
+
+    /*
+     * @tc.name:ContinuousTaskJsTest010
+     * @tc.desc:verify startBackgroundRunning callback workTime
+     * @tc.type: FUNC
+     */
+    it("ContinuousTaskJsTest010", 0, async function (done) {
+        function conTaskCallback(err, data) {
+            if (err) {
+                console.info('ContinuousTaskJsTest010 startBackgroundRunning failed');
+                expect(false).assertTrue();
+            } else {
+                console.info('ContinuousTaskJsTest010 startBackgroundRunning succeed');
+                expect(true).assertTrue();
+            }
+            setTimeout(() => {
+                done();
+            }, 500);
+        }
+        let wantAgentInfo = {
+            wants: [
+                {
+                    bundleName: "com.continuoustask.test",
+                    abilityName: "com.continuoustask.test.MainAbility"
+                }
+            ],
+            operationType: 2,
+            requestCode: 0,
+            wantAgentFlags: [3]
+        };
+        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+            let startTime = (new Date()).valueOf()
+            backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
+                backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data, conTaskCallback);
+            let endTime = (new Date()).valueOf()
+            let workTime = endTime - startTime
+            if (workTime < 50) {
+                expect(true).assertTrue();
+            } else {
+                expect(false).assertTrue()
+            }
+        });
+    })
+
+    /*
+     * @tc.name:ContinuousTaskJsTest011
+     * @tc.desc:verify stopBackgroundRunning promise workTime
+     * @tc.type: FUNC
+     */
+    it("ContinuousTaskJsTest011", 0, async function (done) {
+        let wantAgentInfo = {
+            wants: [
+                {
+                    bundleName: "com.continuoustask.test",
+                    abilityName: "com.continuoustask.test.MainAbility"
+                }
+            ],
+            operationType: 2,
+            requestCode: 0,
+            wantAgentFlags: [3]
+        };
+        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+            backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
+                backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then((data) => {
+                    let startTime = (new Date()).valueOf()
+                    backgroundTaskManager.stopBackgroundRunning(featureAbility.getContext()).then((data) => {
+                        let endTime = (new Date()).valueOf()
+                        let workTime = endTime - startTime
+                        if (workTime < 50) {
+                            expect(true).assertTrue()
+                        } else {
+                            expect(false).assertTrue()
+                        }
+                        setTimeout(() => {
+                            done();
+                        }, 500);
+                    }).catch((err) => {
+                        setTimeout(() => {
+                            done();
+                        }, 500);
+                    });
+                })
+        });
+    })
+
+    /*
+     * @tc.name:ContinuousTaskJsTest012
+     * @tc.desc:verify stopBackgroundRunning callback  workTime
+     * @tc.type: FUNC
+     */
+    it("ContinuousTaskJsTest012", 0, async function (done) {
+        function conTaskCallback(err, data) {
+            if (err) {
+                console.info('ContinuousTaskJsTest012 startBackgroundRunning failure');
+                expect(false).assertTrue();
+            } else {
+                console.info('ContinuousTaskJsTest012 startBackgroundRunning success');
+                expect(true).assertTrue();
+            }
+            setTimeout(() => {
+                done();
+            }, 500);
+        }
+        let wantAgentInfo = {
+            wants: [
+                {
+                    bundleName: "com.continuoustask.test",
+                    abilityName: "com.continuoustask.test.MainAbility"
+                }
+            ],
+            operationType: 2,
+            requestCode: 0,
+            wantAgentFlags: [3]
+        };
+        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+            backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
+                backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then((data) => {
+                    let startTime = (new Date()).valueOf()
+                    backgroundTaskManager.stopBackgroundRunning(featureAbility.getContext(), conTaskCallback);
+                    let endTime = (new Date()).valueOf()
+                    let workTime = endTime - startTime
+                    if (workTime < 50) {
+                        expect(true).assertTrue()
+                    } else {
+                        expect(false).assertTrue()
+                    }
+                })
+        });
     })
 })
