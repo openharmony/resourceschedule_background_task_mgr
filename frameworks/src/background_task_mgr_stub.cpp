@@ -153,7 +153,7 @@ ErrCode BackgroundTaskMgrStub::HandleStopBackgroundRunning(MessageParcel &data, 
     if (!data.ReadString(abilityName)) {
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    sptr<IRemoteObject> abilityToken = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> abilityToken = data.ReadRemoteObject();
     ErrCode result = StopBackgroundRunning(abilityName, abilityToken);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("write result failed, ErrCode=%{public}d", result);

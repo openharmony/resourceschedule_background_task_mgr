@@ -171,7 +171,7 @@ ErrCode BackgroundTaskMgrProxy::StopBackgroundRunning(const std::string &ability
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
-    if (!data.WriteParcelable(abilityToken)) {
+    if (!data.WriteRemoteObject(abilityToken)) {
         BGTASK_LOGE("parcel ability token failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
