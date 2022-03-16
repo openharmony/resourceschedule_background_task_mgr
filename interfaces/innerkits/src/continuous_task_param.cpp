@@ -46,7 +46,7 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
     }
     valid = parcel.ReadBool();
     if (valid) {
-        abilityToken_ = parcel.ReadParcelable<IRemoteObject>();
+        abilityToken_ = parcel.ReadObject<IRemoteObject>();
         if (!abilityToken_) {
             BGTASK_LOGE("Failed to read ablityToken");
             return false;
@@ -102,7 +102,7 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         return false;
     }
     if (valid) {
-        if (!parcel.WriteParcelable(abilityToken_)) {
+        if (!parcel.WriteObject(abilityToken_)) {
             BGTASK_LOGE("parcel ability token failed");
             return false;
         }
