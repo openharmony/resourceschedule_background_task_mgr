@@ -55,7 +55,10 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
     std::unique_ptr<Json::StreamWriter> jsonWriter(writerBuilder.newStreamWriter());
     jsonWriter->write(root, &os);
     std::string result = os.str();
-    CreateNodeFile(TASK_RECORD_FILE_PATH);
+    if (!CreateNodeFile(TASK_RECORD_FILE_PATH)) {
+        BGTASK_LOGE("Create file failed.");
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
     std::ofstream fout;
     std::string realPath;
     if (!ConvertFullPath(TASK_RECORD_FILE_PATH, realPath)) {
@@ -64,6 +67,10 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
     }
     BGTASK_LOGI("Refresh path %{public}s", realPath.c_str());
     fout.open(realPath, std::ios::out);
+    if (!fout.is_open()) {
+        BGTASK_LOGE("Open file failed.");
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
     fout << result.c_str() << std::endl;
     fout.close();
     return ERR_OK;
@@ -110,19 +117,19 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
     return ERR_OK;
 }
 
-int32_t DataStorage::CreateNodeFile(const std::string &filePath)
+bool DataStorage::CreateNodeFile(const std::string &filePath)
 {
-    int32_t fd = -1;
-    if (access(filePath.c_str(), 0) != 0) {
-        fd = open(filePath.c_str(), O_CREAT|O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-        if (fd < ERR_OK) {
-            BGTASK_LOGE("failed to open file: %{public}s", TASK_RECORD_FILE_PATH);
-            return fd;
-        }
-    } else {
+    if (access(filePath.c_str(), F_OK) == ERR_OK) {
         BGTASK_LOGI("the file: %{public}s already exists.", TASK_RECORD_FILE_PATH);
+        return true;
     }
-    return ERR_OK;
+    int32_t fd = open(filePath.c_str(), O_CREAT|O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+    if (fd < ERR_OK) {
+        BGTASK_LOGE("Fail to open file: %{public}s", TASK_RECORD_FILE_PATH);
+        return false;
+    }
+    close(fd);
+    return true;
 }
 
 bool DataStorage::ConvertFullPath(const std::string& partialPath, std::string& fullPath)

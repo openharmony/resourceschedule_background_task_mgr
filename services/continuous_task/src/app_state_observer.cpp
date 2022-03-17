@@ -144,7 +144,7 @@ bool AppStateObserver::Connect()
 
 void AppStateObserver::Disconnect()
 {
-    if (appMgrProxy_ != nullptr) {
+    if (appMgrProxy_ != nullptr && appMgrProxy_->AsObject() != nullptr) {
         appMgrProxy_->AsObject()->RemoveDeathRecipient(appMgrDeathRecipient_);
         appMgrProxy_ = nullptr;
     }
