@@ -117,7 +117,7 @@ bool BundleManagerHelper::Connect()
 
 void BundleManagerHelper::Disconnect()
 {
-    if (bundleMgr_ != nullptr && bundleMgrDeathRecipient_ != nullptr) {
+    if (bundleMgr_ != nullptr && bundleMgr_->AsObject() != nullptr) {
         bundleMgr_->AsObject()->RemoveDeathRecipient(bundleMgrDeathRecipient_);
         bundleMgr_ = nullptr;
     }

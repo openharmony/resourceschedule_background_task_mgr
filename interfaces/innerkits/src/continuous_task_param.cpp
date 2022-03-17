@@ -29,8 +29,7 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
         BGTASK_LOGE("Failed to read request background mode info");
         return false;
     }
-    bool valid = false;
-    valid = parcel.ReadBool();
+    bool valid = parcel.ReadBool();
     if (valid) {
         wantAgent_ = std::shared_ptr<AbilityRuntime::WantAgent::WantAgent>(
             parcel.ReadParcelable<AbilityRuntime::WantAgent::WantAgent>());
@@ -78,8 +77,7 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         BGTASK_LOGE("Failed to write request background mode info");
         return false;
     }
-    bool valid = false;
-    valid = wantAgent_ != nullptr;
+    bool valid = wantAgent_ != nullptr;
     if (!parcel.WriteBool(valid)) {
         BGTASK_LOGE("Failed to write the flag which indicate whether wantAgent is null");
         return false;
