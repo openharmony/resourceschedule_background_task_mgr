@@ -26,7 +26,7 @@ public:
     int32_t RestoreTaskRecord(std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> &allRecord);
 
 private:
-    int32_t CreateNodeFile(const std::string &filePath);
+    bool CreateNodeFile(const std::string &filePath);
     bool ConvertFullPath(const std::string &partialPath, std::string &fullPath);
 };
 }
