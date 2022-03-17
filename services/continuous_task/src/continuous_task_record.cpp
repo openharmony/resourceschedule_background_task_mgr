@@ -124,7 +124,7 @@ bool ContinuousTaskRecord::ParseFromJson(const Json::Value value)
     this->userId_ = value["userId"].asInt();
     this->uid_ = value["uid"].asInt();
     this->pid_ = value["pid"].asInt();
-    this->bgModeId_ = value["bgModeId"].asInt();
+    this->bgModeId_ = value["bgModeId"].asUInt();
     this->isNewApi_ = value["isNewApi"].asBool();
     this->notificationLabel_ = value["notificationLabel"].asString();
 
