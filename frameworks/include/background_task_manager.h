@@ -55,11 +55,11 @@ private:
 private:
     class BgTaskMgrDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
-        BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager);
+        explicit BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager);
 
         ~BgTaskMgrDeathRecipient();
 
-        virtual void OnRemoteDied(const wptr<IRemoteObject> &object) override;
+        void OnRemoteDied(const wptr<IRemoteObject> &object) override;
 
     private:
         BackgroundTaskManager &backgroundTaskManager_;

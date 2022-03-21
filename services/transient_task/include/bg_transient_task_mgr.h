@@ -50,6 +50,7 @@ enum class TransientTaskEventType: uint32_t {
 };
 class BgTransientTaskMgr {
     DECLARE_DELAYED_SINGLETON(BgTransientTaskMgr);
+
 public:
     void Init();
     ErrCode RequestSuspendDelay(const std::u16string& reason,

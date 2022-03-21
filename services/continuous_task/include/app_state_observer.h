@@ -50,6 +50,6 @@ private:
     sptr<AppExecFwk::IAppMgr> appMgrProxy_ {nullptr};
     sptr<RemoteDeathRecipient> appMgrDeathRecipient_ {nullptr};
 };
-}
-}
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_APP_STATE_OBSERVER_H

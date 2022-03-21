@@ -471,5 +471,5 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
     BGTASK_LOGI("end");
     return ret;
 }
-} // namespace BackgroundTaskMgr
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

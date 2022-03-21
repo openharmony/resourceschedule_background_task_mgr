@@ -96,5 +96,5 @@ void SystemEventObserver::OnReceiveEvent(const EventFwk::CommonEventData &eventD
     auto task = [=]() { bgContinuousTaskMgr->OnBundleInfoChanged(action, bundleName, uid); };
     handler->PostTask(task, TASK_ON_BUNDLEINFO_CHANGED);
 }
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

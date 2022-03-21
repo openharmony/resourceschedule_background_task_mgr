@@ -30,7 +30,7 @@ public:
 
     virtual ~CallbackInstance();
 
-    virtual void OnExpired() override;
+    void OnExpired() override;
 
     void SetCallbackInfo(const napi_env &env, const napi_ref &ref);
 

@@ -25,12 +25,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-namespace {
-const std::string HELP_MSG_NO_OPTION = "error: you must specify an option at least.";
-
-const int OFFSET_REQUIRED_ARGUMENT = 2;
-}  // namespace
-
 class ShellCommand {
 public:
     ShellCommand(int argc, char *argv[], std::string name);

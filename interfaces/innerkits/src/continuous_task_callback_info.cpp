@@ -92,5 +92,5 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     }
     return true;
 }
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

@@ -72,7 +72,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
     }
 
     if (deleteReason == Notification::NotificationConstant::APP_CANCEL_REASON_DELETE) {
-        BGTASK_LOGI("notification remove action is already tiggered by cancel method.");
+        BGTASK_LOGI("notification remove action is already triggered by cancel method.");
         return;
     }
 

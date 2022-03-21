@@ -31,8 +31,8 @@ public:
     int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
 
 private:
-    ErrCode HandleOnConnected(MessageParcel &data);
-    ErrCode HandleOnDisconnected(MessageParcel &data);
+    ErrCode HandleOnConnected();
+    ErrCode HandleOnDisconnected();
     ErrCode HandleOnTransientTaskStart(MessageParcel& data);
     ErrCode HandleOnTransientTaskEnd(MessageParcel& data);
     ErrCode HandleOnContinuousTaskStart(MessageParcel &data);

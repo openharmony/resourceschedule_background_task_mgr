@@ -47,7 +47,6 @@ private:
 
     DECLARE_DELAYED_SINGLETON(BundleManagerHelper)
 };
-}
-}
-
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_BUNDLE_MANAGER_HELPER_H

@@ -532,7 +532,7 @@ void BgTransientTaskMgr::SendScreenOnEvent(std::vector<std::string> &dumpInfo)
     data.SetWant(want);
     EventFwk::CommonEventPublishInfo publishInfo;
     publishInfo.SetOrdered(true);
-    
+
     data.SetCode(0);
     data.SetData("dump");
     if (EventFwk::CommonEventManager::PublishCommonEvent(data, publishInfo)) {
@@ -550,7 +550,7 @@ void BgTransientTaskMgr::SendScreenOffEvent(std::vector<std::string> &dumpInfo)
     data.SetWant(want);
     EventFwk::CommonEventPublishInfo publishInfo;
     publishInfo.SetOrdered(true);
-    
+
     data.SetCode(0);
     data.SetData("dump");
     if (EventFwk::CommonEventManager::PublishCommonEvent(data, publishInfo)) {
@@ -568,7 +568,7 @@ void BgTransientTaskMgr::SendLowBatteryEvent(std::vector<std::string> &dumpInfo)
     data.SetWant(want);
     EventFwk::CommonEventPublishInfo publishInfo;
     publishInfo.SetOrdered(true);
-    
+
     data.SetCode(0);
     data.SetData("dump");
     if (EventFwk::CommonEventManager::PublishCommonEvent(data, publishInfo)) {
@@ -586,7 +586,7 @@ void BgTransientTaskMgr::SendOkayBatteryEvent(std::vector<std::string> &dumpInfo
     data.SetWant(want);
     EventFwk::CommonEventPublishInfo publishInfo;
     publishInfo.SetOrdered(true);
-    
+
     data.SetCode(0);
     data.SetData("dump");
     if (EventFwk::CommonEventManager::PublishCommonEvent(data, publishInfo)) {

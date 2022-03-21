@@ -28,7 +28,7 @@ struct ContinuousTaskParam : public Parcelable {
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
     std::string abilityName_ {""};
     sptr<IRemoteObject> abilityToken_ {nullptr};
-    
+
     ContinuousTaskParam() = default;
     ContinuousTaskParam(bool isNewApi, uint32_t bgModeId,
         const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent, const std::string abilityName,
@@ -37,10 +37,9 @@ struct ContinuousTaskParam : public Parcelable {
         abilityName_(abilityName), abilityToken_(abilityToken) {}
 
     bool ReadFromParcel(Parcel &parcel);
-    virtual bool Marshalling(Parcel &parcel) const override;
+    bool Marshalling(Parcel &parcel) const override;
     static ContinuousTaskParam *Unmarshalling(Parcel &parcel);
 };
-}
-}
-
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_PARAMS_H

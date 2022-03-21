@@ -29,7 +29,7 @@ void DeviceInfoManager::OnInputEvent(const EventInfo& eventInfo)
             return;
         }
     }
-    
+
     switch (eventInfo.GetEventId()) {
         case EVENT_SCREEN_ON:
             isScreenOn_ = true;

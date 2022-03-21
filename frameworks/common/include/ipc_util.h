@@ -61,6 +61,6 @@ static inline sptr<IRemoteObject> GetSystemService(const std::string &name)
     auto registry = ServiceRegistry::GetInstance();
     return (registry != nullptr) ? registry->GetService(Str8ToStr16(name)) : nullptr;
 }
-};
-};
+};  // namespace BackgroundTaskMgr
+};  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_COMMON_INCLUDE_IPC_UTIL_H

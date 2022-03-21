@@ -53,8 +53,8 @@ public:
 private:
     class ApplicationStateObserver : public AppExecFwk::ApplicationStateObserverStub {
     public:
-        ApplicationStateObserver(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
-        ~ApplicationStateObserver() {};
+        explicit ApplicationStateObserver(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
+        ~ApplicationStateObserver() {}
         void OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData) override;
         void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
         {}
@@ -72,11 +72,11 @@ private:
 private:
     class AppMgrDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
-        AppMgrDeathRecipient(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
+        explicit AppMgrDeathRecipient(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
 
-        ~AppMgrDeathRecipient() {};
+        ~AppMgrDeathRecipient() {}
 
-        virtual void OnRemoteDied(const wptr<IRemoteObject> &object) override;
+        void OnRemoteDied(const wptr<IRemoteObject> &object) override;
 
     private:
         DecisionMaker &decisionMaker_;

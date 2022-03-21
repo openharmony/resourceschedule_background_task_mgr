@@ -27,7 +27,7 @@ class BgContinuousTaskMgr;
 class SystemEventObserver : public EventFwk::CommonEventSubscriber,
                             public std::enable_shared_from_this<SystemEventObserver> {
 public:
-    SystemEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo);
+    explicit SystemEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo);
     ~SystemEventObserver() = default;
     void OnReceiveEvent(const EventFwk::CommonEventData &eventData) override;
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
@@ -39,6 +39,6 @@ private:
     std::weak_ptr<AppExecFwk::EventHandler> handler_;
     std::weak_ptr<BgContinuousTaskMgr> bgContinuousTaskMgr_;
 };
-}
-}
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_SYSTEM_EVENT_OBSERVER_H
