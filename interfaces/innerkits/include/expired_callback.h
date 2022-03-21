@@ -44,7 +44,7 @@ private:
     class ExpiredCallbackImpl final : public ExpiredCallbackStub {
     public:
         ExpiredCallbackImpl(ExpiredCallback &callback);
-        ~ExpiredCallbackImpl() {};
+        ~ExpiredCallbackImpl() {}
         void OnExpired() override;
 
     public:

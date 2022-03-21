@@ -48,10 +48,10 @@ int BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
 
     switch (code) {
         case ON_CONNECTED: {
-            return HandleOnConnected(data);
+            return HandleOnConnected();
         }
         case ON_DISCONNECTED: {
-            return HandleOnDisconnected(data);
+            return HandleOnDisconnected();
         }
         case ON_TRANSIENT_TASK_START: {
             return HandleOnTransientTaskStart(data);
@@ -70,13 +70,13 @@ int BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
     }
 }
 
-ErrCode BackgroundTaskSubscriberStub::HandleOnConnected(MessageParcel &data)
+ErrCode BackgroundTaskSubscriberStub::HandleOnConnected()
 {
     OnConnected();
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskSubscriberStub::HandleOnDisconnected(MessageParcel &data)
+ErrCode BackgroundTaskSubscriberStub::HandleOnDisconnected()
 {
     OnDisconnected();
     return ERR_OK;

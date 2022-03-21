@@ -107,5 +107,5 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
     }
     return true;
 }
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

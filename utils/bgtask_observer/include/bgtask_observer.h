@@ -24,16 +24,16 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class BgTaskObserver : public OHOS::BackgroundTaskMgr::BackgroundTaskSubscriber {
 public:
-    virtual void OnContinuousTaskStart(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>
+    void OnContinuousTaskStart(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>
         &continuousTaskCallbackInfo) override;
 
-    virtual void OnContinuousTaskStop(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>
+    void OnContinuousTaskStop(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>
         &continuousTaskCallbackInfo) override;
 
-    virtual void OnRemoteDied(const wptr<IRemoteObject> &object) override;
+    void OnRemoteDied(const wptr<IRemoteObject> &object) override;
 
     std::atomic<bool> isRemoteDied_ {false};
 };
-}
-}
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_UTILS_BGTASK_OBSERVER_INCLUDE_BGTASK_OBSERVER_H

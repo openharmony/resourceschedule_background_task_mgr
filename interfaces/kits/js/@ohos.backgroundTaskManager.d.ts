@@ -171,7 +171,7 @@ declare namespace backgroundTaskManager {
         VOIP = 8,
 
         /**
-         * backgroud continuous calculate mode, for example 3d render.
+         * background continuous calculate mode, for example 3d render.
          * only supported in portable computer
          *
          * @since 8

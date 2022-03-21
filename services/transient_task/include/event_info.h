@@ -85,6 +85,7 @@ public:
         ret += "]";
         return ret;
     }
+
 private:
     int32_t eventId_ {0};
     std::vector<int32_t> intArgs_;

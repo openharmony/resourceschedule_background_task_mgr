@@ -33,6 +33,6 @@ public:
         TASK_KEEPING,
     };
 };
-}
-}
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_MODE_H

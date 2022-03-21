@@ -137,5 +137,5 @@ bool ContinuousTaskRecord::ParseFromJson(const Json::Value value)
     }
     return true;
 }
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

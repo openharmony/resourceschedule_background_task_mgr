@@ -129,7 +129,7 @@ ErrCode BgtaskmgrShellCommand::RunAsDumpCommand()
             resultReceiver_.append(DUMP_HELP_MSG);
             break;
     }
-    
+
     for (auto info : infos) {
         resultReceiver_.append(info);
     }

@@ -95,7 +95,7 @@ private:
 
     public:
         BackgroundTaskSubscriberImpl(BackgroundTaskSubscriber &subscriber);
-        ~BackgroundTaskSubscriberImpl() {};
+        ~BackgroundTaskSubscriberImpl() {}
         void OnConnected() override;
         void OnDisconnected() override;
         void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override;

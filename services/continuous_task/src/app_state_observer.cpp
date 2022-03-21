@@ -155,5 +155,5 @@ void AppStateObserver::OnRemoteDied(const wptr<IRemoteObject> &object)
     std::lock_guard<std::mutex> lock(mutex_);
     Disconnect();
 }
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

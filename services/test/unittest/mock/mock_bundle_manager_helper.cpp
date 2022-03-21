@@ -64,5 +64,5 @@ bool BundleManagerHelper::Connect()
 void BundleManagerHelper::Disconnect() {}
 
 void BundleManagerHelper::OnRemoteDied(const wptr<IRemoteObject> &object) {}
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

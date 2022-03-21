@@ -66,5 +66,5 @@ void BgTaskObserver::OnRemoteDied(const wptr<IRemoteObject> &object)
     BGTASK_LOGW("remote service died");
     isRemoteDied_.store(true);
 }
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

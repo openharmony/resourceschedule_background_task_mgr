@@ -172,9 +172,9 @@ ErrCode BackgroundTaskManager::ShellDump(const std::vector<std::string> &dumpOpt
 }
 
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
-    : backgroundTaskManager_(backgroundTaskManager) {};
+    : backgroundTaskManager_(backgroundTaskManager) {}
 
-BackgroundTaskManager::BgTaskMgrDeathRecipient::~BgTaskMgrDeathRecipient() {};
+BackgroundTaskManager::BgTaskMgrDeathRecipient::~BgTaskMgrDeathRecipient() {}
 
 void BackgroundTaskManager::BgTaskMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {

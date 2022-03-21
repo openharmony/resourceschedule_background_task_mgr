@@ -33,6 +33,9 @@ bool DelaySuspendInfo::Marshalling(Parcel& out) const
 std::shared_ptr<DelaySuspendInfo> DelaySuspendInfo::Unmarshalling(Parcel &in)
 {
     auto info = std::make_shared<DelaySuspendInfo>();
+    if (info == nullptr) {
+        return nullptr;
+    }
     return info->ReadFromParcel(in) ? info : nullptr;
 }
 

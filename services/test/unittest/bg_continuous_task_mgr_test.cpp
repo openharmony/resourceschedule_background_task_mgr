@@ -74,10 +74,10 @@ void BgContinuousTaskMgrTest::TearDown()
 
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
 public:
-    virtual void OnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo>
+    void OnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo>
         &continuousTaskCallbackInfo) override {}
 
-    virtual void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo>
+    void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo>
         &continuousTaskCallbackInfo) override {}
 };
 
@@ -182,5 +182,5 @@ HWTEST_F(BgContinuousTaskMgrTest, UnsubscribeContinuousTask_001, TestSize.Level1
     SleepForFC();
     EXPECT_EQ((int)bgContinuousTaskMgr_->RemoveSubscriber(subscriber->GetImpl()), (int)ERR_OK);
 }
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

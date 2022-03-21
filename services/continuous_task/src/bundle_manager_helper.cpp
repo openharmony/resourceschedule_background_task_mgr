@@ -128,5 +128,5 @@ void BundleManagerHelper::OnRemoteDied(const wptr<IRemoteObject> &object)
     std::lock_guard<std::mutex> lock(connectionMutex_);
     Disconnect();
 }
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

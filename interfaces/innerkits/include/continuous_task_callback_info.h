@@ -43,6 +43,6 @@ private:
     pid_t creatorPid_ {0};
     std::string abilityName_ {""};
 };
-}
-}
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_LONGTIME_TASK_EVENT_DATA_H

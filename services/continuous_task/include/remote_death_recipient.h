@@ -24,7 +24,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class RemoteDeathRecipient : public IRemoteObject::DeathRecipient {
 public:
-    RemoteDeathRecipient(std::function<void(const wptr<IRemoteObject> &)> callback)
+    explicit RemoteDeathRecipient(std::function<void(const wptr<IRemoteObject> &)> callback)
     {
         callback_ = callback;
     }
@@ -44,6 +44,6 @@ public:
 private:
     std::function<void(const wptr<IRemoteObject> &)> callback_;
 };
-}
-}
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_REMOTE_DEATH_RECIPIENT_H

@@ -213,6 +213,6 @@ RState ResourceManagerImpl::CloseRawFileDescriptor(const std::string &name)
 {
     return SUCCESS;
 }
-}
-}
-}
+}  // namespace Resource
+}  // namespace Global
+}  // namespace OHOS

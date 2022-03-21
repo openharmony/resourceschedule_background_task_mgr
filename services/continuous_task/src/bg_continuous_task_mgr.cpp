@@ -1008,5 +1008,5 @@ int32_t BgContinuousTaskMgr::RefreshTaskRecord()
     }
     return ERR_OK;
 }
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
