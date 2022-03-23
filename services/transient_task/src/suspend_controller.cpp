@@ -24,7 +24,7 @@ namespace BackgroundTaskMgr {
 void SuspendController::RequestSuspendDelay(const std::shared_ptr<KeyInfo>& key)
 {
     if (key == nullptr) {
-        return false
+        return;
     }
 
     // do delayed suspend
@@ -34,9 +34,9 @@ void SuspendController::RequestSuspendDelay(const std::shared_ptr<KeyInfo>& key)
 void SuspendController::CancelSuspendDelay(const std::shared_ptr<KeyInfo>& key)
 {
     if (key == nullptr) {
-        return false
+        return;
     }
-    
+
     // cancel delayed suspend
     BGTASK_LOGI("Remove delayed suspend app uid: %{public}d, name: %{public}s", key->GetUid(), key->GetPkg().c_str());
 }
