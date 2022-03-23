@@ -69,6 +69,9 @@ private:
 struct KeyInfoComp {
     bool operator()(const std::shared_ptr<KeyInfo> x, const std::shared_ptr<KeyInfo> y) const
     {
+        if (x == nullptr || y == nullptr) {
+            return false
+        }
         return (x->GetPkg() < y->GetPkg()) || ((x->GetPkg() == y->GetPkg()) && (x->GetUid() < y->GetUid()));
     }
 };

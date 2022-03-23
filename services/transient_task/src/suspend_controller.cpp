@@ -23,12 +23,20 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 void SuspendController::RequestSuspendDelay(const std::shared_ptr<KeyInfo>& key)
 {
+    if (key == nullptr) {
+        return false
+    }
+
     // do delayed suspend
     BGTASK_LOGI("Add delayed suspend app uid: %{public}d, name: %{public}s", key->GetUid(), key->GetPkg().c_str());
 }
 
 void SuspendController::CancelSuspendDelay(const std::shared_ptr<KeyInfo>& key)
 {
+    if (key == nullptr) {
+        return false
+    }
+    
     // cancel delayed suspend
     BGTASK_LOGI("Remove delayed suspend app uid: %{public}d, name: %{public}s", key->GetUid(), key->GetPkg().c_str());
 }
