@@ -446,7 +446,7 @@ ErrCode BgTransientTaskMgr::SubscribeBackgroundTask(const sptr<IBackgroundTaskSu
         auto subscriberIter = find_if(subscriberList_.begin(), subscriberList_.end(), findSuscriber);
         if (subscriberIter != subscriberList_.end()) {
             BGTASK_LOGE("request subscriber is already exists.");
-            result =  ERR_BGTASK_OBJECT_EXISTS;
+            result = ERR_BGTASK_OBJECT_EXISTS;
             return;
         }
 

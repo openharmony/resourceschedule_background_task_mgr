@@ -25,6 +25,9 @@ void BgTaskObserver::OnContinuousTaskStart(const std::shared_ptr<OHOS::Backgroun
     ::ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("Continuous Task Start");
+    if (continuousTaskCallbackInfo == nullptr) {
+        return;
+    }
     std::stringstream stream;
     int32_t typeId = continuousTaskCallbackInfo->GetTypeId();
     int32_t uid = continuousTaskCallbackInfo->GetCreatorUid();
@@ -45,6 +48,9 @@ void BgTaskObserver::OnContinuousTaskStop(const std::shared_ptr<OHOS::Background
     ::ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("Continuous Task Stop");
+    if (continuousTaskCallbackInfo == nullptr) {
+        return;
+    }
     std::stringstream stream;
     int32_t typeId = continuousTaskCallbackInfo->GetTypeId();
     int32_t uid = continuousTaskCallbackInfo->GetCreatorUid();

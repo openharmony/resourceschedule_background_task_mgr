@@ -129,7 +129,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
 
 /**
  * @tc.name: StopBackgroundRunning_001
- * @tc.desc: start background runnging use new api test.
+ * @tc.desc: stop background runnging test.
  * @tc.type: FUNC
  * @tc.require: SR000GGT7V AR000GH6ES AR000GH6EM AR000GH6G9 AR000GH56K
  */
@@ -150,7 +150,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: StartBackgroundRunning_001
+ * @tc.name: SubscribeContinuousTask_001
  * @tc.desc: subscribe continuous task event callback test.
  * @tc.type: FUNC
  * @tc.require: SR000GGT81 AR000GH6EM AR000GH6G9 AR000GH6ET

@@ -36,7 +36,7 @@ bool SystemEventObserver::Subscribe()
 {
     BGTASK_LOGI("Subscribe called");
 
-    if (EventFwk::CommonEventManager::SubscribeCommonEvent(shared_from_this()) != true) {
+    if (!EventFwk::CommonEventManager::SubscribeCommonEvent(shared_from_this())) {
         BGTASK_LOGI("SubscribeCommonEvent occur exception.");
         return false;
     }
@@ -46,7 +46,7 @@ bool SystemEventObserver::Subscribe()
 bool SystemEventObserver::Unsubscribe()
 {
     BGTASK_LOGI("UnSubscribe called");
-    if (EventFwk::CommonEventManager::UnSubscribeCommonEvent(shared_from_this()) != true) {
+    if (!EventFwk::CommonEventManager::UnSubscribeCommonEvent(shared_from_this())) {
         BGTASK_LOGI("UnsubscribeCommonEvent occur exception.");
         return false;
     }
