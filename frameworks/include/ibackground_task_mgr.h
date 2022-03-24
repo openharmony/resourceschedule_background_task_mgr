@@ -39,6 +39,7 @@ public:
 
     /**
      * @brief reuqest delay suspend for background task.
+     *
      * @param reason Reason of requesting delay suspend.
      * @param delayInfo Info of background which request delay suspend.
      * @return Returns ERR_OK on success, others on failure.
@@ -48,6 +49,7 @@ public:
     
     /**
      * @brief cancel delay suspend of background task.
+     *
      * @param requestId Id of the requested background task.
      * @return Returns ERR_OK on success, others on failure.
      */    
@@ -55,6 +57,7 @@ public:
 
     /**
      * @brief get the time remaining before the background tasks enter the suspended state.
+     *
      * @param requestId Id of the requested background task.
      * @param delayTime Remaining Time.
      * @return Returns ERR_OK on success, others on failure.
@@ -63,6 +66,7 @@ public:
 
     /**
      * @brief request service to keep running background.
+     *
      * @param taskParam request params.
      * @return Returns ERR_OK on success, others on failure.
      */
@@ -70,6 +74,7 @@ public:
 
     /**
      * @brief request service to stop running background.
+     *
      * @param abilityName ability name of the requester ability.
      * @param abilityToken ability token to mark an unique running ability instance.
      * @return Returns ERR_OK on success, others on failure.
@@ -78,6 +83,7 @@ public:
 
     /**
      * @brief Subscribes background task event.
+     *
      * @param subscriber subscriber token.
      * @return Returns ERR_OK on success, others on failure.
      */
@@ -85,6 +91,7 @@ public:
 
     /**
      * @brief Unsubscribes background task event.
+     *
      * @param subscriber subscriber token.
      * @return Returns ERR_OK on success, others on failure.
      */
@@ -92,6 +99,7 @@ public:
 
     /**
      * @brief Dump info of continous tasks or transient tasks.
+     *
      * @param dumpOption select continous tasks or transient tasks.
      * @param dumpInfo info of continous tasks or transient tasks.
      * @return Returns ERR_OK on success, others on failure.

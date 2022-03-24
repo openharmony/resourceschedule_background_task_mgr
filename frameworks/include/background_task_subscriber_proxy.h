@@ -41,18 +41,21 @@ public:
 
     /**
      * @brief Called back when a transient task start.
+     *
      * @param info Transient task app info.
      */
     void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override;
 
     /**
      * @brief Called back when a transient task end.
+     *
      * @param info Info of transient tasks.
      */
     void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
 
     /**
      * @brief Called back when a continuous task end.
+     *
      * @param continuousTaskCallbackInfo Transient task app info.
      */
     void OnContinuousTaskStart(
@@ -60,6 +63,7 @@ public:
 
     /**
      * @brief Called back when a continuous task start.
+     *
      * @param continuousTaskCallbackInfo Continuous task app info.
      */
     void OnContinuousTaskStop(

@@ -30,6 +30,7 @@ public:
 
     /**
      * @brief request service code and service data.
+     *
      * @param code service request code from JS.
      * @param data MessageParcel object from JS.
      * @param reply local service response.
