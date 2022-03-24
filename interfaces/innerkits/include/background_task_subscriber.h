@@ -87,6 +87,11 @@ private:
 
             ~DeathRecipient();
 
+            /**
+             * @brief Called back when remote object has died.
+             * 
+             * @param object Obiect which has died.
+             */
             void OnRemoteDied(const wptr<IRemoteObject> &object) override;
 
         private:
@@ -96,12 +101,44 @@ private:
     public:
         BackgroundTaskSubscriberImpl(BackgroundTaskSubscriber &subscriber);
         ~BackgroundTaskSubscriberImpl() {}
+
+        /**
+         * @brief Called back when the subscriber is connected to Background Task Manager Service.
+         */
         void OnConnected() override;
+
+        /**
+         * @brief Called back when the subscriber is disconnected from Background Task Manager Service.
+         */
         void OnDisconnected() override;
+
+        /**
+         * @brief Called back when a transient task start.
+         *
+         * @param info Transient task app info.
+         */
         void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+
+        /**
+         * @brief Called back when a transient task end.
+         *
+         * @param info Transient task app info.
+         */
         void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+
+        /**
+         * @brief Called back when a continuous task start.
+         *
+         * @param continuousTaskCallbackInfo continuous task app info.
+         */
         void OnContinuousTaskStart(
             const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+
+        /**
+         * @brief Called back when a continuous task stop.
+         *
+         * @param continuousTaskCallbackInfo Continuous task app info.
+         */
         void OnContinuousTaskStop(
             const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
         bool GetBackgroundTaskMgrProxy();
