@@ -28,6 +28,15 @@ public:
     BackgroundTaskSubscriberStub();
     ~BackgroundTaskSubscriberStub() override;
     DISALLOW_COPY_AND_MOVE(BackgroundTaskSubscriberStub);
+
+    /**
+     * @brief request service code and service data.
+     * @param code service request code from JS.
+     * @param data MessageParcel object from JS.
+     * @param reply local service response.
+     * @param option point out async or sync.
+     * @return Returns ERR_OK on success, others on failure.
+     */
     int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
 
 private:
