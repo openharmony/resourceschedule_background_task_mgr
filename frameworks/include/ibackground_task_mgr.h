@@ -52,7 +52,7 @@ public:
      *
      * @param requestId Id of the requested background task.
      * @return Returns ERR_OK on success, others on failure.
-     */    
+     */
     virtual ErrCode CancelSuspendDelay(int32_t requestId) = 0;
 
     /**
