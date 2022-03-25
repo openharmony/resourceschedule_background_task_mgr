@@ -31,11 +31,11 @@ public:
     /**
      * @brief request service code and service data.
      *
-     * @param code service request code from JS.
-     * @param data MessageParcel object from JS.
+     * @param code service request code.
+     * @param data MessageParcel object.
      * @param reply local service response.
      * @param option point out async or sync.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
 

@@ -34,7 +34,7 @@ public:
      * @brief cancel delay suspend of background task.
      *
      * @param requestId Id of the requested background task.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     ErrCode CancelSuspendDelay(int32_t requestId);
 
@@ -42,8 +42,9 @@ public:
      * @brief reuqest delay suspend for background task.
      *
      * @param reason Reason of requesting delay suspend.
-     * @param delayInfo Info of background which request delay suspend.
-     * @return Returns ERR_OK on success, others on failure.
+     * @param callback Called back to notify the application.
+     * @param delayInfo Info of background task which request delay suspend.
+     * @return ERR_OK if success, else fail.
      */
     ErrCode RequestSuspendDelay(const std::u16string &reason,
         const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo);
@@ -53,7 +54,7 @@ public:
      *
      * @param requestId Id of the requested background task.
      * @param delayTime Remaining Time.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime);
 
@@ -61,7 +62,7 @@ public:
      * @brief request service to keep running background.
      *
      * @param taskParam request params.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     ErrCode RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam);
 
@@ -70,7 +71,7 @@ public:
      *
      * @param abilityName ability name of the requester ability.
      * @param abilityToken ability token to mark an unique running ability instance.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     ErrCode RequestStopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken);
 
@@ -83,7 +84,7 @@ public:
      * @brief Subscribes background task event.
      *
      * @param subscriber subscriber token.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     ErrCode SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 
@@ -91,7 +92,7 @@ public:
      * @brief Unsubscribes background task event.
      *
      * @param subscriber subscriber token.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     ErrCode UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 
@@ -100,7 +101,7 @@ public:
      *
      * @param dumpOption select continous tasks or transient tasks.
      * @param dumpInfo info of continous tasks or transient tasks.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 

@@ -26,7 +26,7 @@ public:
      * request service to keep running background
      *
      * @param taskParam request params.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     static ErrCode RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam);
 
@@ -35,7 +35,7 @@ public:
      *
      * @param abilityName ability name of the requester ability
      * @param abilityToken ability token to mark an unique running ability instance
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     static ErrCode RequestStopBackgroundRunning(const std::string &abilityName,
         const sptr<IRemoteObject> &abilityToken);
@@ -44,7 +44,7 @@ public:
      * Subscribes background task event.
      *
      * @param subscriber subscriber token.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     static ErrCode SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 
@@ -52,7 +52,7 @@ public:
      * Unsubscribes background task event.
      *
      * @param subscriber subscriber token.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return ERR_OK if success, else fail.
      */
     static ErrCode UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 };
