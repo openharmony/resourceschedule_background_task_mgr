@@ -27,7 +27,7 @@ public:
      * @brief Unmarshals a purpose from a Parcel.
      *
      * @param parcel Indicates the parcel object for unmarshalling.
-     * @return DelaySuspendInfo.
+     * @return The info of delay suspend.
      */
     static std::shared_ptr<DelaySuspendInfo> Unmarshalling(Parcel& in);
 
@@ -83,7 +83,7 @@ public:
     /**
      * @brief Set the actual delay time. 
      *
-     * @param time The delay time
+     * @param time The delay time.
      */
     inline void SetActualDelayTime(int32_t time)
     {
