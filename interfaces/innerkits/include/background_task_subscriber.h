@@ -129,7 +129,7 @@ private:
         /**
          * @brief Called back when a continuous task start.
          *
-         * @param continuousTaskCallbackInfo continuous task app info.
+         * @param continuousTaskCallbackInfo Continuous task app info.
          */
         void OnContinuousTaskStart(
             const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
@@ -144,7 +144,7 @@ private:
         /**
          * @brief get managed proxy of background tasks.
          * 
-         * @return Returns true if success,else false.
+         * @return true if success, else false.
          */
         bool GetBackgroundTaskMgrProxy();
 

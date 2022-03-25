@@ -30,28 +30,28 @@ public:
     /**
      * @brief Get the id of type.
      * 
-     * @returns Returns the id of type
+     * @return the id of type.
      */
     int32_t GetTypeId() const;
 
     /**
      * @brief Get the uid of notification crector.
      * 
-     * @returns Returns the uid of the notification creator.
+     * @return the uid of the notification creator.
      */
     int32_t GetCreatorUid() const;
 
     /**
      * @brief Get the pid of notification crector.
      * 
-     * @returns Returns the pid of the notification creator.
+     * @return the pid of the notification creator.
      */
     pid_t GetCreatorPid() const;
 
     /**
      * @brief Get the name of ability.
      * 
-     * @returns Returns the name of ability.
+     * @return the name of ability.
      */
     std::string GetAbilityName() const;
 
@@ -59,7 +59,7 @@ public:
      * @brief Marshals an Intent into a Parcel.
      * 
      * @param parcel Indicates the Parcel object for marshalling.
-     * @return Returns true if success,else false.
+     * @return true if success, else false.
      */
     bool Marshalling(Parcel &parcel) const;
     static ContinuousTaskCallbackInfo *Unmarshalling(Parcel &parcel);
