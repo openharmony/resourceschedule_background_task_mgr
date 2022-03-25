@@ -26,17 +26,17 @@ namespace BackgroundTaskMgr {
 class ExpiredCallback {
 public:
     /**
-     * Default constructor used to create a instance.
+     * @brief Default constructor used to create a instance.
      */
     ExpiredCallback();
 
     /**
-     * Default destructor.
+     * @brief Default destructor.
      */
     virtual ~ExpiredCallback();
 
     /**
-     * Callback when the transient task will be overtime.
+     * @brief Callback when the transient task will be overtime.
      */
     virtual void OnExpired()= 0;
 
@@ -45,6 +45,9 @@ private:
     public:
         ExpiredCallbackImpl(ExpiredCallback &callback);
         ~ExpiredCallbackImpl() {}
+        /**
+         * @brief Notify the delayed transition to the suspended state times out.
+         */
         void OnExpired() override;
 
     public:

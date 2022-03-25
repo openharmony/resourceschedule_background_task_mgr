@@ -32,19 +32,47 @@ public:
     TransientTaskAppInfo() = default;
     ~TransientTaskAppInfo() = default;
 
+    /**
+     * @brief Marshals a purpose into a parcel.
+     *
+     * @param parcel Indicates the parcel object for marshalling.
+     * @return TransientTaskAppInfo.
+     */
     bool Marshalling(MessageParcel& out) const;
+
+    /**
+     * @brief Unmarshals a purpose from a Parcel.
+     *
+     * @param parcel Indicates the MessageParcel object for unmarshalling.
+     * @return TransientTaskAppInfo.
+     */
     static std::shared_ptr<TransientTaskAppInfo> Unmarshalling(MessageParcel& in);
 
+    /**
+     * @brief Get the package name.
+     *
+     * @return packageName_.
+     */
     inline std::string& GetPackageName()
     {
         return packageName_;
     }
 
+    /**
+     * @brief Get the uid.
+     *
+     * @return uid_.
+     */
     inline int32_t GetUid()
     {
         return uid_;
     }
 
+    /**
+     * @brief Get the uid.
+     *
+     * @return pid_.
+     */
     inline int32_t GetPid()
     {
         return pid_;
