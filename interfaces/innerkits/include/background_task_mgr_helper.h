@@ -23,35 +23,35 @@ namespace BackgroundTaskMgr {
 class BackgroundTaskMgrHelper {
 public:
     /**
-     * request service to keep running background
+     * @brief Request service to keep running background
      *
-     * @param taskParam request params.
+     * @param taskParam Request params.
      * @return ERR_OK if success, else fail.
      */
     static ErrCode RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam);
 
     /**
-     * request service to stop running background
+     * @brief Request service to stop running background
      *
-     * @param abilityName ability name of the requester ability
-     * @param abilityToken ability token to mark an unique running ability instance
+     * @param abilityName Ability name of the requester ability
+     * @param abilityToken Ability token to mark an unique running ability instance
      * @return ERR_OK if success, else fail.
      */
     static ErrCode RequestStopBackgroundRunning(const std::string &abilityName,
         const sptr<IRemoteObject> &abilityToken);
 
     /**
-     * Subscribes background task event.
+     * @brief Subscribes background task event.
      *
-     * @param subscriber subscriber token.
+     * @param subscriber Subscriber token.
      * @return ERR_OK if success, else fail.
      */
     static ErrCode SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 
     /**
-     * Unsubscribes background task event.
+     * @brief Unsubscribes background task event.
      *
-     * @param subscriber subscriber token.
+     * @param subscriber Subscriber token.
      * @return ERR_OK if success, else fail.
      */
     static ErrCode UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);

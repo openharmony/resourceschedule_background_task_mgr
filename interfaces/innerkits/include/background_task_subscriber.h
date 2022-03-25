@@ -142,9 +142,9 @@ private:
         void OnContinuousTaskStop(
             const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
         /**
-         * @brief get managed proxy of background tasks.
+         * @brief Get managed proxy of background tasks.
          * 
-         * @return true if success, else false.
+         * @return True if success, else false.
          */
         bool GetBackgroundTaskMgrProxy();
 
