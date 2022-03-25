@@ -29,35 +29,35 @@ public:
 
     /**
      * @brief Get the id of type.
-     * 
+     *
      * @return The id of type.
      */
     int32_t GetTypeId() const;
 
     /**
      * @brief Get the uid of notification crector.
-     * 
+     *
      * @return The uid of the notification creator.
      */
     int32_t GetCreatorUid() const;
 
     /**
      * @brief Get the pid of notification crector.
-     * 
+     *
      * @return The pid of the notification creator.
      */
     pid_t GetCreatorPid() const;
 
     /**
      * @brief Get the name of ability.
-     * 
+     *
      * @return The name of ability.
      */
     std::string GetAbilityName() const;
 
     /**
-     * @brief Marshals an Intent into a Parcel.
-     * 
+     * @brief Arrange an intent into a parcel.
+     *
      * @param parcel Indicates the Parcel object for marshalling.
      * @return True if success, else false.
      */

@@ -89,7 +89,7 @@ private:
 
             /**
              * @brief Called back when remote object has died.
-             * 
+             *
              * @param object Obiect which has died.
              */
             void OnRemoteDied(const wptr<IRemoteObject> &object) override;
@@ -143,7 +143,7 @@ private:
             const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
         /**
          * @brief Get managed proxy of background tasks.
-         * 
+         *
          * @return True if success, else false.
          */
         bool GetBackgroundTaskMgrProxy();
