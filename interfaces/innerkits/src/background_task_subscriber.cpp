@@ -56,7 +56,7 @@ BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::BackgroundTaskSubscriber
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnConnected()
 {
-    if (GetBackgroundTaskMgrProxy()) {
+    if (GetBackgroundTaskMgrProxy() && recipient_ != nullptr) {
         proxy_->AsObject()->AddDeathRecipient(recipient_);
     }
     subscriber_.OnConnected();
@@ -64,7 +64,7 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnConnected()
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnDisconnected()
 {
-    if (GetBackgroundTaskMgrProxy()) {
+    if (GetBackgroundTaskMgrProxy() && recipient_ != nullptr) {
         proxy_->AsObject()->RemoveDeathRecipient(recipient_);
     }
     subscriber_.OnDisconnected();

@@ -30,6 +30,16 @@ public:
     BackgroundTaskMgrStub() = default;
     ~BackgroundTaskMgrStub() override = default;
     DISALLOW_COPY_AND_MOVE(BackgroundTaskMgrStub);
+
+    /**
+     * @brief Request service code and service data.
+     *
+     * @param code Service request code.
+     * @param data MessageParcel object.
+     * @param reply Local service response.
+     * @param option Point out async or sync.
+     * @return ERR_OK if success, else fail.
+     */
     ErrCode OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
 
 private:

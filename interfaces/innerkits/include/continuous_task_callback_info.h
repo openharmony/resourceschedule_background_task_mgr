@@ -27,10 +27,40 @@ public:
     ContinuousTaskCallbackInfo();
     ContinuousTaskCallbackInfo(int32_t typeId, int32_t creatorUid, pid_t creatorPid, std::string abilityName);
 
+    /**
+     * @brief Get the id of type.
+     *
+     * @return The id of type.
+     */
     int32_t GetTypeId() const;
+
+    /**
+     * @brief Get the uid of notification crector.
+     *
+     * @return The uid of the notification creator.
+     */
     int32_t GetCreatorUid() const;
+
+    /**
+     * @brief Get the pid of notification crector.
+     *
+     * @return The pid of the notification creator.
+     */
     pid_t GetCreatorPid() const;
+
+    /**
+     * @brief Get the name of ability.
+     *
+     * @return The name of ability.
+     */
     std::string GetAbilityName() const;
+
+    /**
+     * @brief Marshals a purpose into a parcel.
+     *
+     * @param parcel Indicates the parcel object for marshalling.
+     * @return True if success, else false.
+     */
     bool Marshalling(Parcel &parcel) const;
     static ContinuousTaskCallbackInfo *Unmarshalling(Parcel &parcel);
 

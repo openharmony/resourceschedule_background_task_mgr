@@ -30,23 +30,79 @@ public:
 
     virtual ~BackgroundTaskManager();
 
+    /**
+     * @brief Cancel delay suspend of background task.
+     *
+     * @param requestId Id of the requested background task.
+     * @return ERR_OK if success, else fail.
+     */
     ErrCode CancelSuspendDelay(int32_t requestId);
 
+    /**
+     * @brief Reuqest delay suspend for background task.
+     *
+     * @param reason Reason of requesting delay suspend.
+     * @param callback Called back to notify the application.
+     * @param delayInfo Info of background task which request delay suspend.
+     * @return ERR_OK if success, else fail.
+     */
     ErrCode RequestSuspendDelay(const std::u16string &reason,
         const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo);
 
+    /**
+     * @brief Get the time remaining before the background tasks enter the suspended state.
+     *
+     * @param requestId Id of the requested background task.
+     * @param delayTime Remaining time.
+     * @return ERR_OK if success, else fail.
+     */
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime);
 
+    /**
+     * @brief Request service to keep running background.
+     *
+     * @param taskParam Request params.
+     * @return ERR_OK if success, else fail.
+     */
     ErrCode RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam);
 
+    /**
+     * @brief Request service to stop running background.
+     *
+     * @param abilityName Ability name of the requester ability.
+     * @param abilityToken Ability token to mark an unique running ability instance.
+     * @return ERR_OK if success, else fail.
+     */
     ErrCode RequestStopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken);
 
+    /**
+     * @brief Reset proxy for background task.
+     */
     void ResetBackgroundTaskManagerProxy();
 
+    /**
+     * @brief Subscribes background task event.
+     *
+     * @param subscriber Subscriber token.
+     * @return ERR_OK if success, else fail.
+     */
     ErrCode SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 
+    /**
+     * @brief Unsubscribes background task event.
+     *
+     * @param subscriber Subscriber token.
+     * @return ERR_OK if success, else fail.
+     */
     ErrCode UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 
+    /**
+     * @brief Dump info of continous tasks or transient tasks.
+     *
+     * @param dumpOption Select continous tasks or transient tasks.
+     * @param dumpInfo Info of continous tasks or transient tasks.
+     * @return ERR_OK if success, else fail.
+     */
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 
 private:

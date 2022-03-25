@@ -29,12 +29,43 @@ public:
     ~BackgroundTaskSubscriberProxy() override;
     DISALLOW_COPY_AND_MOVE(BackgroundTaskSubscriberProxy);
 
+    /**
+     * @brief Called back when the subscriber is connected to Background Task Manager Service.
+     */
     void OnConnected() override;
+
+    /**
+     * @brief Called back when the subscriber is disconnected from Background Task Manager Service.
+     */
     void OnDisconnected() override;
+
+    /**
+     * @brief Called back when a transient task start.
+     *
+     * @param info Transient task app info.
+     */
     void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+
+    /**
+     * @brief Called back when a transient task end.
+     *
+     * @param info Info of transient tasks.
+     */
     void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+
+    /**
+     * @brief Called back when a continuous task start.
+     *
+     * @param continuousTaskCallbackInfo Continuous task app info.
+     */
     void OnContinuousTaskStart(
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+
+    /**
+     * @brief Called back when a continuous task stop.
+     *
+     * @param continuousTaskCallbackInfo Continuous task app info.
+     */
     void OnContinuousTaskStop(
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
 
