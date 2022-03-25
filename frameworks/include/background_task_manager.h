@@ -31,7 +31,7 @@ public:
     virtual ~BackgroundTaskManager();
 
     /**
-     * @brief cancel delay suspend of background task.
+     * @brief Cancel delay suspend of background task.
      *
      * @param requestId Id of the requested background task.
      * @return ERR_OK if success, else fail.
@@ -39,7 +39,7 @@ public:
     ErrCode CancelSuspendDelay(int32_t requestId);
 
     /**
-     * @brief reuqest delay suspend for background task.
+     * @brief Reuqest delay suspend for background task.
      *
      * @param reason Reason of requesting delay suspend.
      * @param callback Called back to notify the application.
@@ -50,40 +50,40 @@ public:
         const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo);
 
     /**
-     * @brief get the time remaining before the background tasks enter the suspended state.
+     * @brief Get the time remaining before the background tasks enter the suspended state.
      *
      * @param requestId Id of the requested background task.
-     * @param delayTime Remaining Time.
+     * @param delayTime Remaining time.
      * @return ERR_OK if success, else fail.
      */
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime);
 
     /**
-     * @brief request service to keep running background.
+     * @brief Request service to keep running background.
      *
-     * @param taskParam request params.
+     * @param taskParam Request params.
      * @return ERR_OK if success, else fail.
      */
     ErrCode RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam);
 
     /**
-     * @brief request service to stop running background.
+     * @brief Request service to stop running background.
      *
-     * @param abilityName ability name of the requester ability.
-     * @param abilityToken ability token to mark an unique running ability instance.
+     * @param abilityName Ability name of the requester ability.
+     * @param abilityToken Ability token to mark an unique running ability instance.
      * @return ERR_OK if success, else fail.
      */
     ErrCode RequestStopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken);
 
     /**
-     * @brief reset proxy for background task.
+     * @brief Reset proxy for background task.
      */
     void ResetBackgroundTaskManagerProxy();
 
     /**
      * @brief Subscribes background task event.
      *
-     * @param subscriber subscriber token.
+     * @param subscriber Subscriber token.
      * @return ERR_OK if success, else fail.
      */
     ErrCode SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
@@ -91,7 +91,7 @@ public:
     /**
      * @brief Unsubscribes background task event.
      *
-     * @param subscriber subscriber token.
+     * @param subscriber Subscriber token.
      * @return ERR_OK if success, else fail.
      */
     ErrCode UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
@@ -99,8 +99,8 @@ public:
     /**
      * @brief Dump info of continous tasks or transient tasks.
      *
-     * @param dumpOption select continous tasks or transient tasks.
-     * @param dumpInfo info of continous tasks or transient tasks.
+     * @param dumpOption Select continous tasks or transient tasks.
+     * @param dumpInfo Info of continous tasks or transient tasks.
      * @return ERR_OK if success, else fail.
      */
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);

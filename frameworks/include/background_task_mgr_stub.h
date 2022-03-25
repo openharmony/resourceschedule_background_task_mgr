@@ -32,12 +32,12 @@ public:
     DISALLOW_COPY_AND_MOVE(BackgroundTaskMgrStub);
 
     /**
-     * @brief request service code and service data.
+     * @brief Request service code and service data.
      *
-     * @param code service request code.
+     * @param code Service request code.
      * @param data MessageParcel object.
-     * @param reply local service response.
-     * @param option point out async or sync.
+     * @param reply Local service response.
+     * @param option Point out async or sync.
      * @return ERR_OK if success, else fail.
      */
     ErrCode OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;

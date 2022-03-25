@@ -30,7 +30,7 @@ public:
     DISALLOW_COPY_AND_MOVE(ExpiredCallbackProxy);
 
     /**
-     * @brief notify the delayed transition to the suspended state times out.
+     * @brief Notify the delayed transition to the suspended state times out.
      */
     void OnExpired() override;
 
