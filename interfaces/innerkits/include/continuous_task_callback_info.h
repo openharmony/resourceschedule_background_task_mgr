@@ -56,9 +56,9 @@ public:
     std::string GetAbilityName() const;
 
     /**
-     * @brief Arrange an intent into a parcel.
+     * @brief Marshals a purpose into a parcel.
      *
-     * @param parcel Indicates the Parcel object for marshalling.
+     * @param parcel Indicates the parcel object for marshalling.
      * @return True if success, else false.
      */
     bool Marshalling(Parcel &parcel) const;
