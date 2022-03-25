@@ -36,7 +36,7 @@ public:
      * @brief Marshals a purpose into a parcel.
      *
      * @param parcel Indicates the parcel object for marshalling.
-     * @return TransientTaskAppInfo.
+     * @return True if success, else false.
      */
     bool Marshalling(MessageParcel& out) const;
 
@@ -44,14 +44,14 @@ public:
      * @brief Unmarshals a purpose from a Parcel.
      *
      * @param parcel Indicates the MessageParcel object for unmarshalling.
-     * @return TransientTaskAppInfo.
+     * @return App info of transient task.
      */
     static std::shared_ptr<TransientTaskAppInfo> Unmarshalling(MessageParcel& in);
 
     /**
      * @brief Get the package name.
      *
-     * @return packageName_.
+     * @return Package name.
      */
     inline std::string& GetPackageName()
     {
@@ -61,7 +61,7 @@ public:
     /**
      * @brief Get the uid.
      *
-     * @return uid_.
+     * @return The uid of app.
      */
     inline int32_t GetUid()
     {
@@ -71,7 +71,7 @@ public:
     /**
      * @brief Get the uid.
      *
-     * @return pid_.
+     * @return The pid of app.
      */
     inline int32_t GetPid()
     {
