@@ -81,7 +81,7 @@ public:
     }
 
     /**
-     * @brief Set the actual delay time. 
+     * @brief Set the actual delay time.
      *
      * @param time The delay time.
      */
