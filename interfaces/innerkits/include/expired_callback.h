@@ -45,6 +45,7 @@ private:
     public:
         ExpiredCallbackImpl(ExpiredCallback &callback);
         ~ExpiredCallbackImpl() {}
+        
         /**
          * @brief Notify the delayed transition to the suspended state times out.
          */
