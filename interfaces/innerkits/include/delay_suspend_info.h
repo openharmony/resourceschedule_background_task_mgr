@@ -22,30 +22,69 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class DelaySuspendInfo : public Parcelable {
 public:
+    
+    /**
+     * @brief Unmarshals a purpose from a Parcel.
+     *
+     * @param parcel Indicates the parcel object for unmarshalling.
+     * @return The info of delay suspend.
+     */
     static std::shared_ptr<DelaySuspendInfo> Unmarshalling(Parcel& in);
 
+    /**
+     * @brief Marshals a purpose into a parcel.
+     *
+     * @param parcel Indicates the parcel object for marshalling.
+     * @return True if success, else false.
+     */
     bool Marshalling(Parcel& out) const override;
 
+    /**
+     * @brief Judge whether the request id is same.
+     *
+     * @param requestId Id use to judge.
+     * @return True if success, else false.
+     */
     inline bool IsSameRequestId(int32_t requestId) const
     {
         return requestId_ == requestId;
     }
-
+    
+    /**
+     * @brief Get the request id.
+     *
+     * @return Request id.
+     */
     inline int32_t GetRequestId() const
     {
         return requestId_;
     }
 
+    /**
+     * @brief Get delay time.
+     *
+     * @return The delay time.
+     */
     inline int32_t GetActualDelayTime() const
     {
         return actualDelayTime_;
     }
 
+    /**
+     * @brief Set id of the request.
+     *
+     * @param id Id of the request.
+     */
     inline void SetRequestId(int32_t id)
     {
         requestId_ = id;
     }
 
+    /**
+     * @brief Set the actual delay time.
+     *
+     * @param time The delay time.
+     */
     inline void SetActualDelayTime(int32_t time)
     {
         actualDelayTime_ = time;
