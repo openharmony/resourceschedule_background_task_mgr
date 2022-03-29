@@ -400,7 +400,7 @@ uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, std::string &ab
     return INVALID_BGMODE;
 }
 
-ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam)
+ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     BGTASK_LOGI("begin");
     if (!isSysReady_.load()) {
@@ -434,7 +434,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
 
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
-        taskParam->abilityName_, taskParam->wantAgent_, taskParam->abilityToken_, userId, callingUid, callingPid,
+        taskParam->abilityName_, taskParam->wantAgent_, userId, callingUid, callingPid,
         taskParam->bgModeId_, taskParam->isNewApi_);
 
     if (taskParam->wantAgent_ != nullptr && taskParam->wantAgent_->GetPendingWant() != nullptr) {
@@ -578,8 +578,7 @@ std::string BgContinuousTaskMgr::CreateNotificationLabel(int32_t uid, const std:
     return label;
 }
 
-ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityName,
-    const sptr<IRemoteObject> &abilityToken)
+ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityName)
 {
     BGTASK_LOGI("begin");
     if (!isSysReady_.load()) {
@@ -594,15 +593,14 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityNam
 
     ErrCode result = ERR_OK;
 
-    handler_->PostSyncTask([this, callingUid, abilityName, abilityToken, &result]() {
-        result = this->StopBackgroundRunningInner(callingUid, abilityName, abilityToken);
+    handler_->PostSyncTask([this, callingUid, abilityName, &result]() {
+        result = this->StopBackgroundRunningInner(callingUid, abilityName);
         }, AppExecFwk::EventQueue::Priority::HIGH);
 
     return result;
 }
 
-ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::string &abilityName,
-    const sptr<IRemoteObject> &abilityToken)
+ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::string &abilityName)
 {
     BGTASK_LOGI("begin");
     std::string mapKey = std::to_string(uid) + SEPARATOR + abilityName;

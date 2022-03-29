@@ -70,7 +70,7 @@ public:
      * @param taskParam Request params.
      * @return ERR_OK if success, else fail.
      */
-    virtual ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam) = 0;
+    virtual ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) = 0;
 
     /**
      * @brief Request service to stop running background.

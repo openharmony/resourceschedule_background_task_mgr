@@ -140,13 +140,13 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     taskParam->abilityName_ = "ability1";
     taskParam->bgModeId_ = 1;
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StopBackgroundRunning("", nullptr), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int)bgContinuousTaskMgr_->StopBackgroundRunning(""), (int)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StopBackgroundRunning("ability1", nullptr), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StopBackgroundRunning("ability1", nullptr), (int)ERR_OK);
+    EXPECT_EQ((int)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int)ERR_OK);
 }
 
 /**

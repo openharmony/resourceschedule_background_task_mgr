@@ -43,15 +43,6 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
         BGTASK_LOGE("Failed to read ability name");
         return false;
     }
-    valid = parcel.ReadBool();
-    if (valid) {
-        abilityToken_ = parcel.ReadObject<IRemoteObject>();
-        if (!abilityToken_) {
-            BGTASK_LOGE("Failed to read ablityToken");
-            return false;
-        }
-    }
-
     return true;
 }
 
@@ -92,18 +83,6 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
     if (!parcel.WriteString(abilityName_)) {
         BGTASK_LOGE("Failed to write abilityName");
         return false;
-    }
-
-    valid = abilityToken_ != nullptr;
-    if (!parcel.WriteBool(valid)) {
-        BGTASK_LOGE("Failed to write the flag which indicate whether ability token is null");
-        return false;
-    }
-    if (valid) {
-        if (!parcel.WriteObject(abilityToken_)) {
-            BGTASK_LOGE("parcel ability token failed");
-            return false;
-        }
     }
     return true;
 }

@@ -102,6 +102,7 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
     Json::CharReaderBuilder readerBuilder;
     const std::unique_ptr<Json::CharReader> jsonReader(readerBuilder.newCharReader());
     bool res = jsonReader->parse(data.c_str(), data.c_str() + data.length(), &root, &errs);
+    fin.close();
     if (!res || !errs.empty()) {
         BGTASK_LOGE("parse json file failed!");
         return ERR_BGTASK_DATA_STORAGE_ERR;

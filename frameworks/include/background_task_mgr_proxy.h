@@ -63,7 +63,7 @@ public:
      * @param taskParam Request params.
      * @return ERR_OK if success, else fail.
      */
-    ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam) override;
+    ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) override;
 
     /**
      * @brief Request service to stop running background.

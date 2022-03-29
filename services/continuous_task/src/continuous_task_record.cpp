@@ -34,9 +34,9 @@ const char *ContinuousTaskModeName[10] = {
 };
 
 ContinuousTaskRecord::ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
-    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent, const sptr<IRemoteObject> &abilityToken,
+    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent,
     int32_t userId, int32_t uid, pid_t pid, uint32_t bgModeId, bool isNewApi)
-    : bundleName_(bundleName), abilityName_(abilityName), wantAgent_(wantAgent), abilityToken_(abilityToken),
+    : bundleName_(bundleName), abilityName_(abilityName), wantAgent_(wantAgent),
     userId_(userId), uid_(uid), pid_(pid), bgModeId_(bgModeId), isNewApi_(isNewApi) {}
 
 std::string ContinuousTaskRecord::GetBundleName() const
@@ -82,11 +82,6 @@ std::string ContinuousTaskRecord::GetNotificationLabel() const
 std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> ContinuousTaskRecord::GetWantAgent() const
 {
     return wantAgent_;
-}
-
-sptr<IRemoteObject> ContinuousTaskRecord::GetAbilityToken() const
-{
-    return abilityToken_;
 }
 
 std::string ContinuousTaskRecord::ParseToJsonStr()
