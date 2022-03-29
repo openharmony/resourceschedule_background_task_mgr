@@ -89,7 +89,7 @@ void BackgroundTaskMgrService::ForceCancelSuspendDelay(int32_t requestId)
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ForceCancelSuspendDelay(requestId);
 }
 
-ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam)
+ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     return BgContinuousTaskMgr::GetInstance()->StartBackgroundRunning(taskParam);
 }
@@ -97,7 +97,7 @@ ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const sptr<ContinuousTa
 ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken)
 {
-    return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName, abilityToken);
+    return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName);
 }
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)

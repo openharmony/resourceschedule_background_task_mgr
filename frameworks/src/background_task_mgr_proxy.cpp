@@ -125,7 +125,7 @@ ErrCode BackgroundTaskMgrProxy::GetRemainingDelayTime(int32_t requestId, int32_t
     return result;
 }
 
-ErrCode BackgroundTaskMgrProxy::StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam)
+ErrCode BackgroundTaskMgrProxy::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     BGTASK_LOGI("begin");
     if (taskParam == nullptr) {

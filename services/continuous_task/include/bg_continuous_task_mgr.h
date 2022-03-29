@@ -53,8 +53,8 @@ struct CachedBundleInfo {
 class BgContinuousTaskMgr : public DelayedSingleton<BgContinuousTaskMgr>,
                             public std::enable_shared_from_this<BgContinuousTaskMgr> {
 public:
-    ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> taskParam);
-    ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken);
+    ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
+    ErrCode StopBackgroundRunning(const std::string &abilityName);
     ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
@@ -71,8 +71,7 @@ public:
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
-    ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName,
-        const sptr<IRemoteObject> &abilityToken);
+    ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName);
     ErrCode AddSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDumpInner(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
