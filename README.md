@@ -83,7 +83,7 @@ OpenHarmony offers 9 kinds of background modes for businesses that need to do co
 | multiDeviceConnection | MULTI_DEVICE_CONNECTION | Distributed interconnection task | Running distributed task |  |
 | wifiInteraction | WIFI_INTERACTION | WLAN transmission | Running WLAN related task | SystemApi，only supported for system app |
 | voip | VOIP | Voice over Internet Phone | Running voip task | SystemApi，only supported for system app |
-| taskKeeping | TASK_KEEPING | Computing tasks | Running computing task | PC specialty only supported in pc device |
+| taskKeeping | TASK_KEEPING | Computing tasks | Running computing task | only supported in particular device |
 
 #### Restrictions on Using Continuous Tasks<a name="section18958419455"></a>
 

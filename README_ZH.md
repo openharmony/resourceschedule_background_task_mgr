@@ -83,7 +83,7 @@ OpenHarmony提供了九种后台模式，供需要在后台做长时任务的业
 | multiDeviceConnection | MULTI_DEVICE_CONNECTION | 分布式互联任务 | 正在运行分布式任务 |  |
 | wifiInteraction | WIFI_INTERACTION | WLAN传输 | 正在运行WLAN相关任务 | SystemApi，仅对System权限应用开放 |
 | voip | VOIP | 音视频电话、VOIP | 正在运行通话相关任务 | SystemApi，仅对System权限应用开放 |
-| taskKeeping | TASK_KEEPING | 计算任务 | 正在运行计算任务 | PC特有，仅在PC申请生效 |
+| taskKeeping | TASK_KEEPING | 计算任务 | 正在运行计算任务 | 仅在特定设备生效 |
 
 #### 长时任务使用约束<a name="section18958419455"></a>
 
