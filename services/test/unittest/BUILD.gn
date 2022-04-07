@@ -19,6 +19,7 @@ module_output_path = "background_task_mgr/unittest"
 
 ohos_unittest("bgtask_unit_test") {
   module_out_path = module_output_path
+  cflags_cc = []
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
@@ -61,11 +62,15 @@ ohos_unittest("bgtask_unit_test") {
     "ipc:ipc_core",
     "multimedia_image_standard:image_native",
     "native_appdatamgr:native_rdb",
-    "os_account_standard:os_account_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
+
+  if (has_os_account_part) {
+    cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
+    external_deps += [ "os_account_standard:os_account_innerkits" ]
+  }
 
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"

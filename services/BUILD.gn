@@ -24,6 +24,7 @@ config("bgtaskmgr_service_public_config") {
 }
 
 ohos_shared_library("bgtaskmgr_service") {
+  cflags_cc = []
   sources = [
     "continuous_task/src/app_state_observer.cpp",
     "continuous_task/src/bg_continuous_task_mgr.cpp",
@@ -70,13 +71,17 @@ ohos_shared_library("bgtaskmgr_service") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "os_account_standard:os_account_innerkits",
     "resmgr_standard:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "startup_l2:syspara",
     "utils_base:utils",
   ]
+
+  if (has_os_account_part) {
+    cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
+    external_deps += [ "os_account_standard:os_account_innerkits" ]
+  }
 
   part_name = "background_task_mgr"
 }
