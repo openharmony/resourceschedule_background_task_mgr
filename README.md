@@ -52,9 +52,9 @@ As mentioned above, applications and service modules with transient tasks have t
 #### Restrictions on Using Transient Tasks<a name="section1551164914237"></a>
 
 - **When to request**：An application can request a transient task only when it is running in the foreground or before it is suspended in the background. Otherwise, the application may be suspended, resulting in request failure. By default, an application has 6–12 seconds of running time (subject to the application scenario) before it is suspended in the background.
-- **Timeout**：The system notifies the application of the suspension delay timeout by using a callback. The application must then cancel the delayed suspension or apply for delayed suspension again. Otherwise, the application will be forcibly suspended.
-- **When to cancel**：The requesting application shall cancel the request when the transient task is complete. If the request is forcibly canceled by the system, the time frame allowed for the application to run in the background will be affected.
-- **Quota mechanism**：To prevent abuse of the keepalive, each application has a certain quota every day (dynamically adjusted based on user habits). After using up the quota, an application cannot request transient tasks. Therefore, applications should cancel their request immediately after the transient tasks are complete, to avoid quota consumption. (Note: The quota refers to the requested duration and does not include the time when the application runs in the background.)
+- **Timeout**：The system notifies the application of the suspension delay which is about to timeout by using a callback. The application must then cancel the delayed suspension . Otherwise, the application will be forcibly killed.
+- **When to cancel**：The requesting application shall cancel the request when the transient task is complete. Do not wait for the request is forcibly canceled by the system.
+- **Quota mechanism**：To prevent abuse of the keepalive, each application has a certain quota every day (dynamically adjusted based on user habits). After using up the quota, an application cannot request transient tasks. Therefore, applications should cancel their suspension delay immediately after the transient tasks are complete, to avoid quota consumption. (Note: The quota refers to the requested duration and does not include the time when the application runs in the background.)
 
 ## Continuous Tasks<a name="section18532577761"></a>
 
