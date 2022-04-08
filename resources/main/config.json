@@ -1,6 +1,6 @@
 {
     "app": {
-        "bundleName": "ohos.global.backgroundtaskres",
+        "bundleName": "ohos.backgroundtaskmgr.resources",
         "singleton": true,
         "vendor": "ohos",
         "version": {
@@ -17,7 +17,7 @@
         }
     },
     "module": {
-        "package": "ohos.global.backgroundtaskres",
+        "package": "ohos.backgroundtaskmgr.resources",
         "deviceType": [
             "default",
             "tv",
