@@ -17,7 +17,7 @@
     <process>bgtaskmgr_service</process>
     <systemability>
         <name>1903</name>
-        <libpath>/system/lib/libbgtaskmgr_service.z.so</libpath>
+        <libpath>libbgtaskmgr_service.z.so</libpath>
         <run-on-create>true</run-on-create>
         <distributed>false</distributed>
         <dump-level>1</dump-level>
