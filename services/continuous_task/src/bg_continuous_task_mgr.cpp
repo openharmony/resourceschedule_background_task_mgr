@@ -27,7 +27,9 @@
 #include "iremote_object.h"
 #include "iservice_registry.h"
 #include "ohos/aafwk/base/string_wrapper.h"
+#ifdef HAS_OS_ACCOUNT_PART
 #include "os_account_manager.h"
+#endif // HAS_OS_ACCOUNT_PART
 #include "parameters.h"
 #include "running_process_info.h"
 #include "system_ability_definition.h"
@@ -71,6 +73,15 @@ static constexpr int32_t DELAY_TIME = 2000;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr int BGMODE_NUMS = 10;
+
+#ifndef HAS_OS_ACCOUNT_PART
+constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 100; // 100 is the default id when there is no os_account part
+constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
+static void GetOsAccountIdFromUid(int uid, int &osAccountId)
+{
+    osAccountId = uid / UID_TRANSFORM_DIVISOR;
+}
+#endif // HAS_OS_ACCOUNT_PART
 }
 
 BgContinuousTaskMgr::BgContinuousTaskMgr() {}
@@ -431,7 +442,11 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     int32_t userId = -1;
+#ifdef HAS_OS_ACCOUNT_PART
     AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
+#else // HAS_OS_ACCOUNT_PART
+    GetOsAccountIdFromUid(callingUid, userId);
+#endif // HAS_OS_ACCOUNT_PART
 
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         taskParam->abilityName_, taskParam->wantAgent_, userId, callingUid, callingPid,
@@ -974,11 +989,15 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
 void BgContinuousTaskMgr::OnAccountsStateChanged(int id)
 {
     std::vector<int> activatedOsAccountIds;
-
+#ifdef HAS_OS_ACCOUNT_PART
     if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
         BGTASK_LOGE("query activated account failed");
         return;
     }
+#else // HAS_OS_ACCOUNT_PART
+    activatedOsAccountIds.push_back(DEFAULT_OS_ACCOUNT_ID);
+    BGTASK_LOGI("there is no account part, use default id.");
+#endif // HAS_OS_ACCOUNT_PART
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         auto idIter = find(activatedOsAccountIds.begin(), activatedOsAccountIds.end(), iter->second->GetUserId());
