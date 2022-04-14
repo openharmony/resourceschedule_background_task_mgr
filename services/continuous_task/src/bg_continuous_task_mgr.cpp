@@ -75,7 +75,7 @@ static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr int BGMODE_NUMS = 10;
 
 #ifndef HAS_OS_ACCOUNT_PART
-constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 100; // 100 is the default id when there is no os_account part
+constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
 static void GetOsAccountIdFromUid(int uid, int &osAccountId)
 {
