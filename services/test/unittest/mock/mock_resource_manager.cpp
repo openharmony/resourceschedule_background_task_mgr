@@ -89,22 +89,22 @@ RState ResourceManagerImpl::GetPatternByName(const char *name, std::map<std::str
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetPluralStringById(uint32_t id, int quantity, std::string &outValue)
+RState ResourceManagerImpl::GetPluralStringById(uint32_t id, int32_t quantity, std::string &outValue)
 {
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetPluralStringByName(const char *name, int quantity, std::string &outValue)
+RState ResourceManagerImpl::GetPluralStringByName(const char *name, int32_t quantity, std::string &outValue)
 {
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetPluralStringByIdFormat(std::string &outValue, uint32_t id, int quantity, ...)
+RState ResourceManagerImpl::GetPluralStringByIdFormat(std::string &outValue, uint32_t id, int32_t quantity, ...)
 {
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetPluralStringByNameFormat(std::string &outValue, const char *name, int quantity, ...)
+RState ResourceManagerImpl::GetPluralStringByNameFormat(std::string &outValue, const char *name, int32_t quantity, ...)
 {
     return SUCCESS;
 }
@@ -129,12 +129,12 @@ RState ResourceManagerImpl::GetBooleanByName(const char *name, bool &outValue)
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetIntegerById(uint32_t id, int &outValue)
+RState ResourceManagerImpl::GetIntegerById(uint32_t id, int32_t &outValue)
 {
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetIntegerByName(const char *name, int &outValue)
+RState ResourceManagerImpl::GetIntegerByName(const char *name, int32_t &outValue)
 {
     return SUCCESS;
 }
@@ -159,12 +159,12 @@ RState ResourceManagerImpl::GetFloatByName(const char *name, float &outValue, st
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetIntArrayById(uint32_t id, std::vector<int> &outValue)
+RState ResourceManagerImpl::GetIntArrayById(uint32_t id, std::vector<int32_t> &outValue)
 {
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetIntArrayByName(const char *name, std::vector<int> &outValue)
+RState ResourceManagerImpl::GetIntArrayByName(const char *name, std::vector<int32_t> &outValue)
 {
     return SUCCESS;
 }

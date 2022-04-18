@@ -31,8 +31,8 @@ namespace {
 static constexpr uint32_t MAX_START_BG_RUNNING_PARAMS = 4;
 static constexpr uint32_t MAX_STOP_BG_RUNNING_PARAMS = 2;
 static constexpr uint32_t CALLBACK_RESULT_PARAMS_NUM = 2;
-static constexpr int32_t BG_MODE_ID_BEGIN = 1;
-static constexpr int32_t BG_MODE_ID_END = 9;
+static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
+static constexpr uint32_t BG_MODE_ID_END = 9;
 }
 
 struct AsyncCallbackInfo {
@@ -41,9 +41,9 @@ struct AsyncCallbackInfo {
     napi_async_work asyncWork {nullptr};
     napi_deferred deferred {nullptr};
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
-    int32_t bgMode {0};
+    uint32_t bgMode {0};
     AbilityRuntime::WantAgent::WantAgent *wantAgent {nullptr};
-    int errCode {0};
+    int32_t errCode {0};
 };
 
 napi_value WrapVoidToJS(napi_env env)
@@ -60,7 +60,7 @@ napi_value WrapUndefinedToJS(napi_env env)
     return result;
 }
 
-napi_value GetCallbackErrorValue(napi_env env, int errCode)
+napi_value GetCallbackErrorValue(napi_env env, int32_t errCode)
 {
     napi_value jsObject = nullptr;
     napi_value jsValue = nullptr;
@@ -144,7 +144,7 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
     }
 
     if (asyncCallbackInfo->bgMode < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgMode > BG_MODE_ID_END) {
-        BGTASK_LOGE("request background mode id: %{public}d out of range", asyncCallbackInfo->bgMode);
+        BGTASK_LOGE("request background mode id: %{public}u out of range", asyncCallbackInfo->bgMode);
         asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
         return;
     }
@@ -205,7 +205,7 @@ void PromiseCompletedCB(napi_env env, napi_status status, void *data)
 }
 
 napi_value StartBackgroundRunningAsync(
-    napi_env env, napi_value *argv, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
+    napi_env env, napi_value *argv, const uint32_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
 {
     BGTASK_LOGI("begin");
     if (argv == nullptr || asyncCallbackInfo == nullptr) {
@@ -259,16 +259,16 @@ napi_value StartBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncC
     return promise;
 }
 
-napi_value GetBackgroundMode(const napi_env &env, const napi_value &value, int32_t &bgMode)
+napi_value GetBackgroundMode(const napi_env &env, const napi_value &value, uint32_t &bgMode)
 {
     BGTASK_LOGI("begin");
 
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     NAPI_ASSERT(env, valuetype == napi_number, "Wrong argument type. Number expected.");
-    napi_get_value_int32(env, value, &bgMode);
+    napi_get_value_uint32(env, value, &bgMode);
 
-    BGTASK_LOGI("get bgmode info: %{public}d", bgMode);
+    BGTASK_LOGI("get bgmode info: %{public}u", bgMode);
     return WrapVoidToJS(env);
 }
 
@@ -371,7 +371,7 @@ void StopBackgroundRunningExecuteCB(napi_env env, void *data)
 }
 
 napi_value StopBackgroundRunningAsync(napi_env env, napi_value *argv,
-    const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
+    const uint32_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
 {
     BGTASK_LOGI("begin");
     if (argv == nullptr || asyncCallbackInfo == nullptr) {

@@ -294,17 +294,17 @@ ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flag
         BGTASK_LOGE("get Remote fail code %{public}d", code);
         return ERR_DEAD_OBJECT;
     }
-    int err = remote->SendRequest(code, data, reply, flags);
+    int32_t err = remote->SendRequest(code, data, reply, flags);
     switch (err) {
         case NO_ERROR: {
             return ERR_OK;
         }
         case DEAD_OBJECT: {
-            BGTASK_LOGE("[InnerTransact] fail: ipcErr=%{public}d code %{public}d", err, code);
+            BGTASK_LOGE("[InnerTransact] fail: ipcErr=%{public}d code %{public}u", err, code);
             return ERR_DEAD_OBJECT;
         }
         default: {
-            BGTASK_LOGE("[InnerTransact] fail: ipcErr=%{public}d code %{public}d", err, code);
+            BGTASK_LOGE("[InnerTransact] fail: ipcErr=%{public}d code %{public}u", err, code);
             return ERR_BGTASK_TRANSACT_FAILED;
         }
     }

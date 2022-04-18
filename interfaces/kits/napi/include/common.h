@@ -30,7 +30,7 @@ struct CallbackPromiseInfo {
     napi_ref callback = nullptr;
     napi_deferred deferred = nullptr;
     bool isCallback = false;
-    int errorCode = 0;
+    int32_t errorCode = 0;
 };
 
 class Common {
@@ -41,9 +41,9 @@ public:
 
     static napi_value NapiGetUndefined(napi_env env);
 
-    static napi_value GetCallbackErrorValue(napi_env env, int errCode);
+    static napi_value GetCallbackErrorValue(napi_env env, int32_t errCode);
 
-    static napi_value GetExpireCallbackValue(napi_env env, int errCode, const napi_value &value);
+    static napi_value GetExpireCallbackValue(napi_env env, int32_t errCode, const napi_value &value);
 
     static void PaddingCallbackPromiseInfo(
         const napi_env &env, const napi_ref &callback, CallbackPromiseInfo &info, napi_value &promise);
@@ -51,7 +51,7 @@ public:
     static void ReturnCallbackPromise(const napi_env &env, const CallbackPromiseInfo &info, const napi_value &result);
 
     static void SetCallback(
-        const napi_env &env, const napi_ref &callbackIn, const int &errorCode, const napi_value &result);
+        const napi_env &env, const napi_ref &callbackIn, const int32_t &errorCode, const napi_value &result);
 
     static void SetCallback(
         const napi_env &env, const napi_ref &callbackIn, const napi_value &result);

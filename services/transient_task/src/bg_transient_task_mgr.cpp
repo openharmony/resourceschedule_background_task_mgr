@@ -603,7 +603,7 @@ bool BgTransientTaskMgr::DumpAllRequestId(std::vector<std::string> &dumpInfo)
         return true;
     }
     std::stringstream stream;
-    int index = 1;
+    int32_t index = 1;
     for (auto record : keyInfoMap_) {
         stream.clear();
         stream.str("");

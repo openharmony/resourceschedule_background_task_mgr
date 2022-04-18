@@ -20,7 +20,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-ShellCommand::ShellCommand(int argc, char *argv[], std::string name)
+ShellCommand::ShellCommand(int32_t argc, char *argv[], std::string name)
 {
     opterr = 0;
     argc_ = argc;
@@ -32,7 +32,7 @@ ShellCommand::ShellCommand(int argc, char *argv[], std::string name)
         return;
     }
     cmd_ = argv[1];
-    for (int i = 2; i < argc; i++) {
+    for (int32_t i = 2; i < argc; i++) {
         argList_.push_back(argv[i]);
     }
 }
@@ -41,7 +41,7 @@ ShellCommand::~ShellCommand() {}
 
 ErrCode ShellCommand::OnCommand()
 {
-    int result = OHOS::ERR_OK;
+    int32_t result = OHOS::ERR_OK;
 
     auto respond = commandMap_[cmd_];
     if (respond == nullptr) {
@@ -60,7 +60,7 @@ ErrCode ShellCommand::OnCommand()
 
 std::string ShellCommand::ExecCommand()
 {
-    int result = CreateCommandMap();
+    int32_t result = CreateCommandMap();
     if (result != OHOS::ERR_OK) {
         BGTASK_LOGE("failed to create command map.\n");
     }

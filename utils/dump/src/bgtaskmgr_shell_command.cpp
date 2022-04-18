@@ -28,7 +28,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-static constexpr int32_t MIN_CONTINUOUS_TASK_DUMP_PARAMS_NUM = 4;
+static constexpr uint32_t MIN_CONTINUOUS_TASK_DUMP_PARAMS_NUM = 4;
 static const struct option OPTIONS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"transient", no_argument, nullptr, 'T'},
@@ -55,7 +55,7 @@ static const std::string DUMP_HELP_MSG =
     "           --cancel <continuous task key>  cancel one task by specifying task key\n";
 }  // namespace
 
-BgtaskmgrShellCommand::BgtaskmgrShellCommand(int argc, char *argv[]) : ShellCommand(argc, argv, "bgtask") {}
+BgtaskmgrShellCommand::BgtaskmgrShellCommand(int32_t argc, char *argv[]) : ShellCommand(argc, argv, "bgtask") {}
 
 ErrCode BgtaskmgrShellCommand::CreateCommandMap()
 {
@@ -98,8 +98,8 @@ ErrCode BgtaskmgrShellCommand::RunAsHelpCommand()
 
 ErrCode BgtaskmgrShellCommand::RunAsDumpCommand()
 {
-    int ind = 0;
-    int option = getopt_long(argc_, argv_, "hTC", OPTIONS, &ind);
+    int32_t ind = 0;
+    int32_t option = getopt_long(argc_, argv_, "hTC", OPTIONS, &ind);
 
     ErrCode ret = ERR_OK;
     if (btm_ == nullptr) {

@@ -24,7 +24,7 @@ namespace BackgroundTaskMgr {
 ExpiredCallbackStub::ExpiredCallbackStub() {}
 ExpiredCallbackStub::~ExpiredCallbackStub() {}
 
-int ExpiredCallbackStub::OnRemoteRequest(uint32_t code,
+ErrCode ExpiredCallbackStub::OnRemoteRequest(uint32_t code,
     MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
     std::u16string descriptor = ExpiredCallbackStub::GetDescriptor();

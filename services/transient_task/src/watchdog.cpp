@@ -72,7 +72,7 @@ void Watchdog::ProcessEvent(const AppExecFwk::InnerEvent::Pointer& event)
     }
 }
 
-bool Watchdog::KillApplicationByUid(const std::string &bundleName, const int uid)
+bool Watchdog::KillApplicationByUid(const std::string &bundleName, const int32_t uid)
 {
     BGTASK_LOGI("kill running application, app name is %{public}s, uid is %{public}d",
         bundleName.c_str(), uid);
@@ -82,13 +82,13 @@ bool Watchdog::KillApplicationByUid(const std::string &bundleName, const int uid
             BGTASK_LOGE("failed to get appMgrClient");
             return false;
         }
-        int result = static_cast<int>(appMgrClient_->ConnectAppMgrService());
+        int32_t result = static_cast<int32_t>(appMgrClient_->ConnectAppMgrService());
         if (result != ERR_OK) {
             BGTASK_LOGE("failed to ConnectAppMgrService");
             return false;
         }
     }
-    int ret = (int)appMgrClient_->KillApplicationByUid(bundleName, uid);
+    int32_t ret = (int32_t)appMgrClient_->KillApplicationByUid(bundleName, uid);
     if (ret != ERR_OK) {
         BGTASK_LOGE("Fail to kill application by uid.");
         return false;
