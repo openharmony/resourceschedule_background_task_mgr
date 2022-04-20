@@ -38,7 +38,7 @@ public:
      * @param option Point out async or sync.
      * @return ERR_OK if success, else fail.
      */
-    int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
+    int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
 
 private:
     ErrCode HandleOnConnected();

@@ -19,15 +19,15 @@ namespace OHOS {
 #ifdef CONFIG_IPC_SINGLE
 using namespace IPC_SINGLE;
 #endif
-int IPCSkeleton::GetCallingUid()
+int32_t IPCSkeleton::GetCallingUid()
 {
-    int uid = 1;
+    int32_t uid = 1;
     return uid;
 }
 
-int IPCSkeleton::GetCallingPid()
+int32_t IPCSkeleton::GetCallingPid()
 {
-    int pid = 1;
+    int32_t pid = 1;
     return pid;
 }
 }  // namespace OHOS

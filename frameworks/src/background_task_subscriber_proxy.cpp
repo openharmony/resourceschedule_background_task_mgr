@@ -40,7 +40,7 @@ void BackgroundTaskSubscriberProxy::OnConnected()
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    ErrCode ret = remote->SendRequest(ON_CONNECTED, data, reply, option);
+    int32_t ret = remote->SendRequest(ON_CONNECTED, data, reply, option);
     if (ret!= ERR_OK) {
         BGTASK_LOGE("SendRequest failed, error code: %d", ret);
     }
@@ -61,7 +61,7 @@ void BackgroundTaskSubscriberProxy::OnDisconnected()
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    ErrCode ret = remote->SendRequest(ON_DISCONNECTED, data, reply, option);
+    int32_t ret = remote->SendRequest(ON_DISCONNECTED, data, reply, option);
     if (ret != ERR_OK) {
         BGTASK_LOGE("SendRequest failed, error code: %d", ret);
     }
@@ -87,7 +87,7 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskStart(const std::shared_ptr<T
     }
     MessageParcel reply;
     MessageOption option;
-    int ret = remote->SendRequest(ON_TRANSIENT_TASK_START, data, reply, option);
+    int32_t ret = remote->SendRequest(ON_TRANSIENT_TASK_START, data, reply, option);
     if (ret != ERR_NONE) {
         BGTASK_LOGE("SendRequest failed, error code: %d", ret);
     }
@@ -113,7 +113,7 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskEnd(const std::shared_ptr<Tra
     }
     MessageParcel reply;
     MessageOption option;
-    int ret = remote->SendRequest(ON_TRANSIENT_TASK_END, data, reply, option);
+    int32_t ret = remote->SendRequest(ON_TRANSIENT_TASK_END, data, reply, option);
     if (ret != ERR_NONE) {
         BGTASK_LOGE("SendRequest failed, error code: %d", ret);
     }
@@ -146,7 +146,7 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStart(
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    ErrCode result = remote->SendRequest(ON_CONTINUOUS_TASK_START, data, reply, option);
+    int32_t result = remote->SendRequest(ON_CONTINUOUS_TASK_START, data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("SendRequest error");
     }
@@ -179,7 +179,7 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStop(
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    ErrCode result = remote->SendRequest(ON_CONTINUOUS_TASK_STOP, data, reply, option);
+    int32_t result = remote->SendRequest(ON_CONTINUOUS_TASK_STOP, data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("SendRequest error");
     }

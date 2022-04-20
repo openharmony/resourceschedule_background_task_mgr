@@ -67,17 +67,17 @@ static constexpr char DEVICE_TYPE_PC[] = "pc";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
-static constexpr unsigned int SYSTEM_UID = 1000;
+static constexpr uint32_t SYSTEM_UID = 1000;
 static constexpr int32_t DEFAULT_NOTIFICATION_ID = 0;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
-static constexpr int BGMODE_NUMS = 10;
+static constexpr uint32_t BGMODE_NUMS = 10;
 
 #ifndef HAS_OS_ACCOUNT_PART
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
-static void GetOsAccountIdFromUid(int uid, int &osAccountId)
+static void GetOsAccountIdFromUid(int32_t uid, int32_t &osAccountId)
 {
     osAccountId = uid / UID_TRANSFORM_DIVISOR;
 }
@@ -331,7 +331,7 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
     for (auto abilityInfo : bundleInfo.abilityInfos) {
         if (abilityInfo.backgroundModes != INVALID_BGMODE) {
             cachedBundleInfo.abilityBgMode_.emplace(abilityInfo.name, abilityInfo.backgroundModes);
-            BGTASK_LOGI("abilityName: %{public}s, abilityNameHash: %{public}s, Background Mode: %{public}d.",
+            BGTASK_LOGI("abilityName: %{public}s, abilityNameHash: %{public}s, Background Mode: %{public}u.",
                 abilityInfo.name.c_str(), std::to_string(std::hash<std::string>()(abilityInfo.name)).c_str(),
                 abilityInfo.backgroundModes);
         }
@@ -986,9 +986,9 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
     }
 }
 
-void BgContinuousTaskMgr::OnAccountsStateChanged(int id)
+void BgContinuousTaskMgr::OnAccountsStateChanged(int32_t id)
 {
-    std::vector<int> activatedOsAccountIds;
+    std::vector<int32_t> activatedOsAccountIds;
 #ifdef HAS_OS_ACCOUNT_PART
     if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
         BGTASK_LOGE("query activated account failed");

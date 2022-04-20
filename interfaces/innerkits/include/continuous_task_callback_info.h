@@ -25,14 +25,14 @@ namespace BackgroundTaskMgr {
 class ContinuousTaskCallbackInfo : public Parcelable {
 public:
     ContinuousTaskCallbackInfo();
-    ContinuousTaskCallbackInfo(int32_t typeId, int32_t creatorUid, pid_t creatorPid, std::string abilityName);
+    ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid, pid_t creatorPid, std::string abilityName);
 
     /**
      * @brief Get the id of type.
      *
      * @return The id of type.
      */
-    int32_t GetTypeId() const;
+    uint32_t GetTypeId() const;
 
     /**
      * @brief Get the uid of notification crector.
@@ -68,7 +68,7 @@ private:
     bool ReadFromParcel(Parcel &parcel);
 
 private:
-    int32_t typeId_ {0};
+    uint32_t typeId_ {0};
     int32_t creatorUid_ {0};
     pid_t creatorPid_ {0};
     std::string abilityName_ {""};

@@ -40,7 +40,7 @@ public:
      * @param option Point out async or sync.
      * @return ERR_OK if success, else fail.
      */
-    ErrCode OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
+    int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
 
 private:
     static const std::map<uint32_t,

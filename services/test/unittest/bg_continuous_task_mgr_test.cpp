@@ -89,23 +89,23 @@ public:
  */
 HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
 {
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
     taskParam->isNewApi_ = true;
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_PARAM);
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_PARAM);
     taskParam->abilityName_ = "";
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_PARAM);
     taskParam->abilityName_ = "ability1";
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_BGTASK_INVALID_BGMODE);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
     taskParam->bgModeId_ = 9;
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_BGTASK_INVALID_BGMODE);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
     taskParam->bgModeId_ = 2;
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_BGTASK_INVALID_BGMODE);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
     taskParam->bgModeId_ = 1;
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_OK);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
 }
 
 /**
@@ -116,15 +116,15 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
  */
 HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
 {
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
     taskParam->isNewApi_ = false;
     taskParam->bgModeId_ = 0;
     taskParam->abilityName_ = "";
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_PARAM);
     taskParam->abilityName_ = "ability1";
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int)ERR_OK);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
 }
 
 /**
@@ -140,13 +140,13 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     taskParam->abilityName_ = "ability1";
     taskParam->bgModeId_ = 1;
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StopBackgroundRunning(""), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(""), (int32_t)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
-    EXPECT_EQ((int)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int)ERR_OK);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_OK);
 }
 
 /**
@@ -157,13 +157,13 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
  */
 HWTEST_F(BgContinuousTaskMgrTest, SubscribeContinuousTask_001, TestSize.Level1)
 {
-    EXPECT_EQ((int)bgContinuousTaskMgr_->AddSubscriber(nullptr), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->AddSubscriber(nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
     auto subscriber = new (std::nothrow) TestBackgroundTaskSubscriber();
     EXPECT_NE(subscriber, nullptr);
-    EXPECT_EQ((int)bgContinuousTaskMgr_->AddSubscriber(subscriber->GetImpl()), (int)ERR_OK);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->AddSubscriber(subscriber->GetImpl()), (int32_t)ERR_OK);
     SleepForFC();
-    EXPECT_EQ((int)bgContinuousTaskMgr_->AddSubscriber(subscriber->GetImpl()), (int)ERR_BGTASK_OBJECT_EXISTS);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->AddSubscriber(subscriber->GetImpl()), (int32_t)ERR_BGTASK_OBJECT_EXISTS);
 }
 
 /**
@@ -174,13 +174,13 @@ HWTEST_F(BgContinuousTaskMgrTest, SubscribeContinuousTask_001, TestSize.Level1)
  */
 HWTEST_F(BgContinuousTaskMgrTest, UnsubscribeContinuousTask_001, TestSize.Level1)
 {
-    EXPECT_EQ((int)bgContinuousTaskMgr_->RemoveSubscriber(nullptr), (int)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->RemoveSubscriber(nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
     auto subscriber = new (std::nothrow) TestBackgroundTaskSubscriber();
     EXPECT_NE(subscriber, nullptr);
     bgContinuousTaskMgr_->AddSubscriber(subscriber->GetImpl());
     SleepForFC();
-    EXPECT_EQ((int)bgContinuousTaskMgr_->RemoveSubscriber(subscriber->GetImpl()), (int)ERR_OK);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->RemoveSubscriber(subscriber->GetImpl()), (int32_t)ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

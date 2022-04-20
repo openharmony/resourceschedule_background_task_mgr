@@ -44,15 +44,15 @@ void CycleTest()
     }
 }
 
-void PatchTest(int nums)
+void PatchTest(int32_t nums)
 {
     std::list<std::shared_ptr<OHOS::BackgroundTaskMgr::BgTaskObserver>> observerList;
-    for (int i = 0; i < nums; i++) {
+    for (int32_t i = 0; i < nums; i++) {
         auto bgtaskObserver = std::make_shared<OHOS::BackgroundTaskMgr::BgTaskObserver>();
         observerList.emplace_back(bgtaskObserver);
     }
 
-    int index = 1;
+    int32_t index = 1;
     for (auto observer : observerList) {
         if (OHOS::BackgroundTaskMgr::BackgroundTaskMgrHelper::SubscribeBackgroundTask(*observer)
             == OHOS::ERR_OK) {
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 {
     auto bgtaskObserver = std::make_shared<OHOS::BackgroundTaskMgr::BgTaskObserver>();
     char command[MAX_CHAR_NUMS];
-    int nums;
+    int32_t nums;
     while (std::cin >> command >> nums) {
         std::string commandStr = command;
         if (commandStr == "register") {

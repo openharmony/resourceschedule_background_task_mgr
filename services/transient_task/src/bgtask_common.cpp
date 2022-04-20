@@ -29,7 +29,7 @@ constexpr int32_t DELAY_TIME_NORMAL_DEFAULT = 3 * MSEC_PER_MIN; // 3min
 constexpr int32_t DELAY_TIME_LOW_POWER_DEFAULT = 1 * MSEC_PER_MIN; // 1min
 constexpr int32_t ALLOW_REQUEST_TIME_BG_DEFAULT = 6 * MSEC_PER_SEC; // 6s
 constexpr int32_t INIT_QUOTA_DEFAULT = 10 * MSEC_PER_MIN; // 10min
-constexpr int32_t QUOTA_UPDATE_DEFAULT = 1 * MSEC_PER_DAY; // 1day
+constexpr int64_t QUOTA_UPDATE_DEFAULT = 1 * MSEC_PER_DAY; // 1day
 
 const std::string DELAY_TIME_NOMAL_PARAM = "persist.sys.bgtask_delaytime_normal";
 const std::string INIT_QUOTA_PARAM = "persist.sys.bgtask_init_quota";
@@ -39,6 +39,6 @@ const int32_t DELAY_TIME_NORMAL = GetIntParameter(DELAY_TIME_NOMAL_PARAM, DELAY_
 const int32_t DELAY_TIME_LOW_POWER = DELAY_TIME_LOW_POWER_DEFAULT;
 const int32_t ALLOW_REQUEST_TIME_BG = ALLOW_REQUEST_TIME_BG_DEFAULT;
 const int32_t INIT_QUOTA = GetIntParameter(INIT_QUOTA_PARAM, INIT_QUOTA_DEFAULT);
-const int32_t QUOTA_UPDATE = GetIntParameter(QUOTA_UPDATE_PARAM, QUOTA_UPDATE_DEFAULT);
+const int64_t QUOTA_UPDATE = GetIntParameter(QUOTA_UPDATE_PARAM, QUOTA_UPDATE_DEFAULT);
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

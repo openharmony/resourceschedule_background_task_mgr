@@ -83,14 +83,14 @@ void SystemEventObserver::OnReceiveEvent(const EventFwk::CommonEventData &eventD
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_USER_ADDED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED) {
-        int userId = eventData.GetCode();
+        int32_t userId = eventData.GetCode();
         BGTASK_LOGI("user of id :%{public}d state is changed, action is : %{public}s", userId, action.c_str());
         auto task = [=]() { bgContinuousTaskMgr->OnAccountsStateChanged(userId); };
         handler->PostTask(task, TASK_ON_OS_ACCOUNT_CHANGED);
         return;
     }
     std::string bundleName = want.GetElement().GetBundleName();
-    int uid = want.GetIntParam(AppExecFwk::Constants::UID, -1);
+    int32_t uid = want.GetIntParam(AppExecFwk::Constants::UID, -1);
     BGTASK_LOGI("get common event action = %{public}s, bundleName = %{public}s, uid = %{public}d",
         action.c_str(), bundleName.c_str(), uid);
     auto task = [=]() { bgContinuousTaskMgr->OnBundleInfoChanged(action, bundleName, uid); };

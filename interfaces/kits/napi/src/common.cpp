@@ -20,9 +20,9 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const std::int32_t STR_MAX_SIZE = 64;
-const std::int32_t EXPIRE_CALLBACK_PARAM_NUM = 1;
-const std::int32_t ASYNC_CALLBACK_PARAM_NUM = 2;
+const uint32_t STR_MAX_SIZE = 64;
+const uint32_t EXPIRE_CALLBACK_PARAM_NUM = 1;
+const uint32_t ASYNC_CALLBACK_PARAM_NUM = 2;
 
 napi_value Common::NapiGetboolean(napi_env env, const bool &isValue)
 {
@@ -48,7 +48,7 @@ void Common::ReturnCallbackPromise(const napi_env &env, const CallbackPromiseInf
 }
 
 void Common::SetCallback(
-    const napi_env &env, const napi_ref &callbackIn, const int &errorCode, const napi_value &result)
+    const napi_env &env, const napi_ref &callbackIn, const int32_t &errorCode, const napi_value &result)
 {
     napi_value undefined = nullptr;
     napi_get_undefined(env, &undefined);
@@ -77,7 +77,7 @@ void Common::SetCallback(const napi_env &env, const napi_ref &callbackIn, const 
         napi_call_function(env, undefined, callback, EXPIRE_CALLBACK_PARAM_NUM, &res, &resultout));
 }
 
-napi_value Common::GetExpireCallbackValue(napi_env env, int errCode, const napi_value &value)
+napi_value Common::GetExpireCallbackValue(napi_env env, int32_t errCode, const napi_value &value)
 {
     napi_value result = nullptr;
     napi_value eCode = nullptr;
@@ -104,7 +104,7 @@ napi_value Common::SetPromise(
     return result;
 }
 
-napi_value Common::GetCallbackErrorValue(napi_env env, int errCode)
+napi_value Common::GetCallbackErrorValue(napi_env env, int32_t errCode)
 {
     napi_value result = nullptr;
     napi_value eCode = nullptr;

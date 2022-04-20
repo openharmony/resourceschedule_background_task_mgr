@@ -24,7 +24,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class BgtaskmgrShellCommand : public ShellCommand {
 public:
-    BgtaskmgrShellCommand(int argc, char *argv[]);
+    BgtaskmgrShellCommand(int32_t argc, char *argv[]);
     ~BgtaskmgrShellCommand() override {};
 
 private:

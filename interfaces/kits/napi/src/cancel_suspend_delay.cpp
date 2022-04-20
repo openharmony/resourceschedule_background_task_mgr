@@ -22,7 +22,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-static const int32_t CANCEL_SUSPEND_DELAY_PARAMS = 1;
+static const uint32_t CANCEL_SUSPEND_DELAY_PARAMS = 1;
 
 napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, int32_t &requestId)
 {

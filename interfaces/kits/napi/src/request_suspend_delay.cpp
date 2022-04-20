@@ -24,7 +24,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-static const int32_t REQUEST_SUSPEND_DELAY_PARAMS = 2;
+static const uint32_t REQUEST_SUSPEND_DELAY_PARAMS = 2;
 
 struct CallbackReceiveDataWorker {
     napi_env env = nullptr;
@@ -40,7 +40,7 @@ CallbackInstance::~CallbackInstance()
     }
 }
 
-void UvQueueWorkOnExpired(uv_work_t *work, int status)
+void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
 {
     BGTASK_LOGI("OnExpired uv_work_t start");
 
@@ -100,7 +100,7 @@ void CallbackInstance::OnExpired()
 
     work->data = (void *)dataWorker;
 
-    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnExpired);
+    int32_t ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnExpired);
     if (ret != 0) {
         delete dataWorker;
         dataWorker = nullptr;

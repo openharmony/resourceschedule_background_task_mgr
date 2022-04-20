@@ -29,7 +29,7 @@ void BgTaskObserver::OnContinuousTaskStart(const std::shared_ptr<OHOS::Backgroun
         return;
     }
     std::stringstream stream;
-    int32_t typeId = continuousTaskCallbackInfo->GetTypeId();
+    uint32_t typeId = continuousTaskCallbackInfo->GetTypeId();
     int32_t uid = continuousTaskCallbackInfo->GetCreatorUid();
     pid_t pid = continuousTaskCallbackInfo->GetCreatorPid();
     std::string abiliytName = continuousTaskCallbackInfo->GetAbilityName();
@@ -52,7 +52,7 @@ void BgTaskObserver::OnContinuousTaskStop(const std::shared_ptr<OHOS::Background
         return;
     }
     std::stringstream stream;
-    int32_t typeId = continuousTaskCallbackInfo->GetTypeId();
+    uint32_t typeId = continuousTaskCallbackInfo->GetTypeId();
     int32_t uid = continuousTaskCallbackInfo->GetCreatorUid();
     pid_t pid = continuousTaskCallbackInfo->GetCreatorPid();
     std::string abiliytName = continuousTaskCallbackInfo->GetAbilityName();

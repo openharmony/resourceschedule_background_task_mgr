@@ -24,13 +24,13 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-constexpr int APP_FIRST_UID = 10000;
+constexpr int32_t APP_FIRST_UID = 10000;
 }
 
 BackgroundTaskSubscriberStub::BackgroundTaskSubscriberStub() {}
 BackgroundTaskSubscriberStub::~BackgroundTaskSubscriberStub() {}
 
-int BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
+ErrCode BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
     MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
     std::u16string descriptor = BackgroundTaskSubscriberStub::GetDescriptor();

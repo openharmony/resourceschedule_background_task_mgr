@@ -38,7 +38,7 @@ public:
     void ProcessEvent(const AppExecFwk::InnerEvent::Pointer& event) override;
 
 private:
-    bool KillApplicationByUid(const std::string &bundleName, const int uid);
+    bool KillApplicationByUid(const std::string &bundleName, const int32_t uid);
 
     wptr<BackgroundTaskMgrService> service_;
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_;

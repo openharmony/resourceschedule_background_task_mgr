@@ -22,8 +22,8 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-constexpr int INVAILD_PID = -1;
-constexpr int INVAILD_UID = -1;
+constexpr int32_t INVAILD_PID = -1;
+constexpr int32_t INVAILD_UID = -1;
 
 class TransientTaskAppInfo final {
 public:

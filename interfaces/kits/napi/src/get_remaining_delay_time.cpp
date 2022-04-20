@@ -22,8 +22,8 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-static const int32_t GET_REMAINING_DELAY_TIME_MIN_PARAMS = 1;
-static const int32_t GET_REMAINING_DELAY_TIME_PARAMS = 2;
+static const uint32_t GET_REMAINING_DELAY_TIME_MIN_PARAMS = 1;
+static const uint32_t GET_REMAINING_DELAY_TIME_PARAMS = 2;
 
 struct AsyncCallbackInfoGetRemainingDelayTime {
     napi_env env = nullptr;

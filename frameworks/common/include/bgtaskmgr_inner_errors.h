@@ -31,14 +31,14 @@ namespace BackgroundTaskMgr {
  */
 
 // BackgroundTaskMgr's module const defined.
-enum : int {
+enum : int32_t {
     BGTASK_MODULE_COMMON = 0x00,
 };
 
 // Offset of background task manager sub-system's errcode base.
 constexpr ErrCode BGTASK_COMMON_ERR_OFFSET = ErrCodeOffset(SUBSYS_IAWARE, BGTASK_MODULE_COMMON);
 // Bgtask Common Error Code Defined.
-enum : int {
+enum : int32_t {
     ERR_BGTASK_SERVICE_NOT_READY = BGTASK_COMMON_ERR_OFFSET + 1,
     ERR_BGTASK_SERVICE_NOT_CONNECTED,
     ERR_BGTASK_REMOTE_DEAD,

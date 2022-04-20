@@ -27,7 +27,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class ShellCommand {
 public:
-    ShellCommand(int argc, char *argv[], std::string name);
+    ShellCommand(int32_t argc, char *argv[], std::string name);
     virtual ~ShellCommand();
 
     ErrCode OnCommand();
@@ -41,16 +41,16 @@ public:
     virtual ErrCode init() = 0;
 
 protected:
-    static constexpr int MIN_ARGUMENT_NUMBER = 2;
+    static constexpr uint32_t MIN_ARGUMENT_NUMBER = 2;
 
-    int argc_;
+    int32_t argc_;
     char **argv_;
 
     std::string cmd_;
     std::vector<std::string> argList_;
 
     std::string name_;
-    std::map<std::string, std::function<int()>> commandMap_;
+    std::map<std::string, std::function<int32_t()>> commandMap_;
     std::map<int32_t, std::string> messageMap_;
 
     std::string resultReceiver_ = "";
