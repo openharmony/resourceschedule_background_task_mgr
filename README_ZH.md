@@ -101,7 +101,7 @@ OpenHarmony提供了九种后台模式，供需要在后台做长时任务的业
 
 notification_ans_standard
 
-notification_ces_standard
+notification_common_event_service
 
 appexecfwk_standard
 
