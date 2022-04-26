@@ -97,12 +97,13 @@ OpenHarmony提供了九种后台模式，供需要在后台做长时任务的业
 
 资源调度子系统
 
-**background\_task\_mgr**
+**[resourceschedule_background_task_mgr](https://gitee.com/openharmony/resourceschedule_background_task_mgr)**
 
-notification_ans_standard
+[notification_ans_standard](https://gitee.com/openharmony/notification_ans_standard)
 
-notification_common_event_service
+[notification_ces_standard](https://gitee.com/openharmony/notification_ces_standard)
 
-appexecfwk_standard
+[appexecfwk_standard](https://gitee.com/openharmony/appexecfwk_standard)
 
-account_os_account
+[account_os_account](https://gitee.com/openharmony/account_os_account)
+
