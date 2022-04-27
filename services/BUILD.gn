@@ -54,7 +54,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "//base/notification/ans_standard/frameworks/ans/native:ans_innerkits",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//third_party/jsoncpp",
   ]
 
