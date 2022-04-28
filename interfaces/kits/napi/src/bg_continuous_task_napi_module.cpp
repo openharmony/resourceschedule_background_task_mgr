@@ -22,6 +22,7 @@
 #include "background_mode.h"
 #include "background_task_mgr_helper.h"
 #include "bgtaskmgr_inner_errors.h"
+#include "common.h"
 #include "continuous_task_log.h"
 #include "continuous_task_param.h"
 
@@ -35,11 +36,8 @@ static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
 }
 
-struct AsyncCallbackInfo {
-    napi_env env {nullptr};
-    napi_ref callback {nullptr};
-    napi_async_work asyncWork {nullptr};
-    napi_deferred deferred {nullptr};
+struct AsyncCallbackInfo : public AsyncWorkData {
+    explicit AsyncCallbackInfo(napi_env env) : AsyncWorkData(env) {}
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
     uint32_t bgMode {0};
     AbilityRuntime::WantAgent::WantAgent *wantAgent {nullptr};
@@ -160,11 +158,12 @@ void CallbackCompletedCB(napi_env env, napi_status status, void *data)
 {
     BGTASK_LOGI("begin");
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
+    std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
     napi_value callback = 0;
     napi_value undefined = 0;
     napi_value result[CALLBACK_RESULT_PARAMS_NUM] = {0};
     napi_value callResult = 0;
-    napi_get_undefined(env, &undefined);
+    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     if (asyncCallbackInfo->errCode == ERR_OK) {
         result[0] = WrapUndefinedToJS(env);
         napi_create_int32(env, 0, &result[1]);
@@ -173,15 +172,10 @@ void CallbackCompletedCB(napi_env env, napi_status status, void *data)
         result[0] = GetCallbackErrorValue(env, asyncCallbackInfo->errCode);
     }
 
-    napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
-    napi_call_function(env, undefined, callback, CALLBACK_RESULT_PARAMS_NUM, result, &callResult);
+    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, asyncCallbackInfo->callback, &callback));
+    NAPI_CALL_RETURN_VOID(env,
+        napi_call_function(env, undefined, callback, CALLBACK_RESULT_PARAMS_NUM, result, &callResult));
 
-    if (asyncCallbackInfo->callback != nullptr) {
-        napi_delete_reference(env, asyncCallbackInfo->callback);
-    }
-    napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-    delete asyncCallbackInfo;
-    asyncCallbackInfo = nullptr;
     BGTASK_LOGI("end");
 }
 
@@ -189,18 +183,16 @@ void PromiseCompletedCB(napi_env env, napi_status status, void *data)
 {
     BGTASK_LOGI("begin");
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
+    std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
     napi_value result = 0;
     if (asyncCallbackInfo->errCode == ERR_OK) {
         napi_create_int32(env, 0, &result);
-        napi_resolve_deferred(env, asyncCallbackInfo->deferred, result);
+        NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result));
     } else {
         result = GetCallbackErrorValue(env, asyncCallbackInfo->errCode);
-        napi_reject_deferred(env, asyncCallbackInfo->deferred, result);
+        NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
     }
 
-    napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-    delete asyncCallbackInfo;
-    asyncCallbackInfo = nullptr;
     BGTASK_LOGI("end");
 }
 
@@ -287,19 +279,18 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value, AbilityRun
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
 {
     BGTASK_LOGI("begin");
-    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo {.env = env};
+    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo == nullpter");
         return WrapVoidToJS(env);
     }
+    std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
 
     size_t argc = MAX_START_BG_RUNNING_PARAMS;
     napi_value argv[MAX_START_BG_RUNNING_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc > MAX_START_BG_RUNNING_PARAMS) {
         BGTASK_LOGE("wrong param nums");
-        delete asyncCallbackInfo;
-        asyncCallbackInfo = nullptr;
         return nullptr;
     }
 
@@ -338,6 +329,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
         ret = WrapVoidToJS(env);
     }
     BGTASK_LOGI("end");
+    callbackPtr.release();
     return ret;
 }
 
@@ -430,11 +422,12 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
 napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
 {
     BGTASK_LOGI("begin");
-    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo {.env = env};
+    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo is nullpter");
         return WrapVoidToJS(env);
     }
+    std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
 
     size_t argc = MAX_STOP_BG_RUNNING_PARAMS;
     napi_value argv[MAX_STOP_BG_RUNNING_PARAMS] = {nullptr};
@@ -442,8 +435,6 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc > MAX_STOP_BG_RUNNING_PARAMS) {
         BGTASK_LOGE("wrong param nums");
-        delete asyncCallbackInfo;
-        asyncCallbackInfo = nullptr;
         return nullptr;
     }
 
@@ -469,6 +460,7 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
         ret = WrapVoidToJS(env);
     }
     BGTASK_LOGI("end");
+    callbackPtr.release();
     return ret;
 }
 }  // namespace BackgroundTaskMgr

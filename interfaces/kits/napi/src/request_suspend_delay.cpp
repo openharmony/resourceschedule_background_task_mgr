@@ -120,20 +120,20 @@ napi_value GetExpiredCallback(
 {
     napi_ref result = nullptr;
 
-    callbcakInfo.callback = new (std::nothrow) CallbackInstance();
+    callbcakInfo.callback = std::make_shared<CallbackInstance>();
     if (callbcakInfo.callback == nullptr) {
         BGTASK_LOGE("callback is null");
         return nullptr;
     }
 
-    napi_create_reference(env, value, 1, &result);
+    NAPI_CALL(env, napi_create_reference(env, value, 1, &result));
     callbcakInfo.callback->SetCallbackInfo(env, result);
 
     return Common::NapiGetNull(env);
 }
 
 napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
-    std::u16string &reason, CallbackInstance *&callback)
+    std::u16string &reason, std::shared_ptr<CallbackInstance> &callback)
 {
     size_t argc = REQUEST_SUSPEND_DELAY_PARAMS;
     napi_value argv[REQUEST_SUSPEND_DELAY_PARAMS] = {nullptr};
@@ -162,13 +162,9 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
 
 napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
 {
-    CallbackInstance *objectInfo = nullptr;
+    std::shared_ptr<CallbackInstance> objectInfo = nullptr;
     std::u16string reason;
     if (ParseParameters(env, info, reason, objectInfo) == nullptr) {
-        if (objectInfo) {
-            delete objectInfo;
-            objectInfo = nullptr;
-        }
         return Common::NapiGetNull(env);
     }
 
