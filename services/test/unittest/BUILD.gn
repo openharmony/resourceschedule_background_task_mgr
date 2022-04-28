@@ -24,7 +24,7 @@ ohos_unittest("bgtask_unit_test") {
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
-    "//base/global/resmgr_standard/frameworks/resmgr/include",
+    "//base/global/resource_management/frameworks/resmgr/include",
     "//third_party/icu/icu4c/source/i18n",
   ]
 
