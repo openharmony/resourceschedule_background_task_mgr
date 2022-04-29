@@ -45,7 +45,7 @@ private:
 
 struct CallbackInstancesInfo {
     napi_ref ref = nullptr;
-    std::shared_ptr<CallbackInstance> callback = nullptr;
+    CallbackInstance *callback = nullptr;
 };
 
 napi_value RequestSuspendDelay(napi_env env, napi_callback_info info);
