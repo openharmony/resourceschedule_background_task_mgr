@@ -24,6 +24,25 @@ const uint32_t STR_MAX_SIZE = 64;
 const uint32_t EXPIRE_CALLBACK_PARAM_NUM = 1;
 const uint32_t ASYNC_CALLBACK_PARAM_NUM = 2;
 
+AsyncWorkData::AsyncWorkData(napi_env napiEnv)
+{
+    env = napiEnv;
+}
+
+AsyncWorkData::~AsyncWorkData()
+{
+    if (callback) {
+        BGTASK_LOGD("AsyncWorkData::~AsyncWorkData delete callback");
+        napi_delete_reference(env, callback);
+        callback = nullptr;
+    }
+    if (asyncWork) {
+        BGTASK_LOGD("AsyncWorkData::~AsyncWorkData delete asyncWork");
+        napi_delete_async_work(env, asyncWork);
+        asyncWork = nullptr;
+    }
+}
+
 napi_value Common::NapiGetboolean(napi_env env, const bool &isValue)
 {
     napi_value result = nullptr;

@@ -25,9 +25,8 @@ namespace BackgroundTaskMgr {
 static const uint32_t GET_REMAINING_DELAY_TIME_MIN_PARAMS = 1;
 static const uint32_t GET_REMAINING_DELAY_TIME_PARAMS = 2;
 
-struct AsyncCallbackInfoGetRemainingDelayTime {
-    napi_env env = nullptr;
-    napi_async_work asyncWork = nullptr;
+struct AsyncCallbackInfoGetRemainingDelayTime : public AsyncWorkData {
+    explicit AsyncCallbackInfoGetRemainingDelayTime(napi_env env) : AsyncWorkData(env) {}
     int32_t requestId = 0;
     int32_t delayTime = 0;
     CallbackPromiseInfo info;
@@ -57,7 +56,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
-        napi_create_reference(env, argv[1], 1, &params.callback);
+        NAPI_CALL(env, napi_create_reference(env, argv[1], 1, &params.callback));
     }
 
     if (params.requestId <= 0) {
@@ -75,54 +74,47 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
     }
 
     napi_value promise = nullptr;
-    AsyncCallbackInfoGetRemainingDelayTime *asynccallbackinfo =
-        new (std::nothrow) AsyncCallbackInfoGetRemainingDelayTime {.env = env, .asyncWork = nullptr};
-    if (!asynccallbackinfo) {
+    AsyncCallbackInfoGetRemainingDelayTime *asyncCallbackInfo =
+        new (std::nothrow) AsyncCallbackInfoGetRemainingDelayTime(env);
+    if (!asyncCallbackInfo) {
         return Common::JSParaError(env, params.callback);
     }
-    asynccallbackinfo->requestId = params.requestId;
-    BGTASK_LOGI(" asynccallbackinfo->requestId: %{public}d", asynccallbackinfo->requestId);
-    Common::PaddingCallbackPromiseInfo(env, params.callback, asynccallbackinfo->info, promise);
+    std::unique_ptr<AsyncCallbackInfoGetRemainingDelayTime> callbackPtr {asyncCallbackInfo};
+    asyncCallbackInfo->requestId = params.requestId;
+    BGTASK_LOGI(" asyncCallbackInfo->requestId: %{public}d", asyncCallbackInfo->requestId);
+    Common::PaddingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
 
     napi_value resourceName = nullptr;
-    napi_create_string_latin1(env, "GetRemainingDelayTime", NAPI_AUTO_LENGTH, &resourceName);
+    NAPI_CALL(env, napi_create_string_latin1(env, "GetRemainingDelayTime", NAPI_AUTO_LENGTH, &resourceName));
 
-    napi_create_async_work(env,
+    NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
-            AsyncCallbackInfoGetRemainingDelayTime *asynccallbackinfo = (AsyncCallbackInfoGetRemainingDelayTime *)data;
-            if (asynccallbackinfo != nullptr) {
-                asynccallbackinfo->info.errorCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
-                    GetRemainingDelayTime(asynccallbackinfo->requestId, asynccallbackinfo->delayTime);
+            AsyncCallbackInfoGetRemainingDelayTime *asyncCallbackInfo = (AsyncCallbackInfoGetRemainingDelayTime *)data;
+            if (asyncCallbackInfo != nullptr) {
+                asyncCallbackInfo->info.errorCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+                    GetRemainingDelayTime(asyncCallbackInfo->requestId, asyncCallbackInfo->delayTime);
             }
         },
         [](napi_env env, napi_status status, void *data) {
-            AsyncCallbackInfoGetRemainingDelayTime *asynccallbackinfo = (AsyncCallbackInfoGetRemainingDelayTime *)data;
-            if (asynccallbackinfo != nullptr) {
+            AsyncCallbackInfoGetRemainingDelayTime *asyncCallbackInfo = (AsyncCallbackInfoGetRemainingDelayTime *)data;
+            std::unique_ptr<AsyncCallbackInfoGetRemainingDelayTime> callbackPtr {asyncCallbackInfo};
+            if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
-                napi_create_int32(env, asynccallbackinfo->delayTime, &result);
-                Common::ReturnCallbackPromise(env, asynccallbackinfo->info, result);
-
-                if (asynccallbackinfo->info.callback != nullptr) {
-                    napi_delete_reference(env, asynccallbackinfo->info.callback);
-                }
-
-                napi_delete_async_work(env, asynccallbackinfo->asyncWork);
-                delete asynccallbackinfo;
-                asynccallbackinfo = nullptr;
+                napi_create_int32(env, asyncCallbackInfo->delayTime, &result);
+                Common::ReturnCallbackPromise(env, asyncCallbackInfo->info, result);
             }
         },
-        (void *)asynccallbackinfo,
-        &asynccallbackinfo->asyncWork);
+        (void *)asyncCallbackInfo,
+        &asyncCallbackInfo->asyncWork));
 
-    NAPI_CALL(env, napi_queue_async_work(env, asynccallbackinfo->asyncWork));
-
-    if (asynccallbackinfo->info.isCallback) {
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+    callbackPtr.release();
+    if (asyncCallbackInfo->info.isCallback) {
         return Common::NapiGetNull(env);
-    } else {
-        return promise;
     }
+    return promise;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -176,6 +176,11 @@ napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestSuspendDelay(reason, *objectInfo, delaySuspendInfo);
 
+    if (objectInfo) {
+        delete objectInfo;
+        objectInfo = nullptr;
+    }
+
     napi_value result = nullptr;
     napi_create_object(env, &result);
     if (!Common::SetDelaySuspendInfo(env, delaySuspendInfo, result)) {
