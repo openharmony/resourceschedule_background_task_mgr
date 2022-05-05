@@ -29,7 +29,6 @@ struct AsyncCallbackInfoGetRemainingDelayTime : public AsyncWorkData {
     explicit AsyncCallbackInfoGetRemainingDelayTime(napi_env env) : AsyncWorkData(env) {}
     int32_t requestId = 0;
     int32_t delayTime = 0;
-    CallbackPromiseInfo info;
 };
 
 struct GetRemainingDelayTimeParamsInfo {
@@ -82,7 +81,7 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
     std::unique_ptr<AsyncCallbackInfoGetRemainingDelayTime> callbackPtr {asyncCallbackInfo};
     asyncCallbackInfo->requestId = params.requestId;
     BGTASK_LOGI(" asyncCallbackInfo->requestId: %{public}d", asyncCallbackInfo->requestId);
-    Common::PaddingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
+    Common::PaddingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
 
     napi_value resourceName = nullptr;
     NAPI_CALL(env, napi_create_string_latin1(env, "GetRemainingDelayTime", NAPI_AUTO_LENGTH, &resourceName));
@@ -93,7 +92,7 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
         [](napi_env env, void *data) {
             AsyncCallbackInfoGetRemainingDelayTime *asyncCallbackInfo = (AsyncCallbackInfoGetRemainingDelayTime *)data;
             if (asyncCallbackInfo != nullptr) {
-                asyncCallbackInfo->info.errorCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+                asyncCallbackInfo->errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
                     GetRemainingDelayTime(asyncCallbackInfo->requestId, asyncCallbackInfo->delayTime);
             }
         },
@@ -103,7 +102,7 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
                 napi_create_int32(env, asyncCallbackInfo->delayTime, &result);
-                Common::ReturnCallbackPromise(env, asyncCallbackInfo->info, result);
+                Common::ReturnCallbackPromise(env, *asyncCallbackInfo, result);
             }
         },
         (void *)asyncCallbackInfo,
@@ -111,7 +110,7 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
 
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     callbackPtr.release();
-    if (asyncCallbackInfo->info.isCallback) {
+    if (asyncCallbackInfo->isCallback) {
         return Common::NapiGetNull(env);
     }
     return promise;

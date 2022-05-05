@@ -57,17 +57,17 @@ napi_value Common::NapiGetNull(napi_env env)
     return result;
 }
 
-void Common::ReturnCallbackPromise(const napi_env &env, const CallbackPromiseInfo &info, const napi_value &result)
+void Common::ReturnCallbackPromise(const napi_env &env, const AsyncWorkData &info, const napi_value &result)
 {
     if (info.isCallback) {
-        SetCallback(env, info.callback, info.errorCode, result);
+        SetCallback(env, info.callback, info.errCode, result);
     } else {
         SetPromise(env, info, result);
     }
 }
 
 void Common::SetCallback(
-    const napi_env &env, const napi_ref &callbackIn, const int32_t &errorCode, const napi_value &result)
+    const napi_env &env, const napi_ref &callbackIn, const int32_t &errCode, const napi_value &result)
 {
     napi_value undefined = nullptr;
     napi_get_undefined(env, &undefined);
@@ -76,7 +76,7 @@ void Common::SetCallback(
     napi_value resultout = nullptr;
     napi_get_reference_value(env, callbackIn, &callback);
     napi_value results[ASYNC_CALLBACK_PARAM_NUM] = {nullptr};
-    results[0] = GetCallbackErrorValue(env, errorCode);
+    results[0] = GetCallbackErrorValue(env, errCode);
     results[1] = result;
     NAPI_CALL_RETURN_VOID(env,
         napi_call_function(env, undefined, callback, ASYNC_CALLBACK_PARAM_NUM, &results[0], &resultout));
@@ -108,14 +108,14 @@ napi_value Common::GetExpireCallbackValue(napi_env env, int32_t errCode, const n
 }
 
 napi_value Common::SetPromise(
-    const napi_env &env, const CallbackPromiseInfo &info, const napi_value &result)
+    const napi_env &env, const AsyncWorkData &info, const napi_value &result)
 {
-    if (info.errorCode == ERR_OK) {
+    if (info.errCode == ERR_OK) {
         napi_resolve_deferred(env, info.deferred, result);
     } else {
         napi_value res = nullptr;
         napi_value eCode = nullptr;
-        NAPI_CALL(env, napi_create_int32(env, info.errorCode, &eCode));
+        NAPI_CALL(env, napi_create_int32(env, info.errCode, &eCode));
         NAPI_CALL(env, napi_create_object(env, &res));
         NAPI_CALL(env, napi_set_named_property(env, res, "data", eCode));
         napi_reject_deferred(env, info.deferred, res);
@@ -187,8 +187,8 @@ napi_value Common::GetInt32NumberValue(const napi_env &env, const napi_value &va
     return Common::NapiGetNull(env);
 }
 
-void Common::PaddingCallbackPromiseInfo(
-    const napi_env &env, const napi_ref &callback, CallbackPromiseInfo &info, napi_value &promise)
+void Common::PaddingAsyncWorkData(
+    const napi_env &env, const napi_ref &callback, AsyncWorkData &info, napi_value &promise)
 {
     if (callback) {
         info.callback = callback;

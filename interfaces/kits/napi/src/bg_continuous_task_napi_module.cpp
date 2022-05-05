@@ -41,7 +41,6 @@ struct AsyncCallbackInfo : public AsyncWorkData {
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
     uint32_t bgMode {0};
     AbilityRuntime::WantAgent::WantAgent *wantAgent {nullptr};
-    int32_t errCode {0};
 };
 
 napi_value WrapVoidToJS(napi_env env)
