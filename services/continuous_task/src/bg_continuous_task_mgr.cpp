@@ -67,7 +67,6 @@ static constexpr char DEVICE_TYPE_PC[] = "pc";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
-static constexpr uint32_t SYSTEM_UID = 1000;
 static constexpr int32_t DEFAULT_NOTIFICATION_ID = 0;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr uint32_t INVALID_BGMODE = 0;
@@ -100,6 +99,10 @@ bool BgContinuousTaskMgr::Init()
         BGTASK_LOGE("BgContinuousTaskMgr handler create failed!");
         return false;
     }
+    std::string identity = IPCSkeleton::ResetCallingIdentity();
+    bgTaskUid_ = IPCSkeleton::GetCallingUid();
+    BGTASK_LOGI("BgContinuousTaskMgr service uid is: %{public}d", currentUid_);
+    IPCSkeleton::SetCallingIdentity(identity);
     auto registerTask = [this]() { this->InitNecessaryState(); };
     handler_->PostSyncTask(registerTask);
     return true;
@@ -307,6 +310,11 @@ bool BgContinuousTaskMgr::RegisterSysCommEventListener()
     return res;
 }
 
+int32_t BgContinuousTaskMgr::GetBgTaskUid()
+{
+    return bgTaskUid_;
+}
+
 bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName)
 {
     AppExecFwk::BundleInfo bundleInfo;
@@ -411,6 +419,27 @@ uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, std::string &ab
     return INVALID_BGMODE;
 }
 
+bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
+{
+    if (!taskParam) {
+        BGTASK_LOGE("continuous task params is null!");
+        return false;
+    }
+
+    if (taskParam->isNewApi_) {
+        if (taskParam->wantAgent_ == nullptr || taskParam->abilityName_.empty()) {
+            BGTASK_LOGE("continuous task params invalid!");
+            return false;
+        }
+    } else {
+        if (taskParam->abilityName_.empty()) {
+            BGTASK_LOGE("continuous task params invalid!");
+            return false;
+        }
+    }
+    return true;
+}
+
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     BGTASK_LOGI("begin");
@@ -419,21 +448,8 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
         return ERR_BGTASK_SYS_NOT_READY;
     }
 
-    if (!taskParam) {
-        BGTASK_LOGE("continuous task params is null!");
+    if (!CheckTaskParam(taskParam)) {
         return ERR_BGTASK_INVALID_PARAM;
-    }
-
-    if (taskParam->isNewApi_) {
-        if (taskParam->wantAgent_ == nullptr || taskParam->abilityName_.empty()) {
-            BGTASK_LOGE("continuous task params invalid!");
-            return ERR_BGTASK_INVALID_PARAM;
-        }
-    } else {
-        if (taskParam->abilityName_.empty()) {
-            BGTASK_LOGE("continuous task params invalid!");
-            return ERR_BGTASK_INVALID_PARAM;
-        }
     }
 
     ErrCode result = ERR_OK;
@@ -448,6 +464,10 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     GetOsAccountIdFromUid(callingUid, userId);
 #endif // HAS_OS_ACCOUNT_PART
 
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(bundleName, BGMODE_PERMISSION, userId)) {
+        BGTASK_LOGE("background mode permission is not passed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         taskParam->abilityName_, taskParam->wantAgent_, userId, callingUid, callingPid,
         taskParam->bgModeId_, taskParam->isNewApi_);
@@ -479,12 +499,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
-    }
-
-    if (!BundleManagerHelper::GetInstance()->CheckPermission(continuousTaskRecord->bundleName_, BGMODE_PERMISSION,
-        continuousTaskRecord->userId_)) {
-        BGTASK_LOGE("background mode permission is not passed");
-        return ERR_BGTASK_PERMISSION_DENIED;
     }
 
     if (cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
@@ -565,8 +579,8 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     // set notification label distinguish different notification
     notificationRequest.SetLabel(notificationLabel);
 
-    // set creator uid as system uid 1000
-    notificationRequest.SetCreatorUid(SYSTEM_UID);
+    // set creator uid as background task manager service uid
+    notificationRequest.SetCreatorUid(bgTaskUid_);
 
     // set creator user id to -2 means to get all user's notification event callback.
     notificationRequest.SetCreatorUserId(-2);

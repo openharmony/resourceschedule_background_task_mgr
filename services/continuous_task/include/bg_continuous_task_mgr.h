@@ -68,6 +68,7 @@ public:
     void InitNecessaryState();
     void InitRequiredResourceInfo();
     void Clear();
+    int32_t GetBgTaskUid();
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
@@ -101,6 +102,7 @@ private:
 private:
     std::atomic<bool> isSysReady_ {false};
     std::string deviceType_ {""};
+    int32_t bgTaskUid_ {-1};
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
