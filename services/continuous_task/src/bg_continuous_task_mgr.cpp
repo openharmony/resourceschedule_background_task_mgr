@@ -101,7 +101,7 @@ bool BgContinuousTaskMgr::Init()
     }
     std::string identity = IPCSkeleton::ResetCallingIdentity();
     bgTaskUid_ = IPCSkeleton::GetCallingUid();
-    BGTASK_LOGI("BgContinuousTaskMgr service uid is: %{public}d", currentUid_);
+    BGTASK_LOGI("BgContinuousTaskMgr service uid is: %{public}d", bgTaskUid_);
     IPCSkeleton::SetCallingIdentity(identity);
     auto registerTask = [this]() { this->InitNecessaryState(); };
     handler_->PostSyncTask(registerTask);
