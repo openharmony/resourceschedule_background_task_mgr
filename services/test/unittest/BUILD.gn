@@ -69,7 +69,7 @@ ohos_unittest("bgtask_unit_test") {
 
   if (has_os_account_part) {
     cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
-    external_deps += [ "os_account_standard:os_account_innerkits" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
   }
 
   subsystem_name = "resourceschedule"
