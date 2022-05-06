@@ -15,6 +15,7 @@
 
 #include "bundle_manager_helper.h"
 
+#include "accesstoken_kit.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 
@@ -51,16 +52,14 @@ std::string BundleManagerHelper::GetClientBundleName(int32_t uid)
 bool BundleManagerHelper::CheckPermission(const std::string &bundleName,
     const std::string &permission, int32_t userId)
 {
-    std::lock_guard<std::mutex> lock(connectionMutex_);
-    Connect();
-    if (bundleMgr_ != nullptr) {
-        auto result = bundleMgr_->CheckPermissionByUid(bundleName, permission, userId);
-        BGTASK_LOGI("permission check result: %{public}d", result);
-        if (result == PERMISSION_GRANTED) {
-            return true;
-        }
+    Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
+    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(callerToken, permission);
+    if (ret != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
+        BGTASK_LOGE("VerifyPermission userId %{public}d, bundleName %{public}s, permission %{public}s failed",
+            userId, bundleName.c_str(), permission.c_str());
+        return false;
     }
-    return false;
+    return true;
 }
 
 bool BundleManagerHelper::IsSystemApp(int32_t uid)

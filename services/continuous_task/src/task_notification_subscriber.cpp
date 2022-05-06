@@ -29,7 +29,6 @@ namespace BackgroundTaskMgr {
 namespace {
 static constexpr char LABEL_SPLITER[] = "_";
 static constexpr char NOTIFICATION_PREFIX[] = "bgmode";
-static constexpr uint32_t SYSTEM_UID = 1000;
 static constexpr uint32_t LABEL_BGMODE_PREFIX_POS = 0;
 static constexpr uint32_t LABEL_APP_UID_POS = 1;
 static constexpr uint32_t LABEL_SIZE = 3;
@@ -57,7 +56,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         return;
     }
     Notification::NotificationRequest request = notification->GetNotificationRequest();
-    if (request.GetCreatorUid() != SYSTEM_UID) {
+    if (request.GetCreatorUid() != continuousTaskMgr_->GetBgTaskUid()) {
         return;
     }
 
