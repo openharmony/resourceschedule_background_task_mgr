@@ -55,11 +55,7 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     bgContinuousTaskMgr_->Init();
 }
 
-void BgContinuousTaskMgrTest::TearDownTestCase()
-{
-    bgContinuousTaskMgr_->Clear();
-    bgContinuousTaskMgr_ = nullptr;
-}
+void BgContinuousTaskMgrTest::TearDownTestCase() {}
 
 void BgContinuousTaskMgrTest::SetUp() {}
 
