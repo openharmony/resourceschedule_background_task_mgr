@@ -52,7 +52,7 @@ std::shared_ptr<BgContinuousTaskMgr> BgContinuousTaskMgrTest::bgContinuousTaskMg
 void BgContinuousTaskMgrTest::SetUpTestCase()
 {
     bgContinuousTaskMgr_ = BgContinuousTaskMgr::GetInstance();
-    bgContinuousTaskMgr_->Init();
+    bgContinuousTaskMgr_->InitRequiredResourceInfo();
 }
 
 void BgContinuousTaskMgrTest::TearDownTestCase() {}

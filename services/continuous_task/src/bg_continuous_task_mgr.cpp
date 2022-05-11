@@ -69,6 +69,7 @@ static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DEFAULT_NOTIFICATION_ID = 0;
 static constexpr int32_t DELAY_TIME = 2000;
+static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
@@ -585,6 +586,9 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     // set creator user id to -2 means to get all user's notification event callback.
     notificationRequest.SetCreatorUserId(-2);
 
+    // set tapDismissed param to false make notification retained when clicked.
+    notificationRequest.SetTapDismissed(false);
+
     if (Notification::NotificationHelper::PublishContinuousTaskNotification(notificationRequest) != ERR_OK) {
         BGTASK_LOGE("publish notification error");
         return ERR_BGTASK_NOTIFICATION_ERR;
@@ -816,6 +820,10 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
         continuousTaskInfosMap_.clear();
         RefreshTaskRecord();
     } else {
+        if (dumpOption.size() < MAX_DUMP_PARAM_NUMS) {
+            BGTASK_LOGW("invalid dump param");
+            return;
+        }
         std::string taskKey = dumpOption[2];
         auto iter = continuousTaskInfosMap_.find(taskKey);
         if (iter == continuousTaskInfosMap_.end()) {
