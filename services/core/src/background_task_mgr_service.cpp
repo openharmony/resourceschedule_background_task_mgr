@@ -31,6 +31,7 @@ namespace BackgroundTaskMgr {
 namespace {
 static const std::string CONTINUOUS_TASK_DUMP = "-C";
 static const std::string TRANSIENT_TASK_DUMP = "-T";
+static constexpr int32_t MIN_DUMP_PARAM_NUMS = 2;
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
 }
@@ -136,6 +137,10 @@ void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& 
 ErrCode BackgroundTaskMgrService::ShellDump(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
+    if (dumpOption.size() < MIN_DUMP_PARAM_NUMS) {
+        BGTASK_LOGW("invalid dump param");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
     ErrCode ret = ERR_OK;
     if (dumpOption[0] == TRANSIENT_TASK_DUMP) {
         ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ShellDump(dumpOption, dumpInfo);
