@@ -13,12 +13,9 @@
  * limitations under the License.
  */
 
-#include <climits>
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <fcntl.h>
-#include <unistd.h>
+#ifndef TEST_FUZZTEST_BGTASKONREMOTEREQUEST_FUZZER_H
+#define TEST_FUZZTEST_BGTASKONREMOTEREQUEST_FUZZER_H
 
 #define FUZZ_PROJECT_NAME "bgtaskonremoterequest_fuzzer"
 
+#endif

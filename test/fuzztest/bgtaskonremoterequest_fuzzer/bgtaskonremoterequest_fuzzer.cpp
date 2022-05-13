@@ -15,19 +15,27 @@
 
 #include "bgtaskonremoterequest_fuzzer.h"
 
+#define private public
 #include "background_task_mgr_service.h"
 #include "background_task_mgr_stub.h"
+#include "bg_continuous_task_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
     constexpr int32_t MIN_LEN = 4;
-    
-    int32_t onRemoteRequest(uint32_t code, MessageParcel& data)
+    constexpr int32_t MAX_CODE_TEST = 15; // current max code is 8
+    static bool isInited = false;
+
+    int32_t OnRemoteRequest(uint32_t code, MessageParcel& data)
     {
         MessageParcel reply;
         MessageOption option;
-        DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnStart();
-        int32_t ret = DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(code, data, reply, option);
+        if (!isInited) {
+            DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->Init();
+            isInited = true;
+        }
+        int32_t ret =
+            DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(code, data, reply, option);
         return ret;
     }
 
@@ -42,13 +50,16 @@ namespace BackgroundTaskMgr {
             return;
         }
 
-        uint32_t code = *(reinterpret_cast<const uint32_t *>(data));
+        uint32_t code = *(reinterpret_cast<const uint32_t*>(data));
+        if (code > MAX_CODE_TEST) {
+            return;
+        }
         size -= sizeof(uint32_t);
 
-        dataMessageParcel.WriteBuffer(data + sizeof(uint32_t) , size);
+        dataMessageParcel.WriteBuffer(data + sizeof(uint32_t), size);
         dataMessageParcel.RewindRead(0);
 
-        onRemoteRequest(code, dataMessageParcel);    
+        OnRemoteRequest(code, dataMessageParcel);
     }
 } // BackgroundTaskMgr
 } // OHOS

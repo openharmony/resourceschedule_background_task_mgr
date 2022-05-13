@@ -21,17 +21,14 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
   module_out_path = module_output_path
   fuzz_config_file = "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskonremoterequest_fuzzer"
 
-  include_dirs = [
-  ]
+  include_dirs = []
   cflags = [
     "-g",
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [
-    "bgtaskonremoterequest_fuzzer.cpp",
-  ]
+  sources = [ "bgtaskonremoterequest_fuzzer.cpp" ]
 
   deps = [
     "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_fwk",
@@ -59,6 +56,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "utils_base:utils",
   ]
 }
+
 ###############################################################################
 group("fuzztest") {
   testonly = true
