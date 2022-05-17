@@ -38,6 +38,7 @@ ohos_shared_library("backgroundtaskmanager") {
   ]
 
   external_deps = [
+    "ability_base:base",
     "ability_base:want",
     "ability_runtime:ability_context_native",
     "ability_runtime:abilitykit_native",

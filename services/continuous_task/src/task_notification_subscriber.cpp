@@ -18,10 +18,9 @@
 #include <mutex>
 #include <cstring>
 
-#include "ohos/aafwk/base/string_wrapper.h"
-
 #include "bg_continuous_task_mgr.h"
 #include "continuous_task_log.h"
+#include "string_wrapper.h"
 
 
 namespace OHOS {

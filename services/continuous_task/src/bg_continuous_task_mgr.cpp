@@ -26,12 +26,12 @@
 #include "if_system_ability_manager.h"
 #include "iremote_object.h"
 #include "iservice_registry.h"
-#include "ohos/aafwk/base/string_wrapper.h"
 #ifdef HAS_OS_ACCOUNT_PART
 #include "os_account_manager.h"
 #endif // HAS_OS_ACCOUNT_PART
 #include "parameters.h"
 #include "running_process_info.h"
+#include "string_wrapper.h"
 #include "system_ability_definition.h"
 
 #include "bgtaskmgr_inner_errors.h"
