@@ -14,7 +14,7 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-module_output_path = "background_task_mgr/fuzztest"
+module_output_path = "background_task_mgr/bgtaskservice"
 
 ##############################fuzztest##########################################
 ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
