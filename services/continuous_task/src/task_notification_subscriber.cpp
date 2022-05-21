@@ -26,7 +26,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-static constexpr char LABEL_SPLITER[] = "_";
+static constexpr char LABEL_SPLITER = '_';
 static constexpr char NOTIFICATION_PREFIX[] = "bgmode";
 static constexpr uint32_t LABEL_BGMODE_PREFIX_POS = 0;
 static constexpr uint32_t LABEL_APP_UID_POS = 1;
@@ -105,18 +105,15 @@ void TaskNotificationSubscriber::OnDoNotDisturbDateChange(
 void TaskNotificationSubscriber::OnEnabledNotificationChanged(
     const std::shared_ptr<Notification::EnabledNotificationCallbackData> &callbackData) {}
 
-std::vector<std::string> TaskNotificationSubscriber::StringSplit(const std::string &str, const char *delim)
+std::vector<std::string> TaskNotificationSubscriber::StringSplit(const std::string &str, const char &delim)
 {
-    std::vector <std::string> strlist;
-    char *saveptr = nullptr;
-    char *p = const_cast<char*>(str.c_str());
-    char *input = strdup(p);
-    while ((input = strtok_r(input, delim, &saveptr)) != nullptr) {
-        strlist.emplace_back(input);
-        input = nullptr;
+    std::vector<std::string> ret;
+    std::stringstream ss(str);
+    std::string tmp;
+    while (getline(ss, tmp, delim)) {
+        ret.push_back(tmp);
     }
-    free(input);
-    return strlist;
+    return ret;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
