@@ -277,7 +277,6 @@ ErrCode BackgroundTaskMgrProxy::GetTransientTaskApps(std::vector<std::shared_ptr
     int32_t infoSize = reply.ReadInt32();
     for (int32_t i = 0; i < infoSize; i++) {
         auto info = TransientTaskAppInfo::Unmarshalling(reply);
-        // std::shared_ptr<TransientTaskAppInfo> info(reply.ReadParcelable<TransientTaskAppInfo>());
         if (!info) {
             BGTASK_LOGE("Read Parcelable infos failed.");
             return ERR_INVALID_VALUE;
