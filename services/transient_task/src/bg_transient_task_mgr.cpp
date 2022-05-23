@@ -199,7 +199,7 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
 }
 
 void BgTransientTaskMgr::HandleTransientTaskSuscriberTask(const shared_ptr<TransientTaskAppInfo>& appInfo,
-        const TransientTaskEventType type)
+    const TransientTaskEventType type)
 {
     handler_->PostSyncTask([&]() {
         NotifyTransientTaskSuscriber(appInfo, type);
