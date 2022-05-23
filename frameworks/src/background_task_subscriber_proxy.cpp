@@ -119,6 +119,58 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskEnd(const std::shared_ptr<Tra
     }
 }
 
+void BackgroundTaskSubscriberProxy::OnAppTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        BGTASK_LOGE("remote is dead.");
+        return;
+    }
+
+    MessageParcel data;
+    bool res = data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor());
+    if (!res) {
+        BGTASK_LOGE("write descriptor failed.");
+        return;
+    }
+    if (!info->Marshalling(data)) {
+        BGTASK_LOGE("write parcel failed.");
+        return;
+    }
+    MessageParcel reply;
+    MessageOption option;
+    int32_t ret = remote->SendRequest(ON_APP_TRANSIENT_TASK_START, data, reply, option);
+    if (ret != ERR_NONE) {
+        BGTASK_LOGE("SendRequest failed, error code: %d", ret);
+    }
+}
+
+void BackgroundTaskSubscriberProxy::OnAppTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        BGTASK_LOGE("remote is dead.");
+        return;
+    }
+
+    MessageParcel data;
+    bool res = data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor());
+    if (!res) {
+        BGTASK_LOGE("write descriptor failed.");
+        return;
+    }
+    if (!info->Marshalling(data)) {
+        BGTASK_LOGE("write parcel failed.");
+        return;
+    }
+    MessageParcel reply;
+    MessageOption option;
+    int32_t ret = remote->SendRequest(ON_APP_TRANSIENT_TASK_END, data, reply, option);
+    if (ret != ERR_NONE) {
+        BGTASK_LOGE("SendRequest failed, error code: %d", ret);
+    }
+}
+
 void BackgroundTaskSubscriberProxy::OnContinuousTaskStart(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {

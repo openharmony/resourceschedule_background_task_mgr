@@ -55,6 +55,13 @@ public:
      * @return ERR_OK if success, else fail.
      */
     static ErrCode UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
+
+    /**
+     * @brief Get transient task applications.
+     * @param list transient task apps.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    static ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

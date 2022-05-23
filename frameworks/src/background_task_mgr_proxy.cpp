@@ -254,6 +254,40 @@ ErrCode BackgroundTaskMgrProxy::UnsubscribeBackgroundTask(const sptr<IBackground
     return result;
 }
 
+ErrCode BackgroundTaskMgrProxy::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        BGTASK_LOGE("write descriptor failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    ErrCode result = InnerTransact(GET_TRANSIENT_TASK_APPS, option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    int32_t infoSize = reply.ReadInt32();
+    for (int32_t i = 0; i < infoSize; i++) {
+        auto info = TransientTaskAppInfo::Unmarshalling(reply);
+        // std::shared_ptr<TransientTaskAppInfo> info(reply.ReadParcelable<TransientTaskAppInfo>());
+        if (!info) {
+            BGTASK_LOGE("Read Parcelable infos failed.");
+            return ERR_INVALID_VALUE;
+        }
+        list.emplace_back(info);
+    }
+
+    return result;
+}
+
 ErrCode BackgroundTaskMgrProxy::ShellDump(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {

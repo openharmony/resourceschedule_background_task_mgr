@@ -100,6 +100,11 @@ ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abili
     return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName);
 }
 
+ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
+{
+    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetTransientTaskApps(list);
+}
+
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK

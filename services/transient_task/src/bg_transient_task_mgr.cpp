@@ -32,7 +32,6 @@
 #include "background_task_mgr_service.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "time_provider.h"
-#include "transient_task_app_info.h"
 #include "transient_task_log.h"
 
 using namespace std;
@@ -195,15 +194,20 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
     if (callbackDeathRecipient_ != nullptr) {
         (void)remote->AddDeathRecipient(callbackDeathRecipient_);
     }
-    handler_->PostSyncTask([&]() {
-        auto appInfo = make_shared<TransientTaskAppInfo>(name, uid, pid);
-        NotifyTransientTaskSuscriber(appInfo, TransientTaskEventType::TASK_START);
-    });
+
     return ERR_OK;
 }
 
-void BgTransientTaskMgr::NotifyTransientTaskSuscriber(shared_ptr<TransientTaskAppInfo>& appInfo,
-    TransientTaskEventType type)
+void BgTransientTaskMgr::HandleTransientTaskSuscriberTask(const shared_ptr<TransientTaskAppInfo>& appInfo,
+        const TransientTaskEventType type)
+{
+    handler_->PostSyncTask([&]() {
+        NotifyTransientTaskSuscriber(appInfo, type);
+    });
+}
+
+void BgTransientTaskMgr::NotifyTransientTaskSuscriber(const shared_ptr<TransientTaskAppInfo>& appInfo,
+    const TransientTaskEventType type)
 {
     if (appInfo == nullptr) {
         BGTASK_LOGE("NotifyTransientTaskSuscriber failed, appInfo is null.");
@@ -222,6 +226,16 @@ void BgTransientTaskMgr::NotifyTransientTaskSuscriber(shared_ptr<TransientTaskAp
         case TransientTaskEventType::TASK_END:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnTransientTaskEnd(appInfo);
+            }
+            break;
+        case TransientTaskEventType::APP_TASK_START:
+            for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
+                (*iter)->OnAppTransientTaskStart(appInfo);
+            }
+            break;
+        case TransientTaskEventType::APP_TASK_END:
+            for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
+                (*iter)->OnAppTransientTaskEnd(appInfo);
             }
             break;
         default:
@@ -255,10 +269,6 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelay(int32_t requestId)
         return ERR_BGTASK_NOT_ALLOWED;
     }
 
-    handler_->PostSyncTask([&]() {
-        auto appInfo = make_shared<TransientTaskAppInfo>(name, uid, pid);
-        NotifyTransientTaskSuscriber(appInfo, TransientTaskEventType::TASK_END);
-    });
     lock_guard<mutex> lock(expiredCallbackLock_);
     return CancelSuspendDelayLocked(requestId);
 }
@@ -290,13 +300,8 @@ void BgTransientTaskMgr::ForceCancelSuspendDelay(int32_t requestId)
         BGTASK_LOGE("force cancel suspend delay failed callback not found.");
         return;
     }
-    handler_->PostSyncTask([&]() {
-        CancelSuspendDelayLocked(requestId);
-        auto appInfo = make_shared<TransientTaskAppInfo>(keyInfoIter->second->GetPkg(),
-                                                        keyInfoIter->second->GetUid(),
-                                                        keyInfoIter->second->GetPid());
-        NotifyTransientTaskSuscriber(appInfo, TransientTaskEventType::TASK_END);
-    });
+
+    CancelSuspendDelayLocked(requestId);
 }
 
 ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &delayTime)
@@ -375,12 +380,6 @@ void BgTransientTaskMgr::HandleExpiredCallbackDeath(const wptr<IRemoteObject>& r
     BGTASK_LOGI("expiredCallback death, %{public}s, requestId : %{public}d", keyInfoIter->second->ToString().c_str(),
         keyInfoIter->first);
     decisionMaker_->RemoveRequest(keyInfoIter->second, keyInfoIter->first);
-    handler_->PostSyncTask([&]() {
-        auto appInfo = make_shared<TransientTaskAppInfo>(keyInfoIter->second->GetPkg(),
-                                                        keyInfoIter->second->GetUid(),
-                                                        keyInfoIter->second->GetPid());
-        NotifyTransientTaskSuscriber(appInfo, TransientTaskEventType::TASK_END);
-    });
     keyInfoMap_.erase(keyInfoIter);
 }
 
@@ -487,6 +486,23 @@ ErrCode BgTransientTaskMgr::UnsubscribeBackgroundTask(const sptr<IBackgroundTask
         BGTASK_LOGI("unsubscribe transient task success.");
     });
     return result;
+}
+
+ErrCode BgTransientTaskMgr::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
+{
+    if (keyInfoMap_.empty()) {
+        return ERR_OK;
+    }
+
+    for (auto record : keyInfoMap_) {
+        auto appInfo = make_shared<TransientTaskAppInfo>(record.second->GetPkg(),
+            record.second->GetUid(), record.second->GetPid());
+        auto findInfo = std::find(list.begin(), list.end(), appInfo);
+        if (findInfo == list.end()) {
+            list.push_back(appInfo);
+        }
+    }
+    return ERR_OK;
 }
 
 ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)

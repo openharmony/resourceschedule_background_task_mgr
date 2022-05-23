@@ -52,6 +52,7 @@ private:
     ErrCode HandleStopBackgroundRunning(MessageParcel &data, MessageParcel &reply);
     ErrCode HandleSubscribeBackgroundTask(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleUnsubscribeBackgroundTask(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleGetTransientTaskApps(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleShellDump(MessageParcel& data, MessageParcel& reply);
 };
 }  // namespace BackgroundTaskMgr

@@ -27,7 +27,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 constexpr int32_t DELAY_TIME_NORMAL_DEFAULT = 3 * MSEC_PER_MIN; // 3min
 constexpr int32_t DELAY_TIME_LOW_POWER_DEFAULT = 1 * MSEC_PER_MIN; // 1min
-constexpr int32_t ALLOW_REQUEST_TIME_BG_DEFAULT = 6 * MSEC_PER_SEC; // 6s
+constexpr int32_t ALLOW_REQUEST_TIME_BG_DEFAULT = 5 * MSEC_PER_SEC; // 5s
 constexpr int32_t INIT_QUOTA_DEFAULT = 10 * MSEC_PER_MIN; // 10min
 constexpr int64_t QUOTA_UPDATE_DEFAULT = 1 * MSEC_PER_DAY; // 1day
 
