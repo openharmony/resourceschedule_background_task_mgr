@@ -42,7 +42,7 @@ public:
         const std::shared_ptr<Notification::EnabledNotificationCallbackData> &callbackData) override;
 
 private:
-    std::vector<std::string> StringSplit(const std::string &str, const char *delim);
+    std::vector<std::string> StringSplit(const std::string &str, const char &delim);
 
 private:
     static std::shared_ptr<BgContinuousTaskMgr> continuousTaskMgr_;
