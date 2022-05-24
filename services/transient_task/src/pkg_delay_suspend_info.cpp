@@ -26,7 +26,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
     constexpr int32_t MAX_REQUEST_ID = 3;
-    constexpr int32_t MIN_ALLOW_QUOTA_TIME = 12 * MSEC_PER_SEC; // 12s
+    constexpr int32_t MIN_ALLOW_QUOTA_TIME = 10 * MSEC_PER_SEC; // 10s
 }
 
 bool PkgDelaySuspendInfo::IsAllowRequest()

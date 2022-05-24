@@ -37,6 +37,7 @@
 #include "iexpired_callback.h"
 #include "ibackground_task_subscriber.h"
 #include "timer_manager.h"
+#include "transient_task_app_info.h"
 #include "watchdog.h"
 
 namespace OHOS {
@@ -47,6 +48,8 @@ class ExpiredCallbackDeathRecipient;
 enum class TransientTaskEventType: uint32_t {
     TASK_START,
     TASK_END,
+    APP_TASK_START,
+    APP_TASK_END,
 };
 class BgTransientTaskMgr {
     DECLARE_DELAYED_SINGLETON(BgTransientTaskMgr);
@@ -59,12 +62,15 @@ public:
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime);
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
+    ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 
     void ForceCancelSuspendDelay(int32_t requestId);
     void HandleExpiredCallbackDeath(const wptr<IRemoteObject>& remote);
     void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
     void HandleRequestExpired(const int32_t requestId);
+    void HandleTransientTaskSuscriberTask(const shared_ptr<TransientTaskAppInfo>& appInfo,
+        const TransientTaskEventType type);
 
 private:
     bool IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
@@ -73,7 +79,8 @@ private:
     bool VerifyCallingInfo(int32_t uid, int32_t pid);
     bool VerifyRequestIdLocked(const std::string& name, int32_t uid, int32_t requestId);
     ErrCode CancelSuspendDelayLocked(int32_t requestId);
-    void NotifyTransientTaskSuscriber(shared_ptr<TransientTaskAppInfo>& appInfo, TransientTaskEventType type);
+    void NotifyTransientTaskSuscriber(const shared_ptr<TransientTaskAppInfo>& appInfo,
+        const TransientTaskEventType type);
     bool DumpAllRequestId(std::vector<std::string> &dumpInfo);
     void SendLowBatteryEvent(std::vector<std::string> &dumpInfo);
     void SendOkayBatteryEvent(std::vector<std::string> &dumpInfo);

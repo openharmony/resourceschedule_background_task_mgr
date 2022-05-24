@@ -45,6 +45,8 @@ private:
     ErrCode HandleOnDisconnected();
     ErrCode HandleOnTransientTaskStart(MessageParcel& data);
     ErrCode HandleOnTransientTaskEnd(MessageParcel& data);
+    ErrCode HandleOnAppTransientTaskStart(MessageParcel& data);
+    ErrCode HandleOnAppTransientTaskEnd(MessageParcel& data);
     ErrCode HandleOnContinuousTaskStart(MessageParcel &data);
     ErrCode HandleOnContinuousTaskCancel(MessageParcel &data);
 };

@@ -97,6 +97,13 @@ public:
     ErrCode UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber);
 
     /**
+     * @brief Get transient task applications.
+     * @param list transient task apps.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
+
+    /**
      * @brief Dump info of continous tasks or transient tasks.
      *
      * @param dumpOption Select continous tasks or transient tasks.

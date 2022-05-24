@@ -49,6 +49,9 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::UNSUBSCRIBE_BACKGROUND_TASK,
             std::bind(&BackgroundTaskMgrStub::HandleUnsubscribeBackgroundTask,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+        {BackgroundTaskMgrStub::GET_TRANSIENT_TASK_APPS,
+            std::bind(&BackgroundTaskMgrStub::HandleGetTransientTaskApps,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
         {BackgroundTaskMgrStub::SHELL_DUMP,
             std::bind(&BackgroundTaskMgrStub::HandleShellDump,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
@@ -190,6 +193,22 @@ ErrCode BackgroundTaskMgrStub::HandleUnsubscribeBackgroundTask(MessageParcel& da
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("Write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleGetTransientTaskApps(MessageParcel& data, MessageParcel& reply)
+{
+    std::vector<std::shared_ptr<TransientTaskAppInfo>> appinfos;
+    ErrCode result = GetTransientTaskApps(appinfos);
+    if (!reply.WriteInt32(result)) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    reply.WriteInt32(appinfos.size());
+    for (auto &info : appinfos) {
+        if (!info->Marshalling(reply)) {
+            return ERR_BGTASK_PARCELABLE_FAILED;
+        }
     }
     return ERR_OK;
 }

@@ -119,6 +119,15 @@ ErrCode BackgroundTaskManager::UnsubscribeBackgroundTask(const BackgroundTaskSub
     return backgroundTaskMgrProxy_->UnsubscribeBackgroundTask(subscriberSptr);
 }
 
+ErrCode BackgroundTaskManager::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
+{
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
+    }
+    return backgroundTaskMgrProxy_->GetTransientTaskApps(list);
+}
+
 bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
 {
     if (backgroundTaskMgrProxy_ != nullptr) {

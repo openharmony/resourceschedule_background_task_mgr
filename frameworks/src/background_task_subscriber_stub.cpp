@@ -59,6 +59,12 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
         case ON_TRANSIENT_TASK_END: {
             return HandleOnTransientTaskEnd(data);
         }
+        case ON_APP_TRANSIENT_TASK_START: {
+            return HandleOnAppTransientTaskStart(data);
+        }
+        case ON_APP_TRANSIENT_TASK_END: {
+            return HandleOnAppTransientTaskEnd(data);
+        }
         case ON_CONTINUOUS_TASK_START: {
             return HandleOnContinuousTaskStart(data);
         }
@@ -101,6 +107,28 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnTransientTaskEnd(MessageParcel& da
         return ERR_INVALID_DATA;
     }
     OnTransientTaskEnd(info);
+    return ERR_NONE;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnAppTransientTaskStart(MessageParcel& data)
+{
+    auto info = TransientTaskAppInfo::Unmarshalling(data);
+    if (info == nullptr) {
+        BGTASK_LOGE("Read parcel failed.");
+        return ERR_INVALID_DATA;
+    }
+    OnAppTransientTaskStart(info);
+    return ERR_NONE;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnAppTransientTaskEnd(MessageParcel& data)
+{
+    auto info = TransientTaskAppInfo::Unmarshalling(data);
+    if (info == nullptr) {
+        BGTASK_LOGE("Read parcel failed.");
+        return ERR_INVALID_DATA;
+    }
+    OnAppTransientTaskEnd(info);
     return ERR_NONE;
 }
 

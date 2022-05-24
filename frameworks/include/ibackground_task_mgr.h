@@ -98,6 +98,13 @@ public:
     virtual ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber> &subscriber) = 0;
 
     /**
+     * @brief Get transient task applications.
+     * @param list transient task apps.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) = 0;
+
+    /**
      * @brief Dump info of continous tasks or transient tasks.
      *
      * @param dumpOption Select continous tasks or transient tasks.
@@ -118,6 +125,7 @@ protected:
         STOP_BACKGROUND_RUNNING,
         SUBSCRIBE_BACKGROUND_TASK,
         UNSUBSCRIBE_BACKGROUND_TASK,
+        GET_TRANSIENT_TASK_APPS,
         SHELL_DUMP,
     };
 };

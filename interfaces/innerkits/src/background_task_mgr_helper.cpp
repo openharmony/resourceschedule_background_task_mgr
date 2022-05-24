@@ -42,5 +42,10 @@ ErrCode BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(const BackgroundTaskS
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->UnsubscribeBackgroundTask(subscriber);
 }
+
+ErrCode BackgroundTaskMgrHelper::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetTransientTaskApps(list);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
