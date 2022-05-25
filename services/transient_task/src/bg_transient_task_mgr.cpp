@@ -201,7 +201,11 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
 void BgTransientTaskMgr::HandleTransientTaskSuscriberTask(const shared_ptr<TransientTaskAppInfo>& appInfo,
     const TransientTaskEventType type)
 {
-    handler_->PostSyncTask([&]() {
+    if (handler_ == nullptr) {
+        BGTASK_LOGE("handler is not init.");
+        return;
+    }
+    handler_->PostTask([=]() {
         NotifyTransientTaskSuscriber(appInfo, type);
     });
 }
@@ -490,6 +494,7 @@ ErrCode BgTransientTaskMgr::UnsubscribeBackgroundTask(const sptr<IBackgroundTask
 
 ErrCode BgTransientTaskMgr::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
 {
+    lock_guard<mutex> lock(expiredCallbackLock_);
     if (keyInfoMap_.empty()) {
         return ERR_OK;
     }

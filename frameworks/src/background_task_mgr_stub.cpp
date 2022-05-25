@@ -206,6 +206,9 @@ ErrCode BackgroundTaskMgrStub::HandleGetTransientTaskApps(MessageParcel& data, M
     }
     reply.WriteInt32(appinfos.size());
     for (auto &info : appinfos) {
+        if (info == nullptr) {
+            continue;
+        }
         if (!info->Marshalling(reply)) {
             return ERR_BGTASK_PARCELABLE_FAILED;
         }
