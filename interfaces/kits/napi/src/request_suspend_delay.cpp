@@ -62,9 +62,7 @@ void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
     Common::SetCallback(dataWorkerData->env, dataWorkerData->ref, Common::NapiGetNull(dataWorkerData->env));
 
     auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
-        [&](const auto& callbackInstance) {
-            return callbackInstance.second == dataWorkerData->callback;
-        }
+        [&](const auto& callbackInstance) { return callbackInstance.second == dataWorkerData->callback; }
     );
     if (findCallback != callbackInstances_.end()) {
         callbackInstances_.erase(findCallback);
@@ -81,9 +79,7 @@ void CallbackInstance::OnExpired()
     BGTASK_LOGI("enter");
 
     auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
-        [&](const auto& callbackInstance) {
-            return callbackInstance.second.get() == this;
-        }
+        [&](const auto& callbackInstance) { return callbackInstance.second.get() == this; }
     );
     if (findCallback == callbackInstances_.end()) {
         BGTASK_LOGI("expired callback is not found");
@@ -193,7 +189,8 @@ napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
         RequestSuspendDelay(reason, *callback, delaySuspendInfo);
     callbackInstances_[delaySuspendInfo->GetRequestId()] = callback;
 
-     BGTASK_LOGW("delaySuspendInfo %{public}d, %{public}d", delaySuspendInfo->GetRequestId(), delaySuspendInfo->GetActualDelayTime());
+    BGTASK_LOGW("delaySuspendInfo %{public}d, %{public}d", delaySuspendInfo->GetRequestId(),
+        delaySuspendInfo->GetActualDelayTime());
 
     napi_value result = nullptr;
     napi_create_object(env, &result);
