@@ -18,6 +18,7 @@
 #include "singleton.h"
 
 #include "background_task_manager.h"
+#include "request_suspend_delay.h"
 #include "transient_task_log.h"
 
 namespace OHOS {
@@ -51,6 +52,10 @@ napi_value CancelSuspendDelay(napi_env env, napi_callback_info info)
     }
 
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(requestId);
+    auto findCallback = callbackInstances_.find(requestId);
+    if (findCallback != callbackInstances_.end()) {
+        callbackInstances_.erase(findCallback);
+    }
     return Common::NapiGetNull(env);
 }
 }  // namespace BackgroundTaskMgr
