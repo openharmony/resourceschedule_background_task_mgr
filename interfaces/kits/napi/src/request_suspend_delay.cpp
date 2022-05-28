@@ -24,11 +24,13 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+std::map<int32_t, std::shared_ptr<CallbackInstance>> callbackInstances_;
 static const uint32_t REQUEST_SUSPEND_DELAY_PARAMS = 2;
 
 struct CallbackReceiveDataWorker {
     napi_env env = nullptr;
     napi_ref ref = nullptr;
+    std::shared_ptr<CallbackInstance> callback = nullptr;
 };
 
 CallbackInstance::CallbackInstance() {}
@@ -42,7 +44,7 @@ CallbackInstance::~CallbackInstance()
 
 void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
 {
-    BGTASK_LOGI("OnExpired uv_work_t start");
+    BGTASK_LOGD("OnExpired uv_work_t start");
 
     if (work == nullptr) {
         BGTASK_LOGE("work is null");
@@ -59,6 +61,13 @@ void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
 
     Common::SetCallback(dataWorkerData->env, dataWorkerData->ref, Common::NapiGetNull(dataWorkerData->env));
 
+    auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
+        [&](const auto& callbackInstance) { return callbackInstance.second == dataWorkerData->callback; }
+    );
+    if (findCallback != callbackInstances_.end()) {
+        callbackInstances_.erase(findCallback);
+    }
+
     delete dataWorkerData;
     dataWorkerData = nullptr;
     delete work;
@@ -67,10 +76,19 @@ void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
 
 void CallbackInstance::OnExpired()
 {
-    BGTASK_LOGI("enter");
+    BGTASK_LOGD("enter");
+
+    auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
+        [&](const auto& callbackInstance) { return callbackInstance.second.get() == this; }
+    );
+    if (findCallback == callbackInstances_.end()) {
+        BGTASK_LOGI("expired callback is not found");
+        return;
+    }
 
     if (expiredCallbackInfo_.ref == nullptr) {
         BGTASK_LOGE("expired callback unset");
+        callbackInstances_.erase(findCallback);
         return;
     }
 
@@ -78,23 +96,27 @@ void CallbackInstance::OnExpired()
     napi_get_uv_event_loop(expiredCallbackInfo_.env, &loop);
     if (loop == nullptr) {
         BGTASK_LOGE("loop instance is nullptr");
+        callbackInstances_.erase(findCallback);
         return;
     }
 
     CallbackReceiveDataWorker *dataWorker = new (std::nothrow) CallbackReceiveDataWorker();
     if (dataWorker == nullptr) {
         BGTASK_LOGE("new dataWorker failed");
+        callbackInstances_.erase(findCallback);
         return;
     }
 
     dataWorker->env = expiredCallbackInfo_.env;
     dataWorker->ref = expiredCallbackInfo_.ref;
+    dataWorker->callback = shared_from_this();
 
     uv_work_t *work = new (std::nothrow) uv_work_t;
     if (work == nullptr) {
         BGTASK_LOGE("new work failed");
         delete dataWorker;
         dataWorker = nullptr;
+        callbackInstances_.erase(findCallback);
         return;
     }
 
@@ -106,6 +128,7 @@ void CallbackInstance::OnExpired()
         dataWorker = nullptr;
         delete work;
         work = nullptr;
+        callbackInstances_.erase(findCallback);
     }
 }
 
@@ -116,24 +139,19 @@ void CallbackInstance::SetCallbackInfo(const napi_env &env, const napi_ref &ref)
 }
 
 napi_value GetExpiredCallback(
-    const napi_env &env, const napi_value &value, CallbackInstancesInfo &callbcakInfo)
+    const napi_env &env, const napi_value &value, std::shared_ptr<CallbackInstance> &callback)
 {
     napi_ref result = nullptr;
-
-    callbcakInfo.callback = new (std::nothrow) CallbackInstance();
-    if (callbcakInfo.callback == nullptr) {
-        BGTASK_LOGE("callback is null");
-        return nullptr;
-    }
+    callback = std::make_shared<CallbackInstance>();
 
     napi_create_reference(env, value, 1, &result);
-    callbcakInfo.callback->SetCallbackInfo(env, result);
+    callback->SetCallbackInfo(env, result);
 
     return Common::NapiGetNull(env);
 }
 
 napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
-    std::u16string &reason, CallbackInstance *&callback)
+    std::u16string &reason, std::shared_ptr<CallbackInstance> &callback)
 {
     size_t argc = REQUEST_SUSPEND_DELAY_PARAMS;
     napi_value argv[REQUEST_SUSPEND_DELAY_PARAMS] = {nullptr};
@@ -151,35 +169,25 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
     NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Object expected.");
 
-    CallbackInstancesInfo callbackInstancesInfo;
-    if (GetExpiredCallback(env, argv[1], callbackInstancesInfo) == nullptr) {
+    if (GetExpiredCallback(env, argv[1], callback) == nullptr) {
         BGTASK_LOGE("CallbackInstancesInfo parse failed");
         return nullptr;
     }
-    callback = callbackInstancesInfo.callback;
     return Common::NapiGetNull(env);
 }
 
 napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
 {
-    CallbackInstance *objectInfo = nullptr;
+    std::shared_ptr<CallbackInstance> callback = nullptr;
     std::u16string reason;
-    if (ParseParameters(env, info, reason, objectInfo) == nullptr) {
-        if (objectInfo) {
-            delete objectInfo;
-            objectInfo = nullptr;
-        }
+    if (ParseParameters(env, info, reason, callback) == nullptr) {
         return Common::NapiGetNull(env);
     }
 
     std::shared_ptr<DelaySuspendInfo> delaySuspendInfo;
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->
-        RequestSuspendDelay(reason, *objectInfo, delaySuspendInfo);
-
-    if (objectInfo) {
-        delete objectInfo;
-        objectInfo = nullptr;
-    }
+        RequestSuspendDelay(reason, *callback, delaySuspendInfo);
+    callbackInstances_[delaySuspendInfo->GetRequestId()] = callback;
 
     napi_value result = nullptr;
     napi_create_object(env, &result);
