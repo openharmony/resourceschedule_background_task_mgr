@@ -201,7 +201,11 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
 void BgTransientTaskMgr::HandleTransientTaskSuscriberTask(const shared_ptr<TransientTaskAppInfo>& appInfo,
     const TransientTaskEventType type)
 {
-    handler_->PostSyncTask([&]() {
+    if (handler_ == nullptr) {
+        BGTASK_LOGE("handler is not init.");
+        return;
+    }
+    handler_->PostTask([=]() {
         NotifyTransientTaskSuscriber(appInfo, type);
     });
 }
@@ -490,15 +494,20 @@ ErrCode BgTransientTaskMgr::UnsubscribeBackgroundTask(const sptr<IBackgroundTask
 
 ErrCode BgTransientTaskMgr::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
 {
+    lock_guard<mutex> lock(expiredCallbackLock_);
     if (keyInfoMap_.empty()) {
         return ERR_OK;
     }
 
     for (auto record : keyInfoMap_) {
-        auto appInfo = make_shared<TransientTaskAppInfo>(record.second->GetPkg(),
-            record.second->GetUid(), record.second->GetPid());
-        auto findInfo = std::find(list.begin(), list.end(), appInfo);
-        if (findInfo == list.end()) {
+        auto findInfo = [&record](const auto& info) {
+            return (record.second->GetPkg() == info->GetPackageName()) &&
+                (record.second->GetUid() == info->GetUid());
+        };
+        auto findInfoIter = std::find_if(list.begin(), list.end(), findInfo);
+        if (findInfoIter == list.end()) {
+            auto appInfo = make_shared<TransientTaskAppInfo>(record.second->GetPkg(),
+                record.second->GetUid());
             list.push_back(appInfo);
         }
     }
