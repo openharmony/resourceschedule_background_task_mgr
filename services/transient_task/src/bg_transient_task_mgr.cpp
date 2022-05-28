@@ -502,13 +502,12 @@ ErrCode BgTransientTaskMgr::GetTransientTaskApps(std::vector<std::shared_ptr<Tra
     for (auto record : keyInfoMap_) {
         auto findInfo = [&record](const auto& info) {
             return (record.second->GetPkg() == info->GetPackageName()) &&
-                (record.second->GetUid() == info->GetUid()) &&
-                (record.second->GetPid() == info->GetPid());
+                (record.second->GetUid() == info->GetUid());
         };
         auto findInfoIter = std::find_if(list.begin(), list.end(), findInfo);
         if (findInfoIter == list.end()) {
             auto appInfo = make_shared<TransientTaskAppInfo>(record.second->GetPkg(),
-                record.second->GetUid(), record.second->GetPid());
+                record.second->GetUid());
             list.push_back(appInfo);
         }
     }

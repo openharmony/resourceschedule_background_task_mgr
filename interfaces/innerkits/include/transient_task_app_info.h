@@ -27,7 +27,7 @@ constexpr int32_t INVAILD_UID = -1;
 
 class TransientTaskAppInfo final {
 public:
-    TransientTaskAppInfo(std::string packageName, int32_t uid, int32_t pid)
+    TransientTaskAppInfo(std::string packageName, int32_t uid, int32_t pid = -1)
         : packageName_(packageName), uid_(uid), pid_(pid) {}
     TransientTaskAppInfo() = default;
     ~TransientTaskAppInfo() = default;
