@@ -173,8 +173,9 @@ bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::share
         ->HandleTransientTaskSuscriberTask(appInfo, TransientTaskEventType::TASK_START);
     if (pkgInfo->GetRequestSize() == 1) {
         suspendController_.RequestSuspendDelay(key);
+        auto info = make_shared<TransientTaskAppInfo>(name, uid);
         DelayedSingleton<BgTransientTaskMgr>::GetInstance()
-        ->HandleTransientTaskSuscriberTask(appInfo, TransientTaskEventType::APP_TASK_START);
+        ->HandleTransientTaskSuscriberTask(info, TransientTaskEventType::APP_TASK_START);
     }
     if (CanStartAccountingLocked(pkgInfo)) {
         pkgInfo->StartAccounting(delayInfo->GetRequestId());
@@ -199,8 +200,9 @@ void DecisionMaker::RemoveRequest(const std::shared_ptr<KeyInfo>& key, const int
             ->HandleTransientTaskSuscriberTask(appInfo, TransientTaskEventType::TASK_END);
         if (pkgInfo->IsRequestEmpty()) {
             suspendController_.CancelSuspendDelay(key);
+            auto info = make_shared<TransientTaskAppInfo>(key->GetPkg(), key->GetUid());
             DelayedSingleton<BgTransientTaskMgr>::GetInstance()
-                ->HandleTransientTaskSuscriberTask(appInfo, TransientTaskEventType::APP_TASK_END);
+                ->HandleTransientTaskSuscriberTask(info, TransientTaskEventType::APP_TASK_END);
         }
         BGTASK_LOGD("Remove requestId: %{public}d", requestId);
     }
