@@ -189,9 +189,6 @@ napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
         RequestSuspendDelay(reason, *callback, delaySuspendInfo);
     callbackInstances_[delaySuspendInfo->GetRequestId()] = callback;
 
-    BGTASK_LOGD("delaySuspendInfo %{public}d, %{public}d", delaySuspendInfo->GetRequestId(),
-        delaySuspendInfo->GetActualDelayTime());
-
     napi_value result = nullptr;
     napi_create_object(env, &result);
     if (!Common::SetDelaySuspendInfo(env, delaySuspendInfo, result)) {
