@@ -24,7 +24,8 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class CallbackInstance : public ExpiredCallback {
+class CallbackInstance : public ExpiredCallback,
+    public std::enable_shared_from_this<CallbackInstance> {
 public:
     CallbackInstance();
 
@@ -43,10 +44,7 @@ private:
     CallbackInfo expiredCallbackInfo_;
 };
 
-struct CallbackInstancesInfo {
-    napi_ref ref = nullptr;
-    CallbackInstance *callback = nullptr;
-};
+extern std::map<int32_t, std::shared_ptr<CallbackInstance>> callbackInstances_;
 
 napi_value RequestSuspendDelay(napi_env env, napi_callback_info info);
 }  // namespace BackgroundTaskMgr
