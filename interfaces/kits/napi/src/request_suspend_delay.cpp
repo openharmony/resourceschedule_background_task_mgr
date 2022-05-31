@@ -37,8 +37,59 @@ CallbackInstance::CallbackInstance() {}
 
 CallbackInstance::~CallbackInstance()
 {
-    if (expiredCallbackInfo_.ref != nullptr) {
-        napi_delete_reference(expiredCallbackInfo_.env, expiredCallbackInfo_.ref);
+    if (expiredCallbackInfo_.ref == nullptr) {
+        return;
+    }
+    DeleteNapiRef();
+}
+
+void UvQueueWorkDeleteRef(uv_work_t *work, int32_t status)
+{
+    if (work == nullptr) {
+        return;
+    }
+    CallbackReceiveDataWorker *dataWorkerData = (CallbackReceiveDataWorker *)work->data;
+    if (dataWorkerData == nullptr) {
+        delete work;
+        work = nullptr;
+        return;
+    }
+    napi_delete_reference(dataWorkerData->env, dataWorkerData->ref);
+    delete dataWorkerData;
+    dataWorkerData = nullptr;
+    delete work;
+    work = nullptr;
+}
+
+void CallbackInstance::DeleteNapiRef()
+{
+    uv_loop_s *loop = nullptr;
+    napi_get_uv_event_loop(expiredCallbackInfo_.env, &loop);
+    if (loop == nullptr) {
+        return;
+    }
+    CallbackReceiveDataWorker *dataWorker = new (std::nothrow) CallbackReceiveDataWorker();
+    if (dataWorker == nullptr) {
+        return;
+    }
+
+    dataWorker->env = expiredCallbackInfo_.env;
+    dataWorker->ref = expiredCallbackInfo_.ref;
+    uv_work_t *work = new (std::nothrow) uv_work_t;
+    if (work == nullptr) {
+        BGTASK_LOGE("new work failed");
+        delete dataWorker;
+        dataWorker = nullptr;
+        return;
+    }
+    work->data = (void *)dataWorker;
+
+    int32_t ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkDeleteRef);
+    if (ret != 0) {
+        delete dataWorker;
+        dataWorker = nullptr;
+        delete work;
+        work = nullptr;
     }
 }
 

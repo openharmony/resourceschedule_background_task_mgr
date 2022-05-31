@@ -36,6 +36,7 @@ public:
     void SetCallbackInfo(const napi_env &env, const napi_ref &ref);
 
 private:
+    void DeleteNapiRef();
     struct CallbackInfo {
         napi_env env = nullptr;
         napi_ref ref = nullptr;
