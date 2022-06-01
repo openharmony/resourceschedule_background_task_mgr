@@ -118,6 +118,7 @@ napi_value Common::SetPromise(
         NAPI_CALL(env, napi_create_int32(env, info.errCode, &eCode));
         NAPI_CALL(env, napi_create_object(env, &res));
         NAPI_CALL(env, napi_set_named_property(env, res, "data", eCode));
+        NAPI_CALL(env, napi_set_named_property(env, res, "code", eCode));
         napi_reject_deferred(env, info.deferred, res);
     }
     return result;
@@ -125,11 +126,15 @@ napi_value Common::SetPromise(
 
 napi_value Common::GetCallbackErrorValue(napi_env env, int32_t errCode)
 {
+    if (errCode == ERR_OK) {
+        return NapiGetNull(env);
+    }
     napi_value result = nullptr;
     napi_value eCode = nullptr;
     NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
     NAPI_CALL(env, napi_create_object(env, &result));
     NAPI_CALL(env, napi_set_named_property(env, result, "data", eCode));
+    NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
     return result;
 }
 
@@ -148,6 +153,7 @@ napi_value Common::JSParaError(const napi_env &env, const napi_ref &callback)
         NAPI_CALL(env, napi_create_int32(env, ERR_BGTASK_INVALID_PARAM, &eCode));
         NAPI_CALL(env, napi_create_object(env, &res));
         NAPI_CALL(env, napi_set_named_property(env, res, "data", eCode));
+        NAPI_CALL(env, napi_set_named_property(env, res, "code", eCode));
         napi_reject_deferred(env, deferred, res);
         return promise;
     }
