@@ -140,7 +140,7 @@ describe("TransientTaskJsTest", function () {
         }
 
         backgroundTaskManager.getRemainingDelayTime(info.requestId, (err, res) => {
-            if (err.data === 0) {
+            if (!err) {
                 console.info('TransientTaskJsTest004  backgroundTaskManager success, delaytime:' + res);
                 expect(true).assertTrue();
 
