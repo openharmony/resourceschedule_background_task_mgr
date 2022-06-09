@@ -59,7 +59,7 @@ public:
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) override;
-    ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo) override;
+    int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);
     void HandleRequestExpired(const int32_t requestId);
@@ -68,6 +68,7 @@ public:
 
 private:
     void Init();
+    void DumpUsage(std::string &result);
 
 private:
     ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};

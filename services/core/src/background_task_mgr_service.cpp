@@ -22,16 +22,17 @@
 #include "bundle_constants.h"
 #include "common_event_manager.h"
 #include "common_event_support.h"
+#include "file_ex.h"
 #include "ipc_skeleton.h"
+#include "string_ex.h"
 
 #include "bgtaskmgr_log_wrapper.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-static const std::string CONTINUOUS_TASK_DUMP = "-C";
-static const std::string TRANSIENT_TASK_DUMP = "-T";
-static constexpr int32_t MIN_DUMP_PARAM_NUMS = 2;
+static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
+static constexpr int32_t MIN_DUMP_PARAM_NUMS = 1;
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
 }
@@ -139,23 +140,63 @@ void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& 
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->HandleSubscriberDeath(remote);
 }
 
-ErrCode BackgroundTaskMgrService::ShellDump(const std::vector<std::string> &dumpOption,
-    std::vector<std::string> &dumpInfo)
+int32_t BackgroundTaskMgrService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
-    if (dumpOption.size() < MIN_DUMP_PARAM_NUMS) {
-        BGTASK_LOGW("invalid dump param");
-        return ERR_BGTASK_INVALID_PARAM;
+    std::vector<std::string> argsInStr;
+    std::transform(args.begin(), args.end(), std::back_inserter(argsInStr),
+        [](const std::u16string &arg) {
+        return Str16ToStr8(arg);
+    });
+
+    std::string result;
+
+    int32_t ret = ERR_OK;
+
+    if (argsInStr.size() == NO_DUMP_PARAM_NUMS) {
+        DumpUsage(result);
+    } else if (argsInStr.size() >= MIN_DUMP_PARAM_NUMS) {
+        std::vector<std::string> infos;
+        if (argsInStr[0] == "-h") {
+            DumpUsage(result);
+        } else if (argsInStr[0] == "-T") {
+            ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ShellDump(argsInStr, infos);
+        } else if (argsInStr[0] == "-C") {
+            ret = BgContinuousTaskMgr::GetInstance()->ShellDump(argsInStr, infos);
+        } else {
+            infos.emplace_back("Error params.\n");
+            ret = ERR_BGTASK_INVALID_PARAM;
+        }
+        for (auto info : infos) {
+            result.append(info);
+        }
     }
-    ErrCode ret = ERR_OK;
-    if (dumpOption[0] == TRANSIENT_TASK_DUMP) {
-        ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ShellDump(dumpOption, dumpInfo);
-    } else if (dumpOption[0] == CONTINUOUS_TASK_DUMP) {
-        ret = BgContinuousTaskMgr::GetInstance()->ShellDump(dumpOption, dumpInfo);
-    } else {
-        BGTASK_LOGW("invalid dump param");
-        ret = ERR_BGTASK_INVALID_PARAM;
+
+    if (!SaveStringToFd(fd, result)) {
+        BGTASK_LOGE("BackgroundTaskMgrService dump save string to fd failed!");
+        ret = ERR_BGTASK_METHOD_CALLED_FAILED;
     }
     return ret;
 }
+
+void BackgroundTaskMgrService::DumpUsage(std::string &result)
+{
+    std::string dumpHelpMsg =
+    "usage: bgtask dump [<options>]\n"
+    "options list:\n"
+    "    -h                                   help menu\n"
+    "    -T                                   transient task commands:\n"
+    "        BATTARY_LOW                          battary low mode\n"
+    "        BATTARY_OKAY                         battary okay mode\n"
+    "        SCREEN_ON                            sreen on mode\n"
+    "        SCREEN_OFF                           sreen off mode\n"
+    "        DUMP_CANCEL                          cancel dump mode\n"
+    "        All                                  list all request\n"
+    "    -C                                   continuous task commands:\n"
+    "        --all                                list all running continuous task infos\n"
+    "        --cancel_all                         cancel all running continuous task\n"
+    "        --cancel {continuous task key}       cancel one task by specifying task key\n";
+
+    result.append(dumpHelpMsg);
+}  // namespace
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

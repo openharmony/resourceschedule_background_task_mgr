@@ -104,15 +104,6 @@ public:
      */
     virtual ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) = 0;
 
-    /**
-     * @brief Dump info of continous tasks or transient tasks.
-     *
-     * @param dumpOption Select continous tasks or transient tasks.
-     * @param dumpInfo Info of continous tasks or transient tasks.
-     * @return ERR_OK if success, else fail.
-     */
-    virtual ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo) = 0;
-
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskMgr");
 
@@ -126,7 +117,6 @@ protected:
         SUBSCRIBE_BACKGROUND_TASK,
         UNSUBSCRIBE_BACKGROUND_TASK,
         GET_TRANSIENT_TASK_APPS,
-        SHELL_DUMP,
     };
 };
 }  // namespace BackgroundTaskMgr

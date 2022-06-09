@@ -19,6 +19,8 @@
 #define protected public
 
 #include "background_task_manager.h"
+#include "bg_continuous_task_mgr.h"
+#include "bg_transient_task_mgr.h"
 #include "iservice_registry.h"
 #include "singleton.h"
 #include "system_ability_definition.h"
@@ -36,20 +38,16 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
-
-    std::shared_ptr<BackgroundTaskManager> bgtaskMgr_;
 };
 
-void BgtaskDumpTest::SetUpTestCase() {}
+void BgtaskDumpTest::SetUpTestCase()
+{
+    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->isReady_.store(true);
+}
 
 void BgtaskDumpTest::TearDownTestCase() {}
 
-void BgtaskDumpTest::SetUp()
-{
-    if (!bgtaskMgr_) {
-        bgtaskMgr_ = DelayedSingleton<BackgroundTaskManager>::GetInstance();
-    }
-}
+void BgtaskDumpTest::SetUp() {}
 
 void BgtaskDumpTest::TearDown() {}
 
@@ -82,10 +80,8 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_001, Function | MediumTest | L
     std::vector<std::string> options;
     options.push_back("-T");
     options.push_back("All");
-    if (bgtaskMgr_ != nullptr) {
-        auto ret = bgtaskMgr_->ShellDump(options, infos);
-        EXPECT_EQ(ret, 0);
-    }
+    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ShellDump(options, infos);
+    EXPECT_EQ(ret, 0);
 }
 
 /*
@@ -100,10 +96,8 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_002, Function | MediumTest | L
     std::vector<std::string> options;
     options.push_back("-C");
     options.push_back("--all");
-    if (bgtaskMgr_ != nullptr) {
-        auto ret = bgtaskMgr_->ShellDump(options, infos);
-        EXPECT_EQ(ret, 0);
-    }
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

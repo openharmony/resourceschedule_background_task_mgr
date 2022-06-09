@@ -52,9 +52,6 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::GET_TRANSIENT_TASK_APPS,
             std::bind(&BackgroundTaskMgrStub::HandleGetTransientTaskApps,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::SHELL_DUMP,
-            std::bind(&BackgroundTaskMgrStub::HandleShellDump,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
 };
 
 ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
@@ -212,27 +209,6 @@ ErrCode BackgroundTaskMgrStub::HandleGetTransientTaskApps(MessageParcel& data, M
         if (!info->Marshalling(reply)) {
             return ERR_BGTASK_PARCELABLE_FAILED;
         }
-    }
-    return ERR_OK;
-}
-
-ErrCode BackgroundTaskMgrStub::HandleShellDump(MessageParcel& data, MessageParcel& reply)
-{
-    std::vector<std::string> dumpOption;
-    if (!data.ReadStringVector(&dumpOption)) {
-        BGTASK_LOGE("Read dumpOption failed.");
-        return ERR_BGTASK_PARCELABLE_FAILED;
-    }
-
-    std::vector<std::string> bgtaskmgrInfo;
-    ErrCode result = ShellDump(dumpOption, bgtaskmgrInfo);
-    if (!reply.WriteInt32(result)) {
-        BGTASK_LOGE("Write result failed, ErrCode=%{public}d", result);
-        return ERR_BGTASK_PARCELABLE_FAILED;
-    }
-    if (!reply.WriteStringVector(bgtaskmgrInfo)) {
-        BGTASK_LOGE("Write bgtaskmgrInfo fail.");
-        return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;
 }
