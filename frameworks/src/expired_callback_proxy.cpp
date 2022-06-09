@@ -29,7 +29,7 @@ void ExpiredCallbackProxy::OnExpired()
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        BGTASK_LOGE("remote is dead.");
+        BGTASK_LOGE("OnExpired remote is dead.");
         return;
     }
 
@@ -38,7 +38,7 @@ void ExpiredCallbackProxy::OnExpired()
     MessageOption option(MessageOption::TF_ASYNC);
     bool res = data.WriteInterfaceToken(ExpiredCallbackProxy::GetDescriptor());
     if (!res) {
-        BGTASK_LOGE("write descriptor failed.");
+        BGTASK_LOGE("OnExpired write descriptor failed.");
         return;
     }
     remote->SendRequest(ON_EXPIRED, data, reply, option);

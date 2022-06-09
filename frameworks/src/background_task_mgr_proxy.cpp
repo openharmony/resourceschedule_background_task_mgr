@@ -32,7 +32,7 @@ ErrCode BackgroundTaskMgrProxy::RequestSuspendDelay(const std::u16string& reason
     const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
     if (callback == nullptr) {
-        BGTASK_LOGE("callback is null");
+        BGTASK_LOGE("RequestSuspendDelay callback is null");
         return ERR_BGTASK_INVALID_PARAM;
     }
 
@@ -40,30 +40,30 @@ ErrCode BackgroundTaskMgrProxy::RequestSuspendDelay(const std::u16string& reason
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_SYNC};
     if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
-        BGTASK_LOGE("write descriptor failed");
+        BGTASK_LOGE("RequestSuspendDelay write descriptor failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     if (!data.WriteString16(reason)) {
-        BGTASK_LOGE("write reason failed");
+        BGTASK_LOGE("RequestSuspendDelay write reason failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     if (!data.WriteRemoteObject(callback->AsObject())) {
-        BGTASK_LOGE("write callback failed");
+        BGTASK_LOGE("RequestSuspendDelay write callback failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
     ErrCode result = InnerTransact(REQUEST_SUSPEND_DELAY, option, data, reply);
     if (result != ERR_OK) {
-        BGTASK_LOGE("transact ErrCode=%{public}d", result);
+        BGTASK_LOGE("RequestSuspendDelay transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
     }
     if (!reply.ReadInt32(result)) {
-        BGTASK_LOGE("fail: read result failed.");
+        BGTASK_LOGE("RequestSuspendDelay fail: read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     delayInfo = DelaySuspendInfo::Unmarshalling(reply);
     if (delayInfo == nullptr) {
-        BGTASK_LOGE("read result failed");
+        BGTASK_LOGE("RequestSuspendDelay read result failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return result;
@@ -75,21 +75,21 @@ ErrCode BackgroundTaskMgrProxy::CancelSuspendDelay(int32_t requestId)
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_SYNC};
     if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
-        BGTASK_LOGE("write descriptor failed");
+        BGTASK_LOGE("RequestSuspendDelay write descriptor failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     if (!data.WriteInt32(requestId)) {
-        BGTASK_LOGE("write requestId failed");
+        BGTASK_LOGE("RequestSuspendDelay write requestId failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
     ErrCode result = InnerTransact(CANCEL_SUSPEND_DELAY, option, data, reply);
     if (result != ERR_OK) {
-        BGTASK_LOGE("fail: transact ErrCode=%{public}d", result);
+        BGTASK_LOGE("RequestSuspendDelay fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
     }
     if (!reply.ReadInt32(result)) {
-        BGTASK_LOGE("fail: read result failed.");
+        BGTASK_LOGE("RequestSuspendDelay fail: read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return result;
@@ -111,15 +111,15 @@ ErrCode BackgroundTaskMgrProxy::GetRemainingDelayTime(int32_t requestId, int32_t
 
     ErrCode result = InnerTransact(GET_REMAINING_DELAY_TIME, option, data, reply);
     if (result != ERR_OK) {
-        BGTASK_LOGE("fail: transact ErrCode=%{public}d", result);
+        BGTASK_LOGE("GetRemainingDelayTime fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
     }
     if (!reply.ReadInt32(result)) {
-        BGTASK_LOGE("fail: read result failed.");
+        BGTASK_LOGE("GetRemainingDelayTime fail: read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     if (!reply.ReadInt32(delayTime)) {
-        BGTASK_LOGE("fail: read result failed.");
+        BGTASK_LOGE("GetRemainingDelayTime fail: read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return result;
@@ -127,7 +127,6 @@ ErrCode BackgroundTaskMgrProxy::GetRemainingDelayTime(int32_t requestId, int32_t
 
 ErrCode BackgroundTaskMgrProxy::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
-    BGTASK_LOGI("begin");
     if (taskParam == nullptr) {
         return ERR_BGTASK_INVALID_PARAM;
     }
@@ -146,33 +145,31 @@ ErrCode BackgroundTaskMgrProxy::StartBackgroundRunning(const sptr<ContinuousTask
 
     ErrCode result = InnerTransact(START_BACKGROUND_RUNNING, option, data, reply);
     if (result != ERR_OK) {
-        BGTASK_LOGE("fail: transact ErrCode=%{public}d", result);
+        BGTASK_LOGE("StartBackgroundRunning fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
     }
     if (!reply.ReadInt32(result)) {
-        BGTASK_LOGE("fail: read result failed.");
+        BGTASK_LOGE("StartBackgroundRunning fail: read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    BGTASK_LOGI("end");
     return result;
 }
 
 ErrCode BackgroundTaskMgrProxy::StopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken)
 {
-    BGTASK_LOGI("begin");
     MessageParcel data;
     if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
     if (!data.WriteString(abilityName)) {
-        BGTASK_LOGE("parcel ability Name failed");
+        BGTASK_LOGE("StopBackgroundRunning parcel ability Name failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
     if (!data.WriteRemoteObject(abilityToken)) {
-        BGTASK_LOGE("parcel ability token failed");
+        BGTASK_LOGE("StopBackgroundRunning parcel ability token failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
@@ -181,21 +178,20 @@ ErrCode BackgroundTaskMgrProxy::StopBackgroundRunning(const std::string &ability
 
     ErrCode result = InnerTransact(STOP_BACKGROUND_RUNNING, option, data, reply);
     if (result != ERR_OK) {
-        BGTASK_LOGE("transact ErrCode=%{public}d", result);
+        BGTASK_LOGE("StopBackgroundRunning transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
     }
     if (!reply.ReadInt32(result)) {
-        BGTASK_LOGE("read result failed.");
+        BGTASK_LOGE("StopBackgroundRunning read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    BGTASK_LOGI("end");
     return result;
 }
 
 ErrCode BackgroundTaskMgrProxy::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
     if (subscriber == nullptr) {
-        BGTASK_LOGE("subscriber is null");
+        BGTASK_LOGE("SubscribeBackgroundTask subscriber is null");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
@@ -203,21 +199,21 @@ ErrCode BackgroundTaskMgrProxy::SubscribeBackgroundTask(const sptr<IBackgroundTa
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_SYNC};
     if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
-        BGTASK_LOGE("write descriptor failed");
+        BGTASK_LOGE("SubscribeBackgroundTask write descriptor failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     if (!data.WriteRemoteObject(subscriber->AsObject())) {
-        BGTASK_LOGE("write subscriber failed");
+        BGTASK_LOGE("SubscribeBackgroundTask write subscriber failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
     ErrCode result = InnerTransact(SUBSCRIBE_BACKGROUND_TASK, option, data, reply);
     if (result != ERR_OK) {
-        BGTASK_LOGE("fail: transact ErrCode=%{public}d", result);
+        BGTASK_LOGE("SubscribeBackgroundTask fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
     }
     if (!reply.ReadInt32(result)) {
-        BGTASK_LOGE("fail: read result failed.");
+        BGTASK_LOGE("SubscribeBackgroundTask fail: read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return result;
@@ -226,7 +222,7 @@ ErrCode BackgroundTaskMgrProxy::SubscribeBackgroundTask(const sptr<IBackgroundTa
 ErrCode BackgroundTaskMgrProxy::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
     if (subscriber == nullptr) {
-        BGTASK_LOGE("subscriber is null");
+        BGTASK_LOGE("UnsubscribeBackgroundTask subscriber is null");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
@@ -234,21 +230,21 @@ ErrCode BackgroundTaskMgrProxy::UnsubscribeBackgroundTask(const sptr<IBackground
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_SYNC};
     if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
-        BGTASK_LOGE("write descriptor failed");
+        BGTASK_LOGE("UnsubscribeBackgroundTask write descriptor failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     if (!data.WriteRemoteObject(subscriber->AsObject())) {
-        BGTASK_LOGE("write subscriber failed");
+        BGTASK_LOGE("UnsubscribeBackgroundTask write subscriber failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
     ErrCode result = InnerTransact(UNSUBSCRIBE_BACKGROUND_TASK, option, data, reply);
     if (result != ERR_OK) {
-        BGTASK_LOGE("fail: transact ErrCode=%{public}d", result);
+        BGTASK_LOGE("UnsubscribeBackgroundTask fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
     }
     if (!reply.ReadInt32(result)) {
-        BGTASK_LOGE("fail: read result failed.");
+        BGTASK_LOGE("UnsubscribeBackgroundTask fail: read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return result;
@@ -260,17 +256,17 @@ ErrCode BackgroundTaskMgrProxy::GetTransientTaskApps(std::vector<std::shared_ptr
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_SYNC};
     if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
-        BGTASK_LOGE("write descriptor failed");
+        BGTASK_LOGE("GetTransientTaskApps write descriptor failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
     ErrCode result = InnerTransact(GET_TRANSIENT_TASK_APPS, option, data, reply);
     if (result != ERR_OK) {
-        BGTASK_LOGE("fail: transact ErrCode=%{public}d", result);
+        BGTASK_LOGE("GetTransientTaskApps fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
     }
     if (!reply.ReadInt32(result)) {
-        BGTASK_LOGE("fail: read result failed.");
+        BGTASK_LOGE("GetTransientTaskApps fail: read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
@@ -278,7 +274,7 @@ ErrCode BackgroundTaskMgrProxy::GetTransientTaskApps(std::vector<std::shared_ptr
     for (int32_t i = 0; i < infoSize; i++) {
         auto info = TransientTaskAppInfo::Unmarshalling(reply);
         if (!info) {
-            BGTASK_LOGE("Read Parcelable infos failed.");
+            BGTASK_LOGE("GetTransientTaskApps Read Parcelable infos failed.");
             return ERR_INVALID_VALUE;
         }
         list.emplace_back(info);
@@ -324,7 +320,7 @@ ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flag
 {
     auto remote = Remote();
     if (remote == nullptr) {
-        BGTASK_LOGE("get Remote fail code %{public}d", code);
+        BGTASK_LOGE("InnerTransact get Remote fail code %{public}d", code);
         return ERR_DEAD_OBJECT;
     }
     int32_t err = remote->SendRequest(code, data, reply, flags);

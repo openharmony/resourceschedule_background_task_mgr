@@ -77,7 +77,7 @@ void CallbackInstance::DeleteNapiRef()
     dataWorker->ref = expiredCallbackInfo_.ref;
     uv_work_t *work = new (std::nothrow) uv_work_t;
     if (work == nullptr) {
-        BGTASK_LOGE("new work failed");
+        BGTASK_LOGE("DeleteNapiRef new work failed");
         delete dataWorker;
         dataWorker = nullptr;
         return;
@@ -98,13 +98,13 @@ void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
     BGTASK_LOGD("OnExpired uv_work_t start");
 
     if (work == nullptr) {
-        BGTASK_LOGE("work is null");
+        BGTASK_LOGE("UvQueueWorkOnExpired work is null");
         return;
     }
 
     CallbackReceiveDataWorker *dataWorkerData = (CallbackReceiveDataWorker *)work->data;
     if (dataWorkerData == nullptr) {
-        BGTASK_LOGE("dataWorkerData is null");
+        BGTASK_LOGE("UvQueueWorkOnExpired dataWorkerData is null");
         delete work;
         work = nullptr;
         return;
@@ -127,8 +127,6 @@ void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
 
 void CallbackInstance::OnExpired()
 {
-    BGTASK_LOGD("enter");
-
     auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
         [&](const auto& callbackInstance) { return callbackInstance.second.get() == this; }
     );
@@ -164,7 +162,7 @@ void CallbackInstance::OnExpired()
 
     uv_work_t *work = new (std::nothrow) uv_work_t;
     if (work == nullptr) {
-        BGTASK_LOGE("new work failed");
+        BGTASK_LOGW("OnExpired new work failed");
         delete dataWorker;
         dataWorker = nullptr;
         callbackInstances_.erase(findCallback);
@@ -211,7 +209,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
 
     // argv[0] : reason
     if (Common::GetU16StringValue(env, argv[0], reason) == nullptr) {
-        BGTASK_LOGE("ParseParameters failed, reason is nullptr ");
+        BGTASK_LOGE("ParseParameters failed, reason is nullptr.");
         return nullptr;
     }
 
@@ -221,7 +219,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Object expected.");
 
     if (GetExpiredCallback(env, argv[1], callback) == nullptr) {
-        BGTASK_LOGE("CallbackInstancesInfo parse failed");
+        BGTASK_LOGE("ExpiredCallback parse failed");
         return nullptr;
     }
     return Common::NapiGetNull(env);

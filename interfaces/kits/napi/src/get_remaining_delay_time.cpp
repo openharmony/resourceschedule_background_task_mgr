@@ -59,7 +59,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
     }
 
     if (params.requestId <= 0) {
-        BGTASK_LOGE("ParseParameters failed, requestId is illegal.");
+        BGTASK_LOGI("ParseParameters failed, requestId is illegal.");
         return nullptr;
     }
     return Common::NapiGetNull(env);
@@ -80,7 +80,6 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
     }
     std::unique_ptr<AsyncCallbackInfoGetRemainingDelayTime> callbackPtr {asyncCallbackInfo};
     asyncCallbackInfo->requestId = params.requestId;
-    BGTASK_LOGI(" asyncCallbackInfo->requestId: %{public}d", asyncCallbackInfo->requestId);
     Common::PaddingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
 
     napi_value resourceName = nullptr;

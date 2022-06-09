@@ -155,17 +155,17 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
     const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
     if (!isReady_.load()) {
-        BGTASK_LOGE("Transient task manager is not ready.");
+        BGTASK_LOGW("Transient task manager is not ready.");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
     std::string name = "";
     if (!IsCallingInfoLegal(uid, pid, name, callback)) {
-        BGTASK_LOGE("Request suspend delay failed, calling info is illegal.");
+        BGTASK_LOGI("Request suspend delay failed, calling info is illegal.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    BGTASK_LOGI("request suspend delay pkg : %{public}s, reason : %{public}s, uid : %{public}d, pid : %{public}d",
+    BGTASK_LOGD("request suspend delay pkg : %{public}s, reason : %{public}s, uid : %{public}d, pid : %{public}d",
         name.c_str(), Str16ToStr8(reason).c_str(), uid, pid);
 
     auto infoEx = make_shared<DelaySuspendInfoEx>(pid);
@@ -178,13 +178,13 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
 
     auto callbackIter = find_if(expiredCallbackMap_.begin(), expiredCallbackMap_.end(), findCallback);
     if (callbackIter != expiredCallbackMap_.end()) {
-        BGTASK_LOGE("request suspend failed, callback is already exists.");
+        BGTASK_LOGI("%{public}s request suspend failed, callback is already exists.", name.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
 
     auto keyInfo = make_shared<KeyInfo>(name, uid, pid);
     if (!decisionMaker_->Decide(keyInfo, infoEx)) {
-        BGTASK_LOGE("request suspend failed, callback is already exists, not allow.");
+        BGTASK_LOGI("%{public}s request suspend failed.", name.c_str());
         return ERR_BGTASK_NOT_ALLOWED;
     }
     BGTASK_LOGI("request suspend success, pkg : %{public}s, uid : %{public}d, requestId: %{public}d,"
@@ -202,7 +202,7 @@ void BgTransientTaskMgr::HandleTransientTaskSuscriberTask(const shared_ptr<Trans
     const TransientTaskEventType type)
 {
     if (handler_ == nullptr) {
-        BGTASK_LOGE("handler is not init.");
+        BGTASK_LOGE("HandleTransientTaskSuscriberTask handler is not init.");
         return;
     }
     handler_->PostTask([=]() {
@@ -256,20 +256,20 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelay(int32_t requestId)
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
     if (!VerifyCallingInfo(uid, pid)) {
-        BGTASK_LOGE(" cancel suspend delay failed, pid or uid is invalid.");
+        BGTASK_LOGI("cancel suspend delay failed, pid or uid is invalid.");
         return ERR_BGTASK_INVALID_PARAM;
     }
 
     std::string name = "";
     if (!GetBundleNamesForUid(uid, name)) {
-        BGTASK_LOGE("GetBundleNamesForUid fail.");
+        BGTASK_LOGW("GetBundleNamesForUid fail, uid : %{public}d.", uid);
         return ERR_BGTASK_INVALID_PARAM;
     }
-    BGTASK_LOGI(" cancel suspend delay pkg : %{public}s, uid : %{public}d, requestId : %{public}d",
+    BGTASK_LOGI("cancel suspend delay pkg : %{public}s, uid : %{public}d, requestId : %{public}d",
         name.c_str(), uid, requestId);
 
     if (!VerifyRequestIdLocked(name, uid, requestId)) {
-        BGTASK_LOGE(" cancel suspend delay failed, requestId is illegal.");
+        BGTASK_LOGI(" cancel suspend delay failed, requestId is illegal.");
         return ERR_BGTASK_NOT_ALLOWED;
     }
 
@@ -285,7 +285,7 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelayLocked(int32_t requestId)
 
     auto iter = expiredCallbackMap_.find(requestId);
     if (iter == expiredCallbackMap_.end()) {
-        BGTASK_LOGE("Callback not found.");
+        BGTASK_LOGI("CancelSuspendDelayLocked Callback not found.");
         return ERR_BGTASK_NOT_ALLOWED;
     }
     auto remote = iter->second->AsObject();
@@ -301,7 +301,7 @@ void BgTransientTaskMgr::ForceCancelSuspendDelay(int32_t requestId)
     lock_guard<mutex> lock(expiredCallbackLock_);
     auto keyInfoIter = keyInfoMap_.find(requestId);
     if (keyInfoIter == keyInfoMap_.end()) {
-        BGTASK_LOGE("force cancel suspend delay failed callback not found.");
+        BGTASK_LOGI("force cancel suspend delay failed callback not found.");
         return;
     }
 
@@ -311,13 +311,13 @@ void BgTransientTaskMgr::ForceCancelSuspendDelay(int32_t requestId)
 ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &delayTime)
 {
     if (!isReady_.load()) {
-        BGTASK_LOGE("Transient task manager is not ready.");
+        BGTASK_LOGW("Transient task manager is not ready.");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
     if (!VerifyCallingInfo(uid, pid)) {
-        BGTASK_LOGE("get remain time failed, uid or pid is invalid");
+        BGTASK_LOGI("get remain time failed, uid or pid is invalid");
         delayTime = BG_INVALID_REMAIN_TIME;
         return ERR_BGTASK_INVALID_PARAM;
     }
@@ -328,7 +328,7 @@ ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &de
         delayTime = BG_INVALID_REMAIN_TIME;
         return ERR_BGTASK_INVALID_PARAM;
     }
-    BGTASK_LOGD("get remain time pkg : %{public}s, uid : %{public}d, requestId : %{public}d",
+    BGTASK_LOGI("get remain time pkg : %{public}s, uid : %{public}d, requestId : %{public}d",
         name.c_str(), uid, requestId);
 
     if (!VerifyRequestIdLocked(name, uid, requestId)) {
@@ -369,7 +369,7 @@ void BgTransientTaskMgr::HandleExpiredCallbackDeath(const wptr<IRemoteObject>& r
 
     auto callbackIter = find_if(expiredCallbackMap_.begin(), expiredCallbackMap_.end(), findCallback);
     if (callbackIter == expiredCallbackMap_.end()) {
-        BGTASK_LOGE("expiredCallback death, remote in callback not found.");
+        BGTASK_LOGI("expiredCallback death, remote in callback not found.");
         return;
     }
 
@@ -377,7 +377,7 @@ void BgTransientTaskMgr::HandleExpiredCallbackDeath(const wptr<IRemoteObject>& r
     auto keyInfoIter = keyInfoMap_.find(callbackIter->first);
     expiredCallbackMap_.erase(callbackIter);
     if (keyInfoIter == keyInfoMap_.end()) {
-        BGTASK_LOGE("expiredCallback death, keyInfo not found.");
+        BGTASK_LOGI("expiredCallback death, keyInfo not found.");
         return;
     }
 
@@ -400,7 +400,7 @@ void BgTransientTaskMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& remote
         };
         auto subscriberIter = find_if(subscriberList_.begin(), subscriberList_.end(), findSuscriber);
         if (subscriberIter == subscriberList_.end()) {
-            BGTASK_LOGE("suscriber death, remote in suscriber not found.");
+            BGTASK_LOGI("suscriber death, remote in suscriber not found.");
             return;
         }
 
@@ -465,7 +465,7 @@ ErrCode BgTransientTaskMgr::SubscribeBackgroundTask(const sptr<IBackgroundTaskSu
 ErrCode BgTransientTaskMgr::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
     if (subscriber == nullptr) {
-        BGTASK_LOGI("subscriber is null.");
+        BGTASK_LOGE("subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;
     }
     auto remote = subscriber->AsObject();

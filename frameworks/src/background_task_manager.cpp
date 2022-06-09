@@ -47,7 +47,7 @@ ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reason,
 
     sptr<ExpiredCallback::ExpiredCallbackImpl> callbackSptr = callback.GetImpl();
     if (callbackSptr == nullptr) {
-        BGTASK_LOGE("callbackSptr == nullptr");
+        BGTASK_LOGE("callbackSptr is nullptr");
         return ERR_BGTASK_INVALID_PARAM;
     }
     return backgroundTaskMgrProxy_->RequestSuspendDelay(reason, callbackSptr, delayInfo);
@@ -64,7 +64,6 @@ ErrCode BackgroundTaskManager::GetRemainingDelayTime(int32_t requestId, int32_t 
 
 ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam)
 {
-    BGTASK_LOGI("begin");
     if (!GetBackgroundTaskManagerProxy()) {
         BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
         return ERR_BGTASK_SERVICE_NOT_CONNECTED;
@@ -75,19 +74,16 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTas
         BGTASK_LOGE("Failed to create continuous task param");
         return ERR_BGTASK_NO_MEMORY;
     }
-    BGTASK_LOGI("end");
     return backgroundTaskMgrProxy_->StartBackgroundRunning(taskParamPtr);
 }
 
 ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken)
 {
-    BGTASK_LOGI("begin");
     if (!GetBackgroundTaskManagerProxy()) {
         BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
         return ERR_BGTASK_SERVICE_NOT_CONNECTED;
     }
-    BGTASK_LOGI("end");
     return backgroundTaskMgrProxy_->StopBackgroundRunning(abilityName, abilityToken);
 }
 
@@ -99,7 +95,7 @@ ErrCode BackgroundTaskManager::SubscribeBackgroundTask(const BackgroundTaskSubsc
     }
     sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> subscriberSptr = subscriber.GetImpl();
     if (subscriberSptr == nullptr) {
-        BGTASK_LOGE("subscriberSptr == nullptr");
+        BGTASK_LOGE("subscriberSptr is nullptr");
         return ERR_BGTASK_INVALID_PARAM;
     }
     return backgroundTaskMgrProxy_->SubscribeBackgroundTask(subscriberSptr);
@@ -113,7 +109,7 @@ ErrCode BackgroundTaskManager::UnsubscribeBackgroundTask(const BackgroundTaskSub
     }
     sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> subscriberSptr = subscriber.GetImpl();
     if (subscriberSptr == nullptr) {
-        BGTASK_LOGE("subscriberSptr == nullptr");
+        BGTASK_LOGE("subscriberSptr is nullptr");
         return ERR_BGTASK_INVALID_PARAM;
     }
     return backgroundTaskMgrProxy_->UnsubscribeBackgroundTask(subscriberSptr);
@@ -137,20 +133,20 @@ bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityManager == nullptr) {
-        BGTASK_LOGE("GetSystemAbilityManager failed.");
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy GetSystemAbilityManager failed.");
         return false;
     }
 
     sptr<IRemoteObject> remoteObject =
         systemAbilityManager->GetSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID);
     if (remoteObject == nullptr) {
-        BGTASK_LOGE("GetSystemAbility failed.");
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy GetSystemAbility failed.");
         return false;
     }
 
     backgroundTaskMgrProxy_ = iface_cast<BackgroundTaskMgr::IBackgroundTaskMgr>(remoteObject);
     if ((backgroundTaskMgrProxy_ == nullptr) || (backgroundTaskMgrProxy_->AsObject() == nullptr)) {
-        BGTASK_LOGE("iface_cast remoteObject failed.");
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy iface_cast remoteObject failed.");
         return false;
     }
 

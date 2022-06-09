@@ -28,7 +28,6 @@ EXTERN_C_START
 
 napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
 {
-    BGTASK_LOGI("BackgroundTaskMgrInit");
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_FUNCTION("requestSuspendDelay", RequestSuspendDelay),
         DECLARE_NAPI_FUNCTION("cancelSuspendDelay", CancelSuspendDelay),
@@ -52,8 +51,6 @@ void SetNamedPropertyByInteger(napi_env env, napi_value dstObj, int32_t objName,
 
 napi_value BackgroundModeInit(napi_env env, napi_value exports)
 {
-    BGTASK_LOGI("begin");
-
     napi_value obj = nullptr;
     napi_create_object(env, &obj);
 

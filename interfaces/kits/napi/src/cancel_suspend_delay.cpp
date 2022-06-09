@@ -38,7 +38,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
         return nullptr;
     }
     if (requestId <= 0) {
-        BGTASK_LOGE("ParseParameters failed, requestId is illegal.");
+        BGTASK_LOGI("ParseParameters failed, requestId is illegal.");
         return nullptr;
     }
     return Common::NapiGetNull(env);

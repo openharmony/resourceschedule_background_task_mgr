@@ -30,7 +30,7 @@ ErrCode ExpiredCallbackStub::OnRemoteRequest(uint32_t code,
     std::u16string descriptor = ExpiredCallbackStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        BGTASK_LOGE("local descriptor not match remote.");
+        BGTASK_LOGE("ExpiredCallbackStub local descriptor not match remote.");
         return ERR_TRANSACTION_FAILED;
     }
     switch (code) {

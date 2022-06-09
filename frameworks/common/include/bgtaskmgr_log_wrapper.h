@@ -22,8 +22,8 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-#ifndef LOG_DOMAIN
-#define LOG_DOMAIN 0xD001800
+#ifndef BGTASK_MGR_LOG_DOMAIN
+#define BGTASK_MGR_LOG_DOMAIN 0xD001711
 #endif
 
 #ifndef BGTASK_MGR_LOG_TAG
@@ -32,7 +32,8 @@ namespace BackgroundTaskMgr {
 
 enum class BgTaskMgrLogLevel : uint8_t { DEBUG = 0, INFO, WARN, ERROR, FATAL };
 
-static constexpr OHOS::HiviewDFX::HiLogLabel BGTASK_MGR_LABEL = {LOG_CORE, LOG_DOMAIN, BGTASK_MGR_LOG_TAG};
+static constexpr OHOS::HiviewDFX::HiLogLabel BGTASK_MGR_LABEL = {LOG_CORE, BGTASK_MGR_LOG_DOMAIN,
+    BGTASK_MGR_LOG_TAG};
 
 class BgTaskMgrLogWrapper {
 public:
@@ -60,10 +61,7 @@ private:
 #define BGTASK_PRINT_LOG(LEVEL, Level, fmt, ...)                  \
     if (BackgroundTaskMgr::BgTaskMgrLogWrapper::JudgeLevel(BackgroundTaskMgr::BgTaskMgrLogLevel::LEVEL))     \
     OHOS::HiviewDFX::HiLog::Level(BackgroundTaskMgr::BGTASK_MGR_LABEL,               \
-        "[%{public}s(%{public}s):%{public}d] " fmt,        \
-        BackgroundTaskMgr::BgTaskMgrLogWrapper::GetBriefFileName(__FILE__).c_str(), \
-        __FUNCTION__,                                      \
-        __LINE__,                                          \
+        fmt,        \
         ##__VA_ARGS__)
 
 #define BGTASK_LOGD(fmt, ...) BGTASK_PRINT_LOG(DEBUG, Debug, fmt, ##__VA_ARGS__)
