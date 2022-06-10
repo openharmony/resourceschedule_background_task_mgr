@@ -41,15 +41,28 @@ ohos_systemtest("BgtaskDumpTest") {
   deps = [
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
+    "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits",
     "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "ability_base:want",
+    "ability_base:zuri",
+    "ability_runtime:ability_manager",
+    "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
+    "access_token:libaccesstoken_sdk",
+    "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "common_event_service:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "relational_store:native_rdb",
+    "resource_management:global_resmgr",
+    "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
+    "startup_l2:syspara",
     "utils_base:utils",
   ]
 }

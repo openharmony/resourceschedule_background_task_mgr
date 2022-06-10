@@ -171,15 +171,6 @@ void BackgroundTaskManager::ResetBackgroundTaskManagerProxy()
     backgroundTaskMgrProxy_ = nullptr;
 }
 
-ErrCode BackgroundTaskManager::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
-{
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
-    return backgroundTaskMgrProxy_->ShellDump(dumpOption, dumpInfo);
-}
-
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 

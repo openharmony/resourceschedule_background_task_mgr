@@ -97,15 +97,6 @@ public:
      */
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) override;
 
-    /**
-     * @brief Dump info of continous tasks or transient tasks.
-     *
-     * @param dumpOption Select continous tasks or transient tasks.
-     * @param dumpInfo Info of continous tasks or transient tasks.
-     * @return ERR_OK if success, else fail.
-     */
-    ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo) override;
-
 private:
     ErrCode InnerTransact(uint32_t code, MessageOption &flags, MessageParcel &data, MessageParcel &reply);
 

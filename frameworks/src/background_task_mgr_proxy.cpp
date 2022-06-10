@@ -287,38 +287,6 @@ ErrCode BackgroundTaskMgrProxy::GetTransientTaskApps(std::vector<std::shared_ptr
     return result;
 }
 
-ErrCode BackgroundTaskMgrProxy::ShellDump(const std::vector<std::string> &dumpOption,
-    std::vector<std::string> &dumpInfo)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option = {MessageOption::TF_SYNC};
-    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
-        BGTASK_LOGE("write interface token failed.");
-        return ERR_BGTASK_PARCELABLE_FAILED;
-    }
-
-    if (!data.WriteStringVector(dumpOption)) {
-        BGTASK_LOGE("write option failed.");
-        return ERR_BGTASK_PARCELABLE_FAILED;
-    }
-
-    ErrCode result = InnerTransact(SHELL_DUMP, option, data, reply);
-    if (result != ERR_OK) {
-        BGTASK_LOGE("fail: transact ErrCode=%{public}d", result);
-        return ERR_BGTASK_TRANSACT_FAILED;
-    }
-    if (!reply.ReadInt32(result)) {
-        BGTASK_LOGE("fail: read result failed.");
-        return ERR_BGTASK_PARCELABLE_FAILED;
-    }
-    if (!reply.ReadStringVector(&dumpInfo)) {
-        BGTASK_LOGE("read dumpInfo failed.");
-        return ERR_BGTASK_PARCELABLE_FAILED;
-    }
-    return result;
-}
-
 ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flags,
     MessageParcel &data, MessageParcel &reply)
 {
