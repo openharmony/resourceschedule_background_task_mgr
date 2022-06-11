@@ -36,13 +36,13 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
     std::u16string descriptor = BackgroundTaskSubscriberStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        BGTASK_LOGE("Local descriptor not match remote.");
+        BGTASK_LOGE("BackgroundTaskSubscriberStub Local descriptor not match remote.");
         return ERR_TRANSACTION_FAILED;
     }
 
     auto uid = IPCSkeleton::GetCallingUid();
     if (uid >= APP_FIRST_UID) {
-        BGTASK_LOGE("OnRemoteRequest failed, illegal calling uid %d.", uid);
+        BGTASK_LOGE("BackgroundTaskSubscriberStub OnRemoteRequest failed, illegal calling uid %d.", uid);
         return ERR_INVALID_DATA;
     }
 
@@ -92,7 +92,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnTransientTaskStart(MessageParcel& 
 {
     auto info = TransientTaskAppInfo::Unmarshalling(data);
     if (info == nullptr) {
-        BGTASK_LOGE("Read parcel failed.");
+        BGTASK_LOGE("HandleOnTransientTaskStart Read parcel failed.");
         return ERR_INVALID_DATA;
     }
     OnTransientTaskStart(info);
@@ -103,7 +103,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnTransientTaskEnd(MessageParcel& da
 {
     auto info = TransientTaskAppInfo::Unmarshalling(data);
     if (info == nullptr) {
-        BGTASK_LOGE("Read parcel failed.");
+        BGTASK_LOGE("HandleOnTransientTaskEnd Read parcel failed.");
         return ERR_INVALID_DATA;
     }
     OnTransientTaskEnd(info);
@@ -114,7 +114,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppTransientTaskStart(MessageParce
 {
     auto info = TransientTaskAppInfo::Unmarshalling(data);
     if (info == nullptr) {
-        BGTASK_LOGE("Read parcel failed.");
+        BGTASK_LOGE("HandleOnAppTransientTaskStart Read parcel failed.");
         return ERR_INVALID_DATA;
     }
     OnAppTransientTaskStart(info);
@@ -125,7 +125,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppTransientTaskEnd(MessageParcel&
 {
     auto info = TransientTaskAppInfo::Unmarshalling(data);
     if (info == nullptr) {
-        BGTASK_LOGE("Read parcel failed.");
+        BGTASK_LOGE("HandleOnAppTransientTaskEnd Read parcel failed.");
         return ERR_INVALID_DATA;
     }
     OnAppTransientTaskEnd(info);
@@ -134,11 +134,10 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppTransientTaskEnd(MessageParcel&
 
 ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskStart(MessageParcel &data)
 {
-    BGTASK_LOGI("begin");
     std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo
         = std::shared_ptr<ContinuousTaskCallbackInfo>(data.ReadParcelable<ContinuousTaskCallbackInfo>());
     if (!continuousTaskCallbackInfo) {
-        BGTASK_LOGE("ContinuousTaskCallbackInfo ReadParcelable failed");
+        BGTASK_LOGE("HandleOnContinuousTaskStart ContinuousTaskCallbackInfo ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
@@ -148,11 +147,10 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskStart(MessageParcel 
 
 ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskCancel(MessageParcel &data)
 {
-    BGTASK_LOGI("begin");
     std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo
         = std::shared_ptr<ContinuousTaskCallbackInfo>(data.ReadParcelable<ContinuousTaskCallbackInfo>());
     if (!continuousTaskCallbackInfo) {
-        BGTASK_LOGE("ContinuousTaskCallbackInfo ReadParcelable failed");
+        BGTASK_LOGE("HandleOnContinuousTaskCancel ContinuousTaskCallbackInfo ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 

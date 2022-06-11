@@ -161,7 +161,6 @@ napi_value Common::JSParaError(const napi_env &env, const napi_ref &callback)
 
 napi_value Common::GetU16StringValue(const napi_env &env, const napi_value &value, std::u16string &result)
 {
-    BGTASK_LOGI("GetU16StringValue start");
     napi_valuetype valuetype = napi_undefined;
 
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
@@ -172,7 +171,7 @@ napi_value Common::GetU16StringValue(const napi_env &env, const napi_value &valu
         NAPI_CALL(env, napi_get_value_string_utf8(env, value, str, STR_MAX_SIZE - 1, &strLen));
 
         result = Str8ToStr16((std::string)str);
-        BGTASK_LOGI("string result: %{public}s", Str16ToStr8(result).c_str());
+        BGTASK_LOGD("GetU16StringValue result: %{public}s", Str16ToStr8(result).c_str());
     } else {
         return nullptr;
     }
@@ -182,13 +181,12 @@ napi_value Common::GetU16StringValue(const napi_env &env, const napi_value &valu
 
 napi_value Common::GetInt32NumberValue(const napi_env &env, const napi_value &value, int32_t &result)
 {
-    BGTASK_LOGI("GetInt32NumberValue start ");
     napi_valuetype valuetype = napi_undefined;
 
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     NAPI_ASSERT(env, valuetype == napi_number, "Wrong argument type. Number or function expected.");
     napi_get_value_int32(env, value, &result);
-    BGTASK_LOGI("number result: %{public}d", result);
+    BGTASK_LOGD("GetInt32NumberValue result: %{public}d", result);
 
     return Common::NapiGetNull(env);
 }

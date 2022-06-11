@@ -132,7 +132,6 @@ void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
 
 bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::shared_ptr<DelaySuspendInfoEx>& delayInfo)
 {
-    BGTASK_LOGI("enter");
     lock_guard<mutex> lock(lock_);
     if (key == nullptr) {
         BGTASK_LOGE("Invalid key");
@@ -143,7 +142,7 @@ bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::share
     auto findBgDurationIt = pkgBgDurationMap_.find(key);
     if (findBgDurationIt != pkgBgDurationMap_.end()) {
         if (TimeProvider::GetCurrentTime() - findBgDurationIt->second > ALLOW_REQUEST_TIME_BG) {
-            BGTASK_LOGE("Request not allow after entering background for a valid duration, %{public}s",
+            BGTASK_LOGI("Request not allow after entering background for a valid duration, %{public}s",
                 key->ToString().c_str());
             return false;
         }
@@ -158,7 +157,7 @@ bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::share
 
     auto pkgInfo = pkgDelaySuspendInfoMap_[key];
     if (!pkgInfo->IsAllowRequest()) {
-        BGTASK_LOGE("Request not allow by its info");
+        BGTASK_LOGI("Request not allow by its info");
         return false;
     }
 

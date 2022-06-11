@@ -28,7 +28,7 @@ void SuspendController::RequestSuspendDelay(const std::shared_ptr<KeyInfo>& key)
     }
 
     // do delayed suspend
-    BGTASK_LOGI("Add delayed suspend app uid: %{public}d, name: %{public}s", key->GetUid(), key->GetPkg().c_str());
+    BGTASK_LOGD("Add delayed suspend app uid: %{public}d, name: %{public}s", key->GetUid(), key->GetPkg().c_str());
 }
 
 void SuspendController::CancelSuspendDelay(const std::shared_ptr<KeyInfo>& key)
@@ -38,7 +38,7 @@ void SuspendController::CancelSuspendDelay(const std::shared_ptr<KeyInfo>& key)
     }
 
     // cancel delayed suspend
-    BGTASK_LOGI("Remove delayed suspend app uid: %{public}d, name: %{public}s", key->GetUid(), key->GetPkg().c_str());
+    BGTASK_LOGD("Remove delayed suspend app uid: %{public}d, name: %{public}s", key->GetUid(), key->GetPkg().c_str());
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
