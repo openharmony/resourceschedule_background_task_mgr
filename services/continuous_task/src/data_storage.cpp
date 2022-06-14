@@ -65,7 +65,6 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
         BGTASK_LOGE("Get real path failed");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
-    BGTASK_LOGI("Refresh path %{public}s", realPath.c_str());
     fout.open(realPath, std::ios::out);
     if (!fout.is_open()) {
         BGTASK_LOGE("Open file failed.");
@@ -114,14 +113,13 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
             allRecord.emplace(it, record);
         }
     }
-    BGTASK_LOGI("end");
     return ERR_OK;
 }
 
 bool DataStorage::CreateNodeFile(const std::string &filePath)
 {
     if (access(filePath.c_str(), F_OK) == ERR_OK) {
-        BGTASK_LOGI("the file: %{public}s already exists.", TASK_RECORD_FILE_PATH);
+        BGTASK_LOGD("the file: %{public}s already exists.", TASK_RECORD_FILE_PATH);
         return true;
     }
     int32_t fd = open(filePath.c_str(), O_CREAT|O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);

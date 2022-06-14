@@ -34,8 +34,6 @@ SystemEventObserver::SystemEventObserver(const EventFwk::CommonEventSubscribeInf
 
 bool SystemEventObserver::Subscribe()
 {
-    BGTASK_LOGI("Subscribe called");
-
     if (!EventFwk::CommonEventManager::SubscribeCommonEvent(shared_from_this())) {
         BGTASK_LOGI("SubscribeCommonEvent occur exception.");
         return false;
@@ -45,7 +43,6 @@ bool SystemEventObserver::Subscribe()
 
 bool SystemEventObserver::Unsubscribe()
 {
-    BGTASK_LOGI("UnSubscribe called");
     if (!EventFwk::CommonEventManager::UnSubscribeCommonEvent(shared_from_this())) {
         BGTASK_LOGI("UnsubscribeCommonEvent occur exception.");
         return false;
@@ -55,19 +52,16 @@ bool SystemEventObserver::Unsubscribe()
 
 void SystemEventObserver::SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler)
 {
-    BGTASK_LOGI("set app state observer handler");
     handler_ = handler;
 }
 
 void SystemEventObserver::SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr)
 {
-    BGTASK_LOGI("set app state oberver bgContinuousTaskMgr");
     bgContinuousTaskMgr_ = bgContinuousTaskMgr;
 }
 
 void SystemEventObserver::OnReceiveEvent(const EventFwk::CommonEventData &eventData)
 {
-    BGTASK_LOGI("OnReceiveEvent enter");
     auto handler = handler_.lock();
     if (!handler) {
         BGTASK_LOGE("handler is null");

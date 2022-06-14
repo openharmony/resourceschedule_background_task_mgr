@@ -187,8 +187,6 @@ void BackgroundTaskMgrService::DumpUsage(std::string &result)
     "    -T                                   transient task commands:\n"
     "        BATTARY_LOW                          battary low mode\n"
     "        BATTARY_OKAY                         battary okay mode\n"
-    "        SCREEN_ON                            sreen on mode\n"
-    "        SCREEN_OFF                           sreen off mode\n"
     "        DUMP_CANCEL                          cancel dump mode\n"
     "        All                                  list all request\n"
     "    -C                                   continuous task commands:\n"

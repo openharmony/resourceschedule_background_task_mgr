@@ -45,18 +45,16 @@ std::string BundleManagerHelper::GetClientBundleName(int32_t uid)
     if (bundleMgr_ != nullptr) {
         bundleMgr_->GetBundleNameForUid(uid, bundle);
     }
-    BGTASK_LOGI("get client Bundle Name: %{public}s", bundle.c_str());
+    BGTASK_LOGD("get client Bundle Name: %{public}s", bundle.c_str());
     return bundle;
 }
 
-bool BundleManagerHelper::CheckPermission(const std::string &bundleName,
-    const std::string &permission, int32_t userId)
+bool BundleManagerHelper::CheckPermission(const std::string &permission)
 {
     Security::AccessToken::AccessTokenID callerToken = IPCSkeleton::GetCallingTokenID();
     int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(callerToken, permission);
     if (ret != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
-        BGTASK_LOGE("VerifyPermission userId %{public}d, bundleName %{public}s, permission %{public}s failed",
-            userId, bundleName.c_str(), permission.c_str());
+        BGTASK_LOGE("CheckPermission: %{public}s failed", permission.c_str());
         return false;
     }
     return true;

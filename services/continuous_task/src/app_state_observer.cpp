@@ -45,7 +45,7 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     if ((int32_t) AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED != abilityStateData.abilityState) {
         return;
     }
-    BGTASK_LOGI("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d",
+    BGTASK_LOGD("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d",
         abilityStateData.uid, abilityStateData.abilityName.c_str(), abilityStateData.abilityState);
     auto handler = handler_.lock();
     if (!handler) {
@@ -65,7 +65,7 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
 {
-    BGTASK_LOGI("process died, pid : %{public}d", processData.pid);
+    BGTASK_LOGD("process died, pid : %{public}d", processData.pid);
     auto handler = handler_.lock();
     if (!handler) {
         BGTASK_LOGE("handler is null");
@@ -93,7 +93,6 @@ void AppStateObserver::SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuous
 
 bool AppStateObserver::Subscribe()
 {
-    BGTASK_LOGI("Subscribe called");
     std::lock_guard<std::mutex> lock(mutex_);
 
     if (!Connect()) {
@@ -105,7 +104,6 @@ bool AppStateObserver::Subscribe()
 
 bool AppStateObserver::Unsubscribe()
 {
-    BGTASK_LOGI("UnSubscribe called");
     std::lock_guard<std::mutex> lock(mutex_);
     if (!Connect()) {
         return false;

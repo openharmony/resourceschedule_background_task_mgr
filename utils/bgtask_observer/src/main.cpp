@@ -32,7 +32,8 @@ void CycleTest()
         == OHOS::ERR_OK) {
         std::cout << "register succeed in cycletest" << std::endl;
     }
-    while (true) {
+    char cmd[MAX_CHAR_NUMS];
+    while (std::cin >> cmd) {
         if (bgtaskObserver->isRemoteDied_.load()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_TIME));
             if (OHOS::BackgroundTaskMgr::BackgroundTaskMgrHelper::SubscribeBackgroundTask(*bgtaskObserver)
@@ -40,6 +41,9 @@ void CycleTest()
                 std::cout << "try to subscribe again succeed" << std::endl;
                 bgtaskObserver->isRemoteDied_.store(false);
             }
+        }
+        if (strlen(cmd) == 1 && cmd[0] == 'q') {
+            exit(0);
         }
     }
 }
