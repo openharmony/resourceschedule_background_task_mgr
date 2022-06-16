@@ -84,8 +84,6 @@ private:
     bool DumpAllRequestId(std::vector<std::string> &dumpInfo);
     void SendLowBatteryEvent(std::vector<std::string> &dumpInfo);
     void SendOkayBatteryEvent(std::vector<std::string> &dumpInfo);
-    void SendScreenOnEvent(std::vector<std::string> &dumpInfo);
-    void SendScreenOffEvent(std::vector<std::string> &dumpInfo);
     void InitNecessaryState();
 
     std::atomic<bool> isReady_ {false};

@@ -49,7 +49,6 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
 void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::Notification> &notification,
     const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap, int deleteReason)
 {
-    BGTASK_LOGI("notification cancel event triggered");
     if (notification == nullptr) {
         BGTASK_LOGW("notification param is null");
         return;
@@ -79,7 +78,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         BGTASK_LOGE("notification extraInfo is null");
         return;
     }
-    BGTASK_LOGI("stop continuous task by user, the label is : %{public}s", notificationLabel.c_str());
+    BGTASK_LOGD("stop continuous task by user, the label is : %{public}s", notificationLabel.c_str());
 
     std::string abilityName = AAFwk::String::Unbox(AAFwk::IString::Query(extraInfo->GetParam("abilityName")));
     std::string taskInfoMapKey = labelSplits[LABEL_APP_UID_POS] + LABEL_SPLITER + abilityName;

@@ -42,8 +42,6 @@ namespace {
 static const std::string All_BGTASKMGR_OPTION = "All";
 static const std::string LOW_BATTARY_OPTION = "BATTARY_LOW";
 static const std::string OKAY_BATTARY_OPTION = "BATTARY_OKAY";
-static const std::string SCREEN_ON_OPTION = "SCREEN_ON";
-static const std::string SCREEN_OFF_OPTION = "SCREEN_OFF";
 static const std::string CANCEL_DUMP_OPTION = "DUMP_CANCEL";
 
 constexpr int32_t BG_INVALID_REMAIN_TIME = -1;
@@ -531,14 +529,6 @@ ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption
         deviceInfoManeger_->SetDump(true);
         SendOkayBatteryEvent(dumpInfo);
         result = true;
-    } else if (dumpOption[1] == SCREEN_ON_OPTION) {
-        deviceInfoManeger_->SetDump(true);
-        SendScreenOnEvent(dumpInfo);
-        result = true;
-    } else if (dumpOption[1] == SCREEN_OFF_OPTION) {
-        deviceInfoManeger_->SetDump(true);
-        SendScreenOffEvent(dumpInfo);
-        result = true;
     } else if (dumpOption[1] == CANCEL_DUMP_OPTION) {
         deviceInfoManeger_->SetDump(false);
         result = true;
@@ -547,42 +537,6 @@ ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption
     }
 
     return result ? ERR_OK : ERR_BGTASK_NOT_ALLOWED;
-}
-
-void BgTransientTaskMgr::SendScreenOnEvent(std::vector<std::string> &dumpInfo)
-{
-    AAFwk::Want want;
-    want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON);
-    EventFwk::CommonEventData data;
-    data.SetWant(want);
-    EventFwk::CommonEventPublishInfo publishInfo;
-    publishInfo.SetOrdered(true);
-
-    data.SetCode(0);
-    data.SetData("dump");
-    if (EventFwk::CommonEventManager::PublishCommonEvent(data, publishInfo)) {
-        dumpInfo.push_back("Publish COMMON_EVENT_SCREEN_ON succeed!\n");
-    } else {
-        dumpInfo.push_back("Publish COMMON_EVENT_SCREEN_ON failed!\n");
-    }
-}
-
-void BgTransientTaskMgr::SendScreenOffEvent(std::vector<std::string> &dumpInfo)
-{
-    AAFwk::Want want;
-    want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF);
-    EventFwk::CommonEventData data;
-    data.SetWant(want);
-    EventFwk::CommonEventPublishInfo publishInfo;
-    publishInfo.SetOrdered(true);
-
-    data.SetCode(0);
-    data.SetData("dump");
-    if (EventFwk::CommonEventManager::PublishCommonEvent(data, publishInfo)) {
-        dumpInfo.push_back("Publish COMMON_EVENT_SCREEN_OFF succeed!\n");
-    } else {
-        dumpInfo.push_back("Publish COMMON_EVENT_SCREEN_OFF failed!\n");
-    }
 }
 
 void BgTransientTaskMgr::SendLowBatteryEvent(std::vector<std::string> &dumpInfo)
