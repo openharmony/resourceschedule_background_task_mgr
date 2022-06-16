@@ -48,7 +48,6 @@
           "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service",
           "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_sa_profile",
           "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_service_init",
-          "//foundation/resourceschedule/background_task_mgr/utils:bgtaskmgr_dump",
           "//foundation/resourceschedule/background_task_mgr/resources:bgtaskmgr_resources"
         ],
         "inner_kits": [
