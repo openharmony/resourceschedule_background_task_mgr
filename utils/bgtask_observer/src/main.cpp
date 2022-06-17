@@ -25,25 +25,6 @@ namespace {
 static constexpr int32_t DELAY_TIME = 1000;
 static constexpr int32_t MAX_CHAR_NUMS = 100;
 
-void CycleTest()
-{
-    auto bgtaskObserver = std::make_shared<OHOS::BackgroundTaskMgr::BgTaskObserver>();
-    if (OHOS::BackgroundTaskMgr::BackgroundTaskMgrHelper::SubscribeBackgroundTask(*bgtaskObserver)
-        == OHOS::ERR_OK) {
-        std::cout << "register succeed in cycletest" << std::endl;
-    }
-    while (true) {
-        if (bgtaskObserver->isRemoteDied_.load()) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_TIME));
-            if (OHOS::BackgroundTaskMgr::BackgroundTaskMgrHelper::SubscribeBackgroundTask(*bgtaskObserver)
-                == OHOS::ERR_OK) {
-                std::cout << "try to subscribe again succeed" << std::endl;
-                bgtaskObserver->isRemoteDied_.store(false);
-            }
-        }
-    }
-}
-
 void PatchTest(int32_t nums)
 {
     std::list<std::shared_ptr<OHOS::BackgroundTaskMgr::BgTaskObserver>> observerList;
@@ -93,9 +74,6 @@ int main(int argc, char *argv[])
         }
         if (commandStr == "patchtest") {
             PatchTest(nums);
-        }
-        if (commandStr == "cycletest") {
-            CycleTest();
         }
     }
     return 0;
