@@ -16,6 +16,7 @@
 #include "bg_continuous_task_napi_module.h"
 
 #include "ability.h"
+#include "hitrace_meter.h"
 #include "want_agent.h"
 #include "napi_base_context.h"
 
@@ -34,6 +35,8 @@ static constexpr uint32_t MAX_STOP_BG_RUNNING_PARAMS = 2;
 static constexpr uint32_t CALLBACK_RESULT_PARAMS_NUM = 2;
 static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
+static constexpr int32_t START_CONTINUOUS_TASK_TASKID = 1;
+static constexpr int32_t STOP_CONTINUOUS_TASK_TASKID = 2;
 }
 
 struct AsyncCallbackInfo : public AsyncWorkData {
@@ -175,7 +178,8 @@ void CallbackCompletedCB(napi_env env, napi_status status, void *data)
     NAPI_CALL_RETURN_VOID(env,
         napi_call_function(env, undefined, callback, CALLBACK_RESULT_PARAMS_NUM, result, &callResult));
 
-    BGTASK_LOGI("end");
+    FinishAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StartBackgroundRunning", START_CONTINUOUS_TASK_TASKID);
+    FinishAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StopBackgroundRunning", STOP_CONTINUOUS_TASK_TASKID);
 }
 
 void PromiseCompletedCB(napi_env env, napi_status status, void *data)
@@ -192,7 +196,8 @@ void PromiseCompletedCB(napi_env env, napi_status status, void *data)
         NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
     }
 
-    BGTASK_LOGI("end");
+    FinishAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StartBackgroundRunning", START_CONTINUOUS_TASK_TASKID);
+    FinishAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StopBackgroundRunning", STOP_CONTINUOUS_TASK_TASKID);
 }
 
 napi_value StartBackgroundRunningAsync(
@@ -277,10 +282,11 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value, AbilityRun
 
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
 {
-    BGTASK_LOGI("begin");
+    StartAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StartBackgroundRunning", START_CONTINUOUS_TASK_TASKID);
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo == nullpter");
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StartBackgroundRunning", START_CONTINUOUS_TASK_TASKID);
         return WrapVoidToJS(env);
     }
     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
@@ -290,6 +296,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc > MAX_START_BG_RUNNING_PARAMS) {
         BGTASK_LOGE("wrong param nums");
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StartBackgroundRunning", START_CONTINUOUS_TASK_TASKID);
         return nullptr;
     }
 
@@ -326,8 +333,8 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
             asyncCallbackInfo = nullptr;
         }
         ret = WrapVoidToJS(env);
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StartBackgroundRunning", START_CONTINUOUS_TASK_TASKID);
     }
-    BGTASK_LOGI("end");
     callbackPtr.release();
     return ret;
 }
@@ -420,9 +427,10 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
 
 napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
 {
-    BGTASK_LOGI("begin");
+    StartAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StopBackgroundRunning", STOP_CONTINUOUS_TASK_TASKID);
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StopBackgroundRunning", STOP_CONTINUOUS_TASK_TASKID);
         BGTASK_LOGE("asyncCallbackInfo is nullpter");
         return WrapVoidToJS(env);
     }
@@ -434,6 +442,7 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc > MAX_STOP_BG_RUNNING_PARAMS) {
         BGTASK_LOGE("wrong param nums");
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StopBackgroundRunning", STOP_CONTINUOUS_TASK_TASKID);
         return nullptr;
     }
 
@@ -457,8 +466,8 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
             asyncCallbackInfo = nullptr;
         }
         ret = WrapVoidToJS(env);
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "NAPI::StopBackgroundRunning", STOP_CONTINUOUS_TASK_TASKID);
     }
-    BGTASK_LOGI("end");
     callbackPtr.release();
     return ret;
 }
