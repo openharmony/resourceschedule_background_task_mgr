@@ -30,7 +30,7 @@ public:
     DISALLOW_COPY_AND_MOVE(BackgroundTaskMgrProxy);
 
     /**
-     * @brief Reuqest delay suspend for background task.
+     * @brief Request delay suspend for background task.
      *
      * @param reason Reason of requesting delay suspend.
      * @param callback Called back to notify the application.
