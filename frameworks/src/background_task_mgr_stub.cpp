@@ -15,10 +15,10 @@
 
 #include "background_task_mgr_stub.h"
 
-#include "hitrace_meter.h"
 #include <ipc_skeleton.h>
 #include <string_ex.h>
 
+#include "hitrace_meter.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "bgtaskmgr_log_wrapper.h"
 #include "delay_suspend_info.h"
