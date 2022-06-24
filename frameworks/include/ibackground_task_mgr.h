@@ -38,7 +38,7 @@ public:
     DISALLOW_COPY_AND_MOVE(IBackgroundTaskMgr);
 
     /**
-     * @brief Reuqest delay suspend for background task.
+     * @brief Request delay suspend for background task.
      *
      * @param reason Reason of requesting delay suspend.
      * @param delayInfo Info of background which request delay suspend.

@@ -78,7 +78,7 @@ napi_value BackgroundModeInit(napi_env env, napi_value exports)
 static napi_value Init(napi_env env, napi_value exports)
 {
     /*
-     * Propertise define
+     * Properties define
      */
     BackgroundTaskMgrInit(env, exports);
     BackgroundModeInit(env, exports);
