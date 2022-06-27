@@ -316,7 +316,7 @@ int32_t BgContinuousTaskMgr::GetBgTaskUid()
 }
 
 bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId,
-std::string &bundleName, const std::string &appName)
+    std::string &bundleName, const std::string &appName)
 {
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
