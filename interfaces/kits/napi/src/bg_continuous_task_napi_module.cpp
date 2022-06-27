@@ -16,8 +16,10 @@
 #include "bg_continuous_task_napi_module.h"
 
 #include "ability.h"
-#include "want_agent.h"
+#include "iservice_registry.h"
 #include "napi_base_context.h"
+#include "system_ability_definition.h"
+#include "want_agent.h"
 
 #include "background_mode.h"
 #include "background_task_mgr_helper.h"
@@ -103,6 +105,36 @@ napi_value GetAbilityContext(const napi_env &env, const napi_value &value,
     }
 }
 
+std::string GetMainAbilityLabel(const std::string &bundleName)
+{
+    sptr<ISystemAbilityManager> systemAbilityManager =
+        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityManager == nullptr) {
+        BGTASK_LOGE("get SystemAbilityManager failed");
+        return "";
+    }
+
+    sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    if (remoteObject == nullptr) {
+        BGTASK_LOGE("get Bundle Manager object failed");
+        return "";
+    }
+
+    auto bundleMgr = iface_cast<AppExecFwk::IBundleMgr>(remoteObject);
+    if (bundleMgr == nullptr) {
+        BGTASK_LOGE("get Bundle Manager Proxy failed");
+        return "";
+    }
+
+    AAFwk::Want want;
+    want.SetAction("action.system.home");
+    want.AddEntity("entity.system.home");
+    want.SetElementName("", bundleName, "", "");
+    AppExecFwk::AbilityInfo abilityInfo;
+    bundleMgr->QueryAbilityInfo(want, abilityInfo);
+    return bundleMgr->GetAbilityLabel(bundleName, abilityInfo.name);
+}
+
 void StartBackgroundRunningExecuteCB(napi_env env, void *data)
 {
     BGTASK_LOGI("begin");
@@ -146,8 +178,15 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         return;
     }
 
+    std::string appName = GetMainAbilityLabel(info->bundleName);
+    if (appName.empty()) {
+        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        return;
+    }
+
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
-        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*asyncCallbackInfo->wantAgent), info->name, token);
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*asyncCallbackInfo->wantAgent),
+        info->name, token, appName);
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
 
     BGTASK_LOGI("end");

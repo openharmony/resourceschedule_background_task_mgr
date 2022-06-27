@@ -34,10 +34,10 @@ const char *ContinuousTaskModeName[10] = {
 };
 
 ContinuousTaskRecord::ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
-    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent,
-    int32_t userId, int32_t uid, pid_t pid, uint32_t bgModeId, bool isNewApi)
-    : bundleName_(bundleName), abilityName_(abilityName), wantAgent_(wantAgent),
-    userId_(userId), uid_(uid), pid_(pid), bgModeId_(bgModeId), isNewApi_(isNewApi) {}
+    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent, int32_t userId, int32_t uid,
+    pid_t pid, uint32_t bgModeId, bool isNewApi, const std::string &appName)
+    : bundleName_(bundleName), abilityName_(abilityName), wantAgent_(wantAgent), userId_(userId),
+    uid_(uid), pid_(pid), bgModeId_(bgModeId), isNewApi_(isNewApi), appName_(appName) {}
 
 std::string ContinuousTaskRecord::GetBundleName() const
 {

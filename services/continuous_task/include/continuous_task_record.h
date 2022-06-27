@@ -36,8 +36,8 @@ class ContinuousTaskRecord {
 public:
     ContinuousTaskRecord() = default;
     ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
-        const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent,
-        int32_t userId, int32_t uid, pid_t pid, uint32_t bgModeId, bool isNewApi);
+        const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent, int32_t userId,
+        int32_t uid, pid_t pid, uint32_t bgModeId, bool isNewApi, const std::string &appName);
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
     bool IsNewApi() const;
@@ -61,6 +61,7 @@ private:
     bool isNewApi_ {false};
     std::string notificationLabel_ {""};
     std::shared_ptr<WantAgentInfo> wantAgentInfo_ {nullptr};
+    std::string appName_ {""};
 
     friend class BgContinuousTaskMgr;
 };
