@@ -18,6 +18,7 @@
 #include <ipc_skeleton.h>
 #include <string_ex.h>
 
+#include "hitrace_meter.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "bgtaskmgr_log_wrapper.h"
 #include "delay_suspend_info.h"
@@ -134,31 +135,39 @@ ErrCode BackgroundTaskMgrStub::HandleGetRemainingDelayTime(MessageParcel& data, 
 
 ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data, MessageParcel &reply)
 {
+    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleStartBackgroundRunning");
     sptr<ContinuousTaskParam> taskParam = data.ReadParcelable<ContinuousTaskParam>();
     if (taskParam == nullptr) {
         BGTASK_LOGE("ContinuousTaskParam ReadParcelable failed");
+        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     ErrCode result = StartBackgroundRunning(taskParam);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleStopBackgroundRunning write result failed, ErrCode=%{public}d", result);
+        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
+    FinishTrace(HITRACE_TAG_OHOS);
     return ERR_OK;
 }
 
 ErrCode BackgroundTaskMgrStub::HandleStopBackgroundRunning(MessageParcel &data, MessageParcel &reply)
 {
+    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleStopBackgroundRunning");
     std::string abilityName;
     if (!data.ReadString(abilityName)) {
+        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     sptr<IRemoteObject> abilityToken = data.ReadRemoteObject();
     ErrCode result = StopBackgroundRunning(abilityName, abilityToken);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleStopBackgroundRunning write result failed, ErrCode=%{public}d", result);
+        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
+    FinishTrace(HITRACE_TAG_OHOS);
     return ERR_OK;
 }
 

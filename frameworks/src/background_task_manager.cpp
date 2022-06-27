@@ -15,6 +15,7 @@
 
 #include "background_task_manager.h"
 
+#include "hitrace_meter.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 
@@ -64,8 +65,10 @@ ErrCode BackgroundTaskManager::GetRemainingDelayTime(int32_t requestId, int32_t 
 
 ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam)
 {
+    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestStartBackgroundRunning");
     if (!GetBackgroundTaskManagerProxy()) {
         BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_SERVICE_NOT_CONNECTED;
     }
 
@@ -74,17 +77,24 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTas
         BGTASK_LOGE("Failed to create continuous task param");
         return ERR_BGTASK_NO_MEMORY;
     }
-    return backgroundTaskMgrProxy_->StartBackgroundRunning(taskParamPtr);
+    ErrCode ret = backgroundTaskMgrProxy_->StartBackgroundRunning(taskParamPtr);
+    FinishTrace(HITRACE_TAG_OHOS);
+    return ret;
 }
 
 ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken)
 {
+    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestStopBackgroundRunning");
     if (!GetBackgroundTaskManagerProxy()) {
         BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_SERVICE_NOT_CONNECTED;
     }
-    return backgroundTaskMgrProxy_->StopBackgroundRunning(abilityName, abilityToken);
+
+    ErrCode ret = backgroundTaskMgrProxy_->StopBackgroundRunning(abilityName, abilityToken);
+    FinishTrace(HITRACE_TAG_OHOS);
+    return ret;
 }
 
 ErrCode BackgroundTaskManager::SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)

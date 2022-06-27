@@ -23,6 +23,7 @@
 #include "common_event_support.h"
 #include "common_event_manager.h"
 #include "errors.h"
+#include "hitrace_meter.h"
 #include "if_system_ability_manager.h"
 #include "iremote_object.h"
 #include "iservice_registry.h"
@@ -482,9 +483,11 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
         }
     }
 
+    StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StartBackgroundRunningInner");
     handler_->PostSyncTask([this, continuousTaskRecord, &result]() mutable {
         result = this->StartBackgroundRunningInner(continuousTaskRecord);
         }, AppExecFwk::EventQueue::Priority::HIGH);
+    FinishTrace(HITRACE_TAG_OHOS);
 
     return result;
 }
@@ -619,9 +622,11 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityNam
 
     ErrCode result = ERR_OK;
 
+    StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StopBackgroundRunningInner");
     handler_->PostSyncTask([this, callingUid, abilityName, &result]() {
         result = this->StopBackgroundRunningInner(callingUid, abilityName);
         }, AppExecFwk::EventQueue::Priority::HIGH);
+    FinishTrace(HITRACE_TAG_OHOS);
 
     return result;
 }
