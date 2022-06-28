@@ -526,7 +526,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     return ERR_OK;
 }
 
-int32_t GetBgModeNameIndex(uint32_t bgModeId, bool isNewApi)
+uint32_t GetBgModeNameIndex(uint32_t bgModeId, bool isNewApi)
 {
     if (!isNewApi) {
         return BGMODE_NUMS - 1;
@@ -542,7 +542,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
         = std::make_shared<Notification::NotificationNormalContent>();
 
     std::string notificationText {""};
-    int32_t index = GetBgModeNameIndex(continuousTaskRecord->GetBgModeId(), continuousTaskRecord->isNewApi_);
+    uint32_t index = GetBgModeNameIndex(continuousTaskRecord->GetBgModeId(), continuousTaskRecord->isNewApi_);
     if (index >= 0 && index < BGMODE_NUMS) {
         notificationText = continuousTaskText_.at(index);
     }
