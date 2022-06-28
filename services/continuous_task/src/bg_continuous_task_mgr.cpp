@@ -442,9 +442,17 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
-        taskParam->abilityName_, taskParam->wantAgent_, userId, callingUid, callingPid,
-        taskParam->bgModeId_, taskParam->isNewApi_, taskParam->appName_);
+
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->bundleName_ = bundleName;
+    continuousTaskRecord->abilityName_ = taskParam->abilityName_;
+    continuousTaskRecord->wantAgent_ = taskParam->wantAgent_;
+    continuousTaskRecord->userId_ = userId;
+    continuousTaskRecord->uid_ = callingUid;
+    continuousTaskRecord->pid_ = callingPid;
+    continuousTaskRecord->bgModeId_ = taskParam->bgModeId_;
+    continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
+    continuousTaskRecord->appName_ = taskParam->appName_;
 
     if (taskParam->wantAgent_ != nullptr && taskParam->wantAgent_->GetPendingWant() != nullptr) {
         auto target = taskParam->wantAgent_->GetPendingWant()->GetTarget();

@@ -35,9 +35,6 @@ struct WantAgentInfo {
 class ContinuousTaskRecord {
 public:
     ContinuousTaskRecord() = default;
-    ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
-        const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent, int32_t userId,
-        int32_t uid, pid_t pid, uint32_t bgModeId, bool isNewApi, const std::string &appName);
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
     bool IsNewApi() const;
