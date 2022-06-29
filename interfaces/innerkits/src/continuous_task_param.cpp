@@ -43,6 +43,11 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
         BGTASK_LOGE("Failed to read ability name");
         return false;
     }
+
+    if (!parcel.ReadString(appName_)) {
+        BGTASK_LOGE("Failed to read app name");
+        return false;
+    }
     return true;
 }
 
@@ -82,6 +87,10 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
 
     if (!parcel.WriteString(abilityName_)) {
         BGTASK_LOGE("Failed to write abilityName");
+        return false;
+    }
+    if (!parcel.WriteString(appName_)) {
+        BGTASK_LOGE("Failed to write appName");
         return false;
     }
     return true;

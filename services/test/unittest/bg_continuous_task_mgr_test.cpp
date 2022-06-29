@@ -88,6 +88,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
+    taskParam->appName_ = "Entry";
     taskParam->isNewApi_ = true;
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_PARAM);
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
@@ -115,6 +116,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
+    taskParam->appName_ = "Entry";
     taskParam->isNewApi_ = false;
     taskParam->bgModeId_ = 0;
     taskParam->abilityName_ = "";
@@ -133,6 +135,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
 {
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
+    taskParam->appName_ = "Entry";
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     taskParam->abilityName_ = "ability1";
     taskParam->bgModeId_ = 1;

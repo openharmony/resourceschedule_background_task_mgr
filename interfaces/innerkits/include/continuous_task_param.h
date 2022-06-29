@@ -28,13 +28,14 @@ struct ContinuousTaskParam : public Parcelable {
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
     std::string abilityName_ {""};
     sptr<IRemoteObject> abilityToken_ {nullptr};
+    std::string appName_ {""};
 
     ContinuousTaskParam() = default;
     ContinuousTaskParam(bool isNewApi, uint32_t bgModeId,
         const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent, const std::string abilityName,
-        const sptr<IRemoteObject> abilityToken)
+        const sptr<IRemoteObject> abilityToken, const std::string &appName)
         : isNewApi_(isNewApi), bgModeId_(bgModeId), wantAgent_(wantAgent),
-        abilityName_(abilityName), abilityToken_(abilityToken) {}
+        abilityName_(abilityName), abilityToken_(abilityToken), appName_(appName) {}
 
     bool ReadFromParcel(Parcel &parcel);
     bool Marshalling(Parcel &parcel) const override;

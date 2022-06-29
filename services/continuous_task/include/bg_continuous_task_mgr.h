@@ -92,7 +92,7 @@ private:
     bool RegisterSysCommEventListener();
     bool RegisterAppStateObserver();
     bool GetNotificationPrompt();
-    bool SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName);
+    bool SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName, const std::string &appName);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);

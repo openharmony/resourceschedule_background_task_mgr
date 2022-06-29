@@ -316,7 +316,8 @@ int32_t BgContinuousTaskMgr::GetBgTaskUid()
     return bgTaskUid_;
 }
 
-bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName)
+bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId,
+    std::string &bundleName, const std::string &appName)
 {
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
@@ -326,8 +327,8 @@ bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId, std::
     }
 
     CachedBundleInfo cachedBundleInfo = CachedBundleInfo();
-    if (AddAbilityBgModeInfos(bundleInfo, cachedBundleInfo)
-        && AddAppNameInfos(bundleInfo, cachedBundleInfo)) {
+    cachedBundleInfo.appName_ = appName;
+    if (AddAbilityBgModeInfos(bundleInfo, cachedBundleInfo)) {
         cachedBundleInfos_.emplace(uid, cachedBundleInfo);
         return true;
     }
@@ -348,32 +349,6 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
     if (cachedBundleInfo.abilityBgMode_.empty()) {
         return false;
     }
-    return true;
-}
-
-bool BgContinuousTaskMgr::AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo,
-    CachedBundleInfo &cachedBundleInfo)
-{
-    std::shared_ptr<Global::Resource::ResourceManager> resourceManager(Global::Resource::CreateResourceManager());
-    if (resourceManager == nullptr) {
-        BGTASK_LOGE("resourceManager init failed!");
-        return false;
-    }
-    int32_t labelId = bundleInfo.applicationInfo.labelId;
-    std::string bundleName = bundleInfo.name;
-    std::string appName {""};
-    for (auto resPath = bundleInfo.moduleResPaths.begin(); resPath != bundleInfo.moduleResPaths.end(); resPath++) {
-        if (resPath->empty()) {
-            continue;
-        }
-        if (!resourceManager->AddResource(resPath->c_str())) {
-            BGTASK_LOGE("resourceManager add %{public}s resource path failed!", bundleInfo.name.c_str());
-        }
-    }
-    resourceManager->GetStringById(labelId, appName);
-    appName = appName.empty() ? bundleInfo.applicationInfo.label : appName;
-    BGTASK_LOGD("get app display info, labelId: %{public}d, appname: %{public}s", labelId, appName.c_str());
-    cachedBundleInfo.appName_ = appName;
     return true;
 }
 
@@ -468,9 +443,17 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
-        taskParam->abilityName_, taskParam->wantAgent_, userId, callingUid, callingPid,
-        taskParam->bgModeId_, taskParam->isNewApi_);
+
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->bundleName_ = bundleName;
+    continuousTaskRecord->abilityName_ = taskParam->abilityName_;
+    continuousTaskRecord->wantAgent_ = taskParam->wantAgent_;
+    continuousTaskRecord->userId_ = userId;
+    continuousTaskRecord->uid_ = callingUid;
+    continuousTaskRecord->pid_ = callingPid;
+    continuousTaskRecord->bgModeId_ = taskParam->bgModeId_;
+    continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
+    continuousTaskRecord->appName_ = taskParam->appName_;
 
     if (taskParam->wantAgent_ != nullptr && taskParam->wantAgent_->GetPendingWant() != nullptr) {
         auto target = taskParam->wantAgent_->GetPendingWant()->GetTarget();
@@ -503,7 +486,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
 
     if (cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
         SetCachedBundleInfo(continuousTaskRecord->uid_, continuousTaskRecord->userId_,
-            continuousTaskRecord->bundleName_);
+            continuousTaskRecord->bundleName_, continuousTaskRecord->appName_);
     }
 
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_,
