@@ -84,6 +84,14 @@ public:
      */
     virtual void OnContinuousTaskStop(
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) = 0;
+    
+    /**
+     * Called back when the app does not have continuous task.
+     *
+     * @param uid App uid.
+     **/
+    virtual void OnAppContinuousTaskStop(int32_t uid) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskSubscriber");
 
@@ -97,6 +105,7 @@ protected:
         ON_APP_TRANSIENT_TASK_END,
         ON_CONTINUOUS_TASK_START,
         ON_CONTINUOUS_TASK_STOP,
+        ON_APP_CONTINUOUS_TASK_STOP,
     };
 };
 }  // namespace BackgroundTaskMgr

@@ -283,6 +283,39 @@ ErrCode BackgroundTaskMgrProxy::GetTransientTaskApps(std::vector<std::shared_ptr
     return result;
 }
 
+ErrCode BackgroundTaskMgrProxy::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        BGTASK_LOGE("GetContinuousTaskApps write descriptor failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    ErrCode result = InnerTransact(GET_CONTINUOUS_TASK_APPS, option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("GetContinuousTaskApps fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("GetContinuousTaskApps fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    int32_t infoSize = reply.ReadInt32();
+    for (int32_t i = 0; i < infoSize; i++) {
+        auto info = ContinuousTaskCallbackInfo::Unmarshalling(reply);
+        if (!info) {
+            BGTASK_LOGE("GetContinuousTaskApps Read Parcelable infos failed.");
+            return ERR_INVALID_VALUE;
+        }
+        list.emplace_back(info);
+    }
+
+    return result;
+}
+
 ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flags,
     MessageParcel &data, MessageParcel &reply)
 {

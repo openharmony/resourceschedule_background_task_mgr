@@ -53,6 +53,9 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::GET_TRANSIENT_TASK_APPS,
             std::bind(&BackgroundTaskMgrStub::HandleGetTransientTaskApps,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+        {BackgroundTaskMgrStub::GET_CONTINUOUS_TASK_APPS,
+            std::bind(&BackgroundTaskMgrStub::HandleGetContinuousTaskApps,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
 };
 
 ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
@@ -212,6 +215,25 @@ ErrCode BackgroundTaskMgrStub::HandleGetTransientTaskApps(MessageParcel& data, M
     }
     reply.WriteInt32(appinfos.size());
     for (auto &info : appinfos) {
+        if (info == nullptr) {
+            return ERR_BGTASK_INVALID_PARAM;
+        }
+        if (!info->Marshalling(reply)) {
+            return ERR_BGTASK_PARCELABLE_FAILED;
+        }
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleGetContinuousTaskApps(MessageParcel& data, MessageParcel& reply)
+{
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> appInfos;
+    ErrCode result = GetContinuousTaskApps(appInfos);
+    if (!reply.WriteInt32(result)) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    reply.WriteInt32(appInfos.size());
+    for (auto &info : appInfos) {
         if (info == nullptr) {
             return ERR_BGTASK_INVALID_PARAM;
         }
