@@ -1071,13 +1071,10 @@ void BgContinuousTaskMgr::HandleAppContinuousTaskStop(int32_t uid)
         return uid == target.second->GetUid();
     };
     auto findUidIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findUid);
-
     if (findUidIter != continuousTaskInfosMap_.end()) {
         return;
     }
-
-    BGTASK_LOGI("all continuous task has stopped of uid: %{public}d, so notify related subsystem", uid);
-
+    BGTASK_LOGI("All continuous task has stopped of uid: %{public}d, so notify related subsystem", uid);
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); iter++) {
         (*iter)->OnAppContinuousTaskStop(uid);
     }
