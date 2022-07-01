@@ -303,6 +303,11 @@ ErrCode BackgroundTaskMgrProxy::GetContinuousTaskApps(std::vector<std::shared_pt
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
+    if (result != ERR_OK) {
+        BGTASK_LOGE("GetContinuousTaskApps failed.");
+        return result;
+    }
+
     int32_t infoSize = reply.ReadInt32();
     for (int32_t i = 0; i < infoSize; i++) {
         auto info = ContinuousTaskCallbackInfo::Unmarshalling(reply);
