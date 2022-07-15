@@ -16,7 +16,6 @@
 #include "expired_callback_stub.h"
 
 #include <errors.h>
-#include <string>
 
 #include "transient_task_log.h"
 
