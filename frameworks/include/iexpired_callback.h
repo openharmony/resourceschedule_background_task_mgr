@@ -20,6 +20,8 @@
 #include <iremote_broker.h>
 #include <nocopyable.h>
 
+#include "refbase.h"
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class IExpiredCallback : public IRemoteBroker {
