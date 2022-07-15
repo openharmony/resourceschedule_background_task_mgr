@@ -20,6 +20,9 @@
 #include <iremote_broker.h>
 #include <nocopyable.h>
 
+#include "errors.h"
+#include "refbase.h"
+
 #include "continuous_task_callback_info.h"
 #include "transient_task_app_info.h"
 

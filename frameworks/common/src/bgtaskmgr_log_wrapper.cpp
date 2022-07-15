@@ -15,6 +15,8 @@
 
 #include "bgtaskmgr_log_wrapper.h"
 
+#include <cstddef>
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 BgTaskMgrLogLevel BgTaskMgrLogWrapper::level_ = {BgTaskMgrLogLevel::DEBUG};

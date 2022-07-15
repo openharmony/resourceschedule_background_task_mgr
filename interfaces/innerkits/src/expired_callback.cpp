@@ -15,6 +15,8 @@
 
 #include "expired_callback.h"
 
+#include <new>
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 ExpiredCallback::ExpiredCallback()

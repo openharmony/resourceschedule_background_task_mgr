@@ -17,8 +17,6 @@
 
 #include "ipc_util.h"
 
-#include "transient_task_log.h"
-
 using namespace std;
 
 namespace OHOS {

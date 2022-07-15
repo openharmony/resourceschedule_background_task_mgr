@@ -14,6 +14,9 @@
  */
 
 #include "continuous_task_param.h"
+
+#include <new>
+
 #include "continuous_task_log.h"
 
 namespace OHOS {
