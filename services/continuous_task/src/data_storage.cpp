@@ -21,7 +21,6 @@
 #include <sys/stat.h>
 
 #include "errors.h"
-#include "json/json.h"
 
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_manager_helper.h"
@@ -31,6 +30,8 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr char TASK_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/running_task";
+static constexpr char TASK_DETECTION_INFO_FILE_PATH[]
+    = "/data/service/el1/public/background_task_mgr/task_detection_info";
 static constexpr int32_t MAX_BUFFER = 512;
 }
 
@@ -50,24 +51,66 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
             root[iter.first] = recordJson;
         }
     }
+    return SaveJsonValueToFile(root, TASK_RECORD_FILE_PATH);
+}
+
+int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
+    std::shared_ptr<ContinuousTaskRecord>> &allRecord)
+{
+    Json::Value root;
+    if (ParseJsonValueFromFile(root, TASK_RECORD_FILE_PATH) != ERR_OK) {
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
+    for (auto it : root.getMemberNames()) {
+        Json::Value recordJson = root[it];
+        std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+        if (record->ParseFromJson(recordJson)) {
+            allRecord.emplace(it, record);
+        }
+    }
+    return ERR_OK;
+}
+
+int32_t DataStorage::RefreshTaskDetectionInfo(const std::string &detectionInfos)
+{
+    Json::Value root;
+    JSONCPP_STRING errs;
+    Json::Value recordJson;
+    Json::CharReaderBuilder readerBuilder;
+    const std::unique_ptr<Json::CharReader> jsonReader(readerBuilder.newCharReader());
+    bool res = jsonReader->parse(detectionInfos.c_str(), detectionInfos.c_str() + detectionInfos.length(),
+        &recordJson, &errs);
+    if (res && errs.empty()) {
+        root = recordJson;
+    }
+    return SaveJsonValueToFile(root, TASK_DETECTION_INFO_FILE_PATH);
+}
+
+int32_t DataStorage::RestoreTaskDetectionInfo(Json::Value &value)
+{
+    return ParseJsonValueFromFile(value, TASK_DETECTION_INFO_FILE_PATH);
+}
+
+int32_t DataStorage::SaveJsonValueToFile(const Json::Value &value, const std::string &filePath)
+{
     Json::StreamWriterBuilder writerBuilder;
     std::ostringstream os;
     std::unique_ptr<Json::StreamWriter> jsonWriter(writerBuilder.newStreamWriter());
-    jsonWriter->write(root, &os);
+    jsonWriter->write(value, &os);
     std::string result = os.str();
-    if (!CreateNodeFile(TASK_RECORD_FILE_PATH)) {
+    if (!CreateNodeFile(filePath)) {
         BGTASK_LOGE("Create file failed.");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     std::ofstream fout;
     std::string realPath;
-    if (!ConvertFullPath(TASK_RECORD_FILE_PATH, realPath)) {
-        BGTASK_LOGE("Get real path failed");
+    if (!ConvertFullPath(filePath, realPath)) {
+        BGTASK_LOGE("SaveJsonValueToFile Get real file path: %{public}s failed", filePath.c_str());
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     fout.open(realPath, std::ios::out);
     if (!fout.is_open()) {
-        BGTASK_LOGE("Open file failed.");
+        BGTASK_LOGE("Open file: %{public}s failed.", filePath.c_str());
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     fout << result.c_str() << std::endl;
@@ -75,12 +118,11 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
     return ERR_OK;
 }
 
-int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
-    std::shared_ptr<ContinuousTaskRecord>> &allRecord)
+int32_t DataStorage::ParseJsonValueFromFile(Json::Value &value, const std::string &filePath)
 {
     std::ifstream fin;
     std::string realPath;
-    if (!ConvertFullPath(TASK_RECORD_FILE_PATH, realPath)) {
+    if (!ConvertFullPath(filePath, realPath)) {
         BGTASK_LOGE("Get real path failed");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
@@ -97,21 +139,13 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
     }
     std::string data = os.str();
     JSONCPP_STRING errs;
-    Json::Value root;
     Json::CharReaderBuilder readerBuilder;
     const std::unique_ptr<Json::CharReader> jsonReader(readerBuilder.newCharReader());
-    bool res = jsonReader->parse(data.c_str(), data.c_str() + data.length(), &root, &errs);
+    bool res = jsonReader->parse(data.c_str(), data.c_str() + data.length(), &value, &errs);
     fin.close();
     if (!res || !errs.empty()) {
         BGTASK_LOGE("parse json file failed!");
         return ERR_BGTASK_DATA_STORAGE_ERR;
-    }
-    for (auto it : root.getMemberNames()) {
-        Json::Value recordJson = root[it];
-        std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
-        if (record->ParseFromJson(recordJson)) {
-            allRecord.emplace(it, record);
-        }
     }
     return ERR_OK;
 }
@@ -119,12 +153,12 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
 bool DataStorage::CreateNodeFile(const std::string &filePath)
 {
     if (access(filePath.c_str(), F_OK) == ERR_OK) {
-        BGTASK_LOGD("the file: %{public}s already exists.", TASK_RECORD_FILE_PATH);
+        BGTASK_LOGD("the file: %{public}s already exists.", filePath.c_str());
         return true;
     }
     int32_t fd = open(filePath.c_str(), O_CREAT|O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
     if (fd < ERR_OK) {
-        BGTASK_LOGE("Fail to open file: %{public}s", TASK_RECORD_FILE_PATH);
+        BGTASK_LOGE("Fail to open file: %{public}s", filePath.c_str());
         return false;
     }
     close(fd);

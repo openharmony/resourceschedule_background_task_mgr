@@ -17,6 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_DATA_STORAGE_H
 
 #include "continuous_task_record.h"
+#include "json/json.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -25,10 +26,15 @@ public:
     int32_t RefreshTaskRecord(const std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> &allRecord);
     int32_t RestoreTaskRecord(std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> &allRecord);
 
+    int32_t RefreshTaskDetectionInfo(const std::string &detectionInfos);
+    int32_t RestoreTaskDetectionInfo(Json::Value &value);
+
 private:
+    int32_t SaveJsonValueToFile(const Json::Value &value, const std::string &filePath);
+    int32_t ParseJsonValueFromFile(Json::Value &value, const std::string &filePath);
     bool CreateNodeFile(const std::string &filePath);
     bool ConvertFullPath(const std::string &partialPath, std::string &fullPath);
 };
-}
-}
-#endif
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_DATA_STORAGE_H
