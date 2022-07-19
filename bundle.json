@@ -48,14 +48,20 @@
         "third_party": [ "googletest" ]
       },
       "build": {
-        "sub_component": [
-          "//foundation/resourceschedule/background_task_mgr/interfaces:bgtaskmgr_interfaces",
-          "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_fwk",
-          "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service",
-          "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_sa_profile",
-          "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_service_init",
-          "//foundation/resourceschedule/background_task_mgr/resources:bgtaskmgr_resources"
-        ],
+        "group_type": {
+          "base_group": [
+           "//foundation/resourceschedule/background_task_mgr/resources:bgtaskmgr_resources"
+          ],
+          "fwk_group": [
+           "//foundation/resourceschedule/background_task_mgr/interfaces:bgtaskmgr_interfaces",
+           "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_fwk"
+          ],
+          "service_group": [
+           "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_sa_profile",
+           "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_service_init",
+           "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service"
+          ]
+        },
         "inner_kits": [
           {
             "header": {
