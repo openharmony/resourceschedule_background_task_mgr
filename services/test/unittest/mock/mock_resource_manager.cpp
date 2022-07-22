@@ -223,6 +223,16 @@ RState ResourceManagerImpl::CloseRawFileDescriptor(const std::string &name)
 {
     return SUCCESS;
 }
+
+RState ResourceManagerImpl::GetMediaBase64ByIdData(uint32_t id, uint32_t density, std::string &base64Data)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetMediaBase64ByNameData(const char *name, uint32_t density, std::string &base64Data)
+{
+    return SUCCESS;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS
