@@ -62,6 +62,13 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     static ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
+
+    /**
+     * @brief Get all continuous task running infos.
+     * @param list continuous task infos.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    static ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

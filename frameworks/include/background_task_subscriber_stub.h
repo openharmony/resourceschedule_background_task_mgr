@@ -49,6 +49,7 @@ private:
     ErrCode HandleOnAppTransientTaskEnd(MessageParcel& data);
     ErrCode HandleOnContinuousTaskStart(MessageParcel &data);
     ErrCode HandleOnContinuousTaskCancel(MessageParcel &data);
+    ErrCode HandleOnAppContinuousTaskStop(MessageParcel &data);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

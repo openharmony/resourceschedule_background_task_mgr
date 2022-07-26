@@ -47,5 +47,10 @@ ErrCode BackgroundTaskMgrHelper::GetTransientTaskApps(std::vector<std::shared_pt
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetTransientTaskApps(list);
 }
+
+ErrCode BackgroundTaskMgrHelper::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetContinuousTaskApps(list);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

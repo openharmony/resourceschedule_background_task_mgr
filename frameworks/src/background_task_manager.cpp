@@ -168,6 +168,15 @@ bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
     return true;
 }
 
+ErrCode BackgroundTaskManager::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
+    }
+    return backgroundTaskMgrProxy_->GetContinuousTaskApps(list);
+}
+
 void BackgroundTaskManager::ResetBackgroundTaskManagerProxy()
 {
     std::lock_guard<std::mutex> lock(mutex_);
