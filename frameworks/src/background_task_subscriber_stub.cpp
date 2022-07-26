@@ -71,6 +71,9 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
         case ON_CONTINUOUS_TASK_STOP: {
             return HandleOnContinuousTaskCancel(data);
         }
+        case ON_APP_CONTINUOUS_TASK_STOP: {
+            return HandleOnAppContinuousTaskStop(data);
+        }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
@@ -155,6 +158,18 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskCancel(MessageParcel
     }
 
     OnContinuousTaskStop(continuousTaskCallbackInfo);
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnAppContinuousTaskStop(MessageParcel &data)
+{
+    int32_t uid;
+    if (!data.ReadInt32(uid)) {
+        BGTASK_LOGE("HandleOnAppContinuousTaskStop read uid failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    OnAppContinuousTaskStop(uid);
     return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr

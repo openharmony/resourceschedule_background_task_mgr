@@ -107,6 +107,11 @@ ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<std::shared_p
     return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetTransientTaskApps(list);
 }
 
+ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    return BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(list);
+}
+
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK

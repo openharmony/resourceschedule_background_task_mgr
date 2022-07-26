@@ -45,6 +45,8 @@ void BackgroundTaskSubscriber::OnContinuousTaskStart(
 void BackgroundTaskSubscriber::OnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) {}
 
+void BackgroundTaskSubscriber::OnAppContinuousTaskStop(int32_t uid) {}
+
 void BackgroundTaskSubscriber::OnRemoteDied(const wptr<IRemoteObject> &object) {}
 
 const sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> BackgroundTaskSubscriber::GetImpl() const
@@ -108,6 +110,11 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskSto
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     subscriber_.OnContinuousTaskStop(continuousTaskCallbackInfo);
+}
+
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppContinuousTaskStop(int32_t uid)
+{
+    subscriber_.OnAppContinuousTaskStop(uid);
 }
 
 bool BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::GetBackgroundTaskMgrProxy()

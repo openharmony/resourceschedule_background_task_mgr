@@ -82,6 +82,13 @@ public:
      */
     void OnContinuousTaskStop(
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+    
+    /**
+     * Called back when the app does not have continuous task.
+     *
+     * @param uid App uid.
+     **/
+    void OnAppContinuousTaskStop(int32_t uid) override;
 
 private:
     static inline BrokerDelegator<BackgroundTaskSubscriberProxy> delegator_;
