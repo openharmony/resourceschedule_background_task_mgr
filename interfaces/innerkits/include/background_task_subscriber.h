@@ -88,6 +88,13 @@ public:
     virtual void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
 
     /**
+     * Called back when the app does not have continuous task.
+     *
+     * @param uid App uid.
+     **/
+    virtual void OnAppContinuousTaskStop(int32_t uid);
+
+    /**
      * Called back when the Background Task Manager Service has died.
      */
     virtual void OnRemoteDied(const wptr<IRemoteObject> &object);
@@ -169,6 +176,14 @@ private:
          */
         void OnContinuousTaskStop(
             const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+        
+        /**
+         * Called back when the app does not have continuous task.
+         *
+         * @param uid App uid.
+         */
+        void OnAppContinuousTaskStop(int32_t uid) override;
+
         /**
          * @brief Get managed proxy of background tasks.
          *

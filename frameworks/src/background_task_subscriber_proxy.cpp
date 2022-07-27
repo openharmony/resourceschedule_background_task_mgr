@@ -250,5 +250,32 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStop(
         BGTASK_LOGE("OnContinuousTaskStop SendRequest error");
     }
 }
+
+void BackgroundTaskSubscriberProxy::OnAppContinuousTaskStop(int32_t uid)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        BGTASK_LOGE("OnAppContinuousTaskStop remote is dead.");
+        return;
+    }
+
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor())) {
+        BGTASK_LOGE("OnAppContinuousTaskStop write interface token failed.");
+        return;
+    }
+
+    if (!data.WriteInt32(uid)) {
+        BGTASK_LOGE("OnAppContinuousTaskStop write uid failed.");
+        return;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    int32_t result = remote->SendRequest(ON_APP_CONTINUOUS_TASK_STOP, data, reply, option);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("OnAppContinuousTaskStop SendRequest error");
+    }
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

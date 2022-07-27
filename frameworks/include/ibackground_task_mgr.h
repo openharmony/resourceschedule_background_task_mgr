@@ -104,6 +104,13 @@ public:
      */
     virtual ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) = 0;
 
+    /**
+     * @brief Get all continuous task running infos.
+     * @param list continuous task infos.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskMgr");
 
@@ -117,6 +124,7 @@ protected:
         SUBSCRIBE_BACKGROUND_TASK,
         UNSUBSCRIBE_BACKGROUND_TASK,
         GET_TRANSIENT_TASK_APPS,
+        GET_CONTINUOUS_TASK_APPS,
     };
 };
 }  // namespace BackgroundTaskMgr

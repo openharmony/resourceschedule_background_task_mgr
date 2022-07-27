@@ -721,6 +721,36 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
     return ERR_OK;
 }
 
+ErrCode BgContinuousTaskMgr::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+
+    ErrCode result = ERR_OK;
+
+    handler_->PostSyncTask([this, &list, &result]() {
+        result = this->GetContinuousTaskAppsInner(list);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    if (continuousTaskInfosMap_.empty()) {
+        return ERR_OK;
+    }
+
+    for (auto record : continuousTaskInfosMap_) {
+        auto appInfo = std::make_shared<ContinuousTaskCallbackInfo>(record.second->bgModeId_, record.second->uid_,
+            record.second->pid_, record.second->abilityName_);
+        list.push_back(appInfo);
+    }
+    return ERR_OK;
+}
+
 ErrCode BgContinuousTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     if (!isSysReady_.load()) {
@@ -788,13 +818,18 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
 void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll)
 {
     if (cleanAll) {
+        std::set<int32_t> uids;
         for (auto item : continuousTaskInfosMap_) {
             Notification::NotificationHelper::CancelContinuousTaskNotification(item.second->GetNotificationLabel(),
                 DEFAULT_NOTIFICATION_ID);
             OnContinuousTaskChanged(item.second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            uids.insert(item.second->uid_);
         }
         continuousTaskInfosMap_.clear();
         RefreshTaskRecord();
+        for (int32_t uid : uids) {
+            HandleAppContinuousTaskStop(uid);
+        }
     } else {
         if (dumpOption.size() < MAX_DUMP_PARAM_NUMS) {
             BGTASK_LOGW("invalid dump param");
@@ -818,8 +853,10 @@ bool BgContinuousTaskMgr::RemoveContinuousTaskRecord(const std::string &mapKey)
         BGTASK_LOGW("remove TaskInfo failure, no matched task: %{public}s", mapKey.c_str());
         return false;
     }
-    OnContinuousTaskChanged(continuousTaskInfosMap_.at(mapKey), ContinuousTaskEventTriggerType::TASK_CANCEL);
+    auto record = continuousTaskInfosMap_.at(mapKey);
+    OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
     continuousTaskInfosMap_.erase(mapKey);
+    HandleAppContinuousTaskStop(record->uid_);
     RefreshTaskRecord();
     return true;
 }
@@ -878,10 +915,12 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->uid_ == uid && iter->second->abilityName_ == abilityName) {
-            OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            auto record = iter->second;
+            OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             Notification::NotificationHelper::CancelContinuousTaskNotification(
-                iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+                record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
             iter = continuousTaskInfosMap_.erase(iter);
+            HandleAppContinuousTaskStop(record->uid_);
             RefreshTaskRecord();
         } else {
             iter++;
@@ -899,10 +938,12 @@ void BgContinuousTaskMgr::OnProcessDied(int32_t pid)
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->GetPid() == pid) {
-            OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            auto record = iter->second;
+            OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             Notification::NotificationHelper::CancelContinuousTaskNotification(
-                iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+                record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
             iter = continuousTaskInfosMap_.erase(iter);
+            HandleAppContinuousTaskStop(record->uid_);
             RefreshTaskRecord();
         } else {
             iter++;
@@ -961,10 +1002,12 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
         auto iter = continuousTaskInfosMap_.begin();
         while (iter != continuousTaskInfosMap_.end()) {
             if (iter->second->GetUid() == uid) {
-                OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+                auto record = iter->second;
+                OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
                 Notification::NotificationHelper::CancelContinuousTaskNotification(
-                    iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+                    record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
                 iter = continuousTaskInfosMap_.erase(iter);
+                HandleAppContinuousTaskStop(uid);
                 RefreshTaskRecord();
             } else {
                 iter++;
@@ -992,14 +1035,31 @@ void BgContinuousTaskMgr::OnAccountsStateChanged(int32_t id)
     while (iter != continuousTaskInfosMap_.end()) {
         auto idIter = find(activatedOsAccountIds.begin(), activatedOsAccountIds.end(), iter->second->GetUserId());
         if (idIter == activatedOsAccountIds.end()) {
-            OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            auto record = iter->second;
+            OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             Notification::NotificationHelper::CancelContinuousTaskNotification(
-                iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+                record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
             iter = continuousTaskInfosMap_.erase(iter);
+            HandleAppContinuousTaskStop(record->uid_);
             RefreshTaskRecord();
         } else {
             iter++;
         }
+    }
+}
+
+void BgContinuousTaskMgr::HandleAppContinuousTaskStop(int32_t uid)
+{
+    auto findUid = [uid](const auto &target) {
+        return uid == target.second->GetUid();
+    };
+    auto findUidIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findUid);
+    if (findUidIter != continuousTaskInfosMap_.end()) {
+        return;
+    }
+    BGTASK_LOGI("All continuous task has stopped of uid: %{public}d, so notify related subsystem", uid);
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); iter++) {
+        (*iter)->OnAppContinuousTaskStop(uid);
     }
 }
 

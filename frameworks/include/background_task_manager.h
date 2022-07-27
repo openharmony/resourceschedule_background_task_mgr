@@ -103,6 +103,13 @@ public:
      */
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
 
+    /**
+     * @brief Get all continuous task running infos
+     * @param list continuous task infos.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
+
 private:
     bool GetBackgroundTaskManagerProxy();
 
