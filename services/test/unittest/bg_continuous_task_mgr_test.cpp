@@ -24,7 +24,7 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_subscriber.h"
 #include "bg_continuous_task_mgr.h"
-#include "continuous_task_detection.h"
+#include "task_detection_manager.h"
 #include "want_agent.h"
 
 using namespace testing::ext;
@@ -68,7 +68,7 @@ void BgContinuousTaskMgrTest::TearDown()
     dumpOption.emplace_back("--cancel_all");
     std::vector<string> dumpInfo;
     bgContinuousTaskMgr_->ShellDump(dumpOption, dumpInfo);
-    ContinuousTaskDetection::GetInstance()->ClearAllData();
+    TaskDetectionManager::GetInstance()->ClearAllData();
 }
 
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
@@ -146,8 +146,8 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
-    ContinuousTaskDetection::GetInstance()->isLocationSwitchOn_ = true;
-    ContinuousTaskDetection::GetInstance()->locationUsingRecords_.emplace_back(std::make_pair(1, 1));
+    TaskDetectionManager::GetInstance()->locationDetect_->isLocationSwitchOn_ = true;
+    TaskDetectionManager::GetInstance()->locationDetect_->locationUsingRecords_.emplace_back(std::make_pair(1, 1));
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_OK);
@@ -204,8 +204,8 @@ HWTEST_F(BgContinuousTaskMgrTest, AudioPlaybackDetection, TestSize.Level1)
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
-    ContinuousTaskDetection::GetInstance()->audioPlayerInfos_.emplace_back(std::make_shared<AudioInfo>(1, 111));
-    ContinuousTaskDetection::GetInstance()->avSessionInfos_.emplace_back(std::make_shared<AVSessionInfo>(1, 1, "111"));
+    TaskDetectionManager::GetInstance()->audioDetect_->audioPlayerInfos_.emplace_back(std::make_shared<AudioInfo>(1, 111));
+    TaskDetectionManager::GetInstance()->audioDetect_->avSessionInfos_.emplace_back(std::make_shared<AVSessionInfo>(1, 1, "111"));
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
@@ -229,7 +229,7 @@ HWTEST_F(BgContinuousTaskMgrTest, AudioRecordingDetection, TestSize.Level1)
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
-    ContinuousTaskDetection::GetInstance()->audioRecorderInfos_.emplace_back(std::make_shared<AudioInfo>(1, 111));
+    TaskDetectionManager::GetInstance()->audioDetect_->audioRecorderInfos_.emplace_back(std::make_shared<AudioInfo>(1, 111));
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
@@ -253,8 +253,8 @@ HWTEST_F(BgContinuousTaskMgrTest, LocationDetection, TestSize.Level1)
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
-    ContinuousTaskDetection::GetInstance()->isLocationSwitchOn_ = true;
-    ContinuousTaskDetection::GetInstance()->locationUsingRecords_.emplace_back(std::make_pair(1, 1));
+    TaskDetectionManager::GetInstance()->locationDetect_->isLocationSwitchOn_ = true;
+    TaskDetectionManager::GetInstance()->locationDetect_->locationUsingRecords_.emplace_back(std::make_pair(1, 1));
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
@@ -278,9 +278,9 @@ HWTEST_F(BgContinuousTaskMgrTest, BluetoothInteractionDetection, TestSize.Level1
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
-    ContinuousTaskDetection::GetInstance()->isBrSwitchOn_ = true;
-    ContinuousTaskDetection::GetInstance()->isBleSwitchOn_ = true;
-    ContinuousTaskDetection::GetInstance()->sppConnectRecords_.emplace_back(
+    TaskDetectionManager::GetInstance()->bluetoothDetect_->isBrSwitchOn_ = true;
+    TaskDetectionManager::GetInstance()->bluetoothDetect_->isBleSwitchOn_ = true;
+    TaskDetectionManager::GetInstance()->bluetoothDetect_->sppConnectRecords_.emplace_back(
         std::make_shared<SppConnectStateReocrd>(1, 1, 1));
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
@@ -305,8 +305,8 @@ HWTEST_F(BgContinuousTaskMgrTest, MultiDeviceConnectionDetection, TestSize.Level
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
-    ContinuousTaskDetection::GetInstance()->callerRecords_[1] = 1;
-    ContinuousTaskDetection::GetInstance()->calleeRecords_[1] = 1;
+    TaskDetectionManager::GetInstance()->multiDeviceDetect_->callerRecords_[1] = 1;
+    TaskDetectionManager::GetInstance()->multiDeviceDetect_->calleeRecords_[1] = 1;
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
