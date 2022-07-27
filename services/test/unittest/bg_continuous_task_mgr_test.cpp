@@ -54,6 +54,11 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
 {
     bgContinuousTaskMgr_ = BgContinuousTaskMgr::GetInstance();
     bgContinuousTaskMgr_->dataStorage_ = std::make_shared<DataStorage>();
+    TaskDetectionManager::GetInstance()->dataStorage_ = bgContinuousTaskMgr_->dataStorage_;
+    TaskDetectionManager::GetInstance()->audioDetect_ = std::make_shared<AudioDetect>();
+    TaskDetectionManager::GetInstance()->bluetoothDetect_ = std::make_shared<BluetoothDetect>();
+    TaskDetectionManager::GetInstance()->locationDetect_ = std::make_shared<LocationDetect>();
+    TaskDetectionManager::GetInstance()->multiDeviceDetect_ = std::make_shared<MultiDeviceDetect>();
     bgContinuousTaskMgr_->InitRequiredResourceInfo();
 }
 

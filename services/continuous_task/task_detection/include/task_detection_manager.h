@@ -55,8 +55,6 @@ private:
     bool InitAudioStateChangeListener();
     bool InitAVSessionStateChangeListener();
     bool GetDisSchedProxy();
-    bool CheckIsDisSchedScene(int32_t uid);
-    bool CheckBluetoothUsingScene(int32_t uid);
     void HandleBluetoothSysEvent(const Json::Value &root);
     void HandleLocationSysEvent(const Json::Value &root);
     void HandleAudioStreamInfo(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,
