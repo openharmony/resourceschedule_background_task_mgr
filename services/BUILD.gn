@@ -76,7 +76,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
-    "bluetooth:btframework",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_innerkits",
@@ -102,6 +101,11 @@ ohos_shared_library("bgtaskmgr_service") {
     cflags_cc += [ "-DAV_SESSION_PART_ENABLE" ]
     external_deps += [ "multimedia_av_session:avsession_client" ]
     external_deps += [ "input:libmmi-client" ]
+  }
+
+  if (has_multimedia_av_session_part) {
+    cflags_cc += [ "-DBLUETOOTH_PART_ENABLE" ]
+    external_deps += [ "bluetooth:btframework" ]
   }
 
   part_name = "background_task_mgr"

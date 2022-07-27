@@ -21,7 +21,9 @@
 #include <strstream>
 
 #include "bg_continuous_task_mgr.h"
+#ifdef BLUETOOTH_PART_ENABLE
 #include "bluetooth_host.h"
+#endif // BLUETOOTH_PART_ENABLE
 #include "continuous_task_log.h"
 #include "distributed_component_listener_stub.h"
 #include "distributed_sched_proxy.h"
@@ -173,9 +175,14 @@ void TaskDetectionManager::HandlePersistenceData(const std::vector<AppExecFwk::R
             break;
         }
     }
+#ifdef BLUETOOTH_PART_ENABLE
     bluetoothDetect_->isBrSwitchOn_
         = Bluetooth::BluetoothHost::GetDefaultHost().GetBtState() == CLASSICAL_BT_SWITCH_ON ? true : false;
     bluetoothDetect_->isBleSwitchOn_ = Bluetooth::BluetoothHost::GetDefaultHost().IsBleEnabled();
+#else // BLUETOOTH_PART_ENABLE
+    bluetoothDetect_->isBrSwitchOn_ = false;
+    bluetoothDetect_->isBleSwitchOn_ = false;
+#endif // BLUETOOTH_PART_ENABLE
     if (hasNoRunningUid && !bluetoothDetect_->isBrSwitchOn_ && !bluetoothDetect_->isBleSwitchOn_) {
         ClearAllData();
     }
