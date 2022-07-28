@@ -73,7 +73,7 @@ ohos_unittest("bgtask_unit_test") {
     cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
     external_deps += [ "os_account:os_account_innerkits" ]
   }
-  
+
   if (has_multimedia_av_session_part) {
     cflags_cc += [ "-DBLUETOOTH_PART_ENABLE" ]
     external_deps += [ "bluetooth:btframework" ]

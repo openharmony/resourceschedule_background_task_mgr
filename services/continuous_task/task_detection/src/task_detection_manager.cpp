@@ -225,6 +225,7 @@ bool TaskDetectionManager::GetDisSchedProxy()
 void TaskDetectionManager::HandleAudioStreamInfo(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,
     const std::string &type)
 {
+    BGTASK_LOGI("HandleAudioStreamInfo begin, type: %{public}s", type.c_str());
     handler_->PostTask([=]() {
         audioDetect_->HandleAudioStreamInfo(streamInfos, type);
         dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
@@ -379,7 +380,6 @@ void TaskDetectionManager::HiSysEventListener::OnServiceDied() {}
 void TaskDetectionManager::AudioRendererStateChangeListener::OnRendererStateChange(
     const std::vector<std::unique_ptr<AudioStandard::AudioRendererChangeInfo>> &audioRendererChangeInfos)
 {
-    BGTASK_LOGD("OnRendererStateChange begin, info size is: %{public}lu", audioRendererChangeInfos.size());
     std::list<std::tuple<int32_t, int32_t, int32_t>> streamInfos;
     for (const auto &var : audioRendererChangeInfos) {
         streamInfos.emplace_back(std::make_tuple(var->clientUID, var->sessionId,
@@ -391,7 +391,6 @@ void TaskDetectionManager::AudioRendererStateChangeListener::OnRendererStateChan
 void TaskDetectionManager::AudioCapturerStateChangeListener::OnCapturerStateChange(
     const std::vector<std::unique_ptr<AudioStandard::AudioCapturerChangeInfo>> &audioCapturerChangeInfos)
 {
-    BGTASK_LOGD("OnCapturerStateChange begin, info size is: %{public}lu", audioCapturerChangeInfos.size());
     std::list<std::tuple<int32_t, int32_t, int32_t>> streamInfos;
     for (const auto &var : audioCapturerChangeInfos) {
         streamInfos.emplace_back(std::make_tuple(var->clientUID, var->sessionId,

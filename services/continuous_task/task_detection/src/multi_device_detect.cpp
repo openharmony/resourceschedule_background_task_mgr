@@ -15,7 +15,7 @@
 
 #include "multi_device_detect.h"
 
-#include <strstream>
+#include <sstream>
 
 #include "bg_continuous_task_mgr.h"
 #include "continuous_task_log.h"
@@ -33,7 +33,7 @@ void MultiDeviceDetect::HandleDisComponentChange(const std::string &info)
     Json::Value root;
     Json::CharReaderBuilder reader;
     std::string errors;
-    std::istrstream is(info.c_str());
+    std::stringstream is(info.c_str());
     if (parseFromStream(reader, is, &root, &errors)) {
         if (!root.isMember("componentType") || root["componentType"].isNull()
             || !root.isMember("deviceType") || root["deviceType"].isNull()
