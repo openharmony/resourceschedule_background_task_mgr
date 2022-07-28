@@ -54,7 +54,6 @@ ohos_unittest("bgtask_unit_test") {
     "ability_base:zuri",
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
-    "bluetooth:btframework",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_innerkits",
@@ -73,6 +72,11 @@ ohos_unittest("bgtask_unit_test") {
   if (has_os_account_part) {
     cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
     external_deps += [ "os_account:os_account_innerkits" ]
+  }
+  
+  if (has_multimedia_av_session_part) {
+    cflags_cc += [ "-DBLUETOOTH_PART_ENABLE" ]
+    external_deps += [ "bluetooth:btframework" ]
   }
 
   subsystem_name = "resourceschedule"

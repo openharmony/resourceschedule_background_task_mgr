@@ -44,10 +44,11 @@ void AudioDetect::HandleAudioStreamInfo(
             HandleRecorderInfos(uid, sessionId, state, uidRemoved);
         }
     }
+    uint32_t bgModeId = (type == "player" ? AUDIO_PLAYBACK_BGMODE_ID : AUDIO_RECORDING_BGMODE_ID);
     for (int32_t uidToCheck : uidRemoved) {
-        if (!CheckAudioCondition(uidToCheck, AUDIO_RECORDING_BGMODE_ID)) {
+        if (!CheckAudioCondition(uidToCheck, bgModeId)) {
             BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uidToCheck,
-                UNSET_PID, AUDIO_RECORDING_BGMODE_ID);
+                UNSET_PID, bgModeId);
         }
     }
 }

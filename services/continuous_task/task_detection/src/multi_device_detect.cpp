@@ -65,7 +65,7 @@ void MultiDeviceDetect::UpdateDisCallerInfo(int32_t uid, const std::string &chan
             callerRecords_.emplace(uid, INIT_CONNECTED_NUM);
         }
     } else if (changeType == "2") { // remove
-        if (findIter != callerRecords_.end()) {
+        if (findIter == callerRecords_.end()) {
             return;
         }
         if (callerRecords_[uid] == INIT_CONNECTED_NUM) {
@@ -79,6 +79,7 @@ void MultiDeviceDetect::UpdateDisCallerInfo(int32_t uid, const std::string &chan
         }
     }
 }
+
 void MultiDeviceDetect::UpdateDisCalleeInfo(int32_t uid, const std::string &changeType)
 {
     auto findIter = calleeRecords_.find(uid);
@@ -89,7 +90,7 @@ void MultiDeviceDetect::UpdateDisCalleeInfo(int32_t uid, const std::string &chan
             calleeRecords_.emplace(uid, INIT_CONNECTED_NUM);
         }
     } else if (changeType == "2") { // remove
-        if (findIter != calleeRecords_.end()) {
+        if (findIter == calleeRecords_.end()) {
             return;
         }
         if (calleeRecords_[uid] == INIT_CONNECTED_NUM) {
