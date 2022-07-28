@@ -209,8 +209,10 @@ HWTEST_F(BgContinuousTaskMgrTest, AudioPlaybackDetection, TestSize.Level1)
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
-    TaskDetectionManager::GetInstance()->audioDetect_->audioPlayerInfos_.emplace_back(std::make_shared<AudioInfo>(1, 111));
-    TaskDetectionManager::GetInstance()->audioDetect_->avSessionInfos_.emplace_back(std::make_shared<AVSessionInfo>(1, 1, "111"));
+    TaskDetectionManager::GetInstance()->audioDetect_->audioPlayerInfos_.emplace_back(
+        std::make_shared<AudioInfo>(1, 111));
+    TaskDetectionManager::GetInstance()->audioDetect_->avSessionInfos_.emplace_back(
+        std::make_shared<AVSessionInfo>(1, 1, "111"));
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
@@ -234,7 +236,8 @@ HWTEST_F(BgContinuousTaskMgrTest, AudioRecordingDetection, TestSize.Level1)
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
-    TaskDetectionManager::GetInstance()->audioDetect_->audioRecorderInfos_.emplace_back(std::make_shared<AudioInfo>(1, 111));
+    TaskDetectionManager::GetInstance()->audioDetect_->audioRecorderInfos_.emplace_back(
+        std::make_shared<AudioInfo>(1, 111));
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();

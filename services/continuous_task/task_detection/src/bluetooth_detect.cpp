@@ -228,14 +228,14 @@ void BluetoothDetect::HandleMasterSideDisconnect(const std::string &addr)
     // this loop is to get all gatt client app's uid and pid that address is the same as the disconnect info.
     for (auto var : gattAppRegisterInfos_) {
         if (var->side_ == "client" && var->address_ == addr) {
-            clientToRemove[{ var->uid_, var->pid_ }] = false;
+            clientToRemove[std::make_pair(var->uid_, var->pid_)] = false;
         }
     }
     // this loop is check whether there is target gatt client app(with same uid and pid)
     // that connect different remote device(namely different address)
     for (auto var : gattAppRegisterInfos_) {
         if (var->side_ == "client" && var->address_ != addr) {
-            clientToRemove[{ var->uid_, var->pid_ }] = true;
+            clientToRemove[std::make_pair(var->uid_, var->pid_)] = true;
         }
     }
     // after second loop check, if target uid and pid does not contain any different bluetooth address,

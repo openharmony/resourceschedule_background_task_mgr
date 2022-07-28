@@ -35,9 +35,7 @@ struct SppConnectStateReocrd {
 struct GattConnectStateRecord {
     std::string address_ {""};
     int32_t role_ {-1}; // GATT_ROLE_MASTER = 0x00; GATT_ROLE_SLAVE = 0x01; GATT_ROLE_INVALID = 0xFF;
-
-    // GATT_TRANSPORT_TYPE_AUTO = 0x0; GATT_TRANSPORT_TYPE_LE = 0x1; GATT_TRANSPORT_TYPE_CLASSIC = 0x2;
-    int32_t transport_ {-1}; 
+    int32_t transport_ {-1}; // TYPE_AUTO = 0x0; TYPE_LE = 0x1; TYPE_CLASSIC = 0x2;
     GattConnectStateRecord() = default;
     GattConnectStateRecord(const std::string &address, int32_t role, int32_t transport)
         : address_(address), role_(role), transport_(transport) {};

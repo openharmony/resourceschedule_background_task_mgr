@@ -78,7 +78,7 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
         return;
     }
 
-    auto task = [=]() { 
+    auto task = [=]() {
         bgContinuousTaskMgr->OnProcessDied(processData.pid);
         TaskDetectionManager::GetInstance()->HandleProcessDied(processData.uid, processData.pid);
     };

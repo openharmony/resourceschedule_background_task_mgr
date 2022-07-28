@@ -225,7 +225,7 @@ bool TaskDetectionManager::GetDisSchedProxy()
 void TaskDetectionManager::HandleAudioStreamInfo(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,
     const std::string &type)
 {
-    handler_->PostTask([=]() { 
+    handler_->PostTask([=]() {
         audioDetect_->HandleAudioStreamInfo(streamInfos, type);
         dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
     });
@@ -235,7 +235,7 @@ void TaskDetectionManager::HandleAudioStreamInfo(const std::list<std::tuple<int3
 void TaskDetectionManager::HandleAVSessionInfo(const AVSession::AVSessionDescriptor &descriptor,
     const std::string &action)
 {
-    handler_->PostTask([=]() { 
+    handler_->PostTask([=]() {
         audioDetect_->HandleAVSessionInfo(descriptor, action);
         dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
     });
@@ -244,7 +244,7 @@ void TaskDetectionManager::HandleAVSessionInfo(const AVSession::AVSessionDescrip
 
 void TaskDetectionManager::HandleBluetoothSysEvent(const Json::Value& root)
 {
-    handler_->PostTask([=]() { 
+    handler_->PostTask([=]() {
         bluetoothDetect_->HandleBluetoothSysEvent(root);
         dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
     });
@@ -252,7 +252,7 @@ void TaskDetectionManager::HandleBluetoothSysEvent(const Json::Value& root)
 
 void TaskDetectionManager::HandleLocationSysEvent(const Json::Value &root)
 {
-    handler_->PostTask([=]() { 
+    handler_->PostTask([=]() {
         locationDetect_->HandleLocationSysEvent(root);
         dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
     });
@@ -260,12 +260,16 @@ void TaskDetectionManager::HandleLocationSysEvent(const Json::Value &root)
 
 void TaskDetectionManager::HandleProcessDied(int32_t uid, int32_t pid)
 {
-    bluetoothDetect_->sppConnectRecords_.remove_if([uid, pid](auto record) {return (record->uid_ == uid && record->pid_ == pid);});
-    bluetoothDetect_->gattAppRegisterInfos_.remove_if([uid, pid](auto record) {return (record->uid_ == uid && record->pid_ == pid);});
+    bluetoothDetect_->sppConnectRecords_.remove_if(
+        [uid, pid](auto record) {return (record->uid_ == uid && record->pid_ == pid);});
+    bluetoothDetect_->gattAppRegisterInfos_.remove_if(
+        [uid, pid](auto record) {return (record->uid_ == uid && record->pid_ == pid);});
     audioDetect_->audioPlayerInfos_.remove_if([uid](auto record) {return (record->uid_ == uid);});
     audioDetect_->audioRecorderInfos_.remove_if([uid](auto record) {return (record->uid_ == uid);});
-    audioDetect_->avSessionInfos_.remove_if([uid, pid](auto record) {return (record->uid_ == uid && record->pid_ == pid);});
-    locationDetect_->locationUsingRecords_.remove_if([uid, pid](auto record) {return (record.first == uid && record.second == pid);});
+    audioDetect_->avSessionInfos_.remove_if(
+        [uid, pid](auto record) {return (record->uid_ == uid && record->pid_ == pid);});
+    locationDetect_->locationUsingRecords_.remove_if(
+        [uid, pid](auto record) {return (record.first == uid && record.second == pid);});
     multiDeviceDetect_->calleeRecords_.erase(uid);
     multiDeviceDetect_->callerRecords_.erase(uid);
     dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
@@ -274,7 +278,7 @@ void TaskDetectionManager::HandleProcessDied(int32_t uid, int32_t pid)
 void TaskDetectionManager::HandleDisComponentChange(const std::string &info)
 {
     BGTASK_LOGI("MultiDeviceDetect::HandleDisComponentChange info: %{public}s", info.c_str());
-    handler_->PostTask([=]() { 
+    handler_->PostTask([=]() {
         multiDeviceDetect_->HandleDisComponentChange(info);
         dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
     });
