@@ -45,6 +45,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
@@ -53,7 +54,6 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
-    "utils_base:utils",
   ]
 }
 
