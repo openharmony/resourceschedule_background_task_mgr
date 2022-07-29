@@ -31,18 +31,10 @@ void AudioDetect::HandleAudioStreamInfo(
     const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos, const std::string &type)
 {
     std::set<int32_t> uidRemoved;
-    for (const auto &var : streamInfos) {
-        int32_t uid;
-        int32_t sessionId;
-        int32_t state;
-        std::tie(uid, sessionId, state) = var;
-        BGTASK_LOGI("Get %{public}s info uid: %{public}d, sessionId: %{public}d, State: %{public}d",
-            type.c_str(), uid, sessionId, state);
-        if (type == "player") {
-            HandlePlayerInfos(uid, sessionId, state, uidRemoved);
-        } else {
-            HandleRecorderInfos(uid, sessionId, state, uidRemoved);
-        }
+    if (type == "player") {
+        UpdateAudioRecord(streamInfos, audioPlayerInfos_, uidRemoved);
+    } else {
+        UpdateAudioRecord(streamInfos, audioRecorderInfos_, uidRemoved);
     }
     uint32_t bgModeId = (type == "player" ? AUDIO_PLAYBACK_BGMODE_ID : AUDIO_RECORDING_BGMODE_ID);
     for (int32_t uidToCheck : uidRemoved) {
@@ -53,33 +45,27 @@ void AudioDetect::HandleAudioStreamInfo(
     }
 }
 
-void AudioDetect::HandlePlayerInfos(int32_t uid, int32_t sessionId, int32_t state, std::set<int32_t> &uidRemoved)
+void AudioDetect::UpdateAudioRecord(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,
+    std::list<std::shared_ptr<AudioInfo>> &records, std::set<int32_t> &uidRemoved)
 {
-    auto findRecord = [uid, sessionId](const auto &target) {
+    for (const auto &var : streamInfos) {
+        int32_t uid;
+        int32_t sessionId;
+        int32_t state;
+        std::tie(uid, sessionId, state) = var;
+        BGTASK_LOGI("Get Audio info uid: %{public}d, sessionId: %{public}d, State: %{public}d",
+            uid, sessionId, state);
+        auto findRecord = [uid, sessionId](const auto &target) {
         return target->uid_ == uid && target->sessionId_ == sessionId;
-    };
-    auto findRecordIter = find_if(audioPlayerInfos_.begin(), audioPlayerInfos_.end(), findRecord);
-    if (findRecordIter == audioPlayerInfos_.end() && state == AUDIO_RUNNING_STATE) {
-        auto recorderInfo = std::make_shared<AudioInfo>(uid, sessionId);
-        audioPlayerInfos_.emplace_back(recorderInfo);
-    } else if (findRecordIter != audioPlayerInfos_.end() && state != AUDIO_RUNNING_STATE) {
-        audioPlayerInfos_.erase(findRecordIter);
-        uidRemoved.emplace(uid);
-    }
-}
-
-void AudioDetect::HandleRecorderInfos(int32_t uid, int32_t sessionId, int32_t state, std::set<int32_t> &uidRemoved)
-{
-    auto findRecord = [uid, sessionId](const auto &target) {
-        return target->uid_ == uid && target->sessionId_ == sessionId;
-    };
-    auto findRecordIter = find_if(audioRecorderInfos_.begin(), audioRecorderInfos_.end(), findRecord);
-    if (findRecordIter == audioRecorderInfos_.end() && state == AUDIO_RUNNING_STATE) {
-        auto recorderInfo = std::make_shared<AudioInfo>(uid, sessionId);
-        audioRecorderInfos_.emplace_back(recorderInfo);
-    } else if (findRecordIter != audioRecorderInfos_.end() && state != AUDIO_RUNNING_STATE) {
-        audioRecorderInfos_.erase(findRecordIter);
-        uidRemoved.emplace(uid);
+        };
+        auto findRecordIter = find_if(records.begin(), records.end(), findRecord);
+        if (findRecordIter == records.end() && state == AUDIO_RUNNING_STATE) {
+            auto recorderInfo = std::make_shared<AudioInfo>(uid, sessionId);
+            records.emplace_back(recorderInfo);
+        } else if (findRecordIter != records.end() && state != AUDIO_RUNNING_STATE) {
+            records.erase(findRecordIter);
+            uidRemoved.emplace(uid);
+        }
     }
 }
 

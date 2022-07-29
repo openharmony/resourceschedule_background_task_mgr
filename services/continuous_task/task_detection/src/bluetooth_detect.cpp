@@ -259,18 +259,20 @@ void BluetoothDetect::HandleSlaveSideDisconnect()
         if (var->side_ != "server") {
             continue;
         }
-        bool isClientHasSameUidPid = false;
+
+        int32_t uid = var->uid_;
+        int32_t pid = var->pid_;
+
         // need to recheck there is no client connect with same uid and pid
-        for (auto innerClient : gattAppRegisterInfos_) {
-            if (innerClient->side_ == "client" && innerClient->uid_ == var->uid_ && innerClient->pid_ == var->pid_) {
-                isClientHasSameUidPid = true;
-                break;
-            }
+        auto findRecord = [uid, pid](const auto &target) {
+            return target->side_ == "client" && target->pid_ == pid && target->uid_ == uid;
+        };
+        auto findRecordIter = find_if(gattAppRegisterInfos_.begin(), gattAppRegisterInfos_.end(), findRecord);
+        if (findRecordIter != gattAppRegisterInfos_.end()) {
+            return;
         }
-        if (!isClientHasSameUidPid) {
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(var->uid_, var->pid_,
-                BLUETOOTH_INTERACTION_BGMODE_ID);
-        }
+        BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(var->uid_, var->pid_,
+            BLUETOOTH_INTERACTION_BGMODE_ID);
     }
 }
 
@@ -290,18 +292,18 @@ bool BluetoothDetect::CheckBluetoothUsingScene(int32_t uid)
         if (var->uid_ != uid) {
             continue;
         }
-        if (var->side_ == "client") {
-            for (auto record : gattConnectRecords_) {
-                if (var->address_ == record->address_ && record->role_ == GATT_ROLE_MASTER) {
-                    return true;
-                }
-            }
-        } else if (var->side_ == "server") {
-            for (auto record : gattConnectRecords_) {
-                if (record->role_ == GATT_ROLE_SLAVE) {
-                    return true;
-                }
-            }
+
+        std::string side = var->side_;
+        std::string address = var->address_;
+
+        auto findRecord = [side, address](const auto &target) {
+            return (side == "client" && target->address_ == address && target->role_ == GATT_ROLE_MASTER) 
+                || (side == "server" && target->role_ == GATT_ROLE_SLAVE);
+        };
+        auto findRecordIter = find_if(gattConnectRecords_.begin(), gattConnectRecords_.end(), findRecord);
+
+        if (findRecordIter != gattConnectRecords_.end()) {
+            return true;
         }
     }
     return false;

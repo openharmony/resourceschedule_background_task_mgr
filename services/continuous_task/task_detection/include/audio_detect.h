@@ -48,8 +48,6 @@ class AudioDetect {
 public:
     void HandleAudioStreamInfo(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,
         const std::string &type);
-    void HandlePlayerInfos(int32_t uid, int32_t sessionId, int32_t state, std::set<int32_t> &uidRemoved);
-    void HandleRecorderInfos(int32_t uid, int32_t sessionId, int32_t state, std::set<int32_t> &uidRemoved);
 #ifdef AV_SESSION_PART_ENABLE
     void HandleAVSessionInfo(const AVSession::AVSessionDescriptor &descriptor, const std::string &action);
 #endif // AV_SESSION_PART_ENABLE
@@ -57,6 +55,10 @@ public:
     void ClearData();
     void ParseAudioRecordToStr(Json::Value &value);
     bool ParseAudioRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet);
+
+private:
+    void UpdateAudioRecord(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,
+        std::list<std::shared_ptr<AudioInfo>> &records, std::set<int32_t> &uidRemoved);
 
 private:
     std::list<std::shared_ptr<AudioInfo>> audioPlayerInfos_ {};

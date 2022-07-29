@@ -18,6 +18,7 @@
 #include <sstream>
 
 #include "bg_continuous_task_mgr.h"
+#include "common_utils.h"
 #include "continuous_task_log.h"
 
 namespace OHOS {
@@ -34,73 +35,48 @@ void MultiDeviceDetect::HandleDisComponentChange(const std::string &info)
     Json::CharReaderBuilder reader;
     std::string errors;
     std::stringstream is(info.c_str());
-    if (parseFromStream(reader, is, &root, &errors)) {
-        if (!root.isMember("componentType") || root["componentType"].isNull()
-            || !root.isMember("deviceType") || root["deviceType"].isNull()
-            || !root.isMember("changeType") || root["changeType"].isNull()
-            || !root.isMember("uid") || root["uid"].isNull()) {
-            BGTASK_LOGE("reported distributed component change event lost important info");
-            return;
-        }
-        std::string componentType = root["componentType"].asString();
-        std::string deviceType = root["deviceType"].asString();
-        std::string changeType = root["changeType"].asString();
-        int32_t uid = atoi(root["uid"].asString().c_str());
+    if (!parseFromStream(reader, is, &root, &errors)) {
+        BGTASK_LOGE("Parse json value From stream failed");
+        return;
+    }
+    if (!CommonUtils::GetInstance()->CheckJsonValue(root, { "deviceType", "changeType", "uid" })) {
+        BGTASK_LOGE("reported distributed component change event lost important info");
+        return;
+    }
+    std::string componentType = root["componentType"].asString();
+    std::string deviceType = root["deviceType"].asString();
+    std::string changeType = root["changeType"].asString();
+    int32_t uid = atoi(root["uid"].asString().c_str());
 
-        if (deviceType == "0") { // caller
-            UpdateDisCallerInfo(uid, changeType);
-        } else if (deviceType == "1") { // callee
-            UpdateDisCalleeInfo(uid, changeType);
-        }
+    if (deviceType == "0") { // caller
+        UpdateDisComponentInfo(uid, changeType, callerRecords_);
+    } else if (deviceType == "1") { // callee
+        UpdateDisComponentInfo(uid, changeType, calleeRecords_);
     }
 }
 
-void MultiDeviceDetect::UpdateDisCallerInfo(int32_t uid, const std::string &changeType)
+void MultiDeviceDetect::UpdateDisComponentInfo(int32_t uid, const std::string &changeType,
+    std::map<int32_t, uint32_t> &record)
 {
-    auto findIter = callerRecords_.find(uid);
+    auto findIter = record.find(uid);
     if (changeType == "1") { // add
-        if (findIter != callerRecords_.end()) {
-            callerRecords_[uid]++;
+        if (findIter != record.end()) {
+            record[uid]++;
         } else {
-            callerRecords_.emplace(uid, INIT_CONNECTED_NUM);
+            record.emplace(uid, INIT_CONNECTED_NUM);
         }
     } else if (changeType == "2") { // remove
-        if (findIter == callerRecords_.end()) {
+        if (findIter == record.end()) {
             return;
         }
-        if (callerRecords_[uid] == INIT_CONNECTED_NUM) {
-            callerRecords_.erase(findIter);
-            if (!CheckIsDisSchedScene(uid)) {
-                BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
-                    UNSET_PID, MULTIDEVICE_CONNECTION_BGMODE_ID);
-            }
-        } else {
-            callerRecords_[uid]--;
-        }
-    }
-}
-
-void MultiDeviceDetect::UpdateDisCalleeInfo(int32_t uid, const std::string &changeType)
-{
-    auto findIter = calleeRecords_.find(uid);
-    if (changeType == "1") { // add
-        if (findIter != calleeRecords_.end()) {
-            calleeRecords_[uid]++;
-        } else {
-            calleeRecords_.emplace(uid, INIT_CONNECTED_NUM);
-        }
-    } else if (changeType == "2") { // remove
-        if (findIter == calleeRecords_.end()) {
+        if (record[uid] != INIT_CONNECTED_NUM) {
+            record[uid]--;
             return;
         }
-        if (calleeRecords_[uid] == INIT_CONNECTED_NUM) {
-            calleeRecords_.erase(findIter);
-            if (!CheckIsDisSchedScene(uid)) {
-                BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
-                    UNSET_PID, MULTIDEVICE_CONNECTION_BGMODE_ID);
-            }
-        } else {
-            calleeRecords_[uid]--;
+        record.erase(findIter);
+        if (!CheckIsDisSchedScene(uid)) {
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
+                UNSET_PID, MULTIDEVICE_CONNECTION_BGMODE_ID);
         }
     }
 }
@@ -117,20 +93,20 @@ void MultiDeviceDetect::ParseDisSchedRecordToStr(Json::Value &value)
 {
     Json::Value disScheduleInfo;
 
-    for (auto var : callerRecords_) {
-        Json::Value callerRecord;
-        callerRecord["uid"] = var.first;
-        callerRecord["connectedNums"] = var.second;
-        disScheduleInfo["callerRecords"].append(callerRecord);
-    }
-
-    for (auto var : calleeRecords_) {
-        Json::Value calleeRecord;
-        calleeRecord["uid"] = var.first;
-        calleeRecord["connectedNums"] = var.second;
-        disScheduleInfo["calleeRecords"].append(calleeRecord);
-    }
+    ParseRecordToStrByType(disScheduleInfo, "callerRecords", callerRecords_);
+    ParseRecordToStrByType(disScheduleInfo, "calleeRecords", calleeRecords_);
     value["disSchedule"] = disScheduleInfo;
+}
+
+void MultiDeviceDetect::ParseRecordToStrByType(Json::Value &value, const std::string &type,
+    const std::map<int32_t, uint32_t> &record)
+{
+    for (auto var : record) {
+        Json::Value jsonRecord;
+        jsonRecord["uid"] = var.first;
+        jsonRecord["connectedNums"] = var.second;
+        value[type].append(jsonRecord);
+    }
 }
 
 bool MultiDeviceDetect::ParseDisSchedRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet)
@@ -140,21 +116,21 @@ bool MultiDeviceDetect::ParseDisSchedRecordFromJson(const Json::Value &value, st
     }
 
     Json::Value disScheduleInfo = value["disSchedule"];
-    Json::Value arrayObj = disScheduleInfo["callerRecords"];
+    ParseRecordFromJsonByType(disScheduleInfo, uidSet, "callerRecords", callerRecords_);
+    ParseRecordFromJsonByType(disScheduleInfo, uidSet, "calleeRecords", calleeRecords_);
+    return true;
+}
+
+bool MultiDeviceDetect::ParseRecordFromJsonByType(const Json::Value &value, std::set<int32_t> &uidSet,
+    const std::string &type, std::map<int32_t, uint32_t> &record)
+{
+    Json::Value arrayObj = value["type"];
     int32_t uid;
     for (uint32_t i = 0; i < arrayObj.size(); i++) {
         uid = arrayObj[i]["uid"].asInt();
         uidSet.emplace(uid);
-        callerRecords_[uid] = arrayObj[i]["connectedNums"].asInt();
+        record[uid] = arrayObj[i]["connectedNums"].asInt();
     }
-
-    arrayObj = disScheduleInfo["calleeRecords"];
-    for (uint32_t i = 0; i < arrayObj.size(); i++) {
-        uid = arrayObj[i]["uid"].asInt();
-        uidSet.emplace(uid);
-        calleeRecords_[uid] = arrayObj[i]["connectedNums"].asInt();
-    }
-
     return true;
 }
 
