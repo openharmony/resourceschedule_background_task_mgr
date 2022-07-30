@@ -17,10 +17,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-CommonUtils::CommonUtils() {}
-
-CommonUtils::~CommonUtils() {}
-
 bool CommonUtils::CheckJsonValue(const Json::Value &value, std::initializer_list<std::string> params)
 {
     for (auto param : params) {
@@ -39,6 +35,7 @@ bool CommonUtils::CheckIsUidExist(int32_t uid, const T &t)
             return true;
         }
     }
+    return false;
 }
 }
 }

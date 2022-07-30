@@ -16,6 +16,7 @@
 #include "audio_detect.h"
 
 #include "bg_continuous_task_mgr.h"
+#include "common_utils.h"
 #include "continuous_task_log.h"
 
 namespace OHOS {
@@ -92,17 +93,31 @@ void AudioDetect::HandleAVSessionInfo(const AVSession::AVSessionDescriptor &desc
 }
 #endif // AV_SESSION_PART_ENABLE
 
-void AudioDetect::ParseAudioRecordToStr(Json::Value &value)
+template<typename T>
+void ParseAudioStreamInfoToStr(Json::Value &value, const std::string &type, const T &record)
 {
-    Json::Value playerInfo;
-    Json::Value audioRenderInfos;
-    for (auto var : audioPlayerInfos_) {
+    Json::Value streamInfos;
+    for (auto var : record) {
         Json::Value info;
         info["uid"] = var->uid_;
         info["sessionId"] = var->sessionId_;
-        audioRenderInfos.append(info);
+        streamInfos.append(info);
     }
-    playerInfo["audioRenderInfos"] = audioRenderInfos;
+    value[type] = streamInfos;
+}
+
+void AudioDetect::ParseAudioRecordToStr(Json::Value &value)
+{
+    Json::Value playerInfo;
+    ParseAudioStreamInfoToStr(playerInfo, "audioRenderInfos", audioPlayerInfos_);
+    // Json::Value audioRenderInfos;
+    // for (auto var : audioPlayerInfos_) {
+    //     Json::Value info;
+    //     info["uid"] = var->uid_;
+    //     info["sessionId"] = var->sessionId_;
+    //     audioRenderInfos.append(info);
+    // }
+    // playerInfo["audioRenderInfos"] = audioRenderInfos;
 
     Json::Value avSessionInfos;
     for (auto var : avSessionInfos_) {
@@ -116,14 +131,30 @@ void AudioDetect::ParseAudioRecordToStr(Json::Value &value)
     
     value["audioPlayer"] = playerInfo;
 
-    Json::Value RecorderInfo;
-    for (auto var : audioRecorderInfos_) {
-        Json::Value info;
-        info["uid"] = var->uid_;
-        info["sessionId"] = var->sessionId_;
-        RecorderInfo.append(info);
+    ParseAudioStreamInfoToStr(value, "audioRecorder", audioRecorderInfos_);
+
+    // Json::Value RecorderInfo;
+    // for (auto var : audioRecorderInfos_) {
+    //     Json::Value info;
+    //     info["uid"] = var->uid_;
+    //     info["sessionId"] = var->sessionId_;
+    //     RecorderInfo.append(info);
+    // }
+    // value["audioRecorder"] = RecorderInfo;
+}
+
+template<typename T>
+void ParseAudioStreamInfoFromJson(const Json::Value &value, const std::string &type,
+    std::set<int32_t> &uidSet, T &record)
+{
+    Json::Value arrayObj = value[type];
+    int32_t uid;
+    for (uint32_t i = 0; i < arrayObj.size(); i++) {
+        uid = arrayObj[i]["uid"].asInt();
+        uidSet.emplace(uid);
+        auto info = std::make_shared<AudioInfo>(uid, arrayObj[i]["sessionId"].asInt());
+        record.emplace_back(info);
     }
-    value["audioRecorder"] = RecorderInfo;
 }
 
 bool AudioDetect::ParseAudioRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet)
@@ -132,16 +163,18 @@ bool AudioDetect::ParseAudioRecordFromJson(const Json::Value &value, std::set<in
         return false;
     }
     Json::Value playerInfo = value["audioPlayer"];
-    Json::Value arrayObj = playerInfo["audioRenderInfos"];
-    int32_t uid;
-    for (uint32_t i = 0; i < arrayObj.size(); i++) {
-        uid = arrayObj[i]["uid"].asInt();
-        uidSet.emplace(uid);
-        auto record = std::make_shared<AudioInfo>(uid, arrayObj[i]["sessionId"].asInt());
-        audioPlayerInfos_.emplace_back(record);
-    }
+    ParseAudioStreamInfoFromJson(playerInfo, "audioRenderInfos", uidSet, audioPlayerInfos_);
+    // Json::Value arrayObj = playerInfo["audioRenderInfos"];
+    // int32_t uid;
+    // for (uint32_t i = 0; i < arrayObj.size(); i++) {
+    //     uid = arrayObj[i]["uid"].asInt();
+    //     uidSet.emplace(uid);
+    //     auto record = std::make_shared<AudioInfo>(uid, arrayObj[i]["sessionId"].asInt());
+    //     audioPlayerInfos_.emplace_back(record);
+    // }
 
-    arrayObj = playerInfo["AVSessionInfos"];
+    Json::Value arrayObj = playerInfo["AVSessionInfos"];
+    int32_t uid;
     for (uint32_t i = 0; i < arrayObj.size(); i++) {
         uid = arrayObj[i]["uid"].asInt();
         uidSet.emplace(uid);
@@ -150,46 +183,28 @@ bool AudioDetect::ParseAudioRecordFromJson(const Json::Value &value, std::set<in
         avSessionInfos_.emplace_back(record);
     }
 
-    arrayObj = value["audioRecorder"];
-    for (uint32_t i = 0; i < arrayObj.size(); i++) {
-        uid = arrayObj[i]["uid"].asInt();
-        uidSet.emplace(uid);
-        auto record = std::make_shared<AudioInfo>(uid, arrayObj[i]["sessionId"].asInt());
-        audioRecorderInfos_.emplace_back(record);
-    }
+    // arrayObj = value["audioRecorder"];
+    // for (uint32_t i = 0; i < arrayObj.size(); i++) {
+    //     uid = arrayObj[i]["uid"].asInt();
+    //     uidSet.emplace(uid);
+    //     auto record = std::make_shared<AudioInfo>(uid, arrayObj[i]["sessionId"].asInt());
+    //     audioRecorderInfos_.emplace_back(record);
+    // }
+    ParseAudioStreamInfoFromJson(value, "audioRecorder", uidSet, audioRecorderInfos_);
     return true;
 }
 
 bool AudioDetect::CheckAudioCondition(int32_t uid, uint32_t taskType)
 {
-    bool isAudioConditionMet = false;
-    bool isAVSessionConditionMet = false;
     if (taskType == AUDIO_PLAYBACK_BGMODE_ID) {
-        for (auto var : audioPlayerInfos_) {
-            if (var->uid_ == uid) {
-                isAudioConditionMet = true;
-                break;
-            }
-        }
-        for (auto var : avSessionInfos_) {
-            if (var->uid_ == uid) {
-                isAVSessionConditionMet = true;
-                break;
-            }
-        }
 #ifdef AV_SESSION_PART_ENABLE
-        return isAudioConditionMet && isAVSessionConditionMet;
+        return CommonUtils::CheckIsUidExist(uid, audioPlayerInfos_)
+            && CommonUtils::CheckIsUidExist(uid, avSessionInfos_);
 #else
-        return isAudioConditionMet;
+        return CommonUtils::CheckIsUidExist(uid, audioPlayerInfos_);
 #endif
     } else {
-        for (auto var : audioRecorderInfos_) {
-            if (var->uid_ == uid) {
-                isAudioConditionMet = true;
-                break;
-            }
-        }
-        return isAudioConditionMet;
+        return CommonUtils::CheckIsUidExist(uid, audioRecorderInfos_);
     }
 }
 

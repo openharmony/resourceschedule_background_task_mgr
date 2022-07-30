@@ -59,8 +59,8 @@ public:
     void HandleBtSwitchState(const Json::Value &root);
     void HandleSppConnect(const Json::Value &root);
     void HandleGattConnect(const Json::Value &root);
-    void HandleGattGattAppRegister(const Json::Value &root);
-    void HandleGattGattAppDeregister(const Json::Value &root);
+    void HandleGattAppRegister(const Json::Value &root);
+    void HandleGattAppDeregister(const Json::Value &root);
     void HandleGattDisconnect(const std::shared_ptr<GattConnectStateRecord> &record);
     void HandleMasterSideDisconnect(const std::string &addr);
     void HandleSlaveSideDisconnect();

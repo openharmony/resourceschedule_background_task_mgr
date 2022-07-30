@@ -48,9 +48,10 @@ void LocationDetect::HandleLocationSysEvent(const Json::Value &root)
                 locationUsingRecords_.emplace_back(pair);
             }
         } else if (state == "stop") {
-            if (iter != locationUsingRecords_.end())
-            locationUsingRecords_.erase(iter);
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid, LOCATION_BGMODE_ID);
+            if (iter != locationUsingRecords_.end()) {
+                locationUsingRecords_.erase(iter);
+                BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid, LOCATION_BGMODE_ID);
+            }
         }
     } else if (root["name_"].asString() == "LOCATION_SWITCH_STATE") {
         if (!root.isMember("STATE")) {

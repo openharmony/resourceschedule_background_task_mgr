@@ -38,7 +38,7 @@ ohos_shared_library("bgtaskmgr_service") {
     "continuous_task/src/task_notification_subscriber.cpp",
     "continuous_task/task_detection/src/audio_detect.cpp",
     "continuous_task/task_detection/src/bluetooth_detect.cpp",
-    "continuous_task/task_detection/src/common_utils.cpp",
+    # "continuous_task/task_detection/src/common_utils.cpp",
     "continuous_task/task_detection/src/distributed_component_listener_stub.cpp",
     "continuous_task/task_detection/src/location_detect.cpp",
     "continuous_task/task_detection/src/multi_device_detect.cpp",

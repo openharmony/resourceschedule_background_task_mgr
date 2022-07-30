@@ -39,7 +39,7 @@ void MultiDeviceDetect::HandleDisComponentChange(const std::string &info)
         BGTASK_LOGE("Parse json value From stream failed");
         return;
     }
-    if (!CommonUtils::GetInstance()->CheckJsonValue(root, { "deviceType", "changeType", "uid" })) {
+    if (!CommonUtils::CheckJsonValue(root, { "deviceType", "changeType", "uid" })) {
         BGTASK_LOGE("reported distributed component change event lost important info");
         return;
     }
