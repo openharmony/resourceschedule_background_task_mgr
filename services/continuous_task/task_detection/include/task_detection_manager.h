@@ -21,8 +21,10 @@
 #include "event_handler.h"
 #include "event_runner.h"
 #include "json/json.h"
+#include "nlohmann/json.hpp"
 #include "singleton.h"
 #include "audio_stream_manager.h"
+#include "common_utils.h"
 #include "data_storage.h"
 #include "idistributed_component_listener.h"
 #include "running_process_info.h"
@@ -55,8 +57,8 @@ private:
     bool InitAudioStateChangeListener();
     bool InitAVSessionStateChangeListener();
     bool GetDisSchedProxy();
-    void HandleBluetoothSysEvent(const Json::Value &root);
-    void HandleLocationSysEvent(const Json::Value &root);
+    void HandleBluetoothSysEvent(const nlohmann::json &root);
+    void HandleLocationSysEvent(const nlohmann::json &root);
     void HandleAudioStreamInfo(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,
         const std::string &type);
 #ifdef AV_SESSION_PART_ENABLE
@@ -66,7 +68,7 @@ private:
     bool CheckLocationCondition(int32_t uid);
     void ClearAllData();
     std::string ParseRecordToStr();
-    bool ParseRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet);
+    bool ParseRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet);
 
 private:
     class HiSysEventListener : public HiviewDFX::HiSysEventSubscribeCallBack {

@@ -94,21 +94,21 @@ void AudioDetect::HandleAVSessionInfo(const AVSession::AVSessionDescriptor &desc
 #endif // AV_SESSION_PART_ENABLE
 
 template<typename T>
-void ParseAudioStreamInfoToStr(Json::Value &value, const std::string &type, const T &record)
+void ParseAudioStreamInfoToStr(nlohmann::json &value, const std::string &type, const T &record)
 {
-    Json::Value streamInfos;
+    auto streamInfos = nlohmann::json::array();
     for (auto var : record) {
-        Json::Value info;
+        nlohmann::json info;
         info["uid"] = var->uid_;
         info["sessionId"] = var->sessionId_;
-        streamInfos.append(info);
+        streamInfos.push_back(info);
     }
     value[type] = streamInfos;
 }
 
-void AudioDetect::ParseAudioRecordToStr(Json::Value &value)
+void AudioDetect::ParseAudioRecordToStr(nlohmann::json &value)
 {
-    Json::Value playerInfo;
+    nlohmann::json playerInfo;
     ParseAudioStreamInfoToStr(playerInfo, "audioRenderInfos", audioPlayerInfos_);
     // Json::Value audioRenderInfos;
     // for (auto var : audioPlayerInfos_) {
@@ -119,13 +119,13 @@ void AudioDetect::ParseAudioRecordToStr(Json::Value &value)
     // }
     // playerInfo["audioRenderInfos"] = audioRenderInfos;
 
-    Json::Value avSessionInfos;
+    auto avSessionInfos = nlohmann::json::array();
     for (auto var : avSessionInfos_) {
-        Json::Value info;
+        nlohmann::json info;
         info["uid"] = var->uid_;
         info["pid"] = var->pid_;
         info["sessionId"] = var->sessionId_;
-        avSessionInfos.append(info);
+        avSessionInfos.push_back(info);
     }
     playerInfo["AVSessionInfos"] = avSessionInfos;
     
@@ -144,25 +144,45 @@ void AudioDetect::ParseAudioRecordToStr(Json::Value &value)
 }
 
 template<typename T>
-void ParseAudioStreamInfoFromJson(const Json::Value &value, const std::string &type,
+void ParseAudioStreamInfoFromJson(const nlohmann::json &value, const std::string &type,
     std::set<int32_t> &uidSet, T &record)
 {
-    Json::Value arrayObj = value[type];
+    // nlohmann::json arrayObj = value[type];
     int32_t uid;
-    for (uint32_t i = 0; i < arrayObj.size(); i++) {
-        uid = arrayObj[i]["uid"].asInt();
+    int32_t sessionId;
+    // for (uint32_t i = 0; i < arrayObj.size(); i++) {
+    //     uid = arrayObj[i]["uid"].asInt();
+    //     uidSet.emplace(uid);
+    //     auto info = std::make_shared<AudioInfo>(uid, arrayObj[i]["sessionId"].asInt());
+    //     record.emplace_back(info);
+    // }
+
+    // for (auto iter = arrayObj.begin(); iter != arrayObj.end(); iter++) {
+    //     uid = (*iter).at("uid").get<int32_t>();
+    //     sessionId = (*iter).at("sessionId").get<int32_t>();
+    //     uidSet.emplace(uid);
+    //     auto info = std::make_shared<AudioInfo>(uid, sessionId);
+    //     record.emplace_back(info);
+    // }
+
+    for (auto &elem : value[type]) {
+        uid = elem.at("uid").get<int32_t>();
+        sessionId = elem.at("sessionId").get<int32_t>();
         uidSet.emplace(uid);
-        auto info = std::make_shared<AudioInfo>(uid, arrayObj[i]["sessionId"].asInt());
+        auto info = std::make_shared<AudioInfo>(uid, sessionId);
         record.emplace_back(info);
     }
 }
 
-bool AudioDetect::ParseAudioRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet)
+bool AudioDetect::ParseAudioRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet)
 {
-    if (!value.isMember("audioPlayer") || !value.isMember("audioRecorder")) {
+    // if (!value.isMember("audioPlayer") || !value.isMember("audioRecorder")) {
+    //     return false;
+    // }
+    if (!CommonUtils::CheckJsonValue(root, { "audioPlayer", "audioRecorder" })) {
         return false;
     }
-    Json::Value playerInfo = value["audioPlayer"];
+    nlohmann::json playerInfo = value["audioPlayer"];
     ParseAudioStreamInfoFromJson(playerInfo, "audioRenderInfos", uidSet, audioPlayerInfos_);
     // Json::Value arrayObj = playerInfo["audioRenderInfos"];
     // int32_t uid;
@@ -173,13 +193,16 @@ bool AudioDetect::ParseAudioRecordFromJson(const Json::Value &value, std::set<in
     //     audioPlayerInfos_.emplace_back(record);
     // }
 
-    Json::Value arrayObj = playerInfo["AVSessionInfos"];
+    // nlohmann::json = playerInfo["AVSessionInfos"];
     int32_t uid;
-    for (uint32_t i = 0; i < arrayObj.size(); i++) {
-        uid = arrayObj[i]["uid"].asInt();
+    int32_t pid;
+    std::string sessionId;
+    for (auto &item : playerInfo["AVSessionInfos"]) {
+        uid = (*iter).at("uid").get<int32_t>();
+        pid = (*iter).at("pid").get<int32_t>();
+        sessionId = (*iter).at("sessionId").get<std::string>();
         uidSet.emplace(uid);
-        auto record = std::make_shared<AVSessionInfo>(uid, arrayObj[i]["pid"].asInt(),
-            arrayObj[i]["sessionId"].asString());
+        auto record = std::make_shared<AVSessionInfo>(uid, pid, sessionId);
         avSessionInfos_.emplace_back(record);
     }
 

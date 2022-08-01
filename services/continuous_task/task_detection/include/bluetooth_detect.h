@@ -20,6 +20,7 @@
 #include <set>
 
 #include "json/json.h"
+#include "nlohmann/json.hpp"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -55,17 +56,17 @@ struct GattAppRegisterInfo {
 class BluetoothDetect {
 public:
     bool CheckBluetoothUsingScene(int32_t uid);
-    void HandleBluetoothSysEvent(const Json::Value &root);
-    void HandleBtSwitchState(const Json::Value &root);
-    void HandleSppConnect(const Json::Value &root);
-    void HandleGattConnect(const Json::Value &root);
-    void HandleGattAppRegister(const Json::Value &root);
-    void HandleGattAppDeregister(const Json::Value &root);
+    void HandleBluetoothSysEvent(const nlohmann::json &root);
+    void HandleBtSwitchState(const nlohmann::json &root);
+    void HandleSppConnect(const nlohmann::json &root);
+    void HandleGattConnect(const nlohmann::json &root);
+    void HandleGattAppRegister(const nlohmann::json &root);
+    void HandleGattAppDeregister(const nlohmann::json &root);
     void HandleGattDisconnect(const std::shared_ptr<GattConnectStateRecord> &record);
     void HandleMasterSideDisconnect(const std::string &addr);
     void HandleSlaveSideDisconnect();
-    void ParseBluetoothRecordToStr(Json::Value &value);
-    bool ParseBluetoothRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet);
+    void ParseBluetoothRecordToStr(nlohmann::json &value);
+    bool ParseBluetoothRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet);
     void ClearData();
 
 private:

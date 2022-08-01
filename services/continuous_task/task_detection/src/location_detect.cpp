@@ -16,6 +16,7 @@
 #include "location_detect.h"
 
 #include "bg_continuous_task_mgr.h"
+#include "common_utils.h"
 #include "continuous_task_log.h"
 
 namespace OHOS {
@@ -26,20 +27,32 @@ static constexpr int32_t UNSET_PID = -1;
 static constexpr uint32_t LOCATION_BGMODE_ID = 4;
 }
 
-void LocationDetect::HandleLocationSysEvent(const Json::Value &root)
+void LocationDetect::HandleLocationSysEvent(const nlohmann::json &root)
 {
-    if (!root.isMember("name_") || root["name_"].isNull()) {
+    // if (!root.isMember("name_") || root["name_"].isNull()) {
+    //     BGTASK_LOGE("hisysevent data domain info lost");
+    //     return;
+    // }
+    if (!CommonUtils::CheckJsonValue(root, {"name_"})) {
         BGTASK_LOGE("hisysevent data domain info lost");
         return;
     }
-    if (root["name_"].asString() == "GNSS_STATE") {
-        if (!root.isMember("STATE") || !root.isMember("UID") || !root.isMember("PID")) {
+    std::string eventName = root.at("name_").get<std::string>();
+    if (eventName == "GNSS_STATE") {
+        // if (!root.isMember("STATE") || !root.isMember("UID") || !root.isMember("PID")) {
+        //     return;
+        // }
+        if (!CommonUtils::CheckJsonValue(root, { "STATE", "UID", "PID" })) {
             return;
         }
-        std::string state = root["STATE"].asString();
-        int32_t uid = atoi(root["UID"].asString().c_str());
-        int32_t pid = atoi(root["PID"].asString().c_str());
-        BGTASK_LOGI("GNSS_STATE: %{public}s", state.c_str());
+        std::string state = root.at("STATE").get<std::string>();
+        int32_t uid = atoi(root.at("UID").get<std::string>().c_str());
+        int32_t pid = atoi(root.at("PID").get<std::string>().c_str());
+        
+        // std::string state = root["STATE"].asString();
+        // int32_t uid = atoi(root["UID"].asString().c_str());
+        // int32_t pid = atoi(root["PID"].asString().c_str());
+        // BGTASK_LOGI("GNSS_STATE: %{public}s", state.c_str());
         auto pair = std::make_pair(uid, pid);
         auto iter = find_if(locationUsingRecords_.begin(), locationUsingRecords_.end(),
             [pair](const auto &target) { return pair.first == target.first && pair.second == target.second; });
@@ -53,11 +66,14 @@ void LocationDetect::HandleLocationSysEvent(const Json::Value &root)
                 BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid, LOCATION_BGMODE_ID);
             }
         }
-    } else if (root["name_"].asString() == "LOCATION_SWITCH_STATE") {
-        if (!root.isMember("STATE")) {
+    } else if (eventName == "LOCATION_SWITCH_STATE") {
+        // if (!root.isMember("STATE")) {
+        //     return;
+        // }
+        if (!CommonUtils::CheckJsonValue(root, {"STATE"})) {
             return;
         }
-        std::string switchState = root["STATE"].asString();
+        std::string switchState = root.at("STATE").get<std::string>();
         if (switchState == "enable") {
             isLocationSwitchOn_ = true;
         } else if (switchState == "disable") {
@@ -81,32 +97,48 @@ bool LocationDetect::CheckLocationCondition(int32_t uid)
     return false;
 }
 
-void LocationDetect::ParseLocationRecordToStr(Json::Value &value)
+void LocationDetect::ParseLocationRecordToStr(nlohmann::json &value)
 {
-    Json::Value locationInfo;
+    nlohmann::json locationInfo;
     locationInfo["location switch"] = isLocationSwitchOn_;
+    auto arrayInfo = nlohmann::json::array();
     for (auto var : locationUsingRecords_) {
-        Json::Value locationUsingRecord;
+        nlohmann::json locationUsingRecord;
         locationUsingRecord["uid"] = var.first;
         locationUsingRecord["pid"] = var.second;
-        locationInfo["locationRecords"].append(locationUsingRecord);
+        arrayInfo["locationRecords"].push_back(locationUsingRecord);
     }
+    locationInfo["locationRecords"] = arrayInfo;
     value["location"] = locationInfo;
 }
 
-bool LocationDetect::ParseLocationRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet)
+bool LocationDetect::ParseLocationRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet)
 {
-    if (!value.isMember("location")) {
+    // if (!value.isMember("location")) {
+    //     return false;
+    // }
+
+    if (!CommonUtils::CheckJsonValue(value, {"location"})) {
         return false;
     }
 
-    Json::Value locationInfo = value["location"];
-    this->isLocationSwitchOn_ = locationInfo["location switch"].asBool();
-    Json::Value arrayObj = locationInfo["locationRecords"];
-    for (uint32_t i = 0; i < arrayObj.size(); i++) {
-        int32_t uid = arrayObj[i]["uid"].asInt();
+    nlohmann::json locationInfo = value["location"];
+    // this->isLocationSwitchOn_ = locationInfo["location switch"].asBool();
+    this->isLocationSwitchOn_ = locationInfo.at("location switch").get<bool>();
+    // nlohmann::json arrayObj = locationInfo["locationRecords"];
+    int32_t uid;
+    int32_t pid;
+    // for (uint32_t i = 0; i < arrayObj.size(); i++) {
+    //     int32_t uid = arrayObj[i]["uid"].asInt();
+    //     uidSet.emplace(uid);
+    //     auto pair = std::make_pair(uid, arrayObj[i]["pid"].asInt());
+    //     locationUsingRecords_.emplace_back(pair);
+    // }
+    for (auto &elem : locationInfo["locationRecords"]) {
+        uid = elem["uid"].get<int32_t>();
+        pid = elem["pid"].get<int32_t>();
         uidSet.emplace(uid);
-        auto pair = std::make_pair(uid, arrayObj[i]["pid"].asInt());
+        auto pair = std::make_pair(uid, pid);
         locationUsingRecords_.emplace_back(pair);
     }
     return true;

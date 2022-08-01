@@ -31,11 +31,16 @@ static constexpr int32_t INIT_CONNECTED_NUM = 1;
 
 void MultiDeviceDetect::HandleDisComponentChange(const std::string &info)
 {
-    Json::Value root;
-    Json::CharReaderBuilder reader;
-    std::string errors;
-    std::stringstream is(info.c_str());
-    if (!parseFromStream(reader, is, &root, &errors)) {
+    // Json::Value root;
+    // Json::CharReaderBuilder reader;
+    // std::string errors;
+    // std::stringstream is(info.c_str());
+    // if (!parseFromStream(reader, is, &root, &errors)) {
+    //     BGTASK_LOGE("Parse json value From stream failed");
+    //     return;
+    // }
+    nlohmann::json root = nlohmann::json::parse(info, nullptr, false);
+    if (root.is_discarded()) {
         BGTASK_LOGE("Parse json value From stream failed");
         return;
     }
@@ -43,10 +48,15 @@ void MultiDeviceDetect::HandleDisComponentChange(const std::string &info)
         BGTASK_LOGE("reported distributed component change event lost important info");
         return;
     }
-    std::string componentType = root["componentType"].asString();
-    std::string deviceType = root["deviceType"].asString();
-    std::string changeType = root["changeType"].asString();
-    int32_t uid = atoi(root["uid"].asString().c_str());
+    std::string deviceType = root.at("deviceType").get<std::string>();
+    std::string changeType = root.at("dochangeTypemain_").get<std::string>();
+    int32_t uid = atoi(root.at("uid").get<std::string>().c_str());
+
+
+    // std::string componentType = root["componentType"].asString();
+    // std::string deviceType = root["deviceType"].asString();
+    // std::string changeType = root["changeType"].asString();
+    // int32_t uid = atoi(root["uid"].asString().c_str());
 
     if (deviceType == "0") { // caller
         UpdateDisComponentInfo(uid, changeType, callerRecords_);
@@ -89,47 +99,59 @@ bool MultiDeviceDetect::CheckIsDisSchedScene(int32_t uid)
     return false;
 }
 
-void MultiDeviceDetect::ParseDisSchedRecordToStr(Json::Value &value)
+void MultiDeviceDetect::ParseDisSchedRecordToStr(nlohmann::json &value)
 {
-    Json::Value disScheduleInfo;
+    nlohmann::json disScheduleInfo;
 
     ParseRecordToStrByType(disScheduleInfo, "callerRecords", callerRecords_);
     ParseRecordToStrByType(disScheduleInfo, "calleeRecords", calleeRecords_);
     value["disSchedule"] = disScheduleInfo;
 }
 
-void MultiDeviceDetect::ParseRecordToStrByType(Json::Value &value, const std::string &type,
+void MultiDeviceDetect::ParseRecordToStrByType(nlohmann::json &value, const std::string &type,
     const std::map<int32_t, uint32_t> &record)
 {
+    auto arrayInfo = nlohmann::json::array();
     for (auto var : record) {
-        Json::Value jsonRecord;
+        nlohmann::json jsonRecord;
         jsonRecord["uid"] = var.first;
         jsonRecord["connectedNums"] = var.second;
-        value[type].append(jsonRecord);
+        arrayInfo.push_back(jsonRecord);
     }
+    value[type] = arrayInfo;
 }
 
-bool MultiDeviceDetect::ParseDisSchedRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet)
+bool MultiDeviceDetect::ParseDisSchedRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet)
 {
-    if (!value.isMember("disSchedule")) {
-        return false;
+    // if (!value.isMember("disSchedule")) {
+    //     return false;
+    // }
+    if (!CommonUtils::CheckJsonValue(value, {"disSchedule"})) {
+        return;
     }
 
-    Json::Value disScheduleInfo = value["disSchedule"];
+    nlohmann::json disScheduleInfo = value["disSchedule"];
     ParseRecordFromJsonByType(disScheduleInfo, uidSet, "callerRecords", callerRecords_);
     ParseRecordFromJsonByType(disScheduleInfo, uidSet, "calleeRecords", calleeRecords_);
     return true;
 }
 
-bool MultiDeviceDetect::ParseRecordFromJsonByType(const Json::Value &value, std::set<int32_t> &uidSet,
+bool MultiDeviceDetect::ParseRecordFromJsonByType(const nlohmann::json &value, std::set<int32_t> &uidSet,
     const std::string &type, std::map<int32_t, uint32_t> &record)
 {
-    Json::Value arrayObj = value["type"];
+    // nlohmann::json arrayObj = value[type];
     int32_t uid;
-    for (uint32_t i = 0; i < arrayObj.size(); i++) {
-        uid = arrayObj[i]["uid"].asInt();
+    int32_t nums;
+    // for (uint32_t i = 0; i < arrayObj.size(); i++) {
+    //     uid = arrayObj[i]["uid"].asInt();
+    //     uidSet.emplace(uid);
+    //     record[uid] = arrayObj[i]["connectedNums"].asInt();
+    // }
+    for (auto& elem : value[type]) {
+        uid = value.at("uid").get<int32_t>();
+        uid = value.at("connectedNums").get<int32_t>();
         uidSet.emplace(uid);
-        record[uid] = arrayObj[i]["connectedNums"].asInt();
+        record[uid] = nums;
     }
     return true;
 }

@@ -20,15 +20,16 @@
 #include <set>
 
 #include "json/json.h"
+#include "nlohmann/json.hpp"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class LocationDetect {
 public:
     bool CheckLocationCondition(int32_t uid);
-    void ParseLocationRecordToStr(Json::Value &value);
-    bool ParseLocationRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet);
-    void HandleLocationSysEvent(const Json::Value &root);
+    void ParseLocationRecordToStr(nlohmann::json &value);
+    bool ParseLocationRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet);
+    void HandleLocationSysEvent(const nlohmann::json &root);
     void ClearData();
 
 private:

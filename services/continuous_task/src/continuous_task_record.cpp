@@ -80,7 +80,7 @@ std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> ContinuousTaskRecord::GetW
 
 std::string ContinuousTaskRecord::ParseToJsonStr()
 {
-    Json::Value root;
+    nlohmann::json root;
     root["bundleName"] = bundleName_;
     root["abilityName"] = abilityName_;
     root["userId"] = userId_;
@@ -90,38 +90,47 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["isNewApi"] = isNewApi_;
     root["notificationLabel"] = notificationLabel_;
     if (wantAgentInfo_ != nullptr) {
-        Json::Value info;
+        nlohmann::json info;
         info["bundleName"] = wantAgentInfo_->bundleName_;
         info["abilityName"] = wantAgentInfo_->abilityName_;
         root["wantAgentInfo"] = info;
     }
-    Json::StreamWriterBuilder writerBuilder;
-    std::ostringstream os;
-    std::unique_ptr<Json::StreamWriter> jsonWriter(writerBuilder.newStreamWriter());
-    jsonWriter->write(root, &os);
-    std::string result = os.str();
-    return result;
+    return root.dump();
 }
 
-bool ContinuousTaskRecord::ParseFromJson(const Json::Value value)
+bool CheckValueExist(const nlohmann::json &value, std::initializer_list<std::string> params)
 {
-    if (value.empty()) {
+    for (auto param : params) {
+        if (value.find(param) == value.end()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
+{
+    if (value.is_null() || !value.is_object() || !CheckValueExist(value,
+        { "bundleName", "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "notificationLabel" })) {
         return false;
     }
-    this->bundleName_ = value["bundleName"].asString();
-    this->abilityName_ = value["abilityName"].asString();
-    this->userId_ = value["userId"].asInt();
-    this->uid_ = value["uid"].asInt();
-    this->pid_ = value["pid"].asInt();
-    this->bgModeId_ = value["bgModeId"].asUInt();
-    this->isNewApi_ = value["isNewApi"].asBool();
-    this->notificationLabel_ = value["notificationLabel"].asString();
+    this->bundleName_ = value.at("bundleName").get<std::string>();
+    this->abilityName_ = value.at("abilityName").get<std::string>();
+    this->userId_ = value.at("userId").get<int32_t>();
+    this->uid_ = value.at("uid").get<int32_t>();
+    this->pid_ = value.at("pid").get<int32_t>();
+    this->bgModeId_ = value.at("bgModeId").get<uint32_t>();
+    this->isNewApi_ = value.at("isNewApi").get<bool>();
+    this->notificationLabel_ = value.at("notificationLabel").get<std::string>();
 
-    if (value.isMember("wantAgentInfo")) {
-        Json::Value infoVal = value["wantAgentInfo"];
+    if (value.find("wantAgentInfo") != value.end()) {
+        nlohmann::json infoVal = value["wantAgentInfo"];
+        if (!CheckValueExist(infoVal, { "bundleName", "abilityName" })) {
+            return false;
+        }
         std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
-        info->bundleName_ = infoVal["bundleName"].asString();
-        info->abilityName_ = infoVal["abilityName"].asString();
+        info->bundleName_ = infoVal.at("bundleName").get<std::string>();
+        info->abilityName_ = infoVal.at("abilityName").get<std::string>();
         this->wantAgentInfo_ = info;
     }
     return true;

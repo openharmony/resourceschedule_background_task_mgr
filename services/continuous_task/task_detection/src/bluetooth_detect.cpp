@@ -30,7 +30,7 @@ static constexpr int32_t GATT_ROLE_MASTER = 0;
 static constexpr int32_t GATT_ROLE_SLAVE = 1;
 }
 
-void BluetoothDetect::HandleBluetoothSysEvent(const Json::Value &root)
+void BluetoothDetect::HandleBluetoothSysEvent(const nlohmann::json &root)
 {
     if (!CommonUtils::CheckJsonValue(root, {"name_"})) {
         BGTASK_LOGE("hisysevent data domain info lost");
@@ -40,7 +40,8 @@ void BluetoothDetect::HandleBluetoothSysEvent(const Json::Value &root)
     //     BGTASK_LOGE("hisysevent data domain info lost");
     //     return;
     // }
-    std::string eventName = root["name_"].asString();
+    std::string eventName = root.at("name_").get<std::string>();
+    // std::string eventName = root["name_"].asString();
     if (eventName == "BLUETOOTH_BR_SWITCH_STATE" || eventName == "BLUETOOTH_BLE_STATE") {
         HandleBtSwitchState(root);
     } else if (eventName == "BLUETOOTH_SPP_CONNECT_STATE") {
@@ -56,7 +57,8 @@ void BluetoothDetect::HandleBluetoothSysEvent(const Json::Value &root)
             BGTASK_LOGE("Bluetooth connect state event lost important info");
             return;
         }
-        std::string action = root["ACTION"].asString();
+        // std::string action = root["ACTION"].asString();
+        std::string action = root.at("ACTION").get<std::string>();
         if (action == "register") {
             HandleGattAppRegister(root);
         } else if (action == "deregister") {
@@ -67,14 +69,16 @@ void BluetoothDetect::HandleBluetoothSysEvent(const Json::Value &root)
     }
 }
 
-void BluetoothDetect::HandleBtSwitchState(const Json::Value& root)
+void BluetoothDetect::HandleBtSwitchState(const nlohmann::json &root)
 {
     if (!CommonUtils::CheckJsonValue(root, {"STATE"})) {
         BGTASK_LOGE("Bluetooth sys event lost important info");
         return;
     }
-    std::string switchState = root["STATE"].asString();
-    std::string eventName = root["name_"].asString();
+    std::string switchState = root.at("STATE").get<std::string>();
+    std::string eventName = root.at("name_").get<std::string>();
+    // std::string switchState = root["STATE"].asString();
+    // std::string eventName = root["name_"].asString();
     if (eventName == "BLUETOOTH_BR_SWITCH_STATE") {
         if (switchState == "1") { // 1 means state turn on
             isBrSwitchOn_ = true;
@@ -94,7 +98,7 @@ void BluetoothDetect::HandleBtSwitchState(const Json::Value& root)
     }
 }
 
-void BluetoothDetect::HandleSppConnect(const Json::Value& root)
+void BluetoothDetect::HandleSppConnect(const nlohmann::json& root)
 {
     if (!CommonUtils::CheckJsonValue(root, { "ACTION", "ID", "PID", "UID" })) {
         BGTASK_LOGE("Bluetooth HandleSppConnect event lost important info");
@@ -105,10 +109,15 @@ void BluetoothDetect::HandleSppConnect(const Json::Value& root)
     //     BGTASK_LOGE("Bluetooth connect state event lost important info");
     //     return;
     // }
-    std::string action = root["ACTION"].asString();
-    int32_t socketId = atoi(root["ID"].asString().c_str());
-    int32_t pid = atoi(root["PID"].asString().c_str());
-    int32_t uid = atoi(root["UID"].asString().c_str());
+    std::string action = root.at("ACTION").get<std::string>();
+    int32_t socketId = atoi(root.at("ID").get<std::string>().c_str());
+    int32_t pid = atoi(root.at("PID").get<std::string>().c_str());
+    int32_t uid = atoi(root.at("UID").get<std::string>().c_str());
+
+    // std::string action = root["ACTION"].asString();
+    // int32_t socketId = atoi(root["ID"].asString().c_str());
+    // int32_t pid = atoi(root["PID"].asString().c_str());
+    // int32_t uid = atoi(root["UID"].asString().c_str());
     if (uid == SOFTBUS_SA_UID) {
         BGTASK_LOGI("Ignore spp server app register event about softbus");
         return;
@@ -136,7 +145,7 @@ void BluetoothDetect::HandleSppConnect(const Json::Value& root)
     }
 }
 
-void BluetoothDetect::HandleGattConnect(const Json::Value& root)
+void BluetoothDetect::HandleGattConnect(const nlohmann::json &root)
 {
     if (!CommonUtils::CheckJsonValue(root, { "ADDRESS", "STATE", "ROLE", "TRANSPORT" })) {
         BGTASK_LOGE("Bluetooth HandleGattConnect state event lost important info");
@@ -147,11 +156,16 @@ void BluetoothDetect::HandleGattConnect(const Json::Value& root)
     //     BGTASK_LOGE("Bluetooth connect state event lost important info");
     //     return;
     // }
-    std::string address = root["ADDRESS"].asString();
-    std::string state = root["STATE"].asString();
-    int32_t role = atoi(root["ROLE"].asString().c_str());
-    int32_t transport = atoi(root["TRANSPORT"].asString().c_str());
-    
+    // std::string address = root["ADDRESS"].asString();
+    // std::string state = root["STATE"].asString();
+    // int32_t role = atoi(root["ROLE"].asString().c_str());
+    // int32_t transport = atoi(root["TRANSPORT"].asString().c_str());
+
+    std::string address = root.at("ADDRESS").get<std::string>();
+    std::string state = root.at("STATE").get<std::string>();
+    int32_t role = atoi(root.at("ROLE").get<std::string>().c_str());
+    int32_t transport = atoi(root.at("TRANSPORT").get<std::string>().c_str());
+
     auto findRecord = [address, transport, role](const auto &target) {
         return target->address_ == address && target->transport_ == transport && target->role_ == role;
     };
@@ -173,7 +187,7 @@ void BluetoothDetect::HandleGattConnect(const Json::Value& root)
     }
 }
 
-void BluetoothDetect::HandleGattAppRegister(const Json::Value& root)
+void BluetoothDetect::HandleGattAppRegister(const nlohmann::json &root)
 {
     if (!CommonUtils::CheckJsonValue(root, { "SIDE", "ADDRESS", "PID", "UID", "APPID" })) {
         BGTASK_LOGE("Bluetooth GattAppRegister event lost important info");
@@ -184,11 +198,17 @@ void BluetoothDetect::HandleGattAppRegister(const Json::Value& root)
     //     BGTASK_LOGE("Bluetooth connect state event lost important info");
     //     return;
     // }
-    std::string side = root["SIDE"].asString();
-    std::string address = root["ADDRESS"].asString();
-    int32_t pid = atoi(root["PID"].asString().c_str());
-    int32_t uid = atoi(root["UID"].asString().c_str());
-    int32_t appId = atoi(root["APPID"].asString().c_str());
+    // std::string side = root["SIDE"].asString();
+    // std::string address = root["ADDRESS"].asString();
+    // int32_t pid = atoi(root["PID"].asString().c_str());
+    // int32_t uid = atoi(root["UID"].asString().c_str());
+    // int32_t appId = atoi(root["APPID"].asString().c_str());
+
+    std::string side = root.at("SIDE").get<std::string>();
+    std::string address = root.at("ADDRESS").get<std::string>();
+    int32_t pid = atoi(root.at("PID").get<std::string>().c_str());
+    int32_t uid = atoi(root.at("UID").get<std::string>().c_str());
+    int32_t appId = atoi(root.at("APPID").get<std::string>().c_str());
 
     if (uid == SOFTBUS_SA_UID) {
         BGTASK_LOGI("Ignore gatt server app register event about softbus");
@@ -206,7 +226,7 @@ void BluetoothDetect::HandleGattAppRegister(const Json::Value& root)
     }
 }
 
-void BluetoothDetect::HandleGattAppDeregister(const Json::Value& root)
+void BluetoothDetect::HandleGattAppDeregister(const nlohmann::json &root)
 {
     if (!CommonUtils::CheckJsonValue(root, { "SIDE", "APPID" })) {
         BGTASK_LOGE("Bluetooth GattAppDeregister state event lost important info");
@@ -216,8 +236,11 @@ void BluetoothDetect::HandleGattAppDeregister(const Json::Value& root)
     //     BGTASK_LOGE("Bluetooth connect state event lost important info");
     //     return;
     // }
-    std::string side = root["SIDE"].asString();
-    int32_t appId = atoi(root["APPID"].asString().c_str());
+    // std::string side = root["SIDE"].asString();
+    // int32_t appId = atoi(root["APPID"].asString().c_str());
+
+    std::string side = root.at("SIDE").get<std::string>();
+    int32_t appId = atoi(root.at("APPID").get<std::string>().c_str());
 
     auto findRecord = [side, appId](const auto &target) {
         return target->side_ == side && target->appId_ == appId;
@@ -334,73 +357,83 @@ bool BluetoothDetect::CheckBluetoothUsingScene(int32_t uid)
     return false;
 }
 
-void BluetoothDetect::ParseBluetoothRecordToStr(Json::Value &value)
+void BluetoothDetect::ParseBluetoothRecordToStr(nlohmann::json &value)
 {
-    Json::Value bluetoothInfo;
+    nlohmann::json bluetoothInfo;
     bluetoothInfo["bredr switch"] = isBrSwitchOn_;
     bluetoothInfo["ble switch"] = isBleSwitchOn_;
-    Json::Value arrayObj1;
+    auto arrayObj1 = nlohmann::json::array();
     for (auto var: sppConnectRecords_) {
-        Json::Value sppConnectRecord;
+        nlohmann::json sppConnectRecord;
         sppConnectRecord["socketId"] = var->socketId_;
         sppConnectRecord["pid"] = var->pid_;
         sppConnectRecord["uid"] = var->uid_;
-        bluetoothInfo["sppConnectRecords"].append(sppConnectRecord);
+        arrayObj1.push_back(sppConnectRecord);
     }
+    bluetoothInfo["sppConnectRecords"] = arrayObj1;
 
+    auto arrayObj2 = nlohmann::json::array();
     for (auto var : gattConnectRecords_) {
-        Json::Value gattConnectRecord;
+        nlohmann::json gattConnectRecord;
         gattConnectRecord["address"] = var->address_;
         gattConnectRecord["role"] = var->role_;
         gattConnectRecord["transport"] = var->transport_;
-        bluetoothInfo["gattConnectRecords"].append(gattConnectRecord);
+        arrayObj2.push_back(gattConnectRecord);
     }
+    bluetoothInfo["gattConnectRecords"] = arrayObj2;
 
+    auto arrayObj3 = nlohmann::json::array();
     for (auto var : gattAppRegisterInfos_) {
-        Json::Value gattAppRegisterInfo;
+        nlohmann::json gattAppRegisterInfo;
         gattAppRegisterInfo["side"] = var->side_;
         gattAppRegisterInfo["address"] = var->address_;
         gattAppRegisterInfo["appId"] = var->appId_;
         gattAppRegisterInfo["pid"] = var->pid_;
         gattAppRegisterInfo["uid"] = var->uid_;
-        bluetoothInfo["gattAppRegisterInfos"].append(gattAppRegisterInfo);
+        arrayObj3.push_back(gattAppRegisterInfo);
     }
+    bluetoothInfo["gattAppRegisterInfos"] = arrayObj3;
 
     value["bluetooth"] = bluetoothInfo;
 }
 
-bool BluetoothDetect::ParseBluetoothRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet)
+bool BluetoothDetect::ParseBluetoothRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet)
 {
-    if (!value.isMember("bluetooth")) {
+    // if (!value.isMember("bluetooth")) {
+    //     return false;
+    // }
+    if (!CommonUtils::CheckJsonValue(root, {"bluetooth"})) {
         return false;
     }
-    Json::Value bluetoothInfo = value["bluetooth"];
-    this->isBrSwitchOn_ = bluetoothInfo["bredr switch"].asBool();
-    this->isBleSwitchOn_ = bluetoothInfo["ble switch"].asBool();
-    Json::Value arrayObj = bluetoothInfo["sppConnectRecords"];
+    nlohmann::json bluetoothInfo = value["bluetooth"];
+    // this->isBrSwitchOn_ = bluetoothInfo["bredr switch"].asBool();
+    // this->isBleSwitchOn_ = bluetoothInfo["ble switch"].asBool();
+    this->isBrSwitchOn_ = bluetoothInfo["bredr switch"].get<bool>();
+    this->isBleSwitchOn_ = bluetoothInfo["ble switch"].get<bool>();
+    // nlohmann::json arrayObj = bluetoothInfo["sppConnectRecords"];
     int32_t uid;
-    for (uint32_t i = 0; i < arrayObj.size(); i++) {
-        uid = arrayObj[i]["uid"].asInt();
+    for (auto &elem : bluetoothInfo["sppConnectRecords"]) {
+        uid = elem["uid"].get<int32_t>();
         uidSet.emplace(uid);
-        auto record = std::make_shared<SppConnectStateReocrd>(arrayObj[i]["socketId"].asInt(),
-            arrayObj[i]["pid"].asInt(), uid);
+        auto record = std::make_shared<SppConnectStateReocrd>(elem["socketId"].get<int32_t>(),
+            elem["pid"].get<int32_t>(), uid);
         sppConnectRecords_.emplace_back(record);
     }
 
-    arrayObj = bluetoothInfo["gattConnectRecords"];
-    for (uint32_t i = 0; i < arrayObj.size(); i++) {
-        auto record = std::make_shared<GattConnectStateRecord>(arrayObj[i]["address"].asString(),
-            arrayObj[i]["role"].asInt(), arrayObj[i]["transport"].asInt());
+    // arrayObj = bluetoothInfo["gattConnectRecords"];
+    for (auto &elem : bluetoothInfo["gattConnectRecords"]) {
+        auto record = std::make_shared<GattConnectStateRecord>(elem["address"].get<std::string>(),
+            elem["role"].get<int32_t>(), elem["transport"].get<int32_t>());
         gattConnectRecords_.emplace_back(record);
     }
 
-    arrayObj = bluetoothInfo["gattAppRegisterInfos"];
-    for (uint32_t i = 0; i < arrayObj.size(); i++) {
-        uid = arrayObj[i]["uid"].asInt();
+    // arrayObj = bluetoothInfo["gattAppRegisterInfos"];
+    for (auto &elem : bluetoothInfo["gattAppRegisterInfos"]) {
+        uid = elem["uid"].get<int32_t>();
         uidSet.emplace(uid);
-        auto record = std::make_shared<GattAppRegisterInfo>(arrayObj[i]["side"].asString(),
-            arrayObj[i]["address"].asString(), arrayObj[i]["appId"].asInt(),
-            arrayObj[i]["pid"].asInt(), uid);
+        auto record = std::make_shared<GattAppRegisterInfo>(elem["side"].get<std::string>(),
+            elem["address"].get<std::string>(), elem["appId"].get<int32_t>(),
+            elem["pid"].get<int32_t>(), uid);
         gattAppRegisterInfos_.emplace_back(record);
     }
     return true;

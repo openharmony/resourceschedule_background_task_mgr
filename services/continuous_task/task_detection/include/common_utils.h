@@ -17,16 +17,17 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_CONTINUOUS_TASK_COMMON_UTILS_H
 
 #include "json/json.h"
+#include "nlohmann/json.hpp"
 // #include "singleton.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class CommonUtils {
 public:
-    static bool CheckJsonValue(const Json::Value &value, std::initializer_list<std::string> params)
+    static bool CheckJsonValue(const nlohmann::json &value, std::initializer_list<std::string> params)
     {
         for (auto param : params) {
-            if (!value.isMember(param) || value[param].isNull()) {
+            if (value.find(param) == value.end()) {
                 return false;
             }
         }

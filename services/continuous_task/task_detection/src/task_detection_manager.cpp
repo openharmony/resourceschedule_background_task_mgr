@@ -18,7 +18,7 @@
 #include <new>
 #include <unistd.h>
 #include <random>
-#include <strstream>
+// #include <strstream>
 
 #include "bg_continuous_task_mgr.h"
 #ifdef BLUETOOTH_PART_ENABLE
@@ -161,7 +161,7 @@ void TaskDetectionManager::HandlePersistenceData(const std::vector<AppExecFwk::R
         return;
     }
     std::set<int32_t> allUidHasTasks;
-    Json::Value value;
+    nlohmann::json value;
     if (dataStorage_->RestoreTaskDetectionInfo(value) != ERR_OK) {
         BGTASK_LOGE("Get detection persistent info failed");
         return;
@@ -243,7 +243,7 @@ void TaskDetectionManager::HandleAVSessionInfo(const AVSession::AVSessionDescrip
 }
 #endif // AV_SESSION_PART_ENABLE
 
-void TaskDetectionManager::HandleBluetoothSysEvent(const Json::Value& root)
+void TaskDetectionManager::HandleBluetoothSysEvent(const nlohmann::json &root)
 {
     handler_->PostTask([=]() {
         bluetoothDetect_->HandleBluetoothSysEvent(root);
@@ -251,7 +251,7 @@ void TaskDetectionManager::HandleBluetoothSysEvent(const Json::Value& root)
     });
 }
 
-void TaskDetectionManager::HandleLocationSysEvent(const Json::Value &root)
+void TaskDetectionManager::HandleLocationSysEvent(const nlohmann::json &root)
 {
     handler_->PostTask([=]() {
         locationDetect_->HandleLocationSysEvent(root);
@@ -311,19 +311,20 @@ void TaskDetectionManager::Dump(std::vector<std::string> &dumpInfo)
 
 std::string TaskDetectionManager::ParseRecordToStr()
 {
-    Json::Value root;
+    nlohmann::json root;
 
     locationDetect_->ParseLocationRecordToStr(root);
     bluetoothDetect_->ParseBluetoothRecordToStr(root);
     multiDeviceDetect_->ParseDisSchedRecordToStr(root);
     audioDetect_->ParseAudioRecordToStr(root);
 
-    Json::StreamWriterBuilder writerBuilder;
-    std::ostringstream os;
-    std::unique_ptr<Json::StreamWriter> jsonWriter(writerBuilder.newStreamWriter());
-    jsonWriter->write(root, &os);
-    std::string result = os.str();
-    return result;
+    // Json::StreamWriterBuilder writerBuilder;
+    // std::ostringstream os;
+    // std::unique_ptr<Json::StreamWriter> jsonWriter(writerBuilder.newStreamWriter());
+    // jsonWriter->write(root, &os);
+    // std::string result = os.str();
+    // return result;
+    return root.dump();
 }
 
 bool TaskDetectionManager::ParseRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet)
@@ -354,26 +355,35 @@ void TaskDetectionManager::HiSysEventListener::OnHandle(const std::string &domai
     const std::string &eventName, const int32_t eventType, const std::string &eventDetail)
 {
     BGTASK_LOGI("OnHandle get hisysevent info: %{public}s", eventDetail.c_str());
-    Json::Value root;
-    Json::CharReaderBuilder reader;
-    std::string errors;
-    std::istrstream is(eventDetail.c_str());
-    if (parseFromStream(reader, is, &root, &errors)) {
-        if (!root.isMember("domain_") || root["domain_"].isNull()) {
-            BGTASK_LOGE("hisysevent data domain info lost");
-            return;
-        }
-        std::string domainName = root["domain_"].asString();
-        if (domainName == "BLUETOOTH") {
-            TaskDetectionManager::GetInstance()->HandleBluetoothSysEvent(root);
-        } else if (domainName == "LOCATION") {
-            TaskDetectionManager::GetInstance()->HandleLocationSysEvent(root);
-        } else {
-            BGTASK_LOGW("Get unrelated event");
-        }
-    } else {
+    nlohmann::json root = nlohmann::json::parse(eventDetail, nullptr, false);
+    if (root.is_discarded()) {
         BGTASK_LOGE("Parse hisysevent data failed");
+        return;
     }
+    // Json::CharReaderBuilder reader;
+    // std::string errors;
+    // std::istrstream is(eventDetail.c_str());
+    // if (parseFromStream(reader, is, &root, &errors)) {
+    // if (!root.isMember("domain_") || root["domain_"].isNull()) {
+    //     BGTASK_LOGE("hisysevent data domain info lost");
+    //     return;
+    // }
+    if (!CommonUtils::CheckJsonValue(root, {"domain_"})) {
+        BGTASK_LOGE("hisysevent data domain info lost");
+        return;
+    }
+    // std::string domainName = root["domain_"].asString();
+    std::string domainName = root.at("domain_").get<std::string>();
+    if (domainName == "BLUETOOTH") {
+        TaskDetectionManager::GetInstance()->HandleBluetoothSysEvent(root);
+    } else if (domainName == "LOCATION") {
+        TaskDetectionManager::GetInstance()->HandleLocationSysEvent(root);
+    } else {
+        BGTASK_LOGW("Get unrelated event");
+    }
+    // } else {
+    //     BGTASK_LOGE("Parse hisysevent data failed");
+    // }
 }
 void TaskDetectionManager::HiSysEventListener::OnServiceDied() {}
 

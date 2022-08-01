@@ -20,6 +20,7 @@
 #include <set>
 
 #include "json/json.h"
+#include "nlohmann/json.hpp"
 #include "audio_stream_manager.h"
 #ifdef AV_SESSION_PART_ENABLE
 #include "avsession_info.h"
@@ -53,8 +54,8 @@ public:
 #endif // AV_SESSION_PART_ENABLE
     bool CheckAudioCondition(int32_t uid, uint32_t taskType);
     void ClearData();
-    void ParseAudioRecordToStr(Json::Value &value);
-    bool ParseAudioRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet);
+    void ParseAudioRecordToStr(nlohmann::json &value);
+    bool ParseAudioRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet);
 
 private:
     void UpdateAudioRecord(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,
