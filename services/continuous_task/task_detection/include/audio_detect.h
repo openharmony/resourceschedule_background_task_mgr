@@ -19,7 +19,6 @@
 #include <list>
 #include <set>
 
-#include "json/json.h"
 #include "nlohmann/json.hpp"
 #include "audio_stream_manager.h"
 #ifdef AV_SESSION_PART_ENABLE

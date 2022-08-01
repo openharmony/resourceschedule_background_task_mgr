@@ -16,9 +16,7 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_CONTINUOUS_TASK_COMMON_UTILS_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_CONTINUOUS_TASK_COMMON_UTILS_H
 
-#include "json/json.h"
 #include "nlohmann/json.hpp"
-// #include "singleton.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -45,32 +43,29 @@ public:
         return false;
     }
 
-    // template<typename T>
-    // static void ParseAudioStreamInfoToStr(Json::Value &value, const std::string &type, const T &record)
-    // {
-    //     Json::Value streamInfos;
-    //     for (auto var : record) {
-    //         Json::Value info;
-    //         info["uid"] = var->uid_;
-    //         info["sessionId"] = var->sessionId_;
-    //         streamInfos.append(info);
-    //     }
-    //     value[type] = streamInfos;
-    // }
-
-    // template<typename T>
-    // static void ParseAudioStreamInfoFromJson(int32_t uid, const T &t)
-
-    // DECLARE_DELAYED_SINGLETON(CommonUtils);
-
 public:
     static constexpr int32_t UNSET_PID = -1;
     static constexpr int32_t UNSET_UID = -1;
+    static constexpr int32_t JSON_FORMAT = 4;
     static constexpr int32_t AUDIO_RUNNING_STATE = 2;
+    static constexpr int32_t GATT_ROLE_MASTER = 0;
+    static constexpr int32_t GATT_ROLE_SLAVE = 1;
+    static constexpr int32_t INIT_CONNECTED_NUM = 1;
+    static constexpr int32_t GATT_CONNECT = 0;
+    static constexpr int32_t GATT_RECONNECT = 4;
+    static constexpr int32_t BT_SWITCH_TURN_ON = 1;
+    static constexpr int32_t BT_SWITCH_TURN_OFF = 3;
+    static constexpr int32_t DIS_TYPE_CALLER = 0;
+    static constexpr int32_t DIS_TYPE_CALLEE = 1;
+    static constexpr int32_t DIS_ACTION_ADD = 1;
+    static constexpr int32_t DIS_ACTION_REMOVE = 2;
     static constexpr uint32_t AUDIO_PLAYBACK_BGMODE_ID = 2;
     static constexpr uint32_t AUDIO_RECORDING_BGMODE_ID = 3;
-    static constexpr char GATT_CONNECT[] = "0";
-    static constexpr char GATT_RECONNECT[] = "4";
+    static constexpr uint32_t LOCATION_BGMODE_ID = 4;
+    static constexpr uint32_t BLUETOOTH_INTERACTION_BGMODE_ID = 5;
+    static constexpr uint32_t MULTIDEVICE_CONNECTION_BGMODE_ID = 6;
+    static constexpr uint32_t SOFTBUS_SA_UID = 1024;
+
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

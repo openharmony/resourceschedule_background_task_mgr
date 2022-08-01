@@ -20,7 +20,6 @@
 #include "hisysevent_subscribe_callback.h"
 #include "event_handler.h"
 #include "event_runner.h"
-#include "json/json.h"
 #include "nlohmann/json.hpp"
 #include "singleton.h"
 #include "audio_stream_manager.h"
@@ -38,6 +37,7 @@
 #include "bluetooth_detect.h"
 #include "location_detect.h"
 #include "multi_device_detect.h"
+#include "system_ability_status_change_stub.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -52,10 +52,13 @@ public:
     void HandlePersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
 
 private:
+    bool AddSystemAbilityListener();
     bool InitHiSysEventListener();
     bool InitDisCompChangeObserver();
     bool InitAudioStateChangeListener();
     bool InitAVSessionStateChangeListener();
+    void OnAddSystemAbility(int32_t systemAbilityId);
+    void HandleSystemAbilityAdded(int32_t systemAbilityId);
     bool GetDisSchedProxy();
     void HandleBluetoothSysEvent(const nlohmann::json &root);
     void HandleLocationSysEvent(const nlohmann::json &root);
@@ -92,6 +95,12 @@ private:
         const std::vector<std::unique_ptr<AudioStandard::AudioCapturerChangeInfo>> &audioCapturerChangeInfos) override;
     };
 
+    class SystemAbilityListener : public SystemAbilityStatusChangeStub {
+    public:
+        void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
+        void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
+    };
+
 #ifdef AV_SESSION_PART_ENABLE
     class SessionStateListener : public AVSession::SessionListener {
     public:
@@ -112,6 +121,7 @@ private:
     sptr<IDistributedComponentListener> disCompListener_ {nullptr};
     std::shared_ptr<DataStorage> dataStorage_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
+    sptr<ISystemAbilityStatusChange> statusChangeListener_ {nullptr};
     std::shared_ptr<AudioDetect> audioDetect_ {nullptr};
     std::shared_ptr<BluetoothDetect> bluetoothDetect_ {nullptr};
     std::shared_ptr<LocationDetect> locationDetect_ {nullptr};

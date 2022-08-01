@@ -15,6 +15,7 @@
 
 #include "continuous_task_record.h"
 
+#include "common_utils.h"
 #include "iremote_object.h"
 #include "json/value.h"
 
@@ -95,22 +96,12 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
         info["abilityName"] = wantAgentInfo_->abilityName_;
         root["wantAgentInfo"] = info;
     }
-    return root.dump();
-}
-
-bool CheckValueExist(const nlohmann::json &value, std::initializer_list<std::string> params)
-{
-    for (auto param : params) {
-        if (value.find(param) == value.end()) {
-            return false;
-        }
-    }
-    return true;
+    return root.dump(CommonUtils::JSON_FORMAT);
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
 {
-    if (value.is_null() || !value.is_object() || !CheckValueExist(value,
+    if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value,
         { "bundleName", "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "notificationLabel" })) {
         return false;
     }
@@ -125,7 +116,7 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
 
     if (value.find("wantAgentInfo") != value.end()) {
         nlohmann::json infoVal = value["wantAgentInfo"];
-        if (!CheckValueExist(infoVal, { "bundleName", "abilityName" })) {
+        if (!CommonUtils::CheckJsonValue(infoVal, { "bundleName", "abilityName" })) {
             return false;
         }
         std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();

@@ -23,22 +23,8 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-namespace {
-static constexpr int32_t UNSET_PID = -1;
-static constexpr uint32_t MULTIDEVICE_CONNECTION_BGMODE_ID = 6;
-static constexpr int32_t INIT_CONNECTED_NUM = 1;
-}
-
 void MultiDeviceDetect::HandleDisComponentChange(const std::string &info)
 {
-    // Json::Value root;
-    // Json::CharReaderBuilder reader;
-    // std::string errors;
-    // std::stringstream is(info.c_str());
-    // if (!parseFromStream(reader, is, &root, &errors)) {
-    //     BGTASK_LOGE("Parse json value From stream failed");
-    //     return;
-    // }
     nlohmann::json root = nlohmann::json::parse(info, nullptr, false);
     if (root.is_discarded()) {
         BGTASK_LOGE("Parse json value From stream failed");
@@ -48,45 +34,39 @@ void MultiDeviceDetect::HandleDisComponentChange(const std::string &info)
         BGTASK_LOGE("reported distributed component change event lost important info");
         return;
     }
-    std::string deviceType = root.at("deviceType").get<std::string>();
-    std::string changeType = root.at("dochangeTypemain_").get<std::string>();
-    int32_t uid = atoi(root.at("uid").get<std::string>().c_str());
+    int32_t deviceType = root.at("deviceType").get<int32_t>();
+    int32_t changeType = root.at("changeType").get<int32_t>();
+    int32_t uid = root.at("uid").get<int32_t>();
 
-
-    // std::string componentType = root["componentType"].asString();
-    // std::string deviceType = root["deviceType"].asString();
-    // std::string changeType = root["changeType"].asString();
-    // int32_t uid = atoi(root["uid"].asString().c_str());
-
-    if (deviceType == "0") { // caller
+    if (deviceType == CommonUtils::DIS_TYPE_CALLER) { // caller
         UpdateDisComponentInfo(uid, changeType, callerRecords_);
-    } else if (deviceType == "1") { // callee
+    } else if (deviceType == CommonUtils::DIS_TYPE_CALLEE) { // callee
         UpdateDisComponentInfo(uid, changeType, calleeRecords_);
     }
 }
 
-void MultiDeviceDetect::UpdateDisComponentInfo(int32_t uid, const std::string &changeType,
+void MultiDeviceDetect::UpdateDisComponentInfo(int32_t uid, int32_t changeType,
     std::map<int32_t, uint32_t> &record)
 {
     auto findIter = record.find(uid);
-    if (changeType == "1") { // add
+    if (changeType == CommonUtils::DIS_ACTION_ADD) { // add
         if (findIter != record.end()) {
             record[uid]++;
         } else {
-            record.emplace(uid, INIT_CONNECTED_NUM);
+            record.emplace(uid, CommonUtils::INIT_CONNECTED_NUM);
         }
-    } else if (changeType == "2") { // remove
+    } else if (changeType == CommonUtils::DIS_ACTION_REMOVE) { // remove
         if (findIter == record.end()) {
             return;
         }
-        if (record[uid] != INIT_CONNECTED_NUM) {
+        if (record[uid] != CommonUtils::INIT_CONNECTED_NUM) {
             record[uid]--;
             return;
         }
         record.erase(findIter);
         if (!CheckIsDisSchedScene(uid)) {
             BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
-                UNSET_PID, MULTIDEVICE_CONNECTION_BGMODE_ID);
+                CommonUtils::UNSET_PID, CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID);
         }
     }
 }
@@ -102,7 +82,6 @@ bool MultiDeviceDetect::CheckIsDisSchedScene(int32_t uid)
 void MultiDeviceDetect::ParseDisSchedRecordToStr(nlohmann::json &value)
 {
     nlohmann::json disScheduleInfo;
-
     ParseRecordToStrByType(disScheduleInfo, "callerRecords", callerRecords_);
     ParseRecordToStrByType(disScheduleInfo, "calleeRecords", calleeRecords_);
     value["disSchedule"] = disScheduleInfo;
@@ -123,11 +102,8 @@ void MultiDeviceDetect::ParseRecordToStrByType(nlohmann::json &value, const std:
 
 bool MultiDeviceDetect::ParseDisSchedRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet)
 {
-    // if (!value.isMember("disSchedule")) {
-    //     return false;
-    // }
     if (!CommonUtils::CheckJsonValue(value, {"disSchedule"})) {
-        return;
+        return false;
     }
 
     nlohmann::json disScheduleInfo = value["disSchedule"];
@@ -139,17 +115,11 @@ bool MultiDeviceDetect::ParseDisSchedRecordFromJson(const nlohmann::json &value,
 bool MultiDeviceDetect::ParseRecordFromJsonByType(const nlohmann::json &value, std::set<int32_t> &uidSet,
     const std::string &type, std::map<int32_t, uint32_t> &record)
 {
-    // nlohmann::json arrayObj = value[type];
     int32_t uid;
     int32_t nums;
-    // for (uint32_t i = 0; i < arrayObj.size(); i++) {
-    //     uid = arrayObj[i]["uid"].asInt();
-    //     uidSet.emplace(uid);
-    //     record[uid] = arrayObj[i]["connectedNums"].asInt();
-    // }
     for (auto& elem : value[type]) {
-        uid = value.at("uid").get<int32_t>();
-        uid = value.at("connectedNums").get<int32_t>();
+        uid = elem.at("uid").get<int32_t>();
+        nums = elem.at("connectedNums").get<int32_t>();
         uidSet.emplace(uid);
         record[uid] = nums;
     }

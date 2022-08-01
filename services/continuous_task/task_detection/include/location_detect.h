@@ -19,7 +19,6 @@
 #include <list>
 #include <set>
 
-#include "json/json.h"
 #include "nlohmann/json.hpp"
 
 namespace OHOS {

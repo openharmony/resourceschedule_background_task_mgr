@@ -104,7 +104,7 @@ ohos_shared_library("bgtaskmgr_service") {
     external_deps += [ "input:libmmi-client" ]
   }
 
-  if (has_multimedia_av_session_part) {
+  if (has_communication_bluetooth_part) {
     cflags_cc += [ "-DBLUETOOTH_PART_ENABLE" ]
     external_deps += [ "bluetooth:btframework" ]
   }

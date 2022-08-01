@@ -19,7 +19,6 @@
 #include "iremote_object.h"
 #include "nlohmann/json.hpp"
 #include "parcel.h"
-#include "json/json.h"
 #include "want_agent.h"
 
 #include "task_notification_subscriber.h"

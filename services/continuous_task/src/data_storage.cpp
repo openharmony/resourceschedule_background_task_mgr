@@ -18,12 +18,14 @@
 #include <fcntl.h>
 #include <fstream>
 #include <unistd.h>
+#include <sstream>
 #include <sys/stat.h>
 
 #include "errors.h"
 
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_manager_helper.h"
+#include "common_utils.h"
 #include "continuous_task_log.h"
 
 namespace OHOS {
@@ -42,16 +44,12 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
     for (auto &iter : allRecord) {
         auto record = iter.second;
         std::string data = record->ParseToJsonStr();
-        // JSONCPP_STRING errs;
         nlohmann::json recordJson = nlohmann::json::parse(data, nullptr, false);;
-        // Json::CharReaderBuilder readerBuilder;
-        // const std::unique_ptr<Json::CharReader> jsonReader(readerBuilder.newCharReader());
-        // bool res = jsonReader->parse(data.c_str(), data.c_str() + data.length(), &recordJson, &errs);
         if (!recordJson.is_discarded()) {
             root[iter.first] = recordJson;
         }
     }
-    return SaveJsonValueToFile(root.dump(), TASK_RECORD_FILE_PATH);
+    return SaveJsonValueToFile(root.dump(CommonUtils::JSON_FORMAT), TASK_RECORD_FILE_PATH);
 }
 
 int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
@@ -62,10 +60,10 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     for (auto iter = root.begin(); iter != root.end(); iter++) {
-        nlohmann::json recordJson = *iter;
+        nlohmann::json recordJson = iter.value();
         std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
         if (record->ParseFromJson(recordJson)) {
-            allRecord.emplace(iter, record);
+            allRecord.emplace(iter.key(), record);
         }
     }
     return ERR_OK;
@@ -73,17 +71,6 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
 
 int32_t DataStorage::RefreshTaskDetectionInfo(const std::string &detectionInfos)
 {
-    // Json::Value root;
-    // JSONCPP_STRING errs;
-    // Json::Value recordJson;
-    // Json::CharReaderBuilder readerBuilder;
-    // const std::unique_ptr<Json::CharReader> jsonReader(readerBuilder.newCharReader());
-    // bool res = jsonReader->parse(detectionInfos.c_str(), detectionInfos.c_str() + detectionInfos.length(),
-    //     &recordJson, &errs);
-    // if (res && errs.empty()) {
-    //     root = recordJson;
-    // }
-    // nlohmann::json root = nlohmann::json::parse(detectionInfos, nullptr, false);
     return SaveJsonValueToFile(detectionInfos, TASK_DETECTION_INFO_FILE_PATH);
 }
 
@@ -94,9 +81,6 @@ int32_t DataStorage::RestoreTaskDetectionInfo(nlohmann::json &value)
 
 int32_t DataStorage::SaveJsonValueToFile(const std::string &value, const std::string &filePath)
 {
-    // std::ostringstream os;
-    // std::string result = os.str();
-    // std::string result = value.dump();
     if (!CreateNodeFile(filePath)) {
         BGTASK_LOGE("Create file failed.");
         return ERR_BGTASK_DATA_STORAGE_ERR;
@@ -138,15 +122,6 @@ int32_t DataStorage::ParseJsonValueFromFile(nlohmann::json &value, const std::st
     }
     std::string data = os.str();
     value = nlohmann::json::parse(data, nullptr, false);
-    // JSONCPP_STRING errs;
-    // Json::CharReaderBuilder readerBuilder;
-    // const std::unique_ptr<Json::CharReader> jsonReader(readerBuilder.newCharReader());
-    // bool res = jsonReader->parse(data.c_str(), data.c_str() + data.length(), &value, &errs);
-    // fin.close();
-    // if (!res || !errs.empty()) {
-    //     BGTASK_LOGE("parse json file failed!");
-    //     return ERR_BGTASK_DATA_STORAGE_ERR;
-    // }
     if (value.is_discarded()) {
         BGTASK_LOGE("failed due to data is discarded");
         return ERR_BGTASK_DATA_STORAGE_ERR;

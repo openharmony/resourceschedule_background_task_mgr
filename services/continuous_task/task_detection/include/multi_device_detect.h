@@ -19,7 +19,6 @@
 #include <list>
 #include <set>
 
-#include "json/json.h"
 #include "nlohmann/json.hpp"
 
 namespace OHOS {
@@ -33,7 +32,7 @@ public:
     void ClearData();
 
 private:
-    void UpdateDisComponentInfo(int32_t uid, const std::string &changeType,
+    void UpdateDisComponentInfo(int32_t uid, int32_t changeType,
         std::map<int32_t, uint32_t> &record);
     void ParseRecordToStrByType(nlohmann::json &value, const std::string &type,
         const std::map<int32_t, uint32_t> &record);

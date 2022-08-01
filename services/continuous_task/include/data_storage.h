@@ -17,7 +17,6 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_DATA_STORAGE_H
 
 #include "continuous_task_record.h"
-#include "json/json.h"
 #include "nlohmann/json.hpp"
 
 namespace OHOS {

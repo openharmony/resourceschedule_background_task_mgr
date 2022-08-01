@@ -58,16 +58,7 @@ bool TaskDetectionManager::Init(const std::shared_ptr<DataStorage> &dataStorage,
     }
     dataStorage_ = dataStorage;
     handler_ = handler;
-    if (!InitHiSysEventListener()) {
-        return false;
-    }
-    if (!InitDisCompChangeObserver()) {
-        return false;
-    }
-    if (!InitAudioStateChangeListener()) {
-        return false;
-    }
-    if (!InitAVSessionStateChangeListener()) {
+    if (!AddSystemAbilityListener()) {
         return false;
     }
     audioDetect_ = std::make_shared<AudioDetect>();
@@ -154,6 +145,33 @@ bool TaskDetectionManager::InitAVSessionStateChangeListener()
     return true;
 }
 
+void TaskDetectionManager::OnAddSystemAbility(int32_t systemAbilityId)
+{
+    handler_->PostTask([=]() {
+        HandleSystemAbilityAdded(systemAbilityId);
+    });
+}
+
+void TaskDetectionManager::HandleSystemAbilityAdded(int32_t systemAbilityId)
+{
+    switch (systemAbilityId) {
+        case DISTRIBUTED_SCHED_SA_ID:
+            InitDisCompChangeObserver();
+            break;
+        case AUDIO_POLICY_SERVICE_ID:
+            InitAudioStateChangeListener();
+            break;
+        case DFX_SYS_EVENT_SERVICE_ABILITY_ID:
+            InitHiSysEventListener();
+            break;
+        case AVSESSION_SERVICE_ID:
+            InitAVSessionStateChangeListener();
+            break;
+        default:
+            break;
+    }
+}
+
 void TaskDetectionManager::HandlePersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses)
 {
     if (dataStorage_ == nullptr) {
@@ -197,6 +215,33 @@ void TaskDetectionManager::ClearAllData()
     bluetoothDetect_->ClearData();
     locationDetect_->ClearData();
     multiDeviceDetect_->ClearData();
+}
+
+bool TaskDetectionManager::AddSystemAbilityListener()
+{
+    auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (!samgrProxy) {
+        BGTASK_LOGE("failed to get samgrProxy");
+        return false;
+    }
+    statusChangeListener_ = new (std::nothrow) SystemAbilityListener();
+    if (samgrProxy->SubscribeSystemAbility(DFX_SYS_EVENT_SERVICE_ABILITY_ID, statusChangeListener_) != ERR_OK) {
+        BGTASK_LOGE("failed to listen hiview sa");
+        return false;
+    }
+    if (samgrProxy->SubscribeSystemAbility(DISTRIBUTED_SCHED_SA_ID, statusChangeListener_) != ERR_OK) {
+        BGTASK_LOGE("failed to get dis sched da");
+        return false;
+    }
+    if (samgrProxy->SubscribeSystemAbility(AUDIO_POLICY_SERVICE_ID, statusChangeListener_) != ERR_OK) {
+        BGTASK_LOGE("failed to get audio service sa");
+        return false;
+    }
+    if (samgrProxy->SubscribeSystemAbility(AVSESSION_SERVICE_ID, statusChangeListener_) != ERR_OK) {
+        BGTASK_LOGE("failed to get avsession service sa");
+        return false;
+    }
+    return true;
 }
 
 bool TaskDetectionManager::GetDisSchedProxy()
@@ -312,24 +357,16 @@ void TaskDetectionManager::Dump(std::vector<std::string> &dumpInfo)
 std::string TaskDetectionManager::ParseRecordToStr()
 {
     nlohmann::json root;
-
     locationDetect_->ParseLocationRecordToStr(root);
     bluetoothDetect_->ParseBluetoothRecordToStr(root);
     multiDeviceDetect_->ParseDisSchedRecordToStr(root);
     audioDetect_->ParseAudioRecordToStr(root);
-
-    // Json::StreamWriterBuilder writerBuilder;
-    // std::ostringstream os;
-    // std::unique_ptr<Json::StreamWriter> jsonWriter(writerBuilder.newStreamWriter());
-    // jsonWriter->write(root, &os);
-    // std::string result = os.str();
-    // return result;
-    return root.dump();
+    return root.dump(CommonUtils::JSON_FORMAT);
 }
 
-bool TaskDetectionManager::ParseRecordFromJson(const Json::Value &value, std::set<int32_t> &uidSet)
+bool TaskDetectionManager::ParseRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet)
 {
-    if (value.empty()) {
+    if (value.is_null() || !value.is_object()) {
         BGTASK_LOGE("ParseRecordFromJson json value is empty");
         return false;
     }
@@ -360,19 +397,10 @@ void TaskDetectionManager::HiSysEventListener::OnHandle(const std::string &domai
         BGTASK_LOGE("Parse hisysevent data failed");
         return;
     }
-    // Json::CharReaderBuilder reader;
-    // std::string errors;
-    // std::istrstream is(eventDetail.c_str());
-    // if (parseFromStream(reader, is, &root, &errors)) {
-    // if (!root.isMember("domain_") || root["domain_"].isNull()) {
-    //     BGTASK_LOGE("hisysevent data domain info lost");
-    //     return;
-    // }
     if (!CommonUtils::CheckJsonValue(root, {"domain_"})) {
         BGTASK_LOGE("hisysevent data domain info lost");
         return;
     }
-    // std::string domainName = root["domain_"].asString();
     std::string domainName = root.at("domain_").get<std::string>();
     if (domainName == "BLUETOOTH") {
         TaskDetectionManager::GetInstance()->HandleBluetoothSysEvent(root);
@@ -381,9 +409,6 @@ void TaskDetectionManager::HiSysEventListener::OnHandle(const std::string &domai
     } else {
         BGTASK_LOGW("Get unrelated event");
     }
-    // } else {
-    //     BGTASK_LOGE("Parse hisysevent data failed");
-    // }
 }
 void TaskDetectionManager::HiSysEventListener::OnServiceDied() {}
 
@@ -408,6 +433,16 @@ void TaskDetectionManager::AudioCapturerStateChangeListener::OnCapturerStateChan
     }
     TaskDetectionManager::GetInstance()->HandleAudioStreamInfo(streamInfos, "recorder");
 }
+
+void TaskDetectionManager::SystemAbilityListener::OnAddSystemAbility(
+    int32_t systemAbilityId, const std::string &deviceId)
+{
+    BGTASK_LOGI("System ability added: %{public}d", systemAbilityId);
+    TaskDetectionManager::GetInstance()->OnAddSystemAbility(systemAbilityId);
+}
+
+void TaskDetectionManager::SystemAbilityListener::OnRemoveSystemAbility(
+    int32_t systemAbilityId, const std::string &deviceId) {}
 
 #ifdef AV_SESSION_PART_ENABLE
 void TaskDetectionManager::SessionStateListener::OnSessionCreate(
