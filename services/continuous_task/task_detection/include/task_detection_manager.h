@@ -106,7 +106,7 @@ private:
     public:
         void OnSessionCreate(const AVSession::AVSessionDescriptor &descriptor) override;
         void OnSessionRelease(const AVSession::AVSessionDescriptor &descriptor) override;
-        void OnTopSessionChanged(const AVSession::AVSessionDescriptor &descriptor) override;
+        void OnTopSessionChange(const AVSession::AVSessionDescriptor &descriptor) override;
     };
 #endif // AV_SESSION_PART_ENABLE
 

@@ -22,6 +22,7 @@
 #include "bundle_manager_helper.h"
 #include "common_event_support.h"
 #include "common_event_manager.h"
+#include "common_utils.h"
 #include "task_detection_manager.h"
 #include "errors.h"
 #include "hitrace_meter.h"
@@ -62,6 +63,7 @@ static constexpr char SEPARATOR[] = "_";
 static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_CANCEL_ALL[] = "--cancel_all";
 static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
+static constexpr char DUMP_PARAM_DETECTION[] = "--detection";
 static constexpr char NOTIFICATION_PREFIX[] = "bgmode";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "ohos.backgroundtaskmgr.resources";
@@ -686,7 +688,7 @@ void BgContinuousTaskMgr::ReportTaskRunningStateUnmet(int32_t uid, int32_t pid, 
 void BgContinuousTaskMgr::HandleTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType)
 {
     // uid == -1 means target type continuoust task required condition is not met, so cancel all this kind of tasks;
-    if (uid == -1) {
+    if (uid == CommonUtils::UNSET_UID) {
         RemoveSpecifiedBgTask(taskType);
         return;
     }
@@ -892,7 +894,7 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
         DumpCancelTask(dumpOption, true);
     } else if (dumpOption[1] == DUMP_PARAM_CANCEL) {
         DumpCancelTask(dumpOption, false);
-    } else if (dumpOption[1] == "--detection") {
+    } else if (dumpOption[1] == DUMP_PARAM_DETECTION) {
         DumpDetection(dumpOption, dumpInfo);
     } else {
         BGTASK_LOGW("invalid dump param");
@@ -979,7 +981,7 @@ void BgContinuousTaskMgr::DumpDetection(const std::vector<std::string> &dumpOpti
         return;
     }
 
-    if (dumpOption[MAX_DUMP_PARAM_NUMS - 1] == "--all") {
+    if (dumpOption[MAX_DUMP_PARAM_NUMS - 1] == DUMP_PARAM_LIST_ALL) {
         TaskDetectionManager::GetInstance()->Dump(dumpInfo);
         return;
     }

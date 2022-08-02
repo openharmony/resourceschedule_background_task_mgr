@@ -32,16 +32,16 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-namespace {
-#ifdef BLUETOOTH_PART_ENABLE
-static constexpr int32_t CLASSICAL_BT_SWITCH_ON = 1;
-#endif // BLUETOOTH_PART_ENABLE
-static constexpr uint32_t AUDIO_PLAYBACK_BGMODE_ID = 2;
-static constexpr uint32_t AUDIO_RECORDING_BGMODE_ID = 3;
-static constexpr uint32_t LOCATION_BGMODE_ID = 4;
-static constexpr uint32_t BLUETOOTH_INTERACTION_BGMODE_ID = 5;
-static constexpr uint32_t MULTIDEVICE_CONNECTION_BGMODE_ID = 6;
-}
+// namespace {
+// #ifdef BLUETOOTH_PART_ENABLE
+// static constexpr int32_t CLASSICAL_BT_SWITCH_ON = 1;
+// #endif // BLUETOOTH_PART_ENABLE
+// static constexpr uint32_t AUDIO_PLAYBACK_BGMODE_ID = 2;
+// static constexpr uint32_t AUDIO_RECORDING_BGMODE_ID = 3;
+// static constexpr uint32_t LOCATION_BGMODE_ID = 4;
+// static constexpr uint32_t BLUETOOTH_INTERACTION_BGMODE_ID = 5;
+// static constexpr uint32_t MULTIDEVICE_CONNECTION_BGMODE_ID = 6;
+// }
 
 TaskDetectionManager::TaskDetectionManager() {}
 
@@ -195,8 +195,8 @@ void TaskDetectionManager::HandlePersistenceData(const std::vector<AppExecFwk::R
         }
     }
 #ifdef BLUETOOTH_PART_ENABLE
-    bluetoothDetect_->isBrSwitchOn_
-        = Bluetooth::BluetoothHost::GetDefaultHost().GetBtState() == CLASSICAL_BT_SWITCH_ON ? true : false;
+    bluetoothDetect_->isBrSwitchOn_ = Bluetooth::BluetoothHost::GetDefaultHost().GetBtState()
+        == CommonUtils::CLASSICAL_BT_SWITCH_ON ? true : false;
     bluetoothDetect_->isBleSwitchOn_ = Bluetooth::BluetoothHost::GetDefaultHost().IsBleEnabled();
 #else // BLUETOOTH_PART_ENABLE
     bluetoothDetect_->isBrSwitchOn_ = false;
@@ -331,15 +331,15 @@ void TaskDetectionManager::HandleDisComponentChange(const std::string &info)
 
 bool TaskDetectionManager::CheckTaskRunningState(int32_t uid, uint32_t taskType)
 {
-    if (taskType == AUDIO_PLAYBACK_BGMODE_ID) {
-        return audioDetect_->CheckAudioCondition(uid, AUDIO_PLAYBACK_BGMODE_ID);
-    } else if (taskType == AUDIO_RECORDING_BGMODE_ID) {
-        return audioDetect_->CheckAudioCondition(uid, AUDIO_RECORDING_BGMODE_ID);
-    } else if (taskType == LOCATION_BGMODE_ID) {
+    if (taskType == CommonUtils::AUDIO_PLAYBACK_BGMODE_ID) {
+        return audioDetect_->CheckAudioCondition(uid, CommonUtils::AUDIO_PLAYBACK_BGMODE_ID);
+    } else if (taskType == CommonUtils::AUDIO_RECORDING_BGMODE_ID) {
+        return audioDetect_->CheckAudioCondition(uid, CommonUtils::AUDIO_RECORDING_BGMODE_ID);
+    } else if (taskType == CommonUtils::LOCATION_BGMODE_ID) {
         return locationDetect_->CheckLocationCondition(uid);
-    } else if (taskType == BLUETOOTH_INTERACTION_BGMODE_ID) {
+    } else if (taskType == CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID) {
         return bluetoothDetect_->CheckBluetoothUsingScene(uid);
-    } else if (taskType == MULTIDEVICE_CONNECTION_BGMODE_ID) {
+    } else if (taskType == CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID) {
         return multiDeviceDetect_->CheckIsDisSchedScene(uid);
     } else {
         BGTASK_LOGE("Invalid taskType");
@@ -456,7 +456,7 @@ void TaskDetectionManager::SessionStateListener::OnSessionRelease(
     BGTASK_LOGI("OnSessionRelease begin");
     TaskDetectionManager::GetInstance()->HandleAVSessionInfo(descriptor, "release");
 }
-void TaskDetectionManager::SessionStateListener::OnTopSessionChanged(
+void TaskDetectionManager::SessionStateListener::OnTopSessionChange(
     const AVSession::AVSessionDescriptor &descriptor) {}
 #endif // AV_SESSION_PART_ENABLE
 }  // namespace BackgroundTaskMgr

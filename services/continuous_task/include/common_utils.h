@@ -59,6 +59,7 @@ public:
     static constexpr int32_t DIS_TYPE_CALLEE = 1;
     static constexpr int32_t DIS_ACTION_ADD = 1;
     static constexpr int32_t DIS_ACTION_REMOVE = 2;
+    static constexpr int32_t CLASSICAL_BT_SWITCH_ON = 1;
     static constexpr uint32_t AUDIO_PLAYBACK_BGMODE_ID = 2;
     static constexpr uint32_t AUDIO_RECORDING_BGMODE_ID = 3;
     static constexpr uint32_t LOCATION_BGMODE_ID = 4;
