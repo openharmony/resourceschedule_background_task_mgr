@@ -101,8 +101,8 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
 {
-    if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value,
-        { "bundleName", "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "notificationLabel" })) {
+    if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value, { "bundleName",
+        "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "notificationLabel" })) {
         return false;
     }
     this->bundleName_ = value.at("bundleName").get<std::string>();

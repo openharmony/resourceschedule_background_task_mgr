@@ -88,7 +88,6 @@ void BluetoothDetect::HandleSppConnect(const nlohmann::json& root)
     int32_t socketId = root.at("ID").get<int32_t>();
     int32_t pid = root.at("PID").get<int32_t>();
     int32_t uid = root.at("UID").get<int32_t>();
-
     if (uid == CommonUtils::SOFTBUS_SA_UID) {
         BGTASK_LOGI("Ignore spp server app register event about softbus");
         return;
@@ -229,7 +228,7 @@ void BluetoothDetect::HandleMasterSideDisconnect(const std::string &addr)
         }
     }
 
-    // after second loop check, if target uid and pid does not contain any different bluetooth address,
+    // if target uid and pid does not contain any different bluetooth address,
     // report to stop related continous task.
     for (const auto& var : clientToRemove) {
         if (!var.second) {
@@ -295,7 +294,6 @@ bool BluetoothDetect::CheckBluetoothUsingScene(int32_t uid)
                 || (side == "server" && target->role_ == CommonUtils::GATT_ROLE_SLAVE);
         };
         auto findRecordIter = find_if(gattConnectRecords_.begin(), gattConnectRecords_.end(), findRecord);
-
         if (findRecordIter != gattConnectRecords_.end()) {
             return true;
         }

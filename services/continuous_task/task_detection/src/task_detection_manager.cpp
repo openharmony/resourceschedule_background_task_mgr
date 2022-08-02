@@ -18,7 +18,6 @@
 #include <new>
 #include <unistd.h>
 #include <random>
-// #include <strstream>
 
 #include "bg_continuous_task_mgr.h"
 #ifdef BLUETOOTH_PART_ENABLE

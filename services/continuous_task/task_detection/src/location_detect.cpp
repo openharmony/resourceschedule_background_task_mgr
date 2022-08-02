@@ -46,7 +46,8 @@ void LocationDetect::HandleLocationSysEvent(const nlohmann::json &root)
         } else if (state == "stop") {
             if (iter != locationUsingRecords_.end()) {
                 locationUsingRecords_.erase(iter);
-                BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid, CommonUtils::LOCATION_BGMODE_ID);
+                BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid,
+                    CommonUtils::LOCATION_BGMODE_ID);
             }
         }
     } else if (eventName == "LOCATION_SWITCH_STATE") {

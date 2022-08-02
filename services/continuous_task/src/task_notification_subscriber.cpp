@@ -15,8 +15,6 @@
 
 #include "task_notification_subscriber.h"
 
-#include <mutex>
-#include <cstring>
 #include <sstream>
 
 #include "bg_continuous_task_mgr.h"
