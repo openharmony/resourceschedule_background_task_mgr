@@ -65,7 +65,7 @@ public:
     static constexpr uint32_t LOCATION_BGMODE_ID = 4;
     static constexpr uint32_t BLUETOOTH_INTERACTION_BGMODE_ID = 5;
     static constexpr uint32_t MULTIDEVICE_CONNECTION_BGMODE_ID = 6;
-    static constexpr uint32_t SOFTBUS_SA_UID = 1024;
+    static constexpr uint32_t MAX_UID = 10000;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

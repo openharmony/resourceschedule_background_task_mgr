@@ -32,17 +32,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-// namespace {
-// #ifdef BLUETOOTH_PART_ENABLE
-// static constexpr int32_t CLASSICAL_BT_SWITCH_ON = 1;
-// #endif // BLUETOOTH_PART_ENABLE
-// static constexpr uint32_t AUDIO_PLAYBACK_BGMODE_ID = 2;
-// static constexpr uint32_t AUDIO_RECORDING_BGMODE_ID = 3;
-// static constexpr uint32_t LOCATION_BGMODE_ID = 4;
-// static constexpr uint32_t BLUETOOTH_INTERACTION_BGMODE_ID = 5;
-// static constexpr uint32_t MULTIDEVICE_CONNECTION_BGMODE_ID = 6;
-// }
-
 TaskDetectionManager::TaskDetectionManager() {}
 
 TaskDetectionManager::~TaskDetectionManager() {}

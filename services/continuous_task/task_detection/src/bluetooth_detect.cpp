@@ -88,8 +88,8 @@ void BluetoothDetect::HandleSppConnect(const nlohmann::json& root)
     int32_t socketId = root.at("ID").get<int32_t>();
     int32_t pid = root.at("PID").get<int32_t>();
     int32_t uid = root.at("UID").get<int32_t>();
-    if (uid == CommonUtils::SOFTBUS_SA_UID) {
-        BGTASK_LOGI("Ignore spp server app register event about softbus");
+    if (uid <= CommonUtils::MAX_UID) {
+        BGTASK_LOGI("Ignore system service spp connet event");
         return;
     }
     auto findRecord = [socketId, pid, uid](const auto &target) {
@@ -161,8 +161,8 @@ void BluetoothDetect::HandleGattAppRegister(const nlohmann::json &root)
     int32_t uid = root.at("UID").get<int32_t>();
     int32_t appId = root.at("APPID").get<int32_t>();
 
-    if (uid == CommonUtils::SOFTBUS_SA_UID) {
-        BGTASK_LOGI("Ignore gatt server app register event about softbus");
+    if (uid <= CommonUtils::MAX_UID) {
+        BGTASK_LOGI("Ignore gatt register event of system service");
         return;
     }
 
