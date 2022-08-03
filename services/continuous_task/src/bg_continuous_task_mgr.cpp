@@ -77,7 +77,6 @@ static constexpr int32_t DETECT_DELAY_TIME = 5000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
-static constexpr uint32_t BGMODEID_IGNORE_NOTIFICATION = 2;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static const bool IS_TASK_DETECTION_ENABLE
     = system::GetBoolParameter("persist.sys.continuous_task_detection_switch", true);
@@ -561,10 +560,6 @@ uint32_t GetBgModeNameIndex(uint32_t bgModeId, bool isNewApi)
 ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
-    if (continuousTaskRecord->bgModeId_ == BGMODEID_IGNORE_NOTIFICATION) {
-        BGTASK_LOGE("No need to publish notification for audio playback ");
-        return ERR_OK;
-    }
     std::shared_ptr<Notification::NotificationNormalContent> normalContent
         = std::make_shared<Notification::NotificationNormalContent>();
 

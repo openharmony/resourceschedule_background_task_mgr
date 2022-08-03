@@ -240,10 +240,12 @@ void BluetoothDetect::HandleMasterSideDisconnect(const std::string &addr)
 
 void BluetoothDetect::HandleSlaveSideDisconnect()
 {
+    std::set<std::string> clientAddr;
     for (auto var : gattConnectRecords_) {
         if (var->role_ == CommonUtils::GATT_ROLE_SLAVE) {
             return;
         }
+        clientAddr.emplace(var->address_);
     }
     for (auto var : gattAppRegisterInfos_) {
         if (var->side_ != "server") {
@@ -258,13 +260,14 @@ void BluetoothDetect::HandleSlaveSideDisconnect()
             return target->side_ == "client" && target->pid_ == pid && target->uid_ == uid;
         };
         auto findRecordIter = find_if(gattAppRegisterInfos_.begin(), gattAppRegisterInfos_.end(), findRecord);
-        if (findRecordIter != gattAppRegisterInfos_.end()) {
-            return;
+        if (findRecordIter != gattAppRegisterInfos_.end()
+            && clientAddr.find((*findRecordIter)->address_) != clientAddr.end()) {
+            continue;
         }
         if (CommonUtils::CheckIsUidExist(uid, sppConnectRecords_)) {
-            return;
+            continue;
         }
-        BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(var->uid_, var->pid_,
+        BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid,
             CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
     }
 }

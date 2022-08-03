@@ -196,7 +196,7 @@ HWTEST_F(BgContinuousTaskMgrTest, UnsubscribeContinuousTask_001, TestSize.Level1
  * @tc.name: AudioPlaybackDetection
  * @tc.desc: detect audio playback background mode.
  * @tc.type: FUNC
- * @tc.require: SR000GGT7U AR000GH6EM AR000GH6G9 AR000GH6ET
+ * @tc.require: AR000H2MSF
  */
 HWTEST_F(BgContinuousTaskMgrTest, AudioPlaybackDetection, TestSize.Level1)
 {
@@ -223,7 +223,7 @@ HWTEST_F(BgContinuousTaskMgrTest, AudioPlaybackDetection, TestSize.Level1)
  * @tc.name: AudioRecordingDetection
  * @tc.desc: detect audio recording background mode.
  * @tc.type: FUNC
- * @tc.require: SR000GGT7U AR000GH6EM AR000GH6G9 AR000GH6ET
+ * @tc.require: AR000H2MSG
  */
 HWTEST_F(BgContinuousTaskMgrTest, AudioRecordingDetection, TestSize.Level1)
 {
@@ -246,9 +246,9 @@ HWTEST_F(BgContinuousTaskMgrTest, AudioRecordingDetection, TestSize.Level1)
 
 /**
  * @tc.name: LocationDetection
- * @tc.desc: detect audio recording background mode.
+ * @tc.desc: detect location background mode.
  * @tc.type: FUNC
- * @tc.require: SR000GGT7U AR000GH6EM AR000GH6G9 AR000GH6ET
+ * @tc.require: AR000H2MSI
  */
 HWTEST_F(BgContinuousTaskMgrTest, LocationDetection, TestSize.Level1)
 {
@@ -271,9 +271,9 @@ HWTEST_F(BgContinuousTaskMgrTest, LocationDetection, TestSize.Level1)
 
 /**
  * @tc.name: BluetoothInteractionDetection
- * @tc.desc: detect audio recording background mode.
+ * @tc.desc: detect bluetooth interaction background mode.
  * @tc.type: FUNC
- * @tc.require: SR000GGT7U AR000GH6EM AR000GH6G9 AR000GH6ET
+ * @tc.require: AR000H2MSJ
  */
 HWTEST_F(BgContinuousTaskMgrTest, BluetoothInteractionDetection, TestSize.Level1)
 {
@@ -298,9 +298,9 @@ HWTEST_F(BgContinuousTaskMgrTest, BluetoothInteractionDetection, TestSize.Level1
 
 /**
  * @tc.name: MultiDeviceConnectionDetection
- * @tc.desc: detect audio recording background mode.
+ * @tc.desc: detect multi-device interaction background mode.
  * @tc.type: FUNC
- * @tc.require: SR000GGT7U AR000GH6EM AR000GH6G9 AR000GH6ET
+ * @tc.require: AR000H2MSH
  */
 HWTEST_F(BgContinuousTaskMgrTest, MultiDeviceConnectionDetection, TestSize.Level1)
 {
