@@ -136,9 +136,6 @@ void BgContinuousTaskMgr::InitNecessaryState()
         || systemAbilityManager->CheckSystemAbility(APP_MGR_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(ADVANCED_NOTIFICATION_SERVICE_ABILITY_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(DFX_SYS_EVENT_SERVICE_ABILITY_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(DISTRIBUTED_SCHED_SA_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(AUDIO_POLICY_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr) {
         BGTASK_LOGW("request system service is not ready yet!");
         auto task = [this]() { this->InitNecessaryState(); };
