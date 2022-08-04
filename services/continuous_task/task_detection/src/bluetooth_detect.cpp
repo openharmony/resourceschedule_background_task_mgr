@@ -80,11 +80,12 @@ void BluetoothDetect::HandleBtSwitchState(const nlohmann::json &root)
 
 void BluetoothDetect::HandleSppConnect(const nlohmann::json& root)
 {
-    if (!CommonUtils::CheckJsonValue(root, { "ACTION", "ID", "PID", "UID" })) {
+    if (!CommonUtils::CheckJsonValue(root, { "ACTION", "ID", "ADDRESS", "PID", "UID" })) {
         BGTASK_LOGE("Bluetooth HandleSppConnect event lost important info");
         return;
     }
     std::string action = root.at("ACTION").get<std::string>();
+    std::string address = root.at("ADDRESS").get<std::string>();
     int32_t socketId = root.at("ID").get<int32_t>();
     int32_t pid = root.at("PID").get<int32_t>();
     int32_t uid = root.at("UID").get<int32_t>();
@@ -101,7 +102,7 @@ void BluetoothDetect::HandleSppConnect(const nlohmann::json& root)
             BGTASK_LOGE("SPP receive same connect event");
             return;
         }
-        sppConnectRecords_.emplace_back(std::make_shared<SppConnectStateReocrd>(socketId, pid, uid));
+        sppConnectRecords_.emplace_back(std::make_shared<SppConnectStateReocrd>(socketId, pid, uid, address));
     } else if (action == "close") {
         if (findRecordIter == sppConnectRecords_.end()) {
             BGTASK_LOGE("SPP receive close event is not exist");
@@ -272,6 +273,20 @@ void BluetoothDetect::HandleSlaveSideDisconnect()
     }
 }
 
+void BluetoothDetect::HandleBluetoothPairState(const std::string &addr, int32_t state)
+{
+    if (state != 0) {
+        return;
+    }
+   auto findRecord = [addr](const auto &target) {
+            return target->address_ == addr;
+    };
+    auto findRecordIter = find_if(sppConnectRecords_.begin(), sppConnectRecords_.end(), findRecord);
+    if (findRecordIter != gattAppRegisterInfos_.end()) {
+        // todo
+    } 
+}
+
 bool BluetoothDetect::CheckBluetoothUsingScene(int32_t uid)
 {
     if (!isBrSwitchOn_ && !isBleSwitchOn_) {
@@ -315,6 +330,7 @@ void BluetoothDetect::ParseBluetoothRecordToStr(nlohmann::json &value)
         sppConnectRecord["socketId"] = var->socketId_;
         sppConnectRecord["pid"] = var->pid_;
         sppConnectRecord["uid"] = var->uid_;
+        sppConnectRecord["address"] = var->address_;
         arrayObj1.push_back(sppConnectRecord);
     }
     bluetoothInfo["sppConnectRecords"] = arrayObj1;
@@ -356,7 +372,7 @@ bool BluetoothDetect::ParseBluetoothRecordFromJson(const nlohmann::json &value, 
         uid = elem["uid"].get<int32_t>();
         uidSet.emplace(uid);
         auto record = std::make_shared<SppConnectStateReocrd>(elem["socketId"].get<int32_t>(),
-            elem["pid"].get<int32_t>(), uid);
+            elem["pid"].get<int32_t>(), uid, elem["address"].get<std::string>());
         sppConnectRecords_.emplace_back(record);
     }
 

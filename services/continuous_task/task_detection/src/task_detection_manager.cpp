@@ -20,9 +20,6 @@
 #include <random>
 
 #include "bg_continuous_task_mgr.h"
-#ifdef BLUETOOTH_PART_ENABLE
-#include "bluetooth_host.h"
-#endif // BLUETOOTH_PART_ENABLE
 #include "continuous_task_log.h"
 #include "distributed_component_listener_stub.h"
 #include "distributed_sched_proxy.h"
@@ -133,6 +130,15 @@ bool TaskDetectionManager::InitAVSessionStateChangeListener()
     return true;
 }
 
+bool TaskDetectionManager::InitBluetoothStateChangeObserver()
+{
+#ifdef BLUETOOTH_PART_ENABLE
+    btRemoteDeviceObserver_ = std::make_shared<BluetoothRemoteDeviceObserver>();
+    Bluetooth::BluetoothHost::GetDefaultHost()->RegisterRemoteDeviceObserver(btRemoteDeviceObserver_);
+#endif // BLUETOOTH_PART_ENABLE
+    return true;
+}
+
 void TaskDetectionManager::OnAddSystemAbility(int32_t systemAbilityId)
 {
     handler_->PostTask([=]() {
@@ -155,6 +161,8 @@ void TaskDetectionManager::HandleSystemAbilityAdded(int32_t systemAbilityId)
         case AVSESSION_SERVICE_ID:
             InitAVSessionStateChangeListener();
             break;
+        case BLUETOOTH_HOST_SYS_ABILITY_ID:
+            InitBluetoothStateChangeObserver();
         default:
             break;
     }
@@ -197,6 +205,15 @@ void TaskDetectionManager::HandlePersistenceData(const std::vector<AppExecFwk::R
     dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
 }
 
+void TaskDetectionManager::ReportBluetoothPairState(const std::string &addr, int32_t state)
+{
+    BGTASK_LOGI("ReportBluetoothPairState begin, address: %{public}s, state: %{public}d", type.c_str(), state);
+    handler_->PostTask([=]() {
+        bluetoothDetect_->HandleBluetoothPairState(addr, state);
+        dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
+    });
+}
+
 void TaskDetectionManager::ClearAllData()
 {
     audioDetect_->ClearData();
@@ -218,7 +235,7 @@ bool TaskDetectionManager::AddSystemAbilityListener()
         return false;
     }
     if (samgrProxy->SubscribeSystemAbility(DISTRIBUTED_SCHED_SA_ID, statusChangeListener_) != ERR_OK) {
-        BGTASK_LOGE("failed to get dis sched da");
+        BGTASK_LOGE("failed to get dis sched sa");
         return false;
     }
     if (samgrProxy->SubscribeSystemAbility(AUDIO_POLICY_SERVICE_ID, statusChangeListener_) != ERR_OK) {
@@ -448,5 +465,34 @@ void TaskDetectionManager::SessionStateListener::OnSessionRelease(
 void TaskDetectionManager::SessionStateListener::OnTopSessionChange(
     const AVSession::AVSessionDescriptor &descriptor) {}
 #endif // AV_SESSION_PART_ENABLE
+
+#ifdef BLUETOOTH_PART_ENABLE
+void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnPairStatusChanged(
+    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, int status)
+{
+    // BGTASK_LOGI("TaskDetectionManager OnPairStatusChanged begin");
+    TaskDetectionManager::GetInstance()->ReportBluetoothPairState()
+}
+
+void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnRemoteUuidChanged(
+    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
+    const std::vector<Bluetooth::BluetoothHost::ParcelUuid> &uuids) {}
+
+void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnRemoteNameChanged(
+    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, const std::string &deviceName) {}
+
+void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnRemoteAliasChanged(
+    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, const std::string &alias) {}
+
+void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnRemoteCodChanged(
+    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
+    const Bluetooth::BluetoothHost::BluetoothDeviceClass &cod) {}
+
+void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnRemoteBatteryLevelChanged(
+    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, int batteryLevel) {}
+
+void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnReadRemoteRssiEvent(
+    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, int rssi, int status) {}
+#endif // BLUETOOTH_PART_ENABLE
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

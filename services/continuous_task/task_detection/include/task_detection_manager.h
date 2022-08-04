@@ -33,6 +33,10 @@
 #include "avsession_manager.h"
 #endif // AV_SESSION_PART_ENABLE
 
+#ifdef BLUETOOTH_PART_ENABLE
+#include "bluetooth_host.h"
+#endif // BLUETOOTH_PART_ENABLE
+
 #include "audio_detect.h"
 #include "bluetooth_detect.h"
 #include "location_detect.h"
@@ -57,7 +61,9 @@ private:
     bool InitDisCompChangeObserver();
     bool InitAudioStateChangeListener();
     bool InitAVSessionStateChangeListener();
+    bool InitBluetoothStateChangeObserver();
     void OnAddSystemAbility(int32_t systemAbilityId);
+    void ReportBluetoothPairState(const std::string &addr, int32_t state);
     void HandleSystemAbilityAdded(int32_t systemAbilityId);
     bool GetDisSchedProxy();
     void HandleBluetoothSysEvent(const nlohmann::json &root);
@@ -110,6 +116,26 @@ private:
     };
 #endif // AV_SESSION_PART_ENABLE
 
+#ifdef BLUETOOTH_PART_ENABLE
+    class BluetoothRemoteDeviceObserver : public Bluetooth::BluetoothHost::BluetoothRemoteDeviceObserver {
+    public:
+        void OnPairStatusChanged(
+            const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, int status) override;
+        void OnRemoteUuidChanged(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
+            const std::vector<Bluetooth::BluetoothHost::ParcelUuid> &uuids) override;
+        void OnRemoteNameChanged(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
+            const std::string &deviceName) override;
+        void OnRemoteAliasChanged(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
+            const std::string &alias) override;
+        void OnRemoteCodChanged(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
+            const Bluetooth::BluetoothHost::BluetoothDeviceClass &cod) override;
+        void OnRemoteBatteryLevelChanged(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
+            int batteryLevel) override;
+        void OnReadRemoteRssiEvent(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
+            int rssi, int status) override;
+    };
+#endif // BLUETOOTH_PART_ENABLE
+
 private:
     std::shared_ptr<HiSysEventListener> hiEventListener_ {nullptr};
     std::shared_ptr<AudioRendererStateChangeListener> playerListener_ {nullptr};
@@ -121,6 +147,9 @@ private:
     sptr<IDistributedComponentListener> disCompListener_ {nullptr};
     std::shared_ptr<DataStorage> dataStorage_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
+#ifdef BLUETOOTH_PART_ENABLE
+    std::shared_ptr<BluetoothRemoteDeviceObserver> btRemoteDeviceObserver_ {nullptr};
+#endif // BLUETOOTH_PART_ENABLE
     sptr<ISystemAbilityStatusChange> statusChangeListener_ {nullptr};
     std::shared_ptr<AudioDetect> audioDetect_ {nullptr};
     std::shared_ptr<BluetoothDetect> bluetoothDetect_ {nullptr};

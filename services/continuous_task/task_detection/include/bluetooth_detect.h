@@ -27,9 +27,10 @@ struct SppConnectStateReocrd {
     int32_t socketId_ {-1};
     int32_t pid_ {-1};
     int32_t uid_ {-1};
+    std::string address_ {""};
     SppConnectStateReocrd() = default;
-    SppConnectStateReocrd(int32_t socketId, int32_t pid, int32_t uid)
-        : socketId_(socketId), pid_(pid), uid_(uid) {};
+    SppConnectStateReocrd(int32_t socketId, int32_t pid, int32_t uid, const std::string &address)
+        : socketId_(socketId), pid_(pid), uid_(uid), address_(address) {};
 };
 
 struct GattConnectStateRecord {
@@ -63,6 +64,7 @@ public:
     void HandleGattDisconnect(const std::shared_ptr<GattConnectStateRecord> &record);
     void HandleMasterSideDisconnect(const std::string &addr);
     void HandleSlaveSideDisconnect();
+    void HandleBluetoothPairState(const std::string &addr, int32_t state);
     void ParseBluetoothRecordToStr(nlohmann::json &value);
     bool ParseBluetoothRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet);
     void ClearData();
