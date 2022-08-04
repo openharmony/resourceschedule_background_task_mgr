@@ -541,6 +541,7 @@ void BgContinuousTaskMgr::DetectNewAddContinuousTask(const std::string &task)
             record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
         OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
         continuousTaskInfosMap_.erase(task);
+        HandleAppContinuousTaskStop(record->uid_);
         RefreshTaskRecord();
     }
 }
