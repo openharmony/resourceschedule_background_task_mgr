@@ -48,6 +48,7 @@ public:
     static constexpr int32_t UNSET_UID = -1;
     static constexpr int32_t JSON_FORMAT = 4;
     static constexpr int32_t AUDIO_RUNNING_STATE = 2;
+    static constexpr int32_t AUDIO_PAUSED_STATE = 5;
     static constexpr int32_t GATT_ROLE_MASTER = 0;
     static constexpr int32_t GATT_ROLE_SLAVE = 1;
     static constexpr int32_t INIT_CONNECTED_NUM = 1;
@@ -60,12 +61,14 @@ public:
     static constexpr int32_t DIS_ACTION_ADD = 1;
     static constexpr int32_t DIS_ACTION_REMOVE = 2;
     static constexpr int32_t CLASSICAL_BT_SWITCH_ON = 1;
+    static constexpr int32_t BT_PAIR_NONE = 0;
+    static constexpr int32_t RECHECK_DELAY_TIME = 5000;
+    static constexpr int32_t MAX_UID = 10000;
     static constexpr uint32_t AUDIO_PLAYBACK_BGMODE_ID = 2;
     static constexpr uint32_t AUDIO_RECORDING_BGMODE_ID = 3;
     static constexpr uint32_t LOCATION_BGMODE_ID = 4;
     static constexpr uint32_t BLUETOOTH_INTERACTION_BGMODE_ID = 5;
     static constexpr uint32_t MULTIDEVICE_CONNECTION_BGMODE_ID = 6;
-    static constexpr uint32_t MAX_UID = 10000;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

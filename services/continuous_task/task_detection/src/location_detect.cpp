@@ -18,6 +18,7 @@
 #include "bg_continuous_task_mgr.h"
 #include "common_utils.h"
 #include "continuous_task_log.h"
+#include "task_detection_manager.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -46,8 +47,9 @@ void LocationDetect::HandleLocationSysEvent(const nlohmann::json &root)
         } else if (state == "stop") {
             if (iter != locationUsingRecords_.end()) {
                 locationUsingRecords_.erase(iter);
-                BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid,
-                    CommonUtils::LOCATION_BGMODE_ID);
+                // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid,
+                //     CommonUtils::LOCATION_BGMODE_ID);
+                TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid, CommonUtils::LOCATION_BGMODE_ID);
             }
         }
     } else if (eventName == "LOCATION_SWITCH_STATE") {

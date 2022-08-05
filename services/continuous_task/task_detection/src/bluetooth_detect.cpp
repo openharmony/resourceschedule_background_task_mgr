@@ -18,6 +18,7 @@
 #include "bg_continuous_task_mgr.h"
 #include "common_utils.h"
 #include "continuous_task_log.h"
+#include "task_detection_manager.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -110,8 +111,10 @@ void BluetoothDetect::HandleSppConnect(const nlohmann::json& root)
         }
         sppConnectRecords_.erase(findRecordIter);
         if (!CheckBluetoothUsingScene(uid)) {
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
-                CommonUtils::UNSET_PID, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+            // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
+            //     CommonUtils::UNSET_PID, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+            TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid,
+                CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
         }
     }
 }
@@ -198,8 +201,10 @@ void BluetoothDetect::HandleGattAppDeregister(const nlohmann::json &root)
         auto record = *findRecordIter;
         gattAppRegisterInfos_.erase(findRecordIter);
         if (!CheckBluetoothUsingScene(record->uid_)) {
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(record->uid_,
-                CommonUtils::UNSET_PID, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+            // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(record->uid_,
+            //     CommonUtils::UNSET_PID, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+            TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(record->uid_,
+                CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
         }
     }
 }
@@ -233,8 +238,10 @@ void BluetoothDetect::HandleMasterSideDisconnect(const std::string &addr)
     // report to stop related continous task.
     for (const auto& var : clientToRemove) {
         if (!var.second) {
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(var.first.first,
-                var.first.second, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+            // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(var.first.first,
+            //     var.first.second, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+            TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(var.first.first,
+                CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
         }
     }
 }
@@ -268,23 +275,40 @@ void BluetoothDetect::HandleSlaveSideDisconnect()
         if (CommonUtils::CheckIsUidExist(uid, sppConnectRecords_)) {
             continue;
         }
-        BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid,
-            CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+        // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid,
+        //     CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+        TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
     }
 }
 
 void BluetoothDetect::HandleBluetoothPairState(const std::string &addr, int32_t state)
 {
-    if (state != 0) {
+    if (state != CommonUtils::BT_PAIR_NONE) {
         return;
     }
-   auto findRecord = [addr](const auto &target) {
-            return target->address_ == addr;
-    };
-    auto findRecordIter = find_if(sppConnectRecords_.begin(), sppConnectRecords_.end(), findRecord);
-    if (findRecordIter != gattAppRegisterInfos_.end()) {
-        // todo
-    } 
+    // auto findRecord = [addr](const auto &target) {
+    //         return target->address_ == addr;
+    // };
+    // auto findRecordIter = find_if(sppConnectRecords_.begin(), sppConnectRecords_.end(), findRecord);
+    // if (findRecordIter != sppConnectRecords_.end()) {
+    //     // todo
+    // } 
+
+    std::set<int32_t> uidToCheck;
+
+    for (auto var : sppConnectRecords_) {
+        if (var->address_ == addr) {
+            uidToCheck.emplace(var->uid_);
+        }
+    }
+    for (int32_t uid : uidToCheck) {
+        if (!CheckBluetoothUsingScene(uid)) {
+            // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
+            //     CommonUtils::UNSET_PID, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+            TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid,
+                 CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+        }
+    }
 }
 
 bool BluetoothDetect::CheckBluetoothUsingScene(int32_t uid)

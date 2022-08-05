@@ -20,6 +20,7 @@
 #include "bg_continuous_task_mgr.h"
 #include "common_utils.h"
 #include "continuous_task_log.h"
+#include "task_detection_manager.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -65,8 +66,10 @@ void MultiDeviceDetect::UpdateDisComponentInfo(int32_t uid, int32_t changeType,
         }
         record.erase(findIter);
         if (!CheckIsDisSchedScene(uid)) {
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
-                CommonUtils::UNSET_PID, CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID);
+            // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
+            //     CommonUtils::UNSET_PID, CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID);
+            TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid,
+                CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID);
         }
     }
 }

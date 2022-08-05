@@ -134,7 +134,7 @@ bool TaskDetectionManager::InitBluetoothStateChangeObserver()
 {
 #ifdef BLUETOOTH_PART_ENABLE
     btRemoteDeviceObserver_ = std::make_shared<BluetoothRemoteDeviceObserver>();
-    Bluetooth::BluetoothHost::GetDefaultHost()->RegisterRemoteDeviceObserver(btRemoteDeviceObserver_);
+    Bluetooth::BluetoothHost::GetDefaultHost().RegisterRemoteDeviceObserver(*(btRemoteDeviceObserver_.get()));
 #endif // BLUETOOTH_PART_ENABLE
     return true;
 }
@@ -207,7 +207,7 @@ void TaskDetectionManager::HandlePersistenceData(const std::vector<AppExecFwk::R
 
 void TaskDetectionManager::ReportBluetoothPairState(const std::string &addr, int32_t state)
 {
-    BGTASK_LOGI("ReportBluetoothPairState begin, address: %{public}s, state: %{public}d", type.c_str(), state);
+    BGTASK_LOGI("ReportBluetoothPairState begin, address: %{public}s, state: %{public}d", addr.c_str(), state);
     handler_->PostTask([=]() {
         bluetoothDetect_->HandleBluetoothPairState(addr, state);
         dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
@@ -333,6 +333,16 @@ void TaskDetectionManager::HandleDisComponentChange(const std::string &info)
         multiDeviceDetect_->HandleDisComponentChange(info);
         dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
     });
+}
+
+void TaskDetectionManager::ReportNeedRecheckTask(int32_t uid, uint32_t taskType)
+{
+    handler_->PostTask([=]() {
+        if (!CheckTaskRunningState(uid, taskType)) {
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
+                CommonUtils::UNSET_PID, taskType);
+        }
+    }, CommonUtils::RECHECK_DELAY_TIME);
 }
 
 bool TaskDetectionManager::CheckTaskRunningState(int32_t uid, uint32_t taskType)
@@ -468,31 +478,29 @@ void TaskDetectionManager::SessionStateListener::OnTopSessionChange(
 
 #ifdef BLUETOOTH_PART_ENABLE
 void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnPairStatusChanged(
-    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, int status)
+    const Bluetooth::BluetoothRemoteDevice &device, int status)
 {
-    // BGTASK_LOGI("TaskDetectionManager OnPairStatusChanged begin");
-    TaskDetectionManager::GetInstance()->ReportBluetoothPairState()
+    std::string addr = device.GetDeviceAddr();
+    TaskDetectionManager::GetInstance()->ReportBluetoothPairState(addr, status);
 }
 
 void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnRemoteUuidChanged(
-    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
-    const std::vector<Bluetooth::BluetoothHost::ParcelUuid> &uuids) {}
+    const Bluetooth::BluetoothRemoteDevice &device, const std::vector<Bluetooth::ParcelUuid> &uuids) {}
 
 void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnRemoteNameChanged(
-    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, const std::string &deviceName) {}
+    const Bluetooth::BluetoothRemoteDevice &device, const std::string &deviceName) {}
 
 void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnRemoteAliasChanged(
-    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, const std::string &alias) {}
+    const Bluetooth::BluetoothRemoteDevice &device, const std::string &alias) {}
 
 void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnRemoteCodChanged(
-    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
-    const Bluetooth::BluetoothHost::BluetoothDeviceClass &cod) {}
+    const Bluetooth::BluetoothRemoteDevice &device, const Bluetooth::BluetoothDeviceClass &cod) {}
 
 void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnRemoteBatteryLevelChanged(
-    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, int batteryLevel) {}
+    const Bluetooth::BluetoothRemoteDevice &device, int batteryLevel) {}
 
 void TaskDetectionManager::BluetoothRemoteDeviceObserver::OnReadRemoteRssiEvent(
-    const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, int rssi, int status) {}
+    const Bluetooth::BluetoothRemoteDevice &device, int rssi, int status) {}
 #endif // BLUETOOTH_PART_ENABLE
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

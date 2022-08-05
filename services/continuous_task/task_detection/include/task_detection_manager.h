@@ -54,6 +54,7 @@ public:
     void HandleProcessDied(int32_t uid, int32_t pid);
     void Dump(std::vector<std::string> &dumpInfo);
     void HandlePersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
+    void ReportNeedRecheckTask(int32_t uid, uint32_t taskType);
 
 private:
     bool AddSystemAbilityListener();
@@ -117,22 +118,18 @@ private:
 #endif // AV_SESSION_PART_ENABLE
 
 #ifdef BLUETOOTH_PART_ENABLE
-    class BluetoothRemoteDeviceObserver : public Bluetooth::BluetoothHost::BluetoothRemoteDeviceObserver {
+    class BluetoothRemoteDeviceObserver : public Bluetooth::BluetoothRemoteDeviceObserver {
     public:
-        void OnPairStatusChanged(
-            const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device, int status) override;
-        void OnRemoteUuidChanged(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
-            const std::vector<Bluetooth::BluetoothHost::ParcelUuid> &uuids) override;
-        void OnRemoteNameChanged(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
+        void OnPairStatusChanged(const Bluetooth::BluetoothRemoteDevice &device, int status) override;
+        void OnRemoteUuidChanged(const Bluetooth::BluetoothRemoteDevice &device,
+            const std::vector<Bluetooth::ParcelUuid> &uuids) override;
+        void OnRemoteNameChanged(const Bluetooth::BluetoothRemoteDevice &device,
             const std::string &deviceName) override;
-        void OnRemoteAliasChanged(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
-            const std::string &alias) override;
-        void OnRemoteCodChanged(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
-            const Bluetooth::BluetoothHost::BluetoothDeviceClass &cod) override;
-        void OnRemoteBatteryLevelChanged(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
-            int batteryLevel) override;
-        void OnReadRemoteRssiEvent(const Bluetooth::BluetoothHost::BluetoothRemoteDevice &device,
-            int rssi, int status) override;
+        void OnRemoteAliasChanged(const Bluetooth::BluetoothRemoteDevice &device, const std::string &alias) override;
+        void OnRemoteCodChanged(const Bluetooth::BluetoothRemoteDevice &device,
+            const Bluetooth::BluetoothDeviceClass &cod) override;
+        void OnRemoteBatteryLevelChanged(const Bluetooth::BluetoothRemoteDevice &device, int batteryLevel) override;
+        void OnReadRemoteRssiEvent(const Bluetooth::BluetoothRemoteDevice &device, int rssi, int status) override;
     };
 #endif // BLUETOOTH_PART_ENABLE
 

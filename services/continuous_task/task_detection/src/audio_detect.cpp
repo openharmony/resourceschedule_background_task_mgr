@@ -18,6 +18,7 @@
 #include "bg_continuous_task_mgr.h"
 #include "common_utils.h"
 #include "continuous_task_log.h"
+#include "task_detection_manager.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -33,10 +34,11 @@ void AudioDetect::HandleAudioStreamInfo(
     uint32_t bgModeId = (type == "player" ? CommonUtils::AUDIO_PLAYBACK_BGMODE_ID
         : CommonUtils::AUDIO_RECORDING_BGMODE_ID);
     for (int32_t uidToCheck : uidRemoved) {
-        if (!CheckAudioCondition(uidToCheck, bgModeId)) {
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uidToCheck,
-                CommonUtils::UNSET_PID, bgModeId);
-        }
+        // if (!CheckAudioCondition(uidToCheck, bgModeId)) {
+        //     BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uidToCheck,
+        //         CommonUtils::UNSET_PID, bgModeId);
+        // }
+        TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uidToCheck, bgModeId);
     }
 }
 
@@ -55,8 +57,10 @@ void AudioDetect::UpdateAudioRecord(const std::list<std::tuple<int32_t, int32_t,
         };
         auto findRecordIter = find_if(records.begin(), records.end(), findRecord);
         if (findRecordIter == records.end() && state == CommonUtils::AUDIO_RUNNING_STATE) {
-            auto recorderInfo = std::make_shared<AudioInfo>(uid, sessionId);
+            auto recorderInfo = std::make_shared<AudioInfo>(uid, sessionId, state);
             records.emplace_back(recorderInfo);
+        } else if (findRecordIter != records.end() && state == CommonUtils::AUDIO_PAUSED_STATE) {
+            (*findRecordIter)->state_ = state;
         } else if (findRecordIter != records.end() && state != CommonUtils::AUDIO_RUNNING_STATE) {
             records.erase(findRecordIter);
             uidRemoved.emplace(uid);
@@ -95,6 +99,7 @@ void ParseAudioStreamInfoToStr(nlohmann::json &value, const std::string &type, c
         nlohmann::json info;
         info["uid"] = var->uid_;
         info["sessionId"] = var->sessionId_;
+        info["state"] = var->state_;
         streamInfos.push_back(info);
     }
     value[type] = streamInfos;
@@ -126,11 +131,13 @@ void ParseAudioStreamInfoFromJson(const nlohmann::json &value, const std::string
 {
     int32_t uid;
     int32_t sessionId;
+    int32_t state;
     for (auto &elem : value[type]) {
         uid = elem.at("uid").get<int32_t>();
         sessionId = elem.at("sessionId").get<int32_t>();
+        state = elem.at("state").get<int32_t>();
         uidSet.emplace(uid);
-        auto info = std::make_shared<AudioInfo>(uid, sessionId);
+        auto info = std::make_shared<AudioInfo>(uid, sessionId, state);
         record.emplace_back(info);
     }
 }
