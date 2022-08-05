@@ -31,9 +31,8 @@ namespace BackgroundTaskMgr {
 struct AudioInfo {
     int32_t uid_ {-1};
     int32_t sessionId_ {-1};
-    int32_t state_ {-1};
     AudioInfo() = default;
-    AudioInfo(int32_t uid, int32_t sessionId, int32_t state) : uid_(uid), sessionId_(sessionId), state_(state) {};
+    AudioInfo(int32_t uid, int32_t sessionId) : uid_(uid), sessionId_(sessionId) {};
 };
 
 struct AVSessionInfo {

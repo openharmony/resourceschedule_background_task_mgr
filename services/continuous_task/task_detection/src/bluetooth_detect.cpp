@@ -74,8 +74,8 @@ void BluetoothDetect::HandleBtSwitchState(const nlohmann::json &root)
         }
     }
     if (!isBrSwitchOn_ && !isBleSwitchOn_) {
-        BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
-            CommonUtils::UNSET_PID, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+        BgContinuousTaskMgr::GetInstance()->ReportNeedRecheckTask(CommonUtils::UNSET_UID,
+            CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
     }
 }
 
@@ -277,22 +277,21 @@ void BluetoothDetect::HandleSlaveSideDisconnect()
         }
         // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid,
         //     CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
-        TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+        TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid,
+            CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
     }
 }
 
 void BluetoothDetect::HandleBluetoothPairState(const std::string &addr, int32_t state)
 {
-    if (state != CommonUtils::BT_PAIR_NONE) {
+    if (state == CommonUtils::BT_PAIR_PAIRED) {
+        devicePairRecords_.emplace(addr);
         return;
+    } else if (state == CommonUtils::BT_PAIR_PAIRED) {
+        return;
+    } else {
+        devicePairRecords_.erase(addr);
     }
-    // auto findRecord = [addr](const auto &target) {
-    //         return target->address_ == addr;
-    // };
-    // auto findRecordIter = find_if(sppConnectRecords_.begin(), sppConnectRecords_.end(), findRecord);
-    // if (findRecordIter != sppConnectRecords_.end()) {
-    //     // todo
-    // } 
 
     std::set<int32_t> uidToCheck;
 
@@ -303,8 +302,6 @@ void BluetoothDetect::HandleBluetoothPairState(const std::string &addr, int32_t 
     }
     for (int32_t uid : uidToCheck) {
         if (!CheckBluetoothUsingScene(uid)) {
-            // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
-            //     CommonUtils::UNSET_PID, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
             TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid,
                  CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
         }
@@ -313,12 +310,15 @@ void BluetoothDetect::HandleBluetoothPairState(const std::string &addr, int32_t 
 
 bool BluetoothDetect::CheckBluetoothUsingScene(int32_t uid)
 {
+    if (uid == CommonUtils::UNSET_UID) {
+        return isBrSwitchOn_ || isBleSwitchOn_;
+    }
     if (!isBrSwitchOn_ && !isBleSwitchOn_) {
         return false;
     }
     // check if is using SPP function
     for (auto var : sppConnectRecords_) {
-        if (var->uid_ == uid) {
+        if (var->uid_ == uid && devicePairRecords_.find(var->address_) != devicePairRecords_.end()) {
             return true;
         }
     }
@@ -359,6 +359,9 @@ void BluetoothDetect::ParseBluetoothRecordToStr(nlohmann::json &value)
     }
     bluetoothInfo["sppConnectRecords"] = arrayObj1;
 
+    nlohmann::json pairsRecords(devicePairRecords_);
+    bluetoothInfo["devicePairRecords"] = pairsRecords;
+
     auto arrayObj2 = nlohmann::json::array();
     for (auto var : gattConnectRecords_) {
         nlohmann::json gattConnectRecord;
@@ -398,6 +401,10 @@ bool BluetoothDetect::ParseBluetoothRecordFromJson(const nlohmann::json &value, 
         auto record = std::make_shared<SppConnectStateReocrd>(elem["socketId"].get<int32_t>(),
             elem["pid"].get<int32_t>(), uid, elem["address"].get<std::string>());
         sppConnectRecords_.emplace_back(record);
+    }
+
+    for (auto &elem : bluetoothInfo["devicePairRecords"]) {
+        devicePairRecords_.emplace(elem.get<std::string>());
     }
 
     for (auto &elem : bluetoothInfo["gattConnectRecords"]) {

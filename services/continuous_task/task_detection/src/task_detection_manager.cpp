@@ -163,6 +163,7 @@ void TaskDetectionManager::HandleSystemAbilityAdded(int32_t systemAbilityId)
             break;
         case BLUETOOTH_HOST_SYS_ABILITY_ID:
             InitBluetoothStateChangeObserver();
+            break;
         default:
             break;
     }
@@ -235,15 +236,19 @@ bool TaskDetectionManager::AddSystemAbilityListener()
         return false;
     }
     if (samgrProxy->SubscribeSystemAbility(DISTRIBUTED_SCHED_SA_ID, statusChangeListener_) != ERR_OK) {
-        BGTASK_LOGE("failed to get dis sched sa");
+        BGTASK_LOGE("failed to listen dis sched sa");
         return false;
     }
     if (samgrProxy->SubscribeSystemAbility(AUDIO_POLICY_SERVICE_ID, statusChangeListener_) != ERR_OK) {
-        BGTASK_LOGE("failed to get audio service sa");
+        BGTASK_LOGE("failed to listen audio service sa");
         return false;
     }
     if (samgrProxy->SubscribeSystemAbility(AVSESSION_SERVICE_ID, statusChangeListener_) != ERR_OK) {
-        BGTASK_LOGE("failed to get avsession service sa");
+        BGTASK_LOGE("failed to listen avsession service sa");
+        return false;
+    }
+    if (samgrProxy->SubscribeSystemAbility(BLUETOOTH_HOST_SYS_ABILITY_ID, statusChangeListener_) != ERR_OK) {
+        BGTASK_LOGE("failed to listen bluetooth service sa");
         return false;
     }
     return true;

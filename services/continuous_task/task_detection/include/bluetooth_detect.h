@@ -72,6 +72,7 @@ public:
 private:
     bool isBrSwitchOn_ {false};
     bool isBleSwitchOn_ {false};
+    std::set<std::string> devicePairRecords_ {};
     std::list<std::shared_ptr<SppConnectStateReocrd>> sppConnectRecords_ {};
     std::list<std::shared_ptr<GattConnectStateRecord>> gattConnectRecords_ {};
     std::list<std::shared_ptr<GattAppRegisterInfo>> gattAppRegisterInfos_ {};

@@ -47,8 +47,6 @@ void LocationDetect::HandleLocationSysEvent(const nlohmann::json &root)
         } else if (state == "stop") {
             if (iter != locationUsingRecords_.end()) {
                 locationUsingRecords_.erase(iter);
-                // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid, pid,
-                //     CommonUtils::LOCATION_BGMODE_ID);
                 TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid, CommonUtils::LOCATION_BGMODE_ID);
             }
         }
@@ -61,14 +59,17 @@ void LocationDetect::HandleLocationSysEvent(const nlohmann::json &root)
             isLocationSwitchOn_ = true;
         } else if (switchState == "disable") {
             isLocationSwitchOn_ = false;
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
-                CommonUtils::UNSET_PID, CommonUtils::LOCATION_BGMODE_ID);
+            BgContinuousTaskMgr::GetInstance()->ReportNeedRecheckTask(CommonUtils::UNSET_UID,
+                CommonUtils::LOCATION_BGMODE_ID);
         }
     }
 }
 
 bool LocationDetect::CheckLocationCondition(int32_t uid)
 {
+    if (uid == CommonUtils::UNSET_UID) {
+        return isLocationSwitchOn_;
+    }
     if (!isLocationSwitchOn_) {
             return false;
         }

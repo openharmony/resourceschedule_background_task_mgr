@@ -57,10 +57,8 @@ void AudioDetect::UpdateAudioRecord(const std::list<std::tuple<int32_t, int32_t,
         };
         auto findRecordIter = find_if(records.begin(), records.end(), findRecord);
         if (findRecordIter == records.end() && state == CommonUtils::AUDIO_RUNNING_STATE) {
-            auto recorderInfo = std::make_shared<AudioInfo>(uid, sessionId, state);
+            auto recorderInfo = std::make_shared<AudioInfo>(uid, sessionId);
             records.emplace_back(recorderInfo);
-        } else if (findRecordIter != records.end() && state == CommonUtils::AUDIO_PAUSED_STATE) {
-            (*findRecordIter)->state_ = state;
         } else if (findRecordIter != records.end() && state != CommonUtils::AUDIO_RUNNING_STATE) {
             records.erase(findRecordIter);
             uidRemoved.emplace(uid);
@@ -84,8 +82,8 @@ void AudioDetect::HandleAVSessionInfo(const AVSession::AVSessionDescriptor &desc
     } else if (action == "release" && findRecordIter != avSessionInfos_.end()) {
         avSessionInfos_.erase(findRecordIter);
         if (!CheckAudioCondition(uid, CommonUtils::AUDIO_PLAYBACK_BGMODE_ID)) {
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
-                CommonUtils::UNSET_PID, CommonUtils::AUDIO_PLAYBACK_BGMODE_ID);
+            BgContinuousTaskMgr::GetInstance()->ReportNeedRecheckTask(uid,
+                CommonUtils::AUDIO_PLAYBACK_BGMODE_ID);
         }
     }
 }
@@ -99,7 +97,6 @@ void ParseAudioStreamInfoToStr(nlohmann::json &value, const std::string &type, c
         nlohmann::json info;
         info["uid"] = var->uid_;
         info["sessionId"] = var->sessionId_;
-        info["state"] = var->state_;
         streamInfos.push_back(info);
     }
     value[type] = streamInfos;
@@ -131,13 +128,11 @@ void ParseAudioStreamInfoFromJson(const nlohmann::json &value, const std::string
 {
     int32_t uid;
     int32_t sessionId;
-    int32_t state;
     for (auto &elem : value[type]) {
         uid = elem.at("uid").get<int32_t>();
         sessionId = elem.at("sessionId").get<int32_t>();
-        state = elem.at("state").get<int32_t>();
         uidSet.emplace(uid);
-        auto info = std::make_shared<AudioInfo>(uid, sessionId, state);
+        auto info = std::make_shared<AudioInfo>(uid, sessionId);
         record.emplace_back(info);
     }
 }
