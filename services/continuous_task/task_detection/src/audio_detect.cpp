@@ -34,10 +34,6 @@ void AudioDetect::HandleAudioStreamInfo(
     uint32_t bgModeId = (type == "player" ? CommonUtils::AUDIO_PLAYBACK_BGMODE_ID
         : CommonUtils::AUDIO_RECORDING_BGMODE_ID);
     for (int32_t uidToCheck : uidRemoved) {
-        // if (!CheckAudioCondition(uidToCheck, bgModeId)) {
-        //     BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uidToCheck,
-        //         CommonUtils::UNSET_PID, bgModeId);
-        // }
         TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uidToCheck, bgModeId);
     }
 }
@@ -82,7 +78,7 @@ void AudioDetect::HandleAVSessionInfo(const AVSession::AVSessionDescriptor &desc
     } else if (action == "release" && findRecordIter != avSessionInfos_.end()) {
         avSessionInfos_.erase(findRecordIter);
         if (!CheckAudioCondition(uid, CommonUtils::AUDIO_PLAYBACK_BGMODE_ID)) {
-            BgContinuousTaskMgr::GetInstance()->ReportNeedRecheckTask(uid,
+            TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid,
                 CommonUtils::AUDIO_PLAYBACK_BGMODE_ID);
         }
     }

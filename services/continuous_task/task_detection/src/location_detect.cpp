@@ -59,7 +59,7 @@ void LocationDetect::HandleLocationSysEvent(const nlohmann::json &root)
             isLocationSwitchOn_ = true;
         } else if (switchState == "disable") {
             isLocationSwitchOn_ = false;
-            BgContinuousTaskMgr::GetInstance()->ReportNeedRecheckTask(CommonUtils::UNSET_UID,
+            TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(CommonUtils::UNSET_UID,
                 CommonUtils::LOCATION_BGMODE_ID);
         }
     }

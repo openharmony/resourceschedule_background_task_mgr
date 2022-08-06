@@ -66,8 +66,6 @@ void MultiDeviceDetect::UpdateDisComponentInfo(int32_t uid, int32_t changeType,
         }
         record.erase(findIter);
         if (!CheckIsDisSchedScene(uid)) {
-            // BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
-            //     CommonUtils::UNSET_PID, CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID);
             TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid,
                 CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID);
         }
