@@ -288,8 +288,9 @@ HWTEST_F(BgContinuousTaskMgrTest, BluetoothInteractionDetection, TestSize.Level1
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
     TaskDetectionManager::GetInstance()->bluetoothDetect_->isBrSwitchOn_ = true;
     TaskDetectionManager::GetInstance()->bluetoothDetect_->isBleSwitchOn_ = true;
+    TaskDetectionManager::GetInstance()->bluetoothDetect_->devicePairRecords_.emplace("test");
     TaskDetectionManager::GetInstance()->bluetoothDetect_->sppConnectRecords_.emplace_back(
-        std::make_shared<SppConnectStateReocrd>(1, 1, 1));
+        std::make_shared<SppConnectStateReocrd>(1, 1, 1, "test"));
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();

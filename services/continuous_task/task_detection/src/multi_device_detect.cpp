@@ -15,8 +15,6 @@
 
 #include "multi_device_detect.h"
 
-#include <sstream>
-
 #include "bg_continuous_task_mgr.h"
 #include "common_utils.h"
 #include "continuous_task_log.h"

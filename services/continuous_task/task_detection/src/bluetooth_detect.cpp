@@ -295,7 +295,7 @@ void BluetoothDetect::HandleBluetoothPairState(const std::string &addr, int32_t 
     for (int32_t uid : uidToCheck) {
         if (!CheckBluetoothUsingScene(uid)) {
             TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uid,
-                 CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+                CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
         }
     }
 }

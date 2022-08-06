@@ -342,12 +342,13 @@ void TaskDetectionManager::HandleDisComponentChange(const std::string &info)
 
 void TaskDetectionManager::ReportNeedRecheckTask(int32_t uid, uint32_t taskType)
 {
-    handler_->PostTask([=]() {
+    auto reportTask = [=]() {
         if (!CheckTaskRunningState(uid, taskType)) {
             BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
                 CommonUtils::UNSET_PID, taskType);
         }
-    }, CommonUtils::RECHECK_DELAY_TIME);
+    };
+    handler_->PostTask(reportTask, CommonUtils::RECHECK_DELAY_TIME);
 }
 
 bool TaskDetectionManager::CheckTaskRunningState(int32_t uid, uint32_t taskType)
