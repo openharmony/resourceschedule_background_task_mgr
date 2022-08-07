@@ -66,7 +66,7 @@ ohos_unittest("bgtask_unit_test") {
     "multimedia_image_standard:image_native",
     "relational_store:native_rdb",
     "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
   ]
 
   if (has_os_account_part) {

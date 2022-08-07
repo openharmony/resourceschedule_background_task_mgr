@@ -89,7 +89,7 @@ ohos_shared_library("bgtaskmgr_service") {
     "multimedia_audio_framework:audio_client",
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
   ]
 
   if (has_os_account_part) {
