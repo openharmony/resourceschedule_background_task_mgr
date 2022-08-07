@@ -50,6 +50,10 @@ private:
     ErrCode HandleOnContinuousTaskStart(MessageParcel &data);
     ErrCode HandleOnContinuousTaskCancel(MessageParcel &data);
     ErrCode HandleOnAppContinuousTaskStop(MessageParcel &data);
+    ErrCode HandleOnAppEfficiencyResourcesApply(MessageParcel &data);
+    ErrCode HandleOnAppAllEfficiencyResourcesReset(MessageParcel &data);
+    ErrCode HandleOnEfficiencyResourcesApply(MessageParcel &data);
+    ErrCode HandleOnEfficiencyResourcesReset(MessageParcel &data);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

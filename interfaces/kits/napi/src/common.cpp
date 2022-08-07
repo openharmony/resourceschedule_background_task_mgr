@@ -224,5 +224,37 @@ napi_value Common::SetDelaySuspendInfo(
 
     return NapiGetboolean(env, true);
 }
+
+napi_value Common::GetBooolValue(const napi_env &env, const napi_value &value, bool &result)
+{
+    napi_valuetype valuetype = napi_undefined;
+
+    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    NAPI_ASSERT(env, valuetype == napi_boolean, "Wrong argument type. Boolean expected.");
+    NAPI_CALL(env,napi_get_value_bool(env, value, &result));
+    BGTASK_LOGD("GetBooolValue result: %{public}s", result?"true":"false");
+
+    return Common::NapiGetNull(env);
+}
+
+napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, std::string &result)
+{
+    napi_valuetype valuetype = napi_undefined;
+
+    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    NAPI_ASSERT(env, valuetype == napi_string, "Wrong argument type. String or function expected.");
+    if (valuetype == napi_string) {
+        char str[STR_MAX_SIZE] = {0};
+        size_t strLen = 0;
+        NAPI_CALL(env, napi_get_value_string_utf8(env, value, str, STR_MAX_SIZE - 1, &strLen));
+
+        result = std::string(str);
+        BGTASK_LOGD("GetStringValue result: %{public}s", result.c_str());
+    } else {
+        return nullptr;
+    }
+
+    return Common::NapiGetNull(env);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

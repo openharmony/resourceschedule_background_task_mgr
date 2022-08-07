@@ -18,6 +18,7 @@
 
 #include "notification_helper.h"
 
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class BgContinuousTaskMgr;

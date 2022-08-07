@@ -344,5 +344,59 @@ ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flag
         }
     }
 }
+
+ErrCode BackgroundTaskMgrProxy::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess)
+{
+    if (resourceInfo == nullptr) {
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteParcelable(resourceInfo)) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    ErrCode result = InnerTransact(APPLY_EFFICIENCY_RESOURCES, option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("ApplyEfficiencyResources fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("ApplyEfficiencyResources fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    if (!reply.ReadBool(isSuccess)) {
+        BGTASK_LOGE("ApplyEfficiencyResources fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return result;
+}
+
+ErrCode BackgroundTaskMgrProxy::ResetAllEfficiencyResources()
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        BGTASK_LOGE("UnsubscribeBackgroundTask write descriptor failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    ErrCode result = InnerTransact(RESET_ALL_EFFICIENCY_RESOURCES, option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("ResetAllEfficiencyResources fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("ResetAllEfficiencyResources fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return result;
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

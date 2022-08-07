@@ -25,6 +25,7 @@ ohos_shared_library("backgroundtaskmanager") {
     "napi/src/bg_continuous_task_napi_module.cpp",
     "napi/src/cancel_suspend_delay.cpp",
     "napi/src/common.cpp",
+    "napi/src/efficiency_resources_operation.cpp",
     "napi/src/get_remaining_delay_time.cpp",
     "napi/src/init.cpp",
     "napi/src/request_suspend_delay.cpp",

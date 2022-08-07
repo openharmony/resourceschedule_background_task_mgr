@@ -28,6 +28,7 @@
 #include "iexpired_callback.h"
 #include "ibackground_task_subscriber.h"
 #include "want_agent.h"
+#include "efficiency_resource_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -111,6 +112,22 @@ public:
      */
     virtual ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) = 0;
 
+    /**
+     * @brief Apply or unapply efficiency resources.
+     * 
+     * @param resourceInfo Request params.
+     * @param isSuccess succeed to apply efficiency resources.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess) = 0;
+
+    /**
+     * @brief Reset all efficiency resources apply.
+     * 
+     * @return ERR_OK if success, else fail.
+     */
+    virtual ErrCode ResetAllEfficiencyResources() = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskMgr");
 
@@ -125,6 +142,8 @@ protected:
         UNSUBSCRIBE_BACKGROUND_TASK,
         GET_TRANSIENT_TASK_APPS,
         GET_CONTINUOUS_TASK_APPS,
+        APPLY_EFFICIENCY_RESOURCES,
+        RESET_ALL_EFFICIENCY_RESOURCES,
     };
 };
 }  // namespace BackgroundTaskMgr

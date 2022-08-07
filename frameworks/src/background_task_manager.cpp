@@ -134,6 +134,33 @@ ErrCode BackgroundTaskManager::GetTransientTaskApps(std::vector<std::shared_ptr<
     return backgroundTaskMgrProxy_->GetTransientTaskApps(list);
 }
 
+ErrCode BackgroundTaskManager::ApplyEfficiencyResources(const EfficiencyResourceInfo &resourceInfo, bool &isSuccess)
+{
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
+    }
+
+    sptr<EfficiencyResourceInfo> resourceInfoPtr = new (std::nothrow) EfficiencyResourceInfo(resourceInfo);
+    if (resourceInfoPtr == nullptr) {
+        BGTASK_LOGE("Failed to create efficiency resource info");
+        return ERR_BGTASK_NO_MEMORY;
+    }
+    ErrCode ret = backgroundTaskMgrProxy_->ApplyEfficiencyResources(resourceInfoPtr, isSuccess);
+    return ret;
+}
+
+ErrCode BackgroundTaskManager::ResetAllEfficiencyResources()
+{
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
+    }
+
+    ErrCode ret = backgroundTaskMgrProxy_->ResetAllEfficiencyResources();
+    return ret;
+}
+
 bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
 {
     if (backgroundTaskMgrProxy_ != nullptr) {

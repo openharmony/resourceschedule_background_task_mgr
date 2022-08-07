@@ -74,6 +74,12 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
         case ON_APP_CONTINUOUS_TASK_STOP: {
             return HandleOnAppContinuousTaskStop(data);
         }
+        case ON_EFFICIENCY_RESOURCES_APPLY: {
+            return HandleOnEfficiencyResourcesApply(data);
+        }
+        case ON_EFFICIENCY_RESOURCES_RESET: {
+            return HandleOnEfficiencyResourcesReset(data);
+        }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
@@ -171,6 +177,52 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppContinuousTaskStop(MessageParce
 
     OnAppContinuousTaskStop(uid);
     return ERR_OK;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesApply(MessageParcel &data)
+{
+    std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
+        = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
+    if(!resourceCallbackInfo){
+        BGTASK_LOGE("HandleOnAppEfficiencyResourcesApply ReadParcelable failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    OnAppEfficiencyResourcesApply(resourceCallbackInfo);
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesReset(MessageParcel &data)
+{
+    std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
+        = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
+    if(!resourceCallbackInfo){
+        BGTASK_LOGE("HandleOnAppEfficiencyResourcesApply ReadParcelable failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    OnAppEfficiencyResourcesReset(resourceCallbackInfo);
+    return ERR_NONE;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesApply(MessageParcel &data)
+{
+    std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
+        = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
+    if(!resourceCallbackInfo){
+        BGTASK_LOGE("HandleOnEfficiencyResourcesApply ContinuousTaskCallbackInfo ReadParcelable failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    OnEfficiencyResourcesApply(resourceCallbackInfo);
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesReset(MessageParcel &data)
+{
+    std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
+        = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
+    if(!resourceCallbackInfo){
+        BGTASK_LOGE("HandleOnAppEfficiencyResourcesApply ReadParcelable failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    OnEfficiencyResourcesReset(resourceCallbackInfo);
+    return ERR_NONE;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

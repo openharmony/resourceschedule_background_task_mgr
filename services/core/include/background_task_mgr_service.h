@@ -32,6 +32,7 @@
 #include "bg_continuous_task_mgr.h"
 #include "bg_transient_task_mgr.h"
 #include "bgtaskmgr_inner_errors.h"
+#include "bg_efficiency_resources_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -60,6 +61,8 @@ public:
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) override;
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) override;
+    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess) override;
+    ErrCode ResetAllEfficiencyResources() override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);

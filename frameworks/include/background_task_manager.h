@@ -21,6 +21,7 @@
 #include "ibackground_task_mgr.h"
 #include "iremote_object.h"
 #include "want_agent.h"
+#include "efficiency_resource_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -109,6 +110,23 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
+
+    /**
+     * @brief Apply or unapply efficiency resources.
+     * 
+     * @param resourceInfo Request params.
+     * @param isSuccess succeed to apply efficiency recources.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode ApplyEfficiencyResources(const EfficiencyResourceInfo &resourceInfo, bool &isSuccess);
+
+    /**
+     * @brief Reset all efficiency resources.
+     * 
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode ResetAllEfficiencyResources();
+
 
 private:
     bool GetBackgroundTaskManagerProxy();

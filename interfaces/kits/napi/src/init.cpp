@@ -21,6 +21,7 @@
 #include "get_remaining_delay_time.h"
 #include "request_suspend_delay.h"
 #include "transient_task_log.h"
+#include "efficiency_resources_operation.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -34,6 +35,8 @@ napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getRemainingDelayTime", GetRemainingDelayTime),
         DECLARE_NAPI_FUNCTION("startBackgroundRunning", StartBackgroundRunning),
         DECLARE_NAPI_FUNCTION("stopBackgroundRunning", StopBackgroundRunning),
+        DECLARE_NAPI_FUNCTION("applyEfficiencyResources", ApplyEfficiencyResources),
+        DECLARE_NAPI_FUNCTION("resetAllEfficiencyResources", ResetAllEfficiencyResources),
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));

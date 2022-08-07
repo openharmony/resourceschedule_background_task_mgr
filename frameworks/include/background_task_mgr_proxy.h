@@ -104,6 +104,22 @@ public:
      */
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) override;
 
+    /**
+     * @brief Apply or unapply efficiency resources.
+     * 
+     * @param resourceInfo Request params.
+     * @param isSuccess succeed to apply efficiency resources.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess) override;
+
+    /**
+     * @brief Reset all efficiency resources.
+     * 
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode ResetAllEfficiencyResources() override;
+    
 private:
     ErrCode InnerTransact(uint32_t code, MessageOption &flags, MessageParcel &data, MessageParcel &reply);
 

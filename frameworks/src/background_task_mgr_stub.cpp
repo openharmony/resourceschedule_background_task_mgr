@@ -56,6 +56,12 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::GET_CONTINUOUS_TASK_APPS,
             std::bind(&BackgroundTaskMgrStub::HandleGetContinuousTaskApps,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+        {BackgroundTaskMgrStub::APPLY_EFFICIENCY_RESOURCES,
+            std::bind(&BackgroundTaskMgrStub::HandleApplyEfficiencyResources,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+        {BackgroundTaskMgrStub::RESET_ALL_EFFICIENCY_RESOURCES,
+            std::bind(&BackgroundTaskMgrStub::HandleResetAllEfficiencyResources,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
 };
 
 ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
@@ -240,6 +246,37 @@ ErrCode BackgroundTaskMgrStub::HandleGetContinuousTaskApps(MessageParcel& data, 
         if (!info->Marshalling(reply)) {
             return ERR_BGTASK_PARCELABLE_FAILED;
         }
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleApplyEfficiencyResources(MessageParcel& data, MessageParcel& reply)
+{
+    sptr<EfficiencyResourceInfo> resourceInfoPtr = data.ReadParcelable<EfficiencyResourceInfo>();
+    if (resourceInfoPtr == nullptr) {
+        BGTASK_LOGE("EfficiencyResourceInfo ReadParcelable failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    bool isSuccess {false};
+    ErrCode result = ApplyEfficiencyResources(resourceInfoPtr, isSuccess);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleApplyEfficiencyResources write result failed, ErrCode=%{public}d", result);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    if (!reply.WriteBool(isSuccess)) {
+        BGTASK_LOGE("HandleApplyEfficiencyResources Write result fail.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleResetAllEfficiencyResources(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t id = data.ReadInt32();
+    ErrCode result = ResetAllEfficiencyResources();
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleCancelSuspendDelay Write result failed, ErrCode=%{public}d", result);
+        return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;
 }

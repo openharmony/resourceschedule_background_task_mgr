@@ -20,6 +20,7 @@ config("bgtaskmgr_service_public_config") {
     "core/include",
     "transient_task/include",
     "test/include",
+    "efficiency_resources/include",
   ]
 }
 
@@ -46,6 +47,9 @@ ohos_shared_library("bgtaskmgr_service") {
     "transient_task/src/time_provider.cpp",
     "transient_task/src/timer_manager.cpp",
     "transient_task/src/watchdog.cpp",
+    "efficiency_resources/src/application_record_storage.cpp",
+    "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
+    "efficiency_resources/src/resources_application_record.cpp",
   ]
 
   public_configs = [ ":bgtaskmgr_service_public_config" ]
@@ -53,7 +57,6 @@ ohos_shared_library("bgtaskmgr_service") {
   public_deps = [
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits",
     "//third_party/jsoncpp",
   ]
 
