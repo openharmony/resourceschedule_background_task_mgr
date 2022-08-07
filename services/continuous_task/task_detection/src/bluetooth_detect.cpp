@@ -32,11 +32,11 @@ void BluetoothDetect::HandleBluetoothSysEvent(const nlohmann::json &root)
     std::string eventName = root.at("name_").get<std::string>();
     if (eventName == "BLUETOOTH_BR_SWITCH_STATE" || eventName == "BLUETOOTH_BLE_STATE") {
         HandleBtSwitchState(root);
-    } else if (eventName == "BLUETOOTH_SPP_CONNECT_STATE") {
+    } else if (eventName == "SPP_CONNECT_STATE") {
         HandleSppConnect(root);
-    } else if (eventName == "BLUETOOTH_GATT_CONNECT_STATE") {
+    } else if (eventName == "GATT_CONNECT_STATE") {
         HandleGattConnect(root);
-    } else if (eventName == "BLUETOOTH_GATT_APP_REGISTER") {
+    } else if (eventName == "GATT_APP_REGISTER") {
         if (!CommonUtils::CheckJsonValue(root, {"ACTION"})) {
             BGTASK_LOGE("Bluetooth connect state event lost important info");
             return;

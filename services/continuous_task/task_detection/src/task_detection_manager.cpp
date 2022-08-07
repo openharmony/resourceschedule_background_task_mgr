@@ -59,9 +59,9 @@ bool TaskDetectionManager::InitHiSysEventListener()
     hiEventListener_ = std::make_shared<HiSysEventListener>();
     HiviewDFX::ListenerRule brSwitchState("BLUETOOTH", "BLUETOOTH_BR_SWITCH_STATE");
     HiviewDFX::ListenerRule bleSwitchState("BLUETOOTH", "BLUETOOTH_BLE_STATE");
-    HiviewDFX::ListenerRule sppConnectState("BLUETOOTH", "BLUETOOTH_SPP_CONNECT_STATE");
-    HiviewDFX::ListenerRule gattConnectState("BLUETOOTH", "BLUETOOTH_GATT_CONNECT_STATE");
-    HiviewDFX::ListenerRule gattAppRegister("BLUETOOTH", "BLUETOOTH_GATT_APP_REGISTER");
+    HiviewDFX::ListenerRule sppConnectState("BLUETOOTH", "SPP_CONNECT_STATE");
+    HiviewDFX::ListenerRule gattConnectState("BLUETOOTH", "GATT_CONNECT_STATE");
+    HiviewDFX::ListenerRule gattAppRegister("BLUETOOTH", "GATT_APP_REGISTER");
     HiviewDFX::ListenerRule locationSwitchState("LOCATION", "LOCATION_SWITCH_STATE");
     HiviewDFX::ListenerRule gnssState("LOCATION", "GNSS_STATE");
     std::vector<HiviewDFX::ListenerRule> sysRules;
