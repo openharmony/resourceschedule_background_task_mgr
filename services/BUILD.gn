@@ -35,6 +35,9 @@ ohos_shared_library("bgtaskmgr_service") {
     "continuous_task/src/system_event_observer.cpp",
     "continuous_task/src/task_notification_subscriber.cpp",
     "core/src/background_task_mgr_service.cpp",
+    "efficiency_resources/src/application_record_storage.cpp",
+    "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
+    "efficiency_resources/src/resources_application_record.cpp",
     "transient_task/src/bg_transient_task_mgr.cpp",
     "transient_task/src/bgtask_common.cpp",
     "transient_task/src/decision_maker.cpp",
@@ -47,9 +50,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "transient_task/src/time_provider.cpp",
     "transient_task/src/timer_manager.cpp",
     "transient_task/src/watchdog.cpp",
-    "efficiency_resources/src/application_record_storage.cpp",
-    "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
-    "efficiency_resources/src/resources_application_record.cpp",
   ]
 
   public_configs = [ ":bgtaskmgr_service_public_config" ]
