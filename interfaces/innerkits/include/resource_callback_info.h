@@ -24,8 +24,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-constexpr int32_t INVAILD_PID = -1;
-constexpr int32_t INVAILD_UID = -1;
 
 class ResourceCallbackInfo : public Parcelable  {
 public:
@@ -40,7 +38,7 @@ public:
      * @param parcel Indicates the parcel object for marshalling.
      * @return True if success, else false.
      */
-    bool Marshalling(MessageParcel& out) const;
+    bool Marshalling(Parcel& out) const override;
 
     /**
      * @brief Unmarshals a purpose from a Parcel.
@@ -48,7 +46,7 @@ public:
      * @param parcel Indicates the MessageParcel object for unmarshalling.
      * @return App info of transient task.
      */
-    static std::shared_ptr<ResourceCallbackInfo> Unmarshalling(MessageParcel& in);
+    static std::shared_ptr<ResourceCallbackInfo> Unmarshalling(Parcel& in);
 
     /**
      * @brief Get the uid.
