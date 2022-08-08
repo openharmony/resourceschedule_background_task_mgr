@@ -188,6 +188,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesApply(Messag
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnAppEfficiencyResourcesApply(resourceCallbackInfo);
+    return ERR_OK;
 }
 
 ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesReset(MessageParcel &data)
@@ -199,7 +200,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesReset(Messag
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnAppEfficiencyResourcesReset(resourceCallbackInfo);
-    return ERR_NONE;
+    return ERR_OK;
 }
 
 ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesApply(MessageParcel &data)
@@ -211,6 +212,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesApply(MessagePa
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnEfficiencyResourcesApply(resourceCallbackInfo);
+    return ERR_OK;
 }
 
 ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesReset(MessageParcel &data)
@@ -222,7 +224,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesReset(MessagePa
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnEfficiencyResourcesReset(resourceCallbackInfo);
-    return ERR_NONE;
+    return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

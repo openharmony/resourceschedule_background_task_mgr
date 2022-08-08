@@ -16,7 +16,7 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_EFFICIENCY_RESOURCE_INFO_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_EFFICIENCY_RESOURCE_INFO_H
 
-#include <message_parcel.h>
+#include "parcel.h"
 #include <string>
 #include <memory>
 
@@ -36,7 +36,7 @@ public:
      * @param parcel Indicates the parcel object for unmarshalling.
      * @return The info of delay suspend.
      */
-    static std::shared_ptr<EfficiencyResourceInfo> Unmarshalling(Parcel& in);
+    static EfficiencyResourceInfo* Unmarshalling(Parcel& in);
 
     /**
      * @brief Marshals a purpose into a parcel.

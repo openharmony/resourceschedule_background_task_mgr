@@ -37,13 +37,14 @@ bool ResourceCallbackInfo::ReadFromParcel(Parcel& in)
     return true;
 }
 
-std::shared_ptr<ResourceCallbackInfo> ResourceCallbackInfo::Unmarshalling(Parcel& in)
+ResourceCallbackInfo* ResourceCallbackInfo::Unmarshalling(Parcel& in)
 {
-    auto transientAppInfo = std::make_shared<ResourceCallbackInfo>();
-    if (!transientAppInfo->ReadFromParcel(in)) {
-        return nullptr;
+    auto resourceInfo = new (std::nothrow) ResourceCallbackInfo();
+    if (resourceInfo && !resourceInfo->ReadFromParcel(in)) {
+        delete resourceInfo;
+        resourceInfo = nullptr;
     }
-    return transientAppInfo;
+    return resourceInfo;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

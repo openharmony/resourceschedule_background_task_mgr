@@ -69,6 +69,6 @@ ohos_systemtest("BgtaskDumpTest") {
 
 group("systemtest") {
   testonly = true
-    
+
   deps = [ ":BgtaskDumpTest" ]
 }

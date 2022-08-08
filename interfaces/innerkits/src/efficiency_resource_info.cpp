@@ -26,17 +26,16 @@ bool EfficiencyResourceInfo::Marshalling(Parcel& out) const
     WRITE_PARCEL_WITH_RET(out, Int32, timeOut_, false);
     WRITE_PARCEL_WITH_RET(out, String, reason_, false);
     WRITE_PARCEL_WITH_RET(out, Bool, isPersist_, false);
-    WRITE_PARCEL_WITH_RET(out, Bool, isProcess_, false);
     return true;
 }
 
-std::shared_ptr<EfficiencyResourceInfo> EfficiencyResourceInfo::Unmarshalling(Parcel &in)
+EfficiencyResourceInfo* EfficiencyResourceInfo::Unmarshalling(Parcel &in)
 {
-    auto info = std::make_shared<EfficiencyResourceInfo>();
-    if (info == nullptr || !info->ReadFromParcel(in)) {
+    auto info = new (std::nothrow) EfficiencyResourceInfo();
+    if (info && !info->ReadFromParcel(in)) {
         BGTASK_LOGE("read from parcel failed");
-        info.reset();
-        return nullptr;
+        delete info;
+        info = nullptr;
     }
     return info;
 }
@@ -48,7 +47,6 @@ bool EfficiencyResourceInfo::ReadFromParcel(Parcel& in)
     READ_PARCEL_WITH_RET(in, Int32, timeOut_, false);
     READ_PARCEL_WITH_RET(in, String, reason_, false);
     READ_PARCEL_WITH_RET(in, Bool, isPersist_, false);
-    READ_PARCEL_WITH_RET(in, Bool, isProcess_, false);
     return true;
 }
 }
