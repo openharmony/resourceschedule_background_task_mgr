@@ -42,7 +42,7 @@ public:
         std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
     }
 
-    static std::shared_ptr<BgEfficiencyResourcesMgr> bgEfficiencyResourcesMgr_;
+    static std::shared_ptr<BgEfficiencyResourcesMgr> bgEfficiencyResourcesMgr_ {nullptr};
 };
 
 std::shared_ptr<BgEfficiencyResourcesMgr> BgEfficiencyResourcesMgrTest::bgEfficiencyResourcesMgr_ = nullptr;
@@ -67,4 +67,6 @@ public:
 
     void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo>
         &continuousTaskCallbackInfo) override {}
-};
+}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

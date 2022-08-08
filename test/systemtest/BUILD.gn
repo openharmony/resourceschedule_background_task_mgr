@@ -41,6 +41,7 @@ ohos_systemtest("BgtaskDumpTest") {
   deps = [
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
+    "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -68,6 +69,6 @@ ohos_systemtest("BgtaskDumpTest") {
 
 group("systemtest") {
   testonly = true
-
+    
   deps = [ ":BgtaskDumpTest" ]
 }
