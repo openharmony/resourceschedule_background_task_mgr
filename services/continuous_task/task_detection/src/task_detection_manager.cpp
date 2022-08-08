@@ -169,6 +169,49 @@ void TaskDetectionManager::HandleSystemAbilityAdded(int32_t systemAbilityId)
     }
 }
 
+void TaskDetectionManager::OnRemoveSystemAbility(int32_t systemAbilityId)
+{
+    handler_->PostTask([=]() {
+        HandleSystemAbilityRemoved(systemAbilityId);
+    });
+}
+
+void TaskDetectionManager::HandleSystemAbilityRemoved(int32_t systemAbilityId)
+{
+    switch (systemAbilityId) {
+        case DISTRIBUTED_SCHED_SA_ID:
+            multiDeviceDetect_->ClearData();
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+                CommonUtils::UNSET_PID, CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID);
+            break;
+        case AUDIO_POLICY_SERVICE_ID:
+            audioDetect_->ClearAudioData();
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+                CommonUtils::UNSET_PID, CommonUtils::AUDIO_PLAYBACK_BGMODE_ID);
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+                CommonUtils::UNSET_PID, CommonUtils::AUDIO_RECORDING_BGMODE_ID);
+            break;
+        case LOCATION_LOCATOR_SA_ID:
+            locationDetect_->ClearData();
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+                CommonUtils::UNSET_PID, CommonUtils::LOCATION_BGMODE_ID);
+            break;
+        case AVSESSION_SERVICE_ID:
+            audioDetect_->ClearAVSessionData();
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+                CommonUtils::UNSET_PID, CommonUtils::AUDIO_PLAYBACK_BGMODE_ID);
+            break;
+        case BLUETOOTH_HOST_SYS_ABILITY_ID:
+            bluetoothDetect_->ClearData();
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+                CommonUtils::UNSET_PID, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
+            break;
+        default:
+            break;
+    }
+    dataStorage_->RefreshTaskDetectionInfo(ParseRecordToStr());
+}
+
 void TaskDetectionManager::HandlePersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses)
 {
     if (dataStorage_ == nullptr) {
@@ -217,7 +260,8 @@ void TaskDetectionManager::ReportBluetoothPairState(const std::string &addr, int
 
 void TaskDetectionManager::ClearAllData()
 {
-    audioDetect_->ClearData();
+    audioDetect_->ClearAudioData();
+    audioDetect_->ClearAVSessionData();
     bluetoothDetect_->ClearData();
     locationDetect_->ClearData();
     multiDeviceDetect_->ClearData();
@@ -249,6 +293,10 @@ bool TaskDetectionManager::AddSystemAbilityListener()
     }
     if (samgrProxy->SubscribeSystemAbility(BLUETOOTH_HOST_SYS_ABILITY_ID, statusChangeListener_) != ERR_OK) {
         BGTASK_LOGE("failed to listen bluetooth service sa");
+        return false;
+    }
+    if (samgrProxy->SubscribeSystemAbility(LOCATION_LOCATOR_SA_ID, statusChangeListener_) != ERR_OK) {
+        BGTASK_LOGE("failed to listen location service sa");
         return false;
     }
     return true;
@@ -463,7 +511,11 @@ void TaskDetectionManager::SystemAbilityListener::OnAddSystemAbility(
 }
 
 void TaskDetectionManager::SystemAbilityListener::OnRemoveSystemAbility(
-    int32_t systemAbilityId, const std::string &deviceId) {}
+    int32_t systemAbilityId, const std::string &deviceId)
+{
+    BGTASK_LOGI("System ability removed: %{public}d", systemAbilityId);
+    TaskDetectionManager::GetInstance()->OnRemoveSystemAbility(systemAbilityId);
+}
 
 #ifdef AV_SESSION_PART_ENABLE
 void TaskDetectionManager::SessionStateListener::OnSessionCreate(

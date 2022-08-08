@@ -64,9 +64,11 @@ private:
     bool InitAVSessionStateChangeListener();
     bool InitBluetoothStateChangeObserver();
     void OnAddSystemAbility(int32_t systemAbilityId);
-    void ReportBluetoothPairState(const std::string &addr, int32_t state);
     void HandleSystemAbilityAdded(int32_t systemAbilityId);
+    void OnRemoveSystemAbility(int32_t systemAbilityId);
+    void HandleSystemAbilityRemoved(int32_t systemAbilityId);
     bool GetDisSchedProxy();
+    void ReportBluetoothPairState(const std::string &addr, int32_t state);
     void HandleBluetoothSysEvent(const nlohmann::json &root);
     void HandleLocationSysEvent(const nlohmann::json &root);
     void HandleAudioStreamInfo(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,

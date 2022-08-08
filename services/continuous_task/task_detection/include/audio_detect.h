@@ -52,7 +52,8 @@ public:
     void HandleAVSessionInfo(const AVSession::AVSessionDescriptor &descriptor, const std::string &action);
 #endif // AV_SESSION_PART_ENABLE
     bool CheckAudioCondition(int32_t uid, uint32_t taskType);
-    void ClearData();
+    void ClearAudioData();
+    void ClearAVSessionData();
     void ParseAudioRecordToStr(nlohmann::json &value);
     bool ParseAudioRecordFromJson(const nlohmann::json &value, std::set<int32_t> &uidSet);
 

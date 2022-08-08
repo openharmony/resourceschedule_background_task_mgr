@@ -170,10 +170,15 @@ bool AudioDetect::CheckAudioCondition(int32_t uid, uint32_t taskType)
     }
 }
 
-void AudioDetect::ClearData()
+void AudioDetect::ClearAudioData()
 {
     audioPlayerInfos_.clear();
     audioRecorderInfos_.clear();
+}
+
+void AudioDetect::ClearAVSessionData()
+{
+    avSessionInfos_.clear();
 }
 }
 }
