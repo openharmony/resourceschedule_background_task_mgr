@@ -86,8 +86,11 @@ bool TaskDetectionManager::InitDisCompChangeObserver()
     if (!GetDisSchedProxy()) {
         return false;
     }
-    disCompListener_ = new (std::nothrow) DistributedComponentListenerStub();
+    if (!disCompListener_) {
+        disCompListener_ = new (std::nothrow) DistributedComponentListenerStub();
+    }
     if (disSched_->RegisterDistributedComponentListener(disCompListener_->AsObject()) != ERR_OK) {
+        BGTASK_LOGE("RegisterDistributedComponentListener failed");
         return false;
     }
     return true;
@@ -141,9 +144,10 @@ bool TaskDetectionManager::InitBluetoothStateChangeObserver()
 
 void TaskDetectionManager::OnAddSystemAbility(int32_t systemAbilityId)
 {
-    handler_->PostTask([=]() {
+    auto initTask = [=]() {
         HandleSystemAbilityAdded(systemAbilityId);
-    });
+    };
+    handler_->PostTask(initTask, CommonUtils::INIT_STATE_DELAY_TIME);
 }
 
 void TaskDetectionManager::HandleSystemAbilityAdded(int32_t systemAbilityId)
@@ -304,9 +308,6 @@ bool TaskDetectionManager::AddSystemAbilityListener()
 
 bool TaskDetectionManager::GetDisSchedProxy()
 {
-    if (disSched_ != nullptr) {
-        return true;
-    }
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
         BGTASK_LOGE("fail to get samgr.");

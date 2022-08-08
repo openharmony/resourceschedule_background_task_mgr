@@ -64,6 +64,7 @@ public:
     static constexpr int32_t BT_PAIR_PAIRING = 1;
     static constexpr int32_t BT_PAIR_PAIRED = 3;
     static constexpr int32_t RECHECK_DELAY_TIME = 5000;
+    static constexpr int32_t INIT_STATE_DELAY_TIME = 1000;
     static constexpr int32_t MAX_UID = 10000;
     static constexpr uint32_t AUDIO_PLAYBACK_BGMODE_ID = 2;
     static constexpr uint32_t AUDIO_RECORDING_BGMODE_ID = 3;
