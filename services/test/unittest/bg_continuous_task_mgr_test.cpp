@@ -33,6 +33,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t SLEEP_TIME = 500;
+static constexpr int32_t PROMPT_NUMS = 10;
 }
 class BgContinuousTaskMgrTest : public testing::Test {
 public:
@@ -59,7 +60,7 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     TaskDetectionManager::GetInstance()->bluetoothDetect_ = std::make_shared<BluetoothDetect>();
     TaskDetectionManager::GetInstance()->locationDetect_ = std::make_shared<LocationDetect>();
     TaskDetectionManager::GetInstance()->multiDeviceDetect_ = std::make_shared<MultiDeviceDetect>();
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), 10, "bgmode_test");
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     bgContinuousTaskMgr_->isSysReady_.store(true);
 }
 
