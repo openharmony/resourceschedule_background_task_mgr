@@ -197,7 +197,8 @@ void BackgroundTaskMgrService::DumpUsage(std::string &result)
     "    -C                                   continuous task commands:\n"
     "        --all                                list all running continuous task infos\n"
     "        --cancel_all                         cancel all running continuous task\n"
-    "        --cancel {continuous task key}       cancel one task by specifying task key\n";
+    "        --cancel {continuous task key}       cancel one task by specifying task key\n"
+    "        --detection --all                    list all collected info for task detection\n";
 
     result.append(dumpHelpMsg);
 }  // namespace

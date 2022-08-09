@@ -17,8 +17,8 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_CONTINUOUS_TASK_INFO_H
 
 #include "iremote_object.h"
+#include "nlohmann/json.hpp"
 #include "parcel.h"
-#include "json/json.h"
 #include "want_agent.h"
 
 #include "task_notification_subscriber.h"
@@ -45,7 +45,7 @@ public:
     std::string GetNotificationLabel() const;
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
     std::string ParseToJsonStr();
-    bool ParseFromJson(const Json::Value value);
+    bool ParseFromJson(const nlohmann::json &value);
 
 private:
     std::string bundleName_ {""};
