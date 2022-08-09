@@ -25,21 +25,21 @@ namespace BackgroundTaskMgr {
 void AudioDetect::HandleAudioStreamInfo(
     const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos, const std::string &type)
 {
-    std::set<int32_t> uidRemoved;
+    std::set<int32_t> removedUid;
     if (type == "player") {
-        UpdateAudioRecord(streamInfos, audioPlayerInfos_, uidRemoved);
+        UpdateAudioRecord(streamInfos, audioPlayerInfos_, removedUid);
     } else {
-        UpdateAudioRecord(streamInfos, audioRecorderInfos_, uidRemoved);
+        UpdateAudioRecord(streamInfos, audioRecorderInfos_, removedUid);
     }
     uint32_t bgModeId = (type == "player" ? CommonUtils::AUDIO_PLAYBACK_BGMODE_ID
         : CommonUtils::AUDIO_RECORDING_BGMODE_ID);
-    for (int32_t uidToCheck : uidRemoved) {
+    for (int32_t uidToCheck : removedUid) {
         TaskDetectionManager::GetInstance()->ReportNeedRecheckTask(uidToCheck, bgModeId);
     }
 }
 
 void AudioDetect::UpdateAudioRecord(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,
-    std::list<std::shared_ptr<AudioInfo>> &records, std::set<int32_t> &uidRemoved)
+    std::list<std::shared_ptr<AudioInfo>> &records, std::set<int32_t> &removedUid)
 {
     for (const auto &var : streamInfos) {
         int32_t uid;
@@ -49,7 +49,7 @@ void AudioDetect::UpdateAudioRecord(const std::list<std::tuple<int32_t, int32_t,
         BGTASK_LOGI("Get Audio info uid: %{public}d, sessionId: %{public}d, State: %{public}d",
             uid, sessionId, state);
         auto findRecord = [uid, sessionId](const auto &target) {
-        return target->uid_ == uid && target->sessionId_ == sessionId;
+            return target->uid_ == uid && target->sessionId_ == sessionId;
         };
         auto findRecordIter = find_if(records.begin(), records.end(), findRecord);
         if (findRecordIter == records.end() && state == CommonUtils::AUDIO_RUNNING_STATE) {
@@ -57,7 +57,7 @@ void AudioDetect::UpdateAudioRecord(const std::list<std::tuple<int32_t, int32_t,
             records.emplace_back(recorderInfo);
         } else if (findRecordIter != records.end() && state != CommonUtils::AUDIO_RUNNING_STATE) {
             records.erase(findRecordIter);
-            uidRemoved.emplace(uid);
+            removedUid.emplace(uid);
         }
     }
 }

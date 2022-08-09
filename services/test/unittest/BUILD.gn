@@ -37,6 +37,7 @@ ohos_unittest("bgtask_unit_test") {
     "mock/mock_ipc.cpp",
     "mock/mock_notification_helper.cpp",
     "mock/mock_resource_manager.cpp",
+    "mock/mock_task_detection_manager.cpp",
   ]
 
   configs = [ "//commonlibrary/c_utils/base:utils_config" ]

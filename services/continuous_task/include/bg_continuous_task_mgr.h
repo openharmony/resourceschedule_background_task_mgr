@@ -99,7 +99,7 @@ private:
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName, const std::string &appName);
     void HandleTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType);
     void RemoveSpecifiedBgTask(uint32_t taskType);
-    void DetectNewAddContinuousTask(const std::string &task);
+    void DetectRequestedContinuousTask(const std::string &task);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);

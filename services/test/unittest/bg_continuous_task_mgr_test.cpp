@@ -59,7 +59,8 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     TaskDetectionManager::GetInstance()->bluetoothDetect_ = std::make_shared<BluetoothDetect>();
     TaskDetectionManager::GetInstance()->locationDetect_ = std::make_shared<LocationDetect>();
     TaskDetectionManager::GetInstance()->multiDeviceDetect_ = std::make_shared<MultiDeviceDetect>();
-    bgContinuousTaskMgr_->InitRequiredResourceInfo();
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), 10, "bgmode_test");
+    bgContinuousTaskMgr_->isSysReady_.store(true);
 }
 
 void BgContinuousTaskMgrTest::TearDownTestCase() {}
@@ -73,7 +74,6 @@ void BgContinuousTaskMgrTest::TearDown()
     dumpOption.emplace_back("--cancel_all");
     std::vector<string> dumpInfo;
     bgContinuousTaskMgr_->ShellDump(dumpOption, dumpInfo);
-    TaskDetectionManager::GetInstance()->ClearAllData();
 }
 
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
@@ -156,6 +156,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_OK);
+    TaskDetectionManager::GetInstance()->locationDetect_->isLocationSwitchOn_ = false;
 }
 
 /**

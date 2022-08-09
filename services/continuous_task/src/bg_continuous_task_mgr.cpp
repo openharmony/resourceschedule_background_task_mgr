@@ -522,13 +522,13 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     if (IS_TASK_DETECTION_ENABLE) {
-        auto detectTask = [this, taskInfoMapKey]() { this->DetectNewAddContinuousTask(taskInfoMapKey); };
+        auto detectTask = [this, taskInfoMapKey]() { this->DetectRequestedContinuousTask(taskInfoMapKey); };
         handler_->PostTask(detectTask, DETECT_DELAY_TIME);
     }
     return ERR_OK;
 }
 
-void BgContinuousTaskMgr::DetectNewAddContinuousTask(const std::string &task)
+void BgContinuousTaskMgr::DetectRequestedContinuousTask(const std::string &task)
 {
     if (continuousTaskInfosMap_.count(task) == 0) {
         BGTASK_LOGE("Task: %{public}s to check is not exist", task.c_str());

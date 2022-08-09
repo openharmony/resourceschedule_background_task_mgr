@@ -59,7 +59,7 @@ public:
 
 private:
     void UpdateAudioRecord(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,
-        std::list<std::shared_ptr<AudioInfo>> &records, std::set<int32_t> &uidRemoved);
+        std::list<std::shared_ptr<AudioInfo>> &records, std::set<int32_t> &removedUid);
 
 private:
     std::list<std::shared_ptr<AudioInfo>> audioPlayerInfos_ {};
