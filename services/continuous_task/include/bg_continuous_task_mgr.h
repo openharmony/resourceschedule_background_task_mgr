@@ -63,7 +63,7 @@ public:
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
     void OnAbilityStateChanged(int32_t uid, const std::string &abilityName);
-    void OnProcessDied(int32_t pid);
+    void OnProcessDied(int32_t uid, int32_t pid);
     void OnRemoteSubscriberDied(const wptr<IRemoteObject> &object);
     bool Init();
     void InitNecessaryState();

@@ -24,7 +24,6 @@
 #include "distributed_component_listener_stub.h"
 #include "distributed_sched_proxy.h"
 #include "iservice_registry.h"
-#include "json/value.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {

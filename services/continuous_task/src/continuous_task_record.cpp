@@ -17,7 +17,6 @@
 
 #include "common_utils.h"
 #include "iremote_object.h"
-#include "json/value.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
