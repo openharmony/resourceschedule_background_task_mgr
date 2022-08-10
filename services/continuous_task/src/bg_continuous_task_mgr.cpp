@@ -1062,7 +1062,7 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
     }
 }
 
-void BgContinuousTaskMgr::OnProcessDied(int32_t pid)
+void BgContinuousTaskMgr::OnProcessDied(int32_t uid, int32_t pid)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
@@ -1082,6 +1082,10 @@ void BgContinuousTaskMgr::OnProcessDied(int32_t pid)
         } else {
             iter++;
         }
+    }
+
+    if (IS_TASK_DETECTION_ENABLE) {
+        TaskDetectionManager::GetInstance()->HandleProcessDied(uid, pid);
     }
 }
 
