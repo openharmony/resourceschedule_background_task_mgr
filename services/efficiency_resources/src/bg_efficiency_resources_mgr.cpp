@@ -28,19 +28,16 @@
 #include "resource_type.h"
 #include "time_provider.h"
 #include "bundle_manager_helper.h"
-
 namespace OHOS {
 namespace BackgroundTaskMgr {
 
 static constexpr char BG_EFFICIENCY_RESOURCES_MGR_NAME[] = "BgEfficiencyResourcesMgr";
-
 static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_RESET_ALL[] = "--reset_all";
 static constexpr char DUMP_PARAM_RESET_APP[] = "--resetapp";
 static constexpr char DUMP_PARAM_RESET_PROC[] = "--resetproc";
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 4;
-
 static constexpr int32_t MAX_RESOURCES_TYPE_NUM = 7;
 static constexpr int32_t MAX_RESOURCE_NUMBER = (1 << MAX_RESOURCES_TYPE_NUM) - 1;
 
@@ -424,6 +421,7 @@ void BgEfficiencyResourcesMgr::DumpApplicationInfoMap(std::unordered_map<int32_t
         stream << "\t\tbundleName: " << iter->second->GetBundleName() << "\n";
         stream << "\t\tuid: " << iter->second->GetUid() << "\n";
         stream << "\t\tpid: " << iter->second->GetPid() << "\n";
+        stream << "\t\resourceNumber: " << iter->second->GetResourceNumber() << "\n";
         stream << "\t\treason: " << iter->second->GetReason() << "\n";
         int64_t curTime = TimeProvider::GetCurrentTime();
         for(auto unitIter = iter->second->resourceUnitList_.begin(); 
