@@ -115,10 +115,10 @@ bool MultiDeviceDetect::ParseRecordFromJsonByType(const nlohmann::json &value, s
     const std::string &type, std::map<int32_t, uint32_t> &record)
 {
     int32_t uid;
-    int32_t nums;
+    uint32_t nums;
     for (auto& elem : value[type]) {
         uid = elem.at("uid").get<int32_t>();
-        nums = elem.at("connectedNums").get<int32_t>();
+        nums = elem.at("connectedNums").get<uint32_t>();
         uidSet.emplace(uid);
         record[uid] = nums;
     }
