@@ -18,69 +18,94 @@
 #include <fcntl.h>
 #include <fstream>
 #include <unistd.h>
+#include <sstream>
 #include <sys/stat.h>
 
 #include "errors.h"
-#include "json/json.h"
 
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_manager_helper.h"
+#include "common_utils.h"
 #include "continuous_task_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr char TASK_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/running_task";
+static constexpr char TASK_DETECTION_INFO_FILE_PATH[]
+    = "/data/service/el1/public/background_task_mgr/task_detection_info";
 static constexpr int32_t MAX_BUFFER = 512;
 }
 
 int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
     std::shared_ptr<ContinuousTaskRecord>> &allRecord)
 {
-    Json::Value root;
+    nlohmann::json root;
     for (auto &iter : allRecord) {
         auto record = iter.second;
         std::string data = record->ParseToJsonStr();
-        JSONCPP_STRING errs;
-        Json::Value recordJson;
-        Json::CharReaderBuilder readerBuilder;
-        const std::unique_ptr<Json::CharReader> jsonReader(readerBuilder.newCharReader());
-        bool res = jsonReader->parse(data.c_str(), data.c_str() + data.length(), &recordJson, &errs);
-        if (res && errs.empty()) {
+        nlohmann::json recordJson = nlohmann::json::parse(data, nullptr, false);;
+        if (!recordJson.is_discarded()) {
             root[iter.first] = recordJson;
         }
     }
-    Json::StreamWriterBuilder writerBuilder;
-    std::ostringstream os;
-    std::unique_ptr<Json::StreamWriter> jsonWriter(writerBuilder.newStreamWriter());
-    jsonWriter->write(root, &os);
-    std::string result = os.str();
-    if (!CreateNodeFile(TASK_RECORD_FILE_PATH)) {
-        BGTASK_LOGE("Create file failed.");
-        return ERR_BGTASK_DATA_STORAGE_ERR;
-    }
-    std::ofstream fout;
-    std::string realPath;
-    if (!ConvertFullPath(TASK_RECORD_FILE_PATH, realPath)) {
-        BGTASK_LOGE("Get real path failed");
-        return ERR_BGTASK_DATA_STORAGE_ERR;
-    }
-    fout.open(realPath, std::ios::out);
-    if (!fout.is_open()) {
-        BGTASK_LOGE("Open file failed.");
-        return ERR_BGTASK_DATA_STORAGE_ERR;
-    }
-    fout << result.c_str() << std::endl;
-    fout.close();
-    return ERR_OK;
+    return SaveJsonValueToFile(root.dump(CommonUtils::JSON_FORMAT), TASK_RECORD_FILE_PATH);
 }
 
 int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
     std::shared_ptr<ContinuousTaskRecord>> &allRecord)
 {
+    nlohmann::json root;
+    if (ParseJsonValueFromFile(root, TASK_RECORD_FILE_PATH) != ERR_OK) {
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
+    for (auto iter = root.begin(); iter != root.end(); iter++) {
+        nlohmann::json recordJson = iter.value();
+        std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+        if (record->ParseFromJson(recordJson)) {
+            allRecord.emplace(iter.key(), record);
+        }
+    }
+    return ERR_OK;
+}
+
+int32_t DataStorage::RefreshTaskDetectionInfo(const std::string &detectionInfos)
+{
+    return SaveJsonValueToFile(detectionInfos, TASK_DETECTION_INFO_FILE_PATH);
+}
+
+int32_t DataStorage::RestoreTaskDetectionInfo(nlohmann::json &value)
+{
+    return ParseJsonValueFromFile(value, TASK_DETECTION_INFO_FILE_PATH);
+}
+
+int32_t DataStorage::SaveJsonValueToFile(const std::string &value, const std::string &filePath)
+{
+    if (!CreateNodeFile(filePath)) {
+        BGTASK_LOGE("Create file failed.");
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
+    std::ofstream fout;
+    std::string realPath;
+    if (!ConvertFullPath(filePath, realPath)) {
+        BGTASK_LOGE("SaveJsonValueToFile Get real file path: %{public}s failed", filePath.c_str());
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
+    fout.open(realPath, std::ios::out);
+    if (!fout.is_open()) {
+        BGTASK_LOGE("Open file: %{public}s failed.", filePath.c_str());
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
+    fout << value.c_str() << std::endl;
+    fout.close();
+    return ERR_OK;
+}
+
+int32_t DataStorage::ParseJsonValueFromFile(nlohmann::json &value, const std::string &filePath)
+{
     std::ifstream fin;
     std::string realPath;
-    if (!ConvertFullPath(TASK_RECORD_FILE_PATH, realPath)) {
+    if (!ConvertFullPath(filePath, realPath)) {
         BGTASK_LOGE("Get real path failed");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
@@ -96,22 +121,10 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
         os << buffer;
     }
     std::string data = os.str();
-    JSONCPP_STRING errs;
-    Json::Value root;
-    Json::CharReaderBuilder readerBuilder;
-    const std::unique_ptr<Json::CharReader> jsonReader(readerBuilder.newCharReader());
-    bool res = jsonReader->parse(data.c_str(), data.c_str() + data.length(), &root, &errs);
-    fin.close();
-    if (!res || !errs.empty()) {
-        BGTASK_LOGE("parse json file failed!");
+    value = nlohmann::json::parse(data, nullptr, false);
+    if (value.is_discarded()) {
+        BGTASK_LOGE("failed due to data is discarded");
         return ERR_BGTASK_DATA_STORAGE_ERR;
-    }
-    for (auto it : root.getMemberNames()) {
-        Json::Value recordJson = root[it];
-        std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
-        if (record->ParseFromJson(recordJson)) {
-            allRecord.emplace(it, record);
-        }
     }
     return ERR_OK;
 }
@@ -119,12 +132,12 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
 bool DataStorage::CreateNodeFile(const std::string &filePath)
 {
     if (access(filePath.c_str(), F_OK) == ERR_OK) {
-        BGTASK_LOGD("the file: %{public}s already exists.", TASK_RECORD_FILE_PATH);
+        BGTASK_LOGD("the file: %{public}s already exists.", filePath.c_str());
         return true;
     }
     int32_t fd = open(filePath.c_str(), O_CREAT|O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
     if (fd < ERR_OK) {
-        BGTASK_LOGE("Fail to open file: %{public}s", TASK_RECORD_FILE_PATH);
+        BGTASK_LOGE("Fail to open file: %{public}s", filePath.c_str());
         return false;
     }
     close(fd);

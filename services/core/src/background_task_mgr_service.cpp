@@ -214,11 +214,16 @@ void BackgroundTaskMgrService::DumpUsage(std::string &result)
     "        --all                                list all running continuous task infos\n"
     "        --cancel_all                         cancel all running continuous task\n"
     "        --cancel {continuous task key}       cancel one task by specifying task key\n"
+<<<<<<< HEAD
     "    -E                                   efficiency resources commands;\n"
     "        --all                                list all efficiency resource aplications\n"
     "        --reset_all                          reset all efficiency resource aplications\n"
     "        --resetapp {uid} {resource}          reset one application of uid by specifying \n"
     "        --resetproc {pid} {resources}         reset one application of pid by specifying \n";
+=======
+    "        --detection --all                    list all collected info for task detection\n";
+
+>>>>>>> e25010d0caf635cd8dc46244654e7ce39ff295e3
     result.append(dumpHelpMsg);
 }  // namespace
 }  // namespace BackgroundTaskMgr
