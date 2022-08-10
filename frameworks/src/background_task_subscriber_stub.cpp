@@ -196,7 +196,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesReset(Messag
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
     if(!resourceCallbackInfo){
-        BGTASK_LOGE("HandleOnAppEfficiencyResourcesApply ReadParcelable failed");
+        BGTASK_LOGE("HandleOnAppEfficiencyResourcesReset ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnAppEfficiencyResourcesReset(resourceCallbackInfo);
@@ -220,7 +220,11 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesReset(MessagePa
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
     if(!resourceCallbackInfo){
+<<<<<<< Updated upstream
         BGTASK_LOGE("HandleOnAppEfficiencyResourcesApply ReadParcelable failed");
+=======
+        BGTASK_LOGE("HandleOnEfficiencyResourcesReset ReadParcelable failed");
+>>>>>>> Stashed changes
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnEfficiencyResourcesReset(resourceCallbackInfo);

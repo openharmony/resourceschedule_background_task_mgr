@@ -28,13 +28,22 @@ extern const char *ResourceTypeName[7];
 class BgEfficiencyResourcesMgr;
 
 struct PersistTime{
+<<<<<<< Updated upstream
     bool isPersist_ {false};
     int64_t endTime_ {0};
+=======
+    int32_t resourceIndex_ {0};
+    bool isPersist_ {false};
+    int64_t endTime_ {0};
+    PersistTime() = default;
+    PersistTime(int32_t resourceIndex, bool isPersist, int64_t endTime);
+>>>>>>> Stashed changes
 };
 
 class ResourceApplicationRecord {
 public:
     ResourceApplicationRecord() = default;
+<<<<<<< Updated upstream
     ResourceApplicationRecord(int32_t uid, pid_t pid, bool isProcess,uint32_t resourceNumber, std::string bundleName) :
         uid_(uid), pid_(pid), isProcess_(isProcess_), resourceNumber_(resourceNumber), bundleName_(bundleName) {}
     ~ResourceApplicationRecord() = default;
@@ -58,6 +67,30 @@ private:
     std::map<uint32_t, PersistTime> resourceUnitMap_ {};
 
     friend class BgEfficiencyResourcesMgr;
+=======
+    ResourceApplicationRecord(int32_t uid, int32_t pid, uint32_t resourceNumber, std::string bundleName) :
+        uid_(uid), pid_(pid), resourceNumber_(resourceNumber), bundleName_(bundleName) {}
+    ~ResourceApplicationRecord() = default;
+    inline int32_t GetUid() const;
+    inline int32_t GetPid() const;
+    inline std::string GetBundleName() const;
+    inline uint32_t GetResourceNumber() const;
+    inline std::string GetReason() const;
+    inline std::list<PersistTime>& GetResourceUnitList();
+    void ParseToJson(Json::Value &root);
+    std::string ParseToJsonStr();
+    bool ParseFromJson(const Json::Value& value);
+
+private:
+    int32_t uid_ {0};
+    int32_t pid_ {0};
+    uint32_t resourceNumber_ {0};
+    std::string bundleName_ {""};
+    std::string reason_ {""};
+    std::list<PersistTime> resourceUnitList_ {};
+
+    friend class BgEfficiencyResourcesMgr;  
+>>>>>>> Stashed changes
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

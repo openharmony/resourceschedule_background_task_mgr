@@ -51,7 +51,7 @@ private:
     ErrCode HandleOnContinuousTaskCancel(MessageParcel &data);
     ErrCode HandleOnAppContinuousTaskStop(MessageParcel &data);
     ErrCode HandleOnAppEfficiencyResourcesApply(MessageParcel &data);
-    ErrCode HandleOnAppAllEfficiencyResourcesReset(MessageParcel &data);
+    ErrCode HandleOnAppEfficiencyResourcesReset(MessageParcel &data);
     ErrCode HandleOnEfficiencyResourcesApply(MessageParcel &data);
     ErrCode HandleOnEfficiencyResourcesReset(MessageParcel &data);
 };

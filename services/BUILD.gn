@@ -21,13 +21,14 @@ config("bgtaskmgr_service_public_config") {
     "transient_task/include",
     "test/include",
     "efficiency_resources/include",
+    "common/include",
   ]
 }
 
 ohos_shared_library("bgtaskmgr_service") {
   cflags_cc = []
   sources = [
-    "continuous_task/src/app_state_observer.cpp",
+    "common/src/app_state_observer.cpp",
     "continuous_task/src/bg_continuous_task_mgr.cpp",
     "continuous_task/src/bundle_manager_helper.cpp",
     "continuous_task/src/continuous_task_record.cpp",

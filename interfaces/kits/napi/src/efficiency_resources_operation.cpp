@@ -76,7 +76,11 @@ namespace BackgroundTaskMgr {
             GetNamedBoolValue(env, argv[0], "isProcess", isProcess) == nullptr) {
             return nullptr;
         }
+<<<<<<< Updated upstream
         if(timeOut < 0 || isPersist && timeOut == 0) {
+=======
+        if(timeOut < 0) {
+>>>>>>> Stashed changes
             BGTASK_LOGE("ParseParameters failed, timeOut is negatibve.");
             return nullptr;
         }
@@ -84,6 +88,7 @@ namespace BackgroundTaskMgr {
         return Common::NapiGetNull(env);
     }
 
+<<<<<<< Updated upstream
     napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
     {
         EfficiencyResourceInfo params;
@@ -91,6 +96,26 @@ namespace BackgroundTaskMgr {
             return Common::NapiGetNull(env);
         }
         bool isSuccess = false;
+=======
+    bool CheckValidInfo(EfficiencyResourceInfo &params) {
+        if (params.GetResourceNumber() == 0 || !params.IsPersist() && params.GetTimeOut() == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
+    {
+        EfficiencyResourceInfo params;
+        bool isSuccess = false;
+        if (ParseParameters(env, info, params) == nullptr) {
+            return Common::NapiGetboolean(env, isSuccess);
+        }
+        if (!CheckValidInfo(params)) {
+            BGTASK_LOGD("params make no sense, unnecessary to execute");
+            return Common::NapiGetboolean(env, true);
+        }
+>>>>>>> Stashed changes
         DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(params, isSuccess);
         return Common::NapiGetboolean(env, isSuccess);
     }

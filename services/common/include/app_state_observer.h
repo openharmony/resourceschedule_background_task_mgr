@@ -16,25 +16,30 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_APP_STATE_OBSERVER_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_APP_STATE_OBSERVER_H
 
+#include "singleton.h"
 #include "app_mgr_interface.h"
 #include "application_state_observer_stub.h"
 #include "event_handler.h"
 #include "iremote_object.h"
-
-#include "remote_death_recipient.h"
+#include "rebase.h"
+#include "bg_efficiency_resources_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class BgContinuousTaskMgr;
+class BgEfficiencyResourcesMgr;
 
 class AppStateObserver : public AppExecFwk::ApplicationStateObserverStub {
+    DECLARE_DELAYED_SINGLETON(ResourcesSubscriberMgr);
 public:
     AppStateObserver();
     ~AppStateObserver();
     void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override;
     void OnProcessDied(const AppExecFwk::ProcessData &processData) override;
+    void OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData) override;
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
     void SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr);
+    void SetBgEfficiencyResourcesMgr(const std::shared_ptr<BgEfficiencyResourcesMgr> &resourceMgr);
     bool Subscribe();
     bool Unsubscribe();
 
@@ -49,6 +54,7 @@ private:
     std::weak_ptr<BgContinuousTaskMgr> bgContinuousTaskMgr_ {};
     sptr<AppExecFwk::IAppMgr> appMgrProxy_ {nullptr};
     sptr<RemoteDeathRecipient> appMgrDeathRecipient_ {nullptr};
+    std::weak_ptr<BgEfficiencyResourcesMgr> bgEfficiencyResourcesMgr_ {};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
