@@ -22,7 +22,11 @@ config("bgtaskmgr_service_public_config") {
     "transient_task/include",
     "test/include",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "efficiency_resources/include",
+=======
+    "//foundation/ability/dmsfwk/services/dtbschedmgr/include",
+>>>>>>> e25010d0caf635cd8dc46244654e7ce39ff295e3
 =======
     "//foundation/ability/dmsfwk/services/dtbschedmgr/include",
 >>>>>>> e25010d0caf635cd8dc46244654e7ce39ff295e3
