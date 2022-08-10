@@ -23,6 +23,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
+static constexpr uint32_t ALL_NEED_CHECK_BGMODE = 62;
 }
 
 BundleManagerHelper::BundleManagerHelper() {}
@@ -49,7 +50,7 @@ bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const App
 {
     AppExecFwk::AbilityInfo abilityInfo;
     abilityInfo.name = "ability1";
-    abilityInfo.backgroundModes = 1;
+    abilityInfo.backgroundModes = ALL_NEED_CHECK_BGMODE;
     bundleInfo.abilityInfos.emplace_back(abilityInfo);
     bundleInfo.name = TEST_DEFAULT_BUNDLE;
     return true;

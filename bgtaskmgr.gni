@@ -27,3 +27,17 @@ if (!defined(global_parts_info) ||
 } else {
   has_os_account_part = false
 }
+
+if (defined(global_parts_info) &&
+    !defined(global_parts_info.multimedia_multimedia_av_session)) {
+  has_multimedia_av_session_part = false
+} else {
+  has_multimedia_av_session_part = true
+}
+
+if (defined(global_parts_info) &&
+    !defined(global_parts_info.communication_bluetooth)) {
+  has_communication_bluetooth_part = false
+} else {
+  has_communication_bluetooth_part = true
+}
