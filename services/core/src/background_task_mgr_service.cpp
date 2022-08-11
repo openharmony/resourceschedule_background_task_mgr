@@ -145,6 +145,11 @@ void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& 
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->HandleSubscriberDeath(remote);
 }
 
+ErrCode BackgroundTaskMgrService::ReportStateChangeEvent(const std::string &type, const std::string &infos)
+{
+    return BgContinuousTaskMgr::GetInstance()->ReportStateChangeEvent(type, infos);
+}
+
 int32_t BackgroundTaskMgrService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
     std::vector<std::string> argsInStr;

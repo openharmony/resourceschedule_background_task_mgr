@@ -21,8 +21,8 @@
 
 #include "bg_continuous_task_mgr.h"
 #include "continuous_task_log.h"
-#include "distributed_component_listener_stub.h"
-#include "distributed_sched_proxy.h"
+// #include "distributed_component_listener_stub.h"
+// #include "distributed_sched_proxy.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 
@@ -79,21 +79,21 @@ bool TaskDetectionManager::InitHiSysEventListener()
     return true;
 }
 
-bool TaskDetectionManager::InitDisCompChangeObserver()
-{
-    BGTASK_LOGD("TaskDetectionManager::InitDisCompChangeObserver begin");
-    if (!GetDisSchedProxy()) {
-        return false;
-    }
-    if (!disCompListener_) {
-        disCompListener_ = new (std::nothrow) DistributedComponentListenerStub();
-    }
-    if (disSched_->RegisterDistributedComponentListener(disCompListener_->AsObject()) != ERR_OK) {
-        BGTASK_LOGE("RegisterDistributedComponentListener failed");
-        return false;
-    }
-    return true;
-}
+// bool TaskDetectionManager::InitDisCompChangeObserver()
+// {
+//     BGTASK_LOGD("TaskDetectionManager::InitDisCompChangeObserver begin");
+//     if (!GetDisSchedProxy()) {
+//         return false;
+//     }
+//     if (!disCompListener_) {
+//         disCompListener_ = new (std::nothrow) DistributedComponentListenerStub();
+//     }
+//     if (disSched_->RegisterDistributedComponentListener(disCompListener_->AsObject()) != ERR_OK) {
+//         BGTASK_LOGE("RegisterDistributedComponentListener failed");
+//         return false;
+//     }
+//     return true;
+// }
 
 bool TaskDetectionManager::InitAudioStateChangeListener()
 {
@@ -152,9 +152,9 @@ void TaskDetectionManager::OnAddSystemAbility(int32_t systemAbilityId)
 void TaskDetectionManager::HandleSystemAbilityAdded(int32_t systemAbilityId)
 {
     switch (systemAbilityId) {
-        case DISTRIBUTED_SCHED_SA_ID:
-            InitDisCompChangeObserver();
-            break;
+        // case DISTRIBUTED_SCHED_SA_ID:
+        //     InitDisCompChangeObserver();
+        //     break;
         case AUDIO_POLICY_SERVICE_ID:
             InitAudioStateChangeListener();
             break;
@@ -182,11 +182,11 @@ void TaskDetectionManager::OnRemoveSystemAbility(int32_t systemAbilityId)
 void TaskDetectionManager::HandleSystemAbilityRemoved(int32_t systemAbilityId)
 {
     switch (systemAbilityId) {
-        case DISTRIBUTED_SCHED_SA_ID:
-            multiDeviceDetect_->ClearData();
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
-                CommonUtils::UNSET_PID, CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID);
-            break;
+        // case DISTRIBUTED_SCHED_SA_ID:
+        //     multiDeviceDetect_->ClearData();
+        //     BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+        //         CommonUtils::UNSET_PID, CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID);
+        //     break;
         case AUDIO_POLICY_SERVICE_ID:
             audioDetect_->ClearAudioData();
             BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
@@ -282,10 +282,10 @@ bool TaskDetectionManager::AddSystemAbilityListener()
         BGTASK_LOGE("failed to listen hiview sa");
         return false;
     }
-    if (samgrProxy->SubscribeSystemAbility(DISTRIBUTED_SCHED_SA_ID, statusChangeListener_) != ERR_OK) {
-        BGTASK_LOGE("failed to listen dis sched sa");
-        return false;
-    }
+    // if (samgrProxy->SubscribeSystemAbility(DISTRIBUTED_SCHED_SA_ID, statusChangeListener_) != ERR_OK) {
+    //     BGTASK_LOGE("failed to listen dis sched sa");
+    //     return false;
+    // }
     if (samgrProxy->SubscribeSystemAbility(AUDIO_POLICY_SERVICE_ID, statusChangeListener_) != ERR_OK) {
         BGTASK_LOGE("failed to listen audio service sa");
         return false;
@@ -305,24 +305,31 @@ bool TaskDetectionManager::AddSystemAbilityListener()
     return true;
 }
 
-bool TaskDetectionManager::GetDisSchedProxy()
+// bool TaskDetectionManager::GetDisSchedProxy()
+// {
+//     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+//     if (samgrProxy == nullptr) {
+//         BGTASK_LOGE("fail to get samgr.");
+//         return false;
+//     }
+//     sptr<IRemoteObject> remote = samgrProxy->GetSystemAbility(DISTRIBUTED_SCHED_SA_ID);
+//     if (remote == nullptr) {
+//         BGTASK_LOGE("Get DMS failed");
+//         return false;
+//     }
+//     disSched_ = iface_cast<DistributedSchedule::IDistributedSched>(remote);
+//     if (disSched_ == nullptr) {
+//         BGTASK_LOGE("Get DMS proxy failed");
+//         return false;
+//     }
+//     return true;
+// }
+
+void TaskDetectionManager::ReportStateChangeEvent(const std::string &type, const std::string &infos)
 {
-    auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (samgrProxy == nullptr) {
-        BGTASK_LOGE("fail to get samgr.");
-        return false;
+    if (type == "disCompInfo") {
+        HandleDisComponentChange(infos);
     }
-    sptr<IRemoteObject> remote = samgrProxy->GetSystemAbility(DISTRIBUTED_SCHED_SA_ID);
-    if (remote == nullptr) {
-        BGTASK_LOGE("Get DMS failed");
-        return false;
-    }
-    disSched_ = iface_cast<DistributedSchedule::IDistributedSched>(remote);
-    if (disSched_ == nullptr) {
-        BGTASK_LOGE("Get DMS proxy failed");
-        return false;
-    }
-    return true;
 }
 
 void TaskDetectionManager::HandleAudioStreamInfo(const std::list<std::tuple<int32_t, int32_t, int32_t>> &streamInfos,

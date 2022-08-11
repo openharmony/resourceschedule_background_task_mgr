@@ -54,6 +54,7 @@ private:
     ErrCode HandleUnsubscribeBackgroundTask(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetTransientTaskApps(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetContinuousTaskApps(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleReportStateChangeEvent(MessageParcel& data, MessageParcel& reply);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

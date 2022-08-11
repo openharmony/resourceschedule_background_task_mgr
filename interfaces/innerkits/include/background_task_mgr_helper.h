@@ -69,6 +69,14 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     static ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
+
+    /**
+     * @brief Report some state change infos to bgtask service.
+     * @param type state type.
+     * @param infos state detailed infos.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    static ErrCode ReportStateChangeEvent(const std::string &type, const std::string &infos);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

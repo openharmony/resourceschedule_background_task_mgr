@@ -52,5 +52,10 @@ ErrCode BackgroundTaskMgrHelper::GetContinuousTaskApps(std::vector<std::shared_p
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetContinuousTaskApps(list);
 }
+
+ErrCode BackgroundTaskMgrHelper::ReportStateChangeEvent(const std::string &type, const std::string &infos)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ReportStateChangeEvent(type, infos);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
