@@ -18,7 +18,7 @@
 
 #include <unordered_map>
 #include "bgtaskmgr_inner_errors.h"
-#include "json/json.h"
+#include "nlohmann/json.hpp"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -33,12 +33,12 @@ public:
 private:
     void ConvertMapToString(const ResourceRecordMap &appRecord, 
         const ResourceRecordMap &processRecord, std::string &recordString);
-    void ConvertMapToJson(const ResourceRecordMap &appRecord, Json::Value &root);
+    void ConvertMapToJson(const ResourceRecordMap &appRecord, nlohmann::json &root);
     ErrCode ConvertStringToMap(const std::string &recordString, 
         ResourceRecordMap &appRecord, ResourceRecordMap &processRecord);
-    void ConvertJsonToMap(const Json::Value &value, ResourceRecordMap &recordMap);
+    void ConvertJsonToMap(const nlohmann::json &value, ResourceRecordMap &recordMap);
     ErrCode ConvertStringToJson(const std::string &recordString, 
-        Json::Value &appRecord, Json::Value &processRecord);
+        nlohmann::json &appRecord, nlohmann::json &processRecord);
     bool CreateNodeFile(const std::string &filePath);
     bool ConvertFullPath(const std::string &partialPath, std::string &fullPath);
     ErrCode WriteStringToFile(const std::string &result, const std::string &filePath);

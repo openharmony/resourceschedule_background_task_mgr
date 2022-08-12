@@ -21,7 +21,6 @@
 #include <sys/stat.h>
 
 #include "errors.h"
-#include "json/json.h"
 
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_manager_helper.h"
@@ -53,27 +52,27 @@ ErrCode ResourceRecordStorage::RestoreResourceRecord(ResourceRecordMap &appRecor
     if (ReadStringFromFile(recordString, RESOURCE_RECORD_FILE_PATH) != ERR_OK) {
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
-    Json::Value root;
+    nlohmann::json root;
     return ConvertStringToMap(recordString, appRecord, processRecord);
 }
 
 void ResourceRecordStorage::ConvertMapToString(const ResourceRecordMap &appRecord, 
     const ResourceRecordMap &processRecord, std::string &recordString)
 {
-    Json::Value root;
-    Json::Value appValue;
+    nlohmann::json root;
+    nlohmann::json appValue;
     ConvertMapToJson(appRecord, appValue);
     root[APP_RESOURCE_RECORD] = appValue;
-    Json::Value processValue;
+    nlohmann::json processValue;
     ConvertMapToJson(processRecord, processValue);
     root[PROCESS_RESOURCE_RECORD] = processValue;
-    recordString = root.toStyledString();
+    recordString = root.dump();
 }
 
-void ResourceRecordStorage::ConvertMapToJson(const ResourceRecordMap &appRecord, Json::Value &root)
+void ResourceRecordStorage::ConvertMapToJson(const ResourceRecordMap &appRecord, nlohmann::json &root)
 {
     for (const auto &iter : appRecord) {
-        Json::Value value;
+        nlohmann::json value;
         iter.second->ParseToJson(value);
         root[std::to_string(iter.first)] = value;
     }
@@ -82,8 +81,8 @@ void ResourceRecordStorage::ConvertMapToJson(const ResourceRecordMap &appRecord,
 ErrCode ResourceRecordStorage::ConvertStringToMap(const std::string &recordString, 
     ResourceRecordMap &appRecord, ResourceRecordMap &processRecord)
 {
-    Json::Value appRecordJson;
-    Json::Value processrecordJson;
+    nlohmann::json appRecordJson;
+    nlohmann::json processrecordJson;
     if (ConvertStringToJson(recordString, appRecordJson, processrecordJson) != ERR_OK) {
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
@@ -92,30 +91,25 @@ ErrCode ResourceRecordStorage::ConvertStringToMap(const std::string &recordStrin
     return ERR_OK;
 }
 
-void ResourceRecordStorage::ConvertJsonToMap(const Json::Value &value, ResourceRecordMap &recordMap)
+void ResourceRecordStorage::ConvertJsonToMap(const nlohmann::json &value, ResourceRecordMap &recordMap)
 {
-    for (auto &it : value.getMemberNames()) {
+    for (auto iter = value.begin(); iter != value.end(); iter++) {
         std::shared_ptr<ResourceApplicationRecord> recordPtr = std::make_shared<ResourceApplicationRecord>();
-        recordPtr->ParseFromJson(value[it]);
-        recordMap.emplace(std::stoi(it), recordPtr);
+        recordPtr->ParseFromJson(iter.value());
+        recordMap.emplace(static_cast<uint32_t>(std::stoi(iter.key())), recordPtr);
     }
 }
 
 ErrCode ResourceRecordStorage::ConvertStringToJson(const std::string &recordString, 
-    Json::Value &appRecord, Json::Value &processRecord)
+    nlohmann::json &appRecord, nlohmann::json &processRecord)
 {
-    Json::CharReaderBuilder builder;
-    const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
-    Json::Value root;
-    std::string errs;
-    bool res = reader->parse(recordString.c_str(), recordString.c_str()+recordString.size(), &root, 
-        &errs);
-    if (!res || !errs.empty()) {
-        BGTASK_LOGE("parse json file failed!");
+    nlohmann::json root = nlohmann::json::parse(recordString, nullptr, false);
+    if (root.is_discarded()) {
+        BGTASK_LOGE("failed due to data is discarded");
         return ERR_BGTASK_DATA_STORAGE_ERR;
-    }    
-    appRecord = root[APP_RESOURCE_RECORD];
-    processRecord = root[PROCESS_RESOURCE_RECORD];
+    }
+    appRecord = root.at(APP_RESOURCE_RECORD);
+    processRecord = root.at(PROCESS_RESOURCE_RECORD);
     return ERR_OK;
 }
 

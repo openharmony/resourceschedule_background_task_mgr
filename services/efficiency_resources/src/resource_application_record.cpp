@@ -17,7 +17,6 @@
 #include "bg_efficiency_resources_mgr.h"
 
 #include "iremote_object.h"
-#include "json/value.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -66,12 +65,12 @@ std::list<PersistTime>& ResourceApplicationRecord::GetResourceUnitList()
 
 std::string ResourceApplicationRecord::ParseToJsonStr()
 {
-    Json::Value root;
+    nlohmann::json root;
     ParseToJson(root);
-    return root.toStyledString();
+    return root.dump();
 }
 
-void ResourceApplicationRecord::ParseToJson(Json::Value &root)
+void ResourceApplicationRecord::ParseToJson(nlohmann::json &root)
 {
     root["bundleName"] = bundleName_;
     root["uid"] = uid_;
@@ -80,45 +79,35 @@ void ResourceApplicationRecord::ParseToJson(Json::Value &root)
     root["reason"] = reason_;
 
     if (!resourceUnitList_.empty()) {
-        Json::Value resource;
+        nlohmann::json resource;
         for (const auto &iter : resourceUnitList_) {
-            Json::Value info;
+            nlohmann::json info;
             info["resourceIndex"] = iter.resourceIndex_;
             info["isPersist"] = iter.isPersist_;
             info["endTime"] = iter.endTime_;
-            resource.append(info);
+            resource.push_back(info);
         }
         root["resourceUnitList"] = resource;
     }
 }
 
-std::string WriteString(Json::Value &root)
-{
-    Json::StreamWriterBuilder writerBuilder;
-    std::ostringstream os;
-    std::unique_ptr<Json::StreamWriter> jsonWriter(writerBuilder.newStreamWriter());
-    jsonWriter->write(root, &os);
-    std::string result = os.str();
-    return result;
-}
-
-bool ResourceApplicationRecord::ParseFromJson(const Json::Value& value)
+bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
 {
     if (value.empty()) {
         return false;
     }
-    this->uid_ = value["uid"].asInt();
-    this->pid_ = value["pid"].asInt();
-    this->bundleName_ = value["bundleName"].asString();
-    this->resourceNumber_ = value["resourceNumber"].asUInt();
-    this->reason_ = value["reason"].asString();
-    if (value.isMember("resourceUnitList")) {
-        Json::Value resourceVal = value["resourceUnitList"];
+    this->uid_ = value.at("uid").get<int32_t>();
+    this->pid_ = value.at("pid").get<int32_t>();
+    this->bundleName_ = value.at("bundleName").get<std::string>();
+    this->resourceNumber_ = value.at("resourceNumber").get<uint32_t>();
+    this->reason_ = value.at("reason").get<std::string>();
+    if (value.count("resourceUnitList") > 0) {
+        const nlohmann::json &resourceVal = value.at("resourceUnitList");
         auto nums = static_cast<int32_t>(resourceVal.size());
         for (int i=0; i<nums; ++i) {
-            Json::Value persistTime = resourceVal[i];
-            this->resourceUnitList_.emplace_back(PersistTime{persistTime["resourceIndex"].asInt(),
-                persistTime["isPersist"].asBool(), persistTime["endTime"].asInt64()}); 
+            const nlohmann::json &persistTime = resourceVal.at(i);
+            this->resourceUnitList_.emplace_back(PersistTime{persistTime.at("resourceIndex").get<uint32_t>(),
+                persistTime.at("isPersist").get<bool>(), persistTime.at("endTime").get<int64_t>()}); 
         }
     }
     return true;

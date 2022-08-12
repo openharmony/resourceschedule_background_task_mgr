@@ -24,6 +24,7 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_subscriber.h"
 #include "bg_efficiency_resources_mgr.h"
+#include "json/json.h"
 
 using namespace testing::ext;
 

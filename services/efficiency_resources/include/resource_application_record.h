@@ -18,8 +18,9 @@
 
 #include "iremote_object.h"
 #include "parcel.h"
-#include "json/json.h"
+#include "nlohmann/json.hpp"
 #include <list>
+#include <sstream>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -47,9 +48,9 @@ public:
     uint32_t GetResourceNumber() const;
     std::string GetReason() const;
     std::list<PersistTime>& GetResourceUnitList();
-    void ParseToJson(Json::Value &root);
+    void ParseToJson(nlohmann::json &root);
     std::string ParseToJsonStr();
-    bool ParseFromJson(const Json::Value& value);
+    bool ParseFromJson(const nlohmann::json& value);
 
 private:
     int32_t uid_ {0};
