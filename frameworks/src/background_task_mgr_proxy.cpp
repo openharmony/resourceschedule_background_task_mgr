@@ -323,7 +323,6 @@ ErrCode BackgroundTaskMgrProxy::GetContinuousTaskApps(std::vector<std::shared_pt
 
 ErrCode BackgroundTaskMgrProxy::ReportStateChangeEvent(const EventType type, const std::string &infos)
 {
-    BGTASK_LOGE("BackgroundTaskMgrProxy::ReportStateChangeEvent begin");
     MessageParcel data;
     if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
         return ERR_BGTASK_PARCELABLE_FAILED;

@@ -249,7 +249,6 @@ ErrCode BackgroundTaskMgrStub::HandleGetContinuousTaskApps(MessageParcel& data, 
 
 ErrCode BackgroundTaskMgrStub::HandleReportStateChangeEvent(MessageParcel& data, MessageParcel& reply)
 {
-    BGTASK_LOGE("BackgroundTaskMgrStub::HandleReportStateChangeEvent begin");
     std::string infos;
     EventType type = static_cast<EventType>(data.ReadInt32());
     if (!data.ReadString(infos)) {

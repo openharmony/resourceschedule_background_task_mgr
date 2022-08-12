@@ -26,9 +26,7 @@
 #include "common_utils.h"
 #include "data_storage.h"
 #include "event_type.h"
-// #include "idistributed_component_listener.h"
 #include "running_process_info.h"
-// #include "distributed_sched_interface.h"
 #ifdef AV_SESSION_PART_ENABLE
 #include "avsession_info.h"
 #include "avsession_manager.h"
@@ -69,7 +67,6 @@ private:
     void HandleSystemAbilityAdded(int32_t systemAbilityId);
     void OnRemoveSystemAbility(int32_t systemAbilityId);
     void HandleSystemAbilityRemoved(int32_t systemAbilityId);
-    // bool GetDisSchedProxy();
     void ReportBluetoothPairState(const std::string &addr, int32_t state);
     void HandleBluetoothSysEvent(const nlohmann::json &root);
     void HandleLocationSysEvent(const nlohmann::json &root);
@@ -144,8 +141,6 @@ private:
 #ifdef AV_SESSION_PART_ENABLE
     std::shared_ptr<SessionStateListener> avSessionStateListener_ {nullptr};
 #endif // AV_SESSION_PART_ENABLE
-    // sptr<DistributedSchedule::IDistributedSched> disSched_ {nullptr};
-    // sptr<IDistributedComponentListener> disCompListener_ {nullptr};
     std::shared_ptr<DataStorage> dataStorage_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
 #ifdef BLUETOOTH_PART_ENABLE
