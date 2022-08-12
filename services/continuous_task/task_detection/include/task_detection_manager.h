@@ -25,6 +25,7 @@
 #include "audio_stream_manager.h"
 #include "common_utils.h"
 #include "data_storage.h"
+#include "event_type.h"
 // #include "idistributed_component_listener.h"
 #include "running_process_info.h"
 // #include "distributed_sched_interface.h"
@@ -55,7 +56,7 @@ public:
     void Dump(std::vector<std::string> &dumpInfo);
     void HandlePersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void ReportNeedRecheckTask(int32_t uid, uint32_t taskType);
-    void ReportStateChangeEvent(const std::string &type, const std::string &infos);
+    void ReportStateChangeEvent(const EventType type, const std::string &infos);
 
 private:
     bool AddSystemAbilityListener();

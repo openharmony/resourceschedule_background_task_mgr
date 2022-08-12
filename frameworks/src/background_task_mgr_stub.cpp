@@ -249,11 +249,9 @@ ErrCode BackgroundTaskMgrStub::HandleGetContinuousTaskApps(MessageParcel& data, 
 
 ErrCode BackgroundTaskMgrStub::HandleReportStateChangeEvent(MessageParcel& data, MessageParcel& reply)
 {
-    std::string type;
+    BGTASK_LOGE("BackgroundTaskMgrStub::HandleReportStateChangeEvent begin");
     std::string infos;
-    if (!data.ReadString(type)) {
-        return ERR_BGTASK_PARCELABLE_FAILED;
-    }
+    EventType type = static_cast<EventType>(data.ReadInt32());
     if (!data.ReadString(infos)) {
         return ERR_BGTASK_PARCELABLE_FAILED;
     }

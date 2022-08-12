@@ -134,12 +134,13 @@ ErrCode BackgroundTaskManager::GetTransientTaskApps(std::vector<std::shared_ptr<
     return backgroundTaskMgrProxy_->GetTransientTaskApps(list);
 }
 
-ErrCode BackgroundTaskManager::ReportStateChangeEvent(const std::string &type, const std::string &infos)
+ErrCode BackgroundTaskManager::ReportStateChangeEvent(const EventType type, const std::string &infos)
 {
     if (!GetBackgroundTaskManagerProxy()) {
         BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
         return ERR_BGTASK_SERVICE_NOT_CONNECTED;
     }
+    BGTASK_LOGE("BackgroundTaskManager::ReportStateChangeEvent begin");
     return backgroundTaskMgrProxy_->ReportStateChangeEvent(type, infos);
 }
 

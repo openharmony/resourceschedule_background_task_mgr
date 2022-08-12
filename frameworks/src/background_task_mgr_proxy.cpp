@@ -321,14 +321,15 @@ ErrCode BackgroundTaskMgrProxy::GetContinuousTaskApps(std::vector<std::shared_pt
     return result;
 }
 
-ErrCode BackgroundTaskMgrProxy::ReportStateChangeEvent(const std::string &type, const std::string &infos)
+ErrCode BackgroundTaskMgrProxy::ReportStateChangeEvent(const EventType type, const std::string &infos)
 {
+    BGTASK_LOGE("BackgroundTaskMgrProxy::ReportStateChangeEvent begin");
     MessageParcel data;
     if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
-    if (!data.WriteString(type)) {
+    if (!data.WriteInt32(static_cast<int32_t>(type))) {
         BGTASK_LOGE("ReportStateChangeEvent parcel ability Name failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }

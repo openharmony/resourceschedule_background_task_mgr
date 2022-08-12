@@ -110,7 +110,7 @@ public:
      * @param infos state detailed infos.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode ReportStateChangeEvent(const std::string &type, const std::string &infos) override;
+    ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos) override;
 
 private:
     ErrCode InnerTransact(uint32_t code, MessageOption &flags, MessageParcel &data, MessageParcel &reply);

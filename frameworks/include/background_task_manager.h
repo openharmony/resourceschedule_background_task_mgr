@@ -116,7 +116,7 @@ public:
      * @param infos state detailed infos.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode ReportStateChangeEvent(const std::string &type, const std::string &infos);
+    ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos);
 
 private:
     bool GetBackgroundTaskManagerProxy();

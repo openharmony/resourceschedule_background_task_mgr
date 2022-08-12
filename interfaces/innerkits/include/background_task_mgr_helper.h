@@ -76,7 +76,7 @@ public:
      * @param infos state detailed infos.
      * @return Returns ERR_OK on success, others on failure.
      */
-    static ErrCode ReportStateChangeEvent(const std::string &type, const std::string &infos);
+    static ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

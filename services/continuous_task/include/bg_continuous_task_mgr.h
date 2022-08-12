@@ -29,6 +29,7 @@
 #include "bundle_info.h"
 #include "continuous_task_callback_info.h"
 #include "data_storage.h"
+#include "event_type.h"
 #include "task_notification_subscriber.h"
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
@@ -59,7 +60,7 @@ public:
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
-    ErrCode ReportStateChangeEvent(const std::string &type, const std::string &infos);
+    ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos);
     bool StopContinuousTaskByUser(const std::string &mapKey);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);

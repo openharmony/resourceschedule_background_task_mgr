@@ -325,9 +325,9 @@ bool TaskDetectionManager::AddSystemAbilityListener()
 //     return true;
 // }
 
-void TaskDetectionManager::ReportStateChangeEvent(const std::string &type, const std::string &infos)
+void TaskDetectionManager::ReportStateChangeEvent(const EventType type, const std::string &infos)
 {
-    if (type == "disCompInfo") {
+    if (type == EventType::DIS_COMP_CHANGE) {
         HandleDisComponentChange(infos);
     }
 }
