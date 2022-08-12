@@ -260,7 +260,7 @@ bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
 bool BgContinuousTaskMgr::RegisterAppStateObserver()
 {
     bool res = true;
-    appStateObserver_ = std::make_shared<AppStateObserver>();
+    appStateObserver_ = DelayedSingleton<AppStateObserver>::GetInstance();
     if (appStateObserver_ != nullptr) {
         appStateObserver_->SetEventHandler(handler_);
         appStateObserver_->SetBgContinuousTaskMgr(shared_from_this());

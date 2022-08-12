@@ -20,7 +20,7 @@
 
 #include "bgtaskmgr_inner_errors.h"
 #include "ibackground_task_subscriber.h"
-
+#include "resource_callback_info.h"
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class BackgroundTaskSubscriberStub : public IRemoteStub<IBackgroundTaskSubscriber> {
@@ -51,7 +51,7 @@ private:
     ErrCode HandleOnContinuousTaskCancel(MessageParcel &data);
     ErrCode HandleOnAppContinuousTaskStop(MessageParcel &data);
     ErrCode HandleOnAppEfficiencyResourcesApply(MessageParcel &data);
-    ErrCode HandleOnAppAllEfficiencyResourcesReset(MessageParcel &data);
+    ErrCode HandleOnAppEfficiencyResourcesReset(MessageParcel &data);
     ErrCode HandleOnEfficiencyResourcesApply(MessageParcel &data);
     ErrCode HandleOnEfficiencyResourcesReset(MessageParcel &data);
 };

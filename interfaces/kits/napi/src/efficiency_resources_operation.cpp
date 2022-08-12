@@ -16,6 +16,7 @@
 #include "efficiency_resources_operation.h"
 #include "singleton.h"
 #include "background_task_manager.h"
+#include "efficiency_resource_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -76,7 +77,7 @@ namespace BackgroundTaskMgr {
             GetNamedBoolValue(env, argv[0], "isProcess", isProcess) == nullptr) {
             return nullptr;
         }
-        if(timeOut < 0 || isPersist && timeOut == 0) {
+        if(timeOut < 0) {
             BGTASK_LOGE("ParseParameters failed, timeOut is negatibve.");
             return nullptr;
         }
@@ -84,13 +85,24 @@ namespace BackgroundTaskMgr {
         return Common::NapiGetNull(env);
     }
 
+    bool CheckValidInfo(EfficiencyResourceInfo &params) {
+        if (params.GetResourceNumber() == 0 || (!params.IsPersist() && params.GetTimeOut() == 0)) {
+            return false;
+        }
+        return true;
+    }
+
     napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
     {
         EfficiencyResourceInfo params;
-        if (ParseParameters(env, info, params) == nullptr) {
-            return Common::NapiGetNull(env);
-        }
         bool isSuccess = false;
+        if (ParseParameters(env, info, params) == nullptr) {
+            return Common::NapiGetboolean(env, isSuccess);
+        }
+        if (!CheckValidInfo(params)) {
+            BGTASK_LOGD("params make no sense, unnecessary to execute");
+            return Common::NapiGetboolean(env, true);
+        }
         DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(params, isSuccess);
         return Common::NapiGetboolean(env, isSuccess);
     }

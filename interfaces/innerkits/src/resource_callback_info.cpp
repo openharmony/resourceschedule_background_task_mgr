@@ -21,7 +21,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-bool ResourceCallbackInfo::Marshalling(MessageParcel& out) const
+bool ResourceCallbackInfo::Marshalling(Parcel& out) const
 {
     WRITE_PARCEL_WITH_RET(out, Int32, uid_, false);
     WRITE_PARCEL_WITH_RET(out, Int32, pid_, false);
@@ -29,7 +29,7 @@ bool ResourceCallbackInfo::Marshalling(MessageParcel& out) const
     return true;
 }
 
-bool ResourceCallbackInfo::ReadFromParcel(MessageParcel& in)
+bool ResourceCallbackInfo::ReadFromParcel(Parcel& in)
 {
     READ_PARCEL_WITH_RET(in, Int32, uid_, false);
     READ_PARCEL_WITH_RET(in, Int32, pid_, false);
@@ -37,13 +37,14 @@ bool ResourceCallbackInfo::ReadFromParcel(MessageParcel& in)
     return true;
 }
 
-std::shared_ptr<ResourceCallbackInfo> ResourceCallbackInfo::Unmarshalling(MessageParcel& in)
+ResourceCallbackInfo* ResourceCallbackInfo::Unmarshalling(Parcel& in)
 {
-    auto transientAppInfo = std::make_shared<ResourceCallbackInfo>();
-    if (!transientAppInfo->ReadFromParcel(in)) {
-        return nullptr;
+    ResourceCallbackInfo* resourceInfo = new (std::nothrow) ResourceCallbackInfo();
+    if (resourceInfo && !resourceInfo->ReadFromParcel(in)) {
+        delete resourceInfo;
+        resourceInfo = nullptr;
     }
-    return transientAppInfo;
+    return resourceInfo;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-#include "resources_application_record.h"
+#include "resource_application_record.h"
+#include "bg_efficiency_resources_mgr.h"
 
 #include "iremote_object.h"
 #include "json/value.h"
@@ -30,6 +31,9 @@ const char *ResourceTypeName[7] = {
    "AUDIO",
 };
 
+PersistTime::PersistTime(uint32_t resourceIndex, bool isPersist, int64_t endTime) :
+    resourceIndex_(resourceIndex), isPersist_(isPersist), endTime_(endTime) {}
+
 std::string ResourceApplicationRecord::GetBundleName() const
 {
     return bundleName_;
@@ -40,14 +44,9 @@ int32_t ResourceApplicationRecord::GetUid() const
     return uid_;
 }
 
-pid_t ResourceApplicationRecord::GetPid() const
+int32_t ResourceApplicationRecord::GetPid() const
 {
     return pid_;
-}
-
-bool ResourceApplicationRecord::IsProcess() const
-{
-    return isProcess_;
 }
 
 uint32_t ResourceApplicationRecord::GetResourceNumber() const
@@ -60,32 +59,37 @@ std::string ResourceApplicationRecord::GetReason() const
     return reason_;
 }
 
-std::map<uint32_t, PersistTime> ResourceApplicationRecord::GetResourceUnitMap() const
+std::list<PersistTime>& ResourceApplicationRecord::GetResourceUnitList()
 {
-    return resourceUnitMap_;
+    return resourceUnitList_;
 }
 
 std::string ResourceApplicationRecord::ParseToJsonStr()
 {
     Json::Value root;
+    ParseToJson(root);
+    return root.toStyledString();
+}
+
+void ResourceApplicationRecord::ParseToJson(Json::Value &root)
+{
     root["bundleName"] = bundleName_;
     root["uid"] = uid_;
     root["pid"] = pid_;
-    root["isProcess"] = isProcess_;
     root["resourceNumber"] = resourceNumber_;
     root["reason"] = reason_;
 
-    if (!resourceUnitMap_.empty()) {
+    if (!resourceUnitList_.empty()) {
         Json::Value resource;
-        for (auto &iter : resourceUnitMap_) {
+        for (const auto &iter : resourceUnitList_) {
             Json::Value info;
-            info["isPersist"] = iter.second.isPersist_;
-            info["endTime"] = iter.second.endTime_;
-            resource[std::to_string(iter.first)] = info;
+            info["resourceIndex"] = iter.resourceIndex_;
+            info["isPersist"] = iter.isPersist_;
+            info["endTime"] = iter.endTime_;
+            resource.append(info);
         }
-        root["resourceUnitMap"] = resource;
+        root["resourceUnitList"] = resource;
     }
-    return WriteString(root);
 }
 
 std::string WriteString(Json::Value &root)
@@ -98,25 +102,24 @@ std::string WriteString(Json::Value &root)
     return result;
 }
 
-bool ResourceApplicationRecord::ParseFromJson(const Json::Value value)
+bool ResourceApplicationRecord::ParseFromJson(const Json::Value& value)
 {
     if (value.empty()) {
         return false;
     }
-    this->bundleName_ = value["bundleName"].asString();
     this->uid_ = value["uid"].asInt();
     this->pid_ = value["pid"].asInt();
-    this->isProcess_ = value["isProcess"].asBool();
+    this->bundleName_ = value["bundleName"].asString();
     this->resourceNumber_ = value["resourceNumber"].asUInt();
-    if (value.isMember("resourceUnitMap")) {
-        Json::Value resourceVal = value["resourceUnitMap"];
-        std::map<uint32_t, PersistTime> resourceUnitMap;
-        for (auto it : resourceVal.getMemberNames()) {
-            Json::Value persistTime = resourceVal[it];
-            resourceUnitMap.emplace(static_cast<uint32_t>(std::atoi(it.c_str())), 
-                PersistTime{persistTime["isPersist"].asBool(), persistTime["endTime"].asInt64()}); 
+    this->reason_ = value["reason"].asString();
+    if (value.isMember("resourceUnitList")) {
+        Json::Value resourceVal = value["resourceUnitList"];
+        auto nums = static_cast<int32_t>(resourceVal.size());
+        for (int i=0; i<nums; ++i) {
+            Json::Value persistTime = resourceVal[i];
+            this->resourceUnitList_.emplace_back(PersistTime{persistTime["resourceIndex"].asInt(),
+                persistTime["isPersist"].asBool(), persistTime["endTime"].asInt64()}); 
         }
-        this->resourceUnitMap_ = resourceUnitMap;
     }
     return true;
 }

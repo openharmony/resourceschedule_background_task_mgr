@@ -272,7 +272,6 @@ ErrCode BackgroundTaskMgrStub::HandleApplyEfficiencyResources(MessageParcel& dat
 
 ErrCode BackgroundTaskMgrStub::HandleResetAllEfficiencyResources(MessageParcel& data, MessageParcel& reply)
 {
-    int32_t id = data.ReadInt32();
     ErrCode result = ResetAllEfficiencyResources();
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleCancelSuspendDelay Write result failed, ErrCode=%{public}d", result);

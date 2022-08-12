@@ -33,7 +33,7 @@
 #include "bg_transient_task_mgr.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "bg_efficiency_resources_mgr.h"
-
+#include "ibackground_task_mgr.h"
 namespace OHOS {
 namespace BackgroundTaskMgr {
 enum class ServiceRunningState {
@@ -69,7 +69,7 @@ public:
     void HandleRequestExpired(const int32_t requestId);
     void HandleExpiredCallbackDeath(const wptr<IRemoteObject>& remote);
     void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
-
+    
 private:
     void Init();
     void DumpUsage(std::string &result);

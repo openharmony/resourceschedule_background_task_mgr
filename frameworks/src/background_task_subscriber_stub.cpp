@@ -20,7 +20,6 @@
 
 #include "transient_task_log.h"
 #include "background_task_subscriber_proxy.h"
-
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
@@ -188,6 +187,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesApply(Messag
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnAppEfficiencyResourcesApply(resourceCallbackInfo);
+    return ERR_OK;
 }
 
 ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesReset(MessageParcel &data)
@@ -195,11 +195,11 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesReset(Messag
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
     if(!resourceCallbackInfo){
-        BGTASK_LOGE("HandleOnAppEfficiencyResourcesApply ReadParcelable failed");
+        BGTASK_LOGE("HandleOnAppEfficiencyResourcesReset ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnAppEfficiencyResourcesReset(resourceCallbackInfo);
-    return ERR_NONE;
+    return ERR_OK;
 }
 
 ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesApply(MessageParcel &data)
@@ -211,6 +211,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesApply(MessagePa
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnEfficiencyResourcesApply(resourceCallbackInfo);
+    return ERR_OK;
 }
 
 ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesReset(MessageParcel &data)
@@ -218,11 +219,11 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesReset(MessagePa
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
     if(!resourceCallbackInfo){
-        BGTASK_LOGE("HandleOnAppEfficiencyResourcesApply ReadParcelable failed");
+        BGTASK_LOGE("HandleOnEfficiencyResourcesReset ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnEfficiencyResourcesReset(resourceCallbackInfo);
-    return ERR_NONE;
+    return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

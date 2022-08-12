@@ -20,19 +20,16 @@
 #include <memory>
 #include <string>
 
-#include <message_parcel.h>
+#include "parcel.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-constexpr int32_t INVAILD_PID = -1;
-constexpr int32_t INVAILD_UID = -1;
 
 class ResourceCallbackInfo : public Parcelable  {
 public:
     ResourceCallbackInfo() = default;
     ResourceCallbackInfo(int32_t uid, int32_t pid, uint32_t resourceNumber, std::string bundleName) :
         uid_(uid), pid_(pid), resourceNumber_(resourceNumber), bundleName_(bundleName) {}
-    ~ResourceCallbackInfo() = default;
 
     /**
      * @brief Marshals a purpose into a parcel.
@@ -40,15 +37,24 @@ public:
      * @param parcel Indicates the parcel object for marshalling.
      * @return True if success, else false.
      */
-    bool Marshalling(MessageParcel& out) const;
+    bool Marshalling(Parcel& out) const override;
 
     /**
      * @brief Unmarshals a purpose from a Parcel.
      *
-     * @param parcel Indicates the MessageParcel object for unmarshalling.
+     * @param parcel Indicates the Parcel object for unmarshalling.
      * @return App info of transient task.
      */
-    static std::shared_ptr<ResourceCallbackInfo> Unmarshalling(MessageParcel& in);
+    static ResourceCallbackInfo* Unmarshalling(Parcel& in);
+
+    /**
+     * @brief read date from a parcel, transform json to data
+     * 
+     * @param in 
+     * @return true read data from parcel seccessed
+     * @return false failed
+     */
+    bool ReadFromParcel(Parcel& in);
 
     /**
      * @brief Get the uid.
@@ -89,9 +95,8 @@ public:
     {
         return bundleName_;
     }
-private:
-    bool ReadFromParcel(MessageParcel& in);
 
+private:
     int32_t uid_ {0};
     int32_t pid_ {0};
     uint32_t resourceNumber_ {0};
