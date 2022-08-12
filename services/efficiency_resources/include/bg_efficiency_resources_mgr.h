@@ -20,6 +20,7 @@
 #include <mutex>
 #include <list>
 #include <unordered_map>
+#include <sstream>
 
 #include "ipc_skeleton.h"
 #include "singleton.h"

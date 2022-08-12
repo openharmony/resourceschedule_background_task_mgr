@@ -71,7 +71,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits",
     "//foundation/ability/dmsfwk/services/base:dmsbaseinner",
     "//foundation/ability/dmsfwk/services/dtbschedmgr:distributedschedsvr",
-    "//third_party/jsoncpp",
   ]
 
   external_deps = [
