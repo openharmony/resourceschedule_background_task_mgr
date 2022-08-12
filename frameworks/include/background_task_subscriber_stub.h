@@ -20,7 +20,7 @@
 
 #include "bgtaskmgr_inner_errors.h"
 #include "ibackground_task_subscriber.h"
-
+#include "resource_callback_info.h"
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class BackgroundTaskSubscriberStub : public IRemoteStub<IBackgroundTaskSubscriber> {

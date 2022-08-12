@@ -16,6 +16,7 @@
 #include "efficiency_resources_operation.h"
 #include "singleton.h"
 #include "background_task_manager.h"
+#include "efficiency_resource_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -85,7 +86,7 @@ namespace BackgroundTaskMgr {
     }
 
     bool CheckValidInfo(EfficiencyResourceInfo &params) {
-        if (params.GetResourceNumber() == 0 || !params.IsPersist() && params.GetTimeOut() == 0) {
+        if (params.GetResourceNumber() == 0 || (!params.IsPersist() && params.GetTimeOut() == 0)) {
             return false;
         }
         return true;

@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 class EfficiencyResourceInfo : public Parcelable {
 public:
     EfficiencyResourceInfo() = default;;
@@ -103,7 +102,7 @@ public:
      */
     inline bool IsProcess() const
     {
-        return isPersist_;
+        return isProcess_;
     }
 
 

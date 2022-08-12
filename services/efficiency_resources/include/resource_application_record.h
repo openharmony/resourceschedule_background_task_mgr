@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCES_APPLICATION_RECORD_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCES_APPLICATION_RECORD_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_APPLICATION_RECORD_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_APPLICATION_RECORD_H
 
 #include "iremote_object.h"
 #include "parcel.h"
 #include "json/json.h"
-#include "bg_efficiency_resources_mgr.h"
+#include <list>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -28,11 +28,11 @@ extern const char *ResourceTypeName[7];
 class BgEfficiencyResourcesMgr;
 
 struct PersistTime{
-    int32_t resourceIndex_ {0};
+    uint32_t resourceIndex_ {0};
     bool isPersist_ {false};
     int64_t endTime_ {0};
     PersistTime() = default;
-    PersistTime(int32_t resourceIndex, bool isPersist, int64_t endTime);
+    PersistTime(uint32_t resourceIndex, bool isPersist, int64_t endTime);
 };
 
 class ResourceApplicationRecord {
@@ -41,12 +41,12 @@ public:
     ResourceApplicationRecord(int32_t uid, int32_t pid, uint32_t resourceNumber, std::string bundleName) :
         uid_(uid), pid_(pid), resourceNumber_(resourceNumber), bundleName_(bundleName) {}
     ~ResourceApplicationRecord() = default;
-    inline int32_t GetUid() const;
-    inline int32_t GetPid() const;
-    inline std::string GetBundleName() const;
-    inline uint32_t GetResourceNumber() const;
-    inline std::string GetReason() const;
-    inline std::list<PersistTime>& GetResourceUnitList();
+    int32_t GetUid() const;
+    int32_t GetPid() const;
+    std::string GetBundleName() const;
+    uint32_t GetResourceNumber() const;
+    std::string GetReason() const;
+    std::list<PersistTime>& GetResourceUnitList();
     void ParseToJson(Json::Value &root);
     std::string ParseToJsonStr();
     bool ParseFromJson(const Json::Value& value);
@@ -63,4 +63,4 @@ private:
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCES_APPLICATION_RECORD_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_APPLICATION_RECORD_H

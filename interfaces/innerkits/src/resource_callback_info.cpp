@@ -39,7 +39,7 @@ bool ResourceCallbackInfo::ReadFromParcel(Parcel& in)
 
 ResourceCallbackInfo* ResourceCallbackInfo::Unmarshalling(Parcel& in)
 {
-    auto resourceInfo = new (std::nothrow) ResourceCallbackInfo();
+    ResourceCallbackInfo* resourceInfo = new (std::nothrow) ResourceCallbackInfo();
     if (resourceInfo && !resourceInfo->ReadFromParcel(in)) {
         delete resourceInfo;
         resourceInfo = nullptr;

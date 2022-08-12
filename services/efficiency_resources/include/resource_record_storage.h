@@ -16,13 +16,15 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_RECORD_STORAGE_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_RECORD_STORAGE_H
 
-#include <array>
-#include "resources_application_record.h"
+#include <unordered_map>
 #include "bgtaskmgr_inner_errors.h"
+#include "json/json.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class ResourceRecordStorage {
+class ResourceApplicationRecord;
+
+class ResourceRecordStorage { 
 using ResourceRecordMap = std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>>;
 public:
     ErrCode RefreshResourceRecord(const ResourceRecordMap &appRecord, const ResourceRecordMap &processRecord);

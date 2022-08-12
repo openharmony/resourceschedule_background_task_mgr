@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-#include <vector>
 #include <set>
 #include <algorithm>
 
@@ -109,38 +108,69 @@ void BgEfficiencyResourcesMgr::HandlePersistenceData()
     appMgrClient->GetAllRunningProcesses(allAppProcessInfos);
     std::lock_guard<std::mutex> lock(callbackLock_);
     CheckPersistenceData(allAppProcessInfos);
+    RecoverDelayedTask(true, resourceApplyMap_);
+    RecoverDelayedTask(false, appResourceApplyMap_);
     recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
+}
+
+void BgEfficiencyResourcesMgr::EraseRecordIf(ResourceRecordMap &infoMap,const 
+    std::function<bool(ResourceRecordPair)> &fun)
+{
+    for (auto iter = infoMap.begin(); iter != infoMap.end();) {
+        if (fun(*iter)) {
+            infoMap.erase(iter++);
+        } else {
+            iter++;
+        }
+    }
 }
 
 void BgEfficiencyResourcesMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses)
 {
     std::set<int32_t> runningUid;
     std::set<int32_t> runningPid;
-    std::for_each(allProcesses.begin(), allProcesses.end(), [&runningUid](const auto iter) {
+    std::for_each(allProcesses.begin(), allProcesses.end(), [&runningUid, &runningPid](const auto &iter) {
         runningUid.emplace(iter.uid_);
         runningPid.emplace(iter.pid_);
     } );
-    appResourceApplyMap_.erase(
-        std::remove_if(appResourceApplyMap_.begin(), appResourceApplyMap_.end(), [&runningUid](const auto &iter) 
-        { return runningUid.find(iter.first) == runningUid.end(); }), appResourceApplyMap_.end());
-    resourceApplyMap_.erase(
-        std::remove_if(resourceApplyMap_.begin(), resourceApplyMap_.end(), [&runningPid](const auto &iter) 
-        { return runningPid.find(iter.first) == runningPid.end(); }), resourceApplyMap_.end());
+    auto removeUid = [&runningUid](const auto &iter) { return runningUid.find(iter.first) == runningUid.end(); };
+    EraseRecordIf(appResourceApplyMap_, removeUid);
+    auto removePid = [&runningPid](const auto &iter)  { return runningPid.find(iter.first) == runningPid.end(); };
+    EraseRecordIf(appResourceApplyMap_, removePid);
+}
+
+
+void BgEfficiencyResourcesMgr::RecoverDelayedTask(bool isProcess, ResourceRecordMap& infoMap)
+{
+    const auto &mgr = shared_from_this();
+    for (auto iter = infoMap.begin(); iter != infoMap.end(); iter ++) {
+        auto &resourceList = iter->second->resourceUnitList_;
+        int32_t mapKey = iter->first; 
+        for (auto resourceIter = resourceList.begin(); resourceIter != resourceList.end(); resourceIter++) {
+            if (resourceIter->isPersist_) {
+                continue;
+            }
+            uint32_t timeOutBit = resourceIter->resourceIndex_;
+            auto task = [mgr, mapKey, timeOutBit, isProcess] () {
+                mgr->ResetTimeOutResource(mapKey, timeOutBit, isProcess);
+            };
+            int32_t timeOut = static_cast<int32_t>(resourceIter->endTime_-TimeProvider::GetCurrentTime());
+            handler_->PostTask(task, std::max(0, timeOut));
+        }
+    }    
 }
 
 void BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid)
 {
     std::lock_guard<std::mutex> lock(callbackLock_);
-    appResourceApplyMap_.erase(std::remove_if(appResourceApplyMap_.begin(), appResourceApplyMap_.end(),
-        [uid](const auto &iter) { return iter.first == uid; }), appResourceApplyMap_.end());
+    EraseRecordIf(appResourceApplyMap_, [uid](const auto &iter) { return iter.first == uid; });
     recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
 }
 
 void BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t pid)
 {   
     std::lock_guard<std::mutex> lock(callbackLock_);
-    resourceApplyMap_.erase(std::remove_if(resourceApplyMap_.begin(), resourceApplyMap_.end(),
-        [pid](const auto &iter) { return iter.resourceIndex_ == pid; }), resourceApplyMap_.end());
+    EraseRecordIf(resourceApplyMap_, [pid](const auto &iter) { return iter.first == pid; });
     recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
 }
 
@@ -189,17 +219,16 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     isSuccess = true;
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, resourceInfo->GetResourceNumber(), bundleName);
-    ErrCode result = ERR_OK; 
     if (resourceInfo->IsApply()) {
-        result = ApplyEfficiencyResourcesInner(callbackInfo, resourceInfo);
+        ApplyEfficiencyResourcesInner(callbackInfo, resourceInfo);
     } else {
         ResetEfficiencyResourcesInner(callbackInfo, resourceInfo->IsProcess());
     }
     recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
-    return result;
+    return ERR_OK;
 }
 
-ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> 
+void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> 
     &callbackInfo, const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
     std::lock_guard<std::mutex> lock(callbackLock_);
@@ -249,7 +278,8 @@ void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<Reso
         }
     }
     int32_t mapKey = !isProcess ? callbackInfo->GetUid() : callbackInfo->GetPid();
-    auto task = [mgr=shared_from_this(), mapKey, timeOutBit, isProcess] () {
+    const auto& mgr = shared_from_this();
+    auto task = [mgr, mapKey, timeOutBit, isProcess] () {
         mgr->ResetTimeOutResource(mapKey, timeOutBit, isProcess);
     };
     handler_->PostTask(task, timeOut);
@@ -326,9 +356,8 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
                 iter->second->resourceNumber_ ^= (resourceNumber & iter->second->resourceNumber_);
         }
     }
-    auto findEmptyResource = [](const auto &iter) { return iter->second->resourceNumber_ == 0; };
-    resourceApplyMap_.erase(remove_if(resourceApplyMap_.begin(), resourceApplyMap_.end(),   
-        findEmptyResource), resourceApplyMap_.end());
+    auto findEmptyResource = [](const auto &iter) { return iter.second->resourceNumber_ == 0; };
+    EraseRecordIf(resourceApplyMap_, findEmptyResource);
 }
 
 void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
@@ -444,7 +473,6 @@ void BgEfficiencyResourcesMgr::DumpResetAllResource(const std::vector<std::strin
 
 void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> &dumpOption, bool cleanApp, bool cleanAll)
 {
-    EfficiencyResourcesEventType type = EfficiencyResourcesEventType::APP_RESOURCE_RESET;
     auto &infoMap = cleanApp ? appResourceApplyMap_ : resourceApplyMap_;
     auto type = cleanApp ? EfficiencyResourcesEventType::APP_RESOURCE_RESET : EfficiencyResourcesEventType::RESOURCE_RESET;
 

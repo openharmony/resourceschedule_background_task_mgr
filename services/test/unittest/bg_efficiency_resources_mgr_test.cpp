@@ -45,11 +45,11 @@ public:
     static std::shared_ptr<BgEfficiencyResourcesMgr> bgEfficiencyResourcesMgr_ {nullptr};
 };
 
-std::shared_ptr<BgEfficiencyResourcesMgr> BgEfficiencyResourcesMgrTest::bgEfficiencyResourcesMgr_ = nullptr;
+
 
 void BgEfficiencyResourcesMgrTest::SetUpTestCase()
 {
-    bgEfficiencyResourcesMgr_ = BgEfficiencyResourcesMgr::GetInstance();
+    bgEfficiencyResourcesMgr_ = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance();
 }
 
 void BgEfficiencyResourcesMgrTest::TearDownTestCase() {}
@@ -68,5 +68,6 @@ public:
     void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo>
         &continuousTaskCallbackInfo) override {}
 }
+
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

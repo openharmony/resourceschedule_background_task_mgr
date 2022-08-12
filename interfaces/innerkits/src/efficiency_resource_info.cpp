@@ -31,7 +31,7 @@ bool EfficiencyResourceInfo::Marshalling(Parcel& out) const
 
 EfficiencyResourceInfo* EfficiencyResourceInfo::Unmarshalling(Parcel &in)
 {
-    auto info = new (std::nothrow) EfficiencyResourceInfo();
+    EfficiencyResourceInfo* info = new (std::nothrow) EfficiencyResourceInfo();
     if (info && !info->ReadFromParcel(in)) {
         BGTASK_LOGE("read from parcel failed");
         delete info;

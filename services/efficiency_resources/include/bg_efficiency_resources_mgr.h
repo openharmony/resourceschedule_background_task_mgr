@@ -30,19 +30,22 @@
 #include "remote_death_recipient.h"
 
 #include "efficiency_resource_info.h"
-#include "resource_record_storage.h"
 #include "ibackground_task_subscriber.h"
 #include "resource_callback_info.h"
 #include "bundle_manager_helper.h"
-#include "resources_application_record.h"
+#include "resource_record_storage.h"
+#include "resource_application_record.h"
 #include "resources_subscriber_mgr.h"
 #include "app_state_observer.h"
 #include "running_process_info.h"
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 
 class BgEfficiencyResourcesMgr : public DelayedSingleton<BgEfficiencyResourcesMgr>,
                             public std::enable_shared_from_this<BgEfficiencyResourcesMgr> {
+using ResourceRecordMap = std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>>;
+using ResourceRecordPair = std::pair<const int32_t, std::shared_ptr<OHOS::BackgroundTaskMgr::ResourceApplicationRecord>>;
 public:
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     bool Init();
@@ -58,7 +61,7 @@ public:
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
 
 private:
-    ErrCode ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
+    void ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
         const sptr<EfficiencyResourceInfo> &resourceInfo);
     void UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
         std::shared_ptr<ResourceApplicationRecord> &record, bool isPersist, int32_t timeOut, bool isProcess);
@@ -81,7 +84,8 @@ private:
     bool GetBundleNamesForUid(int32_t uid, std::string &bundleName);
     bool IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &bundleName);
     bool RegisterAppStateObserver();
-
+    void EraseRecordIf(ResourceRecordMap &infoMap, const std::function<bool(ResourceRecordPair)> &fun);
+    void RecoverDelayedTask(bool isProcess, ResourceRecordMap& infoMap);
 private:
     std::atomic<bool> isSysReady_ {false};
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};

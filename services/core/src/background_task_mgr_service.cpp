@@ -61,7 +61,7 @@ void BackgroundTaskMgrService::Init()
 {
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->Init();
     BgContinuousTaskMgr::GetInstance()->Init();
-    BgEfficiencyResourcesMgr::GetInstance()->Init();
+    DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Init();
 }
 
 void BackgroundTaskMgrService::OnStop()
@@ -69,7 +69,7 @@ void BackgroundTaskMgrService::OnStop()
     BgContinuousTaskMgr::GetInstance()->Clear();
     state_ = ServiceRunningState::STATE_NOT_START;
     BGTASK_LOGI("background task manager stop");
-    BgEfficiencyResourcesMgr::GetInstance()->clear();
+    DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Clear();
 }
 
 ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::u16string& reason,
@@ -118,7 +118,7 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
 {
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK
-        && BgEfficiencyResourcesMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
+        && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
         return ERR_OK;
     }
     return ERR_BGTASK_SYS_NOT_READY;
@@ -128,7 +128,7 @@ ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgrou
 {
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
-        && BgEfficiencyResourcesMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
+        && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
         return ERR_OK;
     }
     return ERR_BGTASK_SYS_NOT_READY;
@@ -149,14 +149,14 @@ void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& 
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->HandleSubscriberDeath(remote);
 }
 
-ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess)
+ErrCode BackgroundTaskMgrService::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess)
 {
-    return BgEfficiencyResourcesMgr::GetInstance()->RequestSuspendDelay(resourceInfo, isSuccess);
+    return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->ApplyEfficiencyResources(resourceInfo, isSuccess);
 }
 
-ErrCode ResetAllEfficiencyResources()
+ErrCode BackgroundTaskMgrService::ResetAllEfficiencyResources()
 {
-    return BgEfficiencyResourcesMgr::GetInstance()->ResetAllEfficiencyResources();
+    return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->ResetAllEfficiencyResources();
 }
 
 int32_t BackgroundTaskMgrService::Dump(int32_t fd, const std::vector<std::u16string> &args)
@@ -182,7 +182,7 @@ int32_t BackgroundTaskMgrService::Dump(int32_t fd, const std::vector<std::u16str
         } else if (argsInStr[0] == "-C") {
             ret = BgContinuousTaskMgr::GetInstance()->ShellDump(argsInStr, infos);
         } else if (argsInStr[0] == "-E") {
-            ret = BgEfficiencyResourcesMgr::GetInstance()->ShellDump(argsInStr, infos);
+            ret = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->ShellDump(argsInStr, infos);
         } else {
             infos.emplace_back("Error params.\n");
             ret = ERR_BGTASK_INVALID_PARAM;

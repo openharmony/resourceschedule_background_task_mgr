@@ -104,26 +104,28 @@ public:
      * 
      * @param resourceInfo Request params.
      */
-    void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
+    virtual void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
 
     /**
      * @brief Called back when the efficiency resources of App reset.
      * 
+     * @param resourceInfo Request params.
      */
-    void OnAppEfficiencyResourcesReset();
+    virtual void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
 
     /**
      * @brief Apply or unapply efficiency resources.
      * 
      * @param resourceInfo Request params.
      */
-    void OnEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
+    virtual void OnEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
 
     /**
      * @brief Called back when the efficiency resources reset.
      * 
+     * @param resourceInfo Request params.
      */
-    void OnEfficiencyResourcesReset();
+    virtual void OnEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
 
 private:
     class BackgroundTaskSubscriberImpl final : public BackgroundTaskSubscriberStub {

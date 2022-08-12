@@ -20,6 +20,7 @@
 #include <nocopyable.h>
 
 #include <ibackground_task_mgr.h>
+#include "efficiency_resource_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {

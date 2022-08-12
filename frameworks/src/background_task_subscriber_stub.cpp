@@ -20,7 +20,6 @@
 
 #include "transient_task_log.h"
 #include "background_task_subscriber_proxy.h"
-
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
@@ -220,11 +219,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesReset(MessagePa
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
     if(!resourceCallbackInfo){
-<<<<<<< Updated upstream
-        BGTASK_LOGE("HandleOnAppEfficiencyResourcesApply ReadParcelable failed");
-=======
         BGTASK_LOGE("HandleOnEfficiencyResourcesReset ReadParcelable failed");
->>>>>>> Stashed changes
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     OnEfficiencyResourcesReset(resourceCallbackInfo);

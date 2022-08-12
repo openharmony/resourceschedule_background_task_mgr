@@ -29,6 +29,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 
+class ObserverDeathRecipient;
 enum class EfficiencyResourcesEventType: uint32_t {
     APP_RESOURCE_APPLY,
     APP_RESOURCE_RESET,
@@ -55,12 +56,12 @@ private:
 class ObserverDeathRecipient final : public IRemoteObject::DeathRecipient {
 public:
     DISALLOW_COPY_AND_MOVE(ObserverDeathRecipient);
-    explicit ObserverDeathRecipient(const wptr<ResourcesSubscriberMgr>& subscriberMgr);
+    explicit ObserverDeathRecipient(ResourcesSubscriberMgr& subscriberMgr);
     ~ObserverDeathRecipient() override;
     void OnRemoteDied(const wptr<IRemoteObject>& remote) override;
 
 private:
-    wptr<ResourcesSubscriberMgr> subscriberMgr_;
+    ResourcesSubscriberMgr& subscriberMgr_;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

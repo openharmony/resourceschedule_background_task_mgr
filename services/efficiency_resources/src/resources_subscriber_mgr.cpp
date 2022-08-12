@@ -20,7 +20,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 ResourcesSubscriberMgr::ResourcesSubscriberMgr()
 {
-    deathRecipient_ = new (std::nothrow) ObserverDeathRecipient(this);
+    deathRecipient_ = new (std::nothrow) ObserverDeathRecipient(*this);
 }
 
 ResourcesSubscriberMgr::~ResourcesSubscriberMgr() {}
@@ -40,7 +40,7 @@ ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscrib
     std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
     auto subscriberIter = std::find_if(subscriberList_.begin(), subscriberList_.end(),[&remote](const auto &subscriber){
         return subscriber->AsObject() == remote;
-    });
+    });  
     if (subscriberIter != subscriberList_.end()) {
         BGTASK_LOGE("subscriber has already exist");
         return ERR_BGTASK_OBJECT_EXISTS;
@@ -140,19 +140,14 @@ void ResourcesSubscriberMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& re
     BGTASK_LOGI("suscriber death, remove it.");
 }
 
-ObserverDeathRecipient::ObserverDeathRecipient(const wptr<ResourcesSubscriberMgr>& subscriberMgr)
+ObserverDeathRecipient::ObserverDeathRecipient(ResourcesSubscriberMgr& subscriberMgr)
     : subscriberMgr_(subscriberMgr) {}
 
 ObserverDeathRecipient::~ObserverDeathRecipient() {}
 
 void ObserverDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    auto subscriberMgr = subscriberMgr_.promote();
-    if (subscriberMgr == nullptr) {
-        BGTASK_LOGE("suscriber died, ObserverDeathRecipient dead.");
-        return;
-    }
-    subscriberMgr->HandleSubscriberDeath(remote);
+    subscriberMgr_.HandleSubscriberDeath(remote);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

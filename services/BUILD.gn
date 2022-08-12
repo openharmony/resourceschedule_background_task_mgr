@@ -16,19 +16,14 @@ import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
 config("bgtaskmgr_service_public_config") {
   include_dirs = [
+    "common/include",
     "continuous_task/include",
     "continuous_task/task_detection/include",
     "core/include",
     "transient_task/include",
     "test/include",
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
     "efficiency_resources/include",
-=======
     "//foundation/ability/dmsfwk/services/dtbschedmgr/include",
->>>>>>> e25010d0caf635cd8dc46244654e7ce39ff295e3
->>>>>>> Stashed changes
   ]
 }
 
@@ -36,7 +31,7 @@ ohos_shared_library("bgtaskmgr_service") {
   cflags_cc = []
   sources = [
     "//foundation/ability/dmsfwk/services/dtbschedmgr/src/distributed_sched_proxy.cpp",
-    "continuous_task/src/app_state_observer.cpp",
+    "common/src/app_state_observer.cpp",
     "continuous_task/src/bg_continuous_task_mgr.cpp",
     "continuous_task/src/bundle_manager_helper.cpp",
     "continuous_task/src/continuous_task_record.cpp",
@@ -50,6 +45,10 @@ ohos_shared_library("bgtaskmgr_service") {
     "continuous_task/task_detection/src/multi_device_detect.cpp",
     "continuous_task/task_detection/src/task_detection_manager.cpp",
     "core/src/background_task_mgr_service.cpp",
+    "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
+    "efficiency_resources/src/resource_record_storage.cpp",
+    "efficiency_resources/src/resource_application_record.cpp",
+    "efficiency_resources/src/resources_subscriber_mgr.cpp",
     "transient_task/src/bg_transient_task_mgr.cpp",
     "transient_task/src/bgtask_common.cpp",
     "transient_task/src/decision_maker.cpp",
@@ -114,6 +113,7 @@ ohos_shared_library("bgtaskmgr_service") {
     cflags_cc += [ "-DBLUETOOTH_PART_ENABLE" ]
     external_deps += [ "bluetooth:btframework" ]
   }
-
+  
+  subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
 }

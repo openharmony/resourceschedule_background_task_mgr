@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-#include "resources_application_record.h"
+#include "resource_application_record.h"
+#include "bg_efficiency_resources_mgr.h"
 
 #include "iremote_object.h"
 #include "json/value.h"
@@ -30,7 +31,7 @@ const char *ResourceTypeName[7] = {
    "AUDIO",
 };
 
-PersistTime::PersistTime(int32_t resourceIndex, bool isPersist, int64_t endTime) :
+PersistTime::PersistTime(uint32_t resourceIndex, bool isPersist, int64_t endTime) :
     resourceIndex_(resourceIndex), isPersist_(isPersist), endTime_(endTime) {}
 
 std::string ResourceApplicationRecord::GetBundleName() const
@@ -113,7 +114,8 @@ bool ResourceApplicationRecord::ParseFromJson(const Json::Value& value)
     this->reason_ = value["reason"].asString();
     if (value.isMember("resourceUnitList")) {
         Json::Value resourceVal = value["resourceUnitList"];
-        for (int i=0; i<resourceVal.size(); ++i) {
+        auto nums = static_cast<int32_t>(resourceVal.size());
+        for (int i=0; i<nums; ++i) {
             Json::Value persistTime = resourceVal[i];
             this->resourceUnitList_.emplace_back(PersistTime{persistTime["resourceIndex"].asInt(),
                 persistTime["isPersist"].asBool(), persistTime["endTime"].asInt64()}); 

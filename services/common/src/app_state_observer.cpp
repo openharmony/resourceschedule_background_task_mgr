@@ -22,6 +22,8 @@
 #include "bg_continuous_task_mgr.h"
 #include "task_detection_manager.h"
 #include "continuous_task_log.h"
+#include "bg_efficiency_resources_mgr.h"
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
@@ -92,7 +94,8 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
     bgEfficiencyResourcesMgr->RemoveProcessRecord(processData.pid);
 }
 
-void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData) {
+void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData)
+{
     if (!ValidateAppStateData(appStateData)) {
         BGTASK_LOGD("%{public}s : validate app state data failed!", __func__);
         return;
@@ -111,16 +114,10 @@ void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData 
     }
 }
 
-inline bool ValidateAppStateData(const AppExecFwk::AppStateData &appStateData)
+inline bool AppStateObserver::ValidateAppStateData(const AppExecFwk::AppStateData &appStateData)
 {
     return appStateData.uid > 0
         && appStateData.bundleName.size() > 0;
-}
-
-inline bool ValidateProcessData(const AppExecFwk::ProcessData &processData)
-{
-    return processData.uid > 0 && processData.pid >= 0
-        && processData.bundleName.size() > 0;
 }
 
 void AppStateObserver::SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler)
@@ -133,7 +130,7 @@ void AppStateObserver::SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuous
     bgContinuousTaskMgr_ = bgContinuousTaskMgr;
 }
 
-void SetBgEfficiencyResourcesMgr(const std::shared_ptr<BgEfficiencyResourcesMgr> &resourceMgr)
+void AppStateObserver::SetBgEfficiencyResourcesMgr(const std::shared_ptr<BgEfficiencyResourcesMgr> &resourceMgr)
 {
     bgEfficiencyResourcesMgr_ = resourceMgr;
 }

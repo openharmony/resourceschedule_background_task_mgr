@@ -30,7 +30,6 @@ public:
     ResourceCallbackInfo() = default;
     ResourceCallbackInfo(int32_t uid, int32_t pid, uint32_t resourceNumber, std::string bundleName) :
         uid_(uid), pid_(pid), resourceNumber_(resourceNumber), bundleName_(bundleName) {}
-    ~ResourceCallbackInfo() = default;
 
     /**
      * @brief Marshals a purpose into a parcel.

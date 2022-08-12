@@ -21,19 +21,17 @@
 #include "application_state_observer_stub.h"
 #include "event_handler.h"
 #include "iremote_object.h"
-#include "rebase.h"
-#include "bg_efficiency_resources_mgr.h"
+
+#include "remote_death_recipient.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class BgContinuousTaskMgr;
 class BgEfficiencyResourcesMgr;
+class BgContinuousTaskMgr;
 
 class AppStateObserver : public AppExecFwk::ApplicationStateObserverStub {
-    DECLARE_DELAYED_SINGLETON(ResourcesSubscriberMgr);
+    DECLARE_DELAYED_SINGLETON(AppStateObserver);
 public:
-    AppStateObserver();
-    ~AppStateObserver();
     void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override;
     void OnProcessDied(const AppExecFwk::ProcessData &processData) override;
     void OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData) override;
@@ -47,6 +45,7 @@ private:
     bool Connect();
     void Disconnect();
     void OnRemoteDied(const wptr<IRemoteObject> &object);
+    inline bool ValidateAppStateData(const AppExecFwk::AppStateData &appStateData);
 
 private:
     std::mutex mutex_ {};

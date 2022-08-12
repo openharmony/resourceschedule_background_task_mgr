@@ -30,6 +30,8 @@ ohos_shared_library("bgtaskmgr_fwk") {
     "${bgtaskmgr_interfaces_path}/innerkits/src/delay_suspend_info.cpp",
     "${bgtaskmgr_interfaces_path}/innerkits/src/expired_callback.cpp",
     "${bgtaskmgr_interfaces_path}/innerkits/src/transient_task_app_info.cpp",
+    "${bgtaskmgr_interfaces_path}/innerkits/src/efficiency_resource_info.cpp",
+    "${bgtaskmgr_interfaces_path}/innerkits/src/resource_callback_info.cpp",
     "common/src/bgtaskmgr_log_wrapper.cpp",
     "src/background_task_manager.cpp",
     "src/background_task_mgr_proxy.cpp",

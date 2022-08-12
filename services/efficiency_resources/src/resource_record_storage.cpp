@@ -27,6 +27,7 @@
 #include "bundle_manager_helper.h"
 #include "efficiency_resource_log.h"
 #include "limits.h"
+#include "resource_application_record.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -94,9 +95,9 @@ ErrCode ResourceRecordStorage::ConvertStringToMap(const std::string &recordStrin
 void ResourceRecordStorage::ConvertJsonToMap(const Json::Value &value, ResourceRecordMap &recordMap)
 {
     for (auto &it : value.getMemberNames()) {
-        std::shared_ptr<ResourceApplicationRecord> recordPtr(std::make_shared<ResourceApplicationRecord>());
+        std::shared_ptr<ResourceApplicationRecord> recordPtr = std::make_shared<ResourceApplicationRecord>();
         recordPtr->ParseFromJson(value[it]);
-        recordMap.emplace(it, recordPtr);
+        recordMap.emplace(std::stoi(it), recordPtr);
     }
 }
 
