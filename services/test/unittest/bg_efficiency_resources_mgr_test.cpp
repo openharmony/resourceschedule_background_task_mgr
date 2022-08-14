@@ -63,12 +63,13 @@ void BgEfficiencyResourcesMgrTest::TearDown()
 
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
 public:
-    void OnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo>
-        &continuousTaskCallbackInfo) override {}
+    void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
 
-    void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo>
-        &continuousTaskCallbackInfo) override {}
-}
+    void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
+    
+    void OnEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
 
+    void OnEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
+};
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
