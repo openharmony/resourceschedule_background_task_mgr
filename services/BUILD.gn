@@ -46,8 +46,8 @@ ohos_shared_library("bgtaskmgr_service") {
     "continuous_task/task_detection/src/task_detection_manager.cpp",
     "core/src/background_task_mgr_service.cpp",
     "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
-    "efficiency_resources/src/resource_record_storage.cpp",
     "efficiency_resources/src/resource_application_record.cpp",
+    "efficiency_resources/src/resource_record_storage.cpp",
     "efficiency_resources/src/resources_subscriber_mgr.cpp",
     "transient_task/src/bg_transient_task_mgr.cpp",
     "transient_task/src/bgtask_common.cpp",
@@ -112,7 +112,7 @@ ohos_shared_library("bgtaskmgr_service") {
     cflags_cc += [ "-DBLUETOOTH_PART_ENABLE" ]
     external_deps += [ "bluetooth:btframework" ]
   }
-  
+
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
 }

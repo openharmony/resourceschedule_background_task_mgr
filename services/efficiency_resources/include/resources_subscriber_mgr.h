@@ -37,7 +37,7 @@ enum class EfficiencyResourcesEventType: uint32_t {
     RESOURCE_RESET,
 };
 
-class ResourcesSubscriberMgr {
+class ResourcesSubscriberMgr : public std::enable_shared_from_this<ResourcesSubscriberMgr>  {
     DECLARE_DELAYED_SINGLETON(ResourcesSubscriberMgr);
 public:
     ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
@@ -56,12 +56,12 @@ private:
 class ObserverDeathRecipient final : public IRemoteObject::DeathRecipient {
 public:
     DISALLOW_COPY_AND_MOVE(ObserverDeathRecipient);
-    explicit ObserverDeathRecipient(ResourcesSubscriberMgr& subscriberMgr);
+    explicit ObserverDeathRecipient(const std::shared_ptr<ResourcesSubscriberMgr>& subscriberMgr);
     ~ObserverDeathRecipient() override;
     void OnRemoteDied(const wptr<IRemoteObject>& remote) override;
 
 private:
-    ResourcesSubscriberMgr& subscriberMgr_;
+    std::weak_ptr<ResourcesSubscriberMgr> subscriberMgr_;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

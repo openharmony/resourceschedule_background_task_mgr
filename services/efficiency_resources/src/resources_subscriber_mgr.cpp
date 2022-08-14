@@ -20,7 +20,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 ResourcesSubscriberMgr::ResourcesSubscriberMgr()
 {
-    deathRecipient_ = new (std::nothrow) ObserverDeathRecipient(*this);
+    deathRecipient_ = new (std::nothrow) ObserverDeathRecipient(shared_from_this());
 }
 
 ResourcesSubscriberMgr::~ResourcesSubscriberMgr() {}
@@ -140,14 +140,17 @@ void ResourcesSubscriberMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& re
     BGTASK_LOGI("suscriber death, remove it.");
 }
 
-ObserverDeathRecipient::ObserverDeathRecipient(ResourcesSubscriberMgr& subscriberMgr)
+ObserverDeathRecipient::ObserverDeathRecipient(const std::shared_ptr<ResourcesSubscriberMgr>& subscriberMgr)
     : subscriberMgr_(subscriberMgr) {}
 
 ObserverDeathRecipient::~ObserverDeathRecipient() {}
 
 void ObserverDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    subscriberMgr_.HandleSubscriberDeath(remote);
+    auto subscriberMgr = subscriberMgr_.lock();
+    if (subscriberMgr != nullptr) {
+        subscriberMgr->HandleSubscriberDeath(remote);
+    }
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

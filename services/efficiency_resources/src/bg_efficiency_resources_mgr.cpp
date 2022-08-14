@@ -252,7 +252,7 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(const std::shared_p
 void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo> 
     &callbackInfo, std::shared_ptr<ResourceApplicationRecord> &record, bool isPersist, int32_t timeOut, bool isProcess){
     uint32_t timeOutBit = 0;
-    for (int resourceIndex = 0; resourceIndex < MAX_RESOURCES_TYPE_NUM; ++resourceIndex) {
+    for (uint32_t resourceIndex = 0; resourceIndex < MAX_RESOURCES_TYPE_NUM; ++resourceIndex) {
         if ((callbackInfo->GetResourceNumber() & (1 << resourceIndex)) != 0) {
             auto task = [resourceIndex](const auto &it){
                 return it.resourceIndex_ == resourceIndex;
@@ -303,7 +303,7 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, uint32_t tim
     }
     auto &resourceRecord = iter->second;
     uint32_t resetZeros = 0;
-    for (int resourceIndex = 0; resourceIndex < MAX_RESOURCES_TYPE_NUM; ++resourceIndex) {
+    for (uint32_t resourceIndex = 0; resourceIndex < MAX_RESOURCES_TYPE_NUM; ++resourceIndex) {
         if ((resourceRecord->resourceNumber_ & 1 << resourceIndex) ==0 || 
             (timeOutBit & 1 << resourceIndex) == 0) {
             continue;
