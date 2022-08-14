@@ -44,7 +44,7 @@ public:
         std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
     }
 
-    static std::shared_ptr<BgEfficiencyResourcesMgr> bgEfficiencyResourcesMgr_ {nullptr};
+    static std::shared_ptr<BgEfficiencyResourcesMgr> BgEfficiencyResourcesMgrTest::bgEfficiencyResourcesMgr_ {nullptr};
 };
 
 void BgEfficiencyResourcesMgrTest::SetUpTestCase()
