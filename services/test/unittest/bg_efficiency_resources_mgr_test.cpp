@@ -21,10 +21,11 @@
 
 #define private public
 
+#include "json/json.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_subscriber.h"
 #include "bg_efficiency_resources_mgr.h"
-#include "json/json.h"
+#include "background_task_subscriber.h"
 
 using namespace testing::ext;
 
@@ -39,14 +40,12 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
-    inline void SleepForFC{
+    inline void SleepForFC(){
         std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
     }
 
     static std::shared_ptr<BgEfficiencyResourcesMgr> bgEfficiencyResourcesMgr_ {nullptr};
 };
-
-
 
 void BgEfficiencyResourcesMgrTest::SetUpTestCase()
 {
@@ -61,7 +60,7 @@ void BgEfficiencyResourcesMgrTest::TearDown()
 {
 }
 
-class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
+class TestBackgroundTaskSubscriber : public BackgroundTaskMgr::BackgroundTaskSubscriber {
 public:
     void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
 
