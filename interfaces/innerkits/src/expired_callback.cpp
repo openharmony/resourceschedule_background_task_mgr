@@ -17,23 +17,28 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-ExpiredCallback::ExpiredCallback()
-{
-    impl_ = new (std::nothrow) ExpiredCallbackImpl(*this);
-};
+ExpiredCallback::ExpiredCallback() {}
 
 ExpiredCallback::~ExpiredCallback() {}
+
+void ExpiredCallback::Init()
+{
+    impl_ = new (std::nothrow) ExpiredCallbackImpl(shared_from_this());
+}
 
 const sptr<ExpiredCallback::ExpiredCallbackImpl> ExpiredCallback::GetImpl() const
 {
     return impl_;
 }
 
-ExpiredCallback::ExpiredCallbackImpl::ExpiredCallbackImpl(ExpiredCallback &callback) : callback_(callback) {}
+ExpiredCallback::ExpiredCallbackImpl::ExpiredCallbackImpl(const std::shared_ptr<ExpiredCallback> &callback)
+    : callback_(callback) {}
 
 void ExpiredCallback::ExpiredCallbackImpl::OnExpired()
 {
-    callback_.OnExpired();
+    if (!callback_.expired()) {
+        callback_.lock()->OnExpired();
+    }
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
