@@ -17,8 +17,8 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_RECORD_STORAGE_H
 
 #include <unordered_map>
-#include "bgtaskmgr_inner_errors.h"
 #include "nlohmann/json.hpp"
+#include "bgtaskmgr_inner_errors.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {

@@ -118,7 +118,7 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
 {
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK
-        && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
+        /*&& DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK*/) {
         return ERR_OK;
     }
     return ERR_BGTASK_SYS_NOT_READY;
@@ -128,7 +128,7 @@ ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgrou
 {
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
-        && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
+        /*&& DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK*/) {
         return ERR_OK;
     }
     return ERR_BGTASK_SYS_NOT_READY;

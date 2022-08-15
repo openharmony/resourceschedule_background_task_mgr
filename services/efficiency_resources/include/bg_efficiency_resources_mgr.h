@@ -29,6 +29,7 @@
 #include "event_handler.h"
 #include "event_info.h"
 #include "remote_death_recipient.h"
+#include "running_process_info.h"
 
 #include "efficiency_resource_info.h"
 #include "ibackground_task_subscriber.h"
@@ -38,7 +39,6 @@
 #include "resource_application_record.h"
 #include "resources_subscriber_mgr.h"
 #include "app_state_observer.h"
-#include "running_process_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -56,8 +56,8 @@ public:
     ErrCode ResetAllEfficiencyResources();
     ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber>& subscriber);
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber>& subscriber);
-    void RemoveProcessRecord(int32_t pid);
-    void RemoveAppRecord(int32_t uid);
+    ErrCode RemoveProcessRecord(int32_t pid);
+    ErrCode RemoveAppRecord(int32_t uid);
     void HandlePersistenceData();
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
 
@@ -84,7 +84,6 @@ private:
         uint32_t cleanResource, EfficiencyResourcesEventType type);
     bool GetBundleNamesForUid(int32_t uid, std::string &bundleName);
     bool IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &bundleName);
-    bool RegisterAppStateObserver();
     void EraseRecordIf(ResourceRecordMap &infoMap, const std::function<bool(ResourceRecordPair)> &fun);
     void RecoverDelayedTask(bool isProcess, ResourceRecordMap& infoMap);
 private:

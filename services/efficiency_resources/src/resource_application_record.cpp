@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
+#include "iremote_object.h"
+
 #include "resource_application_record.h"
 #include "bg_efficiency_resources_mgr.h"
-
-#include "iremote_object.h"
+#include "efficiency_resource_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {

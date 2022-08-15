@@ -20,11 +20,12 @@
 #include <map>
 #include <memory>
 #include <algorithm>
+
 #include "singleton.h"
 #include "iremote_object.h"
 
-#include "ibackground_task_subscriber.h"
 #include "bgtaskmgr_inner_errors.h"
+#include "ibackground_task_subscriber.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -49,7 +50,7 @@ public:
 private:
     std::mutex subscriberLock_;
     std::map<sptr<IRemoteObject>, sptr<ObserverDeathRecipient>> subscriberRecipients_ {};
-    std::list<sptr<IBackgroundTaskSubscriber>> subscriberList_;
+    std::list<sptr<IBackgroundTaskSubscriber>> subscriberList_ {};
     sptr<ObserverDeathRecipient> deathRecipient_ {nullptr};
 };
 

@@ -18,15 +18,17 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-ResourcesSubscriberMgr::ResourcesSubscriberMgr()
-{
-    deathRecipient_ = new (std::nothrow) ObserverDeathRecipient(shared_from_this());
-}
+
+ResourcesSubscriberMgr::ResourcesSubscriberMgr() {}
 
 ResourcesSubscriberMgr::~ResourcesSubscriberMgr() {}
 
 ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
+    if (deathRecipient_ == nullptr) {
+        deathRecipient_ = new (std::nothrow) ObserverDeathRecipient(shared_from_this());
+    }
+    BGTASK_LOGD("ResourcesSubscriberMgr start subscriber");
     if (subscriber == NULL) {
         BGTASK_LOGI("subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;
@@ -50,7 +52,8 @@ ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscrib
     if (deathRecipient_ != nullptr) {
         remote->AddDeathRecipient(deathRecipient_);
     }
-    BGTASK_LOGI("subscribe efficiency resources success.");
+    
+    BGTASK_LOGI("subscribe efficiency resources task success.");
     return ERR_OK;
 }
 
@@ -78,7 +81,7 @@ ErrCode ResourcesSubscriberMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubsc
     }
     remote->RemoveDeathRecipient(deathRecipient_);
     subscriberList_.erase(subscriberIter);
-    BGTASK_LOGI("unsubscribe transient task success.");
+    BGTASK_LOGI("unsubscribe efficiency resources task success.");
     return ERR_OK;
 }
 
@@ -86,7 +89,7 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
     EfficiencyResourcesEventType type)
 {
     if (callbackInfo == nullptr) {
-        BGTASK_LOGW("ContinuousTaskRecord is null");
+        BGTASK_LOGW("ResourceCallbackInfo is null");
         return;
     }
 

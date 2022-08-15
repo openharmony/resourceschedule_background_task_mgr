@@ -16,11 +16,12 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_APPLICATION_RECORD_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_APPLICATION_RECORD_H
 
+#include <list>
+#include <sstream>
 #include "iremote_object.h"
 #include "parcel.h"
 #include "nlohmann/json.hpp"
-#include <list>
-#include <sstream>
+#include "efficiency_resource_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {

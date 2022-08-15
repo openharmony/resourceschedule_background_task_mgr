@@ -20,12 +20,12 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#include "limits.h"
 #include "errors.h"
 
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_manager_helper.h"
 #include "efficiency_resource_log.h"
-#include "limits.h"
 #include "resource_application_record.h"
 
 namespace OHOS {
@@ -50,6 +50,7 @@ ErrCode ResourceRecordStorage::RestoreResourceRecord(ResourceRecordMap &appRecor
 {
     std::string recordString {""};
     if (ReadStringFromFile(recordString, RESOURCE_RECORD_FILE_PATH) != ERR_OK) {
+        BGTASK_LOGD("can not read string form file: %{public}s", RESOURCE_RECORD_FILE_PATH);
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     nlohmann::json root;
