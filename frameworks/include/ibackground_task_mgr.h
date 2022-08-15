@@ -25,6 +25,7 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_param.h"
 #include "delay_suspend_info.h"
+#include "event_type.h"
 #include "iexpired_callback.h"
 #include "ibackground_task_subscriber.h"
 #include "want_agent.h"
@@ -111,6 +112,14 @@ public:
      */
     virtual ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) = 0;
 
+    /**
+     * @brief Report some state change infos to bgtask service.
+     * @param type state type.
+     * @param infos state detailed infos.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskMgr");
 
@@ -125,6 +134,7 @@ protected:
         UNSUBSCRIBE_BACKGROUND_TASK,
         GET_TRANSIENT_TASK_APPS,
         GET_CONTINUOUS_TASK_APPS,
+        REPORT_STATE_CHANGE_EVENT,
     };
 };
 }  // namespace BackgroundTaskMgr

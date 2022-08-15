@@ -864,6 +864,12 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
     return ERR_OK;
 }
 
+ErrCode BgContinuousTaskMgr::ReportStateChangeEvent(const EventType type, const std::string &infos)
+{
+    TaskDetectionManager::GetInstance()->ReportStateChangeEvent(type, infos);
+    return ERR_OK;
+}
+
 ErrCode BgContinuousTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     if (!isSysReady_.load()) {
