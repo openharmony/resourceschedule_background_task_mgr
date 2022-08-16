@@ -71,6 +71,7 @@ static constexpr char DEVICE_TYPE_PC[] = "pc";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
+static constexpr uint32_t DATA_TRANSFER_BGMODE_ID = 1;
 static constexpr int32_t DEFAULT_NOTIFICATION_ID = 0;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t DETECT_DELAY_TIME = 5000;
@@ -414,6 +415,11 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
 {
     if (!taskParam) {
         BGTASK_LOGE("continuous task params is null!");
+        return false;
+    }
+
+    if (taskParam->bgModeId_ == DATA_TRANSFER_BGMODE_ID) {
+        BGTASK_LOGE("data transfer need use download agent function");
         return false;
     }
 
