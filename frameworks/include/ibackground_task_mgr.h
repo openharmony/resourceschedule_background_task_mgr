@@ -120,6 +120,15 @@ public:
      */
     virtual ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos) = 0;
 
+    /**
+     * @brief Report task detect failed info to bgtask service.
+     * @param uid app uid.
+     * @param pid app pid.
+     * @param taskType continuous task type.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual ErrCode ReportTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskMgr");
 
@@ -135,6 +144,7 @@ protected:
         GET_TRANSIENT_TASK_APPS,
         GET_CONTINUOUS_TASK_APPS,
         REPORT_STATE_CHANGE_EVENT,
+        REPORT_DETECT_FAILED_INFO,
     };
 };
 }  // namespace BackgroundTaskMgr

@@ -163,29 +163,29 @@ void TaskDetectionManager::HandleSystemAbilityRemoved(int32_t systemAbilityId)
     switch (systemAbilityId) {
         case DISTRIBUTED_SCHED_SA_ID:
             multiDeviceDetect_->ClearData();
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRequiredStateChanged(CommonUtils::UNSET_UID,
                 CommonUtils::UNSET_PID, CommonUtils::MULTIDEVICE_CONNECTION_BGMODE_ID);
             break;
         case AUDIO_POLICY_SERVICE_ID:
             audioDetect_->ClearAudioData();
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRequiredStateChanged(CommonUtils::UNSET_UID,
                 CommonUtils::UNSET_PID, CommonUtils::AUDIO_PLAYBACK_BGMODE_ID);
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRequiredStateChanged(CommonUtils::UNSET_UID,
                 CommonUtils::UNSET_PID, CommonUtils::AUDIO_RECORDING_BGMODE_ID);
             break;
         case LOCATION_LOCATOR_SA_ID:
             locationDetect_->ClearData();
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRequiredStateChanged(CommonUtils::UNSET_UID,
                 CommonUtils::UNSET_PID, CommonUtils::LOCATION_BGMODE_ID);
             break;
         case AVSESSION_SERVICE_ID:
             audioDetect_->ClearAVSessionData();
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRequiredStateChanged(CommonUtils::UNSET_UID,
                 CommonUtils::UNSET_PID, CommonUtils::AUDIO_PLAYBACK_BGMODE_ID);
             break;
         case BLUETOOTH_HOST_SYS_ABILITY_ID:
             bluetoothDetect_->ClearData();
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(CommonUtils::UNSET_UID,
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRequiredStateChanged(CommonUtils::UNSET_UID,
                 CommonUtils::UNSET_PID, CommonUtils::BLUETOOTH_INTERACTION_BGMODE_ID);
             break;
         default:
@@ -358,7 +358,7 @@ void TaskDetectionManager::ReportNeedRecheckTask(int32_t uid, uint32_t taskType)
 {
     auto reportTask = [=]() {
         if (!CheckTaskRunningState(uid, taskType)) {
-            BgContinuousTaskMgr::GetInstance()->ReportTaskRunningStateUnmet(uid,
+            BgContinuousTaskMgr::GetInstance()->ReportTaskRequiredStateChanged(uid,
                 CommonUtils::UNSET_PID, taskType);
         }
     };

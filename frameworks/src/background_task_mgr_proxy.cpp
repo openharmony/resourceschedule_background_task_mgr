@@ -329,12 +329,12 @@ ErrCode BackgroundTaskMgrProxy::ReportStateChangeEvent(const EventType type, con
     }
 
     if (!data.WriteInt32(static_cast<int32_t>(type))) {
-        BGTASK_LOGE("ReportStateChangeEvent parcel ability Name failed");
+        BGTASK_LOGE("ReportStateChangeEvent parcel event type failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
     if (!data.WriteString(infos)) {
-        BGTASK_LOGE("ReportStateChangeEvent parcel ability token failed");
+        BGTASK_LOGE("ReportStateChangeEvent parcel change event info failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
@@ -348,6 +348,43 @@ ErrCode BackgroundTaskMgrProxy::ReportStateChangeEvent(const EventType type, con
     }
     if (!reply.ReadInt32(result)) {
         BGTASK_LOGE("ReportStateChangeEvent read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return result;
+}
+
+ErrCode BackgroundTaskMgrProxy::ReportTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType)
+{
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteInt32(uid)) {
+        BGTASK_LOGE("ReportTaskRequiredStateChanged parcel uid failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteInt32(pid)) {
+        BGTASK_LOGE("ReportTaskRequiredStateChanged parcel pid failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteUint32(taskType)) {
+        BGTASK_LOGE("ReportTaskRequiredStateChanged parcel taskType failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+
+    ErrCode result = InnerTransact(REPORT_DETECT_FAILED_INFO, option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("ReportTaskRequiredStateChanged transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("ReportTaskRequiredStateChanged read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return result;

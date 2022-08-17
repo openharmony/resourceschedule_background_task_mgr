@@ -72,7 +72,7 @@ public:
     void InitRequiredResourceInfo();
     void Clear();
     int32_t GetBgTaskUid();
-    void ReportTaskRunningStateUnmet(int32_t uid, int32_t pid, uint32_t taskType);
+    void ReportTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType);
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);

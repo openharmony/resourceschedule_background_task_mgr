@@ -57,5 +57,10 @@ ErrCode BackgroundTaskMgrHelper::ReportStateChangeEvent(const EventType type, co
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ReportStateChangeEvent(type, infos);
 }
+
+ErrCode BackgroundTaskMgrHelper::ReportTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ReportTaskRequiredStateChanged(uid, pid, taskType);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
