@@ -13,32 +13,14 @@
  * limitations under the License.
  */
 
-#include "expired_callback.h"
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_EVENT_TYPE_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_EVENT_TYPE_H
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-ExpiredCallback::ExpiredCallback() {}
-
-ExpiredCallback::~ExpiredCallback() {}
-
-void ExpiredCallback::Init()
-{
-    impl_ = new (std::nothrow) ExpiredCallbackImpl(shared_from_this());
-}
-
-const sptr<ExpiredCallback::ExpiredCallbackImpl> ExpiredCallback::GetImpl() const
-{
-    return impl_;
-}
-
-ExpiredCallback::ExpiredCallbackImpl::ExpiredCallbackImpl(const std::shared_ptr<ExpiredCallback> &callback)
-    : callback_(callback) {}
-
-void ExpiredCallback::ExpiredCallbackImpl::OnExpired()
-{
-    if (!callback_.expired()) {
-        callback_.lock()->OnExpired();
-    }
-}
+enum class EventType: int32_t {
+    DIS_COMP_CHANGE,
+};
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_EVENT_TYPE_H
