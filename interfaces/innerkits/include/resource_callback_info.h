@@ -28,8 +28,8 @@ namespace BackgroundTaskMgr {
 class ResourceCallbackInfo : public Parcelable  {
 public:
     ResourceCallbackInfo() = default;
-    ResourceCallbackInfo(int32_t uid, int32_t pid, uint32_t resourceNumber, std::string bundleName) :
-        uid_(uid), pid_(pid), resourceNumber_(resourceNumber), bundleName_(bundleName) {}
+    ResourceCallbackInfo(int32_t uid, int32_t pid, uint32_t resourceNumber, std::string bundleName)
+        : uid_(uid), pid_(pid), resourceNumber_(resourceNumber), bundleName_(bundleName) {}
 
     /**
      * @brief Marshals a purpose into a parcel.
@@ -49,8 +49,8 @@ public:
 
     /**
      * @brief read date from a parcel, transform json to data
-     * 
-     * @param in 
+     *
+     * @param in
      * @return true read data from parcel seccessed
      * @return false failed
      */

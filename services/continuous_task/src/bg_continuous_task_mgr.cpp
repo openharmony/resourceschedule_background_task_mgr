@@ -433,6 +433,7 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
+    return ERR_OK;
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
@@ -458,7 +459,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-
+    
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord->bundleName_ = bundleName;
     continuousTaskRecord->abilityName_ = taskParam->abilityName_;
@@ -498,7 +499,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         BGTASK_LOGW("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
-
     if (cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
         SetCachedBundleInfo(continuousTaskRecord->uid_, continuousTaskRecord->userId_,
             continuousTaskRecord->bundleName_, continuousTaskRecord->appName_);
@@ -1038,6 +1038,7 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
         }
     }
     subscriberRecipients_.erase(objectProxy);
+    BGTASK_LOGI("suscriber death, remove it, list.size() is %{public}d", bgTaskSubscribers_  .size());
 }
 
 void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &abilityName)

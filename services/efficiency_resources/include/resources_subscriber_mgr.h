@@ -49,7 +49,6 @@ public:
 
 private:
     std::mutex subscriberLock_;
-    std::map<sptr<IRemoteObject>, sptr<ObserverDeathRecipient>> subscriberRecipients_ {};
     std::list<sptr<IBackgroundTaskSubscriber>> subscriberList_ {};
     sptr<ObserverDeathRecipient> deathRecipient_ {nullptr};
 };
@@ -57,12 +56,12 @@ private:
 class ObserverDeathRecipient final : public IRemoteObject::DeathRecipient {
 public:
     DISALLOW_COPY_AND_MOVE(ObserverDeathRecipient);
-    explicit ObserverDeathRecipient(const std::shared_ptr<ResourcesSubscriberMgr>& subscriberMgr);
+    explicit ObserverDeathRecipient();
     ~ObserverDeathRecipient() override;
     void OnRemoteDied(const wptr<IRemoteObject>& remote) override;
 
-private:
-    std::weak_ptr<ResourcesSubscriberMgr> subscriberMgr_;
+// private:
+//     wptr<ResourcesSubscriberMgr> subscriberMgr_;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

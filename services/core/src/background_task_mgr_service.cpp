@@ -60,16 +60,16 @@ void BackgroundTaskMgrService::OnStart()
 void BackgroundTaskMgrService::Init()
 {
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->Init();
-    BgContinuousTaskMgr::GetInstance()->Init();
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Init();
+    BgContinuousTaskMgr::GetInstance()->Init();
 }
 
 void BackgroundTaskMgrService::OnStop()
 {
     BgContinuousTaskMgr::GetInstance()->Clear();
+    DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Clear();
     state_ = ServiceRunningState::STATE_NOT_START;
     BGTASK_LOGI("background task manager stop");
-    DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Clear();
 }
 
 ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::u16string& reason,
@@ -116,9 +116,9 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
-        && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK
-        /*&& DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK*/) {
+    if (DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
+        && DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
+        && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
         return ERR_OK;
     }
     return ERR_BGTASK_SYS_NOT_READY;
@@ -126,9 +126,9 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
-        && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
-        /*&& DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK*/) {
+    if (DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
+        && DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
+        && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
         return ERR_OK;
     }
     return ERR_BGTASK_SYS_NOT_READY;
@@ -149,7 +149,8 @@ void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& 
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->HandleSubscriberDeath(remote);
 }
 
-ErrCode BackgroundTaskMgrService::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess)
+ErrCode BackgroundTaskMgrService::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo,
+    bool &isSuccess)
 {
     return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->ApplyEfficiencyResources(resourceInfo, isSuccess);
 }
@@ -214,7 +215,12 @@ void BackgroundTaskMgrService::DumpUsage(std::string &result)
     "        --all                                list all running continuous task infos\n"
     "        --cancel_all                         cancel all running continuous task\n"
     "        --cancel {continuous task key}       cancel one task by specifying task key\n"
-    "        --detection --all                    list all collected info for task detection\n";
+    "        --detection --all                    list all collected info for task detection\n"
+    "    -E                                   efficiency resources commands;\n"
+    "        --all                                list all efficiency resource aplications\n"
+    "        --reset_all                          reset all efficiency resource aplications\n"
+    "        --resetapp {uid} {resource}          reset one application of uid by specifying \n"
+    "        --resetproc {pid} {resources}         reset one application of pid by specifying \n";;
 
     result.append(dumpHelpMsg);
 }  // namespace

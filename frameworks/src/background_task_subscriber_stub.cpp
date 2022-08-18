@@ -73,6 +73,12 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
         case ON_APP_CONTINUOUS_TASK_STOP: {
             return HandleOnAppContinuousTaskStop(data);
         }
+        case ON_APP_EFFICIENCY_RESOURCES_APPLY: {
+            return HandleOnAppEfficiencyResourcesApply(data);
+        }
+        case ON_APP_EFFICIENCY_RESOURCES_RESET: {
+            return HandleOnAppEfficiencyResourcesReset(data);
+        }
         case ON_EFFICIENCY_RESOURCES_APPLY: {
             return HandleOnEfficiencyResourcesApply(data);
         }
@@ -182,7 +188,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesApply(Messag
 {
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
-    if(!resourceCallbackInfo){
+    if (!resourceCallbackInfo) {
         BGTASK_LOGE("HandleOnAppEfficiencyResourcesApply ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
@@ -194,7 +200,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesReset(Messag
 {
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
-    if(!resourceCallbackInfo){
+    if (!resourceCallbackInfo) {
         BGTASK_LOGE("HandleOnAppEfficiencyResourcesReset ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
@@ -206,7 +212,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesApply(MessagePa
 {
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
-    if(!resourceCallbackInfo){
+    if (!resourceCallbackInfo) {
         BGTASK_LOGE("HandleOnEfficiencyResourcesApply ContinuousTaskCallbackInfo ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
@@ -218,7 +224,7 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesReset(MessagePa
 {
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
-    if(!resourceCallbackInfo){
+    if (!resourceCallbackInfo) {
         BGTASK_LOGE("HandleOnEfficiencyResourcesReset ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }

@@ -36,7 +36,7 @@ namespace BackgroundTaskMgr {
                 return nullptr;
             }
         }
-        return Common::NapiGetNull(env);;
+        return Common::NapiGetNull(env);
     }
 
     napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, EfficiencyResourceInfo &params)
@@ -55,7 +55,7 @@ namespace BackgroundTaskMgr {
         bool isProcess {false};
         NAPI_CALL(env, napi_get_named_property(env, argv[0], "number", &singleParam));
         if (Common::GetInt32NumberValue(env, singleParam, resourceNumber) == nullptr) {
-            BGTASK_LOGE("ParseParameters failed, requestId is nullptr.");
+            BGTASK_LOGE("ParseParameters failed, resourceNumber is nullptr.");
             return nullptr;
         }
         NAPI_CALL(env, napi_get_named_property(env, argv[0], "isApply", &singleParam));
@@ -77,7 +77,7 @@ namespace BackgroundTaskMgr {
             GetNamedBoolValue(env, argv[0], "isProcess", isProcess) == nullptr) {
             return nullptr;
         }
-        if(timeOut < 0) {
+        if (timeOut < 0) {
             BGTASK_LOGE("ParseParameters failed, timeOut is negatibve.");
             return nullptr;
         }
@@ -85,7 +85,8 @@ namespace BackgroundTaskMgr {
         return Common::NapiGetNull(env);
     }
 
-    bool CheckValidInfo(EfficiencyResourceInfo &params) {
+    bool CheckValidInfo(EfficiencyResourceInfo &params)
+    {
         if (params.GetResourceNumber() == 0 || (!params.IsPersist() && params.GetTimeOut() == 0)) {
             return false;
         }
@@ -101,7 +102,7 @@ namespace BackgroundTaskMgr {
         }
         if (!CheckValidInfo(params)) {
             BGTASK_LOGD("params make no sense, unnecessary to execute");
-            return Common::NapiGetboolean(env, true);
+            return Common::NapiGetboolean(env, false);
         }
         DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(params, isSuccess);
         return Common::NapiGetboolean(env, isSuccess);

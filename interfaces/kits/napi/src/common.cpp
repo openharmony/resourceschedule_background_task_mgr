@@ -231,7 +231,7 @@ napi_value Common::GetBooolValue(const napi_env &env, const napi_value &value, b
 
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     NAPI_ASSERT(env, valuetype == napi_boolean, "Wrong argument type. Boolean expected.");
-    NAPI_CALL(env,napi_get_value_bool(env, value, &result));
+    NAPI_CALL(env, napi_get_value_bool(env, value, &result));
     BGTASK_LOGD("GetBooolValue result: %{public}s", result?"true":"false");
 
     return Common::NapiGetNull(env);

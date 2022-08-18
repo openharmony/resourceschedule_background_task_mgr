@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_APPLICATION_RECORD_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_APPLICATION_RECORD_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_REC_APPLY_RECORD_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_REC_APPLY_RECORD_H
 
 #include <list>
 #include <sstream>
+
 #include "iremote_object.h"
 #include "parcel.h"
 #include "nlohmann/json.hpp"
-#include "efficiency_resource_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -29,7 +29,7 @@ namespace BackgroundTaskMgr {
 extern const char *ResourceTypeName[7];
 class BgEfficiencyResourcesMgr;
 
-struct PersistTime{
+struct PersistTime {
     uint32_t resourceIndex_ {0};
     bool isPersist_ {false};
     int64_t endTime_ {0};
@@ -40,8 +40,8 @@ struct PersistTime{
 class ResourceApplicationRecord {
 public:
     ResourceApplicationRecord() = default;
-    ResourceApplicationRecord(int32_t uid, int32_t pid, uint32_t resourceNumber, std::string bundleName) :
-        uid_(uid), pid_(pid), resourceNumber_(resourceNumber), bundleName_(bundleName) {}
+    ResourceApplicationRecord(int32_t uid, int32_t pid, uint32_t resourceNumber, std::string bundleName)
+        : uid_(uid), pid_(pid), resourceNumber_(resourceNumber), bundleName_(bundleName) {}
     ~ResourceApplicationRecord() = default;
     int32_t GetUid() const;
     int32_t GetPid() const;
@@ -61,8 +61,8 @@ private:
     std::string reason_ {""};
     std::list<PersistTime> resourceUnitList_ {};
 
-    friend class BgEfficiencyResourcesMgr;  
+    friend class BgEfficiencyResourcesMgr;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_APPLICATION_RECORD_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_REC_APPLY_RECORD_H

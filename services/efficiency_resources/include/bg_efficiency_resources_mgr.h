@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_BG_EFFICIENCY_RESOURCES_MGR_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_BG_EFFICIENCY_RESOURCES_MGR_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_EFFICIENCY_RES_MGR_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_EFFICIENCY_RES_MGR_H
 
 #include <memory>
 #include <mutex>
@@ -46,7 +46,8 @@ namespace BackgroundTaskMgr {
 class BgEfficiencyResourcesMgr : public DelayedSingleton<BgEfficiencyResourcesMgr>,
                             public std::enable_shared_from_this<BgEfficiencyResourcesMgr> {
 using ResourceRecordMap = std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>>;
-using ResourceRecordPair = std::pair<const int32_t, std::shared_ptr<OHOS::BackgroundTaskMgr::ResourceApplicationRecord>>;
+using ResourceRecordPair = std::pair<const int32_t, std::shared_ptr<
+    OHOS::BackgroundTaskMgr::ResourceApplicationRecord>>;
 public:
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     bool Init();
@@ -54,12 +55,10 @@ public:
     void Clear();
     ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess);
     ErrCode ResetAllEfficiencyResources();
-    ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber>& subscriber);
-    ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber>& subscriber);
+    ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
+    ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveProcessRecord(int32_t pid);
     ErrCode RemoveAppRecord(int32_t uid);
-    void HandlePersistenceData();
-    void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
 
 private:
     void ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
@@ -80,12 +79,16 @@ private:
         std::stringstream &stream, const char *headInfo);
     void ResetTimeOutResource(int32_t mapKey, uint32_t timeOutBit, bool isProcess);
     bool RemoveTargetResourceRecord(std::unordered_map<int32_t,
-        std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey, 
+        std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey,
         uint32_t cleanResource, EfficiencyResourcesEventType type);
     bool GetBundleNamesForUid(int32_t uid, std::string &bundleName);
     bool IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &bundleName);
     void EraseRecordIf(ResourceRecordMap &infoMap, const std::function<bool(ResourceRecordPair)> &fun);
     void RecoverDelayedTask(bool isProcess, ResourceRecordMap& infoMap);
+    void RegisterAppStateObserver();
+    void HandlePersistenceData();
+    void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
+
 private:
     std::atomic<bool> isSysReady_ {false};
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
@@ -101,4 +104,4 @@ private:
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_BG_EFFICIENCY_RESOURCES_MGR_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_EFFICIENCY_RES_MGR_H

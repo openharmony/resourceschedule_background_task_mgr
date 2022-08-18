@@ -32,6 +32,7 @@ ohos_shared_library("bgtaskmgr_service") {
   sources = [
     "//foundation/ability/dmsfwk/services/dtbschedmgr/src/distributed_sched_proxy.cpp",
     "common/src/app_state_observer.cpp",
+    "common/src/time_provider.cpp",
     "continuous_task/src/bg_continuous_task_mgr.cpp",
     "continuous_task/src/bundle_manager_helper.cpp",
     "continuous_task/src/continuous_task_record.cpp",
@@ -58,7 +59,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "transient_task/src/input_manager.cpp",
     "transient_task/src/pkg_delay_suspend_info.cpp",
     "transient_task/src/suspend_controller.cpp",
-    "transient_task/src/time_provider.cpp",
     "transient_task/src/timer_manager.cpp",
     "transient_task/src/watchdog.cpp",
   ]

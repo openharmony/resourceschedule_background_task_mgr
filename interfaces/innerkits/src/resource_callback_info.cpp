@@ -26,6 +26,7 @@ bool ResourceCallbackInfo::Marshalling(Parcel& out) const
     WRITE_PARCEL_WITH_RET(out, Int32, uid_, false);
     WRITE_PARCEL_WITH_RET(out, Int32, pid_, false);
     WRITE_PARCEL_WITH_RET(out, Uint32, resourceNumber_, false);
+    WRITE_PARCEL_WITH_RET(out, String, bundleName_, false);
     return true;
 }
 
@@ -34,6 +35,7 @@ bool ResourceCallbackInfo::ReadFromParcel(Parcel& in)
     READ_PARCEL_WITH_RET(in, Int32, uid_, false);
     READ_PARCEL_WITH_RET(in, Int32, pid_, false);
     READ_PARCEL_WITH_RET(in, Uint32, resourceNumber_, false);
+    READ_PARCEL_WITH_RET(in, String, bundleName_, false);
     return true;
 }
 
@@ -41,6 +43,7 @@ ResourceCallbackInfo* ResourceCallbackInfo::Unmarshalling(Parcel& in)
 {
     ResourceCallbackInfo* resourceInfo = new (std::nothrow) ResourceCallbackInfo();
     if (resourceInfo && !resourceInfo->ReadFromParcel(in)) {
+        BGTASK_LOGE("read ResourceCallbackInfo from parcel failed");
         delete resourceInfo;
         resourceInfo = nullptr;
     }

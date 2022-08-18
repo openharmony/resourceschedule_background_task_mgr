@@ -18,13 +18,14 @@
 #include <fcntl.h>
 #include <fstream>
 #include <unistd.h>
+#include <climits>
 #include <sys/stat.h>
 
-#include "limits.h"
 #include "errors.h"
+#include "bundle_manager_helper.h"
+#include "common_utils.h"
 
 #include "bgtaskmgr_inner_errors.h"
-#include "bundle_manager_helper.h"
 #include "efficiency_resource_log.h"
 #include "resource_application_record.h"
 
@@ -57,7 +58,7 @@ ErrCode ResourceRecordStorage::RestoreResourceRecord(ResourceRecordMap &appRecor
     return ConvertStringToMap(recordString, appRecord, processRecord);
 }
 
-void ResourceRecordStorage::ConvertMapToString(const ResourceRecordMap &appRecord, 
+void ResourceRecordStorage::ConvertMapToString(const ResourceRecordMap &appRecord,
     const ResourceRecordMap &processRecord, std::string &recordString)
 {
     nlohmann::json root;
@@ -67,7 +68,7 @@ void ResourceRecordStorage::ConvertMapToString(const ResourceRecordMap &appRecor
     nlohmann::json processValue;
     ConvertMapToJson(processRecord, processValue);
     root[PROCESS_RESOURCE_RECORD] = processValue;
-    recordString = root.dump();
+    recordString = root.dump(CommonUtils::JSON_FORMAT);
 }
 
 void ResourceRecordStorage::ConvertMapToJson(const ResourceRecordMap &appRecord, nlohmann::json &root)
@@ -79,7 +80,7 @@ void ResourceRecordStorage::ConvertMapToJson(const ResourceRecordMap &appRecord,
     }
 }
 
-ErrCode ResourceRecordStorage::ConvertStringToMap(const std::string &recordString, 
+ErrCode ResourceRecordStorage::ConvertStringToMap(const std::string &recordString,
     ResourceRecordMap &appRecord, ResourceRecordMap &processRecord)
 {
     nlohmann::json appRecordJson;
@@ -101,12 +102,12 @@ void ResourceRecordStorage::ConvertJsonToMap(const nlohmann::json &value, Resour
     }
 }
 
-ErrCode ResourceRecordStorage::ConvertStringToJson(const std::string &recordString, 
+ErrCode ResourceRecordStorage::ConvertStringToJson(const std::string &recordString,
     nlohmann::json &appRecord, nlohmann::json &processRecord)
 {
     nlohmann::json root = nlohmann::json::parse(recordString, nullptr, false);
-    if (root.is_discarded()) {
-        BGTASK_LOGE("failed due to data is discarded");
+    if (root.is_null() || root.is_discarded()) {
+        BGTASK_LOGE("failed due to data is discarded or record is null");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     appRecord = root.at(APP_RESOURCE_RECORD);

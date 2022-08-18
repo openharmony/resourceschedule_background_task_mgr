@@ -87,7 +87,7 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
     };
     handler->PostTask(task, TASK_ON_PROCESS_DIED);
 
-    if(bgEfficiencyResourcesMgr == nullptr) {
+    if (bgEfficiencyResourcesMgr == nullptr) {
         BGTASK_LOGE("bgEfficiencyResourcesMgr is null");
         return;
     }
@@ -103,10 +103,10 @@ void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData 
     auto uid = appStateData.uid;
     auto bundleName = appStateData.bundleName;
     auto state = appStateData.state;
-    if (state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_TERMINATED) || state == 
+    if (state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_TERMINATED) || state ==
         static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END)) {
         auto bgEfficiencyResourcesMgr = bgEfficiencyResourcesMgr_.lock();
-        if(bgEfficiencyResourcesMgr == nullptr) {
+        if (bgEfficiencyResourcesMgr == nullptr) {
             BGTASK_LOGE("bgEfficiencyResourcesMgr is null");
             return;
         }

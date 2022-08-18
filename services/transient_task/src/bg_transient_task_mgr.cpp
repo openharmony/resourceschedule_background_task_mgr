@@ -392,18 +392,22 @@ void BgTransientTaskMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& remote
         return;
     }
 
-    handler_->PostSyncTask([&]() {
-        auto findSuscriber = [&remote](const auto& subscriberList) {
-            return remote == subscriberList->AsObject();
-        };
-        auto subscriberIter = find_if(subscriberList_.begin(), subscriberList_.end(), findSuscriber);
-        if (subscriberIter == subscriberList_.end()) {
-            BGTASK_LOGI("suscriber death, remote in suscriber not found.");
-            return;
-        }
+    sptr<IRemoteObject> proxy = remote.promote();
+    if (!proxy) {
+        BGTASK_LOGE("get remote proxy failed");
+        return;
+    }
 
-        subscriberList_.erase(subscriberIter);
+    handler_->PostSyncTask([&]() {
+        for (auto iter = subscriberList_.begin(); iter != subscriberList_.end();) {
+        if ((*iter)->AsObject() == proxy) {
+            subscriberList_.erase(iter++);
+        } else {
+            iter++;
+        }
+    }
         BGTASK_LOGI("suscriber death, remove it.");
+        BGTASK_LOGI("suscriber death, remove it, list.size() is %{public}d", subscriberList_.size());
     });
 }
 

@@ -13,26 +13,27 @@
  * limitations under the License.
  */
 
+#include "resource_application_record.h"
+
+#include "common_utils.h"
 #include "iremote_object.h"
 
-#include "resource_application_record.h"
-#include "bg_efficiency_resources_mgr.h"
 #include "efficiency_resource_log.h"
-
+#include "bg_efficiency_resources_mgr.h"
 namespace OHOS {
 namespace BackgroundTaskMgr {
 const char *ResourceTypeName[7] = {
-   "CPU",
-   "COMMON_EVENT",
-   "TIMER",
-   "WORK_SCHEDULER",
-   "BLUETOOTH",
-   "GPS",
-   "AUDIO",
+    "CPU",
+    "COMMON_EVENT",
+    "TIMER",
+    "WORK_SCHEDULER",
+    "BLUETOOTH",
+    "GPS",
+    "AUDIO",
 };
 
-PersistTime::PersistTime(uint32_t resourceIndex, bool isPersist, int64_t endTime) :
-    resourceIndex_(resourceIndex), isPersist_(isPersist), endTime_(endTime) {}
+PersistTime::PersistTime(uint32_t resourceIndex, bool isPersist, int64_t endTime)
+    : resourceIndex_(resourceIndex), isPersist_(isPersist), endTime_(endTime) {}
 
 std::string ResourceApplicationRecord::GetBundleName() const
 {
@@ -68,7 +69,7 @@ std::string ResourceApplicationRecord::ParseToJsonStr()
 {
     nlohmann::json root;
     ParseToJson(root);
-    return root.dump();
+    return root.dump(CommonUtils::JSON_FORMAT);
 }
 
 void ResourceApplicationRecord::ParseToJson(nlohmann::json &root)
@@ -105,10 +106,10 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
     if (value.count("resourceUnitList") > 0) {
         const nlohmann::json &resourceVal = value.at("resourceUnitList");
         auto nums = static_cast<int32_t>(resourceVal.size());
-        for (int i=0; i<nums; ++i) {
+        for (int i = 0; i < nums; ++i) {
             const nlohmann::json &persistTime = resourceVal.at(i);
-            this->resourceUnitList_.emplace_back(PersistTime{persistTime.at("resourceIndex").get<uint32_t>(),
-                persistTime.at("isPersist").get<bool>(), persistTime.at("endTime").get<int64_t>()}); 
+            this->resourceUnitList_.emplace_back(PersistTime {persistTime.at("resourceIndex").get<uint32_t>(),
+                persistTime.at("isPersist").get<bool>(), persistTime.at("endTime").get<int64_t>()});
         }
     }
     return true;

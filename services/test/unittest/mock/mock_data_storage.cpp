@@ -41,18 +41,23 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
     std::shared_ptr<ContinuousTaskRecord>> &allRecord)
 {
     nlohmann::json root;
-    BGTASK_LOGI("allRecord.size is %{public}d ", allRecord.size());
+    BGTASK_LOGI("allRecord.size mock is %{public}d ", allRecord.size());
+    return ERR_OK;
     for (auto &iter : allRecord) {
         auto record = iter.second;
         std::string data = record->ParseToJsonStr();
         nlohmann::json recordJson = nlohmann::json::parse(data, nullptr, false);;
         if (!recordJson.is_null() && !recordJson.is_discarded()) {
             root[iter.first] = recordJson;
+        } else {
+            BGTASK_LOGI("recordJson is discarded");
         }
     }
     BGTASK_LOGI("strvalue.size is %{public}d ", root.size());
-    BGTASK_LOGI("strvalue is %{public}s", root.dump(CommonUtils::JSON_FORMAT).c_str());
-    return SaveJsonValueToFile(root.dump(CommonUtils::JSON_FORMAT), TASK_RECORD_FILE_PATH);
+    std::string strvalue = root.dump(CommonUtils::JSON_FORMAT);
+    BGTASK_LOGI("strvalue is %{public}s", strvalue.c_str());
+    return ERR_OK;
+    return SaveJsonValueToFile(strvalue, TASK_RECORD_FILE_PATH);
 }
 
 int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,

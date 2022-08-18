@@ -16,10 +16,10 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_EFFICIENCY_RESOURCE_INFO_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_EFFICIENCY_RESOURCE_INFO_H
 
-#include "parcel.h"
 #include <string>
 #include <memory>
 
+#include "parcel.h"
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class EfficiencyResourceInfo : public Parcelable {
@@ -105,11 +105,10 @@ public:
         return isProcess_;
     }
 
-
 private:
     bool ReadFromParcel(Parcel& in);
 
-    uint32_t resourceNumber_; 
+    uint32_t resourceNumber_;
     bool isApply_;
     int32_t timeOut_;
     std::string reason_;
