@@ -186,13 +186,13 @@ ErrCode BackgroundTaskManager::GetContinuousTaskApps(std::vector<std::shared_ptr
     return backgroundTaskMgrProxy_->GetContinuousTaskApps(list);
 }
 
-ErrCode BackgroundTaskManager::ReportTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType)
+ErrCode BackgroundTaskManager::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
     if (!GetBackgroundTaskManagerProxy()) {
         BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
         return ERR_BGTASK_SERVICE_NOT_CONNECTED;
     }
-    return backgroundTaskMgrProxy_->ReportTaskRequiredStateChanged(uid, pid, taskType);
+    return backgroundTaskMgrProxy_->StopContinuousTask(uid, pid, taskType);
 }
 
 void BackgroundTaskManager::ResetBackgroundTaskManagerProxy()

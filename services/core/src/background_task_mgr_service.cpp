@@ -150,9 +150,9 @@ ErrCode BackgroundTaskMgrService::ReportStateChangeEvent(const EventType type, c
     return BgContinuousTaskMgr::GetInstance()->ReportStateChangeEvent(type, infos);
 }
 
-ErrCode BackgroundTaskMgrService::ReportTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType)
+ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
-    BgContinuousTaskMgr::GetInstance()->ReportTaskRequiredStateChanged(uid, pid, taskType);
+    BgContinuousTaskMgr::GetInstance()->StopContinuousTask(uid, pid, taskType);
     return ERR_OK;
 }
 

@@ -55,7 +55,7 @@ private:
     ErrCode HandleGetTransientTaskApps(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetContinuousTaskApps(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleReportStateChangeEvent(MessageParcel& data, MessageParcel& reply);
-    ErrCode HandleReportTaskRequiredStateChanged(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleStopContinuousTask(MessageParcel& data, MessageParcel& reply);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

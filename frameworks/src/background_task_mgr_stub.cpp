@@ -60,7 +60,7 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
             std::bind(&BackgroundTaskMgrStub::HandleReportStateChangeEvent,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
         {BackgroundTaskMgrStub::REPORT_DETECT_FAILED_INFO,
-            std::bind(&BackgroundTaskMgrStub::HandleReportTaskRequiredStateChanged,
+            std::bind(&BackgroundTaskMgrStub::HandleStopContinuousTask,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
 };
 
@@ -265,14 +265,14 @@ ErrCode BackgroundTaskMgrStub::HandleReportStateChangeEvent(MessageParcel& data,
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskMgrStub::HandleReportTaskRequiredStateChanged(MessageParcel& data, MessageParcel& reply)
+ErrCode BackgroundTaskMgrStub::HandleStopContinuousTask(MessageParcel& data, MessageParcel& reply)
 {
     int32_t uid = data.ReadInt32();
     int32_t pid = data.ReadInt32();
     uint32_t taskType = data.ReadUint32();
-    ErrCode result = ReportTaskRequiredStateChanged(uid, pid, taskType);
+    ErrCode result = StopContinuousTask(uid, pid, taskType);
     if (!reply.WriteInt32(result)) {
-        BGTASK_LOGE("HandleReportTaskRequiredStateChanged write result failed, ErrCode=%{public}d", result);
+        BGTASK_LOGE("HandleStopContinuousTask write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;

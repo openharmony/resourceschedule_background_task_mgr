@@ -72,7 +72,7 @@ public:
     void InitRequiredResourceInfo();
     void Clear();
     int32_t GetBgTaskUid();
-    void ReportTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType);
+    void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
@@ -99,7 +99,7 @@ private:
     bool RegisterAppStateObserver();
     bool GetNotificationPrompt();
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName, const std::string &appName);
-    void HandleTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType);
+    void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
     void RemoveSpecifiedBgTask(uint32_t taskType);
     void DetectRequestedContinuousTask(const std::string &task);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
