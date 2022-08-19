@@ -79,7 +79,7 @@ static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static const bool IS_TASK_DETECTION_ENABLE
-    = system::GetBoolParameter("persist.sys.continuous_task_detection_switch", true);
+    = system::GetBoolParameter("persist.sys.continuous_task_detection_state", false);
 
 #ifndef HAS_OS_ACCOUNT_PART
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
@@ -666,19 +666,19 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     return result;
 }
 
-void BgContinuousTaskMgr::ReportTaskRunningStateUnmet(int32_t uid, int32_t pid, uint32_t taskType)
+void BgContinuousTaskMgr::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
-    BGTASK_LOGD("ReportTaskRunningStateUnmet begin uid: %{public}d, pid: %{public}d, taskType: %{public}d",
+    BGTASK_LOGD("StopContinuousTask begin uid: %{public}d, pid: %{public}d, taskType: %{public}d",
         uid, pid, taskType);
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
     }
-    auto task = [this, uid, pid, taskType]() { this->HandleTaskRequiredStateChanged(uid, pid, taskType); };
-    handler_->PostSyncTask(task);
+    auto task = [this, uid, pid, taskType]() { this->HandleStopContinuousTask(uid, pid, taskType); };
+    handler_->PostTask(task);
 }
 
-void BgContinuousTaskMgr::HandleTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType)
+void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
     // uid == -1 means target type continuoust task required condition is not met, so cancel all this kind of tasks;
     if (uid == CommonUtils::UNSET_UID) {

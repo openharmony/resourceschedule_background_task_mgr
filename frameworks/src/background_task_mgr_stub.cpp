@@ -59,6 +59,9 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::REPORT_STATE_CHANGE_EVENT,
             std::bind(&BackgroundTaskMgrStub::HandleReportStateChangeEvent,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+        {BackgroundTaskMgrStub::REPORT_DETECT_FAILED_INFO,
+            std::bind(&BackgroundTaskMgrStub::HandleStopContinuousTask,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
 };
 
 ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
@@ -257,6 +260,19 @@ ErrCode BackgroundTaskMgrStub::HandleReportStateChangeEvent(MessageParcel& data,
     ErrCode result = ReportStateChangeEvent(type, infos);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleReportStateChangeEvent write result failed, ErrCode=%{public}d", result);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleStopContinuousTask(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t uid = data.ReadInt32();
+    int32_t pid = data.ReadInt32();
+    uint32_t taskType = data.ReadUint32();
+    ErrCode result = StopContinuousTask(uid, pid, taskType);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleStopContinuousTask write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;
