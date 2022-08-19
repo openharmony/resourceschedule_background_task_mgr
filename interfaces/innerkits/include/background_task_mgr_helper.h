@@ -79,7 +79,7 @@ public:
     static ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos);
 
     /**
-     * @brief Report task detect failed info to bgtask service.
+     * @brief Report task required state changed info to bgtask service.
      * @param uid app uid.
      * @param pid app pid.
      * @param taskType continuous task type.
