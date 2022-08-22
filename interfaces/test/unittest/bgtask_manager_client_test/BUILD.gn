@@ -20,13 +20,9 @@ module_output_path = "background_task_mgr/unittest"
 ohos_unittest("bgtask_client_unit_test") {
   module_out_path = module_output_path
   cflags_cc = []
-  include_dirs = [
-    "${bgtaskmgr_interfaces_path}/innerkits/include",
-  ]
+  include_dirs = [ "${bgtaskmgr_interfaces_path}/innerkits/include" ]
 
-  sources = [
-    "bgtask_client_unit_test.cpp",
-  ]
+  sources = [ "bgtask_client_unit_test.cpp" ]
 
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",

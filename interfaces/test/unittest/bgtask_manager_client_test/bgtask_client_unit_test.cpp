@@ -23,7 +23,7 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class BgTaskManagerClientTest : public testing::Test {
+class BgTaskClientUnitTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
@@ -31,13 +31,13 @@ public:
     void TearDown();
 };
 
-void BgTaskManagerClientTest::SetUpTestCase() {}
+void BgTaskClientUnitTest::SetUpTestCase() {}
 
-void BgTaskManagerClientTest::TearDownTestCase() {}
+void BgTaskClientUnitTest::TearDownTestCase() {}
 
-void BgTaskManagerClientTest::SetUp() {}
+void BgTaskClientUnitTest::SetUp() {}
 
-void BgTaskManagerClientTest::TearDown() {}
+void BgTaskClientUnitTest::TearDown() {}
 
 /**
  * @tc.name: ReportStateChangeEvent_001
@@ -45,7 +45,7 @@ void BgTaskManagerClientTest::TearDown() {}
  * @tc.type: FUNC
  * @tc.require: SR000H0G4B AR000H2MSF AR000H2MSG AR000H2MSI AR000H2MSJ AR000H2MSH
  */
-HWTEST_F(BgTaskManagerClientTest, ReportStateChangeEvent_001, TestSize.Level1)
+HWTEST_F(BgTaskClientUnitTest, ReportStateChangeEvent_001, TestSize.Level1)
 {
     EXPECT_EQ((int32_t)BackgroundTaskMgrHelper::ReportStateChangeEvent(
         EventType::DIS_COMP_CHANGE, "test"), (int32_t)ERR_OK);
