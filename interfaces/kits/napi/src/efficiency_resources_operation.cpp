@@ -87,7 +87,8 @@ namespace BackgroundTaskMgr {
 
     bool CheckValidInfo(EfficiencyResourceInfo &params)
     {
-        if (params.GetResourceNumber() == 0 || (!params.IsPersist() && params.GetTimeOut() == 0)) {
+        if (params.GetResourceNumber() == 0 || (params.IsApply() && !params.IsPersist()
+            && params.GetTimeOut() == 0)) {
             return false;
         }
         return true;

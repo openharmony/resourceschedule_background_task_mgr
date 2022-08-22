@@ -203,7 +203,7 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
         return false;
     }
     if (resourceInfo->GetResourceNumber() == 0 || resourceInfo->GetResourceNumber() > MAX_RESOURCE_NUMBER
-        || (!resourceInfo->IsPersist() && resourceInfo->GetTimeOut() <= 0)) {
+        || (resourceInfo->IsApply() && !resourceInfo->IsPersist() && resourceInfo->GetTimeOut() <= 0)) {
         BGTASK_LOGE("efficiency resources params invalid!");
         return false;
     }
@@ -257,7 +257,7 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(const std::shared_p
             callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), callbackInfo->GetBundleName()));
     } else {
         iter->second->reason_ = resourceInfo->GetReason();
-        iter->second->resourceNumber_ &= callbackInfo->GetResourceNumber();
+        iter->second->resourceNumber_ |= callbackInfo->GetResourceNumber();
     }
     iter = infoMap.find(mapKey);
     BGTASK_LOGI("UpdateResourcesEndtime before");
@@ -364,10 +364,10 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
         BGTASK_LOGI("reset efficiency resources failed, calling info is illegal.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    BGTASK_LOGI("reset efficiency resources uid : %{public}d, pid : %{public}d, bundle name : %{public}s", uid,
-        pid, bundleName.c_str());
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, MAX_RESOURCE_NUMBER, bundleName);
+    BGTASK_LOGI("reset efficiency resources uid : %{public}d, pid : %{public}d, resource number : %{public}d", uid,
+        pid, callbackInfo->GetResourceNumber());
     ResetEfficiencyResourcesInner(callbackInfo, false);
     return ERR_OK;
 }
@@ -388,7 +388,7 @@ void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
 {
     BGTASK_LOGI("ResetEfficiencyResourcesInner locked before");
     std::lock_guard<std::mutex> lock(callbackLock_);
-    BGTASK_LOGI("ResetEfficiencyResourcesInner lend");
+    BGTASK_LOGI("ResetEfficiencyResourcesInner locked end");
     if (!isProcess) {
         RemoveTargetResourceRecord(appResourceApplyMap_, callbackInfo->GetUid(),
             callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::APP_RESOURCE_RESET);
@@ -538,6 +538,7 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     EfficiencyResourcesEventType type)
 {
     BGTASK_LOGD("resource record key: %{public}d", mapKey);
+    BGTASK_LOGD("resource record size(): %{public}d", infoMap.size());
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end() || (iter->second->resourceNumber_ & cleanResource) == 0) {
         BGTASK_LOGW("remove single resource record failure, no matched task: %{public}d", mapKey);

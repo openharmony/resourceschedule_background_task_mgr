@@ -21,21 +21,22 @@ ohos_unittest("bgtask_unit_test") {
   module_out_path = module_output_path
   cflags_cc = []
   include_dirs = [
+    "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
+    "//base/global/resource_management/frameworks/resmgr/include",
+    "//third_party/icu/icu4c/source/i18n",
   ]
 
   sources = [
     "background_task_mgr_service_test.cpp",
     "bg_continuous_task_mgr_test.cpp",
-    "bg_efficiency_resources_mgr_test.cpp",
     "bg_transient_task_mgr_test.cpp",
     "mock/mock_bundle_manager_helper.cpp",
     "mock/mock_data_storage.cpp",
     "mock/mock_event_handler.cpp",
     "mock/mock_ipc.cpp",
     "mock/mock_notification_helper.cpp",
-    "mock/mock_resource_application_record.cpp",
     "mock/mock_resource_manager.cpp",
     "mock/mock_resource_record_storage.cpp",
     "mock/mock_task_detection_manager.cpp",
@@ -100,7 +101,7 @@ ohos_unittest("efficiency_mgr_unit_test") {
     "bg_efficiency_resources_mgr_test.cpp",
     "mock/mock_bundle_manager_helper.cpp",
     # "mock/mock_event_handler.cpp",
-    # "mock/mock_ipc.cpp",
+    "mock/mock_ipc.cpp",
     "mock/mock_resource_record_storage.cpp",
   ]
 

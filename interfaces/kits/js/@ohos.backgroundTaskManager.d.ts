@@ -275,7 +275,8 @@ declare namespace backgroundTaskManager {
         /**
          * True if apply action is for process, false is for package. Default value is false.
          */
-        isProcess?: false;
+        isProcess?: boolean;
+
         /**
          *  The apply reason.
          */
