@@ -195,12 +195,12 @@ HWTEST_F(BgContinuousTaskMgrTest, UnsubscribeContinuousTask_001, TestSize.Level1
 }
 
 /**
- * @tc.name: AudioPlaybackDetection
+ * @tc.name: AudioPlaybackDetection_001
  * @tc.desc: detect audio playback background mode.
  * @tc.type: FUNC
  * @tc.require: SR000H0G4B AR000H2MSF
  */
-HWTEST_F(BgContinuousTaskMgrTest, AudioPlaybackDetection, TestSize.Level1)
+HWTEST_F(BgContinuousTaskMgrTest, AudioPlaybackDetection_001, TestSize.Level1)
 {
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
@@ -222,12 +222,12 @@ HWTEST_F(BgContinuousTaskMgrTest, AudioPlaybackDetection, TestSize.Level1)
 }
 
 /**
- * @tc.name: AudioRecordingDetection
+ * @tc.name: AudioRecordingDetection_001
  * @tc.desc: detect audio recording background mode.
  * @tc.type: FUNC
  * @tc.require: SR000H0G4B AR000H2MSG
  */
-HWTEST_F(BgContinuousTaskMgrTest, AudioRecordingDetection, TestSize.Level1)
+HWTEST_F(BgContinuousTaskMgrTest, AudioRecordingDetection_001, TestSize.Level1)
 {
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
@@ -247,12 +247,12 @@ HWTEST_F(BgContinuousTaskMgrTest, AudioRecordingDetection, TestSize.Level1)
 }
 
 /**
- * @tc.name: LocationDetection
+ * @tc.name: LocationDetection_001
  * @tc.desc: detect location background mode.
  * @tc.type: FUNC
  * @tc.require: SR000H0G4B AR000H2MSI
  */
-HWTEST_F(BgContinuousTaskMgrTest, LocationDetection, TestSize.Level1)
+HWTEST_F(BgContinuousTaskMgrTest, LocationDetection_001, TestSize.Level1)
 {
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
@@ -272,12 +272,12 @@ HWTEST_F(BgContinuousTaskMgrTest, LocationDetection, TestSize.Level1)
 }
 
 /**
- * @tc.name: BluetoothInteractionDetection
+ * @tc.name: BluetoothInteractionDetection_001
  * @tc.desc: detect bluetooth interaction background mode.
  * @tc.type: FUNC
  * @tc.require: SR000H0G4B AR000H2MSJ
  */
-HWTEST_F(BgContinuousTaskMgrTest, BluetoothInteractionDetection, TestSize.Level1)
+HWTEST_F(BgContinuousTaskMgrTest, BluetoothInteractionDetection_001, TestSize.Level1)
 {
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
@@ -300,12 +300,12 @@ HWTEST_F(BgContinuousTaskMgrTest, BluetoothInteractionDetection, TestSize.Level1
 }
 
 /**
- * @tc.name: MultiDeviceConnectionDetection
+ * @tc.name: MultiDeviceConnectionDetection_001
  * @tc.desc: detect multi-device interaction background mode.
  * @tc.type: FUNC
  * @tc.require: SR000H0G4B AR000H2MSH
  */
-HWTEST_F(BgContinuousTaskMgrTest, MultiDeviceConnectionDetection, TestSize.Level1)
+HWTEST_F(BgContinuousTaskMgrTest, MultiDeviceConnectionDetection_001, TestSize.Level1)
 {
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
