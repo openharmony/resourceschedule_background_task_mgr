@@ -62,6 +62,7 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     TaskDetectionManager::GetInstance()->multiDeviceDetect_ = std::make_shared<MultiDeviceDetect>();
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->IS_TASK_DETECTION_ENABLE = true;
 }
 
 void BgContinuousTaskMgrTest::TearDownTestCase() {}
