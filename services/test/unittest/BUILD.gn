@@ -26,12 +26,12 @@ ohos_unittest("bgtask_unit_test") {
   ]
 
   sources = [
-    # "background_task_mgr_service_test.cpp",
+    "background_task_mgr_service_test.cpp",
     "bg_continuous_task_mgr_test.cpp",
-    # "bg_efficiency_resources_mgr_test.cpp",
-    # "bg_transient_task_mgr_test.cpp",
+    "bg_efficiency_resources_mgr_test.cpp",
+    "bg_transient_task_mgr_test.cpp",
     "mock/mock_bundle_manager_helper.cpp",
-    # "mock/mock_data_storage.cpp",
+    "mock/mock_data_storage.cpp",
     "mock/mock_event_handler.cpp",
     "mock/mock_ipc.cpp",
     "mock/mock_notification_helper.cpp",

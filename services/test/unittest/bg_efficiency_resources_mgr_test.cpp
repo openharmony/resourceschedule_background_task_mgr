@@ -30,9 +30,9 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-// static constexpr int32_t SLEEP_TIME = 2000;
-// static constexpr int32_t REMAIN_TIME = 1000;
-// static constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
+static constexpr int32_t SLEEP_TIME = 2000;
+static constexpr int32_t REMAIN_TIME = 1000;
+static constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
 static constexpr char MOCK_EFFICIENCY_RESOURCES_MGR_NAME[] = "MockEfficiencyResourcesMgr";
 
 class BgEfficiencyResourcesMgrTest : public testing::Test {
