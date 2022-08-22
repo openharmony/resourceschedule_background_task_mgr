@@ -161,6 +161,15 @@ ErrCode BackgroundTaskManager::ResetAllEfficiencyResources()
     return ret;
 }
 
+ErrCode BackgroundTaskManager::ReportStateChangeEvent(const EventType type, const std::string &infos)
+{
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
+    }
+    return backgroundTaskMgrProxy_->ReportStateChangeEvent(type, infos);
+}
+
 bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
 {
     if (backgroundTaskMgrProxy_ != nullptr) {

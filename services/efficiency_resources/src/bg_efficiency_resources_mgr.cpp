@@ -36,7 +36,7 @@ static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_RESET_ALL[] = "--reset_all";
 static constexpr char DUMP_PARAM_RESET_APP[] = "--resetapp";
 static constexpr char DUMP_PARAM_RESET_PROC[] = "--resetproc";
-static constexpr int32_t DELAY_TIME = 2000;
+static constexpr int32_t DELAY_TIME = 500;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 4;
 static constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
 static constexpr uint32_t MAX_RESOURCE_NUMBER = (1 << MAX_RESOURCES_TYPE_NUM) - 1;
@@ -105,8 +105,9 @@ void BgEfficiencyResourcesMgr::HandlePersistenceData()
     }
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
     appMgrClient->GetAllRunningProcesses(allAppProcessInfos);
+    BGTASK_LOGI("HandlePersistenceData locked before");
     std::lock_guard<std::mutex> lock(callbackLock_);
-    BGTASK_LOGI("HandlePersistenceData locked");
+    BGTASK_LOGI("HandlePersistenceData locked end");
     CheckPersistenceData(allAppProcessInfos);
     RecoverDelayedTask(true, resourceApplyMap_);
     RecoverDelayedTask(false, appResourceApplyMap_);
@@ -168,8 +169,9 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid)
         BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed.");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
+    BGTASK_LOGI("RemoveAppRecord locked before");
     std::lock_guard<std::mutex> lock(callbackLock_);
-    BGTASK_LOGI("RemoveAppRecord locked");
+    BGTASK_LOGI("RemoveAppRecord locked end");
     EraseRecordIf(appResourceApplyMap_, [uid](const auto &iter) { return iter.first == uid; });
     return recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
 }
@@ -180,8 +182,9 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t pid)
         BGTASK_LOGW("Efficiency resources manager is not ready, RemoveProcessRecord failed..");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
+    BGTASK_LOGI("RemoveProcessRecord locked before");
     std::lock_guard<std::mutex> lock(callbackLock_);
-    BGTASK_LOGI("RemoveProcessRecord locked");
+    BGTASK_LOGI("RemoveProcessRecord locked end");
     EraseRecordIf(resourceApplyMap_, [pid](const auto &iter) { return iter.first == pid; });
     return recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
 }
@@ -243,8 +246,9 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
 void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo>
     &callbackInfo, const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
+    BGTASK_LOGI("ApplyEfficiencyResourcesInner locked before");
     std::lock_guard<std::mutex> lock(callbackLock_);
-    BGTASK_LOGI("ApplyEfficiencyResourcesInner locked");
+    BGTASK_LOGI("ApplyEfficiencyResourcesInner locked end");
     int32_t mapKey = !resourceInfo->IsProcess() ? callbackInfo->GetUid() : callbackInfo->GetPid();
     auto &infoMap = !resourceInfo->IsProcess() ? appResourceApplyMap_ : resourceApplyMap_;
     auto iter = infoMap.find(mapKey);
@@ -256,11 +260,17 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(const std::shared_p
         iter->second->resourceNumber_ &= callbackInfo->GetResourceNumber();
     }
     iter = infoMap.find(mapKey);
-    UpdateResourcesEndtime(callbackInfo, iter->second, resourceInfo->IsPersist(),
-        resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
+    BGTASK_LOGI("UpdateResourcesEndtime before");
+    if (!resourceInfo->IsPersist()) {
+        UpdateResourcesEndtime(callbackInfo, iter->second, resourceInfo->IsPersist(),
+            resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
+    }
+    BGTASK_LOGI("UpdateResourcesEndtime end");
     subscriberMgr_->OnResourceChanged(callbackInfo, !resourceInfo->IsProcess() ?
         EfficiencyResourcesEventType::APP_RESOURCE_APPLY : EfficiencyResourcesEventType::RESOURCE_APPLY);
+    BGTASK_LOGI("UpdateResourcesEndtime end");
     recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
+    BGTASK_LOGI("ApplyEfficiencyResourcesInner locked exit ");
 }
 
 void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo>
@@ -298,18 +308,17 @@ void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<Reso
         mgr->ResetTimeOutResource(mapKey, timeOutBit, isProcess);
     };
     handler_->PostTask(task, timeOut);
-    subscriberMgr_->OnResourceChanged(callbackInfo, !isProcess ?
-        EfficiencyResourcesEventType::APP_RESOURCE_RESET : EfficiencyResourcesEventType::RESOURCE_RESET);
 }
 
 void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, uint32_t timeOutBit, bool isProcess)
 {
+    BGTASK_LOGI("ResetTimeOutResource locked before");
     std::lock_guard<std::mutex> lock(callbackLock_);
-    BGTASK_LOGI("ResetTimeOutResource locked");
+    BGTASK_LOGI("ResetTimeOutResource locked end");
     auto &infoMap = !isProcess ? appResourceApplyMap_ : resourceApplyMap_;
     auto type = !isProcess ? EfficiencyResourcesEventType::APP_RESOURCE_RESET :
         EfficiencyResourcesEventType::RESOURCE_RESET;
-    auto iter = infoMap.find(mapKey);
+    auto iter = infoMap.find(mapKey);  
     if (iter == infoMap.end()) {
         BGTASK_LOGI("Efficiency resource does not exist.");
         return;
@@ -377,8 +386,9 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
 void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
     const std::shared_ptr<ResourceCallbackInfo> &callbackInfo, bool isProcess)
 {
+    BGTASK_LOGI("ResetEfficiencyResourcesInner locked before");
     std::lock_guard<std::mutex> lock(callbackLock_);
-    BGTASK_LOGI("ResetEfficiencyResourcesInner locked");
+    BGTASK_LOGI("ResetEfficiencyResourcesInner lend");
     if (!isProcess) {
         RemoveTargetResourceRecord(appResourceApplyMap_, callbackInfo->GetUid(),
             callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::APP_RESOURCE_RESET);
@@ -435,8 +445,9 @@ ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dump
 ErrCode BgEfficiencyResourcesMgr::ShellDumpInner(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
+    BGTASK_LOGI("ShellDumpInner locked before");
     std::lock_guard<std::mutex> lock(callbackLock_);
-    BGTASK_LOGI("ShellDumpInner locked");
+    BGTASK_LOGI("ShellDumpInner locked end");
     if (dumpOption[1] == DUMP_PARAM_LIST_ALL) {
         DumpAllApplicationInfo(dumpInfo);
     } else if (dumpOption[1] == DUMP_PARAM_RESET_ALL) {

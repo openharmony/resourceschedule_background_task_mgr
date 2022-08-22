@@ -63,6 +63,7 @@ public:
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) override;
     ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess) override;
     ErrCode ResetAllEfficiencyResources() override;
+    ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);

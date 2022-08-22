@@ -116,18 +116,20 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    if (DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
-        && DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
+    if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
+        && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
         return ERR_OK;
+    } else {
+        UnsubscribeBackgroundTask(subscriber);
     }
     return ERR_BGTASK_SYS_NOT_READY;
 }
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    if (DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
-        && DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
+    if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
+        && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
         return ERR_OK;
     }
@@ -158,6 +160,11 @@ ErrCode BackgroundTaskMgrService::ApplyEfficiencyResources(const sptr<Efficiency
 ErrCode BackgroundTaskMgrService::ResetAllEfficiencyResources()
 {
     return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->ResetAllEfficiencyResources();
+}
+
+ErrCode BackgroundTaskMgrService::ReportStateChangeEvent(const EventType type, const std::string &infos)
+{
+    return BgContinuousTaskMgr::GetInstance()->ReportStateChangeEvent(type, infos);
 }
 
 int32_t BackgroundTaskMgrService::Dump(int32_t fd, const std::vector<std::u16string> &args)

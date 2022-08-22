@@ -24,13 +24,13 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-std::map<int32_t, std::shared_ptr<CallbackInstance>> callbackInstances_;
+std::map<int32_t, std::shared_ptr<ExpiredCallback>> callbackInstances_;
 static const uint32_t REQUEST_SUSPEND_DELAY_PARAMS = 2;
 
 struct CallbackReceiveDataWorker {
     napi_env env = nullptr;
     napi_ref ref = nullptr;
-    std::shared_ptr<CallbackInstance> callback = nullptr;
+    std::shared_ptr<ExpiredCallback> callback = nullptr;
 };
 
 CallbackInstance::CallbackInstance() {}
@@ -192,6 +192,7 @@ napi_value GetExpiredCallback(
 {
     napi_ref result = nullptr;
     callback = std::make_shared<CallbackInstance>();
+    callback->Init();
 
     napi_create_reference(env, value, 1, &result);
     callback->SetCallbackInfo(env, result);

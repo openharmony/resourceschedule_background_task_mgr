@@ -23,14 +23,12 @@ config("bgtaskmgr_service_public_config") {
     "transient_task/include",
     "test/include",
     "efficiency_resources/include",
-    "//foundation/ability/dmsfwk/services/dtbschedmgr/include",
   ]
 }
 
 ohos_shared_library("bgtaskmgr_service") {
   cflags_cc = []
   sources = [
-    "//foundation/ability/dmsfwk/services/dtbschedmgr/src/distributed_sched_proxy.cpp",
     "common/src/app_state_observer.cpp",
     "common/src/time_provider.cpp",
     "continuous_task/src/bg_continuous_task_mgr.cpp",
@@ -41,7 +39,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "continuous_task/src/task_notification_subscriber.cpp",
     "continuous_task/task_detection/src/audio_detect.cpp",
     "continuous_task/task_detection/src/bluetooth_detect.cpp",
-    "continuous_task/task_detection/src/distributed_component_listener_stub.cpp",
     "continuous_task/task_detection/src/location_detect.cpp",
     "continuous_task/task_detection/src/multi_device_detect.cpp",
     "continuous_task/task_detection/src/task_detection_manager.cpp",
@@ -69,8 +66,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits",
-    "//foundation/ability/dmsfwk/services/base:dmsbaseinner",
-    "//foundation/ability/dmsfwk/services/dtbschedmgr:distributedschedsvr",
   ]
 
   external_deps = [

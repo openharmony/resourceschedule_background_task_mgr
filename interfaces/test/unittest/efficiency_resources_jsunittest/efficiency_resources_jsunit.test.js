@@ -51,7 +51,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.desc: test apply a efficiency resource
      * @tc.type: FUNC
      */
-    it("EfficiencyResourcesJsTest", 0, async function (done) {
+    it("EfficiencyResourcesJsTest001", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest001---------------------------');
         let resRequest = {
             resourceType: 1,
@@ -65,12 +65,12 @@ describe("EfficiencyResourcesJsTest", function () {
     })
 
     /*
-     * @tc.name: EfficiencyResourcesJsTest001
+     * @tc.name: EfficiencyResourcesJsTest002
      * @tc.desc: test apply a efficiency resource
      * @tc.type: FUNC
      */
-    it("EfficiencyResourcesJsTest", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest001---------------------------');
+    it("EfficiencyResourcesJsTest002", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest002---------------------------');
         let resRequest = {
             resourceType: 1,
             isApply: true,
@@ -83,12 +83,12 @@ describe("EfficiencyResourcesJsTest", function () {
     })
 
     /*
-     * @tc.name: EfficiencyResourcesJsTest002
+     * @tc.name: EfficiencyResourcesJsTest003
      * @tc.desc: test apply a efficiency resource without resourceType
      * @tc.type: FUNC
      */
-    it("EfficiencyResourcesJsTest", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest002---------------------------');
+    it("EfficiencyResourcesJsTest003", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest003---------------------------');
         let resRequest = {
             isApply: true,
             timeOut: 0,
@@ -100,12 +100,12 @@ describe("EfficiencyResourcesJsTest", function () {
     })
 
     /*
-     * @tc.name: EfficiencyResourcesJsTest003
+     * @tc.name: EfficiencyResourcesJsTest004
      * @tc.desc: test apply a efficiency resource without isApply
      * @tc.type: FUNC
      */
-    it("EfficiencyResourcesJsTest", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest003---------------------------');
+    it("EfficiencyResourcesJsTest004", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest004---------------------------');
         let resRequest = {
             resourceType: 1,
             timeOut: 10,
@@ -117,12 +117,12 @@ describe("EfficiencyResourcesJsTest", function () {
     })
 
     /*
-     * @tc.name: EfficiencyResourcesJsTest004
+     * @tc.name: EfficiencyResourcesJsTest005
      * @tc.desc: test apply a efficiency resource without timeOut
      * @tc.type: FUNC
      */
-    it("EfficiencyResourcesJsTest", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest004---------------------------');
+    it("EfficiencyResourcesJsTest005", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest005---------------------------');
         let resRequest = {
             resourceType: 1,
             isApply: true,
@@ -134,12 +134,12 @@ describe("EfficiencyResourcesJsTest", function () {
     })
 
     /*
-     * @tc.name: EfficiencyResourcesJsTest005
+     * @tc.name: EfficiencyResourcesJsTest006
      * @tc.desc: test apply a efficiency resource without reason
      * @tc.type: FUNC
      */
-    it("EfficiencyResourcesJsTest", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest005---------------------------');
+    it("EfficiencyResourcesJsTest006", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest006---------------------------');
         let resRequest = {
             resourceType: 1,
             isApply: true,
@@ -151,12 +151,12 @@ describe("EfficiencyResourcesJsTest", function () {
     })
 
     /*
-     * @tc.name: EfficiencyResourcesJsTest006
+     * @tc.name: EfficiencyResourcesJsTest007
      * @tc.desc: test apply a efficiency resource with timeout equals to 0
      * @tc.type: FUNC
      */
-    it("EfficiencyResourcesJsTest", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest006---------------------------');
+    it("EfficiencyResourcesJsTest007", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest007---------------------------');
         let resRequest = {
             resourceType: 1,
             isApply: true,
@@ -170,12 +170,12 @@ describe("EfficiencyResourcesJsTest", function () {
     })
 
     /*
-     * @tc.name: EfficiencyResourcesJsTest007
+     * @tc.name: EfficiencyResourcesJsTest008
      * @tc.desc: test apply a efficiency resource with resourceType equals to 0
      * @tc.type: FUNC
      */
-    it("EfficiencyResourcesJsTest", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest007---------------------------');
+    it("EfficiencyResourcesJsTest008", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest008---------------------------');
         let resRequest = {
             resourceType: 0,
             isApply: true,
@@ -188,12 +188,12 @@ describe("EfficiencyResourcesJsTest", function () {
     })
 
     /*
-     * @tc.name: EfficiencyResourcesJsTest008
+     * @tc.name: EfficiencyResourcesJsTest009
      * @tc.desc: test apply a efficiency resource with isPersist
      * @tc.type: FUNC
      */
-    it("EfficiencyResourcesJsTest", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest008---------------------------');
+    it("EfficiencyResourcesJsTest009", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest009---------------------------');
         let resRequest = {
             resourceType: 1,
             isApply: true,
@@ -207,12 +207,12 @@ describe("EfficiencyResourcesJsTest", function () {
     })
 
     /*
-     * @tc.name: EfficiencyResourcesJsTest009
+     * @tc.name: EfficiencyResourcesJsTest010
      * @tc.desc: test apply a efficiency resource with isProcess
      * @tc.type: FUNC
      */
-    it("EfficiencyResourcesJsTest", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest009---------------------------');
+    it("EfficiencyResourcesJsTest010", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest010---------------------------');
         let resRequest = {
             resourceType: 1,
             isApply: true,

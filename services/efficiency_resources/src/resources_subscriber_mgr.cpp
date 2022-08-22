@@ -25,8 +25,6 @@ ResourcesSubscriberMgr::~ResourcesSubscriberMgr() {}
 
 ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    BGTASK_LOGE("return ERR_OK");
-    return ERR_OK;
     if (deathRecipient_ == nullptr) {
         deathRecipient_ = new (std::nothrow) ObserverDeathRecipient();
     }

@@ -126,6 +126,14 @@ public:
      * @return ERR_OK if success, else fail.
      */
     ErrCode ResetAllEfficiencyResources();
+    
+    /**
+     * @brief Report some state change infos to bgtask service.
+     * @param type state type.
+     * @param infos state detailed infos.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos);
 
 private:
     bool GetBackgroundTaskManagerProxy();

@@ -30,9 +30,10 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-static constexpr int32_t SLEEP_TIME = 2000;
-static constexpr int32_t REMAIN_TIME = 1000;
-static constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
+// static constexpr int32_t SLEEP_TIME = 2000;
+// static constexpr int32_t REMAIN_TIME = 1000;
+// static constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
+static constexpr char MOCK_EFFICIENCY_RESOURCES_MGR_NAME[] = "MockEfficiencyResourcesMgr";
 
 class BgEfficiencyResourcesMgrTest : public testing::Test {
 public:
@@ -53,9 +54,16 @@ void BgEfficiencyResourcesMgrTest::SetUpTestCase()
 {
     bgEfficiencyResourcesMgr_ = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance();
     bgEfficiencyResourcesMgr_->recordStorage_ = std::make_shared<ResourceRecordStorage>();
+    bgEfficiencyResourcesMgr_->subscriberMgr_ = DelayedSingleton<ResourcesSubscriberMgr>::GetInstance();
+    bgEfficiencyResourcesMgr_->runner_ = AppExecFwk::EventRunner::Create(MOCK_EFFICIENCY_RESOURCES_MGR_NAME);
+    bgEfficiencyResourcesMgr_->handler_ = std::make_shared<AppExecFwk::EventHandler>(bgEfficiencyResourcesMgr_->runner_);
+    bgEfficiencyResourcesMgr_->isSysReady_.store(true);
 }
 
-void BgEfficiencyResourcesMgrTest::TearDownTestCase() {}
+void BgEfficiencyResourcesMgrTest::TearDownTestCase()
+{
+    bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources();
+}
 
 void BgEfficiencyResourcesMgrTest::SetUp() {}
 
@@ -212,6 +220,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_001, TestSize
     resourceInfo->resourceNumber_ = 1;
     resourceInfo->isPersist_ = true;
     resourceInfo->reason_ = "apply";
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(resourceInfo, isSuccess), (int32_t)ERR_OK);
     resourceInfo->resourceNumber_ = 1 << 1;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(resourceInfo, isSuccess), (int32_t)ERR_OK);
@@ -240,6 +249,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_002, TestSize
     resourceInfo->resourceNumber_ = 1;
     resourceInfo->isPersist_ = true;
     resourceInfo->reason_ = "apply";
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(resourceInfo, isSuccess), (int32_t)ERR_OK);
     resourceInfo->resourceNumber_ = 1 << 1;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(resourceInfo, isSuccess), (int32_t)ERR_OK);

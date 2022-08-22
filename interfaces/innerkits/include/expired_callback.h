@@ -23,12 +23,17 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class ExpiredCallback {
+class ExpiredCallback : public std::enable_shared_from_this<ExpiredCallback> {
 public:
     /**
      * @brief Default constructor used to create a instance.
      */
     ExpiredCallback();
+
+    /**
+     * @brief Init something necessary.
+     */
+    void Init();
 
     /**
      * @brief Default destructor.
@@ -38,21 +43,21 @@ public:
     /**
      * @brief Callback when the transient task will be overtime.
      */
-    virtual void OnExpired()= 0;
+    virtual void OnExpired() = 0;
 
 private:
     class ExpiredCallbackImpl final : public ExpiredCallbackStub {
     public:
-        ExpiredCallbackImpl(ExpiredCallback &callback);
+        ExpiredCallbackImpl(const std::shared_ptr<ExpiredCallback> &callback);
         ~ExpiredCallbackImpl() {}
-        
+
         /**
          * @brief Notify the delayed transition to the suspended state times out.
          */
         void OnExpired() override;
 
     public:
-        ExpiredCallback &callback_;
+        std::weak_ptr<ExpiredCallback> callback_;
     };
 
 private:

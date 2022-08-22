@@ -62,6 +62,9 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::RESET_ALL_EFFICIENCY_RESOURCES,
             std::bind(&BackgroundTaskMgrStub::HandleResetAllEfficiencyResources,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+        {BackgroundTaskMgrStub::REPORT_STATE_CHANGE_EVENT,
+            std::bind(&BackgroundTaskMgrStub::HandleReportStateChangeEvent,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
 };
 
 ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
@@ -275,6 +278,21 @@ ErrCode BackgroundTaskMgrStub::HandleResetAllEfficiencyResources(MessageParcel& 
     ErrCode result = ResetAllEfficiencyResources();
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleCancelSuspendDelay Write result failed, ErrCode=%{public}d", result);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleReportStateChangeEvent(MessageParcel& data, MessageParcel& reply)
+{
+    std::string infos;
+    EventType type = static_cast<EventType>(data.ReadInt32());
+    if (!data.ReadString(infos)) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    ErrCode result = ReportStateChangeEvent(type, infos);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleReportStateChangeEvent write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;

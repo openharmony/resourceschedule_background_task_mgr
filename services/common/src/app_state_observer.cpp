@@ -20,7 +20,6 @@
 #include "system_ability_definition.h"
 
 #include "bg_continuous_task_mgr.h"
-#include "task_detection_manager.h"
 #include "continuous_task_log.h"
 #include "bg_efficiency_resources_mgr.h"
 
@@ -82,8 +81,7 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
     auto bgEfficiencyResourcesMgr = bgEfficiencyResourcesMgr_.lock();
 
     auto task = [=]() {
-        bgContinuousTaskMgr->OnProcessDied(processData.pid);
-        TaskDetectionManager::GetInstance()->HandleProcessDied(processData.uid, processData.pid);
+        bgContinuousTaskMgr->OnProcessDied(processData.uid, processData.pid);
     };
     handler->PostTask(task, TASK_ON_PROCESS_DIED);
 

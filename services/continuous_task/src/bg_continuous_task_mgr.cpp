@@ -433,7 +433,6 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
-    return ERR_OK;
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
@@ -864,6 +863,12 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
     return ERR_OK;
 }
 
+ErrCode BgContinuousTaskMgr::ReportStateChangeEvent(const EventType type, const std::string &infos)
+{
+    TaskDetectionManager::GetInstance()->ReportStateChangeEvent(type, infos);
+    return ERR_OK;
+}
+
 ErrCode BgContinuousTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     if (!isSysReady_.load()) {
@@ -1038,7 +1043,7 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
         }
     }
     subscriberRecipients_.erase(objectProxy);
-    BGTASK_LOGI("suscriber death, remove it, list.size() is %{public}d", bgTaskSubscribers_  .size());
+    BGTASK_LOGI("suscriber death, remove it, list.size() is %{public}d", bgTaskSubscribers_.size());
 }
 
 void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &abilityName)
@@ -1063,7 +1068,7 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
     }
 }
 
-void BgContinuousTaskMgr::OnProcessDied(int32_t pid)
+void BgContinuousTaskMgr::OnProcessDied(int32_t uid, int32_t pid)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
@@ -1083,6 +1088,10 @@ void BgContinuousTaskMgr::OnProcessDied(int32_t pid)
         } else {
             iter++;
         }
+    }
+
+    if (IS_TASK_DETECTION_ENABLE) {
+        TaskDetectionManager::GetInstance()->HandleProcessDied(uid, pid);
     }
 }
 
