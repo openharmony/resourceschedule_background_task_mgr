@@ -866,7 +866,9 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
 
 ErrCode BgContinuousTaskMgr::ReportStateChangeEvent(const EventType type, const std::string &infos)
 {
-    TaskDetectionManager::GetInstance()->ReportStateChangeEvent(type, infos);
+    if (IS_TASK_DETECTION_ENABLE) {
+        TaskDetectionManager::GetInstance()->ReportStateChangeEvent(type, infos);
+    }
     return ERR_OK;
 }
 
