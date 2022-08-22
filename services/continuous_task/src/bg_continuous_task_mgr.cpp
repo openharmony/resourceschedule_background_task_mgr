@@ -78,7 +78,7 @@ static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
-static bool IS_TASK_DETECTION_ENABLE
+static const bool IS_TASK_DETECTION_ENABLE
     = system::GetBoolParameter("persist.sys.continuous_task_detection_state", false);
 
 #ifndef HAS_OS_ACCOUNT_PART
