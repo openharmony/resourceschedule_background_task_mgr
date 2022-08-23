@@ -27,7 +27,6 @@ namespace {
 napi_value GetNamedBoolValue(const napi_env &env, napi_value &object, const char* utf8name,
     bool& result)
 {
-    BGTASK_LOGI("test 0.7");
     bool hasNamedProperty = false;
     napi_value boolValue;
     if (napi_has_named_property(env, object, utf8name, &hasNamedProperty) == napi_ok && hasNamedProperty) {
@@ -55,7 +54,6 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
     std::string reason {""};
     bool isPersist {false};
     bool isProcess {false};
-    BGTASK_LOGI("test 0.1");
 
     napi_status getStatus = napi_ok;
     NAPI_CALL(env, napi_get_named_property(env, argv[0], "resourceType", &singleParam));
@@ -65,7 +63,6 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
         return nullptr;
     }
 
-    BGTASK_LOGI("test 0.2");
     NAPI_CALL(env, napi_get_named_property(env, argv[0], "isApply", &singleParam));
     getStatus = napi_get_value_bool(env, singleParam, &isApply);
     if (getStatus != napi_ok) {
@@ -83,7 +80,6 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
         BGTASK_LOGE("ParseParameters failed, reason is nullptr.");
         return nullptr;
     }
-    BGTASK_LOGI("resaon : %{public}s", reason.c_str());
     if (GetNamedBoolValue(env, argv[0], "isPersist", isPersist) == nullptr ||
         GetNamedBoolValue(env, argv[0], "isProcess", isProcess) == nullptr) {
         return nullptr;
@@ -107,19 +103,15 @@ bool CheckValidInfo(EfficiencyResourceInfo &params)
 
 napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
 {
-    BGTASK_LOGI("test 0.0");
     EfficiencyResourceInfo params;
     bool isSuccess = false;
     napi_value result = nullptr;
     if (ParseParameters(env, info, params) == nullptr || !CheckValidInfo(params)) {
         NAPI_CALL(env, napi_get_boolean(env, isSuccess, &result));
-        BGTASK_LOGI("return result %{public}d", isSuccess);
         return result;
     }
-    BGTASK_LOGI("ApplyEfficiencyResources before");
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(params, isSuccess);
     NAPI_CALL(env, napi_get_boolean(env, isSuccess, &result));
-    BGTASK_LOGI("return result %{public}d", isSuccess);
     return result;
 }
 
