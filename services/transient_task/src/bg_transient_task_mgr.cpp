@@ -439,15 +439,13 @@ ErrCode BgTransientTaskMgr::SubscribeBackgroundTask(const sptr<IBackgroundTaskSu
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    ErrCode result = ERR_OK;
-    handler_->PostSyncTask([&]() {
+    handler_->PostTask([&]() {
         auto findSuscriber = [&remote](const auto& subscriberList) {
             return remote == subscriberList->AsObject();
         };
         auto subscriberIter = find_if(subscriberList_.begin(), subscriberList_.end(), findSuscriber);
         if (subscriberIter != subscriberList_.end()) {
             BGTASK_LOGE("request subscriber is already exists.");
-            result = ERR_BGTASK_OBJECT_EXISTS;
             return;
         }
 
@@ -457,7 +455,7 @@ ErrCode BgTransientTaskMgr::SubscribeBackgroundTask(const sptr<IBackgroundTaskSu
         subscriberList_.emplace_back(subscriber);
         BGTASK_LOGI("subscribe transient task success.");
     });
-    return result;
+    return ERR_OK;
 }
 
 ErrCode BgTransientTaskMgr::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
@@ -472,22 +470,20 @@ ErrCode BgTransientTaskMgr::UnsubscribeBackgroundTask(const sptr<IBackgroundTask
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    ErrCode result = ERR_OK;
-    handler_->PostSyncTask([&]() {
+    handler_->PostTask([&]() {
         auto findSuscriber = [&remote](const auto& subscriberList) {
             return remote == subscriberList->AsObject();
         };
         auto subscriberIter = find_if(subscriberList_.begin(), subscriberList_.end(), findSuscriber);
         if (subscriberIter == subscriberList_.end()) {
             BGTASK_LOGE("request subscriber is not exists.");
-            result = ERR_BGTASK_OBJECT_EXISTS;
             return;
         }
         remote->RemoveDeathRecipient(susriberDeathRecipient_);
         subscriberList_.erase(subscriberIter);
         BGTASK_LOGI("unsubscribe transient task success.");
     });
-    return result;
+    return ERR_OK;
 }
 
 ErrCode BgTransientTaskMgr::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)

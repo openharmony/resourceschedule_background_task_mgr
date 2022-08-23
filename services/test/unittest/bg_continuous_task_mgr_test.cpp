@@ -173,8 +173,6 @@ HWTEST_F(BgContinuousTaskMgrTest, SubscribeContinuousTask_001, TestSize.Level1)
     auto subscriber = new (std::nothrow) TestBackgroundTaskSubscriber();
     EXPECT_NE(subscriber, nullptr);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->AddSubscriber(subscriber->GetImpl()), (int32_t)ERR_OK);
-    SleepForFC();
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->AddSubscriber(subscriber->GetImpl()), (int32_t)ERR_BGTASK_OBJECT_EXISTS);
 }
 
 /**
@@ -185,8 +183,6 @@ HWTEST_F(BgContinuousTaskMgrTest, SubscribeContinuousTask_001, TestSize.Level1)
  */
 HWTEST_F(BgContinuousTaskMgrTest, UnsubscribeContinuousTask_001, TestSize.Level1)
 {
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->RemoveSubscriber(nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
-    SleepForFC();
     auto subscriber = new (std::nothrow) TestBackgroundTaskSubscriber();
     EXPECT_NE(subscriber, nullptr);
     bgContinuousTaskMgr_->AddSubscriber(subscriber->GetImpl());
