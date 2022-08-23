@@ -43,7 +43,7 @@ void BgTaskClientUnitTest::TearDown() {}
  * @tc.name: ReportStateChangeEvent_001
  * @tc.desc: report some state change infos to bgtask service api test.
  * @tc.type: FUNC
- * @tc.require: SR000H0G4B AR000H2MSF AR000H2MSG AR000H2MSI AR000H2MSJ AR000H2MSH
+ * @tc.require: issueI5ND60
  */
 HWTEST_F(BgTaskClientUnitTest, ReportStateChangeEvent_001, TestSize.Level1)
 {
