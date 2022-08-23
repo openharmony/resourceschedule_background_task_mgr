@@ -145,10 +145,10 @@ ErrCode BackgroundTaskManager::ReportStateChangeEvent(const EventType type, cons
 
 bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (backgroundTaskMgrProxy_ != nullptr) {
         return true;
     }
-    std::lock_guard<std::mutex> lock(mutex_);
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityManager == nullptr) {
