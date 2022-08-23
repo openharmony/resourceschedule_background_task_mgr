@@ -796,7 +796,7 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscrib
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    handler_->PostSyncTask([=]() {
+    handler_->PostTask([=]() {
         RemoveSubscriberInner(subscriber);
     });
     return ERR_OK;
