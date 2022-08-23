@@ -407,7 +407,7 @@ void BgTransientTaskMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& remote
         }
     }
         BGTASK_LOGI("suscriber death, remove it.");
-        BGTASK_LOGI("suscriber death, remove it, list.size() is %{public}d", subscriberList_.size());
+        BGTASK_LOGI("suscriber death, remove it, list.size() is %{public}d ", subscriberList_.size());
     });
 }
 

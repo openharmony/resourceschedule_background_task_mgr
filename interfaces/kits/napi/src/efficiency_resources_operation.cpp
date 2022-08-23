@@ -32,7 +32,8 @@ napi_value GetNamedBoolValue(const napi_env &env, napi_value &object, const char
     napi_value boolValue;
     if (napi_has_named_property(env, object, utf8name, &hasNamedProperty) == napi_ok && hasNamedProperty) {
         NAPI_CALL(env, napi_get_named_property(env, object, utf8name, &boolValue));
-        if (Common::GetBooolValue(env, boolValue, result) == nullptr) {
+        napi_status status = napi_get_value_bool(env, boolValue, &result);
+        if (status != napi_ok) {
             BGTASK_LOGE("ParseParameters failed, %{public}s is nullptr.", utf8name);
             return nullptr;
         }
@@ -55,19 +56,25 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
     bool isPersist {false};
     bool isProcess {false};
     BGTASK_LOGI("test 0.1");
+
+    napi_status getStatus = napi_ok;
     NAPI_CALL(env, napi_get_named_property(env, argv[0], "resourceType", &singleParam));
-    if (Common::GetInt32NumberValue(env, singleParam, resourceNumber) == nullptr) {
+    getStatus = napi_get_value_int32(env, singleParam, &resourceNumber);
+    if (getStatus != napi_ok) {
         BGTASK_LOGE("ParseParameters failed, resourceNumber is nullptr.");
         return nullptr;
     }
+
     BGTASK_LOGI("test 0.2");
     NAPI_CALL(env, napi_get_named_property(env, argv[0], "isApply", &singleParam));
-    if (Common::GetBooolValue(env, singleParam, isApply) == nullptr) {
+    getStatus = napi_get_value_bool(env, singleParam, &isApply);
+    if (getStatus != napi_ok) {
         BGTASK_LOGE("ParseParameters failed, isApply is nullptr.");
         return nullptr;
     }
     NAPI_CALL(env, napi_get_named_property(env, argv[0], "timeOut", &singleParam));
-    if (Common::GetInt32NumberValue(env, singleParam, timeOut) == nullptr) {
+    getStatus = napi_get_value_int32(env, singleParam, &timeOut);
+    if (getStatus != napi_ok) {
         BGTASK_LOGE("ParseParameters failed, timeOut is nullptr.");
         return nullptr;
     }
@@ -76,6 +83,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
         BGTASK_LOGE("ParseParameters failed, reason is nullptr.");
         return nullptr;
     }
+    BGTASK_LOGI("resaon : %{public}s", reason.c_str());
     if (GetNamedBoolValue(env, argv[0], "isPersist", isPersist) == nullptr ||
         GetNamedBoolValue(env, argv[0], "isProcess", isProcess) == nullptr) {
         return nullptr;
@@ -104,7 +112,6 @@ napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
     bool isSuccess = false;
     napi_value result = nullptr;
     if (ParseParameters(env, info, params) == nullptr || !CheckValidInfo(params)) {
-        BGTASK_LOGI("ParseParameters failed");
         NAPI_CALL(env, napi_get_boolean(env, isSuccess, &result));
         BGTASK_LOGI("return result %{public}d", isSuccess);
         return result;
