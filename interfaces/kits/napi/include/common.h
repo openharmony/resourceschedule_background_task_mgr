@@ -39,7 +39,7 @@ struct AsyncWorkData {
 
 class Common {
 public:
-    static napi_value NapiGetboolean(napi_env env, const bool &isValue);
+    static napi_value NapiGetboolean(const napi_env &env, const bool isValue);
 
     static napi_value NapiGetNull(napi_env env);
 

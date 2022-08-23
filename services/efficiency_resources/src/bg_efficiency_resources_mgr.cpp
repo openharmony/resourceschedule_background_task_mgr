@@ -36,7 +36,7 @@ static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_RESET_ALL[] = "--reset_all";
 static constexpr char DUMP_PARAM_RESET_APP[] = "--resetapp";
 static constexpr char DUMP_PARAM_RESET_PROC[] = "--resetproc";
-static constexpr int32_t DELAY_TIME = 500;
+static constexpr int32_t DELAY_TIME = 200;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 4;
 static constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
 static constexpr uint32_t MAX_RESOURCE_NUMBER = (1 << MAX_RESOURCES_TYPE_NUM) - 1;
@@ -213,6 +213,7 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
 ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess)
 {
+    BGTASK_LOGW("ApplyEfficiencyResources before");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready.");
         return ERR_BGTASK_SERVICE_NOT_READY;
@@ -352,6 +353,7 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, uint32_t tim
 
 ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
 {
+    BGTASK_LOGW("ResetAllEfficiencyResources before");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready.");
         return ERR_BGTASK_SERVICE_NOT_READY;

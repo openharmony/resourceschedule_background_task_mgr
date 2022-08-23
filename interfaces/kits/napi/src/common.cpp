@@ -43,10 +43,11 @@ AsyncWorkData::~AsyncWorkData()
     }
 }
 
-napi_value Common::NapiGetboolean(napi_env env, const bool &isValue)
+napi_value Common::NapiGetboolean(const napi_env &env, bool isValue)
 {
     napi_value result = nullptr;
-    napi_get_boolean(env, isValue, &result);
+    NAPI_CALL(env, napi_get_boolean(env, isValue, &result));
+    BGTASK_LOGI("test 2.1");
     return result;
 }
 
@@ -182,11 +183,12 @@ napi_value Common::GetU16StringValue(const napi_env &env, const napi_value &valu
 napi_value Common::GetInt32NumberValue(const napi_env &env, const napi_value &value, int32_t &result)
 {
     napi_valuetype valuetype = napi_undefined;
-
+    BGTASK_LOGI("1");
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    BGTASK_LOGI("2");
     NAPI_ASSERT(env, valuetype == napi_number, "Wrong argument type. Number or function expected.");
     napi_get_value_int32(env, value, &result);
-    BGTASK_LOGD("GetInt32NumberValue result: %{public}d", result);
+    BGTASK_LOGI("GetInt32NumberValue result: %{public}d", result);
 
     return Common::NapiGetNull(env);
 }
