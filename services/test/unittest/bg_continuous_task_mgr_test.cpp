@@ -198,7 +198,7 @@ HWTEST_F(BgContinuousTaskMgrTest, UnsubscribeContinuousTask_001, TestSize.Level1
  * @tc.name: AudioPlaybackDetection_001
  * @tc.desc: detect audio playback background mode.
  * @tc.type: FUNC
- * @tc.require: issueI5ND60
+ * @tc.require: issueI5NOUK
  */
 HWTEST_F(BgContinuousTaskMgrTest, AudioPlaybackDetection_001, TestSize.Level1)
 {
@@ -225,7 +225,7 @@ HWTEST_F(BgContinuousTaskMgrTest, AudioPlaybackDetection_001, TestSize.Level1)
  * @tc.name: AudioRecordingDetection_001
  * @tc.desc: detect audio recording background mode.
  * @tc.type: FUNC
- * @tc.require: issueI5ND60
+ * @tc.require: issueI5NOUK
  */
 HWTEST_F(BgContinuousTaskMgrTest, AudioRecordingDetection_001, TestSize.Level1)
 {
@@ -250,7 +250,7 @@ HWTEST_F(BgContinuousTaskMgrTest, AudioRecordingDetection_001, TestSize.Level1)
  * @tc.name: LocationDetection_001
  * @tc.desc: detect location background mode.
  * @tc.type: FUNC
- * @tc.require: issueI5ND60
+ * @tc.require: issueI5NOUK
  */
 HWTEST_F(BgContinuousTaskMgrTest, LocationDetection_001, TestSize.Level1)
 {
@@ -275,7 +275,7 @@ HWTEST_F(BgContinuousTaskMgrTest, LocationDetection_001, TestSize.Level1)
  * @tc.name: BluetoothInteractionDetection_001
  * @tc.desc: detect bluetooth interaction background mode.
  * @tc.type: FUNC
- * @tc.require: issueI5ND60
+ * @tc.require: issueI5NOUK
  */
 HWTEST_F(BgContinuousTaskMgrTest, BluetoothInteractionDetection_001, TestSize.Level1)
 {
@@ -303,7 +303,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BluetoothInteractionDetection_001, TestSize.Le
  * @tc.name: MultiDeviceConnectionDetection_001
  * @tc.desc: detect multi-device interaction background mode.
  * @tc.type: FUNC
- * @tc.require: issueI5ND60
+ * @tc.require: issueI5NOUK
  */
 HWTEST_F(BgContinuousTaskMgrTest, MultiDeviceConnectionDetection_001, TestSize.Level1)
 {
