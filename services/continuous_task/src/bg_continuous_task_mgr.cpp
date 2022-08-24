@@ -113,7 +113,7 @@ bool BgContinuousTaskMgr::Init()
     IPCSkeleton::SetCallingIdentity(identity);
     dataStorage_ = std::make_shared<DataStorage>();
     auto registerTask = [this]() { this->InitNecessaryState(); };
-    handler_->PostSyncTask(registerTask);
+    handler_->PostTask(registerTask);
     return true;
 }
 
