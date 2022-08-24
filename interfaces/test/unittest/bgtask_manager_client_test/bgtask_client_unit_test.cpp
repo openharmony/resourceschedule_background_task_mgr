@@ -25,23 +25,19 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class BgTaskClientUnitTest : public testing::Test {
 public:
-    static void SetUpTestCase() const;
-    static void TearDownTestCase() const;
-    void SetUp() const;
-    void TearDown()const;
+    static void SetUpTestCase();
+    static void TearDownTestCase();
+    void SetUp() override;
+    void TearDown() override;
 };
 
-void BgTaskClientUnitTest::SetUpTestCase() const
-{}
+void BgTaskClientUnitTest::SetUpTestCase() {}
 
-void BgTaskClientUnitTest::TearDownTestCase() const
-{}
+void BgTaskClientUnitTest::TearDownTestCase() {}
 
-void BgTaskClientUnitTest::SetUp() const
-{}
+void BgTaskClientUnitTest::SetUp() {}
 
-void BgTaskClientUnitTest::TearDown() const
-{}
+void BgTaskClientUnitTest::TearDown() {}
 
 /**
  * @tc.name: ReportStateChangeEvent_001
