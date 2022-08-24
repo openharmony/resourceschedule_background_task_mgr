@@ -226,7 +226,7 @@ void BackgroundTaskMgrService::DumpUsage(std::string &result)
     "    -E                                   efficiency resources commands;\n"
     "        --all                                list all efficiency resource aplications\n"
     "        --reset_all                          reset all efficiency resource aplications\n"
-    "        --resetapp {uid} {resource}          reset one application of uid by specifying \n"
+    "        --resetapp {uid} {resources}          reset one application of uid by specifying \n"
     "        --resetproc {pid} {resources}         reset one application of pid by specifying \n";;
 
     result.append(dumpHelpMsg);

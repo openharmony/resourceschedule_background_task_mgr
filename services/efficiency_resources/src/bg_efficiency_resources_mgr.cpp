@@ -36,7 +36,7 @@ static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_RESET_ALL[] = "--reset_all";
 static constexpr char DUMP_PARAM_RESET_APP[] = "--resetapp";
 static constexpr char DUMP_PARAM_RESET_PROC[] = "--resetproc";
-static constexpr int32_t DELAY_TIME = 200;
+static constexpr int32_t DELAY_TIME = 500;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 4;
 static constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
 static constexpr uint32_t MAX_RESOURCE_NUMBER = (1 << MAX_RESOURCES_TYPE_NUM) - 1;
@@ -58,6 +58,7 @@ bool BgEfficiencyResourcesMgr::Init()
         BGTASK_LOGE("BgEfficiencyResourcesMgr handler create failed!");
         return false;
     }
+    subscriberMgr_ = DelayedSingleton<ResourcesSubscriberMgr>::GetInstance();
     InitNecessaryState();
     BGTASK_LOGI("BgEfficiencyResourcesMgr finish Init");
     return true;
@@ -76,7 +77,6 @@ void BgEfficiencyResourcesMgr::InitNecessaryState()
         return;
     }
     RegisterAppStateObserver();
-    subscriberMgr_ = DelayedSingleton<ResourcesSubscriberMgr>::GetInstance();
     BGTASK_LOGI("necessary system service has been accessiable!");
     HandlePersistenceData();
     BGTASK_LOGW("appResourceApplyMap_.size(): %{public}d, resourceApplyMap_.size():  %{public}d!",
@@ -230,8 +230,8 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGI("apply efficiency resources failed, calling info is illegal.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    BGTASK_LOGI("apply efficiency resources uid : %{public}d, pid : %{public}d, bundle name : %{public}s", uid,
-        pid, bundleName.c_str());
+    BGTASK_LOGI("apply efficiency resources uid : %{public}d, pid : %{public}d, resourceNumber : %{public}u", uid,
+        pid, resourceInfo->GetResourceNumber());
     isSuccess = true;
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, resourceInfo->GetResourceNumber(), bundleName);
@@ -262,10 +262,8 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(const std::shared_p
     }
     iter = infoMap.find(mapKey);
     BGTASK_LOGI("UpdateResourcesEndtime before");
-    if (!resourceInfo->IsPersist()) {
-        UpdateResourcesEndtime(callbackInfo, iter->second, resourceInfo->IsPersist(),
-            resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
-    }
+    UpdateResourcesEndtime(callbackInfo, iter->second, resourceInfo->IsPersist(),
+        resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
     BGTASK_LOGI("UpdateResourcesEndtime end");
     subscriberMgr_->OnResourceChanged(callbackInfo, !resourceInfo->IsProcess() ?
         EfficiencyResourcesEventType::APP_RESOURCE_APPLY : EfficiencyResourcesEventType::RESOURCE_APPLY);
@@ -414,21 +412,13 @@ bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std:
 
 ErrCode BgEfficiencyResourcesMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("Efficiency resources manager is not ready.");
-        return ERR_BGTASK_SERVICE_NOT_READY;
-    }
-    BGTASK_LOGW("Efficiency resources manager is already ready.");
+    BGTASK_LOGW("AddSubscriber Efficiency resources manager is already ready.");
     return subscriberMgr_->AddSubscriber(subscriber);
 }
 
 ErrCode BgEfficiencyResourcesMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("Efficiency resources manager is not ready.");
-        return ERR_BGTASK_SERVICE_NOT_READY;
-    }
-    BGTASK_LOGW("Efficiency resources manager is already ready.");
+    BGTASK_LOGW("RemoveSubscriber Efficiency resources manager is already ready.");
     return subscriberMgr_->RemoveSubscriber(subscriber);
 }
 
@@ -466,7 +456,7 @@ ErrCode BgEfficiencyResourcesMgr::ShellDumpInner(const std::vector<std::string> 
 void BgEfficiencyResourcesMgr::DumpAllApplicationInfo(std::vector<std::string> &dumpInfo)
 {
     std::stringstream stream;
-    if (appResourceApplyMap_.empty()) {
+    if (appResourceApplyMap_.empty() && resourceApplyMap_.empty()) {
         dumpInfo.emplace_back("No running efficiency resources\n");
         return;
     }
@@ -489,14 +479,18 @@ void BgEfficiencyResourcesMgr::DumpApplicationInfoMap(std::unordered_map<int32_t
         stream << "\t\tbundleName: " << iter->second->GetBundleName() << "\n";
         stream << "\t\tuid: " << iter->second->GetUid() << "\n";
         stream << "\t\tpid: " << iter->second->GetPid() << "\n";
-        stream << "\t\resourceNumber: " << iter->second->GetResourceNumber() << "\n";
+        stream << "\t\tresourceNumber: " << iter->second->GetResourceNumber() << "\n";
         stream << "\t\treason: " << iter->second->GetReason() << "\n";
         int64_t curTime = TimeProvider::GetCurrentTime();
-        for(auto unitIter = iter->second->resourceUnitList_.begin();
-            unitIter != iter->second->resourceUnitList_.end(); ++unitIter) {
+        auto &resourceUnitList = iter->second->resourceUnitList_;
+        sort(resourceUnitList.begin(), resourceUnitList.end());
+        for(auto unitIter = resourceUnitList.begin();
+            unitIter != resourceUnitList.end(); ++unitIter) {
             stream << "\t\t\tresource type: " << ResourceTypeName[unitIter->resourceIndex_] << "\n";
             stream << "\t\t\tisPersist " << (unitIter->isPersist_ ? "true" : "false") << "\n";
-            stream << "\t\t\tremainTime " << curTime - unitIter->endTime_ << "\n";
+            if (!unitIter->isPersist_) {
+                stream << "\t\t\tremainTime " << unitIter->endTime_ - curTime << "\n";
+            }
         }
         stream << "\n";
         dumpInfo.emplace_back(stream.str());

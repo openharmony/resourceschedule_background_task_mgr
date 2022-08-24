@@ -35,6 +35,11 @@ const char *ResourceTypeName[7] = {
 PersistTime::PersistTime(uint32_t resourceIndex, bool isPersist, int64_t endTime)
     : resourceIndex_(resourceIndex), isPersist_(isPersist), endTime_(endTime) {}
 
+bool PersistTime::operator < (const PersistTime& rhs) const
+{
+    return resourceIndex_ < rhs.resourceIndex_;
+}
+
 std::string ResourceApplicationRecord::GetBundleName() const
 {
     return bundleName_;
