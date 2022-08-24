@@ -439,7 +439,7 @@ ErrCode BgTransientTaskMgr::SubscribeBackgroundTask(const sptr<IBackgroundTaskSu
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    handler_->PostTask([&]() {
+    handler_->PostTask([=]() {
         auto findSuscriber = [&remote](const auto& subscriberList) {
             return remote == subscriberList->AsObject();
         };
@@ -470,7 +470,7 @@ ErrCode BgTransientTaskMgr::UnsubscribeBackgroundTask(const sptr<IBackgroundTask
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    handler_->PostTask([&]() {
+    handler_->PostTask([=]() {
         auto findSuscriber = [&remote](const auto& subscriberList) {
             return remote == subscriberList->AsObject();
         };
