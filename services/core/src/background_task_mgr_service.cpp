@@ -145,11 +145,6 @@ void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& 
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->HandleSubscriberDeath(remote);
 }
 
-ErrCode BackgroundTaskMgrService::ReportStateChangeEvent(const EventType type, const std::string &infos)
-{
-    return BgContinuousTaskMgr::GetInstance()->ReportStateChangeEvent(type, infos);
-}
-
 ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
     BgContinuousTaskMgr::GetInstance()->StopContinuousTask(uid, pid, taskType);
@@ -208,8 +203,7 @@ void BackgroundTaskMgrService::DumpUsage(std::string &result)
     "    -C                                   continuous task commands:\n"
     "        --all                                list all running continuous task infos\n"
     "        --cancel_all                         cancel all running continuous task\n"
-    "        --cancel {continuous task key}       cancel one task by specifying task key\n"
-    "        --detection --all                    list all collected info for task detection\n";
+    "        --cancel {continuous task key}       cancel one task by specifying task key\n";
 
     result.append(dumpHelpMsg);
 }  // namespace

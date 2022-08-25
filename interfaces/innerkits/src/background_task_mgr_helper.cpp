@@ -53,11 +53,6 @@ ErrCode BackgroundTaskMgrHelper::GetContinuousTaskApps(std::vector<std::shared_p
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetContinuousTaskApps(list);
 }
 
-ErrCode BackgroundTaskMgrHelper::ReportStateChangeEvent(const EventType type, const std::string &infos)
-{
-    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ReportStateChangeEvent(type, infos);
-}
-
 ErrCode BackgroundTaskMgrHelper::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(uid, pid, taskType);

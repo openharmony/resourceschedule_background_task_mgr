@@ -56,10 +56,7 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::GET_CONTINUOUS_TASK_APPS,
             std::bind(&BackgroundTaskMgrStub::HandleGetContinuousTaskApps,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::REPORT_STATE_CHANGE_EVENT,
-            std::bind(&BackgroundTaskMgrStub::HandleReportStateChangeEvent,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::REPORT_DETECT_FAILED_INFO,
+        {BackgroundTaskMgrStub::STOP_CONTINUOUS_TASK,
             std::bind(&BackgroundTaskMgrStub::HandleStopContinuousTask,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
 };
@@ -246,21 +243,6 @@ ErrCode BackgroundTaskMgrStub::HandleGetContinuousTaskApps(MessageParcel& data, 
         if (!info->Marshalling(reply)) {
             return ERR_BGTASK_PARCELABLE_FAILED;
         }
-    }
-    return ERR_OK;
-}
-
-ErrCode BackgroundTaskMgrStub::HandleReportStateChangeEvent(MessageParcel& data, MessageParcel& reply)
-{
-    std::string infos;
-    EventType type = static_cast<EventType>(data.ReadInt32());
-    if (!data.ReadString(infos)) {
-        return ERR_BGTASK_PARCELABLE_FAILED;
-    }
-    ErrCode result = ReportStateChangeEvent(type, infos);
-    if (!reply.WriteInt32(result)) {
-        BGTASK_LOGE("HandleReportStateChangeEvent write result failed, ErrCode=%{public}d", result);
-        return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;
 }
