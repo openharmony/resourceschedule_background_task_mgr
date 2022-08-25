@@ -607,10 +607,10 @@ void BgEfficiencyResourcesMgr::RemoveListRecord(std::list<PersistTime> &resource
 ErrCode BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<
     ResourceCallbackInfo>> &appList, std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
 {
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("efficiency resources manager is not ready");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
+    // if (!isSysReady_.load()) {
+    //     BGTASK_LOGW("efficiency resources manager is not ready");
+    //     return ERR_BGTASK_SYS_NOT_READY;
+    // }
     handler_->PostSyncTask([this, &appList, &procList]() {
         this->GetEfficiencyResourcesInfosInner(appResourceApplyMap_, appList);
         this->GetEfficiencyResourcesInfosInner(resourceApplyMap_, procList);
