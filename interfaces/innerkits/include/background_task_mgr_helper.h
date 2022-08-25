@@ -71,6 +71,15 @@ public:
     static ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
 
     /**
+     * @brief Get all effficiency resources running infos.
+     * @param appList EFficiency Resources infos of apps.
+     * @param procList  EFficiency Resources infos of processes.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    static ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
+        std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList);
+
+    /**
      * @brief Report some state change infos to bgtask service.
      * @param type state type.
      * @param infos state detailed infos.

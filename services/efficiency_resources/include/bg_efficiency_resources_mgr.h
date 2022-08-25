@@ -55,6 +55,8 @@ public:
     void Clear();
     ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess);
     ErrCode ResetAllEfficiencyResources();
+    ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
+        std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList);
     ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveProcessRecord(int32_t pid);
@@ -77,7 +79,7 @@ private:
     void DumpApplicationInfoMap(std::unordered_map<int32_t,
         std::shared_ptr<ResourceApplicationRecord>> &infoMap, std::vector<std::string> &dumpInfo,
         std::stringstream &stream, const char *headInfo);
-    void ResetTimeOutResource(int32_t mapKey, uint32_t timeOutBit, bool isProcess);
+    void ResetTimeOutResource(int32_t mapKey, bool isProcess);
     bool RemoveTargetResourceRecord(std::unordered_map<int32_t,
         std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey,
         uint32_t cleanResource, EfficiencyResourcesEventType type);
@@ -88,6 +90,9 @@ private:
     void RegisterAppStateObserver();
     void HandlePersistenceData();
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
+    void RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit);
+    void GetEfficiencyResourcesInfosInner(const ResourceRecordMap &infoMap,
+        std::vector<std::shared_ptr<ResourceCallbackInfo>> &list);
 
 private:
     std::atomic<bool> isSysReady_ {false};

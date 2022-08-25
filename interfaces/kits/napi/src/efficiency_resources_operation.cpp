@@ -27,16 +27,23 @@ namespace {
 napi_value GetNamedBoolValue(const napi_env &env, napi_value &object, const char* utf8name,
     bool& result)
 {
+    BGTASK_LOGI("NAPI GetNamedBoolValue start");
     bool hasNamedProperty = false;
-    napi_value boolValue;
-    if (napi_has_named_property(env, object, utf8name, &hasNamedProperty) == napi_ok && hasNamedProperty) {
+    napi_value boolValue = nullptr;
+    if (napi_has_named_property(env, object, utf8name, &hasNamedProperty) == napi_ok) {
+        if (!hasNamedProperty) {
+            BGTASK_LOGI("GetNamedBoolValue: %{public}s hasNamedProperty is false.", utf8name);
+            return Common::NapiGetNull(env);
+        }
         NAPI_CALL(env, napi_get_named_property(env, object, utf8name, &boolValue));
         napi_status status = napi_get_value_bool(env, boolValue, &result);
         if (status != napi_ok) {
             BGTASK_LOGE("ParseParameters failed, %{public}s is nullptr.", utf8name);
             return nullptr;
         }
+        BGTASK_LOGI("GetNamedBoolValue: %{public}s is %{public}d.", utf8name, result);
     }
+    BGTASK_LOGI("NAPI GetNamedBoolValue end");
     return Common::NapiGetNull(env);
 }
 
@@ -47,7 +54,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     NAPI_ASSERT(env, argc == APPLY_EFFICIENCY_RESOURCES_PARAMS, "Wrong number of arguments");
     
-    napi_value singleParam;
+    napi_value singleParam = nullptr;
     int32_t resourceNumber {0};
     bool isApply {false};
     int32_t timeOut {0};
@@ -80,10 +87,12 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
         BGTASK_LOGE("ParseParameters failed, reason is nullptr.");
         return nullptr;
     }
+    BGTASK_LOGI("NAPI GetNamedBoolValue before");
     if (GetNamedBoolValue(env, argv[0], "isPersist", isPersist) == nullptr ||
         GetNamedBoolValue(env, argv[0], "isProcess", isProcess) == nullptr) {
         return nullptr;
     }
+    BGTASK_LOGI("NAPI GetNamedBoolValue after");
     if (timeOut < 0) {
         BGTASK_LOGE("ParseParameters failed, timeOut is negative.");
         return nullptr;
@@ -103,6 +112,7 @@ bool CheckValidInfo(EfficiencyResourceInfo &params)
 
 napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
 {
+    BGTASK_LOGI("NAPI ApplyEfficiencyResources start");
     EfficiencyResourceInfo params;
     bool isSuccess = false;
     napi_value result = nullptr;
@@ -113,6 +123,7 @@ napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(params, isSuccess);
     NAPI_CALL(env, napi_get_boolean(env, isSuccess, &result));
     return result;
+    BGTASK_LOGI("NAPI ApplyEfficiencyResources end");
 }
 
 napi_value ResetAllEfficiencyResources(napi_env env, napi_callback_info info)

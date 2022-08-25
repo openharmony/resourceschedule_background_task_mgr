@@ -35,7 +35,7 @@ struct PersistTime {
     int64_t endTime_ {0};
     PersistTime() = default;
     PersistTime(uint32_t resourceIndex, bool isPersist, int64_t endTime);
-    bool operator < (const Process& rhs) const;
+    bool operator < (const PersistTime& rhs) const;
 };
 
 class ResourceApplicationRecord {

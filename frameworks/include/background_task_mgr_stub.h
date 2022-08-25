@@ -56,7 +56,9 @@ private:
     ErrCode HandleGetContinuousTaskApps(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleApplyEfficiencyResources(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleResetAllEfficiencyResources(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleGetEfficiencyResourcesInfos(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleReportStateChangeEvent(MessageParcel& data, MessageParcel& reply);
+    template<class T> ErrCode WriteInfoToParcel(const T& infoMap, MessageParcel& reply);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

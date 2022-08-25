@@ -62,6 +62,9 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::RESET_ALL_EFFICIENCY_RESOURCES,
             std::bind(&BackgroundTaskMgrStub::HandleResetAllEfficiencyResources,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+        {BackgroundTaskMgrStub::GET_EFFICIENCY_RESOURCES_INFOS,
+            std::bind(&BackgroundTaskMgrStub::HandleGetEfficiencyResourcesInfos,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
         {BackgroundTaskMgrStub::REPORT_STATE_CHANGE_EVENT,
             std::bind(&BackgroundTaskMgrStub::HandleReportStateChangeEvent,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
@@ -279,6 +282,38 @@ ErrCode BackgroundTaskMgrStub::HandleResetAllEfficiencyResources(MessageParcel& 
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleCancelSuspendDelay Write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleGetEfficiencyResourcesInfos(MessageParcel& data, MessageParcel& reply)
+{
+    std::vector<std::shared_ptr<ResourceCallbackInfo>> appInfos;
+    std::vector<std::shared_ptr<ResourceCallbackInfo>> procInfos;
+    ErrCode result = GetEfficiencyResourcesInfos(appInfos, procInfos);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleGetEfficiencyResourcesInfos write result failed, ErrCode=%{public}d", result);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    if (WriteInfoToParcel(appInfos, reply) != ERR_OK
+        || WriteInfoToParcel(procInfos, reply) != ERR_OK) {
+        BGTASK_LOGE("HandleGetEfficiencyResourcesInfos write result failed");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+    return ERR_OK;
+}
+
+template<class T>
+ErrCode BackgroundTaskMgrStub::WriteInfoToParcel(const T& infoMap, MessageParcel& reply)
+{
+    reply.WriteInt32(infoMap.size());
+    for (auto &info : infoMap) {
+        if (info == nullptr) {
+            return ERR_BGTASK_INVALID_PARAM;
+        }
+        if (!info->Marshalling(reply)) {
+            return ERR_BGTASK_PARCELABLE_FAILED;
+        }
     }
     return ERR_OK;
 }

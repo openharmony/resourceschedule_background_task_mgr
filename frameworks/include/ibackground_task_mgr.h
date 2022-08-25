@@ -128,6 +128,16 @@ public:
      * @return ERR_OK if success, else fail.
      */
     virtual ErrCode ResetAllEfficiencyResources() = 0;
+
+    /**
+     * @brief Get all effficiency resources running infos.
+     * @param appList EFficiency Resources infos of apps.
+     * @param procList  EFficiency Resources infos of processes.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
+        std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList) = 0;
+
     /**
      * @brief Report some state change infos to bgtask service.
      * @param type state type.
@@ -152,6 +162,7 @@ protected:
         GET_CONTINUOUS_TASK_APPS,
         APPLY_EFFICIENCY_RESOURCES,
         RESET_ALL_EFFICIENCY_RESOURCES,
+        GET_EFFICIENCY_RESOURCES_INFOS,
         REPORT_STATE_CHANGE_EVENT,
     };
 };

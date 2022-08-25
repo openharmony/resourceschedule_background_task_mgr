@@ -161,6 +161,17 @@ ErrCode BackgroundTaskManager::ResetAllEfficiencyResources()
     return ret;
 }
 
+ErrCode BackgroundTaskManager::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
+        std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
+{
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetEfficiencyResourcesInfos failed.");
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
+    }
+
+    return backgroundTaskMgrProxy_->GetEfficiencyResourcesInfos(appList, procList);
+}
+
 ErrCode BackgroundTaskManager::ReportStateChangeEvent(const EventType type, const std::string &infos)
 {
     if (!GetBackgroundTaskManagerProxy()) {
