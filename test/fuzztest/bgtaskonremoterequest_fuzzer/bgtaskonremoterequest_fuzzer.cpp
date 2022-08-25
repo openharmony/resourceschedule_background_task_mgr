@@ -31,7 +31,13 @@ namespace BackgroundTaskMgr {
         MessageParcel reply;
         MessageOption option;
         if (!isInited) {
-            DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->Init();
+            BgContinuousTaskMgr::GetInstance()->Init();
+            auto bgTransientTask = DelayedSingleton<BgTransientTaskMgr>::GetInstance();
+            bgTransientTask->runner_ = AppExecFwk::EventRunner::Create(true);
+            if (!bgTransientTask->runner_) {
+                return -1;
+            }
+            bgTransientTask->handler_ = std::make_shared<AppExecFwk::EventHandler>(bgTransientTask->runner_);
             isInited = true;
         }
         int32_t ret =
