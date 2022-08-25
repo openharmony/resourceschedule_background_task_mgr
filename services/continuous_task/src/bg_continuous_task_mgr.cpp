@@ -113,7 +113,7 @@ bool BgContinuousTaskMgr::Init()
     IPCSkeleton::SetCallingIdentity(identity);
     dataStorage_ = std::make_shared<DataStorage>();
     auto registerTask = [this]() { this->InitNecessaryState(); };
-    handler_->PostSyncTask(registerTask);
+    handler_->PostTask(registerTask);
     return true;
 }
 
@@ -749,12 +749,10 @@ ErrCode BgContinuousTaskMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber>
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    ErrCode result = ERR_OK;
-    handler_->PostSyncTask([this, &subscriber, &result]() {
-        result = AddSubscriberInner(subscriber);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
-
-    return result;
+    handler_->PostTask([=]() {
+        AddSubscriberInner(subscriber);
+    });
+    return ERR_OK;
 }
 
 ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber)
@@ -798,12 +796,10 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscrib
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    ErrCode result = ERR_OK;
-    handler_->PostSyncTask([this, &subscriber, &result]() {
-        result = this->RemoveSubscriberInner(subscriber);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
-
-    return result;
+    handler_->PostTask([=]() {
+        RemoveSubscriberInner(subscriber);
+    });
+    return ERR_OK;
 }
 
 ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber)
