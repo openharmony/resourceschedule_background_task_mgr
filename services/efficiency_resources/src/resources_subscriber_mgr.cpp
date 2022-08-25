@@ -43,7 +43,9 @@ ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscrib
         BGTASK_LOGE("create death recipient failed");
         return ERR_BGTASK_INVALID_PARAM;
     }
+    BGTASK_LOGD("ResourcesSubscriberMgr::AddSubscriber before");
     std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
+    BGTASK_LOGD("ResourcesSubscriberMgr::AddSubscriber end");
     auto subscriberIter = std::find_if(subscriberList_.begin(), subscriberList_.end(), [&remote](const auto &subscriber) {
         return subscriber->AsObject() == remote;
     });
@@ -74,8 +76,9 @@ ErrCode ResourcesSubscriberMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubsc
         BGTASK_LOGE("apply efficiency resources failed, remote in subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-
+    BGTASK_LOGD("ResourcesSubscriberMgr::RemoveSubscriber before");
     std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
+    BGTASK_LOGD("ResourcesSubscriberMgr::RemoveSubscriber end");
     auto findSuscriber = [&remote](const auto& subscriberList) {
         return subscriberList->AsObject() == remote;
     };
@@ -97,8 +100,9 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
         BGTASK_LOGW("ResourceCallbackInfo is null");
         return;
     }
-
+    BGTASK_LOGD("ResourcesSubscriberMgr::OnResourceChanged before");
     std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
+    BGTASK_LOGD("ResourcesSubscriberMgr::OnResourceChanged end");
     if (subscriberList_.empty()) {
         BGTASK_LOGW("Background Task Subscriber List is empty");
         return;

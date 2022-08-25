@@ -140,7 +140,6 @@ ErrCode BackgroundTaskManager::ApplyEfficiencyResources(const EfficiencyResource
         BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
         return ERR_BGTASK_SERVICE_NOT_CONNECTED;
     }
-
     sptr<EfficiencyResourceInfo> resourceInfoPtr = new (std::nothrow) EfficiencyResourceInfo(resourceInfo);
     if (resourceInfoPtr == nullptr) {
         BGTASK_LOGE("Failed to create efficiency resource info");

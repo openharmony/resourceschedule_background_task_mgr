@@ -372,7 +372,7 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
     BGTASK_LOGI("ResetTimeOutResource resetZeros: %{public}u, resourceNumber: %{public}u, result: %{public}u,",
         resetZeros, resourceRecord->resourceNumber_, resourceRecord->resourceNumber_ ^ resetZeros);
     resourceRecord->resourceNumber_ ^= resetZeros;
-    if (resetZeros) {
+    if (resetZeros == 0) {
         return;
     }
     RemoveListRecord(resourceRecord->resourceUnitList_, resetZeros);
@@ -523,9 +523,9 @@ void BgEfficiencyResourcesMgr::DumpApplicationInfoMap(std::unordered_map<int32_t
         for(auto unitIter = resourceUnitList.begin();
             unitIter != resourceUnitList.end(); ++unitIter) {
             stream << "\t\t\tresource type: " << ResourceTypeName[unitIter->resourceIndex_] << "\n";
-            stream << "\t\t\tisPersist " << (unitIter->isPersist_ ? "true" : "false") << "\n";
+            stream << "\t\t\tisPersist: " << (unitIter->isPersist_ ? "true" : "false") << "\n";
             if (!unitIter->isPersist_) {
-                stream << "\t\t\tremainTime " << unitIter->endTime_ - curTime << "\n";
+                stream << "\t\t\tremainTime: " << unitIter->endTime_ - curTime << "\n";
             }
         }
         stream << "\n";
