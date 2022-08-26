@@ -43,6 +43,7 @@ ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscrib
         BGTASK_LOGE("create death recipient failed");
         return ERR_BGTASK_INVALID_PARAM;
     }
+    BGTASK_LOGI("ResourcesSubscriberMgr::AddSubscriber start list.size() : %{public}d", subscriberList_.size());
     BGTASK_LOGD("ResourcesSubscriberMgr::AddSubscriber before");
     std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
     BGTASK_LOGD("ResourcesSubscriberMgr::AddSubscriber end");
@@ -56,7 +57,7 @@ ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscrib
     
     subscriberList_.emplace_back(subscriber);
     remote->AddDeathRecipient(deathRecipient_);
-    
+    BGTASK_LOGI("ResourcesSubscriberMgr::AddSubscriber end list.size() : %{public}d", subscriberList_.size());
     BGTASK_LOGI("subscribe efficiency resources task success.");
     return ERR_OK;
 }

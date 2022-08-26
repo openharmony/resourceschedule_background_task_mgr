@@ -41,8 +41,7 @@ static constexpr int32_t MAX_DUMP_PARAM_NUMS = 4;
 static constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
 static constexpr uint32_t MAX_RESOURCE_NUMBER = (1 << MAX_RESOURCES_TYPE_NUM) - 1;
 
-BgEfficiencyResourcesMgr::BgEfficiencyResourcesMgr() {
-}
+BgEfficiencyResourcesMgr::BgEfficiencyResourcesMgr() {}
 
 BgEfficiencyResourcesMgr::~BgEfficiencyResourcesMgr() {}
 

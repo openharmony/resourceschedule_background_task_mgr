@@ -747,12 +747,10 @@ ErrCode BgContinuousTaskMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber>
         BGTASK_LOGE("subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-
     ErrCode result = ERR_OK;
     handler_->PostSyncTask([this, &subscriber, &result]() {
         result = AddSubscriberInner(subscriber);
         }, AppExecFwk::EventQueue::Priority::HIGH);
-
     return result;
 }
 
@@ -770,7 +768,6 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscr
     }
 
     bgTaskSubscribers_.emplace_back(subscriber);
-
     if (subscriber->AsObject() == nullptr) {
         return ERR_BGTASK_INVALID_PARAM;
     }

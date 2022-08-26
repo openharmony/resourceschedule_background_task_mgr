@@ -119,8 +119,10 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
         && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
+        BGTASK_LOGI("BackgroundTaskMgrService::SubscribeBackgroundTask success");
         return ERR_OK;
     } else {
+        BGTASK_LOGE("BackgroundTaskMgrService::  SubscribeBackgroundTask  UnsubscribeBackgroundTask");
         UnsubscribeBackgroundTask(subscriber);
     }
     return ERR_BGTASK_SYS_NOT_READY;
