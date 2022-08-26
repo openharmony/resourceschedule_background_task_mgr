@@ -89,7 +89,7 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
         BGTASK_LOGE("bgEfficiencyResourcesMgr is null");
         return;
     }
-    bgEfficiencyResourcesMgr->RemoveProcessRecord(processData.uid, processData.pid);
+    bgEfficiencyResourcesMgr->RemoveProcessRecord(processData.uid, processData.pid, processData.bundleName);
 }
 
 void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData)
@@ -108,7 +108,7 @@ void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData 
             BGTASK_LOGE("bgEfficiencyResourcesMgr is null");
             return;
         }
-        bgEfficiencyResourcesMgr->RemoveAppRecord(uid);
+        bgEfficiencyResourcesMgr->RemoveAppRecord(uid, bundleName);
     }
 }
 
