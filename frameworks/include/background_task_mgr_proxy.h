@@ -105,14 +105,6 @@ public:
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) override;
 
     /**
-     * @brief Report some state change infos to bgtask service.
-     * @param type state type.
-     * @param infos state detailed infos.
-     * @return Returns ERR_OK if success, else failure.
-     */
-    ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos) override;
-
-    /**
      * @brief Request stop continuous task.
      * @param uid app uid.
      * @param pid app pid.

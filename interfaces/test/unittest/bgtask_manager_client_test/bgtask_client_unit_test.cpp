@@ -17,7 +17,6 @@
 
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_mgr_helper.h"
-#include "event_type.h"
 
 using namespace testing::ext;
 
@@ -40,15 +39,14 @@ void BgTaskClientUnitTest::SetUp() {}
 void BgTaskClientUnitTest::TearDown() {}
 
 /**
- * @tc.name: ReportStateChangeEvent_001
- * @tc.desc: report some state change infos to bgtask service api test.
+ * @tc.name: StopContinuousTask_001
+ * @tc.desc: request stop target continuous task api test.
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK
  */
-HWTEST_F(BgTaskClientUnitTest, ReportStateChangeEvent_001, TestSize.Level1)
+HWTEST_F(BgTaskClientUnitTest, StopContinuousTask_001, TestSize.Level1)
 {
-    EXPECT_EQ((int32_t)BackgroundTaskMgrHelper::ReportStateChangeEvent(
-        EventType::DIS_COMP_CHANGE, "test"), (int32_t)ERR_OK);
+    EXPECT_EQ((int32_t)BackgroundTaskMgrHelper::StopContinuousTask(1, 1, 1), (int32_t)ERR_OK);
 }
 }
 }

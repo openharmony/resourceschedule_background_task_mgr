@@ -60,7 +60,6 @@ public:
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) override;
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) override;
-    ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos) override;
     ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 

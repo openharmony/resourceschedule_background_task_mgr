@@ -17,7 +17,6 @@ import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 config("bgtaskmgr_service_public_config") {
   include_dirs = [
     "continuous_task/include",
-    "continuous_task/task_detection/include",
     "core/include",
     "transient_task/include",
     "test/include",
@@ -34,11 +33,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "continuous_task/src/data_storage.cpp",
     "continuous_task/src/system_event_observer.cpp",
     "continuous_task/src/task_notification_subscriber.cpp",
-    "continuous_task/task_detection/src/audio_detect.cpp",
-    "continuous_task/task_detection/src/bluetooth_detect.cpp",
-    "continuous_task/task_detection/src/location_detect.cpp",
-    "continuous_task/task_detection/src/multi_device_detect.cpp",
-    "continuous_task/task_detection/src/task_detection_manager.cpp",
     "core/src/background_task_mgr_service.cpp",
     "transient_task/src/bg_transient_task_mgr.cpp",
     "transient_task/src/bgtask_common.cpp",
@@ -75,12 +69,10 @@ ohos_shared_library("bgtaskmgr_service") {
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
-    "hisysevent_native:libhisyseventmanager",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
     "ipc:ipc_core",
-    "multimedia_audio_framework:audio_client",
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
@@ -89,17 +81,6 @@ ohos_shared_library("bgtaskmgr_service") {
   if (has_os_account_part) {
     cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
     external_deps += [ "os_account:os_account_innerkits" ]
-  }
-
-  if (has_multimedia_av_session_part) {
-    cflags_cc += [ "-DAV_SESSION_PART_ENABLE" ]
-    external_deps += [ "multimedia_av_session:avsession_client" ]
-    external_deps += [ "input:libmmi-client" ]
-  }
-
-  if (has_communication_bluetooth_part) {
-    cflags_cc += [ "-DBLUETOOTH_PART_ENABLE" ]
-    external_deps += [ "bluetooth:btframework" ]
   }
 
   part_name = "background_task_mgr"

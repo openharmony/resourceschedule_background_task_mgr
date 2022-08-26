@@ -32,8 +32,6 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr char TASK_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/running_task";
-static constexpr char TASK_DETECTION_INFO_FILE_PATH[]
-    = "/data/service/el1/public/background_task_mgr/task_detection_info";
 static constexpr int32_t MAX_BUFFER = 512;
 }
 
@@ -67,16 +65,6 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
         }
     }
     return ERR_OK;
-}
-
-int32_t DataStorage::RefreshTaskDetectionInfo(const std::string &detectionInfos)
-{
-    return SaveJsonValueToFile(detectionInfos, TASK_DETECTION_INFO_FILE_PATH);
-}
-
-int32_t DataStorage::RestoreTaskDetectionInfo(nlohmann::json &value)
-{
-    return ParseJsonValueFromFile(value, TASK_DETECTION_INFO_FILE_PATH);
 }
 
 int32_t DataStorage::SaveJsonValueToFile(const std::string &value, const std::string &filePath)
