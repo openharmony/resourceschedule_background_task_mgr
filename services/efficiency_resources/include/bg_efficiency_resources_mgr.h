@@ -59,8 +59,8 @@ public:
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList);
     ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
-    ErrCode RemoveProcessRecord(int32_t pid);
-    ErrCode RemoveAppRecord(int32_t uid);
+    ErrCode RemoveProcessRecord(int32_t uid, int32_t pid, const std::string &bundleName);
+    ErrCode RemoveAppRecord(int32_t uid, const std::string &bundleName);
 
 private:
     void ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
@@ -98,7 +98,7 @@ private:
     std::atomic<bool> isSysReady_ {false};
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
-    std::mutex callbackLock_;
+    // std::mutex callbackLock_;
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> appResourceApplyMap_ {};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> resourceApplyMap_ {};
     std::shared_ptr<ResourceRecordStorage> recordStorage_ {nullptr};

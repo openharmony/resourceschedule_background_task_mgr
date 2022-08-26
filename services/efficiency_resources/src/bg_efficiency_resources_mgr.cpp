@@ -160,7 +160,7 @@ void BgEfficiencyResourcesMgr::RecoverDelayedTask(bool isProcess, ResourceRecord
     }
 }
 
-ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid)
+ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string &bundleName)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed.");
@@ -169,13 +169,16 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid)
     BGTASK_LOGI("RemoveAppRecord locked before");
     ErrCode res = ERR_OK;
     handler_->PostSyncTask([&]() {
-        this->EraseRecordIf(appResourceApplyMap_, [uid](const auto &iter) { return iter.first == uid; });
-        res = recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
+        std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
+            0, MAX_RESOURCE_NUMBER, bundleName);
+        this->ResetEfficiencyResourcesInner(callbackInfo, false);
+        // this->EraseRecordIf(appResourceApplyMap_, [uid](const auto &iter) { return iter.first == uid; });
+        // res = recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
     });
     return res;
 }
 
-ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t pid)
+ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, const std::string &bundleName)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready, RemoveProcessRecord failed..");
@@ -184,8 +187,11 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t pid)
     BGTASK_LOGI("RemoveProcessRecord locked before");
     ErrCode res = ERR_OK;
     handler_->PostSyncTask([&]() {
-        this->EraseRecordIf(resourceApplyMap_, [pid](const auto &iter) { return iter.first == pid; });
-        res = recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
+        std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
+            pid, MAX_RESOURCE_NUMBER, bundleName);
+        this->ResetEfficiencyResourcesInner(callbackInfo, true);
+        // this->EraseRecordIf(resourceApplyMap_, [pid](const auto &iter) { return iter.first == pid; });
+        // res = recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
     });
     return res;
 }
