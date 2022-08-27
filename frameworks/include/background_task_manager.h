@@ -100,14 +100,14 @@ public:
     /**
      * @brief Get transient task applications.
      * @param list transient task apps.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return Returns ERR_OK if success, else failure.
      */
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
 
     /**
      * @brief Get all continuous task running infos
      * @param list continuous task infos.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return Returns ERR_OK if success, else failure.
      */
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
 
@@ -136,13 +136,14 @@ public:
     ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList);
     
-    /**
-     * @brief Report some state change infos to bgtask service.
-     * @param type state type.
-     * @param infos state detailed infos.
-     * @return Returns ERR_OK on success, others on failure.
+    /*
+     * @brief Request stop continuous task.
+     * @param uid app uid.
+     * @param pid app pid.
+     * @param taskType continuous task type.
+     * @return Returns ERR_OK if success, else failure.
      */
-    ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos);
+    ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
 
 private:
     bool GetBackgroundTaskManagerProxy();

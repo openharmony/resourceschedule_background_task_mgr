@@ -25,7 +25,6 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_param.h"
 #include "delay_suspend_info.h"
-#include "event_type.h"
 #include "iexpired_callback.h"
 #include "ibackground_task_subscriber.h"
 #include "want_agent.h"
@@ -102,18 +101,19 @@ public:
     /**
      * @brief Get transient task applications.
      * @param list transient task apps.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return Returns ERR_OK if success, else failure.
      */
     virtual ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) = 0;
 
     /**
      * @brief Get all continuous task running infos.
      * @param list continuous task infos.
-     * @return Returns ERR_OK on success, others on failure.
+     * @return Returns ERR_OK if success, else failure.
      */
     virtual ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) = 0;
 
     /**
+<<<<<<< HEAD
      * @brief Apply or unapply efficiency resources.
      *
      * @param resourceInfo Request params.
@@ -143,8 +143,15 @@ public:
      * @param type state type.
      * @param infos state detailed infos.
      * @return Returns ERR_OK on success, others on failure.
+=======
+     * @brief Request stop continuous task.
+     * @param uid app uid.
+     * @param pid app pid.
+     * @param taskType continuous task type.
+     * @return Returns ERR_OK if success, else failure.
+>>>>>>> upstream/master
      */
-    virtual ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos) = 0;
+    virtual ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType) = 0;
 
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskMgr");
@@ -160,10 +167,14 @@ protected:
         UNSUBSCRIBE_BACKGROUND_TASK,
         GET_TRANSIENT_TASK_APPS,
         GET_CONTINUOUS_TASK_APPS,
+<<<<<<< HEAD
         APPLY_EFFICIENCY_RESOURCES,
         RESET_ALL_EFFICIENCY_RESOURCES,
         GET_EFFICIENCY_RESOURCES_INFOS,
         REPORT_STATE_CHANGE_EVENT,
+=======
+        STOP_CONTINUOUS_TASK,
+>>>>>>> upstream/master
     };
 };
 }  // namespace BackgroundTaskMgr

@@ -59,9 +59,9 @@ ErrCode BackgroundTaskMgrHelper::GetEfficiencyResourcesInfos(std::vector<std::sh
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetEfficiencyResourcesInfos(appList, procList);
 }
 
-ErrCode BackgroundTaskMgrHelper::ReportStateChangeEvent(const EventType type, const std::string &infos)
+ErrCode BackgroundTaskMgrHelper::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
-    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ReportStateChangeEvent(type, infos);
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(uid, pid, taskType);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -29,7 +29,6 @@
 #include "bundle_info.h"
 #include "continuous_task_callback_info.h"
 #include "data_storage.h"
-#include "event_type.h"
 #include "task_notification_subscriber.h"
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
@@ -60,7 +59,6 @@ public:
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
-    ErrCode ReportStateChangeEvent(const EventType type, const std::string &infos);
     bool StopContinuousTaskByUser(const std::string &mapKey);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
@@ -72,7 +70,7 @@ public:
     void InitRequiredResourceInfo();
     void Clear();
     int32_t GetBgTaskUid();
-    void ReportTaskRunningStateUnmet(int32_t uid, int32_t pid, uint32_t taskType);
+    void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
@@ -87,7 +85,6 @@ private:
         const std::vector<sptr<Notification::Notification>> &allNotifications);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
-    void DumpDetection(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     std::string CreateNotificationLabel(int32_t uid, const std::string &bundleName,
@@ -99,9 +96,8 @@ private:
     bool RegisterAppStateObserver();
     bool GetNotificationPrompt();
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName, const std::string &appName);
-    void HandleTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType);
+    void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
     void RemoveSpecifiedBgTask(uint32_t taskType);
-    void DetectRequestedContinuousTask(const std::string &task);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);

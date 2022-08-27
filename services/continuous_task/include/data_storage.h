@@ -26,9 +26,6 @@ public:
     int32_t RefreshTaskRecord(const std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> &allRecord);
     int32_t RestoreTaskRecord(std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> &allRecord);
 
-    int32_t RefreshTaskDetectionInfo(const std::string &detectionInfos);
-    int32_t RestoreTaskDetectionInfo(nlohmann::json &value);
-
 private:
     int32_t SaveJsonValueToFile(const std::string &value, const std::string &filePath);
     int32_t ParseJsonValueFromFile(nlohmann::json &value, const std::string &filePath);

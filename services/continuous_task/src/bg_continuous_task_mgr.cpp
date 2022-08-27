@@ -22,8 +22,6 @@
 #include "bundle_manager_helper.h"
 #include "common_event_support.h"
 #include "common_event_manager.h"
-#include "common_utils.h"
-#include "task_detection_manager.h"
 #include "errors.h"
 #include "hitrace_meter.h"
 #include "if_system_ability_manager.h"
@@ -63,7 +61,6 @@ static constexpr char SEPARATOR[] = "_";
 static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_CANCEL_ALL[] = "--cancel_all";
 static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
-static constexpr char DUMP_PARAM_DETECTION[] = "--detection";
 static constexpr char NOTIFICATION_PREFIX[] = "bgmode";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "ohos.backgroundtaskmgr.resources";
@@ -73,13 +70,11 @@ static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DEFAULT_NOTIFICATION_ID = 0;
 static constexpr int32_t DELAY_TIME = 2000;
-static constexpr int32_t DETECT_DELAY_TIME = 5000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
+static constexpr int32_t UNSET_UID = -1;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
-static const bool IS_TASK_DETECTION_ENABLE
-    = system::GetBoolParameter("persist.sys.continuous_task_detection_switch", true);
 
 #ifndef HAS_OS_ACCOUNT_PART
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
@@ -155,12 +150,6 @@ void BgContinuousTaskMgr::InitNecessaryState()
         BGTASK_LOGE("RegisterSysCommEventListener failed");
         return;
     }
-    if (IS_TASK_DETECTION_ENABLE) {
-        if (!TaskDetectionManager::GetInstance()->Init(dataStorage_, handler_)) {
-            BGTASK_LOGE("TaskDetectionManager init failed");
-            return;
-        }
-    }
     deviceType_ = OHOS::system::GetParameter("const.build.characteristics", "");
     BGTASK_LOGI("current device type is: %{public}s", deviceType_.c_str());
     InitRequiredResourceInfo();
@@ -184,9 +173,6 @@ void BgContinuousTaskMgr::HandlePersistenceData()
     std::vector<sptr<Notification::Notification>> notifications;
     Notification::NotificationHelper::GetAllActiveNotifications(notifications);
     CheckPersistenceData(allAppProcessInfos, notifications);
-    if (IS_TASK_DETECTION_ENABLE) {
-        TaskDetectionManager::GetInstance()->HandlePersistenceData(allAppProcessInfos);
-    }
     dataStorage_->RefreshTaskRecord(continuousTaskInfosMap_);
 }
 
@@ -520,29 +506,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     if (RefreshTaskRecord() != ERR_OK) {
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
-    if (IS_TASK_DETECTION_ENABLE) {
-        auto detectTask = [this, taskInfoMapKey]() { this->DetectRequestedContinuousTask(taskInfoMapKey); };
-        handler_->PostTask(detectTask, DETECT_DELAY_TIME);
-    }
     return ERR_OK;
-}
-
-void BgContinuousTaskMgr::DetectRequestedContinuousTask(const std::string &task)
-{
-    if (continuousTaskInfosMap_.count(task) == 0) {
-        BGTASK_LOGE("Task: %{public}s to check is not exist", task.c_str());
-        return;
-    }
-    auto record = continuousTaskInfosMap_.at(task);
-    if (!TaskDetectionManager::GetInstance()->CheckTaskRunningState(record->uid_, record->bgModeId_)) {
-        BGTASK_LOGE("Task: %{public}s to check is not passed, so cancel it", task.c_str());
-        Notification::NotificationHelper::CancelContinuousTaskNotification(
-            record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
-        OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
-        continuousTaskInfosMap_.erase(task);
-        HandleAppContinuousTaskStop(record->uid_);
-        RefreshTaskRecord();
-    }
 }
 
 uint32_t GetBgModeNameIndex(uint32_t bgModeId, bool isNewApi)
@@ -665,22 +629,22 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     return result;
 }
 
-void BgContinuousTaskMgr::ReportTaskRunningStateUnmet(int32_t uid, int32_t pid, uint32_t taskType)
+void BgContinuousTaskMgr::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
-    BGTASK_LOGD("ReportTaskRunningStateUnmet begin uid: %{public}d, pid: %{public}d, taskType: %{public}d",
+    BGTASK_LOGD("StopContinuousTask begin uid: %{public}d, pid: %{public}d, taskType: %{public}d",
         uid, pid, taskType);
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
     }
-    auto task = [this, uid, pid, taskType]() { this->HandleTaskRequiredStateChanged(uid, pid, taskType); };
-    handler_->PostSyncTask(task);
+    auto task = [this, uid, pid, taskType]() { this->HandleStopContinuousTask(uid, pid, taskType); };
+    handler_->PostTask(task);
 }
 
-void BgContinuousTaskMgr::HandleTaskRequiredStateChanged(int32_t uid, int32_t pid, uint32_t taskType)
+void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
     // uid == -1 means target type continuoust task required condition is not met, so cancel all this kind of tasks;
-    if (uid == CommonUtils::UNSET_UID) {
+    if (uid == UNSET_UID) {
         RemoveSpecifiedBgTask(taskType);
         return;
     }
@@ -747,11 +711,11 @@ ErrCode BgContinuousTaskMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber>
         BGTASK_LOGE("subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    ErrCode result = ERR_OK;
-    handler_->PostSyncTask([this, &subscriber, &result]() {
-        result = AddSubscriberInner(subscriber);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
-    return result;
+
+    handler_->PostTask([=]() {
+        AddSubscriberInner(subscriber);
+    });
+    return ERR_OK;
 }
 
 ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber)
@@ -794,12 +758,10 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscrib
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    ErrCode result = ERR_OK;
-    handler_->PostSyncTask([this, &subscriber, &result]() {
-        result = this->RemoveSubscriberInner(subscriber);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
-
-    return result;
+    handler_->PostTask([=]() {
+        RemoveSubscriberInner(subscriber);
+    });
+    return ERR_OK;
 }
 
 ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber)
@@ -860,12 +822,6 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
     return ERR_OK;
 }
 
-ErrCode BgContinuousTaskMgr::ReportStateChangeEvent(const EventType type, const std::string &infos)
-{
-    TaskDetectionManager::GetInstance()->ReportStateChangeEvent(type, infos);
-    return ERR_OK;
-}
-
 ErrCode BgContinuousTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     if (!isSysReady_.load()) {
@@ -889,8 +845,6 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
         DumpCancelTask(dumpOption, true);
     } else if (dumpOption[1] == DUMP_PARAM_CANCEL) {
         DumpCancelTask(dumpOption, false);
-    } else if (dumpOption[1] == DUMP_PARAM_DETECTION) {
-        DumpDetection(dumpOption, dumpInfo);
     } else {
         BGTASK_LOGW("invalid dump param");
     }
@@ -962,23 +916,6 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
         Notification::NotificationHelper::CancelContinuousTaskNotification(iter->second->GetNotificationLabel(),
             DEFAULT_NOTIFICATION_ID);
         RemoveContinuousTaskRecord(taskKey);
-    }
-}
-
-void BgContinuousTaskMgr::DumpDetection(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
-{
-    if (!IS_TASK_DETECTION_ENABLE) {
-        BGTASK_LOGI("continuous task detection function is disable");
-        return;
-    }
-    if (dumpOption.size() < MAX_DUMP_PARAM_NUMS) {
-        BGTASK_LOGW("invalid dump param");
-        return;
-    }
-
-    if (dumpOption[MAX_DUMP_PARAM_NUMS - 1] == DUMP_PARAM_LIST_ALL) {
-        TaskDetectionManager::GetInstance()->Dump(dumpInfo);
-        return;
     }
 }
 
@@ -1085,10 +1022,6 @@ void BgContinuousTaskMgr::OnProcessDied(int32_t uid, int32_t pid)
         } else {
             iter++;
         }
-    }
-
-    if (IS_TASK_DETECTION_ENABLE) {
-        TaskDetectionManager::GetInstance()->HandleProcessDied(uid, pid);
     }
 }
 

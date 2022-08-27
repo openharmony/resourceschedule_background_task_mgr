@@ -233,6 +233,73 @@ RState ResourceManagerImpl::GetMediaBase64ByNameData(const char *name, uint32_t 
 {
     return SUCCESS;
 }
+
+RState ResourceManagerImpl::GetMediaDataById(uint32_t id, size_t &len, std::unique_ptr<uint8_t[]> &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetMediaDataByName(const char *name, size_t &len, std::unique_ptr<uint8_t[]> &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetMediaDataById(uint32_t id, uint32_t density, size_t &len,
+    std::unique_ptr<uint8_t[]> &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetMediaDataByName(const char *name, uint32_t density, size_t &len,
+    std::unique_ptr<uint8_t[]> &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetMediaBase64DataById(uint32_t id, std::string &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetMediaBase64DataByName(const char *name, std::string &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetMediaBase64DataById(uint32_t id, uint32_t density, std::string &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetMediaBase64DataByName(const char *name, uint32_t density, std::string &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetProfileDataById(uint32_t id, std::unique_ptr<uint8_t[]> &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetProfileDataByName(const char *name, std::unique_ptr<uint8_t[]> &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetRawFileFromHap(const std::string &rawFileName, std::unique_ptr<RawFile> &rawFile)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetRawFileDescriptorFromHap(const std::string &rawFileName, RawFileDescriptor &descriptor)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::isLoadHap()
+{
+    return SUCCESS;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS

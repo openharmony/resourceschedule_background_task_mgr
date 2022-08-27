@@ -182,10 +182,10 @@ ErrCode BackgroundTaskManager::ReportStateChangeEvent(const EventType type, cons
 
 bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (backgroundTaskMgrProxy_ != nullptr) {
         return true;
     }
-    std::lock_guard<std::mutex> lock(mutex_);
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityManager == nullptr) {
@@ -221,6 +221,15 @@ ErrCode BackgroundTaskManager::GetContinuousTaskApps(std::vector<std::shared_ptr
         return ERR_BGTASK_SERVICE_NOT_CONNECTED;
     }
     return backgroundTaskMgrProxy_->GetContinuousTaskApps(list);
+}
+
+ErrCode BackgroundTaskManager::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
+{
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
+    }
+    return backgroundTaskMgrProxy_->StopContinuousTask(uid, pid, taskType);
 }
 
 void BackgroundTaskManager::ResetBackgroundTaskManagerProxy()
