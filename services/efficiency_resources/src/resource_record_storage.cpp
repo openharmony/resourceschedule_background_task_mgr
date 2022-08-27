@@ -32,9 +32,9 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-static constexpr char RESOURCE_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/resource_record";
-static constexpr char APP_RESOURCE_RECORD[] = "appResourceRecord";
-static constexpr char PROCESS_RESOURCE_RECORD[] = "processResourceRecord";
+const std::string RESOURCE_RECORD_FILE_PATH = "/data/service/el1/public/background_task_mgr/resource_record";
+const std::string APP_RESOURCE_RECORD = "appResourceRecord";
+const std::string PROCESS_RESOURCE_RECORD = "processResourceRecord";
 static constexpr int32_t MAX_BUFFER = 512;
 }
 
@@ -51,7 +51,7 @@ ErrCode ResourceRecordStorage::RestoreResourceRecord(ResourceRecordMap &appRecor
 {
     std::string recordString {""};
     if (ReadStringFromFile(recordString, RESOURCE_RECORD_FILE_PATH) != ERR_OK) {
-        BGTASK_LOGD("can not read string form file: %{public}s", RESOURCE_RECORD_FILE_PATH);
+        BGTASK_LOGD("can not read string form file: %{public}s", RESOURCE_RECORD_FILE_PATH.c_str());
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     nlohmann::json root;
@@ -118,12 +118,12 @@ ErrCode ResourceRecordStorage::ConvertStringToJson(const std::string &recordStri
 bool ResourceRecordStorage::CreateNodeFile(const std::string &filePath)
 {
     if (access(filePath.c_str(), F_OK) == ERR_OK) {
-        BGTASK_LOGD("the file: %{public}s already exists.", RESOURCE_RECORD_FILE_PATH);
+        BGTASK_LOGD("the file: %{public}s already exists.", RESOURCE_RECORD_FILE_PATH.c_str());
         return true;
     }
     int32_t fd = open(filePath.c_str(), O_CREAT|O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
     if (fd < ERR_OK) {
-        BGTASK_LOGE("Fail to open file: %{public}s", RESOURCE_RECORD_FILE_PATH);
+        BGTASK_LOGE("Fail to open file: %{public}s", RESOURCE_RECORD_FILE_PATH.c_str());
         return false;
     }
     close(fd);

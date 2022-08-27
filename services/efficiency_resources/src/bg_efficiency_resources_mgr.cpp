@@ -30,16 +30,26 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
-static constexpr char BG_EFFICIENCY_RESOURCES_MGR_NAME[] = "BgEfficiencyResourcesMgr";
-static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
-static constexpr char DUMP_PARAM_RESET_ALL[] = "--reset_all";
-static constexpr char DUMP_PARAM_RESET_APP[] = "--resetapp";
-static constexpr char DUMP_PARAM_RESET_PROC[] = "--resetproc";
-static constexpr int32_t DELAY_TIME = 500;
-static constexpr int32_t MAX_DUMP_PARAM_NUMS = 4;
-static constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
-static constexpr uint32_t MAX_RESOURCE_NUMBER = (1 << MAX_RESOURCES_TYPE_NUM) - 1;
+namespace {
+    const std::string BG_EFFICIENCY_RESOURCES_MGR_NAME = "BgEfficiencyResourcesMgr";
+    const std::string DUMP_PARAM_LIST_ALL = "--all";
+    const std::string DUMP_PARAM_RESET_ALL = "--reset_all";
+    const std::string DUMP_PARAM_RESET_APP = "--resetapp";
+    const std::string DUMP_PARAM_RESET_PROC = "--resetproc";
+    constexpr int32_t DELAY_TIME = 500;
+    constexpr int32_t MAX_DUMP_PARAM_NUMS = 4;
+    constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
+    constexpr uint32_t MAX_RESOURCE_NUMBER = (1 << MAX_RESOURCES_TYPE_NUM) - 1;
+    const std::string ResourceTypeName[7] = {
+        "CPU",
+        "COMMON_EVENT",
+        "TIMER",
+        "WORK_SCHEDULER",
+        "BLUETOOTH",
+        "GPS",
+        "AUDIO",
+    };
+}
 
 BgEfficiencyResourcesMgr::BgEfficiencyResourcesMgr() {}
 
@@ -54,7 +64,7 @@ bool BgEfficiencyResourcesMgr::Init()
         return false;
     }
     handler_ = std::make_shared<AppExecFwk::EventHandler>(runner_);
-    if (handler_ == nullptr) {
+    if (!handler_) {
         BGTASK_LOGE("BgEfficiencyResourcesMgr handler create failed!");
         return false;
     }
@@ -86,19 +96,19 @@ void BgEfficiencyResourcesMgr::InitNecessaryState()
 void BgEfficiencyResourcesMgr::RegisterAppStateObserver()
 {
     appStateObserver_ = DelayedSingleton<AppStateObserver>::GetInstance();
-    if (appStateObserver_ != nullptr) {
+    if (appStateObserver_ ) {
         appStateObserver_->SetBgEfficiencyResourcesMgr(shared_from_this());
     }
 }
 
 void BgEfficiencyResourcesMgr::HandlePersistenceData()
 {
-    recordStorage_ = std::make_shared<ResourceRecordStorage>();
+    recordStorage_ = std::make_unique<ResourceRecordStorage>();
     BGTASK_LOGI("ResourceRecordStorage service restart, restore data");
     recordStorage_->RestoreResourceRecord(appResourceApplyMap_, resourceApplyMap_);
     BGTASK_LOGD("ResourceRecordStorage service finish, restore data");
-    auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
-    if (appMgrClient == nullptr || appMgrClient->ConnectAppMgrService() != ERR_OK) {
+    auto appMgrClient = std::make_unique<AppExecFwk::AppMgrClient>();
+    if (!appMgrClient || appMgrClient->ConnectAppMgrService() != ERR_OK) {
         BGTASK_LOGW("ResourceRecordStorage connect to app mgr service failed");
         return;
     }
@@ -172,8 +182,6 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             0, MAX_RESOURCE_NUMBER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, false);
-        // this->EraseRecordIf(appResourceApplyMap_, [uid](const auto &iter) { return iter.first == uid; });
-        // res = recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
     });
     return res;
 }
@@ -190,15 +198,13 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             pid, MAX_RESOURCE_NUMBER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, true);
-        // this->EraseRecordIf(resourceApplyMap_, [pid](const auto &iter) { return iter.first == pid; });
-        // res = recordStorage_->RefreshResourceRecord(appResourceApplyMap_, resourceApplyMap_);
     });
     return res;
 }
 
 void BgEfficiencyResourcesMgr::Clear()
 {
-    if (appStateObserver_ != nullptr) {
+    if (appStateObserver_) {
         appStateObserver_->Unsubscribe();
     }
 }
@@ -347,7 +353,7 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
         return;
     }
     auto &resourceRecord = iter->second;
-    uint32_t resetZeros = 0;
+    uint32_t eraseBit = 0;
     const auto &resourceUnitList = resourceRecord->resourceUnitList_;
     for (auto iter = resourceUnitList.begin(); iter != resourceUnitList.end(); ++iter) {
         if (iter->isPersist_) {
@@ -355,7 +361,7 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
         }
         auto endTime = iter->endTime_;
         if(TimeProvider::GetCurrentTime() >= endTime) {
-            resetZeros |= 1 << iter->resourceIndex_;
+            eraseBit |= 1 << iter->resourceIndex_;
         }
     }
     // for (uint32_t resourceIndex = 0; resourceIndex < MAX_RESOURCES_TYPE_NUM; ++resourceIndex) {
@@ -370,18 +376,18 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
     //     if (resourceUnitIter != resourceRecord->resourceUnitList_.end()) {
     //         auto endTime = resourceUnitIter->endTime_;
     //         if (TimeProvider::GetCurrentTime() >= endTime) {
-    //             resetZeros |= 1 << resourceIndex;
+    //             eraseBit |= 1 << resourceIndex;
     //         }
     //     }
     // }
-    BGTASK_LOGI("ResetTimeOutResource resetZeros: %{public}u, resourceNumber: %{public}u, result: %{public}u,",
-        resetZeros, resourceRecord->resourceNumber_, resourceRecord->resourceNumber_ ^ resetZeros);
-    resourceRecord->resourceNumber_ ^= resetZeros;
-    if (resetZeros == 0) {
+    BGTASK_LOGI("ResetTimeOutResource eraseBit: %{public}u, resourceNumber: %{public}u, result: %{public}u,",
+        eraseBit, resourceRecord->resourceNumber_, resourceRecord->resourceNumber_ ^ eraseBit);
+    resourceRecord->resourceNumber_ ^= eraseBit;
+    if (eraseBit == 0) {
         return;
     }
-    RemoveListRecord(resourceRecord->resourceUnitList_, resetZeros);
-    auto callbackInfo = std::make_shared<ResourceCallbackInfo>(resourceRecord->uid_, resourceRecord->pid_, resetZeros,
+    RemoveListRecord(resourceRecord->resourceUnitList_, eraseBit);
+    auto callbackInfo = std::make_shared<ResourceCallbackInfo>(resourceRecord->uid_, resourceRecord->pid_, eraseBit,
         resourceRecord->bundleName_);
     subscriberMgr_->OnResourceChanged(callbackInfo, type);
     if(resourceRecord->resourceNumber_ == 0) {
@@ -420,11 +426,15 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
         if(iter->second->uid_ == uid && (resourceNumber & iter->second->resourceNumber_) != 0) {
             uint32_t eraseBit = (resourceNumber & iter->second->resourceNumber_);
             iter->second->resourceNumber_ ^= eraseBit;
-            RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
+            std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
+                iter->second->pid_, eraseBit, iter->second->bundleName_);
+            handler_->PostSyncTask([this, &callbackInfo]() {
+                this->ResetEfficiencyResourcesInner(callbackInfo, true);
+            });
         }
     }
-    auto findEmptyResource = [](const auto &iter) { return iter.second->resourceNumber_ == 0; };
-    EraseRecordIf(resourceApplyMap_, findEmptyResource);
+    // auto findEmptyResource = [](const auto &iter) { return iter.second->resourceNumber_ == 0; };
+    // EraseRecordIf(resourceApplyMap_, findEmptyResource);
 }
 
 void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(

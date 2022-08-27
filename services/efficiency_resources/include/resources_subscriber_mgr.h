@@ -59,9 +59,6 @@ public:
     explicit ObserverDeathRecipient();
     ~ObserverDeathRecipient() override;
     void OnRemoteDied(const wptr<IRemoteObject>& remote) override;
-
-// private:
-//     wptr<ResourcesSubscriberMgr> subscriberMgr_;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -22,15 +22,6 @@
 #include "bg_efficiency_resources_mgr.h"
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const char *ResourceTypeName[7] = {
-    "CPU",
-    "COMMON_EVENT",
-    "TIMER",
-    "WORK_SCHEDULER",
-    "BLUETOOTH",
-    "GPS",
-    "AUDIO",
-};
 
 PersistTime::PersistTime(uint32_t resourceIndex, bool isPersist, int64_t endTime)
     : resourceIndex_(resourceIndex), isPersist_(isPersist), endTime_(endTime) {}

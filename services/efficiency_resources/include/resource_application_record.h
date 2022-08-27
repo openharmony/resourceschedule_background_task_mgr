@@ -26,7 +26,6 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 
-extern const char *ResourceTypeName[7];
 class BgEfficiencyResourcesMgr;
 
 struct PersistTime {

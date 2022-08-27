@@ -101,7 +101,7 @@ private:
     // std::mutex callbackLock_;
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> appResourceApplyMap_ {};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> resourceApplyMap_ {};
-    std::shared_ptr<ResourceRecordStorage> recordStorage_ {nullptr};
+    std::unique_ptr<ResourceRecordStorage> recordStorage_ {nullptr};
     std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
     std::shared_ptr<ResourcesSubscriberMgr> subscriberMgr_ {nullptr};
 

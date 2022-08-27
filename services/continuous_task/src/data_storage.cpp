@@ -41,7 +41,6 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
     std::shared_ptr<ContinuousTaskRecord>> &allRecord)
 {
     nlohmann::json root;
-    BGTASK_LOGI("allRecord.size is %{public}d ", allRecord.size());
     for (auto &iter : allRecord) {
         auto record = iter.second;
         std::string data = record->ParseToJsonStr();
@@ -50,8 +49,6 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
             root[iter.first] = recordJson;
         }
     }
-    BGTASK_LOGI("strvalue.size is %{public}d ", root.size());
-    BGTASK_LOGI("strvalue is %{public}s", root.dump(CommonUtils::JSON_FORMAT).c_str());
     return SaveJsonValueToFile(root.dump(CommonUtils::JSON_FORMAT), TASK_RECORD_FILE_PATH);
 }
 
@@ -84,16 +81,12 @@ int32_t DataStorage::RestoreTaskDetectionInfo(nlohmann::json &value)
 
 int32_t DataStorage::SaveJsonValueToFile(const std::string &value, const std::string &filePath)
 {
-    BGTASK_LOGI("strvalue is %{public}s %{public}s", value.c_str(), filePath.c_str());
     if (!CreateNodeFile(filePath)) {
         BGTASK_LOGE("Create file failed.");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
-    BGTASK_LOGI("end create Node");
     std::ofstream fout;
-    BGTASK_LOGI("declare fout");
     std::string realPath;
-    BGTASK_LOGI("start convert full path");
     if (!ConvertFullPath(filePath, realPath)) {
         BGTASK_LOGE("SaveJsonValueToFile Get real file path: %{public}s failed", filePath.c_str());
         return ERR_BGTASK_DATA_STORAGE_ERR;

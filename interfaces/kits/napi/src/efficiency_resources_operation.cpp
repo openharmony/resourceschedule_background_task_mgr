@@ -30,10 +30,6 @@ napi_value GetNamedBoolValue(const napi_env &env, napi_value &object, const char
     bool hasNamedProperty = false;
     napi_value boolValue = nullptr;
     if (napi_has_named_property(env, object, utf8name, &hasNamedProperty) == napi_ok && hasNamedProperty) {
-        // if (!hasNamedProperty) {
-        //     BGTASK_LOGI("GetNamedBoolValue: %{public}s hasNamedProperty is false.", utf8name);
-        //     return Common::NapiGetNull(env);
-        // }
         NAPI_CALL(env, napi_get_named_property(env, object, utf8name, &boolValue));
         napi_status status = napi_get_value_bool(env, boolValue, &result);
         if (status != napi_ok) {
