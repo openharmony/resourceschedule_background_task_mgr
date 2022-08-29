@@ -18,8 +18,8 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
-ResourcesSubscriberMgr::ResourcesSubscriberMgr() {
+ResourcesSubscriberMgr::ResourcesSubscriberMgr()
+{
     deathRecipient_ = new (std::nothrow) ObserverDeathRecipient();
 }
 
@@ -43,17 +43,16 @@ ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscrib
         return ERR_BGTASK_INVALID_PARAM;
     }
     std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
-    auto subscriberIter = std::find_if(subscriberList_.begin(), subscriberList_.end(), [&remote](const auto &subscriber) {
-        return subscriber->AsObject() == remote;
-    });
+    auto subscriberIter = std::find_if(subscriberList_.begin(), subscriberList_.end(),
+        [&remote](const auto &subscriber) { return subscriber->AsObject() == remote; });
     if (subscriberIter != subscriberList_.end()) {
         BGTASK_LOGE("subscriber has already exist");
         return ERR_BGTASK_OBJECT_EXISTS;
     }
-    // subscriberList_.clear();
+
     subscriberList_.emplace_back(subscriber);
     remote->AddDeathRecipient(deathRecipient_);
-    BGTASK_LOGD("ResourcesSubscriberMgr::AddSubscriber succeed!!!");
+    BGTASK_LOGD("add resources to efficiency resources mgr succeed!!!");
     BGTASK_LOGI("suscriber efficient resources, list.size() is %{public}d.", subscriberList_.size());
     return ERR_OK;
 }
@@ -104,12 +103,18 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                BGTASK_LOGI("start APP_RESOURCE_APPLY OnAppContinuousTaskStop");
+                BGTASK_LOGD("start  on changed callback app resources apply");
                 (*iter)->OnAppEfficiencyResourcesApply(callbackInfo);
             }
             break;
         case EfficiencyResourcesEventType::RESOURCE_APPLY:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
+                // if ((*iter) == nullptr) {
+                //     BGTASK_LOGI("Background Task Subscriber unit is nullptr");
+                //     continue;
+                // } else {
+                //     BGTASK_LOGI("Background Task Subscriber unit is not nullptr");
+                // }
                 (*iter)->OnEfficiencyResourcesApply(callbackInfo);
             }
             break;
@@ -124,7 +129,7 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
             }
             break;
     }
-    BGTASK_LOGD("ResourcesSubscriberMgr::OnResourceChanged succeed");
+    BGTASK_LOGD("efficiency resources on resources changed function succeed");
 }
 
 void ResourcesSubscriberMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& remote)

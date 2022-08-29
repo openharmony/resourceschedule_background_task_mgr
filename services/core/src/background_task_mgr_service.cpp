@@ -116,40 +116,27 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    BGTASK_LOGD("start all SubscribeBackgroundTask!");
+    BGTASK_LOGD("start to subscribe all bgtask!");
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
         && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
-        BGTASK_LOGD("all SubscribeBackgroundTask success");
+        BGTASK_LOGD("all bgtask subscribe success");
         return ERR_OK;
     } else {
-        BGTASK_LOGD("SubscribeBackgroundTask failed");
+        BGTASK_LOGD("subscribe bgtask failed");
         UnsubscribeBackgroundTask(subscriber);
     }
-
-    // if (DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
-    //     BGTASK_LOGD("all SubscribeBackgroundTask success");
-    //     return ERR_OK;
-    // } else {
-    //     BGTASK_LOGD("SubscribeBackgroundTask failed");
-    //     UnsubscribeBackgroundTask(subscriber);
-    // }
     return ERR_BGTASK_SYS_NOT_READY;
 }
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    BGTASK_LOGD("start UnsubscribeBackgroundTask");
+    BGTASK_LOGD("start unscribe bgtask");
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
         && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
         return ERR_OK;
     }
-    // if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
-    //     && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
-    //     && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
-    //     return ERR_OK;
-    // }
     return ERR_BGTASK_SYS_NOT_READY;
 }
 

@@ -92,28 +92,28 @@ public:
 
     /**
      * @brief Apply or unapply efficiency resources of App.
-     * 
+     *
      * @param resourceInfo Request params.
      */
     void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 
     /**
      * @brief Called back when the efficiency resources of App reset.
-     * 
+     *
      * @param resourceInfo Request params.
      */
     void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 
     /**
      * @brief Apply or unapply efficiency resources.
-     * 
+     *
      * @param resourceInfo Request params.
      */
     void OnEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 
     /**
      * @brief Called back when the efficiency resources reset.
-     * 
+     *
      * @param resourceInfo Request params.
      */
     void OnEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;

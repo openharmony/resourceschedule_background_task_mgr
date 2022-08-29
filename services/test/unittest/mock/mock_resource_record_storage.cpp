@@ -31,12 +31,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-namespace {
-static constexpr char RESOURCE_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/mock_resource_record";
-static constexpr char APP_RESOURCE_RECORD[] = "appResourceRecord";
-static constexpr char PROCESS_RESOURCE_RECORD[] = "processResourceRecord";
-static constexpr int32_t MAX_BUFFER = 512;
-}
 
 ErrCode ResourceRecordStorage::RefreshResourceRecord(const ResourceRecordMap &appRecord,
     const ResourceRecordMap &processRecord)

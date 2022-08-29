@@ -54,6 +54,8 @@ private:
     ErrCode HandleOnAppEfficiencyResourcesReset(MessageParcel &data);
     ErrCode HandleOnEfficiencyResourcesApply(MessageParcel &data);
     ErrCode HandleOnEfficiencyResourcesReset(MessageParcel &data);
+    ErrCode OnRemoteRequestInner(uint32_t code,
+        MessageParcel& data, MessageParcel& reply, MessageOption& option);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

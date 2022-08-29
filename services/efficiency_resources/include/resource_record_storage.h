@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_RECORD_STORAGE_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_RECORD_STORAGE_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RES_RECORD_STORAGE_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RES_RECORD_STORAGE_H
 
 #include <unordered_map>
 #include "nlohmann/json.hpp"
@@ -24,20 +24,20 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class ResourceApplicationRecord;
 
-class ResourceRecordStorage { 
+class ResourceRecordStorage {
 using ResourceRecordMap = std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>>;
 public:
     ErrCode RefreshResourceRecord(const ResourceRecordMap &appRecord, const ResourceRecordMap &processRecord);
     ErrCode RestoreResourceRecord(ResourceRecordMap &appRecord, ResourceRecordMap &processRecord);
 
 private:
-    void ConvertMapToString(const ResourceRecordMap &appRecord, 
+    void ConvertMapToString(const ResourceRecordMap &appRecord,
         const ResourceRecordMap &processRecord, std::string &recordString);
     void ConvertMapToJson(const ResourceRecordMap &appRecord, nlohmann::json &root);
-    ErrCode ConvertStringToMap(const std::string &recordString, 
+    ErrCode ConvertStringToMap(const std::string &recordString,
         ResourceRecordMap &appRecord, ResourceRecordMap &processRecord);
     void ConvertJsonToMap(const nlohmann::json &value, ResourceRecordMap &recordMap);
-    ErrCode ConvertStringToJson(const std::string &recordString, 
+    ErrCode ConvertStringToJson(const std::string &recordString,
         nlohmann::json &appRecord, nlohmann::json &processRecord);
     bool CreateNodeFile(const std::string &filePath);
     bool ConvertFullPath(const std::string &partialPath, std::string &fullPath);
@@ -46,4 +46,4 @@ private:
 };
 }
 }
-#endif  //FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RESOURCE_RECORD_STORAGE_H
+#endif //FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RES_RECORD_STORAGE_H

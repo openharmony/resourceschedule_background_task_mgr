@@ -382,7 +382,8 @@ ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flag
     }
 }
 
-ErrCode BackgroundTaskMgrProxy::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess)
+ErrCode BackgroundTaskMgrProxy::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo,
+    bool &isSuccess)
 {
     if (resourceInfo == nullptr) {
         return ERR_BGTASK_INVALID_PARAM;

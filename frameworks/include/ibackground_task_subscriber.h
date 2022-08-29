@@ -98,7 +98,7 @@ public:
 
     /**
      * @brief Apply or unapply efficiency resources of App.
-     * 
+     *
      * @param resourceInfo Request params.
      */
     virtual void OnAppEfficiencyResourcesApply(
@@ -114,7 +114,7 @@ public:
 
     /**
      * @brief Apply or unapply efficiency resources.
-     * 
+     *
      * @param resourceInfo Request params.
      */
     virtual void OnEfficiencyResourcesApply(

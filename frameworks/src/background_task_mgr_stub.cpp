@@ -303,7 +303,8 @@ ErrCode BackgroundTaskMgrStub::HandleGetEfficiencyResourcesInfos(MessageParcel& 
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskMgrStub::WriteInfoToParcel(const std::vector<std::shared_ptr<ResourceCallbackInfo>>& infoMap, MessageParcel& reply)
+ErrCode BackgroundTaskMgrStub::WriteInfoToParcel(
+    const std::vector<std::shared_ptr<ResourceCallbackInfo>>& infoMap, MessageParcel& reply)
 {
     reply.WriteInt32(infoMap.size());
     for (auto &info : infoMap) {

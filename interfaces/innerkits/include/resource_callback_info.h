@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 class ResourceCallbackInfo : public Parcelable  {
 public:
     ResourceCallbackInfo() = default;

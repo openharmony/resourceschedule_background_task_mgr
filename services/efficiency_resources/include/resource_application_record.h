@@ -25,7 +25,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 class BgEfficiencyResourcesMgr;
 
 struct PersistTime {

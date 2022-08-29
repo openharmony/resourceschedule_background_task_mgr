@@ -54,8 +54,8 @@ ErrCode BackgroundTaskMgrHelper::GetContinuousTaskApps(std::vector<std::shared_p
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetContinuousTaskApps(list);
 }
 
-ErrCode BackgroundTaskMgrHelper::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
-    std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
+ErrCode BackgroundTaskMgrHelper::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<
+    ResourceCallbackInfo>> &appList, std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetEfficiencyResourcesInfos(appList, procList);
 }

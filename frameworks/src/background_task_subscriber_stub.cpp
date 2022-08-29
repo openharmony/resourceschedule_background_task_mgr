@@ -45,6 +45,12 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequest(uint32_t code,
         return ERR_INVALID_DATA;
     }
 
+    return OnRemoteRequestInner(code, data, reply, option);
+}
+
+ErrCode BackgroundTaskSubscriberStub::OnRemoteRequestInner(uint32_t code,
+    MessageParcel& data, MessageParcel& reply, MessageOption& option)
+{
     switch (code) {
         case ON_CONNECTED: {
             return HandleOnConnected();
