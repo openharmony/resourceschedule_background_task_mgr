@@ -65,9 +65,6 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::GET_EFFICIENCY_RESOURCES_INFOS,
             std::bind(&BackgroundTaskMgrStub::HandleGetEfficiencyResourcesInfos,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::REPORT_STATE_CHANGE_EVENT,
-            std::bind(&BackgroundTaskMgrStub::HandleReportStateChangeEvent,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
         {BackgroundTaskMgrStub::STOP_CONTINUOUS_TASK,
             std::bind(&BackgroundTaskMgrStub::HandleStopContinuousTask,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
@@ -319,8 +316,6 @@ ErrCode BackgroundTaskMgrStub::WriteInfoToParcel(const std::vector<std::shared_p
     }
     return ERR_OK;
 }
-
-ErrCode BackgroundTaskMgrStub::HandleReportStateChangeEvent(MessageParcel& data, MessageParcel& reply)
 
 ErrCode BackgroundTaskMgrStub::HandleStopContinuousTask(MessageParcel& data, MessageParcel& reply)
 {

@@ -748,6 +748,7 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscr
     subscriberRecipients_.emplace(subscriber->AsObject(), deathRecipient);
     subscriber->OnConnected();
     BGTASK_LOGD("Add continuous task subscriber succeed");
+    BGTASK_LOGI("suscriber continuous, list.size() is %{public}d.", bgTaskSubscribers_.size());
     return ERR_OK;
 }
 

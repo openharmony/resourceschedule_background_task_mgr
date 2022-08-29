@@ -107,7 +107,7 @@ void BgEfficiencyResourcesMgr::HandlePersistenceData()
     BGTASK_LOGI("ResourceRecordStorage service restart, restore data");
     recordStorage_->RestoreResourceRecord(appResourceApplyMap_, resourceApplyMap_);
     BGTASK_LOGD("ResourceRecordStorage service finish, restore data");
-    auto appMgrClient = std::make_unique<AppExecFwk::AppMgrClient>();
+    auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
     if (!appMgrClient || appMgrClient->ConnectAppMgrService() != ERR_OK) {
         BGTASK_LOGW("ResourceRecordStorage connect to app mgr service failed");
         return;
@@ -150,7 +150,7 @@ void BgEfficiencyResourcesMgr::CheckPersistenceData(const std::vector<AppExecFwk
 
 void BgEfficiencyResourcesMgr::RecoverDelayedTask(bool isProcess, ResourceRecordMap& infoMap)
 {
-    BGTASK_LOGI("RecoverDelayedTask restart");
+    BGTASK_LOGD("RemoveSubscriber Efficiency resources manager is already ready restart");
     const auto &mgr = shared_from_this();
     for (auto iter = infoMap.begin(); iter != infoMap.end(); iter ++) {
         auto &resourceList = iter->second->resourceUnitList_;
@@ -433,8 +433,6 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
             });
         }
     }
-    // auto findEmptyResource = [](const auto &iter) { return iter.second->resourceNumber_ == 0; };
-    // EraseRecordIf(resourceApplyMap_, findEmptyResource);
 }
 
 void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
@@ -464,14 +462,16 @@ bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std:
 
 ErrCode BgEfficiencyResourcesMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
-    BGTASK_LOGW("AddSubscriber Efficiency resources manager is already ready.");
+    BGTASK_LOGI("add subscriber to efficiency resources start!!");
     return subscriberMgr_->AddSubscriber(subscriber);
+    BGTASK_LOGI("add subscriber to efficiency resources succeed.");
 }
 
 ErrCode BgEfficiencyResourcesMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
-    BGTASK_LOGW("RemoveSubscriber Efficiency resources manager is already ready.");
+    BGTASK_LOGD("remove subscriber to efficiency resources start.");
     return subscriberMgr_->RemoveSubscriber(subscriber);
+    BGTASK_LOGD("remove subscriber to efficiency resources succeed.");
 }
 
 ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dumpOption,

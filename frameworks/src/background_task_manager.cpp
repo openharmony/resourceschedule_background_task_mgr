@@ -171,15 +171,6 @@ ErrCode BackgroundTaskManager::GetEfficiencyResourcesInfos(std::vector<std::shar
     return backgroundTaskMgrProxy_->GetEfficiencyResourcesInfos(appList, procList);
 }
 
-ErrCode BackgroundTaskManager::ReportStateChangeEvent(const EventType type, const std::string &infos)
-{
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
-    return backgroundTaskMgrProxy_->ReportStateChangeEvent(type, infos);
-}
-
 bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
 {
     std::lock_guard<std::mutex> lock(mutex_);

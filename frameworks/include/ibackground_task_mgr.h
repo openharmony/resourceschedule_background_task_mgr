@@ -113,7 +113,6 @@ public:
     virtual ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) = 0;
 
     /**
-<<<<<<< HEAD
      * @brief Apply or unapply efficiency resources.
      *
      * @param resourceInfo Request params.
@@ -139,17 +138,11 @@ public:
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList) = 0;
 
     /**
-     * @brief Report some state change infos to bgtask service.
-     * @param type state type.
-     * @param infos state detailed infos.
-     * @return Returns ERR_OK on success, others on failure.
-=======
      * @brief Request stop continuous task.
      * @param uid app uid.
      * @param pid app pid.
      * @param taskType continuous task type.
      * @return Returns ERR_OK if success, else failure.
->>>>>>> upstream/master
      */
     virtual ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType) = 0;
 
@@ -167,14 +160,10 @@ protected:
         UNSUBSCRIBE_BACKGROUND_TASK,
         GET_TRANSIENT_TASK_APPS,
         GET_CONTINUOUS_TASK_APPS,
-<<<<<<< HEAD
         APPLY_EFFICIENCY_RESOURCES,
         RESET_ALL_EFFICIENCY_RESOURCES,
         GET_EFFICIENCY_RESOURCES_INFOS,
-        REPORT_STATE_CHANGE_EVENT,
-=======
         STOP_CONTINUOUS_TASK,
->>>>>>> upstream/master
     };
 };
 }  // namespace BackgroundTaskMgr

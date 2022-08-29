@@ -19,15 +19,14 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 
-ResourcesSubscriberMgr::ResourcesSubscriberMgr() {}
+ResourcesSubscriberMgr::ResourcesSubscriberMgr() {
+    deathRecipient_ = new (std::nothrow) ObserverDeathRecipient();
+}
 
 ResourcesSubscriberMgr::~ResourcesSubscriberMgr() {}
 
 ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    if (deathRecipient_ == nullptr) {
-        deathRecipient_ = new (std::nothrow) ObserverDeathRecipient();
-    }
     BGTASK_LOGD("ResourcesSubscriberMgr start subscriber");
     if (subscriber == NULL) {
         BGTASK_LOGI("subscriber is null.");
@@ -51,10 +50,11 @@ ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscrib
         BGTASK_LOGE("subscriber has already exist");
         return ERR_BGTASK_OBJECT_EXISTS;
     }
-    
+    // subscriberList_.clear();
     subscriberList_.emplace_back(subscriber);
     remote->AddDeathRecipient(deathRecipient_);
-    BGTASK_LOGD("ResourcesSubscriberMgr::AddSubscriber succeed");
+    BGTASK_LOGD("ResourcesSubscriberMgr::AddSubscriber succeed!!!");
+    BGTASK_LOGI("suscriber efficient resources, list.size() is %{public}d.", subscriberList_.size());
     return ERR_OK;
 }
 
@@ -84,13 +84,14 @@ ErrCode ResourcesSubscriberMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubsc
     }
     subscriberList_.erase(subscriberIter);
     remote->RemoveDeathRecipient(deathRecipient_);
-    BGTASK_LOGD("ResourcesSubscriberMgr::RemoveSubscriber succeed.");
+    BGTASK_LOGD("remove subscriber from efficiency resources succeed.");
     return ERR_OK;
 }
 
 void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
     EfficiencyResourcesEventType type)
 {
+    BGTASK_LOGI("start OnResourceChanged");
     if (callbackInfo == nullptr) {
         BGTASK_LOGW("ResourceCallbackInfo is null");
         return;
@@ -103,6 +104,7 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
+                BGTASK_LOGI("start APP_RESOURCE_APPLY OnAppContinuousTaskStop");
                 (*iter)->OnAppEfficiencyResourcesApply(callbackInfo);
             }
             break;
@@ -136,7 +138,7 @@ void ResourcesSubscriberMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& re
         BGTASK_LOGE("get remote proxy failed");
         return;
     }
-
+    std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
     auto findSuscriber = [&proxy](const auto& subscriber) {
         return subscriber->AsObject() == proxy;
     };

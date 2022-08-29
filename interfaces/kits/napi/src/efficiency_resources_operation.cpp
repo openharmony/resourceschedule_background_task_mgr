@@ -14,8 +14,11 @@
  */
 
 #include "efficiency_resources_operation.h"
+
 #include "singleton.h"
+
 #include "background_task_manager.h"
+#include "efficiency_resource_info.h"
 #include "efficiency_resource_log.h"
 
 namespace OHOS {
@@ -77,12 +80,12 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
         return nullptr;
     }
     NAPI_CALL(env, napi_get_named_property(env, argv[0], "reason", &singleParam));
-    if (Common::GetStringValue(env, singleParam, reason) == nullptr) {
+    if (!Common::GetStringValue(env, singleParam, reason)) {
         BGTASK_LOGE("ParseParameters failed, reason is nullptr.");
         return nullptr;
     }
-    if (GetNamedBoolValue(env, argv[0], "isPersist", isPersist) == nullptr ||
-        GetNamedBoolValue(env, argv[0], "isProcess", isProcess) == nullptr) {
+    if (!GetNamedBoolValue(env, argv[0], "isPersist", isPersist) ||
+        !GetNamedBoolValue(env, argv[0], "isProcess", isProcess)) {
         return nullptr;
     }
     if (timeOut < 0) {
@@ -122,4 +125,4 @@ napi_value ResetAllEfficiencyResources(napi_env env, napi_callback_info info)
     return Common::NapiGetNull(env);
 }
 }
-}    
+}

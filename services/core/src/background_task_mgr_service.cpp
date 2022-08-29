@@ -116,25 +116,40 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
+    BGTASK_LOGD("start all SubscribeBackgroundTask!");
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
         && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
         BGTASK_LOGD("all SubscribeBackgroundTask success");
         return ERR_OK;
     } else {
-        BGTASK_LOGD("SubscribeBackgroundTask failed, start UnsubscribeBackgroundTask");
+        BGTASK_LOGD("SubscribeBackgroundTask failed");
         UnsubscribeBackgroundTask(subscriber);
     }
+
+    // if (DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
+    //     BGTASK_LOGD("all SubscribeBackgroundTask success");
+    //     return ERR_OK;
+    // } else {
+    //     BGTASK_LOGD("SubscribeBackgroundTask failed");
+    //     UnsubscribeBackgroundTask(subscriber);
+    // }
     return ERR_BGTASK_SYS_NOT_READY;
 }
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
+    BGTASK_LOGD("start UnsubscribeBackgroundTask");
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
         && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
         return ERR_OK;
     }
+    // if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
+    //     && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
+    //     && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
+    //     return ERR_OK;
+    // }
     return ERR_BGTASK_SYS_NOT_READY;
 }
 
@@ -179,12 +194,13 @@ ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, u
 
 int32_t BackgroundTaskMgrService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
+    BGTASK_LOGI("start BackgroundTaskMgrService::Dump");
     std::vector<std::string> argsInStr;
     std::transform(args.begin(), args.end(), std::back_inserter(argsInStr),
         [](const std::u16string &arg) {
         return Str16ToStr8(arg);
     });
-
+    BGTASK_LOGI("start BackgroundTaskMgrService::Dump 2");
     std::string result;
 
     int32_t ret = ERR_OK;

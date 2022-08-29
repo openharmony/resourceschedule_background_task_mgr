@@ -17,6 +17,7 @@
 
 #include "singleton.h"
 
+#include "bgtaskmgr_log_wrapper.h"
 #include "background_task_manager.h"
 #include "ibackground_task_mgr.h"
 
