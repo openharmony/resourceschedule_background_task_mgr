@@ -54,7 +54,7 @@ std::shared_ptr<BgEfficiencyResourcesMgr> BgEfficiencyResourcesMgrTest::bgEffici
 void BgEfficiencyResourcesMgrTest::SetUpTestCase()
 {
     bgEfficiencyResourcesMgr_ = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance();
-    bgEfficiencyResourcesMgr_->recordStorage_ = std::make_shared<ResourceRecordStorage>();
+    bgEfficiencyResourcesMgr_->recordStorage_ = std::make_unique<ResourceRecordStorage>();
     bgEfficiencyResourcesMgr_->subscriberMgr_ = DelayedSingleton<ResourcesSubscriberMgr>::GetInstance();
     bgEfficiencyResourcesMgr_->runner_ = AppExecFwk::EventRunner::Create(MOCK_EFFICIENCY_RESOURCES_MGR_NAME);
     bgEfficiencyResourcesMgr_->handler_ =
