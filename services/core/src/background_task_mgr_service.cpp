@@ -49,12 +49,19 @@ void BackgroundTaskMgrService::OnStart()
         return;
     }
     Init();
+    AddSystemAbilityListener(APP_MGR_SERVICE_ID);
+    AddSystemAbilityListener(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
     if (!Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get())) {
         BGTASK_LOGE("Service start failed!");
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
     BGTASK_LOGI("background task manager service start succeed!");
+}
+
+void BackgroundTaskMgrService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->OnAddSystemAbility(systemAbilityId, deviceId);
 }
 
 void BackgroundTaskMgrService::Init()

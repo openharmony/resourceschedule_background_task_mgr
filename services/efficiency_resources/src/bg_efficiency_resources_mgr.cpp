@@ -37,10 +37,12 @@ namespace {
     const std::string DUMP_PARAM_RESET_ALL = "--reset_all";
     const std::string DUMP_PARAM_RESET_APP = "--resetapp";
     const std::string DUMP_PARAM_RESET_PROC = "--resetproc";
-    constexpr int32_t DELAY_TIME = 500;
     constexpr int32_t MAX_DUMP_PARAM_NUMS = 4;
     constexpr uint32_t MAX_RESOURCES_TYPE_NUM = 7;
     constexpr uint32_t MAX_RESOURCE_NUMBER = (1 << MAX_RESOURCES_TYPE_NUM) - 1;
+    const uint32_t APP_MGR_READY = 1;
+    const uint32_t BUNDLE_MGR_READY = 2;
+    const uint32_t ALL_DEPENDS_READY = 3;
     const std::string ResourceTypeName[7] = {
         "CPU",
         "COMMON_EVENT",
@@ -69,28 +71,37 @@ bool BgEfficiencyResourcesMgr::Init()
         return false;
     }
     HandlePersistenceData();
-    InitNecessaryState();
     BGTASK_LOGI("efficiency resources mgr finish Init");
     return true;
 }
 
 void BgEfficiencyResourcesMgr::InitNecessaryState()
 {
-    sptr<ISystemAbilityManager> systemAbilityManager
-        = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityManager == nullptr
-        || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(APP_MGR_SERVICE_ID) == nullptr) {
-        BGTASK_LOGW("necessary system service is not ready yet!");
-        auto task = [this]() { this->InitNecessaryState(); };
-        handler_->PostTask(task, DELAY_TIME);
-        return;
-    }
     RegisterAppStateObserver();
     BGTASK_LOGI("necessary system service has been accessiable!");
-    BGTASK_LOGD("app resource record size: %{public}u, process  resource record size:  %{public}u!",
-        appResourceApplyMap_.size(), resourceApplyMap_.size());
+    BGTASK_LOGD("app resource record size: %{public}d, process  resource record size:  %{public}d!",
+        static_cast<int32_t>(appResourceApplyMap_.size()), static_cast<int32_t>(resourceApplyMap_.size()));
     isSysReady_.store(true);
+}
+
+void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    BGTASK_LOGI("add system ability, systemAbilityId : %{public}d", systemAbilityId);
+    switch (systemAbilityId) {
+        case APP_MGR_SERVICE_ID:
+            BGTASK_LOGI("app mgr service is ready!");
+            dependsReady_ |= APP_MGR_READY;
+            break;
+        case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
+            BGTASK_LOGI("app mgr service is ready!");
+            dependsReady_ |= BUNDLE_MGR_READY;
+            break;
+    }
+    if (dependsReady_ == ALL_DEPENDS_READY) {
+        BGTASK_LOGI("necessary system service has been satisfied!");
+        auto task = [this]() { this->InitNecessaryState(); };
+        handler_->PostSyncTask(task);
+    }
 }
 
 void BgEfficiencyResourcesMgr::RegisterAppStateObserver()

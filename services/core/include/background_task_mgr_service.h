@@ -33,7 +33,7 @@
 #include "bg_transient_task_mgr.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "bg_efficiency_resources_mgr.h"
-#include "ibackground_task_mgr.h"
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 enum class ServiceRunningState {
@@ -76,6 +76,7 @@ public:
 private:
     void Init();
     void DumpUsage(std::string &result);
+    void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
 
 private:
     ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};

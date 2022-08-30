@@ -17,18 +17,14 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_EFFICIENCY_RES_MGR_H
 
 #include <memory>
-#include <mutex>
 #include <list>
 #include <unordered_map>
-#include <sstream>
 
 #include "ipc_skeleton.h"
 #include "singleton.h"
-#include "bgtaskmgr_inner_errors.h"
 #include "event_runner.h"
 #include "event_handler.h"
 #include "event_info.h"
-#include "remote_death_recipient.h"
 #include "running_process_info.h"
 
 #include "efficiency_resource_info.h"
@@ -61,6 +57,7 @@ public:
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveProcessRecord(int32_t uid, int32_t pid, const std::string &bundleName);
     ErrCode RemoveAppRecord(int32_t uid, const std::string &bundleName);
+    void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
 
 private:
     void ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
@@ -98,12 +95,12 @@ private:
     std::atomic<bool> isSysReady_ {false};
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
-    // std::mutex callbackLock_;
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> appResourceApplyMap_ {};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> resourceApplyMap_ {};
     std::unique_ptr<ResourceRecordStorage> recordStorage_ {nullptr};
     std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
     std::shared_ptr<ResourcesSubscriberMgr> subscriberMgr_ {nullptr};
+    uint32_t dependsReady_ = 0;
 
     DECLARE_DELAYED_SINGLETON(BgEfficiencyResourcesMgr);
 };
