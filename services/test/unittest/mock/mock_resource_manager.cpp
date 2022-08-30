@@ -276,12 +276,12 @@ RState ResourceManagerImpl::GetMediaBase64DataByName(const char *name, uint32_t 
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetProfileDataById(uint32_t id, std::unique_ptr<uint8_t[]> &outValue)
+RState ResourceManagerImpl::GetProfileDataById(uint32_t id, size_t &len, std::unique_ptr<uint8_t[]> &outValue)
 {
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetProfileDataByName(const char *name, std::unique_ptr<uint8_t[]> &outValue)
+RState ResourceManagerImpl::GetProfileDataByName(const char *name, size_t &len, std::unique_ptr<uint8_t[]> &outValue)
 {
     return SUCCESS;
 }
