@@ -38,7 +38,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 class BgEfficiencyResourcesMgr : public DelayedSingleton<BgEfficiencyResourcesMgr>,
                             public std::enable_shared_from_this<BgEfficiencyResourcesMgr> {
 using ResourceRecordMap = std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>>;

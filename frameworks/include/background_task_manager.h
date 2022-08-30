@@ -113,7 +113,7 @@ public:
 
     /**
      * @brief Apply or unapply efficiency resources.
-     * 
+     *
      * @param resourceInfo Request params.
      * @param isSuccess succeed to apply efficiency recources.
      * @return Returns ERR_OK on success, others on failure.
@@ -122,7 +122,7 @@ public:
 
     /**
      * @brief Reset all efficiency resources.
-     * 
+     *
      * @return ERR_OK if success, else fail.
      */
     ErrCode ResetAllEfficiencyResources();

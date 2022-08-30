@@ -117,7 +117,7 @@ void BgEfficiencyResourcesMgr::HandlePersistenceData()
     recordStorage_ = std::make_unique<ResourceRecordStorage>();
     BGTASK_LOGD("ResourceRecordStorage service restart, restore data");
     recordStorage_->RestoreResourceRecord(appResourceApplyMap_, resourceApplyMap_);
-    auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
+    auto appMgrClient = std::make_unique<AppExecFwk::AppMgrClient>();
     if (!appMgrClient || appMgrClient->ConnectAppMgrService() != ERR_OK) {
         BGTASK_LOGW("ResourceRecordStorage connect to app mgr service failed");
         return;
@@ -232,15 +232,9 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
 ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess)
 {
-    if(resourceInfo->IsApply()) {
-        BGTASK_LOGI("ApplyEfficiencyResources apply, resource number: %{public}u, "\
-            "isPersist: %{public}d, timeOut: %{public}d, isProcess: %{public}d", resourceInfo->GetResourceNumber(),
-            resourceInfo->IsPersist(), resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
-    } else {
-        BGTASK_LOGI("ApplyEfficiencyResources reset, resource number: %{public}u, "\
-            "isPersist: %{public}d, timeOut: %{public}d, isProcess: %{public}d", resourceInfo->GetResourceNumber(),
-            resourceInfo->IsPersist(), resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
-    }
+    BGTASK_LOGD("ApplyEfficiencyResources apply, resource number: %{public}u, "\
+        "isPersist: %{public}d, timeOut: %{public}d, isProcess: %{public}d", resourceInfo->GetResourceNumber(),
+        resourceInfo->IsPersist(), resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
     BGTASK_LOGW("ApplyEfficiencyResources before");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready.");
@@ -304,7 +298,8 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(const std::shared_p
 }
 
 void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo>
-    &callbackInfo, std::shared_ptr<ResourceApplicationRecord> &record, bool isPersist, int32_t timeOut, bool isProcess)
+    &callbackInfo, std::shared_ptr<ResourceApplicationRecord> &record,
+    bool isPersist, int32_t timeOut, bool isProcess)
 {
     for (uint32_t resourceIndex = 0; resourceIndex < MAX_RESOURCES_TYPE_NUM; ++resourceIndex) {
         if ((callbackInfo->GetResourceNumber() & (1 << resourceIndex)) != 0) {
@@ -329,7 +324,7 @@ void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<Reso
             }
         }
     }
-    BGTASK_LOGI("UpdateResourcesEndtime list.size(): %{public}d", static_cast<int32_t>(record->resourceUnitList_.size()));
+    BGTASK_LOGD("update end time of resource");
     if (isPersist) {
         return;
     }
@@ -567,7 +562,7 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     EfficiencyResourcesEventType type)
 {
     BGTASK_LOGD("resource record key: %{public}d", mapKey);
-    BGTASK_LOGD("resource record size(): %{public}d", infoMap.size());
+    BGTASK_LOGD("resource record size(): %{public}d", static_cast<int32_t>(infoMap.size()));
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end() || (iter->second->resourceNumber_ & cleanResource) == 0) {
         BGTASK_LOGW("remove single resource record failure, no matched task: %{public}d", mapKey);
@@ -588,7 +583,7 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
 
 void BgEfficiencyResourcesMgr::RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit)
 {
-    BGTASK_LOGD("start RemoveListRecord: %{public}u", resourceUnitList.size());
+    BGTASK_LOGD("start remove record from list");
     if (eraseBit == 0) {
         return;
     }

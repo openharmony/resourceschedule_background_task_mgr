@@ -15,12 +15,6 @@
 
 #include "resource_record_storage.h"
 
-#include <fcntl.h>
-#include <fstream>
-#include <unistd.h>
-#include <climits>
-#include <sys/stat.h>
-
 #include "errors.h"
 #include "bundle_manager_helper.h"
 #include "common_utils.h"
@@ -31,7 +25,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 ErrCode ResourceRecordStorage::RefreshResourceRecord(const ResourceRecordMap &appRecord,
     const ResourceRecordMap &processRecord)
 {

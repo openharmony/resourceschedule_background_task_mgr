@@ -29,7 +29,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-
 class ObserverDeathRecipient;
 enum class EfficiencyResourcesEventType: uint32_t {
     APP_RESOURCE_APPLY,

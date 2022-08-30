@@ -123,14 +123,14 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    BGTASK_LOGD("start to subscribe all bgtask!");
+    BGTASK_LOGD("start to subscribe all background task!");
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
         && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
         BGTASK_LOGD("all bgtask subscribe success");
         return ERR_OK;
     } else {
-        BGTASK_LOGD("subscribe bgtask failed");
+        BGTASK_LOGD("subscribe background task failed");
         UnsubscribeBackgroundTask(subscriber);
     }
     return ERR_BGTASK_SYS_NOT_READY;

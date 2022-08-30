@@ -53,7 +53,7 @@ ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscrib
     subscriberList_.emplace_back(subscriber);
     remote->AddDeathRecipient(deathRecipient_);
     BGTASK_LOGD("add resources to efficiency resources mgr succeed!");
-    BGTASK_LOGI("suscriber efficient resources, list.size() is %{public}d.", subscriberList_.size());
+    BGTASK_LOGD("suscriber efficient resources, list.size() is %{public}d.", static_cast<int32_t>(subscriberList_.size()));
     return ERR_OK;
 }
 
@@ -103,18 +103,12 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                BGTASK_LOGD("start  on changed callback app resources apply");
+                BGTASK_LOGD("start callback function 0f app resources application");
                 (*iter)->OnAppEfficiencyResourcesApply(callbackInfo);
             }
             break;
         case EfficiencyResourcesEventType::RESOURCE_APPLY:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                // if ((*iter) == nullptr) {
-                //     BGTASK_LOGI("Background Task Subscriber unit is nullptr");
-                //     continue;
-                // } else {
-                //     BGTASK_LOGI("Background Task Subscriber unit is not nullptr");
-                // }
                 (*iter)->OnEfficiencyResourcesApply(callbackInfo);
             }
             break;
@@ -153,7 +147,7 @@ void ResourcesSubscriberMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& re
         return;
     }
     subscriberList_.erase(subscriberIter);
-    BGTASK_LOGI("suscriber death, remove it from list, list.size() is %{public}d.", subscriberList_.size());
+    BGTASK_LOGD("suscriber death, remove it from list");
 }
 
 

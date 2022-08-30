@@ -454,7 +454,6 @@ ErrCode BgTransientTaskMgr::SubscribeBackgroundTask(const sptr<IBackgroundTaskSu
         }
         subscriberList_.emplace_back(subscriber);
         BGTASK_LOGI("subscribe transient task success.");
-        BGTASK_LOGI("suscriber transit, list.size() is %{public}d.", subscriberList_.size());
     });
     return ERR_OK;
 }

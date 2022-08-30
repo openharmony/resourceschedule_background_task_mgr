@@ -49,7 +49,7 @@ ohos_unittest("bgtask_unit_test") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [   
+  external_deps = [
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:app_manager",
@@ -137,5 +137,5 @@ group("unittest") {
   deps = [
     ":bgtask_unit_test",
     ":efficiency_mgr_unit_test",
-    ]
+  ]
 }
