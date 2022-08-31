@@ -484,6 +484,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         BGTASK_LOGW("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
+
     if (cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
         SetCachedBundleInfo(continuousTaskRecord->uid_, continuousTaskRecord->userId_,
             continuousTaskRecord->bundleName_, continuousTaskRecord->appName_);
