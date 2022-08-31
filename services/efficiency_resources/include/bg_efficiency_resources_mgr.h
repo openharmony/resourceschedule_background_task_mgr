@@ -59,7 +59,7 @@ public:
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
 
 private:
-    void ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
+    void ApplyEfficiencyResourcesInner(std::shared_ptr<ResourceCallbackInfo> callbackInfo,
         const sptr<EfficiencyResourceInfo> &resourceInfo);
     void UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
         std::shared_ptr<ResourceApplicationRecord> &record, const sptr<EfficiencyResourceInfo> &resourceInfo);

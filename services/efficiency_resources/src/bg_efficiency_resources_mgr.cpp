@@ -266,24 +266,33 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     return ERR_OK;
 }
 
-void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo>
-    &callbackInfo, const sptr<EfficiencyResourceInfo> &resourceInfo)
+void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<ResourceCallbackInfo>
+    callbackInfo, const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
     BGTASK_LOGD("apply efficiency resources, resource number: %{public}u, "\
         "isPersist: %{public}d, timeOut: %{public}d, isProcess: %{public}d", resourceInfo->GetResourceNumber(),
         resourceInfo->IsPersist(), resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
     int32_t mapKey = resourceInfo->IsProcess() ? callbackInfo->GetPid() : callbackInfo->GetUid();
     auto &infoMap = resourceInfo->IsProcess() ? procResourceApplyMap_ : appResourceApplyMap_;
+    uint32_t preResourceNumber = 0;
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end()) {
         infoMap.emplace(mapKey, std::make_shared<ResourceApplicationRecord>(callbackInfo->GetUid(),
             callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), callbackInfo->GetBundleName()));
         iter = infoMap.find(mapKey);
     } else {
+        preResourceNumber = iter->second->resourceNumber_;
         iter->second->resourceNumber_ |= callbackInfo->GetResourceNumber();
     }
     BGTASK_LOGD("start to update resources end time");
     UpdateResourcesEndtime(callbackInfo, iter->second, resourceInfo);
+    uint32_t diffResourceNumber = iter->second->resourceNumber_ ^ (preResourceNumber & iter->second->resourceNumber_);
+    if (diffResourceNumber == 0) {
+        BGTASK_LOGD("after update end time, diff between resourcesNumbers is zero.");
+        recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+        return;
+    }
+    callbackInfo->SetResourceNumber(diffResourceNumber);
     if (resourceInfo->IsProcess()) {
         subscriberMgr_->OnResourceChanged(callbackInfo, EfficiencyResourcesEventType::RESOURCE_APPLY);
     } else {
@@ -541,6 +550,9 @@ void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> 
 
     if (cleanAll) {
         for (auto iter = infoMap.begin(); iter != infoMap.end(); ++iter) {
+            if (iter->second->GetResourceNumber() == 0) {
+                continue;
+            }
             std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>
                 (iter->second->GetUid(), iter->second->GetPid(), iter->second->GetResourceNumber(),
                 iter->second->GetBundleName());
@@ -569,8 +581,6 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
         BGTASK_LOGW("remove single resource record failure, no matched task: %{public}d", mapKey);
         return false;
     }
-    auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
-        iter->second->GetPid(), cleanResource, iter->second->GetBundleName());
     uint32_t eraseBit = (iter->second->resourceNumber_ & cleanResource);
     iter->second->resourceNumber_ ^= eraseBit;
 
@@ -578,6 +588,11 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     if (iter->second->resourceNumber_ == 0) {
         infoMap.erase(iter);
     }
+    if (eraseBit == 0) {
+        return true;
+    }
+    auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
+        iter->second->GetPid(), cleanResource, iter->second->GetBundleName());
     subscriberMgr_->OnResourceChanged(callbackInfo, type);
     return true;
 }

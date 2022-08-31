@@ -48,8 +48,8 @@ public:
     int32_t GetPid() const;
     std::string GetBundleName() const;
     uint32_t GetResourceNumber() const;
-    std::string GetReason() const;
     std::list<PersistTime>& GetResourceUnitList();
+    void SetResourceNumber();
     void ParseToJson(nlohmann::json &root);
     std::string ParseToJsonStr();
     bool ParseFromJson(const nlohmann::json& value);

@@ -85,7 +85,7 @@ public:
         return resourceNumber_;
     }
 
-   /**
+    /**
      * @brief Get the bundleName_.
      *
      * @return The bundle name of the app.
@@ -95,6 +95,15 @@ public:
         return bundleName_;
     }
 
+    /**
+     * @brief Set the Resource Number object
+     * 
+     * @param resourceNumber 
+     */
+    void SetResourceNumber(uint32_t resourceNumber)
+    {
+        resourceNumber_ = resourceNumber;
+    }
 private:
     int32_t uid_ {0};
     int32_t pid_ {0};
