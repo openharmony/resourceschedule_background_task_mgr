@@ -52,8 +52,8 @@ private:
     ErrCode HandleOnAppContinuousTaskStop(MessageParcel &data);
     ErrCode HandleOnAppEfficiencyResourcesApply(MessageParcel &data);
     ErrCode HandleOnAppEfficiencyResourcesReset(MessageParcel &data);
-    ErrCode HandleOnEfficiencyResourcesApply(MessageParcel &data);
-    ErrCode HandleOnEfficiencyResourcesReset(MessageParcel &data);
+    ErrCode HandleOnProcEfficiencyResourcesApply(MessageParcel &data);
+    ErrCode HandleOnProcEfficiencyResourcesReset(MessageParcel &data);
     ErrCode OnRemoteRequestInner(uint32_t code,
         MessageParcel& data, MessageParcel& reply, MessageOption& option);
 };

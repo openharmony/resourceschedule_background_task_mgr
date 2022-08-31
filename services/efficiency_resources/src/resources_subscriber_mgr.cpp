@@ -53,7 +53,8 @@ ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscrib
     subscriberList_.emplace_back(subscriber);
     remote->AddDeathRecipient(deathRecipient_);
     BGTASK_LOGD("add resources to efficiency resources mgr succeed!");
-    BGTASK_LOGD("suscriber efficient resources, list.size() is %{public}d.", static_cast<int32_t>(subscriberList_.size()));
+    BGTASK_LOGD("suscriber efficient resources, list.size() is %{public}d.",
+        static_cast<int32_t>(subscriberList_.size()));
     return ERR_OK;
 }
 
@@ -109,7 +110,7 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
             break;
         case EfficiencyResourcesEventType::RESOURCE_APPLY:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                (*iter)->OnEfficiencyResourcesApply(callbackInfo);
+                (*iter)->OnProcEfficiencyResourcesApply(callbackInfo);
             }
             break;
         case EfficiencyResourcesEventType::APP_RESOURCE_RESET:
@@ -119,7 +120,7 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
             break;
         case EfficiencyResourcesEventType::RESOURCE_RESET:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                (*iter)->OnEfficiencyResourcesReset(callbackInfo);
+                (*iter)->OnProcEfficiencyResourcesReset(callbackInfo);
             }
             break;
     }

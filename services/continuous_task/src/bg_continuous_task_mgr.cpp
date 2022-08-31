@@ -246,7 +246,7 @@ bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
 bool BgContinuousTaskMgr::RegisterAppStateObserver()
 {
     bool res = true;
-    appStateObserver_ = DelayedSingleton<AppStateObserver>::GetInstance();
+    appStateObserver_ = std::make_shared<AppStateObserver>();
     if (appStateObserver_ != nullptr) {
         appStateObserver_->SetEventHandler(handler_);
         appStateObserver_->SetBgContinuousTaskMgr(shared_from_this());
@@ -444,7 +444,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    
+
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord->bundleName_ = bundleName;
     continuousTaskRecord->abilityName_ = taskParam->abilityName_;
@@ -732,6 +732,7 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscr
     }
 
     bgTaskSubscribers_.emplace_back(subscriber);
+
     if (subscriber->AsObject() == nullptr) {
         return ERR_BGTASK_INVALID_PARAM;
     }

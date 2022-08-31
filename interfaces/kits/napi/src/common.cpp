@@ -47,7 +47,6 @@ napi_value Common::NapiGetboolean(const napi_env &env, bool isValue)
 {
     napi_value result = nullptr;
     NAPI_CALL(env, napi_get_boolean(env, isValue, &result));
-    BGTASK_LOGI("test 2.1");
     return result;
 }
 

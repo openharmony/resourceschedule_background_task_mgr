@@ -62,7 +62,7 @@ private:
     void ApplyEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
         const sptr<EfficiencyResourceInfo> &resourceInfo);
     void UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
-        std::shared_ptr<ResourceApplicationRecord> &record, bool isPersist, int32_t timeOut, bool isProcess);
+        std::shared_ptr<ResourceApplicationRecord> &record, const sptr<EfficiencyResourceInfo> &resourceInfo);
     void ResetEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
         bool isProcess);
     ErrCode ResetAllEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
@@ -95,7 +95,7 @@ private:
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> appResourceApplyMap_ {};
-    std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> resourceApplyMap_ {};
+    std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> procResourceApplyMap_ {};
     std::unique_ptr<ResourceRecordStorage> recordStorage_ {nullptr};
     std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
     std::shared_ptr<ResourcesSubscriberMgr> subscriberMgr_ {nullptr};

@@ -31,8 +31,10 @@ struct PersistTime {
     uint32_t resourceIndex_ {0};
     bool isPersist_ {false};
     int64_t endTime_ {0};
+    std::string reason_ {""};
     PersistTime() = default;
-    PersistTime(uint32_t resourceIndex, bool isPersist, int64_t endTime);
+    PersistTime(const uint32_t resourceIndex, const bool isPersist, const int64_t endTime,
+        const std::string &reason);
     bool operator < (const PersistTime& rhs) const;
 };
 
@@ -57,7 +59,6 @@ private:
     int32_t pid_ {0};
     uint32_t resourceNumber_ {0};
     std::string bundleName_ {""};
-    std::string reason_ {""};
     std::list<PersistTime> resourceUnitList_ {};
 
     friend class BgEfficiencyResourcesMgr;

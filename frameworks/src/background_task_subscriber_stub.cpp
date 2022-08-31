@@ -85,11 +85,11 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequestInner(uint32_t code,
         case ON_APP_EFFICIENCY_RESOURCES_RESET: {
             return HandleOnAppEfficiencyResourcesReset(data);
         }
-        case ON_EFFICIENCY_RESOURCES_APPLY: {
-            return HandleOnEfficiencyResourcesApply(data);
+        case ON_PROC_EFFICIENCY_RESOURCES_APPLY: {
+            return HandleOnProcEfficiencyResourcesApply(data);
         }
-        case ON_EFFICIENCY_RESOURCES_RESET: {
-            return HandleOnEfficiencyResourcesReset(data);
+        case ON_PROC_EFFICIENCY_RESOURCES_RESET: {
+            return HandleOnProcEfficiencyResourcesReset(data);
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
@@ -214,27 +214,27 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnAppEfficiencyResourcesReset(Messag
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesApply(MessageParcel &data)
+ErrCode BackgroundTaskSubscriberStub::HandleOnProcEfficiencyResourcesApply(MessageParcel &data)
 {
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
     if (!resourceCallbackInfo) {
-        BGTASK_LOGE("HandleOnEfficiencyResourcesApply ContinuousTaskCallbackInfo ReadParcelable failed");
+        BGTASK_LOGE("HandleOnProcEfficiencyResourcesApply ContinuousTaskCallbackInfo ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    OnEfficiencyResourcesApply(resourceCallbackInfo);
+    OnProcEfficiencyResourcesApply(resourceCallbackInfo);
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskSubscriberStub::HandleOnEfficiencyResourcesReset(MessageParcel &data)
+ErrCode BackgroundTaskSubscriberStub::HandleOnProcEfficiencyResourcesReset(MessageParcel &data)
 {
     std::shared_ptr<ResourceCallbackInfo> resourceCallbackInfo
         = std::shared_ptr<ResourceCallbackInfo>(data.ReadParcelable<ResourceCallbackInfo>());
     if (!resourceCallbackInfo) {
-        BGTASK_LOGE("HandleOnEfficiencyResourcesReset ReadParcelable failed");
+        BGTASK_LOGE("HandleOnProcEfficiencyResourcesReset ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    OnEfficiencyResourcesReset(resourceCallbackInfo);
+    OnProcEfficiencyResourcesReset(resourceCallbackInfo);
     return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr

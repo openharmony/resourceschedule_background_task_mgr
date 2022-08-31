@@ -49,10 +49,10 @@ void BackgroundTaskSubscriber::OnAppContinuousTaskStop(int32_t uid) {}
 
 void BackgroundTaskSubscriber::OnRemoteDied(const wptr<IRemoteObject> &object) {}
 
-void BackgroundTaskSubscriber::OnEfficiencyResourcesApply(
+void BackgroundTaskSubscriber::OnProcEfficiencyResourcesApply(
     const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) {}
 
-void BackgroundTaskSubscriber::OnEfficiencyResourcesReset(
+void BackgroundTaskSubscriber::OnProcEfficiencyResourcesReset(
     const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) {}
 
 void BackgroundTaskSubscriber::OnAppEfficiencyResourcesApply(
@@ -100,16 +100,16 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyReso
     subscriber_.OnAppEfficiencyResourcesReset(resourceInfo);
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnEfficiencyResourcesApply(
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiencyResourcesApply(
     const std::shared_ptr<ResourceCallbackInfo> &resourceInfo)
 {
-    subscriber_.OnEfficiencyResourcesApply(resourceInfo);
+    subscriber_.OnProcEfficiencyResourcesApply(resourceInfo);
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnEfficiencyResourcesReset(
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiencyResourcesReset(
     const std::shared_ptr<ResourceCallbackInfo> &resourceInfo)
 {
-    subscriber_.OnEfficiencyResourcesReset(resourceInfo);
+    subscriber_.OnProcEfficiencyResourcesReset(resourceInfo);
 }
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskStart(

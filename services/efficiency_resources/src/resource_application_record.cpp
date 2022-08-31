@@ -22,8 +22,9 @@
 #include "bg_efficiency_resources_mgr.h"
 namespace OHOS {
 namespace BackgroundTaskMgr {
-PersistTime::PersistTime(uint32_t resourceIndex, bool isPersist, int64_t endTime)
-    : resourceIndex_(resourceIndex), isPersist_(isPersist), endTime_(endTime) {}
+PersistTime::PersistTime(const uint32_t resourceIndex, const bool isPersist, const int64_t endTime,
+    const std::string &reason) : resourceIndex_(resourceIndex), isPersist_(isPersist), endTime_(endTime),
+    reason_(reason) {}
 
 bool PersistTime::operator < (const PersistTime& rhs) const
 {
@@ -50,11 +51,6 @@ uint32_t ResourceApplicationRecord::GetResourceNumber() const
     return resourceNumber_;
 }
 
-std::string ResourceApplicationRecord::GetReason() const
-{
-    return reason_;
-}
-
 std::list<PersistTime>& ResourceApplicationRecord::GetResourceUnitList()
 {
     return resourceUnitList_;
@@ -73,7 +69,6 @@ void ResourceApplicationRecord::ParseToJson(nlohmann::json &root)
     root["uid"] = uid_;
     root["pid"] = pid_;
     root["resourceNumber"] = resourceNumber_;
-    root["reason"] = reason_;
 
     if (!resourceUnitList_.empty()) {
         nlohmann::json resource;
@@ -82,6 +77,7 @@ void ResourceApplicationRecord::ParseToJson(nlohmann::json &root)
             info["resourceIndex"] = iter.resourceIndex_;
             info["isPersist"] = iter.isPersist_;
             info["endTime"] = iter.endTime_;
+            info["reason"] = iter.reason_;
             resource.push_back(info);
         }
         root["resourceUnitList"] = resource;
@@ -97,14 +93,17 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
     this->pid_ = value.at("pid").get<int32_t>();
     this->bundleName_ = value.at("bundleName").get<std::string>();
     this->resourceNumber_ = value.at("resourceNumber").get<uint32_t>();
-    this->reason_ = value.at("reason").get<std::string>();
     if (value.count("resourceUnitList") > 0) {
         const nlohmann::json &resourceVal = value.at("resourceUnitList");
         auto nums = static_cast<int32_t>(resourceVal.size());
         for (int i = 0; i < nums; ++i) {
             const nlohmann::json &persistTime = resourceVal.at(i);
-            this->resourceUnitList_.emplace_back(PersistTime {persistTime.at("resourceIndex").get<uint32_t>(),
-                persistTime.at("isPersist").get<bool>(), persistTime.at("endTime").get<int64_t>()});
+            uint32_t resourceIndex = persistTime.at("resourceIndex").get<uint32_t>();
+            bool isPersist_ = persistTime.at("isPersist").get<bool>();
+            int64_t endTime_ = persistTime.at("endTime").get<int64_t>();
+            std::string reason_ = persistTime.at("reason").get<std::string>();
+            this->resourceUnitList_.emplace_back(PersistTime {resourceIndex, isPersist_, endTime_,
+                reason_});
         }
     }
     return true;

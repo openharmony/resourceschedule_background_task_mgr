@@ -68,6 +68,12 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
 {
     BGTASK_LOGD("process died, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
+    OnProcessDiedContinuousTask(processData);
+    OnProcessDiedEfficiencyRes(processData);
+}
+
+void AppStateObserver::OnProcessDiedContinuousTask(const AppExecFwk::ProcessData &processData)
+{
     auto handler = handler_.lock();
     if (!handler) {
         BGTASK_LOGE("handler is null");
@@ -78,13 +84,16 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
         BGTASK_LOGE("bgContinuousTaskMgr is null");
         return;
     }
-    auto bgEfficiencyResourcesMgr = bgEfficiencyResourcesMgr_.lock();
 
     auto task = [=]() {
         bgContinuousTaskMgr->OnProcessDied(processData.uid, processData.pid);
     };
     handler->PostTask(task, TASK_ON_PROCESS_DIED);
+}
 
+void AppStateObserver::OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData)
+{
+    auto bgEfficiencyResourcesMgr = bgEfficiencyResourcesMgr_.lock();
     if (!bgEfficiencyResourcesMgr) {
         BGTASK_LOGE("bgEfficiencyResourcesMgr is null");
         return;

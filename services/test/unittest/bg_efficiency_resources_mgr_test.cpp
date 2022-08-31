@@ -81,9 +81,9 @@ public:
 
     void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
     
-    void OnEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
+    void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
 
-    void OnEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
+    void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
 };
 
 /**
@@ -102,9 +102,6 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_001, TestSize.Leve
     resourceInfo->resourceNumber_ = 1 << MAX_RESOURCES_TYPE_NUM;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_BGTASK_INVALID_PARAM);
-    resourceInfo->resourceNumber_ = 1 << MAX_RESOURCES_TYPE_NUM;
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo, isSuccess), (int32_t)ERR_BGTASK_INVALID_PARAM);
     resourceInfo->resourceNumber_ = 1;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_BGTASK_INVALID_PARAM);
@@ -112,6 +109,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_001, TestSize.Leve
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
     EXPECT_EQ(isSuccess, true);
+
     isSuccess = false;
     resourceInfo->isPersist_ = false;
     resourceInfo->timeOut_ = -10;
@@ -140,11 +138,8 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_001, TestSize.Leve
 HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_002, TestSize.Level1)
 {
     bool isSuccess = false;
-    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo();
-    resourceInfo->isApply_ = true;
-    resourceInfo->resourceNumber_ = 1;
-    resourceInfo->isPersist_ = true;
-    resourceInfo->reason_ = "apply";
+    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(1, true, 0, "apply",
+        true, false);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
     EXPECT_EQ(isSuccess, true);
@@ -159,11 +154,11 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_002, TestSize.Leve
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
     EXPECT_EQ(isSuccess, true);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->resourceApplyMap_.size(), 1);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
     resourceInfo->isApply_ = false;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->resourceApplyMap_.size(), 0);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
     bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources();
 }
 
@@ -175,15 +170,11 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_002, TestSize.Leve
 HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_003, TestSize.Level1)
 {
     bool isSuccess = false;
-    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo();
-    resourceInfo->isApply_ = true;
-    resourceInfo->resourceNumber_ = 1;
-    resourceInfo->reason_ = "apply";
-    resourceInfo->isPersist_ = true;
-    resourceInfo->isProcess_ = true;
+    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(1, true, 0, "apply",
+        true, true);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
-    EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->resourceApplyMap_.size()), 1);
+    EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->procResourceApplyMap_.size()), 1);
     resourceInfo->isPersist_ = false;
     resourceInfo->timeOut_ = SLEEP_TIME;
     resourceInfo->isProcess_ = false;
@@ -191,7 +182,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_003, TestSize.Leve
         resourceInfo, isSuccess), (int32_t)ERR_OK);
     EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->appResourceApplyMap_.size()), 1);
     SleepFor(SLEEP_TIME + REMAIN_TIME);
-    EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->resourceApplyMap_.size()), 1);
+    EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->procResourceApplyMap_.size()), 1);
     EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->appResourceApplyMap_.size()), 0);
     bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources();
 }
@@ -204,11 +195,8 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_003, TestSize.Leve
 HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_004, TestSize.Level1)
 {
     bool isSuccess = false;
-    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo();
-    resourceInfo->isApply_ = true;
-    resourceInfo->resourceNumber_ = 1;
-    resourceInfo->isPersist_ = true;
-    resourceInfo->reason_ = "apply";
+    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(1, true, 0, "apply",
+        true, false);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
     EXPECT_EQ(isSuccess, true);
@@ -217,14 +205,14 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_004, TestSize.Leve
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
     EXPECT_EQ(isSuccess, true);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->resourceApplyMap_.size(), 1);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
 
     resourceInfo->isProcess_ = false;
     resourceInfo->isApply_ = false;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->resourceApplyMap_.size(), 0);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
     bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources();
 }
 
@@ -236,13 +224,10 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_004, TestSize.Leve
 HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_001, TestSize.Level1)
 {
     bool isSuccess = false;
-    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo();
-    resourceInfo->isApply_ = true;
-    resourceInfo->resourceNumber_ = 1;
-    resourceInfo->isPersist_ = true;
-    resourceInfo->reason_ = "apply";
+    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(1, true, 0, "apply",
+        true, false);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->resourceApplyMap_.size(), 0);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
     EXPECT_EQ(isSuccess, true);
@@ -257,10 +242,10 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_001, TestSize
     resourceInfo->resourceNumber_ = 1 << 1;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->resourceApplyMap_.size(), 1);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources(), (int32_t)ERR_OK);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->resourceApplyMap_.size(), 0);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
 }
 
 /**
@@ -277,7 +262,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_002, TestSize
     resourceInfo->isPersist_ = true;
     resourceInfo->reason_ = "apply";
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->resourceApplyMap_.size(), 0);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
     resourceInfo->resourceNumber_ = 1 << 1;
@@ -291,10 +276,10 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_002, TestSize
     resourceInfo->resourceNumber_ = 1 << 1;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->resourceApplyMap_.size(), 1);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources(), (int32_t)ERR_OK);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->resourceApplyMap_.size(), 0);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
 }
 
 /**

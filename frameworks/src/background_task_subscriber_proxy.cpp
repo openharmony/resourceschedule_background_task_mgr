@@ -344,68 +344,68 @@ void BackgroundTaskSubscriberProxy::OnAppEfficiencyResourcesReset(
     }
 }
 
-void BackgroundTaskSubscriberProxy::OnEfficiencyResourcesApply(
+void BackgroundTaskSubscriberProxy::OnProcEfficiencyResourcesApply(
     const std::shared_ptr<ResourceCallbackInfo> &resourceInfo)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        BGTASK_LOGE("OnEfficiencyResourcesApply remote is dead.");
+        BGTASK_LOGE("OnProcEfficiencyResourcesApply remote is dead.");
         return;
     }
     if (resourceInfo == nullptr) {
-        BGTASK_LOGE("OnEfficiencyResourcesApply resourceInfo is nullptr.");
+        BGTASK_LOGE("OnProcEfficiencyResourcesApply resourceInfo is nullptr.");
         return;
     }
 
     MessageParcel data;
     if (!data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor())) {
-        BGTASK_LOGE("OnEfficiencyResourcesApply write interface token failed.");
+        BGTASK_LOGE("OnProcEfficiencyResourcesApply write interface token failed.");
         return;
     }
 
     if (!data.WriteParcelable(resourceInfo.get())) {
-        BGTASK_LOGE("OnEfficiencyResourcesApply write notification failed.");
+        BGTASK_LOGE("OnProcEfficiencyResourcesApply write notification failed.");
         return;
     }
 
     MessageParcel reply;
     MessageOption option;
-    int32_t result = remote->SendRequest(ON_EFFICIENCY_RESOURCES_APPLY, data, reply, option);
+    int32_t result = remote->SendRequest(ON_PROC_EFFICIENCY_RESOURCES_APPLY, data, reply, option);
     if (result != ERR_OK) {
-        BGTASK_LOGE("OnEfficiencyResourcesApply SendRequest error");
+        BGTASK_LOGE("OnProcEfficiencyResourcesApply SendRequest error");
     }
 }
 
-void BackgroundTaskSubscriberProxy::OnEfficiencyResourcesReset(
+void BackgroundTaskSubscriberProxy::OnProcEfficiencyResourcesReset(
     const std::shared_ptr<ResourceCallbackInfo> &resourceInfo)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        BGTASK_LOGE("OnEfficiencyResourcesReset remote is dead.");
+        BGTASK_LOGE("OnProcEfficiencyResourcesReset remote is dead.");
         return;
     }
 
     if (resourceInfo == nullptr) {
-        BGTASK_LOGE("OnEfficiencyResourcesReset resourceInfo is nullptr.");
+        BGTASK_LOGE("OnProcEfficiencyResourcesReset resourceInfo is nullptr.");
         return;
     }
 
     MessageParcel data;
     if (!data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor())) {
-        BGTASK_LOGE("OnEfficiencyResourcesReset write interface token failed.");
+        BGTASK_LOGE("OnProcEfficiencyResourcesReset write interface token failed.");
         return;
     }
 
     if (!data.WriteParcelable(resourceInfo.get())) {
-        BGTASK_LOGE("OnEfficiencyResourcesReset write notification failed.");
+        BGTASK_LOGE("OnProcEfficiencyResourcesReset write notification failed.");
         return;
     }
 
     MessageParcel reply;
     MessageOption option;
-    int32_t result = remote->SendRequest(ON_EFFICIENCY_RESOURCES_RESET, data, reply, option);
+    int32_t result = remote->SendRequest(ON_PROC_EFFICIENCY_RESOURCES_RESET, data, reply, option);
     if (result != ERR_OK) {
-        BGTASK_LOGE("OnEfficiencyResourcesReset SendRequest error");
+        BGTASK_LOGE("OnProcEfficiencyResourcesReset SendRequest error");
     }
 }
 }  // namespace BackgroundTaskMgr

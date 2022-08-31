@@ -114,18 +114,18 @@ public:
     virtual void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
 
     /**
-     * @brief Apply or unapply efficiency resources.
+     * @brief Apply or unapply efficiency resources of process.
      *
      * @param resourceInfo Request params.
      */
-    virtual void OnEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
+    virtual void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
 
     /**
-     * @brief Called back when the efficiency resources reset.
+     * @brief Called back when the efficiency resources of process reset.
      *
      * @param resourceInfo Request params.
      */
-    virtual void OnEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
+    virtual void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
 
 private:
     class BackgroundTaskSubscriberImpl final : public BackgroundTaskSubscriberStub {
@@ -234,18 +234,18 @@ private:
         void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 
         /**
-         * @brief Apply or unapply efficiency resources.
+         * @brief Apply or unapply efficiency resources of process.
          *
          * @param resourceInfo Request params.
          */
-        void OnEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+        void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 
         /**
-         * @brief Called back when the efficiency resources reset.
+         * @brief Called back when the efficiency resources of process reset.
          *
          * @param resourceInfo Request params.
          */
-        void OnEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+        void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 
     public:
         BackgroundTaskSubscriber &subscriber_;

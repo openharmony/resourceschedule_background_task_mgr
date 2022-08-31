@@ -43,7 +43,7 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
         auto record = iter.second;
         std::string data = record->ParseToJsonStr();
         nlohmann::json recordJson = nlohmann::json::parse(data, nullptr, false);;
-        if (!recordJson.is_null() && !recordJson.is_discarded()) {
+        if (!recordJson.is_discarded()) {
             root[iter.first] = recordJson;
         }
     }

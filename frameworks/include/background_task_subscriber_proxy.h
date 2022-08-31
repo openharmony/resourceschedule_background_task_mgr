@@ -105,18 +105,18 @@ public:
     void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 
     /**
-     * @brief Apply or unapply efficiency resources.
+     * @brief Apply or unapply efficiency resources of process.
      *
      * @param resourceInfo Request params.
      */
-    void OnEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+    void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 
     /**
-     * @brief Called back when the efficiency resources reset.
+     * @brief Called back when the efficiency resources of process reset.
      *
      * @param resourceInfo Request params.
      */
-    void OnEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+    void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 private:
     static inline BrokerDelegator<BackgroundTaskSubscriberProxy> delegator_;
 };
