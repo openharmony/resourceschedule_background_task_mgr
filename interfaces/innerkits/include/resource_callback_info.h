@@ -100,7 +100,7 @@ public:
      * 
      * @param resourceNumber 
      */
-    void SetResourceNumber(uint32_t resourceNumber)
+    inline void SetResourceNumber(uint32_t resourceNumber)
     {
         resourceNumber_ = resourceNumber;
     }

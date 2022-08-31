@@ -292,7 +292,10 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
         recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
         return;
     }
+
     callbackInfo->SetResourceNumber(diffResourceNumber);
+    BGTASK_LOGD("after update end time, callbackInfo resource number is %{public}u.",
+        callbackInfo->GetResourceNumber());
     if (resourceInfo->IsProcess()) {
         subscriberMgr_->OnResourceChanged(callbackInfo, EfficiencyResourcesEventType::RESOURCE_APPLY);
     } else {
@@ -550,9 +553,6 @@ void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> 
 
     if (cleanAll) {
         for (auto iter = infoMap.begin(); iter != infoMap.end(); ++iter) {
-            if (iter->second->GetResourceNumber() == 0) {
-                continue;
-            }
             std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>
                 (iter->second->GetUid(), iter->second->GetPid(), iter->second->GetResourceNumber(),
                 iter->second->GetBundleName());
@@ -583,16 +583,15 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     }
     uint32_t eraseBit = (iter->second->resourceNumber_ & cleanResource);
     iter->second->resourceNumber_ ^= eraseBit;
-
+    if (eraseBit == 0) {
+        return true;
+    }
     RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
     if (iter->second->resourceNumber_ == 0) {
         infoMap.erase(iter);
     }
-    if (eraseBit == 0) {
-        return true;
-    }
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
-        iter->second->GetPid(), cleanResource, iter->second->GetBundleName());
+        iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
     subscriberMgr_->OnResourceChanged(callbackInfo, type);
     return true;
 }
