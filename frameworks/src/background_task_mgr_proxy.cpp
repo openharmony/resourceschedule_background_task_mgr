@@ -51,7 +51,6 @@ ErrCode BackgroundTaskMgrProxy::RequestSuspendDelay(const std::u16string& reason
         BGTASK_LOGE("RequestSuspendDelay write callback failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-
     ErrCode result = InnerTransact(REQUEST_SUSPEND_DELAY, option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("RequestSuspendDelay transact ErrCode=%{public}d", result);
@@ -400,7 +399,7 @@ ErrCode BackgroundTaskMgrProxy::ApplyEfficiencyResources(const sptr<EfficiencyRe
     if (!data.WriteParcelable(resourceInfo)) {
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-
+    BGTASK_LOGD("start send data in apply res function from bgtask proxy");
     ErrCode result = InnerTransact(APPLY_EFFICIENCY_RESOURCES, option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("ApplyEfficiencyResources fail: transact ErrCode=%{public}d", result);
@@ -426,6 +425,7 @@ ErrCode BackgroundTaskMgrProxy::ResetAllEfficiencyResources()
         BGTASK_LOGE("ResetAllEfficiencyResources write descriptor failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
+    BGTASK_LOGD("start send data in reset all res function from bgtask proxy");
     ErrCode result = InnerTransact(RESET_ALL_EFFICIENCY_RESOURCES, option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("ResetAllEfficiencyResources fail: transact ErrCode=%{public}d", result);

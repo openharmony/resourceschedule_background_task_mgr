@@ -22,7 +22,6 @@ class ResourceType {
 public:
     virtual ~ResourceType() = default;
     enum Type : uint32_t {
-        EMPTY_RESOURCE_TYPE = 0,
         CPU = 1,
         COMMON_EVENT = 1 << 1,
         TIMER = 1 << 2,

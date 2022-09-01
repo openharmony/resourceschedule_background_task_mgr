@@ -186,7 +186,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
     ErrCode res = ERR_OK;
-    handler_->PostSyncTask([&]() {
+    handler_->PostTask([this, uid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             0, MAX_RESOURCE_NUMBER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, false);
@@ -201,7 +201,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
     ErrCode res = ERR_OK;
-    handler_->PostSyncTask([&]() {
+    handler_->PostTask([this, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             pid, MAX_RESOURCE_NUMBER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, true);
@@ -254,15 +254,15 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, resourceInfo->GetResourceNumber(), bundleName);
     if (resourceInfo->IsApply()) {
-        handler_->PostSyncTask([this, &callbackInfo, &resourceInfo]() {
+        handler_->PostTask([this, callbackInfo, resourceInfo]() {
             this->ApplyEfficiencyResourcesInner(callbackInfo, resourceInfo);
         });
     } else {
-        handler_->PostSyncTask([this, &callbackInfo, &resourceInfo]() {
+        handler_->PostTask([this, callbackInfo, resourceInfo]() {
             this->ResetEfficiencyResourcesInner(callbackInfo, resourceInfo->IsProcess());
         });
     }
-    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    // recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
     return ERR_OK;
 }
 
@@ -374,10 +374,10 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
     }
     BGTASK_LOGI("ResetTimeOutResource eraseBit: %{public}u, resourceNumber: %{public}u, result: %{public}u,",
         eraseBit, resourceRecord->resourceNumber_, resourceRecord->resourceNumber_ ^ eraseBit);
-    resourceRecord->resourceNumber_ ^= eraseBit;
     if (eraseBit == 0) {
         return;
     }
+    resourceRecord->resourceNumber_ ^= eraseBit;
     RemoveListRecord(resourceRecord->resourceUnitList_, eraseBit);
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(resourceRecord->uid_, resourceRecord->pid_, eraseBit,
         resourceRecord->bundleName_);
@@ -402,11 +402,11 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
         BGTASK_LOGE("reset efficiency resources failed, calling info is illegal.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-        pid, MAX_RESOURCE_NUMBER, bundleName);
     BGTASK_LOGD("reset efficiency resources uid : %{public}d, pid : %{public}d, resource number : %{public}d", uid,
         pid, MAX_RESOURCE_NUMBER);
-    handler_->PostSyncTask([this, &callbackInfo]() {
+    handler_->PostTask([this, uid, pid, bundleName]() {
+        std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
+            pid, MAX_RESOURCE_NUMBER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, false);
     });
     return ERR_OK;
@@ -419,7 +419,7 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
             uint32_t eraseBit = (resourceNumber & iter->second->resourceNumber_);
             std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
                 iter->second->pid_, eraseBit, iter->second->bundleName_);
-            handler_->PostSyncTask([this, &callbackInfo]() {
+            handler_->PostTask([this, callbackInfo]() {
                 this->ResetEfficiencyResourcesInner(callbackInfo, true);
             });
         }
@@ -598,11 +598,13 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
 
 void BgEfficiencyResourcesMgr::RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit)
 {
-    BGTASK_LOGD("start remove record from list");
+    BGTASK_LOGD("start remove record from list.");
     if (eraseBit == 0) {
         return;
     }
-    for (auto it = resourceUnitList.begin(); it != resourceUnitList.end(); ++it) {
+    for (auto it = resourceUnitList.begin(); it != resourceUnitList.end();) {
+        BGTASK_LOGD("remove resource uint list, resourceIndex_: %{public}d eraseBit:%{public}d", it->resourceIndex_,
+            eraseBit);
         if (((1 << it->resourceIndex_) & eraseBit) != 0) {
             it = resourceUnitList.erase(it);
         } else {

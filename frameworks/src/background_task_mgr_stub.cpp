@@ -258,6 +258,7 @@ ErrCode BackgroundTaskMgrStub::HandleGetContinuousTaskApps(MessageParcel& data, 
 
 ErrCode BackgroundTaskMgrStub::HandleApplyEfficiencyResources(MessageParcel& data, MessageParcel& reply)
 {
+    BGTASK_LOGD("start receive data in apply res function from bgtask proxy");
     sptr<EfficiencyResourceInfo> resourceInfoPtr = data.ReadParcelable<EfficiencyResourceInfo>();
     if (resourceInfoPtr == nullptr) {
         BGTASK_LOGE("EfficiencyResourceInfo ReadParcelable failed");
@@ -278,6 +279,7 @@ ErrCode BackgroundTaskMgrStub::HandleApplyEfficiencyResources(MessageParcel& dat
 
 ErrCode BackgroundTaskMgrStub::HandleResetAllEfficiencyResources(MessageParcel& data, MessageParcel& reply)
 {
+    BGTASK_LOGD("start receive data in reset all res function from bgtask proxy");
     ErrCode result = ResetAllEfficiencyResources();
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleCancelSuspendDelay Write result failed, ErrCode=%{public}d", result);
