@@ -60,7 +60,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
     bool isProcess {false};
 
     napi_status getStatus = napi_ok;
-    NAPI_CALL(env, napi_get_named_property(env, argv[0], "resourceType", &singleParam));
+    NAPI_CALL(env, napi_get_named_property(env, argv[0], "resourceTypes", &singleParam));
     getStatus = napi_get_value_int32(env, singleParam, &resourceNumber);
     if (getStatus != napi_ok) {
         BGTASK_LOGE("ParseParameters failed, resourceNumber is nullptr.");

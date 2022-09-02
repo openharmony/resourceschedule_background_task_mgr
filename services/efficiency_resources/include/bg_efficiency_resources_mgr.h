@@ -26,6 +26,7 @@
 #include "event_handler.h"
 #include "event_info.h"
 #include "running_process_info.h"
+#include "app_mgr_client.h"
 
 #include "efficiency_resource_info.h"
 #include "ibackground_task_subscriber.h"
@@ -89,6 +90,8 @@ private:
     void RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit);
     void GetEfficiencyResourcesInfosInner(const ResourceRecordMap &infoMap,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &list);
+    bool CheckRunningResourcesApply(const std::string &bundleName);
+    void CheckAlivedApp(int32_t uid);
 
 private:
     std::atomic<bool> isSysReady_ {false};
@@ -99,6 +102,7 @@ private:
     std::unique_ptr<ResourceRecordStorage> recordStorage_ {nullptr};
     std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
     std::shared_ptr<ResourcesSubscriberMgr> subscriberMgr_ {nullptr};
+    std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_ {nullptr};
     uint32_t dependsReady_ = 0;
 
     DECLARE_DELAYED_SINGLETON(BgEfficiencyResourcesMgr);

@@ -53,15 +53,15 @@ describe("EfficiencyResourcesJsTest", function () {
      */
     it("EfficiencyResourcesJsTest001", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest001---------------------------');
-        var resRequest = {
-            resourceType: 1,
+        let resRequest = {
+            resourceTypes: 1,
             isApply: true,
             timeOut: 10,
             reason: "apply",
             isPersist: false,
             isProcess: false,
         };
-        var res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         expect(res).assertEqual(true);
         done();
     })
@@ -73,30 +73,30 @@ describe("EfficiencyResourcesJsTest", function () {
      */
     it("EfficiencyResourcesJsTest002", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest002---------------------------');
-        var resRequest = {
-            resourceType: 1,
+        let resRequest = {
+            resourceTypes: 1,
             isApply: false,
             timeOut: 10,
             reason: "apply"
         };
-        var res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         expect(res).assertEqual(true);
         done();
     })
 
     /*
      * @tc.name: EfficiencyResourcesJsTest003
-     * @tc.desc: test apply a efficiency resource without resourceType
+     * @tc.desc: test apply a efficiency resource without resourceTypes
      * @tc.type: FUNC
      */
     it("EfficiencyResourcesJsTest003", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest003---------------------------');
-        var resRequest = {
+        let resRequest = {
             isApply: true,
             timeOut: 0,
             reason: "apply"
         };
-        var res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         expect(res).assertEqual(false);
         done();
     })
@@ -108,12 +108,12 @@ describe("EfficiencyResourcesJsTest", function () {
      */
     it("EfficiencyResourcesJsTest004", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest004--------------------------- ');
-        var resRequest = {
-            resourceType: 1,
+        let resRequest = {
+            resourceTypes: 1,
             timeOut: 10,
             reason: "apply"
         };
-        var res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         expect(res).assertEqual(false);
         done();
     })
@@ -125,12 +125,12 @@ describe("EfficiencyResourcesJsTest", function () {
      */
     it("EfficiencyResourcesJsTest005", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest005---------------------------');
-        var resRequest = {
-            resourceType: 1,
+        let resRequest = {
+            resourceTypes: 1,
             isApply: true,
             reason: "apply"
         };
-        var res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         expect(res).assertEqual(false);
         done();
     })
@@ -142,12 +142,12 @@ describe("EfficiencyResourcesJsTest", function () {
      */
     it("EfficiencyResourcesJsTest006", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest006---------------------------');
-        var resRequest = {
-            resourceType: 1,
+        let resRequest = {
+            resourceTypes: 1,
             isApply: true,
             timeOut: 10
         };
-        var res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         console.info('----------------------res---------------------------false ');
         expect(res).assertEqual(false);
         done();
@@ -160,32 +160,32 @@ describe("EfficiencyResourcesJsTest", function () {
      */
     it("EfficiencyResourcesJsTest007", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest007---------------------------');
-        var resRequest = {
-            resourceType: 1,
+        let resRequest = {
+            resourceTypes: 1,
             isApply: true,
             timeOut: 0,
             reason: "apply",
             isPersist: false,
         };
-        var res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         expect(res).assertEqual(false);
         done();
     })
 
     /*
      * @tc.name: EfficiencyResourcesJsTest008
-     * @tc.desc: test apply a efficiency resource with resourceType equals to 0
+     * @tc.desc: test apply a efficiency resource with resourceTypes equals to 0
      * @tc.type: FUNC
      */
     it("EfficiencyResourcesJsTest008", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest008---------------------------');
-        var resRequest = {
-            resourceType: 0,
+        let resRequest = {
+            resourceTypes: 0,
             isApply: true,
             timeOut: 10,
             reason: "apply",
         };
-        var res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         expect(res).assertEqual(false);
         done();
     })
@@ -197,14 +197,14 @@ describe("EfficiencyResourcesJsTest", function () {
      */
     it("EfficiencyResourcesJsTest009", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest009---------------------------');
-        var resRequest = {
-            resourceType: 1,
+        let resRequest = {
+            resourceTypes: 1,
             isApply: true,
             timeOut: 0,
             reason: "apply",
             isPersist: true,
         };
-        var res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         expect(res).assertEqual(true);
         done();
     })
@@ -216,14 +216,14 @@ describe("EfficiencyResourcesJsTest", function () {
      */
     it("EfficiencyResourcesJsTest010", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest010---------------------------');
-        var resRequest = {
-            resourceType: 1,
+        let resRequest = {
+            resourceTypes: 1,
             isApply: true,
             timeOut: 10,
             reason: "apply",
             isProcess: true,
         };
-        var res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         expect(res).assertEqual(true);
         done();
     })

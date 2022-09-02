@@ -188,13 +188,11 @@ ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, u
 
 int32_t BackgroundTaskMgrService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
-    BGTASK_LOGI("start BackgroundTaskMgrService::Dump");
     std::vector<std::string> argsInStr;
     std::transform(args.begin(), args.end(), std::back_inserter(argsInStr),
         [](const std::u16string &arg) {
         return Str16ToStr8(arg);
     });
-    BGTASK_LOGI("start BackgroundTaskMgrService::Dump 2");
     std::string result;
 
     int32_t ret = ERR_OK;

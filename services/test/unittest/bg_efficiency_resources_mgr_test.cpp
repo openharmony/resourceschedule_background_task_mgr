@@ -90,6 +90,7 @@ public:
  * @tc.name: AppEfficiencyResources_001
  * @tc.desc: apply efficiency resources using ApplyEfficiencyResources function.
  * @tc.type: FUNC
+ * @tc.require: SR000GGT7U AR000GH6ER AR000GH6EM AR000GH6EN AR000GH6EO
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_001, TestSize.Level1)
 {

@@ -255,7 +255,7 @@ declare namespace backgroundTaskManager {
         /**
          * The set of resource types that app wants to apply.
          */
-        resourceType: number;
+        resourceTypes: number;
 
         /**
          * True if the app begin to use, else false.

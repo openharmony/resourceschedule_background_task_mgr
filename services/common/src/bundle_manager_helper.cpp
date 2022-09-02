@@ -84,6 +84,19 @@ bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const App
     return false;
 }
 
+bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
+    AppExecFwk::ApplicationInfo &appInfo, const int userId)
+{
+    std::lock_guard<std::mutex> lock(connectionMutex_);
+
+    Connect();
+
+    if (bundleMgr_ != nullptr && bundleMgr_->GetApplicationInfo(appName, flag, userId, appInfo)) {
+        return true;
+    }
+    return false;
+}
+
 bool BundleManagerHelper::Connect()
 {
     if (bundleMgr_ != nullptr) {

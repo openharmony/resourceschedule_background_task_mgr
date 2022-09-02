@@ -19,7 +19,6 @@
 #include <algorithm>
 #include <vector>
 
-#include "app_mgr_client.h"
 #include "event_runner.h"
 #include "system_ability_definition.h"
 #include "iservice_registry.h"
@@ -118,13 +117,16 @@ void BgEfficiencyResourcesMgr::HandlePersistenceData()
     recordStorage_ = std::make_unique<ResourceRecordStorage>();
     BGTASK_LOGD("ResourceRecordStorage service restart, restore data");
     recordStorage_->RestoreResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
-    auto appMgrClient = std::make_unique<AppExecFwk::AppMgrClient>();
-    if (!appMgrClient || appMgrClient->ConnectAppMgrService() != ERR_OK) {
-        BGTASK_LOGW("ResourceRecordStorage connect to app mgr service failed");
-        return;
+
+    if (appMgrClient_ == nullptr) {
+        appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
+        if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+            BGTASK_LOGW("ResourceRecordStorage connect to app mgr service failed");
+            return;
+        }
     }
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
-    appMgrClient->GetAllRunningProcesses(allAppProcessInfos);
+    appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
     BGTASK_LOGI("start to recovery delayed task of apps and processes");
     CheckPersistenceData(allAppProcessInfos);
     RecoverDelayedTask(true, procResourceApplyMap_);
@@ -205,8 +207,29 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             pid, MAX_RESOURCE_NUMBER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, true);
+        if (!this->CheckAlivedApp(uid)) {
+            this->ResetEfficiencyResourcesInner(callbackInfo, false);
+        }
     });
     return res;
+}
+
+void BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
+{
+    BGTASK_LOGI("start check app alive or not");
+    if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGE("ResourceRecordStorage connect to app mgr service failed");
+        return;
+    }
+    std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos {};
+    appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
+    bool isAlive = false;
+    for (const auto & info : allAppProcessInfos) {
+        if (info.uid_ == uid) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void BgEfficiencyResourcesMgr::Clear()
@@ -250,6 +273,11 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGI("apply efficiency resources failed, calling info is illegal.");
         return ERR_BGTASK_INVALID_PARAM;
     }
+    if (!CheckRunningResourcesApply(bundleName)) {
+        BGTASK_LOGI("apply efficiency resources failed, running resource apply is false.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+   
     isSuccess = true;
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, resourceInfo->GetResourceNumber(), bundleName);
@@ -402,6 +430,11 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
         BGTASK_LOGE("reset efficiency resources failed, calling info is illegal.");
         return ERR_BGTASK_INVALID_PARAM;
     }
+    if (!CheckRunningResourcesApply(bundleName)) {
+        BGTASK_LOGI("apply efficiency resources failed, running resource apply is false.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
     BGTASK_LOGD("reset efficiency resources uid : %{public}d, pid : %{public}d, resource number : %{public}d", uid,
         pid, MAX_RESOURCE_NUMBER);
     handler_->PostTask([this, uid, pid, bundleName]() {
@@ -637,6 +670,17 @@ void BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfosInner(const ResourceRe
             record.second->resourceNumber_, record.second->bundleName_);
         list.push_back(appInfo);
     }
+}
+
+bool BgEfficiencyResourcesMgr::CheckRunningResourcesApply(const std::string &bundleName)
+{
+    AppExecFwk::ApplicationInfo applicationInfo;
+    if (BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
+        AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, applicationInfo) &&
+        applicationInfo.runningResourcesApply) {
+        return true;
+    }
+    return false;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
