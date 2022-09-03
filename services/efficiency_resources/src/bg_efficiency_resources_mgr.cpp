@@ -540,10 +540,8 @@ void BgEfficiencyResourcesMgr::DumpApplicationInfoMap(std::unordered_map<int32_t
     std::shared_ptr<ResourceApplicationRecord>> &infoMap, std::vector<std::string> &dumpInfo,
     std::stringstream &stream, const char *headInfo)
 {
-    stream.str("");
-    stream.clear();
-    stream << headInfo << "\n";
     uint32_t index = 1;
+    stream << headInfo << "\n";
     for (auto iter = infoMap.begin(); iter != infoMap.end(); iter++) {
         stream << "No." << index << "\n";
         stream << "\tefficiencyResourceKey: " << iter->first << "\n";
@@ -553,7 +551,6 @@ void BgEfficiencyResourcesMgr::DumpApplicationInfoMap(std::unordered_map<int32_t
         stream << "\t\tpid: " << iter->second->GetPid() << "\n";
         stream << "\t\tresourceNumber: " << iter->second->GetResourceNumber() << "\n";
         int64_t curTime = TimeProvider::GetCurrentTime();
-        iter->second->resourceUnitList_.sort();
         auto &resourceUnitList = iter->second->resourceUnitList_;
         for (auto unitIter = resourceUnitList.begin();
             unitIter != resourceUnitList.end(); ++unitIter) {
@@ -566,6 +563,8 @@ void BgEfficiencyResourcesMgr::DumpApplicationInfoMap(std::unordered_map<int32_t
         }
         stream << "\n";
         dumpInfo.emplace_back(stream.str());
+        stream.str("");
+        stream.clear();
         index++;
     }
 }

@@ -90,7 +90,7 @@ public:
  * @tc.name: AppEfficiencyResources_001
  * @tc.desc: apply efficiency resources using ApplyEfficiencyResources function.
  * @tc.type: FUNC
- * @tc.require: SR000GGT7U AR000GH6ER AR000GH6EM AR000GH6EN AR000GH6EO
+ * @tc.require: issuesI5OD7X
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_001, TestSize.Level1)
 {
@@ -135,6 +135,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_001, TestSize.Leve
  * @tc.name: AppEfficiencyResources_002
  * @tc.desc: apply and reset resources for process and app respectively using ApplyEfficiencyResources function.
  * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_002, TestSize.Level1)
 {
@@ -166,6 +167,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_002, TestSize.Leve
 /**
  * @tc.name: AppEfficiencyResources_003
  * @tc.desc: apply transient efficiency and reset ahead.
+ * @tc.require: issuesI5OD7X
  * @tc.type: FUNC
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_003, TestSize.Level1)
@@ -192,6 +194,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_003, TestSize.Leve
  * @tc.name: AppEfficiencyResources_004
  * @tc.desc: reset resources record of process using app ApplyEfficiencyResources function.
  * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_004, TestSize.Level1)
 {
@@ -221,6 +224,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_004, TestSize.Leve
  * @tc.name: ResetAllEfficiencyResources_001
  * @tc.desc: reset all efficiency resources using ResetAllEfficiencyResources function.
  * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_001, TestSize.Level1)
 {
@@ -253,6 +257,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_001, TestSize
  * @tc.name: AppEfficiencyResourcesApply_005
  * @tc.desc: reset all efficiency resources using ResetAllEfficiencyResources function.
  * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_002, TestSize.Level1)
 {
@@ -287,6 +292,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_002, TestSize
  * @tc.name: SubscribeEfficiencyResources_001
  * @tc.desc: subscribe efficiency resources callback test.
  * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_001, TestSize.Level1)
 {
@@ -306,6 +312,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_001, TestSiz
  * @tc.name: SubscribeEfficiencyResources_002
  * @tc.desc: unsubscribe efficiency resources callback test.
  * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_002, TestSize.Level1)
 {
