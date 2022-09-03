@@ -223,7 +223,7 @@ bool BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
     }
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos {};
     appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
-    for (const auto & info : allAppProcessInfos) {
+    for (const auto &info : allAppProcessInfos) {
         if (info.uid_ == uid) {
             return true;
         }

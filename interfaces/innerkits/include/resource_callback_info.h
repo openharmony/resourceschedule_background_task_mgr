@@ -97,8 +97,8 @@ public:
 
     /**
      * @brief Set the Resource Number object
-     * 
-     * @param resourceNumber 
+     *
+     * @param resourceNumber represents resource types.
      */
     inline void SetResourceNumber(uint32_t resourceNumber)
     {
