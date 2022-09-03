@@ -52,8 +52,8 @@ ErrCode ResourcesSubscriberMgr::AddSubscriber(const sptr<IBackgroundTaskSubscrib
 
     subscriberList_.emplace_back(subscriber);
     remote->AddDeathRecipient(deathRecipient_);
-    BGTASK_LOGD("add resources to efficiency resources mgr succeed!");
-    BGTASK_LOGD("suscriber efficient resources, list.size() is %{public}d.",
+    BGTASK_LOGD("add resources to efficiency resources mgr succeed!"\
+        " suscriber efficient resources, list.size() is %{public}d.",
         static_cast<int32_t>(subscriberList_.size()));
     return ERR_OK;
 }

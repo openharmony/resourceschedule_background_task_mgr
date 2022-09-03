@@ -460,7 +460,6 @@ ErrCode BackgroundTaskMgrProxy::GetEfficiencyResourcesInfos(std::vector<std::sha
     }
 
     if (result != ERR_OK) {
-        BGTASK_LOGE("GetEfficiencyResourcesInfos failed.");
         return result;
     }
 
