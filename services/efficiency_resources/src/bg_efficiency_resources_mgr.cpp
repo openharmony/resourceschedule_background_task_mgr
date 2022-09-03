@@ -289,7 +289,6 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
             this->ResetEfficiencyResourcesInner(callbackInfo, resourceInfo->IsProcess());
         });
     }
-    // recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
     return ERR_OK;
 }
 
