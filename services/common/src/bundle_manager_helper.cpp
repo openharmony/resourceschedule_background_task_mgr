@@ -85,12 +85,13 @@ bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const App
 }
 
 bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
-    AppExecFwk::ApplicationInfo &appInfo, const int userId)
+    const int userId, AppExecFwk::ApplicationInfo &appInfo)
 {
+    BGTASK_LOGD("start get application info");
     std::lock_guard<std::mutex> lock(connectionMutex_);
 
     Connect();
-
+    BGTASK_LOGD("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
     if (bundleMgr_ != nullptr && bundleMgr_->GetApplicationInfo(appName, flag, userId, appInfo)) {
         return true;
     }

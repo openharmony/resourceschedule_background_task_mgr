@@ -90,8 +90,9 @@ private:
     void RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit);
     void GetEfficiencyResourcesInfosInner(const ResourceRecordMap &infoMap,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &list);
-    bool CheckRunningResourcesApply(const std::string &bundleName);
-    void CheckAlivedApp(int32_t uid);
+    bool CheckRunningResourcesApply(const int32_t uid, const std::string &bundleName);
+    bool CheckAlivedApp(int32_t uid);
+    int32_t GetUserIdByUid(int32_t uid);
 
 private:
     std::atomic<bool> isSysReady_ {false};

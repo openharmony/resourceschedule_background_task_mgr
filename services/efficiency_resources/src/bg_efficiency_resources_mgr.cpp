@@ -214,16 +214,15 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
     return res;
 }
 
-void BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
+bool BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
 {
     BGTASK_LOGI("start check app alive or not");
     if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
         BGTASK_LOGE("ResourceRecordStorage connect to app mgr service failed");
-        return;
+        return true;
     }
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos {};
     appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
-    bool isAlive = false;
     for (const auto & info : allAppProcessInfos) {
         if (info.uid_ == uid) {
             return true;
@@ -273,7 +272,7 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGI("apply efficiency resources failed, calling info is illegal.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    if (!CheckRunningResourcesApply(bundleName)) {
+    if (!CheckRunningResourcesApply(uid, bundleName)) {
         BGTASK_LOGI("apply efficiency resources failed, running resource apply is false.");
         return ERR_BGTASK_INVALID_PARAM;
     }
@@ -430,7 +429,7 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
         BGTASK_LOGE("reset efficiency resources failed, calling info is illegal.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    if (!CheckRunningResourcesApply(bundleName)) {
+    if (!CheckRunningResourcesApply(uid, bundleName)) {
         BGTASK_LOGI("apply efficiency resources failed, running resource apply is false.");
         return ERR_BGTASK_INVALID_PARAM;
     }
@@ -672,15 +671,22 @@ void BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfosInner(const ResourceRe
     }
 }
 
-bool BgEfficiencyResourcesMgr::CheckRunningResourcesApply(const std::string &bundleName)
+bool BgEfficiencyResourcesMgr::CheckRunningResourcesApply(const int32_t uid, const std::string &bundleName)
 {
     AppExecFwk::ApplicationInfo applicationInfo;
-    if (BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
-        AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, applicationInfo) &&
-        applicationInfo.runningResourcesApply) {
-        return true;
+    if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
+        AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, GetUserIdByUid(uid), applicationInfo)) {
+        BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
+        return false;
     }
-    return false;
+    BGTASK_LOGD("applicationInfo.runningResourcesApply is %{public}d.", applicationInfo.runningResourcesApply);
+    return applicationInfo.runningResourcesApply;
+}
+
+int32_t BgEfficiencyResourcesMgr::GetUserIdByUid(int32_t uid)
+{
+    const int32_t BASE_USER_RANGE = 200000;
+    return uid / BASE_USER_RANGE;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
