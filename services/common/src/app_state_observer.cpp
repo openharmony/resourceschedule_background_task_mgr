@@ -21,6 +21,8 @@
 
 #include "bg_continuous_task_mgr.h"
 #include "continuous_task_log.h"
+#include "bg_efficiency_resources_mgr.h"
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
@@ -65,7 +67,13 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
 {
-    BGTASK_LOGD("process died, pid : %{public}d", processData.pid);
+    BGTASK_LOGD("process died, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
+    OnProcessDiedContinuousTask(processData);
+    OnProcessDiedEfficiencyRes(processData);
+}
+
+void AppStateObserver::OnProcessDiedContinuousTask(const AppExecFwk::ProcessData &processData)
+{
     auto handler = handler_.lock();
     if (!handler) {
         BGTASK_LOGE("handler is null");
@@ -83,6 +91,42 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
     handler->PostTask(task, TASK_ON_PROCESS_DIED);
 }
 
+void AppStateObserver::OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData)
+{
+    auto bgEfficiencyResourcesMgr = bgEfficiencyResourcesMgr_.lock();
+    if (!bgEfficiencyResourcesMgr) {
+        BGTASK_LOGE("bgEfficiencyResourcesMgr is null");
+        return;
+    }
+    bgEfficiencyResourcesMgr->RemoveProcessRecord(processData.uid, processData.pid, processData.bundleName);
+}
+
+void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData)
+{
+    if (!ValidateAppStateData(appStateData)) {
+        BGTASK_LOGD("%{public}s : validate app state data failed!", __func__);
+        return;
+    }
+    auto uid = appStateData.uid;
+    auto bundleName = appStateData.bundleName;
+    auto state = appStateData.state;
+    if (state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_TERMINATED) || state ==
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END)) {
+        auto bgEfficiencyResourcesMgr = bgEfficiencyResourcesMgr_.lock();
+        if (!bgEfficiencyResourcesMgr) {
+            BGTASK_LOGE("bgEfficiencyResourcesMgr is null");
+            return;
+        }
+        bgEfficiencyResourcesMgr->RemoveAppRecord(uid, bundleName);
+    }
+}
+
+inline bool AppStateObserver::ValidateAppStateData(const AppExecFwk::AppStateData &appStateData)
+{
+    return appStateData.uid > 0
+        && appStateData.bundleName.size() > 0;
+}
+
 void AppStateObserver::SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler)
 {
     handler_ = handler;
@@ -91,6 +135,11 @@ void AppStateObserver::SetEventHandler(const std::shared_ptr<AppExecFwk::EventHa
 void AppStateObserver::SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr)
 {
     bgContinuousTaskMgr_ = bgContinuousTaskMgr;
+}
+
+void AppStateObserver::SetBgEfficiencyResourcesMgr(const std::shared_ptr<BgEfficiencyResourcesMgr> &resourceMgr)
+{
+    bgEfficiencyResourcesMgr_ = resourceMgr;
 }
 
 bool AppStateObserver::Subscribe()

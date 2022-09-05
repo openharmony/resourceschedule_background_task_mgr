@@ -90,6 +90,33 @@ public:
      **/
     void OnAppContinuousTaskStop(int32_t uid) override;
 
+    /**
+     * @brief Apply or unapply efficiency resources of App.
+     *
+     * @param resourceInfo Request params.
+     */
+    void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+
+    /**
+     * @brief Called back when the efficiency resources of App reset.
+     *
+     * @param resourceInfo Request params.
+     */
+    void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+
+    /**
+     * @brief Apply or unapply efficiency resources of process.
+     *
+     * @param resourceInfo Request params.
+     */
+    void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+
+    /**
+     * @brief Called back when the efficiency resources of process reset.
+     *
+     * @param resourceInfo Request params.
+     */
+    void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 private:
     static inline BrokerDelegator<BackgroundTaskSubscriberProxy> delegator_;
 };

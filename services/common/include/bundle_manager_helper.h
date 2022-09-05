@@ -34,7 +34,8 @@ public:
     bool IsSystemApp(int32_t uid);
     bool GetBundleInfo(const std::string &bundleName, const AppExecFwk::BundleFlag flag,
         AppExecFwk::BundleInfo &bundleInfo, int32_t userId = UNSPECIFIED_USERID);
-
+    bool GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
+        const int userId, AppExecFwk::ApplicationInfo &appInfo);
 private:
     bool Connect();
     void Disconnect();

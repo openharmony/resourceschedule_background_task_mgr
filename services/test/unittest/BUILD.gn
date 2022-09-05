@@ -76,8 +76,66 @@ ohos_unittest("bgtask_unit_test") {
   part_name = "background_task_mgr"
 }
 
+ohos_unittest("efficiency_mgr_unit_test") {
+  module_out_path = module_output_path
+  cflags_cc = []
+  include_dirs = [
+    "${bgtaskmgr_services_path}/transient_task/include",
+    "${bgtaskmgr_services_path}/core/inlcude",
+    "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
+    "//base/global/resource_management/frameworks/resmgr/include",
+    "//third_party/icu/icu4c/source/i18n",
+  ]
+
+  sources = [
+    "bg_efficiency_resources_mgr_test.cpp",
+    "mock/mock_bundle_manager_helper.cpp",
+    "mock/mock_ipc.cpp",
+    "mock/mock_resource_record_storage.cpp",
+  ]
+
+  configs = [ "//commonlibrary/c_utils/base:utils_config" ]
+
+  deps = [
+    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
+    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
+    "${bgtaskmgr_services_path}:bgtaskmgr_service",
+    "//base/notification/distributed_notification_service/frameworks/core:ans_core",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "ability_base:want",
+    "ability_base:zuri",
+    "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
+    "common_event_service:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "multimedia_image_standard:image_native",
+    "relational_store:native_rdb",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+
+  if (has_os_account_part) {
+    cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
+}
+
 group("unittest") {
   testonly = true
 
-  deps = [ ":bgtask_unit_test" ]
+  deps = [
+    ":bgtask_unit_test",
+    ":efficiency_mgr_unit_test",
+  ]
 }

@@ -51,7 +51,6 @@ ErrCode BackgroundTaskMgrProxy::RequestSuspendDelay(const std::u16string& reason
         BGTASK_LOGE("RequestSuspendDelay write callback failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-
     ErrCode result = InnerTransact(REQUEST_SUSPEND_DELAY, option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("RequestSuspendDelay transact ErrCode=%{public}d", result);
@@ -380,6 +379,111 @@ ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flag
             return ERR_BGTASK_TRANSACT_FAILED;
         }
     }
+}
+
+ErrCode BackgroundTaskMgrProxy::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo,
+    bool &isSuccess)
+{
+    if (resourceInfo == nullptr) {
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        BGTASK_LOGE("ApplyEfficiencyResources write descriptor failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteParcelable(resourceInfo)) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGD("start send data in apply res function from bgtask proxy");
+    ErrCode result = InnerTransact(APPLY_EFFICIENCY_RESOURCES, option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("ApplyEfficiencyResources fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("ApplyEfficiencyResources fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    if (!reply.ReadBool(isSuccess)) {
+        BGTASK_LOGE("ApplyEfficiencyResources fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return result;
+}
+
+ErrCode BackgroundTaskMgrProxy::ResetAllEfficiencyResources()
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        BGTASK_LOGE("ResetAllEfficiencyResources write descriptor failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGD("start send data in reset all res function from bgtask proxy");
+    ErrCode result = InnerTransact(RESET_ALL_EFFICIENCY_RESOURCES, option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("ResetAllEfficiencyResources fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("ResetAllEfficiencyResources fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return result;
+}
+
+ErrCode BackgroundTaskMgrProxy::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<
+    ResourceCallbackInfo>> &appList, std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        BGTASK_LOGE("GetEfficiencyResourcesInfos write descriptor failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    ErrCode result = InnerTransact(GET_EFFICIENCY_RESOURCES_INFOS, option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("GetEfficiencyResourcesInfos fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("GetEfficiencyResourcesInfos fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (result != ERR_OK) {
+        return result;
+    }
+
+    int32_t infoSize = reply.ReadInt32();
+    for (int32_t i = 0; i < infoSize; i++) {
+        auto info = ResourceCallbackInfo::Unmarshalling(reply);
+        if (!info) {
+            BGTASK_LOGE("GetContinuousTaskApps Read Parcelable infos failed.");
+            return ERR_INVALID_VALUE;
+        }
+        appList.emplace_back(info);
+    }
+
+    infoSize = reply.ReadInt32();
+    for (int32_t i = 0; i < infoSize; i++) {
+        auto info = ResourceCallbackInfo::Unmarshalling(reply);
+        if (!info) {
+            BGTASK_LOGE("GetContinuousTaskApps Read Parcelable infos failed.");
+            return ERR_INVALID_VALUE;
+        }
+        procList.emplace_back(info);
+    }
+
+    return result;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -1,0 +1,690 @@
+/*
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "bg_efficiency_resources_mgr.h"
+
+#include <set>
+#include <algorithm>
+#include <vector>
+
+#include "event_runner.h"
+#include "system_ability_definition.h"
+#include "iservice_registry.h"
+#include "bgtaskmgr_inner_errors.h"
+
+#include "resource_type.h"
+#include "time_provider.h"
+#include "bundle_manager_helper.h"
+#include "efficiency_resource_log.h"
+
+namespace OHOS {
+namespace BackgroundTaskMgr {
+namespace {
+    const std::string BG_EFFICIENCY_RESOURCES_MGR_NAME = "BgEfficiencyResourcesMgr";
+    const std::string DUMP_PARAM_LIST_ALL = "--all";
+    const std::string DUMP_PARAM_RESET_ALL = "--reset_all";
+    const std::string DUMP_PARAM_RESET_APP = "--resetapp";
+    const std::string DUMP_PARAM_RESET_PROC = "--resetproc";
+    const int32_t MAX_DUMP_PARAM_NUMS = 4;
+    const uint32_t APP_MGR_READY = 1;
+    const uint32_t BUNDLE_MGR_READY = 2;
+    const uint32_t ALL_DEPENDS_READY = 3;
+    const std::vector<std::string> ResourceTypeName = {
+        "CPU",
+        "COMMON_EVENT",
+        "TIMER",
+        "WORK_SCHEDULER",
+        "BLUETOOTH",
+        "GPS",
+        "AUDIO",
+    };
+    const uint32_t MAX_RESOURCES_TYPE_NUM = ResourceTypeName.size();
+    const uint32_t MAX_RESOURCE_NUMBER = (1 << ResourceTypeName.size()) - 1;
+}
+BgEfficiencyResourcesMgr::BgEfficiencyResourcesMgr() {}
+
+BgEfficiencyResourcesMgr::~BgEfficiencyResourcesMgr() {}
+
+bool BgEfficiencyResourcesMgr::Init()
+{
+    subscriberMgr_ = DelayedSingleton<ResourcesSubscriberMgr>::GetInstance();
+    runner_ = AppExecFwk::EventRunner::Create(BG_EFFICIENCY_RESOURCES_MGR_NAME);
+    if (runner_ == nullptr) {
+        BGTASK_LOGE("efficiency resources mgr runner create failed!");
+        return false;
+    }
+    handler_ = std::make_shared<AppExecFwk::EventHandler>(runner_);
+    if (!handler_) {
+        BGTASK_LOGE("efficiency resources mgr handler create failed!");
+        return false;
+    }
+    HandlePersistenceData();
+    BGTASK_LOGI("efficiency resources mgr finish Init");
+    return true;
+}
+
+void BgEfficiencyResourcesMgr::InitNecessaryState()
+{
+    RegisterAppStateObserver();
+    BGTASK_LOGI("necessary system service has been accessiable!");
+    BGTASK_LOGD("app resource record size: %{public}d, process  resource record size:  %{public}d!",
+        static_cast<int32_t>(appResourceApplyMap_.size()), static_cast<int32_t>(procResourceApplyMap_.size()));
+    isSysReady_.store(true);
+}
+
+void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    BGTASK_LOGI("add system ability, systemAbilityId : %{public}d", systemAbilityId);
+    switch (systemAbilityId) {
+        case APP_MGR_SERVICE_ID:
+            BGTASK_LOGI("app mgr service is ready!");
+            dependsReady_ |= APP_MGR_READY;
+            break;
+        case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
+            BGTASK_LOGI("app mgr service is ready!");
+            dependsReady_ |= BUNDLE_MGR_READY;
+            break;
+    }
+    if (dependsReady_ == ALL_DEPENDS_READY) {
+        BGTASK_LOGI("necessary system service has been satisfied!");
+        auto task = [this]() { this->InitNecessaryState(); };
+        handler_->PostSyncTask(task);
+    }
+}
+
+void BgEfficiencyResourcesMgr::RegisterAppStateObserver()
+{
+    appStateObserver_ = DelayedSingleton<AppStateObserver>::GetInstance();
+    if (appStateObserver_) {
+        appStateObserver_->SetBgEfficiencyResourcesMgr(shared_from_this());
+    }
+}
+
+void BgEfficiencyResourcesMgr::HandlePersistenceData()
+{
+    recordStorage_ = std::make_unique<ResourceRecordStorage>();
+    BGTASK_LOGD("ResourceRecordStorage service restart, restore data");
+    recordStorage_->RestoreResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+
+    if (appMgrClient_ == nullptr) {
+        appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
+        if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+            BGTASK_LOGW("ResourceRecordStorage connect to app mgr service failed");
+            return;
+        }
+    }
+    std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
+    appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
+    BGTASK_LOGI("start to recovery delayed task of apps and processes");
+    CheckPersistenceData(allAppProcessInfos);
+    RecoverDelayedTask(true, procResourceApplyMap_);
+    RecoverDelayedTask(false, appResourceApplyMap_);
+    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+}
+
+void BgEfficiencyResourcesMgr::EraseRecordIf(ResourceRecordMap &infoMap,
+    const std::function<bool(ResourceRecordPair)> &fun)
+{
+    for (auto iter = infoMap.begin(); iter != infoMap.end();) {
+        if (fun(*iter)) {
+            infoMap.erase(iter++);
+        } else {
+            iter++;
+        }
+    }
+}
+
+void BgEfficiencyResourcesMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses)
+{
+    BGTASK_LOGI("efficiency resources check existing uid and pid");
+    std::set<int32_t> runningUid;
+    std::set<int32_t> runningPid;
+    std::for_each(allProcesses.begin(), allProcesses.end(), [&runningUid, &runningPid](const auto &iter) {
+        runningUid.emplace(iter.uid_);
+        runningPid.emplace(iter.pid_);
+    });
+    auto removeUid = [&runningUid](const auto &iter) { return runningUid.find(iter.first) == runningUid.end(); };
+    EraseRecordIf(appResourceApplyMap_, removeUid);
+    auto removePid = [&runningPid](const auto &iter)  { return runningPid.find(iter.first) == runningPid.end(); };
+    EraseRecordIf(procResourceApplyMap_, removePid);
+}
+
+void BgEfficiencyResourcesMgr::RecoverDelayedTask(bool isProcess, ResourceRecordMap& infoMap)
+{
+    BGTASK_LOGD("start to recovery delayed task");
+    const auto &mgr = shared_from_this();
+    for (auto iter = infoMap.begin(); iter != infoMap.end(); iter ++) {
+        auto &resourceList = iter->second->resourceUnitList_;
+        int32_t mapKey = iter->first;
+        for (auto resourceIter = resourceList.begin(); resourceIter != resourceList.end(); resourceIter++) {
+            if (resourceIter->isPersist_) {
+                continue;
+            }
+            auto task = [mgr, mapKey, isProcess] () {
+                mgr->ResetTimeOutResource(mapKey, isProcess);
+            };
+            int32_t timeOut = static_cast<int32_t>(resourceIter->endTime_ - TimeProvider::GetCurrentTime());
+            handler_->PostTask(task, std::max(0, timeOut));
+        }
+    }
+}
+
+ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string &bundleName)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed.");
+        return ERR_BGTASK_SERVICE_NOT_READY;
+    }
+    ErrCode res = ERR_OK;
+    handler_->PostTask([this, uid, bundleName]() {
+        std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
+            0, MAX_RESOURCE_NUMBER, bundleName);
+        this->ResetEfficiencyResourcesInner(callbackInfo, false);
+    });
+    return res;
+}
+
+ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, const std::string &bundleName)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("Efficiency resources manager is not ready, remove process record failed.");
+        return ERR_BGTASK_SERVICE_NOT_READY;
+    }
+    ErrCode res = ERR_OK;
+    handler_->PostTask([this, uid, pid, bundleName]() {
+        std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
+            pid, MAX_RESOURCE_NUMBER, bundleName);
+        this->ResetEfficiencyResourcesInner(callbackInfo, true);
+        if (!this->CheckAlivedApp(uid)) {
+            this->ResetEfficiencyResourcesInner(callbackInfo, false);
+        }
+    });
+    return res;
+}
+
+bool BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
+{
+    BGTASK_LOGI("start check app alive or not");
+    if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGE("ResourceRecordStorage connect to app mgr service failed");
+        return true;
+    }
+    std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos {};
+    appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
+    for (const auto &info : allAppProcessInfos) {
+        if (info.uid_ == uid) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void BgEfficiencyResourcesMgr::Clear()
+{
+    if (appStateObserver_) {
+        appStateObserver_->Unsubscribe();
+    }
+}
+
+bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
+{
+    if (!resourceInfo) {
+        BGTASK_LOGE("apply efficiency resource request params is null!");
+        return false;
+    }
+    if (resourceInfo->GetResourceNumber() == 0 || resourceInfo->GetResourceNumber() > MAX_RESOURCE_NUMBER
+        || (resourceInfo->IsApply() && !resourceInfo->IsPersist() && resourceInfo->GetTimeOut() <= 0)) {
+        BGTASK_LOGE("efficiency resources params invalid!");
+        return false;
+    }
+    return true;
+}
+
+ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
+    const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess)
+{
+    BGTASK_LOGD("start bgtaskefficiency");
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("Efficiency resources manager is not ready.");
+        return ERR_BGTASK_SERVICE_NOT_READY;
+    }
+
+    if (!CheckResourceInfo(resourceInfo)) {
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
+    auto uid = IPCSkeleton::GetCallingUid();
+    auto pid = IPCSkeleton::GetCallingPid();
+    std::string bundleName = "";
+    if (!IsCallingInfoLegal(uid, pid, bundleName)) {
+        BGTASK_LOGI("apply efficiency resources failed, calling info is illegal.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+    if (!CheckRunningResourcesApply(uid, bundleName)) {
+        BGTASK_LOGI("apply efficiency resources failed, running resource apply is false.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+   
+    isSuccess = true;
+    std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
+        pid, resourceInfo->GetResourceNumber(), bundleName);
+    if (resourceInfo->IsApply()) {
+        handler_->PostTask([this, callbackInfo, resourceInfo]() {
+            this->ApplyEfficiencyResourcesInner(callbackInfo, resourceInfo);
+        });
+    } else {
+        handler_->PostTask([this, callbackInfo, resourceInfo]() {
+            this->ResetEfficiencyResourcesInner(callbackInfo, resourceInfo->IsProcess());
+        });
+    }
+    return ERR_OK;
+}
+
+void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<ResourceCallbackInfo>
+    callbackInfo, const sptr<EfficiencyResourceInfo> &resourceInfo)
+{
+    BGTASK_LOGD("apply efficiency resources, resource number: %{public}u, "\
+        "isPersist: %{public}d, timeOut: %{public}d, isProcess: %{public}d", resourceInfo->GetResourceNumber(),
+        resourceInfo->IsPersist(), resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
+    int32_t mapKey = resourceInfo->IsProcess() ? callbackInfo->GetPid() : callbackInfo->GetUid();
+    auto &infoMap = resourceInfo->IsProcess() ? procResourceApplyMap_ : appResourceApplyMap_;
+    uint32_t preResourceNumber = 0;
+    auto iter = infoMap.find(mapKey);
+    if (iter == infoMap.end()) {
+        infoMap.emplace(mapKey, std::make_shared<ResourceApplicationRecord>(callbackInfo->GetUid(),
+            callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), callbackInfo->GetBundleName()));
+        iter = infoMap.find(mapKey);
+    } else {
+        preResourceNumber = iter->second->resourceNumber_;
+        iter->second->resourceNumber_ |= callbackInfo->GetResourceNumber();
+    }
+    BGTASK_LOGD("start to update resources end time");
+    UpdateResourcesEndtime(callbackInfo, iter->second, resourceInfo);
+    uint32_t diffResourceNumber = iter->second->resourceNumber_ ^ (preResourceNumber & iter->second->resourceNumber_);
+    if (diffResourceNumber == 0) {
+        BGTASK_LOGD("after update end time, diff between resourcesNumbers is zero.");
+        recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+        return;
+    }
+
+    callbackInfo->SetResourceNumber(diffResourceNumber);
+    BGTASK_LOGD("after update end time, callbackInfo resource number is %{public}u.",
+        callbackInfo->GetResourceNumber());
+    if (resourceInfo->IsProcess()) {
+        subscriberMgr_->OnResourceChanged(callbackInfo, EfficiencyResourcesEventType::RESOURCE_APPLY);
+    } else {
+        subscriberMgr_->OnResourceChanged(callbackInfo, EfficiencyResourcesEventType::APP_RESOURCE_APPLY);
+    }
+    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+}
+
+void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo>
+    &callbackInfo, std::shared_ptr<ResourceApplicationRecord> &record,
+    const sptr<EfficiencyResourceInfo> &resourceInfo)
+{
+    for (uint32_t resourceIndex = 0; resourceIndex < MAX_RESOURCES_TYPE_NUM; ++resourceIndex) {
+        if ((callbackInfo->GetResourceNumber() & (1 << resourceIndex)) == 0) {
+            continue;
+        }
+        auto task = [resourceIndex](const auto &it) {
+            return it.resourceIndex_ == resourceIndex;
+        };
+        auto resourceUnitIter = std::find_if(record->resourceUnitList_.begin(),
+            record->resourceUnitList_.end(), task);
+        int64_t endtime = TimeProvider::GetCurrentTime() + resourceInfo->GetTimeOut();
+        if (resourceUnitIter == record->resourceUnitList_.end()) {
+            if (resourceInfo->IsPersist()) {
+                endtime = 0;
+            }
+            record->resourceUnitList_.emplace_back(PersistTime {resourceIndex, resourceInfo->IsPersist(),
+                endtime, resourceInfo->GetReason()});
+        } else {
+            resourceUnitIter->reason_ = resourceInfo->GetReason();
+            resourceUnitIter->isPersist_ = resourceUnitIter->isPersist_ || resourceInfo->IsPersist();
+            if (resourceUnitIter->isPersist_) {
+                resourceUnitIter->endTime_ = 0;
+            } else {
+                resourceUnitIter->endTime_ = std::max(resourceUnitIter->endTime_,
+                    endtime);
+            }
+        }
+    }
+    BGTASK_LOGD("update end time of resource");
+    if (resourceInfo->IsPersist()) {
+        return;
+    }
+    const bool isProcess = resourceInfo->IsProcess();
+    int32_t mapKey = isProcess ? callbackInfo->GetPid() : callbackInfo->GetUid();
+    const auto& mgr = shared_from_this();
+    auto task = [mgr, mapKey, isProcess] () {
+        mgr->ResetTimeOutResource(mapKey, isProcess);
+    };
+    handler_->PostTask(task, resourceInfo->GetTimeOut());
+}
+
+void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProcess)
+{
+    BGTASK_LOGI("ResetTimeOutResource reset efficiency rsources, mapkey: %{public}d",
+        mapKey);
+    auto &infoMap = isProcess ? procResourceApplyMap_ : appResourceApplyMap_;
+    auto type = isProcess ? EfficiencyResourcesEventType::RESOURCE_RESET :
+        EfficiencyResourcesEventType::APP_RESOURCE_RESET;
+    auto iter = infoMap.find(mapKey);
+    if (iter == infoMap.end()) {
+        BGTASK_LOGI("efficiency resource does not exist.");
+        return;
+    }
+    auto &resourceRecord = iter->second;
+    uint32_t eraseBit = 0;
+    for (auto iter = resourceRecord->resourceUnitList_.begin();
+        iter != resourceRecord->resourceUnitList_.end(); ++iter) {
+        if (iter->isPersist_) {
+            continue;
+        }
+        auto endTime = iter->endTime_;
+        if (TimeProvider::GetCurrentTime() >= endTime) {
+            eraseBit |= 1 << iter->resourceIndex_;
+        }
+    }
+    BGTASK_LOGI("ResetTimeOutResource eraseBit: %{public}u, resourceNumber: %{public}u, result: %{public}u,",
+        eraseBit, resourceRecord->resourceNumber_, resourceRecord->resourceNumber_ ^ eraseBit);
+    if (eraseBit == 0) {
+        return;
+    }
+    resourceRecord->resourceNumber_ ^= eraseBit;
+    RemoveListRecord(resourceRecord->resourceUnitList_, eraseBit);
+    auto callbackInfo = std::make_shared<ResourceCallbackInfo>(resourceRecord->uid_, resourceRecord->pid_, eraseBit,
+        resourceRecord->bundleName_);
+    subscriberMgr_->OnResourceChanged(callbackInfo, type);
+    if (resourceRecord->resourceNumber_ == 0) {
+        infoMap.erase(iter);
+    }
+}
+
+ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
+{
+    BGTASK_LOGD("start to reset all efficiency resources");
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("efficiency resources manager is not ready.");
+        return ERR_BGTASK_SERVICE_NOT_READY;
+    }
+
+    auto uid = IPCSkeleton::GetCallingUid();
+    auto pid = IPCSkeleton::GetCallingPid();
+    std::string bundleName = "";
+    if (!IsCallingInfoLegal(uid, pid, bundleName)) {
+        BGTASK_LOGE("reset efficiency resources failed, calling info is illegal.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+    if (!CheckRunningResourcesApply(uid, bundleName)) {
+        BGTASK_LOGI("apply efficiency resources failed, running resource apply is false.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
+    BGTASK_LOGD("reset efficiency resources uid : %{public}d, pid : %{public}d, resource number : %{public}d", uid,
+        pid, MAX_RESOURCE_NUMBER);
+    handler_->PostTask([this, uid, pid, bundleName]() {
+        std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
+            pid, MAX_RESOURCE_NUMBER, bundleName);
+        this->ResetEfficiencyResourcesInner(callbackInfo, false);
+    });
+    return ERR_OK;
+}
+
+void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t resourceNumber)
+{
+    for (auto iter = procResourceApplyMap_.begin(); iter != procResourceApplyMap_.end(); iter++) {
+        if (iter->second->uid_ == uid && (resourceNumber & iter->second->resourceNumber_) != 0) {
+            uint32_t eraseBit = (resourceNumber & iter->second->resourceNumber_);
+            std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
+                iter->second->pid_, eraseBit, iter->second->bundleName_);
+            handler_->PostTask([this, callbackInfo]() {
+                this->ResetEfficiencyResourcesInner(callbackInfo, true);
+            });
+        }
+    }
+}
+
+void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
+    const std::shared_ptr<ResourceCallbackInfo> &callbackInfo, bool isProcess)
+{
+    BGTASK_LOGD("reset efficiency resources inner, resource number: %{public}u, "\
+        " isProcess: %{public}d", callbackInfo->GetResourceNumber(), isProcess);
+    if (isProcess) {
+        RemoveTargetResourceRecord(procResourceApplyMap_, callbackInfo->GetPid(),
+            callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::RESOURCE_RESET);
+    } else {
+        RemoveTargetResourceRecord(appResourceApplyMap_, callbackInfo->GetUid(),
+            callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::APP_RESOURCE_RESET);
+        RemoveRelativeProcessRecord(callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
+    }
+    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+}
+
+bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &bundleName)
+{
+    if (uid < 0 || pid < 0) {
+        BGTASK_LOGE("pid or uid is invalid.");
+        return false;
+    }
+    bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+    return true;
+}
+
+ErrCode BgEfficiencyResourcesMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
+{
+    return subscriberMgr_->AddSubscriber(subscriber);
+    BGTASK_LOGI("add subscriber to efficiency resources succeed.");
+}
+
+ErrCode BgEfficiencyResourcesMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
+{
+    return subscriberMgr_->RemoveSubscriber(subscriber);
+    BGTASK_LOGD("remove subscriber to efficiency resources succeed.");
+}
+
+ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGE("manager is not ready");
+        return ERR_BGTASK_SERVICE_NOT_READY;
+    }
+    handler_->PostSyncTask([&]() {
+        this->ShellDumpInner(dumpOption, dumpInfo);
+    });
+    return ERR_OK;
+}
+
+ErrCode BgEfficiencyResourcesMgr::ShellDumpInner(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
+{
+    if (dumpOption[1] == DUMP_PARAM_LIST_ALL) {
+        DumpAllApplicationInfo(dumpInfo);
+    } else if (dumpOption[1] == DUMP_PARAM_RESET_ALL) {
+        DumpResetAllResource(dumpInfo);
+    } else if (dumpOption[1] == DUMP_PARAM_RESET_APP) {
+        DumpResetResource(dumpOption, true, false);
+    } else if (dumpOption[1] == DUMP_PARAM_RESET_PROC) {
+        DumpResetResource(dumpOption, false, false);
+    }
+    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    return ERR_OK;
+}
+
+void BgEfficiencyResourcesMgr::DumpAllApplicationInfo(std::vector<std::string> &dumpInfo)
+{
+    std::stringstream stream;
+    if (appResourceApplyMap_.empty() && procResourceApplyMap_.empty()) {
+        dumpInfo.emplace_back("No running efficiency resources\n");
+        return;
+    }
+    DumpApplicationInfoMap(appResourceApplyMap_, dumpInfo, stream, "app efficiency resource: \n");
+    DumpApplicationInfoMap(procResourceApplyMap_, dumpInfo, stream, "process efficiency resource: \n");
+}
+
+void BgEfficiencyResourcesMgr::DumpApplicationInfoMap(std::unordered_map<int32_t,
+    std::shared_ptr<ResourceApplicationRecord>> &infoMap, std::vector<std::string> &dumpInfo,
+    std::stringstream &stream, const char *headInfo)
+{
+    uint32_t index = 1;
+    stream << headInfo << "\n";
+    for (auto iter = infoMap.begin(); iter != infoMap.end(); iter++) {
+        stream << "No." << index << "\n";
+        stream << "\tefficiencyResourceKey: " << iter->first << "\n";
+        stream << "\tefficiencyResourceValue:" << "\n";
+        stream << "\t\tbundleName: " << iter->second->GetBundleName() << "\n";
+        stream << "\t\tuid: " << iter->second->GetUid() << "\n";
+        stream << "\t\tpid: " << iter->second->GetPid() << "\n";
+        stream << "\t\tresourceNumber: " << iter->second->GetResourceNumber() << "\n";
+        int64_t curTime = TimeProvider::GetCurrentTime();
+        auto &resourceUnitList = iter->second->resourceUnitList_;
+        for (auto unitIter = resourceUnitList.begin();
+            unitIter != resourceUnitList.end(); ++unitIter) {
+            stream << "\t\t\tresource type: " << ResourceTypeName[unitIter->resourceIndex_] << "\n";
+            stream << "\t\t\tisPersist: " << (unitIter->isPersist_ ? "true" : "false") << "\n";
+            if (!unitIter->isPersist_) {
+                stream << "\t\t\tremainTime: " << unitIter->endTime_ - curTime << "\n";
+            }
+            stream << "\t\t\treason: " << unitIter->reason_ << "\n";
+        }
+        stream << "\n";
+        dumpInfo.emplace_back(stream.str());
+        stream.str("");
+        stream.clear();
+        index++;
+    }
+}
+
+void BgEfficiencyResourcesMgr::DumpResetAllResource(const std::vector<std::string> &dumpOption)
+{
+    DumpResetResource(dumpOption, true, true);
+    DumpResetResource(dumpOption, false, true);
+}
+
+void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> &dumpOption,
+    bool cleanApp, bool cleanAll)
+{
+    auto &infoMap = cleanApp ? appResourceApplyMap_ : procResourceApplyMap_;
+    auto type = cleanApp ? EfficiencyResourcesEventType::APP_RESOURCE_RESET
+        : EfficiencyResourcesEventType::RESOURCE_RESET;
+
+    if (cleanAll) {
+        for (auto iter = infoMap.begin(); iter != infoMap.end(); ++iter) {
+            std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>
+                (iter->second->GetUid(), iter->second->GetPid(), iter->second->GetResourceNumber(),
+                iter->second->GetBundleName());
+            subscriberMgr_->OnResourceChanged(callbackInfo, type);
+        }
+        infoMap.clear();
+    } else {
+        if (dumpOption.size() < MAX_DUMP_PARAM_NUMS) {
+            BGTASK_LOGW("invalid dump param");
+            return;
+        }
+        int32_t mapKey = std::stoi(dumpOption[2]);
+        uint32_t cleanResource = std::stoi(dumpOption[3]);
+        RemoveTargetResourceRecord(infoMap, mapKey, cleanResource, type);
+    }
+}
+
+bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int32_t,
+    std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey, uint32_t cleanResource,
+    EfficiencyResourcesEventType type)
+{
+    BGTASK_LOGD("resource record key: %{public}d", mapKey);
+    BGTASK_LOGD("resource record size(): %{public}d", static_cast<int32_t>(infoMap.size()));
+    auto iter = infoMap.find(mapKey);
+    if (iter == infoMap.end() || (iter->second->resourceNumber_ & cleanResource) == 0) {
+        BGTASK_LOGW("remove single resource record failure, no matched task: %{public}d", mapKey);
+        return false;
+    }
+    uint32_t eraseBit = (iter->second->resourceNumber_ & cleanResource);
+    iter->second->resourceNumber_ ^= eraseBit;
+    if (eraseBit == 0) {
+        return true;
+    }
+    RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
+    if (iter->second->resourceNumber_ == 0) {
+        infoMap.erase(iter);
+    }
+    auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
+        iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
+    subscriberMgr_->OnResourceChanged(callbackInfo, type);
+    return true;
+}
+
+void BgEfficiencyResourcesMgr::RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit)
+{
+    BGTASK_LOGD("start remove record from list.");
+    if (eraseBit == 0) {
+        return;
+    }
+    for (auto it = resourceUnitList.begin(); it != resourceUnitList.end();) {
+        BGTASK_LOGD("remove resource uint list, resourceIndex_: %{public}d eraseBit:%{public}d", it->resourceIndex_,
+            eraseBit);
+        if (((1 << it->resourceIndex_) & eraseBit) != 0) {
+            it = resourceUnitList.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+ErrCode BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<
+    ResourceCallbackInfo>> &appList, std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
+{
+    handler_->PostSyncTask([this, &appList, &procList]() {
+        this->GetEfficiencyResourcesInfosInner(appResourceApplyMap_, appList);
+        this->GetEfficiencyResourcesInfosInner(procResourceApplyMap_, procList);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+
+    return ERR_OK;
+}
+
+void BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfosInner(const ResourceRecordMap &infoMap,
+    std::vector<std::shared_ptr<ResourceCallbackInfo>> &list)
+{
+    if (infoMap.empty()) {
+        return;
+    }
+    BGTASK_LOGD("get efficiency resources info inner function, resources record size(): %{public}d ",
+        static_cast<int32_t>(infoMap.size()));
+    for (auto &record : infoMap) {
+        auto appInfo = std::make_shared<ResourceCallbackInfo>(record.second->uid_, record.second->pid_,
+            record.second->resourceNumber_, record.second->bundleName_);
+        list.push_back(appInfo);
+    }
+}
+
+bool BgEfficiencyResourcesMgr::CheckRunningResourcesApply(const int32_t uid, const std::string &bundleName)
+{
+    AppExecFwk::ApplicationInfo applicationInfo;
+    if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
+        AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, GetUserIdByUid(uid), applicationInfo)) {
+        BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
+        return false;
+    }
+    BGTASK_LOGD("applicationInfo.runningResourcesApply is %{public}d.", applicationInfo.runningResourcesApply);
+    return applicationInfo.runningResourcesApply;
+}
+
+int32_t BgEfficiencyResourcesMgr::GetUserIdByUid(int32_t uid)
+{
+    const int32_t BASE_USER_RANGE = 200000;
+    return uid / BASE_USER_RANGE;
+}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

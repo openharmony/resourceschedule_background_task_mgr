@@ -99,6 +99,34 @@ public:
      */
     virtual void OnRemoteDied(const wptr<IRemoteObject> &object);
 
+    /**
+     * @brief Apply or unapply efficiency resources of App.
+     *
+     * @param resourceInfo Request params.
+     */
+    virtual void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
+
+    /**
+     * @brief Called back when the efficiency resources of App reset.
+     *
+     * @param resourceInfo Request params.
+     */
+    virtual void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
+
+    /**
+     * @brief Apply or unapply efficiency resources of process.
+     *
+     * @param resourceInfo Request params.
+     */
+    virtual void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
+
+    /**
+     * @brief Called back when the efficiency resources of process reset.
+     *
+     * @param resourceInfo Request params.
+     */
+    virtual void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
+
 private:
     class BackgroundTaskSubscriberImpl final : public BackgroundTaskSubscriberStub {
     public:
@@ -190,6 +218,34 @@ private:
          * @return True if success, else false.
          */
         bool GetBackgroundTaskMgrProxy();
+
+        /**
+         * @brief Apply or unapply efficiency resources of App.
+         *
+         * @param resourceInfo Request params.
+         */
+        void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+
+        /**
+         * @brief Called back when the efficiency resources of App reset.
+         *
+         * @param resourceInfo Request params.
+         */
+        void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+
+        /**
+         * @brief Apply or unapply efficiency resources of process.
+         *
+         * @param resourceInfo Request params.
+         */
+        void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+
+        /**
+         * @brief Called back when the efficiency resources of process reset.
+         *
+         * @param resourceInfo Request params.
+         */
+        void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
 
     public:
         BackgroundTaskSubscriber &subscriber_;

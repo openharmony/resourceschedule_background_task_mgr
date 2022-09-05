@@ -39,7 +39,7 @@ struct AsyncWorkData {
 
 class Common {
 public:
-    static napi_value NapiGetboolean(napi_env env, const bool &isValue);
+    static napi_value NapiGetboolean(const napi_env &env, const bool isValue);
 
     static napi_value NapiGetNull(napi_env env);
 
@@ -70,6 +70,8 @@ public:
 
     static napi_value SetDelaySuspendInfo(
         const napi_env &env, std::shared_ptr<DelaySuspendInfo>& delaySuspendInfo, napi_value &result);
+
+    static napi_value GetStringValue(const napi_env &env, const napi_value &value, std::string &result);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

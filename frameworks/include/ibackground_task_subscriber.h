@@ -25,6 +25,7 @@
 
 #include "continuous_task_callback_info.h"
 #include "transient_task_app_info.h"
+#include "resource_callback_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -95,6 +96,37 @@ public:
      **/
     virtual void OnAppContinuousTaskStop(int32_t uid) = 0;
 
+    /**
+     * @brief Apply or unapply efficiency resources of App.
+     *
+     * @param resourceInfo Request params.
+     */
+    virtual void OnAppEfficiencyResourcesApply(
+        const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) = 0;
+
+    /**
+     * @brief Called back when the efficiency resources of App reset.
+     *
+     * @param resourceInfo Request params.
+     */
+    virtual void OnAppEfficiencyResourcesReset(
+        const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) = 0;
+
+    /**
+     * @brief Apply or unapply efficiency resources of process.
+     *
+     * @param resourceInfo Request params.
+     */
+    virtual void OnProcEfficiencyResourcesApply(
+        const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) = 0;
+
+    /**
+     * @brief Called back when the efficiency resources of process reset.
+     *
+     * @param resourceInfo Request params.
+     */
+    virtual void OnProcEfficiencyResourcesReset(
+        const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) = 0;
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskSubscriber");
 
@@ -109,6 +141,10 @@ protected:
         ON_CONTINUOUS_TASK_START,
         ON_CONTINUOUS_TASK_STOP,
         ON_APP_CONTINUOUS_TASK_STOP,
+        ON_APP_EFFICIENCY_RESOURCES_APPLY,
+        ON_APP_EFFICIENCY_RESOURCES_RESET,
+        ON_PROC_EFFICIENCY_RESOURCES_APPLY,
+        ON_PROC_EFFICIENCY_RESOURCES_RESET,
     };
 };
 }  // namespace BackgroundTaskMgr

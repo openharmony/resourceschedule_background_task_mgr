@@ -54,7 +54,11 @@ private:
     ErrCode HandleUnsubscribeBackgroundTask(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetTransientTaskApps(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetContinuousTaskApps(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleApplyEfficiencyResources(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleResetAllEfficiencyResources(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleGetEfficiencyResourcesInfos(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleStopContinuousTask(MessageParcel& data, MessageParcel& reply);
+    ErrCode WriteInfoToParcel(const std::vector<std::shared_ptr<ResourceCallbackInfo>>& infoMap, MessageParcel& reply);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

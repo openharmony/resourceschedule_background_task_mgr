@@ -20,6 +20,7 @@
 #include <nocopyable.h>
 
 #include <ibackground_task_mgr.h>
+#include "efficiency_resource_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -103,6 +104,31 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) override;
+
+    /**
+     * @brief Apply or unapply efficiency resources.
+     *
+     * @param resourceInfo Request params.
+     * @param isSuccess succeed to apply efficiency resources.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess) override;
+
+    /**
+     * @brief Reset all efficiency resources.
+     *
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode ResetAllEfficiencyResources() override;
+    
+    /**
+     * @brief Get all effficiency resources running infos.
+     * @param appList EFficiency Resources infos of apps.
+     * @param procList  EFficiency Resources infos of processes.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
+        std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList) override;
 
     /**
      * @brief Request stop continuous task.

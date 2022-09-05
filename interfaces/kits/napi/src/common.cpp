@@ -43,10 +43,10 @@ AsyncWorkData::~AsyncWorkData()
     }
 }
 
-napi_value Common::NapiGetboolean(napi_env env, const bool &isValue)
+napi_value Common::NapiGetboolean(const napi_env &env, bool isValue)
 {
     napi_value result = nullptr;
-    napi_get_boolean(env, isValue, &result);
+    NAPI_CALL(env, napi_get_boolean(env, isValue, &result));
     return result;
 }
 
@@ -182,11 +182,10 @@ napi_value Common::GetU16StringValue(const napi_env &env, const napi_value &valu
 napi_value Common::GetInt32NumberValue(const napi_env &env, const napi_value &value, int32_t &result)
 {
     napi_valuetype valuetype = napi_undefined;
-
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     NAPI_ASSERT(env, valuetype == napi_number, "Wrong argument type. Number or function expected.");
     napi_get_value_int32(env, value, &result);
-    BGTASK_LOGD("GetInt32NumberValue result: %{public}d", result);
+    BGTASK_LOGI("GetInt32NumberValue result: %{public}d", result);
 
     return Common::NapiGetNull(env);
 }
@@ -223,6 +222,19 @@ napi_value Common::SetDelaySuspendInfo(
     napi_set_named_property(env, result, "actualDelayTime", value);
 
     return NapiGetboolean(env, true);
+}
+
+napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, std::string &result)
+{
+    char str[STR_MAX_SIZE] = {0};
+    size_t strLen = 0;
+    napi_status status = napi_get_value_string_utf8(env, value, str, STR_MAX_SIZE - 1, &strLen);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+    result = std::string(str);
+    BGTASK_LOGD("GetStringValue result: %{public}s", result.c_str());
+    return Common::NapiGetNull(env);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

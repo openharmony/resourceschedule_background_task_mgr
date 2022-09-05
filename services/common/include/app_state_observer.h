@@ -16,6 +16,7 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_APP_STATE_OBSERVER_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_APP_STATE_OBSERVER_H
 
+#include "singleton.h"
 #include "app_mgr_interface.h"
 #include "application_state_observer_stub.h"
 #include "event_handler.h"
@@ -25,16 +26,18 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+class BgEfficiencyResourcesMgr;
 class BgContinuousTaskMgr;
 
 class AppStateObserver : public AppExecFwk::ApplicationStateObserverStub {
+    DECLARE_DELAYED_SINGLETON(AppStateObserver);
 public:
-    AppStateObserver();
-    ~AppStateObserver();
     void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override;
     void OnProcessDied(const AppExecFwk::ProcessData &processData) override;
+    void OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData) override;
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
     void SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr);
+    void SetBgEfficiencyResourcesMgr(const std::shared_ptr<BgEfficiencyResourcesMgr> &resourceMgr);
     bool Subscribe();
     bool Unsubscribe();
 
@@ -42,6 +45,9 @@ private:
     bool Connect();
     void Disconnect();
     void OnRemoteDied(const wptr<IRemoteObject> &object);
+    inline bool ValidateAppStateData(const AppExecFwk::AppStateData &appStateData);
+    void OnProcessDiedContinuousTask(const AppExecFwk::ProcessData &processData);
+    void OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData);
 
 private:
     std::mutex mutex_ {};
@@ -49,6 +55,7 @@ private:
     std::weak_ptr<BgContinuousTaskMgr> bgContinuousTaskMgr_ {};
     sptr<AppExecFwk::IAppMgr> appMgrProxy_ {nullptr};
     sptr<RemoteDeathRecipient> appMgrDeathRecipient_ {nullptr};
+    std::weak_ptr<BgEfficiencyResourcesMgr> bgEfficiencyResourcesMgr_ {};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

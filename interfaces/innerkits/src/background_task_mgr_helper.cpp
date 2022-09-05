@@ -17,6 +17,7 @@
 
 #include "singleton.h"
 
+#include "bgtaskmgr_log_wrapper.h"
 #include "background_task_manager.h"
 #include "ibackground_task_mgr.h"
 
@@ -51,6 +52,12 @@ ErrCode BackgroundTaskMgrHelper::GetTransientTaskApps(std::vector<std::shared_pt
 ErrCode BackgroundTaskMgrHelper::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetContinuousTaskApps(list);
+}
+
+ErrCode BackgroundTaskMgrHelper::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<
+    ResourceCallbackInfo>> &appList, std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetEfficiencyResourcesInfos(appList, procList);
 }
 
 ErrCode BackgroundTaskMgrHelper::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)

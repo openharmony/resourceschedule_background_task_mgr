@@ -32,6 +32,7 @@
 #include "bg_continuous_task_mgr.h"
 #include "bg_transient_task_mgr.h"
 #include "bgtaskmgr_inner_errors.h"
+#include "bg_efficiency_resources_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -60,6 +61,10 @@ public:
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) override;
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) override;
+    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess) override;
+    ErrCode ResetAllEfficiencyResources() override;
+    ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
+        std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList) override;
     ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
@@ -67,10 +72,11 @@ public:
     void HandleRequestExpired(const int32_t requestId);
     void HandleExpiredCallbackDeath(const wptr<IRemoteObject>& remote);
     void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
-
+    
 private:
     void Init();
     void DumpUsage(std::string &result);
+    void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
 
 private:
     ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};
