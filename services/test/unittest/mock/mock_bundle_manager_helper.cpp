@@ -56,6 +56,13 @@ bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const App
     return true;
 }
 
+bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
+    const int userId, AppExecFwk::ApplicationInfo &appInfo)
+{
+    appInfo.runningResourcesApply = true;
+    return true;
+}
+
 bool BundleManagerHelper::Connect()
 {
     return true;

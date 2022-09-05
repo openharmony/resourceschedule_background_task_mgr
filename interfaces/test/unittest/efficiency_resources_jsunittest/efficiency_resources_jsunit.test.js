@@ -50,6 +50,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest001
      * @tc.desc: test apply a efficiency resource
      * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X
      */
     it("EfficiencyResourcesJsTest001", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest001---------------------------');
@@ -70,6 +71,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest002
      * @tc.desc: test reset a efficiency resource
      * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X
      */
     it("EfficiencyResourcesJsTest002", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest002---------------------------');
@@ -88,6 +90,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest003
      * @tc.desc: test apply a efficiency resource without resourceTypes
      * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X
      */
     it("EfficiencyResourcesJsTest003", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest003---------------------------');
@@ -105,6 +108,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest004
      * @tc.desc: test apply a efficiency resource without isApply
      * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X
      */
     it("EfficiencyResourcesJsTest004", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest004--------------------------- ');
@@ -122,6 +126,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest005
      * @tc.desc: test apply a efficiency resource without timeOut
      * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X
      */
     it("EfficiencyResourcesJsTest005", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest005---------------------------');
@@ -139,6 +144,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest006
      * @tc.desc: test apply a efficiency resource without reason
      * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X
      */
     it("EfficiencyResourcesJsTest006", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest006---------------------------');
@@ -157,6 +163,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest007
      * @tc.desc: test apply a efficiency resource with timeout equals to 0
      * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X
      */
     it("EfficiencyResourcesJsTest007", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest007---------------------------');
@@ -176,6 +183,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest008
      * @tc.desc: test apply a efficiency resource with resourceTypes equals to 0
      * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X
      */
     it("EfficiencyResourcesJsTest008", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest008---------------------------');
@@ -194,6 +202,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest009
      * @tc.desc: test apply a efficiency resource with isPersist
      * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X
      */
     it("EfficiencyResourcesJsTest009", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest009---------------------------');
@@ -213,6 +222,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest010
      * @tc.desc: test apply a efficiency resource with isProcess
      * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X
      */
     it("EfficiencyResourcesJsTest010", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest010---------------------------');
@@ -225,6 +235,57 @@ describe("EfficiencyResourcesJsTest", function () {
         };
         let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
         expect(res).assertEqual(true);
+        done();
+    })
+
+    /*
+     * @tc.name:EfficiencyResourcesJsTest011
+     * @tc.desc:verify applyEfficiencyResources  workTime
+     * @tc.type: FUNC
+     */
+    it("EfficiencyResourcesJsTest011", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest011---------------------------');
+        let resRequest = {
+            resourceTypes: backgroundTaskManager.ResourceType.cpu,
+            isApply: true,
+            timeOut: 10,
+            reason: "apply",
+            isProcess: true,
+        };
+        let startTime = (new Date()).valueOf()
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let endTime = (new Date()).valueOf()
+        if (workTime < 50) {
+            expect(true).assertTrue()
+        } else {
+            expect(false).assertTrue()
+        }
+        done();
+    })
+
+    /*
+     * @tc.name:EfficiencyResourcesJsTest012
+     * @tc.desc:verify resetAllEfficiencyResources workTime
+     * @tc.type: FUNC
+     */
+    it("EfficiencyResourcesJsTest012", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest012---------------------------');
+        let resRequest = {
+            resourceTypes: backgroundTaskManager.ResourceType.cpu,
+            isApply: true,
+            timeOut: 10,
+            reason: "apply",
+            isProcess: true,
+        };
+        let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
+        let startTime = (new Date()).valueOf()
+        backgroundTaskManager.resetAllEfficiencyResources();
+        let endTime = (new Date()).valueOf()
+        if (workTime < 50) {
+            expect(true).assertTrue()
+        } else {
+            expect(false).assertTrue()
+        }
         done();
     })
 })
