@@ -14,7 +14,8 @@
       "subsystem": "resourceschedule",
       "syscap": [ 
         "SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask",
-        "SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask"
+        "SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask",
+        "SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply"
       ],
       "features": [],
       "adapted_system_type": [
@@ -70,7 +71,9 @@
                 "background_task_mgr_helper.h",
                 "background_task_subscriber.h",
                 "delay_suspend_info.h",
+                "efficiency_resource_info.h",
                 "expired_callback.h",
+                "resource_callback_info.h",
                 "transient_task_app_info.h"
               ]
             },
@@ -80,6 +83,7 @@
         "test": [
           "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/bgtask_manager_client_test:bgtask_client_unit_test",
           "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/continuous_task_jsunittest:js_unittest",
+          "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/efficiency_resources_jsunittest:js_unittest",
           "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/transient_task_jsunittest:js_unittest",
           "//foundation/resourceschedule/background_task_mgr/services/test/unittest:unittest",
           "//foundation/resourceschedule/background_task_mgr/test/systemtest:systemtest",
