@@ -63,7 +63,7 @@ describe("EfficiencyResourcesJsTest", function () {
             isProcess: false,
         };
         let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
-        expect(res).assertEqual(true);
+        expect(res).assertEqual(false);
         done();
     })
 
@@ -82,7 +82,7 @@ describe("EfficiencyResourcesJsTest", function () {
             reason: "apply"
         };
         let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
-        expect(res).assertEqual(true);
+        expect(res).assertEqual(false);
         done();
     })
 
@@ -214,7 +214,7 @@ describe("EfficiencyResourcesJsTest", function () {
             isPersist: true,
         };
         let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
-        expect(res).assertEqual(true);
+        expect(res).assertEqual(false);
         done();
     })
 
