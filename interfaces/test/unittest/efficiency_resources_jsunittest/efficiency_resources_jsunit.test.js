@@ -234,60 +234,7 @@ describe("EfficiencyResourcesJsTest", function () {
             isProcess: true,
         };
         let res = backgroundTaskManager.applyEfficiencyResources(resRequest);
-        expect(res).assertEqual(true);
-        done();
-    })
-
-    /*
-     * @tc.name:EfficiencyResourcesJsTest011
-     * @tc.desc:verify applyEfficiencyResources  workTime
-     * @tc.type: FUNC
-     */
-    it("EfficiencyResourcesJsTest011", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest011---------------------------');
-        let resRequest = {
-            resourceTypes: backgroundTaskManager.ResourceType.CPU,
-            isApply: true,
-            timeOut: 10,
-            reason: "apply",
-            isProcess: true,
-        };
-        let startTime = (new Date()).valueOf()
-        backgroundTaskManager.applyEfficiencyResources(resRequest);
-        let endTime = (new Date()).valueOf()
-        let workTime = endTime - startTime 
-        if (workTime < 50) {
-            expect(true).assertTrue()
-        } else {
-            expect(false).assertTrue()
-        }
-        done();
-    })
-
-    /*
-     * @tc.name:EfficiencyResourcesJsTest012
-     * @tc.desc:verify resetAllEfficiencyResources workTime
-     * @tc.type: FUNC
-     */
-    it("EfficiencyResourcesJsTest012", 0, async function (done) {
-        console.info('----------------------EfficiencyResourcesJsTest012---------------------------');
-        let resRequest = {
-            resourceTypes: backgroundTaskManager.ResourceType.CPU,
-            isApply: true,
-            timeOut: 10,
-            reason: "apply",
-            isProcess: true,
-        };
-        backgroundTaskManager.applyEfficiencyResources(resRequest);
-        let startTime = (new Date()).valueOf()
-        backgroundTaskManager.resetAllEfficiencyResources();
-        let endTime = (new Date()).valueOf()
-        let workTime = endTime - startTime
-        if (workTime < 50) {
-            expect(true).assertTrue()
-        } else {
-            expect(false).assertTrue()
-        }
+        expect(res).assertEqual(false);
         done();
     })
 })

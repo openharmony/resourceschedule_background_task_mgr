@@ -104,17 +104,17 @@ declare namespace backgroundTaskManager {
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
      * @return True if efficiency resources apply success, else false.
      * @systemapi Hide this for inner system use.
-     */
-     function applyEfficiencyResources(request: EfficiencyResourcesRequest): boolean;
+    */
+    function applyEfficiencyResources(request: EfficiencyResourcesRequest): boolean;
 
      /**
       * Reset all efficiency resources apply.
       *
       * @since 9
-      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply.
+      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
       * @systemapi Hide this for inner system use.
-      */
-     function resetAllEfficiencyResources(): void;
+    */
+    function resetAllEfficiencyResources(): void;
 
     /**
      * supported background mode.
@@ -203,44 +203,44 @@ declare namespace backgroundTaskManager {
      * The type of resource.
      *
      * @since 9
-     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply.
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
      * @systemapi Hide this for inner system use.
-     */
-     export enum ResourceType {
-        /**
-         * The cpu resource for not being suspended.
-         */
-        CPU = 1,
+    */
+    export enum ResourceType {
+       /**
+        * The cpu resource for not being suspended.
+        */
+       CPU = 1,
 
-        /**
-         * The resource for not being proxyed common_event.
-         */
-        COMMON_EVENT = 1 << 1,
+       /**
+        * The resource for not being proxyed common_event.
+        */
+       COMMON_EVENT = 1 << 1,
 
-        /**
-         * The resource for not being proxyed timer.
-         */
-        TIMER = 1 << 2,
+       /**
+        * The resource for not being proxyed timer.
+        */
+       TIMER = 1 << 2,
 
-        /**
-         * The resource for not being proxyed workscheduler.
-         */
-        WORK_SCHEDULER = 1 << 3,
+       /**
+        * The resource for not being proxyed workscheduler.
+        */
+       WORK_SCHEDULER = 1 << 3,
 
-        /**
-         * The resource for not being proxyed bluetooth.
-         */
-        BLUETOOTH = 1 << 4,
+       /**
+        * The resource for not being proxyed bluetooth.
+       */
+       BLUETOOTH = 1 << 4,
 
-        /**
-         * The resource for not being proxyed gps.
-         */
-        GPS = 1 << 5,
+       /**
+        * The resource for not being proxyed gps.
+        */
+       GPS = 1 << 5,
 
-        /**
-         * The resource for not being proxyed audio.
-         */
-        AUDIO = 1 << 6
+       /**
+        * The resource for not being proxyed audio.
+        */
+       AUDIO = 1 << 6
     }
 
     /**
@@ -248,7 +248,7 @@ declare namespace backgroundTaskManager {
      *
      * @name EfficiencyResourcesRequest
      * @since 9
-     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply.
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
      * @systemapi Hide this for inner system use.
      */
     export interface EfficiencyResourcesRequest {
