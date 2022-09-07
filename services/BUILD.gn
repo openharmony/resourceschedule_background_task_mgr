@@ -23,7 +23,7 @@ config("bgtaskmgr_service_public_config") {
     "test/include",
     "efficiency_resources/include",
     "//foundation/distributeddatamgr/relational_store/interfaces/inner_api/rdb/include",
-    "//foundation/distributeddatamgr/relational_store/interfaces/inner_api/appdatafwk/include"
+    "//foundation/distributeddatamgr/relational_store/interfaces/inner_api/appdatafwk/include",
   ]
 }
 
