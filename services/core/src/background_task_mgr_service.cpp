@@ -64,6 +64,11 @@ void BackgroundTaskMgrService::OnAddSystemAbility(int32_t systemAbilityId, const
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->OnAddSystemAbility(systemAbilityId, deviceId);
 }
 
+void BackgroundTaskMgrService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
+}
+
 void BackgroundTaskMgrService::Init()
 {
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->Init();

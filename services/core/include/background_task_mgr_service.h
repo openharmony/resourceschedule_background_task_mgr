@@ -77,6 +77,7 @@ private:
     void Init();
     void DumpUsage(std::string &result);
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
+    void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
 
 private:
     ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};
