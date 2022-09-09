@@ -102,7 +102,6 @@ bool CheckValidInfo(const EfficiencyResourceInfo &params)
 
 napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
 {
-    BGTASK_LOGD("start ApplyEfficiencyResources");
     EfficiencyResourceInfo params;
     napi_value result = nullptr;
     if (ParseParameters(env, info, params) == nullptr || !CheckValidInfo(params)) {

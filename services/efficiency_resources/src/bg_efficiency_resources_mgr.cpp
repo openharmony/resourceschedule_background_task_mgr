@@ -29,8 +29,6 @@
 #include "bundle_manager_helper.h"
 #include "efficiency_resource_log.h"
 
-#include <chrono>
-#include <thread>
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
@@ -159,9 +157,7 @@ void BgEfficiencyResourcesMgr::HandlePersistenceData()
 void BgEfficiencyResourcesMgr::EraseRecordIf(ResourceRecordMap &infoMap,
     const std::function<bool(ResourceRecordPair)> &fun)
 {
-    BGTASK_LOGI("infoMap.size(): %{public}d ", infoMap.size());
     for (auto iter = infoMap.begin(); iter != infoMap.end();) {
-        BGTASK_LOGI("key, result %{public}d %{public}d ", iter->first, fun(*iter));
         if (fun(*iter)) {
             infoMap.erase(iter++);
         } else {
@@ -179,9 +175,6 @@ void BgEfficiencyResourcesMgr::CheckPersistenceData(const std::vector<AppExecFwk
         runningUid.emplace(iter.uid_);
         runningPid.emplace(iter.pid_);
     });
-    BGTASK_LOGI("runningUid.size(): %{public}d ", runningUid.size());
-    BGTASK_LOGI("appResourceApplyMap_.size(): %{public}d ", appResourceApplyMap_.size());
-    BGTASK_LOGI("procResourceApplyMap_.size(): %{public}d ", procResourceApplyMap_.size());
     auto removeUid = [&runningUid](const auto &iter) { return runningUid.find(iter.first) == runningUid.end(); };
     EraseRecordIf(appResourceApplyMap_, removeUid);
     auto removePid = [&runningPid](const auto &iter)  { return runningPid.find(iter.first) == runningPid.end(); };
