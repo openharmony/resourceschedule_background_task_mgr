@@ -73,7 +73,7 @@ bool BgEfficiencyResourcesMgr::Init()
         return false;
     }
     HandlePersistenceData();
-    BGTASK_LOGI("efficiency resources mgr finish Init!!!");
+    BGTASK_LOGI("efficiency resources mgr finish Init");
     return true;
 }
 
@@ -301,7 +301,7 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     }
     if (!CheckRunningResourcesApply(uid, bundleName)) {
         BGTASK_LOGI("apply efficiency resources failed, running resource apply is false");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_PERMISSION_DENIED;
     }
    
     isSuccess = true;
@@ -458,7 +458,7 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
     }
     if (!CheckRunningResourcesApply(uid, bundleName)) {
         BGTASK_LOGI("apply efficiency resources failed, running resource apply is false");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_PERMISSION_DENIED;
     }
 
     BGTASK_LOGD("reset efficiency resources uid : %{public}d, pid : %{public}d, resource number : %{public}d", uid,

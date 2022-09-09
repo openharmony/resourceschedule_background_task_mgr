@@ -72,6 +72,8 @@ public:
         const napi_env &env, std::shared_ptr<DelaySuspendInfo>& delaySuspendInfo, napi_value &result);
 
     static napi_value GetStringValue(const napi_env &env, const napi_value &value, std::string &result);
+
+    static napi_value GetBooleanValue(const napi_env &env, const napi_value &value, bool &result);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
