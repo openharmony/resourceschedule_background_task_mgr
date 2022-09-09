@@ -104,14 +104,13 @@ napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
 {
     BGTASK_LOGD("start ApplyEfficiencyResources");
     EfficiencyResourceInfo params;
-    bool isSuccess = false;
     napi_value result = nullptr;
     if (ParseParameters(env, info, params) == nullptr || !CheckValidInfo(params)) {
-        NAPI_CALL(env, napi_get_boolean(env, isSuccess, &result));
+        NAPI_CALL(env, napi_get_boolean(env, false, &result));
         return result;
     }
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(params, isSuccess);
-    NAPI_CALL(env, napi_get_boolean(env, isSuccess, &result));
+    ErrCode suc = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(params);
+    NAPI_CALL(env, napi_get_boolean(env, suc == ERR_OK, &result));
     return result;
 }
 

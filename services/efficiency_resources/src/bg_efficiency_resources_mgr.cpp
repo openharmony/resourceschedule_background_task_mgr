@@ -280,7 +280,7 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
 }
 
 ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
-    const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess)
+    const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
     BGTASK_LOGD("start bgtaskefficiency");
     if (!isSysReady_.load()) {
@@ -303,8 +303,7 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGI("apply efficiency resources failed, running resource apply is false");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-   
-    isSuccess = true;
+
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, resourceInfo->GetResourceNumber(), bundleName);
     if (resourceInfo->IsApply()) {

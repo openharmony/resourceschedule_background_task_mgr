@@ -167,10 +167,9 @@ void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& 
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->HandleSubscriberDeath(remote);
 }
 
-ErrCode BackgroundTaskMgrService::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo,
-    bool &isSuccess)
+ErrCode BackgroundTaskMgrService::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
-    return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->ApplyEfficiencyResources(resourceInfo, isSuccess);
+    return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->ApplyEfficiencyResources(resourceInfo);
 }
 
 ErrCode BackgroundTaskMgrService::ResetAllEfficiencyResources()

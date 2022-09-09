@@ -61,7 +61,7 @@ public:
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) override;
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) override;
-    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess) override;
+    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo) override;
     ErrCode ResetAllEfficiencyResources() override;
     ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList) override;

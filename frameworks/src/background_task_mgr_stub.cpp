@@ -264,14 +264,9 @@ ErrCode BackgroundTaskMgrStub::HandleApplyEfficiencyResources(MessageParcel& dat
         BGTASK_LOGE("EfficiencyResourceInfo ReadParcelable failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    bool isSuccess {false};
-    ErrCode result = ApplyEfficiencyResources(resourceInfoPtr, isSuccess);
+    ErrCode result = ApplyEfficiencyResources(resourceInfoPtr);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleApplyEfficiencyResources write result failed, ErrCode=%{public}d", result);
-        return ERR_BGTASK_PARCELABLE_FAILED;
-    }
-    if (!reply.WriteBool(isSuccess)) {
-        BGTASK_LOGE("HandleApplyEfficiencyResources Write result fail.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;

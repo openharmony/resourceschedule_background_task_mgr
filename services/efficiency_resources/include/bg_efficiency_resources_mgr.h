@@ -49,7 +49,7 @@ public:
     bool Init();
     void InitNecessaryState();
     void Clear();
-    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess);
+    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo);
     ErrCode ResetAllEfficiencyResources();
     ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList);
