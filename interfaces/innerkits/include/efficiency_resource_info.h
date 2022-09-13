@@ -54,7 +54,7 @@ public:
     {
         return resourceNumber_;
     }
-    
+
     /**
      * @brief Get the apply status.
      *
@@ -103,6 +103,16 @@ public:
     inline bool IsProcess() const
     {
         return isProcess_;
+    }
+
+    /**
+     * @brief Set the Resource Number object
+     * 
+     * @param resourceNumber resource type
+     */
+    inline void SetResourceNumber(uint32_t resourceNumber)
+    {
+        resourceNumber_ = resourceNumber;
     }
 
 private:

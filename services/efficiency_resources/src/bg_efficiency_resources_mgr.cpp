@@ -181,16 +181,17 @@ void BgEfficiencyResourcesMgr::RecoverDelayedTask(bool isProcess, ResourceRecord
     }
 }
 
-ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string &bundleName)
+ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string &bundleName, bool resetAll)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed.");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
     ErrCode res = ERR_OK;
-    handler_->PostTask([this, uid, bundleName]() {
+    handler_->PostTask([this, uid, bundleName, resetAll]() {
+        int resourceNumber = resetAll ? MAX_RESOURCE_NUMBER : (MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER);
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-            0, MAX_RESOURCE_NUMBER, bundleName);
+            0, resourceNumber, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, false);
     });
     return res;
@@ -205,7 +206,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
     ErrCode res = ERR_OK;
     handler_->PostTask([this, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-            pid, MAX_RESOURCE_NUMBER, bundleName);
+            pid, MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, true);
         if (!this->CheckAlivedApp(uid)) {
             this->ResetEfficiencyResourcesInner(callbackInfo, false);
@@ -259,6 +260,10 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready.");
         return ERR_BGTASK_SERVICE_NOT_READY;
+    }
+    if (resourceInfo->IsProcess()) {
+        resourceInfo->SetResourceNumber(resourceInfo->GetResourceNumber()
+            & (~ResourceType::WORK_SCHEDULER));
     }
 
     if (!CheckResourceInfo(resourceInfo)) {

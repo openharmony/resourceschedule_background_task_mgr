@@ -56,7 +56,7 @@ public:
     ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveProcessRecord(int32_t uid, int32_t pid, const std::string &bundleName);
-    ErrCode RemoveAppRecord(int32_t uid, const std::string &bundleName);
+    ErrCode RemoveAppRecord(int32_t uid, const std::string &bundleName, bool resetAll);
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
 
 private:
