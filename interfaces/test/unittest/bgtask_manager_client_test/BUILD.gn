@@ -25,6 +25,7 @@ ohos_unittest("bgtask_client_unit_test") {
   sources = [ "bgtask_client_unit_test.cpp" ]
 
   deps = [
+    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "//third_party/googletest:gtest_main",
   ]
@@ -32,6 +33,7 @@ ohos_unittest("bgtask_client_unit_test") {
   external_deps = [
     "ability_base:want",
     "ability_runtime:wantagent_innerkits",
+    "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "samgr:samgr_proxy",
