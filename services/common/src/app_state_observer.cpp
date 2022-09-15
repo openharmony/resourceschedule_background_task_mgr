@@ -117,7 +117,7 @@ void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData 
             BGTASK_LOGE("bgEfficiencyResourcesMgr is null");
             return;
         }
-        bgEfficiencyResourcesMgr->RemoveAppRecord(uid, bundleName);
+        bgEfficiencyResourcesMgr->RemoveAppRecord(uid, bundleName, false);
     }
 }
 

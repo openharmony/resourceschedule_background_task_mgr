@@ -54,7 +54,7 @@ public:
     {
         return resourceNumber_;
     }
-    
+
     /**
      * @brief Get the apply status.
      *
@@ -105,6 +105,25 @@ public:
         return isProcess_;
     }
 
+    /**
+     * @brief Set the Resource Number object.
+     *
+     * @param resourceNumber represents resource type.
+     */
+    inline void SetResourceNumber(uint32_t resourceNumber)
+    {
+        resourceNumber_ = resourceNumber;
+    }
+
+    /**
+     * @brief Set the isProcess object.
+     *
+     * @param isProcess true if process, else if app.
+     */
+    inline void SetProcess(bool isProcess)
+    {
+        isProcess_ = isProcess;
+    }
 private:
     bool ReadFromParcel(Parcel& in);
 
