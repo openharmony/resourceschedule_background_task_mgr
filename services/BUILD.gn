@@ -22,6 +22,8 @@ config("bgtaskmgr_service_public_config") {
     "transient_task/include",
     "test/include",
     "efficiency_resources/include",
+    "//foundation/distributeddatamgr/relational_store/interfaces/inner_api/rdb/include",
+    "//foundation/distributeddatamgr/relational_store/interfaces/inner_api/appdatafwk/include",
   ]
 }
 
@@ -30,11 +32,11 @@ ohos_shared_library("bgtaskmgr_service") {
   sources = [
     "common/src/app_state_observer.cpp",
     "common/src/bundle_manager_helper.cpp",
+    "common/src/system_event_observer.cpp",
     "common/src/time_provider.cpp",
     "continuous_task/src/bg_continuous_task_mgr.cpp",
     "continuous_task/src/continuous_task_record.cpp",
     "continuous_task/src/data_storage.cpp",
-    "continuous_task/src/system_event_observer.cpp",
     "continuous_task/src/task_notification_subscriber.cpp",
     "core/src/background_task_mgr_service.cpp",
     "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
@@ -58,7 +60,6 @@ ohos_shared_library("bgtaskmgr_service") {
 
   public_deps = [
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
-    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits",
   ]
 
@@ -66,7 +67,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "ability_base:base",
     "ability_base:want",
     "ability_base:zuri",
-    "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",

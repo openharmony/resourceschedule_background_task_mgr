@@ -39,7 +39,6 @@ ohos_shared_library("backgroundtaskmanager") {
   ]
 
   external_deps = [
-    "ability_base:base",
     "ability_base:want",
     "ability_runtime:ability_context_native",
     "ability_runtime:abilitykit_native",
@@ -50,7 +49,6 @@ ohos_shared_library("backgroundtaskmanager") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
-    "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
   relative_install_dir = "module"

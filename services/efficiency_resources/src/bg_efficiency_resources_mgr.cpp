@@ -201,16 +201,17 @@ void BgEfficiencyResourcesMgr::RecoverDelayedTask(bool isProcess, ResourceRecord
     }
 }
 
-ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string &bundleName)
+ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string &bundleName, bool resetAll)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
     ErrCode res = ERR_OK;
-    handler_->PostTask([this, uid, bundleName]() {
+    handler_->PostTask([this, uid, bundleName, resetAll]() {
+        int resourceNumber = resetAll ? MAX_RESOURCE_NUMBER : (MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER);
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-            0, MAX_RESOURCE_NUMBER, bundleName);
+            0, resourceNumber, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, false);
     });
     return res;
@@ -225,7 +226,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
     ErrCode res = ERR_OK;
     handler_->PostTask([this, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-            pid, MAX_RESOURCE_NUMBER, bundleName);
+            pid, MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, true);
         if (!this->CheckAlivedApp(uid)) {
             this->ResetEfficiencyResourcesInner(callbackInfo, false);
@@ -236,7 +237,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
 
 bool BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
 {
-    BGTASK_LOGI("start check app alive or not");
+    BGTASK_LOGD("start check app alive or not");
     if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
         BGTASK_LOGE("ResourceRecordStorage connect to app mgr service failed");
         return true;
@@ -296,7 +297,10 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGI("apply efficiency resources failed, running resource apply is false");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-
+    if (!CheckProcApplyWorkScheduler(resourceInfo)) {
+        BGTASK_LOGW("apply work scheduler resources by process is not recommend");
+        return ERR_OK;
+    }
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, resourceInfo->GetResourceNumber(), bundleName);
     if (resourceInfo->IsApply()) {
@@ -395,7 +399,7 @@ void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<Reso
 
 void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProcess)
 {
-    BGTASK_LOGI("ResetTimeOutResource reset efficiency rsources, mapkey: %{public}d",
+    BGTASK_LOGD("ResetTimeOutResource reset efficiency rsources, mapkey: %{public}d",
         mapKey);
     auto &infoMap = isProcess ? procResourceApplyMap_ : appResourceApplyMap_;
     auto type = isProcess ? EfficiencyResourcesEventType::RESOURCE_RESET :
@@ -407,17 +411,17 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
     }
     auto &resourceRecord = iter->second;
     uint32_t eraseBit = 0;
-    for (auto iter = resourceRecord->resourceUnitList_.begin();
-        iter != resourceRecord->resourceUnitList_.end(); ++iter) {
-        if (iter->isPersist_) {
+    for (auto recordIter = resourceRecord->resourceUnitList_.begin();
+        recordIter != resourceRecord->resourceUnitList_.end(); ++recordIter) {
+        if (recordIter->isPersist_) {
             continue;
         }
-        auto endTime = iter->endTime_;
+        auto endTime = recordIter->endTime_;
         if (TimeProvider::GetCurrentTime() >= endTime) {
-            eraseBit |= 1 << iter->resourceIndex_;
+            eraseBit |= 1 << recordIter->resourceIndex_;
         }
     }
-    BGTASK_LOGI("ResetTimeOutResource eraseBit: %{public}u, resourceNumber: %{public}u, result: %{public}u",
+    BGTASK_LOGD("ResetTimeOutResource eraseBit: %{public}u, resourceNumber: %{public}u, result: %{public}u",
         eraseBit, resourceRecord->resourceNumber_, resourceRecord->resourceNumber_ ^ eraseBit);
     if (eraseBit == 0) {
         BGTASK_LOGD("try to reset time out resources, but find nothing to reset");
@@ -505,14 +509,14 @@ bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std:
 
 ErrCode BgEfficiencyResourcesMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
-    return subscriberMgr_->AddSubscriber(subscriber);
     BGTASK_LOGI("add subscriber to efficiency resources succeed");
+    return subscriberMgr_->AddSubscriber(subscriber);
 }
 
 ErrCode BgEfficiencyResourcesMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
-    return subscriberMgr_->RemoveSubscriber(subscriber);
     BGTASK_LOGD("remove subscriber to efficiency resources succeed");
+    return subscriberMgr_->RemoveSubscriber(subscriber);
 }
 
 ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dumpOption,
@@ -648,13 +652,11 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
 
 void BgEfficiencyResourcesMgr::RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit)
 {
-    BGTASK_LOGD("start remove record from list");
+    BGTASK_LOGD("start remove record from list, eraseBit: %{public}d", eraseBit);
     if (eraseBit == 0) {
         return;
     }
     for (auto it = resourceUnitList.begin(); it != resourceUnitList.end();) {
-        BGTASK_LOGD("remove resource uint list, resourceIndex_: %{public}d eraseBit:%{public}d", it->resourceIndex_,
-            eraseBit);
         if (((1 << it->resourceIndex_) & eraseBit) != 0) {
             it = resourceUnitList.erase(it);
         } else {
@@ -705,6 +707,24 @@ int32_t BgEfficiencyResourcesMgr::GetUserIdByUid(int32_t uid)
 {
     const int32_t BASE_USER_RANGE = 200000;
     return uid / BASE_USER_RANGE;
+}
+
+bool BgEfficiencyResourcesMgr::CheckProcApplyWorkScheduler(const sptr<EfficiencyResourceInfo> &resourceInfo)
+{
+    if (resourceInfo->IsProcess() && (resourceInfo->GetResourceNumber() & ResourceType::WORK_SCHEDULER) != 0) {
+        int resourceNumber = resourceInfo->GetResourceNumber() ^ ResourceType::WORK_SCHEDULER;
+        if (resourceNumber != 0) {
+            sptr<EfficiencyResourceInfo> procResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
+            procResourceInfo->SetResourceNumber(resourceNumber);
+            ApplyEfficiencyResources(procResourceInfo);
+        }
+        sptr<EfficiencyResourceInfo> appResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
+        appResourceInfo->SetResourceNumber(ResourceType::WORK_SCHEDULER);
+        appResourceInfo->SetProcess(false);
+        ApplyEfficiencyResources(appResourceInfo);
+        return false;
+    }
+    return true;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
