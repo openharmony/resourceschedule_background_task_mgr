@@ -181,16 +181,17 @@ void BgEfficiencyResourcesMgr::RecoverDelayedTask(bool isProcess, ResourceRecord
     }
 }
 
-ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string &bundleName)
+ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string &bundleName, bool resetAll)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed.");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
     ErrCode res = ERR_OK;
-    handler_->PostTask([this, uid, bundleName]() {
+    handler_->PostTask([this, uid, bundleName, resetAll]() {
+        int resourceNumber = resetAll ? MAX_RESOURCE_NUMBER : (MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER);
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-            0, MAX_RESOURCE_NUMBER, bundleName);
+            0, resourceNumber, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, false);
     });
     return res;
@@ -205,7 +206,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
     ErrCode res = ERR_OK;
     handler_->PostTask([this, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-            pid, MAX_RESOURCE_NUMBER, bundleName);
+            pid, MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, true);
         if (!this->CheckAlivedApp(uid)) {
             this->ResetEfficiencyResourcesInner(callbackInfo, false);
@@ -276,7 +277,11 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGI("apply efficiency resources failed, running resource apply is false.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-   
+    if (!CheckProcApplyWorkScheduler(resourceInfo)) {
+        BGTASK_LOGW("apply work scheduler resources by process is not recommend");
+        return ERR_OK;
+    }
+
     isSuccess = true;
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, resourceInfo->GetResourceNumber(), bundleName);
@@ -685,6 +690,25 @@ int32_t BgEfficiencyResourcesMgr::GetUserIdByUid(int32_t uid)
 {
     const int32_t BASE_USER_RANGE = 200000;
     return uid / BASE_USER_RANGE;
+}
+
+bool BgEfficiencyResourcesMgr::CheckProcApplyWorkScheduler(const sptr<EfficiencyResourceInfo> &resourceInfo)
+{
+    if (resourceInfo->IsProcess() && (resourceInfo->GetResourceNumber() & ResourceType::WORK_SCHEDULER) != 0) {
+        bool isSuccess = false;
+        int resourceNumber = resourceInfo->GetResourceNumber() ^ ResourceType::WORK_SCHEDULER;
+        if (resourceNumber != 0) {
+            sptr<EfficiencyResourceInfo> procResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
+            procResourceInfo->SetResourceNumber(resourceNumber);
+            ApplyEfficiencyResources(procResourceInfo, isSuccess);
+        }
+        sptr<EfficiencyResourceInfo> appResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
+        appResourceInfo->SetResourceNumber(ResourceType::WORK_SCHEDULER);
+        appResourceInfo->SetProcess(false);
+        ApplyEfficiencyResources(appResourceInfo, isSuccess);
+        return false;
+    }
+    return true;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
