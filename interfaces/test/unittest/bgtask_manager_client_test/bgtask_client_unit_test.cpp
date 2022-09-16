@@ -359,16 +359,20 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskParam_001, TestSize.Level1)
     sptr<ContinuousTaskParam> info2 = sptr<ContinuousTaskParam>(
         new ContinuousTaskParam(true, 1, nullptr, "abilityName", nullptr, "appName"));
 
-    Parcel parcel = Parcel();
-    info2->Marshalling(parcel);
-    sptr<ContinuousTaskParam> info3 = sptr<ContinuousTaskParam>(
-        ContinuousTaskParam::Unmarshalling(parcel));
-    EXPECT_EQ(info3->isNewApi_, true);
-    EXPECT_EQ(info3->bgModeId_, 1);
-    EXPECT_EQ(info3->wantAgent_, nullptr);
-    EXPECT_EQ(info3->abilityName_, "abilityName");
-    EXPECT_EQ(info3->abilityToken_, nullptr);
-    EXPECT_EQ(info3->appName_, "appName");
+    Parcel parcel1 = Parcel();
+    info2->Marshalling(parcel1);
+    sptr<ContinuousTaskParam> info3 = sptr<ContinuousTaskParam>(new ContinuousTaskParam());
+    info3->ReadFromParcel(parcel1);
+    Parcel parcel2 = Parcel();
+    info3->Marshalling(parcel2);
+    sptr<ContinuousTaskParam> info4 = sptr<ContinuousTaskParam>(
+        ContinuousTaskParam::Unmarshalling(parcel2));
+    EXPECT_EQ(info4->isNewApi_, true);
+    EXPECT_EQ(info4->bgModeId_, 1);
+    EXPECT_EQ(info4->wantAgent_, nullptr);
+    EXPECT_EQ(info4->abilityName_, "abilityName");
+    EXPECT_EQ(info4->abilityToken_, nullptr);
+    EXPECT_EQ(info4->appName_, "appName");
 }
 
 /**
@@ -402,7 +406,9 @@ HWTEST_F(BgTaskClientUnitTest, EfficiencyResourceInfo_001, TestSize.Level1)
 {
     sptr<EfficiencyResourceInfo> info1 = sptr<EfficiencyResourceInfo>(new EfficiencyResourceInfo());
     sptr<EfficiencyResourceInfo> info2 = sptr<EfficiencyResourceInfo>(
-        new EfficiencyResourceInfo(1, true, 1, "test", true, true));
+        new EfficiencyResourceInfo(0, true, 1, "test", true, false));
+    info2->SetResourceNumber(1);
+    info2->SetProcess(true);
 
     Parcel parcel = Parcel();
     info2->Marshalling(parcel);
