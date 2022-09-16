@@ -114,9 +114,6 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_001, TestSize.Leve
         resourceInfo), (int32_t)ERR_OK);
 
     resourceInfo->isPersist_ = false;
-    resourceInfo->timeOut_ = -10;
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo), (int32_t)ERR_BGTASK_INVALID_PARAM);
     resourceInfo->timeOut_ = 0;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo), (int32_t)ERR_BGTASK_INVALID_PARAM);

@@ -63,6 +63,10 @@ napi_value GetNamedInt32Value(const napi_env &env, napi_value &object, const cha
         BGTASK_LOGE("ParseParameters failed, %{public}s is nullptr", utf8name);
         return nullptr;
     }
+    if(result < 0) {
+        BGTASK_LOGE("%{public}s can't be a negtive number: %{public}d", utf8name, result);
+        return nullptr;
+    }
     BGTASK_LOGD("GetNamedInt32Value: %{public}s is %{public}d", utf8name, result);
     return Common::NapiGetNull(env);
 }
@@ -107,10 +111,6 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
 
     if (!GetNamedBoolValue(env, argv[0], "isPersist", isPersist, false) ||
         !GetNamedBoolValue(env, argv[0], "isProcess", isProcess, false)) {
-        return nullptr;
-    }
-    if (timeOut < 0) {
-        BGTASK_LOGE("ParseParameters failed, timeOut is negative");
         return nullptr;
     }
     params = EfficiencyResourceInfo {resourceNumber, isApply, timeOut, reason, isPersist, isProcess};
