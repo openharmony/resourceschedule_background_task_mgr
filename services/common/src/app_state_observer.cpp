@@ -42,6 +42,19 @@ AppStateObserver::~AppStateObserver()
     Disconnect();
 }
 
+bool AppStateObserver::CheckParamValid()
+{
+    if (handler_.expired()) {
+        BGTASK_LOGE("AppStateObserver handler is null");
+        return false;
+    }
+    if (bgContinuousTaskMgr_.expired()) {
+        BGTASK_LOGE("AppStateObserver bgContinuousTaskMgr is null");
+        return false;
+    }
+    return true;
+}
+
 void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData)
 {
     if ((int32_t) AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED != abilityStateData.abilityState) {
@@ -49,20 +62,13 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     }
     BGTASK_LOGD("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d",
         abilityStateData.uid, abilityStateData.abilityName.c_str(), abilityStateData.abilityState);
-    auto handler = handler_.lock();
-    if (!handler) {
-        BGTASK_LOGE("handler is null");
-        return;
-    }
-    auto bgContinuousTaskMgr = bgContinuousTaskMgr_.lock();
-    if (!bgContinuousTaskMgr) {
-        BGTASK_LOGE("bgContinuousTaskMgr is null");
+    if (!CheckParamValid()) {
         return;
     }
     auto task = [=]() {
-        bgContinuousTaskMgr->OnAbilityStateChanged(abilityStateData.uid, abilityStateData.abilityName);
+        bgContinuousTaskMgr_.lock()->OnAbilityStateChanged(abilityStateData.uid, abilityStateData.abilityName);
     };
-    handler->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
+    handler_.lock()->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
 }
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
@@ -74,21 +80,13 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
 
 void AppStateObserver::OnProcessDiedContinuousTask(const AppExecFwk::ProcessData &processData)
 {
-    auto handler = handler_.lock();
-    if (!handler) {
-        BGTASK_LOGE("handler is null");
+    if (!CheckParamValid()) {
         return;
     }
-    auto bgContinuousTaskMgr = bgContinuousTaskMgr_.lock();
-    if (!bgContinuousTaskMgr) {
-        BGTASK_LOGE("bgContinuousTaskMgr is null");
-        return;
-    }
-
     auto task = [=]() {
-        bgContinuousTaskMgr->OnProcessDied(processData.uid, processData.pid);
+        bgContinuousTaskMgr_.lock()->OnProcessDied(processData.uid, processData.pid);
     };
-    handler->PostTask(task, TASK_ON_PROCESS_DIED);
+    handler_.lock()->PostTask(task, TASK_ON_PROCESS_DIED);
 }
 
 void AppStateObserver::OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData)

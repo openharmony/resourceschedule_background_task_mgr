@@ -89,14 +89,16 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
-            AsyncCallbackInfoGetRemainingDelayTime *asyncCallbackInfo = (AsyncCallbackInfoGetRemainingDelayTime *)data;
+            AsyncCallbackInfoGetRemainingDelayTime *asyncCallbackInfo =
+                static_cast<AsyncCallbackInfoGetRemainingDelayTime *>(data);
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
                     GetRemainingDelayTime(asyncCallbackInfo->requestId, asyncCallbackInfo->delayTime);
             }
         },
         [](napi_env env, napi_status status, void *data) {
-            AsyncCallbackInfoGetRemainingDelayTime *asyncCallbackInfo = (AsyncCallbackInfoGetRemainingDelayTime *)data;
+            AsyncCallbackInfoGetRemainingDelayTime *asyncCallbackInfo =
+                static_cast<AsyncCallbackInfoGetRemainingDelayTime *>(data);
             std::unique_ptr<AsyncCallbackInfoGetRemainingDelayTime> callbackPtr {asyncCallbackInfo};
             if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
