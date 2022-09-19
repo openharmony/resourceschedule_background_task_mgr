@@ -22,6 +22,8 @@ config("bgtaskmgr_service_public_config") {
     "transient_task/include",
     "test/include",
     "efficiency_resources/include",
+    "//foundation/distributeddatamgr/relational_store/interfaces/inner_api/rdb/include",
+    "//foundation/distributeddatamgr/relational_store/interfaces/inner_api/appdatafwk/include",
   ]
 }
 
@@ -58,7 +60,6 @@ ohos_shared_library("bgtaskmgr_service") {
 
   public_deps = [
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
-    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits",
   ]
 
@@ -66,7 +67,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "ability_base:base",
     "ability_base:want",
     "ability_base:zuri",
-    "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
