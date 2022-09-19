@@ -71,7 +71,7 @@
                 "background_mode.h",
                 "background_task_mgr_helper.h",
                 "background_task_subscriber.h",
-                "continouus_task_callback_info.h",
+                "continuous_task_callback_info.h",
                 "continuous_task_param.h",
                 "delay_suspend_info.h",
                 "efficiency_resource_info.h",
