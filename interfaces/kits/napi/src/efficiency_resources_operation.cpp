@@ -63,7 +63,7 @@ napi_value GetNamedInt32Value(const napi_env &env, napi_value &object, const cha
         BGTASK_LOGE("ParseParameters failed, %{public}s is nullptr", utf8name);
         return nullptr;
     }
-    if(result < 0) {
+    if (result < 0) {
         BGTASK_LOGE("%{public}s can't be a negtive number: %{public}d", utf8name, result);
         return nullptr;
     }

@@ -303,7 +303,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_001, TestSiz
     SleepFor(SLEEP_TIME);
     auto subscriber =  std::make_shared<TestBackgroundTaskSubscriber>();
     EXPECT_NE(subscriber, nullptr);
-    auto resourceInfo = std::make_shared<ResourceCallbackInfo>(0, 0 , 1, "");
+    auto resourceInfo = std::make_shared<ResourceCallbackInfo>(0, 0, 1, "");
     subscriber->OnAppEfficiencyResourcesApply(resourceInfo);
     subscriber->OnAppEfficiencyResourcesReset(resourceInfo);
     subscriber->OnProcEfficiencyResourcesApply(resourceInfo);
