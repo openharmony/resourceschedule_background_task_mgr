@@ -53,7 +53,6 @@ std::shared_ptr<BgContinuousTaskMgr> BgContinuousTaskMgrTest::bgContinuousTaskMg
 void BgContinuousTaskMgrTest::SetUpTestCase()
 {
     bgContinuousTaskMgr_ = BgContinuousTaskMgr::GetInstance();
-    bgContinuousTaskMgr_->dataStorage_ = std::make_shared<DataStorage>();
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     bgContinuousTaskMgr_->isSysReady_.store(true);
 }

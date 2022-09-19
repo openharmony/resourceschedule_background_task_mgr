@@ -54,7 +54,6 @@ std::shared_ptr<BgEfficiencyResourcesMgr> BgEfficiencyResourcesMgrTest::bgEffici
 void BgEfficiencyResourcesMgrTest::SetUpTestCase()
 {
     bgEfficiencyResourcesMgr_ = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance();
-    bgEfficiencyResourcesMgr_->recordStorage_ = std::make_unique<ResourceRecordStorage>();
     bgEfficiencyResourcesMgr_->subscriberMgr_ = DelayedSingleton<ResourcesSubscriberMgr>::GetInstance();
     bgEfficiencyResourcesMgr_->runner_ = AppExecFwk::EventRunner::Create(MOCK_EFFICIENCY_RESOURCES_MGR_NAME);
     bgEfficiencyResourcesMgr_->handler_ =
@@ -236,41 +235,6 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_001, TestSize
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);
     EXPECT_EQ(isSuccess, true);
-    resourceInfo->resourceNumber_ = 1 << 1;
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo, isSuccess), (int32_t)ERR_OK);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 1);
-    resourceInfo->isProcess_ = true;
-    resourceInfo->resourceNumber_ = 1;
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo, isSuccess), (int32_t)ERR_OK);
-    resourceInfo->resourceNumber_ = 1 << 1;
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo, isSuccess), (int32_t)ERR_OK);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources(), (int32_t)ERR_OK);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
-}
-
-/**
- * @tc.name: AppEfficiencyResourcesApply_005
- * @tc.desc: reset all efficiency resources using ResetAllEfficiencyResources function.
- * @tc.type: FUNC
- * @tc.require: issuesI5OD7X
- */
-HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_002, TestSize.Level1)
-{
-    bool isSuccess = false;
-    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo();
-    resourceInfo->isApply_ = true;
-    resourceInfo->resourceNumber_ = 1;
-    resourceInfo->isPersist_ = true;
-    resourceInfo->reason_ = "apply";
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo, isSuccess), (int32_t)ERR_OK);
     resourceInfo->resourceNumber_ = 1 << 1;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo, isSuccess), (int32_t)ERR_OK);

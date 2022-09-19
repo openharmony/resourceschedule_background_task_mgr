@@ -12,8 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include "data_storage.h"
+#include "data_storage_helper.h"
 
 #include <fcntl.h>
 #include <fstream>
@@ -21,21 +20,24 @@
 #include <sstream>
 #include <sys/stat.h>
 
-#include "errors.h"
-
-#include "bgtaskmgr_inner_errors.h"
-#include "bundle_manager_helper.h"
 #include "common_utils.h"
 #include "continuous_task_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-static constexpr char TASK_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/running_task";
 static constexpr int32_t MAX_BUFFER = 512;
+static constexpr char TASK_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/running_task";
+static const std::string RESOURCE_RECORD_FILE_PATH = "/data/service/el1/public/background_task_mgr/resource_record";
+static const std::string APP_RESOURCE_RECORD = "appResourceRecord";
+static const std::string PROCESS_RESOURCE_RECORD = "processResourceRecord";
 }
 
-int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
+DataStorageHelper::DataStorageHelper() {}
+
+DataStorageHelper::~DataStorageHelper() {}
+
+ErrCode DataStorageHelper::RefreshTaskRecord(const std::unordered_map<std::string,
     std::shared_ptr<ContinuousTaskRecord>> &allRecord)
 {
     nlohmann::json root;
@@ -50,7 +52,7 @@ int32_t DataStorage::RefreshTaskRecord(const std::unordered_map<std::string,
     return SaveJsonValueToFile(root.dump(CommonUtils::JSON_FORMAT), TASK_RECORD_FILE_PATH);
 }
 
-int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
+ErrCode DataStorageHelper::RestoreTaskRecord(std::unordered_map<std::string,
     std::shared_ptr<ContinuousTaskRecord>> &allRecord)
 {
     nlohmann::json root;
@@ -67,7 +69,27 @@ int32_t DataStorage::RestoreTaskRecord(std::unordered_map<std::string,
     return ERR_OK;
 }
 
-int32_t DataStorage::SaveJsonValueToFile(const std::string &value, const std::string &filePath)
+ErrCode DataStorageHelper::RefreshResourceRecord(const ResourceRecordMap &appRecord,
+    const ResourceRecordMap &processRecord)
+{
+    std::string record {""};
+    ConvertMapToString(appRecord, processRecord, record);
+    return SaveJsonValueToFile(record, RESOURCE_RECORD_FILE_PATH);
+}
+
+ErrCode DataStorageHelper::RestoreResourceRecord(ResourceRecordMap &appRecord,
+    ResourceRecordMap &processRecord)
+{
+    nlohmann::json root;
+    if (ParseJsonValueFromFile(root, RESOURCE_RECORD_FILE_PATH) != ERR_OK) {
+        BGTASK_LOGD("can not read string form file: %{public}s", RESOURCE_RECORD_FILE_PATH.c_str());
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
+    DivideJsonToMap(root, appRecord, processRecord);
+    return ERR_OK;
+}
+
+int32_t DataStorageHelper::SaveJsonValueToFile(const std::string &value, const std::string &filePath)
 {
     if (!CreateNodeFile(filePath)) {
         BGTASK_LOGE("Create file failed.");
@@ -89,7 +111,7 @@ int32_t DataStorage::SaveJsonValueToFile(const std::string &value, const std::st
     return ERR_OK;
 }
 
-int32_t DataStorage::ParseJsonValueFromFile(nlohmann::json &value, const std::string &filePath)
+int32_t DataStorageHelper::ParseJsonValueFromFile(nlohmann::json &value, const std::string &filePath)
 {
     std::ifstream fin;
     std::string realPath;
@@ -117,7 +139,7 @@ int32_t DataStorage::ParseJsonValueFromFile(nlohmann::json &value, const std::st
     return ERR_OK;
 }
 
-bool DataStorage::CreateNodeFile(const std::string &filePath)
+bool DataStorageHelper::CreateNodeFile(const std::string &filePath)
 {
     if (access(filePath.c_str(), F_OK) == ERR_OK) {
         BGTASK_LOGD("the file: %{public}s already exists.", filePath.c_str());
@@ -132,7 +154,7 @@ bool DataStorage::CreateNodeFile(const std::string &filePath)
     return true;
 }
 
-bool DataStorage::ConvertFullPath(const std::string& partialPath, std::string& fullPath)
+bool DataStorageHelper::ConvertFullPath(const std::string& partialPath, std::string& fullPath)
 {
     if (partialPath.empty() || partialPath.length() >= PATH_MAX) {
         return false;
@@ -144,5 +166,46 @@ bool DataStorage::ConvertFullPath(const std::string& partialPath, std::string& f
     fullPath = tmpPath;
     return true;
 }
+
+void DataStorageHelper::ConvertMapToString(const ResourceRecordMap &appRecord,
+    const ResourceRecordMap &processRecord, std::string &recordString)
+{
+    nlohmann::json root;
+    nlohmann::json appValue;
+    ConvertMapToJson(appRecord, appValue);
+    root[APP_RESOURCE_RECORD] = appValue;
+    nlohmann::json processValue;
+    ConvertMapToJson(processRecord, processValue);
+    root[PROCESS_RESOURCE_RECORD] = processValue;
+    recordString = root.dump(CommonUtils::JSON_FORMAT);
 }
+
+void DataStorageHelper::ConvertMapToJson(const ResourceRecordMap &appRecord, nlohmann::json &root)
+{
+    for (const auto &iter : appRecord) {
+        nlohmann::json value;
+        iter.second->ParseToJson(value);
+        root[std::to_string(iter.first)] = value;
+    }
 }
+
+void DataStorageHelper::DivideJsonToMap(nlohmann::json &root,
+    ResourceRecordMap &appRecord, ResourceRecordMap &processRecord)
+{
+    nlohmann::json appRecordJson = root.at(APP_RESOURCE_RECORD);
+    nlohmann::json processrecordJson = root.at(PROCESS_RESOURCE_RECORD);
+    ConvertJsonToMap(appRecordJson, appRecord);
+    ConvertJsonToMap(processrecordJson, processRecord);
+}
+
+void DataStorageHelper::ConvertJsonToMap(const nlohmann::json &value, ResourceRecordMap &recordMap)
+{
+    for (auto iter = value.begin(); iter != value.end(); iter++) {
+        std::shared_ptr<ResourceApplicationRecord> recordPtr = std::make_shared<ResourceApplicationRecord>();
+        recordPtr->ParseFromJson(iter.value());
+        recordMap.emplace(static_cast<uint32_t>(std::stoi(iter.key())), recordPtr);
+    }
+}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+

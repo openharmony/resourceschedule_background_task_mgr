@@ -13,25 +13,22 @@
  * limitations under the License.
  */
 
-#include "resource_record_storage.h"
+#include "data_storage_helper.h"
 
-#include "errors.h"
-#include "bundle_manager_helper.h"
 #include "common_utils.h"
 
 #include "bgtaskmgr_inner_errors.h"
 #include "efficiency_resource_log.h"
-#include "resource_application_record.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-ErrCode ResourceRecordStorage::RefreshResourceRecord(const ResourceRecordMap &appRecord,
+ErrCode DataStorageHelper::RefreshResourceRecord(const ResourceRecordMap &appRecord,
     const ResourceRecordMap &processRecord)
 {
     return ERR_OK;
 }
 
-ErrCode ResourceRecordStorage::RestoreResourceRecord(ResourceRecordMap &appRecord,
+ErrCode DataStorageHelper::RestoreResourceRecord(ResourceRecordMap &appRecord,
     ResourceRecordMap &processRecord)
 {
     return ERR_OK;

@@ -114,24 +114,26 @@ void BgEfficiencyResourcesMgr::RegisterAppStateObserver()
 
 void BgEfficiencyResourcesMgr::HandlePersistenceData()
 {
-    recordStorage_ = std::make_unique<ResourceRecordStorage>();
     BGTASK_LOGD("ResourceRecordStorage service restart, restore data");
-    recordStorage_->RestoreResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
-
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
         if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
             BGTASK_LOGW("ResourceRecordStorage connect to app mgr service failed");
+            DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+                appResourceApplyMap_, procResourceApplyMap_);
             return;
         }
     }
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
     appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
     BGTASK_LOGI("start to recovery delayed task of apps and processes");
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreResourceRecord(
+        appResourceApplyMap_, procResourceApplyMap_);
     CheckPersistenceData(allAppProcessInfos);
     RecoverDelayedTask(true, procResourceApplyMap_);
     RecoverDelayedTask(false, appResourceApplyMap_);
-    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+        appResourceApplyMap_, procResourceApplyMap_);
 }
 
 void BgEfficiencyResourcesMgr::EraseRecordIf(ResourceRecordMap &infoMap,
@@ -314,8 +316,9 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
     UpdateResourcesEndtime(callbackInfo, iter->second, resourceInfo);
     uint32_t diffResourceNumber = iter->second->resourceNumber_ ^ (preResourceNumber & iter->second->resourceNumber_);
     if (diffResourceNumber == 0) {
-        BGTASK_LOGD("after update end time, diff between resourcesNumbers is zero.");
-        recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+        BGTASK_LOGD("after update end time, diff between resourcesNumbers is zero");
+        DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+            appResourceApplyMap_, procResourceApplyMap_);
         return;
     }
 
@@ -327,7 +330,8 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
     } else {
         subscriberMgr_->OnResourceChanged(callbackInfo, EfficiencyResourcesEventType::APP_RESOURCE_APPLY);
     }
-    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+        appResourceApplyMap_, procResourceApplyMap_);
 }
 
 void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo>
@@ -388,14 +392,14 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
     }
     auto &resourceRecord = iter->second;
     uint32_t eraseBit = 0;
-    for (auto iter = resourceRecord->resourceUnitList_.begin();
-        iter != resourceRecord->resourceUnitList_.end(); ++iter) {
-        if (iter->isPersist_) {
+    for (auto recordIter = resourceRecord->resourceUnitList_.begin();
+        recordIter != resourceRecord->resourceUnitList_.end(); ++recordIter) {
+        if (recordIter->isPersist_) {
             continue;
         }
-        auto endTime = iter->endTime_;
+        auto endTime = recordIter->endTime_;
         if (TimeProvider::GetCurrentTime() >= endTime) {
-            eraseBit |= 1 << iter->resourceIndex_;
+            eraseBit |= 1 << recordIter->resourceIndex_;
         }
     }
     BGTASK_LOGI("ResetTimeOutResource eraseBit: %{public}u, resourceNumber: %{public}u, result: %{public}u,",
@@ -470,7 +474,8 @@ void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
             callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::APP_RESOURCE_RESET);
         RemoveRelativeProcessRecord(callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
     }
-    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+        appResourceApplyMap_, procResourceApplyMap_);
 }
 
 bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &bundleName)
@@ -485,14 +490,14 @@ bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std:
 
 ErrCode BgEfficiencyResourcesMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
-    return subscriberMgr_->AddSubscriber(subscriber);
     BGTASK_LOGI("add subscriber to efficiency resources succeed.");
+    return subscriberMgr_->AddSubscriber(subscriber);
 }
 
 ErrCode BgEfficiencyResourcesMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
-    return subscriberMgr_->RemoveSubscriber(subscriber);
     BGTASK_LOGD("remove subscriber to efficiency resources succeed.");
+    return subscriberMgr_->RemoveSubscriber(subscriber);
 }
 
 ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dumpOption,
@@ -520,7 +525,8 @@ ErrCode BgEfficiencyResourcesMgr::ShellDumpInner(const std::vector<std::string> 
     } else if (dumpOption[1] == DUMP_PARAM_RESET_PROC) {
         DumpResetResource(dumpOption, false, false);
     }
-    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+        appResourceApplyMap_, procResourceApplyMap_);
     return ERR_OK;
 }
 
@@ -595,7 +601,7 @@ void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> 
             return;
         }
         int32_t mapKey = std::stoi(dumpOption[2]);
-        uint32_t cleanResource = std::stoi(dumpOption[3]);
+        uint32_t cleanResource = static_cast<uint32_t>(std::stoi(dumpOption[3]));
         RemoveTargetResourceRecord(infoMap, mapKey, cleanResource, type);
     }
 }

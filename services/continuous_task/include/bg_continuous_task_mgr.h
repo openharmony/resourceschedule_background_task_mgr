@@ -28,7 +28,6 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_info.h"
 #include "continuous_task_callback_info.h"
-#include "data_storage.h"
 #include "task_notification_subscriber.h"
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
@@ -39,6 +38,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class BackgroundTaskMgrService;
+class DataStorageHelper;
 
 enum class ContinuousTaskEventTriggerType: uint32_t {
     TASK_START,
@@ -119,7 +119,6 @@ private:
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> subscriberRecipients_ {};
     std::unordered_map<int32_t, CachedBundleInfo> cachedBundleInfos_ {};
     std::vector<std::string> continuousTaskText_ {};
-    std::shared_ptr<DataStorage> dataStorage_ {nullptr};
 
     DECLARE_DELAYED_SINGLETON(BgContinuousTaskMgr);
 };

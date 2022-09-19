@@ -39,6 +39,7 @@
 #include "continuous_task_record.h"
 #include "continuous_task_log.h"
 #include "system_event_observer.h"
+#include "data_storage_helper.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -106,7 +107,6 @@ bool BgContinuousTaskMgr::Init()
     bgTaskUid_ = IPCSkeleton::GetCallingUid();
     BGTASK_LOGI("BgContinuousTaskMgr service uid is: %{public}d", bgTaskUid_);
     IPCSkeleton::SetCallingIdentity(identity);
-    dataStorage_ = std::make_shared<DataStorage>();
     auto registerTask = [this]() { this->InitNecessaryState(); };
     handler_->PostSyncTask(registerTask);
     return true;
@@ -157,12 +157,8 @@ void BgContinuousTaskMgr::InitNecessaryState()
 
 void BgContinuousTaskMgr::HandlePersistenceData()
 {
-    if (dataStorage_ == nullptr) {
-        BGTASK_LOGE("get data storage failed");
-        return;
-    }
     BGTASK_LOGI("service restart, restore data");
-    dataStorage_->RestoreTaskRecord(continuousTaskInfosMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreTaskRecord(continuousTaskInfosMap_);
     auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
     if (appMgrClient == nullptr || appMgrClient->ConnectAppMgrService() != ERR_OK) {
@@ -173,7 +169,7 @@ void BgContinuousTaskMgr::HandlePersistenceData()
     std::vector<sptr<Notification::Notification>> notifications;
     Notification::NotificationHelper::GetAllActiveNotifications(notifications);
     CheckPersistenceData(allAppProcessInfos, notifications);
-    dataStorage_->RefreshTaskRecord(continuousTaskInfosMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
 }
 
 void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
@@ -1140,11 +1136,7 @@ void BgContinuousTaskMgr::HandleAppContinuousTaskStop(int32_t uid)
 
 int32_t BgContinuousTaskMgr::RefreshTaskRecord()
 {
-    if (dataStorage_ == nullptr) {
-        BGTASK_LOGE("data storage object is null");
-        return ERR_BGTASK_DATA_STORAGE_ERR;
-    }
-    if (dataStorage_->RefreshTaskRecord(continuousTaskInfosMap_) != ERR_OK) {
+    if (DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_) != ERR_OK) {
         BGTASK_LOGE("refresh data failed");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
