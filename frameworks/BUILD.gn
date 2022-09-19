@@ -19,6 +19,7 @@ config("bgtaskmgr_public_config") {
     "common/include",
     "include",
     "${bgtaskmgr_interfaces_path}/innerkits/include",
+    "//third_party/json/single_include",
   ]
 }
 
@@ -45,14 +46,11 @@ ohos_shared_library("bgtaskmgr_fwk") {
   public_configs = [ ":bgtaskmgr_public_config" ]
 
   external_deps = [
-    "ability_base:want",
     "ability_runtime:wantagent_innerkits",
-    "bundle_framework:appexecfwk_base",
     "c_utils:utils",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
 

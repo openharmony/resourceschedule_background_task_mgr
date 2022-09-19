@@ -10,6 +10,10 @@
     -   [接口说明](#section19389218787)
     -   [使用说明](#section17228995140)
         -   [长时任务使用约束](#section18958419455)
+-   [能效资源](#section18532577850)
+    -   [接口说明](#section19389218896)
+    -   [使用说明](#section17228995230)
+        -   [能效资源使用约束](#section18958419327)
 
 -   [相关仓](#section1371113476307)
 
@@ -93,6 +97,37 @@ OpenHarmony提供了九种后台模式，供需要在后台做长时任务的业
 - 长时任务是为了真正在后台长时间执行某个任务，如果一个应用申请了长时任务，但在实际运行过程中，并未真正运行或执行此类任务时，也会被系统检测到并被挂起（Suspend）。
 - 每个Ability同一时刻只能申请运行一个长时任务。
 
+## 能效资源<a name="section18532577850"></a>
+
+### 接口说明<a name="section19389218896"></a>
+
+| 接口名                                      | 接口描述                                       |
+| ---------------------------------------- | ---------------------------------------- |
+| applyEfficiencyResources(request: EfficiencyResourcesRequest): boolean | 申请能效资源。 |
+| resetAllEfficiencyResources():void | 释放申请的能效资源   |
+
+### 使用说明<a name="section17228995230"></a>
+
+能效资源可以分为四种：CPU资源；WORK_SCHEDULER资源；软件资源(COMMON_EVENT, TIMER)；硬件资源(GPS, BLOOTOOTH, AUDIO)。
+应用或进程申请能效资源后能够获得相应特权，例如：申请CPU资源后可以不被挂起；申请WORK_SCHEDULER资源后不受延迟任务执行频率约束，且任务执行时间增加；申请软件、硬件资源后，相关资源在挂起状态下不被代理。
+
+| 参数名                     | 参数值  | 描述                    |
+| ----------------------- | ---- | --------------------- |
+| CPU                     | 1    | CPU资源，申请后不被挂起             |
+| COMMON_EVENT            | 2    | 公共事件，申请后挂起状态下不被代理掉  |
+| TIMER                   | 4    | 计时器，申请后挂起状态下不被代理掉    |
+| WORK_SCHEDULER          | 8    | 延迟任务，申请后有更长的执行时间      |
+| BLUETOOTH               | 16   | 蓝牙相关，申请后挂起状态下不被代理掉  |
+| GPS                     | 32   | GPS相关，申请后挂起状态下不被代理掉  |
+| AUDIO                   | 64   | 音频资源，申请后挂起状态下不被代理掉 |
+
+#### 能效使用约束<a name="section18958419327"></a>
+
+- 能效资源申请或者释放可以由进程或者应用发起，由应用发起的释放在释放的时候会释放所有资源，包括进程申请的资源。由进程发起的资源释放对应用申请的资源没有影响。
+- 同时申请同一类持久资源和非持久资源，持久资源会覆盖非持久资源。在超时时不会释放资源。
+- WORK_SCHEDULER资源的申请和释放都必须由应用来进行，不能以进程的身份申请。
+- 在应用死亡时，会清空除了WORK_SCHEDULER之外的所有资源申请记录；在应用被卸载时，会清空所有的资源申请记录。
+
 ## 相关仓<a name="section1371113476307"></a>
 
 资源调度子系统
@@ -107,3 +142,4 @@ OpenHarmony提供了九种后台模式，供需要在后台做长时任务的业
 
 [account_os_account](https://gitee.com/openharmony/account_os_account)
 
+[resourceschedule_work_scheduler](https://gitee.com/openharmony/resourceschedule_work_scheduler)

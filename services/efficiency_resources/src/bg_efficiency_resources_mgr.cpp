@@ -93,7 +93,7 @@ void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const
             dependsReady_ |= APP_MGR_READY;
             break;
         case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
-            BGTASK_LOGI("app mgr service is ready!");
+            BGTASK_LOGI("bundle mgr service is ready!");
             dependsReady_ |= BUNDLE_MGR_READY;
             break;
     }
@@ -101,6 +101,25 @@ void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const
         BGTASK_LOGI("necessary system service has been satisfied!");
         auto task = [this]() { this->InitNecessaryState(); };
         handler_->PostSyncTask(task);
+    }
+}
+
+void BgEfficiencyResourcesMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    BGTASK_LOGI("remove system ability, systemAbilityId : %{public}d", systemAbilityId);
+    switch (systemAbilityId) {
+        case APP_MGR_SERVICE_ID:
+            BGTASK_LOGI("app mgr service is removed!");
+            dependsReady_ &= (~APP_MGR_READY);
+            break;
+        case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
+            BGTASK_LOGI("bundle mgr service is removed!");
+            dependsReady_ &= (~BUNDLE_MGR_READY);
+            break;
+    }
+    if (dependsReady_ != ALL_DEPENDS_READY) {
+        BGTASK_LOGI("necessary system service has been unsatisfied");
+        isSysReady_.store(false);
     }
 }
 
@@ -115,6 +134,7 @@ void BgEfficiencyResourcesMgr::RegisterAppStateObserver()
 void BgEfficiencyResourcesMgr::HandlePersistenceData()
 {
     BGTASK_LOGD("ResourceRecordStorage service restart, restore data");
+
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
         if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
@@ -186,7 +206,7 @@ void BgEfficiencyResourcesMgr::RecoverDelayedTask(bool isProcess, ResourceRecord
 ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string &bundleName)
 {
     if (!isSysReady_.load()) {
-        BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed.");
+        BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
     ErrCode res = ERR_OK;
@@ -201,7 +221,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string
 ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, const std::string &bundleName)
 {
     if (!isSysReady_.load()) {
-        BGTASK_LOGW("Efficiency resources manager is not ready, remove process record failed.");
+        BGTASK_LOGW("Efficiency resources manager is not ready, remove process record failed");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
     ErrCode res = ERR_OK;
@@ -255,11 +275,11 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
 }
 
 ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
-    const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess)
+    const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
     BGTASK_LOGD("start bgtaskefficiency");
     if (!isSysReady_.load()) {
-        BGTASK_LOGW("Efficiency resources manager is not ready.");
+        BGTASK_LOGW("Efficiency resources manager is not ready");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
 
@@ -271,15 +291,14 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     auto pid = IPCSkeleton::GetCallingPid();
     std::string bundleName = "";
     if (!IsCallingInfoLegal(uid, pid, bundleName)) {
-        BGTASK_LOGI("apply efficiency resources failed, calling info is illegal.");
+        BGTASK_LOGI("apply efficiency resources failed, calling info is illegal");
         return ERR_BGTASK_INVALID_PARAM;
     }
     if (!CheckRunningResourcesApply(uid, bundleName)) {
-        BGTASK_LOGI("apply efficiency resources failed, running resource apply is false.");
-        return ERR_BGTASK_INVALID_PARAM;
+        BGTASK_LOGI("apply efficiency resources failed, running resource apply is false");
+        return ERR_BGTASK_PERMISSION_DENIED;
     }
-   
-    isSuccess = true;
+
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, resourceInfo->GetResourceNumber(), bundleName);
     if (resourceInfo->IsApply()) {
@@ -323,7 +342,7 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
     }
 
     callbackInfo->SetResourceNumber(diffResourceNumber);
-    BGTASK_LOGD("after update end time, callbackInfo resource number is %{public}u.",
+    BGTASK_LOGD("after update end time, callbackInfo resource number is %{public}u",
         callbackInfo->GetResourceNumber());
     if (resourceInfo->IsProcess()) {
         subscriberMgr_->OnResourceChanged(callbackInfo, EfficiencyResourcesEventType::RESOURCE_APPLY);
@@ -387,7 +406,7 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
         EfficiencyResourcesEventType::APP_RESOURCE_RESET;
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end()) {
-        BGTASK_LOGI("efficiency resource does not exist.");
+        BGTASK_LOGI("efficiency resource does not exist");
         return;
     }
     auto &resourceRecord = iter->second;
@@ -402,9 +421,10 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
             eraseBit |= 1 << recordIter->resourceIndex_;
         }
     }
-    BGTASK_LOGI("ResetTimeOutResource eraseBit: %{public}u, resourceNumber: %{public}u, result: %{public}u,",
+    BGTASK_LOGI("ResetTimeOutResource eraseBit: %{public}u, resourceNumber: %{public}u, result: %{public}u",
         eraseBit, resourceRecord->resourceNumber_, resourceRecord->resourceNumber_ ^ eraseBit);
     if (eraseBit == 0) {
+        BGTASK_LOGD("try to reset time out resources, but find nothing to reset");
         return;
     }
     resourceRecord->resourceNumber_ ^= eraseBit;
@@ -421,7 +441,7 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
 {
     BGTASK_LOGD("start to reset all efficiency resources");
     if (!isSysReady_.load()) {
-        BGTASK_LOGW("efficiency resources manager is not ready.");
+        BGTASK_LOGW("efficiency resources manager is not ready");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
 
@@ -429,12 +449,12 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
     auto pid = IPCSkeleton::GetCallingPid();
     std::string bundleName = "";
     if (!IsCallingInfoLegal(uid, pid, bundleName)) {
-        BGTASK_LOGE("reset efficiency resources failed, calling info is illegal.");
+        BGTASK_LOGE("reset efficiency resources failed, calling info is illegal");
         return ERR_BGTASK_INVALID_PARAM;
     }
     if (!CheckRunningResourcesApply(uid, bundleName)) {
-        BGTASK_LOGI("apply efficiency resources failed, running resource apply is false.");
-        return ERR_BGTASK_INVALID_PARAM;
+        BGTASK_LOGI("apply efficiency resources failed, running resource apply is false");
+        return ERR_BGTASK_PERMISSION_DENIED;
     }
 
     BGTASK_LOGD("reset efficiency resources uid : %{public}d, pid : %{public}d, resource number : %{public}d", uid,
@@ -481,7 +501,7 @@ void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
 bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &bundleName)
 {
     if (uid < 0 || pid < 0) {
-        BGTASK_LOGE("pid or uid is invalid.");
+        BGTASK_LOGE("pid or uid is invalid");
         return false;
     }
     bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
@@ -634,7 +654,7 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
 
 void BgEfficiencyResourcesMgr::RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit)
 {
-    BGTASK_LOGD("start remove record from list.");
+    BGTASK_LOGD("start remove record from list");
     if (eraseBit == 0) {
         return;
     }
@@ -683,7 +703,7 @@ bool BgEfficiencyResourcesMgr::CheckRunningResourcesApply(const int32_t uid, con
         BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
         return false;
     }
-    BGTASK_LOGD("applicationInfo.runningResourcesApply is %{public}d.", applicationInfo.runningResourcesApply);
+    BGTASK_LOGD("applicationInfo.runningResourcesApply is %{public}d", applicationInfo.runningResourcesApply);
     return applicationInfo.runningResourcesApply;
 }
 

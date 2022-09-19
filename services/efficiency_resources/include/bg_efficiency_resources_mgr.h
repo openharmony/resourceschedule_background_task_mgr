@@ -50,7 +50,7 @@ public:
     bool Init();
     void InitNecessaryState();
     void Clear();
-    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess);
+    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo);
     ErrCode ResetAllEfficiencyResources();
     ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList);
@@ -59,6 +59,7 @@ public:
     ErrCode RemoveProcessRecord(int32_t uid, int32_t pid, const std::string &bundleName);
     ErrCode RemoveAppRecord(int32_t uid, const std::string &bundleName);
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
+    void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
 
 private:
     void ApplyEfficiencyResourcesInner(std::shared_ptr<ResourceCallbackInfo> callbackInfo,
