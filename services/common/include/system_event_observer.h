@@ -36,6 +36,10 @@ public:
     bool Unsubscribe();
 
 private:
+    void OnReceiveEventContinuousTask(const EventFwk::CommonEventData &eventData);
+    void OnReceiveEventEfficiencyRes(const EventFwk::CommonEventData &eventData);
+
+private:
     std::weak_ptr<AppExecFwk::EventHandler> handler_;
     std::weak_ptr<BgContinuousTaskMgr> bgContinuousTaskMgr_;
 };
