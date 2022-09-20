@@ -43,7 +43,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-static const char *CONTI_TASK_TEXT_RES_NAMES[] = {
+static const char *g_taskPromptResNames[] = {
     "ohos_bgmode_prompt_data_transfer",
     "ohos_bgmode_prompt_audio_playback",
     "ohos_bgmode_prompt_audio_recording",
@@ -276,7 +276,7 @@ bool BgContinuousTaskMgr::GetNotificationPrompt()
         }
     }
     std::string taskText {""};
-    for (std::string name : CONTI_TASK_TEXT_RES_NAMES) {
+    for (std::string name : g_taskPromptResNames) {
         resourceManager->GetStringByName(name.c_str(), taskText);
         if (taskText.empty()) {
             BGTASK_LOGE("get continuous task notification text failed!");
@@ -527,7 +527,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
 
     std::string notificationText {""};
     uint32_t index = GetBgModeNameIndex(continuousTaskRecord->GetBgModeId(), continuousTaskRecord->isNewApi_);
-    if (index >= 0 && index < BGMODE_NUMS) {
+    if (index < BGMODE_NUMS) {
         notificationText = continuousTaskText_.at(index);
     }
     std::string appName {""};
@@ -862,7 +862,7 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
     }
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>>::iterator iter;
     uint32_t index = 1;
-    for (iter = continuousTaskInfosMap_.begin(); iter != continuousTaskInfosMap_.end(); iter++) {
+    for (iter = continuousTaskInfosMap_.begin(); iter != continuousTaskInfosMap_.end(); ++iter) {
         stream.str("");
         stream.clear();
         stream << "No." << index;
@@ -1045,13 +1045,13 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
 
     switch (changeEventType) {
         case ContinuousTaskEventTriggerType::TASK_START:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); iter++) {
+            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task start callback trigger");
                 (*iter)->OnContinuousTaskStart(continuousTaskCallbackInfo);
             }
             break;
         case ContinuousTaskEventTriggerType::TASK_CANCEL:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); iter++) {
+            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task stop callback trigger");
                 (*iter)->OnContinuousTaskStop(continuousTaskCallbackInfo);
             }

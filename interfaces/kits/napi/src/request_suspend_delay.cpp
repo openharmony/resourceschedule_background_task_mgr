@@ -48,7 +48,7 @@ void UvQueueWorkDeleteRef(uv_work_t *work, int32_t status)
     if (work == nullptr) {
         return;
     }
-    CallbackReceiveDataWorker *dataWorkerData = (CallbackReceiveDataWorker *)work->data;
+    CallbackReceiveDataWorker *dataWorkerData = static_cast<CallbackReceiveDataWorker *>(work->data);
     if (dataWorkerData == nullptr) {
         delete work;
         work = nullptr;
@@ -58,7 +58,6 @@ void UvQueueWorkDeleteRef(uv_work_t *work, int32_t status)
     delete dataWorkerData;
     dataWorkerData = nullptr;
     delete work;
-    work = nullptr;
 }
 
 void CallbackInstance::DeleteNapiRef()
@@ -102,7 +101,7 @@ void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
         return;
     }
 
-    CallbackReceiveDataWorker *dataWorkerData = (CallbackReceiveDataWorker *)work->data;
+    CallbackReceiveDataWorker *dataWorkerData = static_cast<CallbackReceiveDataWorker *>(work->data);
     if (dataWorkerData == nullptr) {
         BGTASK_LOGE("UvQueueWorkOnExpired dataWorkerData is null");
         delete work;
@@ -122,7 +121,6 @@ void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
     delete dataWorkerData;
     dataWorkerData = nullptr;
     delete work;
-    work = nullptr;
 }
 
 void CallbackInstance::OnExpired()
@@ -234,9 +232,12 @@ napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
         return Common::NapiGetNull(env);
     }
 
-    std::shared_ptr<DelaySuspendInfo> delaySuspendInfo;
+    std::shared_ptr<DelaySuspendInfo> delaySuspendInfo {nullptr};
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestSuspendDelay(reason, *callback, delaySuspendInfo);
+    if (!delaySuspendInfo) {
+        return Common::NapiGetNull(env);
+    }
     callbackInstances_[delaySuspendInfo->GetRequestId()] = callback;
 
     napi_value result = nullptr;
