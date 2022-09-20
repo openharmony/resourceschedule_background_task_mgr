@@ -628,8 +628,8 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey, uint32_t cleanResource,
     EfficiencyResourcesEventType type)
 {
-    BGTASK_LOGD("resource record key: %{public}d", mapKey);
-    BGTASK_LOGD("resource record size(): %{public}d", static_cast<int32_t>(infoMap.size()));
+    BGTASK_LOGD("resource record key: %{public}d, resource record size(): %{public}d",
+        mapKey, static_cast<int32_t>(infoMap.size()));
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end() || (iter->second->resourceNumber_ & cleanResource) == 0) {
         BGTASK_LOGW("remove single resource record failure, no matched task: %{public}d", mapKey);
@@ -637,9 +637,6 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     }
     uint32_t eraseBit = (iter->second->resourceNumber_ & cleanResource);
     iter->second->resourceNumber_ ^= eraseBit;
-    if (eraseBit == 0) {
-        return true;
-    }
     RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
     if (iter->second->resourceNumber_ == 0) {
         infoMap.erase(iter);
