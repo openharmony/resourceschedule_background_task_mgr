@@ -322,6 +322,12 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_001, TestSiz
     SleepFor(SLEEP_TIME);
     auto subscriber =  std::make_shared<TestBackgroundTaskSubscriber>();
     EXPECT_NE(subscriber, nullptr);
+    auto resourceInfo = std::make_shared<ResourceCallbackInfo>(0, 0, 1, "");
+    subscriber->OnAppEfficiencyResourcesApply(resourceInfo);
+    subscriber->OnAppEfficiencyResourcesReset(resourceInfo);
+    subscriber->OnProcEfficiencyResourcesApply(resourceInfo);
+    subscriber->OnProcEfficiencyResourcesReset(resourceInfo);
+
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->AddSubscriber(
         subscriber->GetImpl()), (int32_t)ERR_OK);
     SleepFor(SLEEP_TIME);
@@ -345,6 +351,20 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_002, TestSiz
     bgEfficiencyResourcesMgr_->AddSubscriber(subscriber->GetImpl());
     SleepFor(SLEEP_TIME);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->RemoveSubscriber(subscriber->GetImpl()), (int32_t)ERR_OK);
+}
+
+/**
+ * @tc.name: Marshalling_001
+ * @tc.desc: marshalling resource callback info.
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, Marshalling_001, TestSize.Level1)
+{
+    auto resourceInfo = std::make_shared<ResourceCallbackInfo>();
+    MessageParcel data;
+    EXPECT_TRUE(resourceInfo->Marshalling(data));
+    EXPECT_TRUE(ResourceCallbackInfo::Unmarshalling(data) != nullptr);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
