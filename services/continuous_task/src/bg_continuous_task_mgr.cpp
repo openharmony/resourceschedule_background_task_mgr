@@ -43,7 +43,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-static const char *g_TaskPromptResNames[] = {
+static const char *g_taskPromptResNames[] = {
     "ohos_bgmode_prompt_data_transfer",
     "ohos_bgmode_prompt_audio_playback",
     "ohos_bgmode_prompt_audio_recording",
@@ -276,7 +276,7 @@ bool BgContinuousTaskMgr::GetNotificationPrompt()
         }
     }
     std::string taskText {""};
-    for (std::string name : g_TaskPromptResNames) {
+    for (std::string name : g_taskPromptResNames) {
         resourceManager->GetStringByName(name.c_str(), taskText);
         if (taskText.empty()) {
             BGTASK_LOGE("get continuous task notification text failed!");
