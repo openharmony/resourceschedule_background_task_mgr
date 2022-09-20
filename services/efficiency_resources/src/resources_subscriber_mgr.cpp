@@ -103,26 +103,26 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
     }
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
+            BGTASK_LOGD("start callback function of app resources application");
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                BGTASK_LOGD("start callback function of app resources application");
                 (*iter)->OnAppEfficiencyResourcesApply(callbackInfo);
             }
             break;
         case EfficiencyResourcesEventType::RESOURCE_APPLY:
+            BGTASK_LOGD("start callback function of proc resources application");
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                BGTASK_LOGD("start callback function of proc resources application");
                 (*iter)->OnProcEfficiencyResourcesApply(callbackInfo);
             }
             break;
         case EfficiencyResourcesEventType::APP_RESOURCE_RESET:
+            BGTASK_LOGD("start callback function of app resources reset");
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                BGTASK_LOGD("start callback function of app resources reset");
                 (*iter)->OnAppEfficiencyResourcesReset(callbackInfo);
             }
             break;
         case EfficiencyResourcesEventType::RESOURCE_RESET:
+            BGTASK_LOGD("start callback function of proc resources reset");
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                BGTASK_LOGD("start callback function of proc resources reset");
                 (*iter)->OnProcEfficiencyResourcesReset(callbackInfo);
             }
             break;

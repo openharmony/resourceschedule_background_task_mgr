@@ -23,7 +23,7 @@ bool EfficiencyResourceInfo::Marshalling(Parcel& out) const
 {
     WRITE_PARCEL_WITH_RET(out, Uint32, resourceNumber_, false);
     WRITE_PARCEL_WITH_RET(out, Bool, isApply_, false);
-    WRITE_PARCEL_WITH_RET(out, Int32, timeOut_, false);
+    WRITE_PARCEL_WITH_RET(out, Uint32, timeOut_, false);
     WRITE_PARCEL_WITH_RET(out, String, reason_, false);
     WRITE_PARCEL_WITH_RET(out, Bool, isPersist_, false);
     WRITE_PARCEL_WITH_RET(out, Bool, isProcess_, false);
@@ -45,7 +45,7 @@ bool EfficiencyResourceInfo::ReadFromParcel(Parcel& in)
 {
     READ_PARCEL_WITH_RET(in, Uint32, resourceNumber_, false);
     READ_PARCEL_WITH_RET(in, Bool, isApply_, false);
-    READ_PARCEL_WITH_RET(in, Int32, timeOut_, false);
+    READ_PARCEL_WITH_RET(in, Uint32, timeOut_, false);
     READ_PARCEL_WITH_RET(in, String, reason_, false);
     READ_PARCEL_WITH_RET(in, Bool, isPersist_, false);
     READ_PARCEL_WITH_RET(in, Bool, isProcess_, false);

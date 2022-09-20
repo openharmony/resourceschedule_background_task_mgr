@@ -114,9 +114,6 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_001, TestSize.Leve
         resourceInfo), (int32_t)ERR_OK);
 
     resourceInfo->isPersist_ = false;
-    resourceInfo->timeOut_ = -10;
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo), (int32_t)ERR_BGTASK_INVALID_PARAM);
     resourceInfo->timeOut_ = 0;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo), (int32_t)ERR_BGTASK_INVALID_PARAM);
@@ -306,7 +303,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_001, TestSiz
     SleepFor(SLEEP_TIME);
     auto subscriber =  std::make_shared<TestBackgroundTaskSubscriber>();
     EXPECT_NE(subscriber, nullptr);
-    auto resourceInfo = std::make_shared<ResourceCallbackInfo>(0, 0 , 1, "");
+    auto resourceInfo = std::make_shared<ResourceCallbackInfo>(0, 0, 1, "");
     subscriber->OnAppEfficiencyResourcesApply(resourceInfo);
     subscriber->OnAppEfficiencyResourcesReset(resourceInfo);
     subscriber->OnProcEfficiencyResourcesApply(resourceInfo);

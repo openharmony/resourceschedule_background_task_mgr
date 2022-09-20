@@ -21,6 +21,7 @@
 #include "bg_continuous_task_mgr.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_log.h"
+#include "bg_efficiency_resources_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -62,6 +63,12 @@ void SystemEventObserver::SetBgContinuousTaskMgr(const std::shared_ptr<BgContinu
 
 void SystemEventObserver::OnReceiveEvent(const EventFwk::CommonEventData &eventData)
 {
+    OnReceiveEventContinuousTask(eventData);
+    OnReceiveEventEfficiencyRes(eventData);
+}
+
+void SystemEventObserver::OnReceiveEventContinuousTask(const EventFwk::CommonEventData &eventData)
+{
     auto handler = handler_.lock();
     if (!handler) {
         BGTASK_LOGE("handler is null");
@@ -89,6 +96,17 @@ void SystemEventObserver::OnReceiveEvent(const EventFwk::CommonEventData &eventD
         action.c_str(), bundleName.c_str(), uid);
     auto task = [=]() { bgContinuousTaskMgr->OnBundleInfoChanged(action, bundleName, uid); };
     handler->PostTask(task, TASK_ON_BUNDLEINFO_CHANGED);
+}
+
+void SystemEventObserver::OnReceiveEventEfficiencyRes(const EventFwk::CommonEventData &eventData)
+{
+    AAFwk::Want want = eventData.GetWant();
+    std::string action = want.GetAction();
+    std::string bundleName = want.GetElement().GetBundleName();
+    int32_t uid = want.GetIntParam(AppExecFwk::Constants::UID, -1);
+    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
+        DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveAppRecord(uid, bundleName, true);
+    }
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
