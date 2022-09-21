@@ -27,3 +27,10 @@ if (!defined(global_parts_info) ||
 } else {
   has_os_account_part = false
 }
+
+if (!defined(global_parts_info) ||
+    defined(global_parts_info.notification_distributed_notification_service)) {
+  distributed_notification_enable = true
+} else {
+  distributed_notification_enable = false
+}
