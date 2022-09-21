@@ -233,10 +233,10 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_005, TestSize.Leve
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo), (int32_t)ERR_OK);
     SleepFor(WAIT_TIME);
-    EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->appResourceApplyMap_.size()), 1);
+    EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->procResourceApplyMap_.size()), 1);
     bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources();
     SleepFor(WAIT_TIME);
-    EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->appResourceApplyMap_.size()), 0);
+    EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->procResourceApplyMap_.size()), 0);
 
     resourceInfo->resourceNumber_ = ResourceType::CPU
         | ResourceType::TIMER | ResourceType::COMMON_EVENT;
@@ -346,6 +346,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_001, TestSiz
     SleepFor(SLEEP_TIME);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->AddSubscriber(
         subscriber->GetImpl()), (int32_t)ERR_BGTASK_OBJECT_EXISTS);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->RemoveSubscriber(subscriber->GetImpl()), (int32_t)ERR_OK);
 }
 
 /**
@@ -405,6 +406,8 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SystemAbility_001, TestSize.Level1)
     bgEfficiencyResourcesMgr_->OnRemoveSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, "");
     bgEfficiencyResourcesMgr_->OnAddSystemAbility(APP_MGR_SERVICE_ID, "");
     bgEfficiencyResourcesMgr_->OnAddSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, "");
+
+    bgEfficiencyResourcesMgr_->isSysReady_.store(true);
     bgEfficiencyResourcesMgr_->CheckAlivedApp(0);
     bgEfficiencyResourcesMgr_->Clear();
     bgEfficiencyResourcesMgr_->appStateObserver_ = nullptr;
@@ -526,7 +529,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, BoundaryCondition_001, TestSize.Level1)
     std::string bundleName {""};
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->IsCallingInfoLegal(-1, 0, bundleName), 0);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->IsCallingInfoLegal(0, -1, bundleName), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckRunningResourcesApply(0, "bundleName"), 0);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckRunningResourcesApply(0, "bundleName"), 1);
     std::list<PersistTime> resourceUnitList {};
     bgEfficiencyResourcesMgr_->RemoveListRecord(resourceUnitList, 0);
 
@@ -552,7 +555,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, BoundaryCondition_001, TestSize.Level1)
         resourceInfo), (int32_t)ERR_OK);
     SleepFor(WAIT_TIME);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 1);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
