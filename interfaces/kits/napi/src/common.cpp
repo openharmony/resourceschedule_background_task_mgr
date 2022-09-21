@@ -236,5 +236,86 @@ napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, 
     BGTASK_LOGD("GetStringValue result: %{public}s", result.c_str());
     return Common::NapiGetNull(env);
 }
+
+void Common::HandleErrCode(const napi_env &env, int32_t errCode) {
+    int32_t errCodeInfo;
+    std::string errMessage = "BussinessError ";
+    switch (errCode) {
+        case ERR_APPLY_CONTINUOUS_TASK_REPEAT:
+            [[fallthrough]];
+        // case E_PARCEL_WRITE_FALIED:
+        //     errCodeInfo = E_PARCEL_OPERATION_FALIED;
+        //     errMessage.append(std::to_string(errCodeInfo)).append(": ").append(saErrCodeMsgMap[errCode]);
+        //     napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMessage.c_str());
+        //     break;
+        // case E_GET_SYSTEM_ABILITY_MANAGER_FALIED:
+        //     [[fallthrough]];
+        // case E_CHECK_SYSTEM_ABILITY_FALIED:
+        //     [[fallthrough]];
+        // case E_SERVICE_NOT_READY:
+        //     errCodeInfo = E_SYSTEM_SERVICE_OPERATION_FAILED;
+        //     errMessage.append(std::to_string(errCodeInfo)).append(": ").append(saErrCodeMsgMap[errCode]);
+        //     napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMessage.c_str());
+        //     break;
+        // case E_IPC_COMMUNICATION_FAILED:
+        //     [[fallthrough]];
+        // case E_CHECK_WORKINFO_FAILED:
+        //     [[fallthrough]];
+        // case E_WORK_NOT_EXIST_FAILED:
+        //     errMessage.append(std::to_string(errCode)).append(": ").append(saErrCodeMsgMap[errCode]);
+        //     napi_throw_error(env, std::to_string(errCode).c_str(), errMessage.c_str());
+        //     break;
+        // case E_ADD_REPEAT_WORK_ERR:
+        //     [[fallthrough]];
+        case ERR_APPLY_SYSTEM_RESOURCE_REPEAT:
+            errCodeInfo = ERR_BGTASK_EFFICIENCY_CALLER_VERIFY_FAILED;
+            errMessage.append(std::to_string(errCodeInfo)).append(": ").append(saErrCodeMsgMap[errCode]);
+            napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMessage.c_str());
+            break;
+        default:
+            HandleParamErr(env, errCode);
+            break;
+    }
+}
+
+bool Common::HandleParamErr(const napi_env &env, int32_t errCode) {
+    int32_t errCodeInfo = ERR_BGTASK_INVALID_PARAM;
+    std::string errMessage = "BussinessError 401: Parameter error. ";
+    bool isParamErr = true;
+    switch (errCode) {
+        case ERR_PARAM_NUMBER_ERR:
+            [[fallthrough]];
+        // case E_WORK_INFO_TYPE_ERR:
+        //     [[fallthrough]];
+        // case E_BUNDLE_OR_ABILITY_NAME_EMPTY:
+        //     [[fallthrough]];
+        // case E_WORKID_ERR:
+        //     [[fallthrough]];
+        // case E_CONDITION_EMPTY:
+        //     [[fallthrough]];
+        // case E_NETWORK_TYPE_ERR:
+        //     [[fallthrough]];
+        // case E_CHARGER_TYPE_ERR:
+        //     [[fallthrough]];
+        // case E_BATTERY_LEVEL_ERR:
+        //     [[fallthrough]];
+        // case E_BATTERY_STATUS_ERR:
+        //     [[fallthrough]];
+        // case E_STORAGE_REQUEST_ERR:
+        //     [[fallthrough]];
+        // case E_REPEAT_CYCLE_TIME_ERR:
+        //     [[fallthrough]];
+        // case E_REPEAT_COUNT_ERR:
+        //     [[fallthrough]];
+        case ERR_CALLER_INFO_VERIFICATION_ERR:
+            errMessage.append(paramErrCodeMsgMap[errCode]);
+            napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMessage.c_str());
+            break;
+        default:
+            isParamErr = false;
+            break;
+    }
+    return isParamErr;
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

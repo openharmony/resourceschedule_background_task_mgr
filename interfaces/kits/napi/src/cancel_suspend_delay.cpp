@@ -51,7 +51,8 @@ napi_value CancelSuspendDelay(napi_env env, napi_callback_info info)
         return Common::NapiGetNull(env);
     }
 
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(requestId);
+    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(requestId);
+    Common::HandleErrCode(env, errCode);
     auto findCallback = callbackInstances_.find(requestId);
     if (findCallback != callbackInstances_.end()) {
         callbackInstances_.erase(findCallback);

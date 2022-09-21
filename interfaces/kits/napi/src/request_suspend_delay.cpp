@@ -206,18 +206,23 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     size_t argc = REQUEST_SUSPEND_DELAY_PARAMS;
     napi_value argv[REQUEST_SUSPEND_DELAY_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == REQUEST_SUSPEND_DELAY_PARAMS, "Wrong number of arguments");
+    if (argc != REQUEST_SUSPEND_DELAY_PARAMS) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR);
+    }
 
     // argv[0] : reason
     if (Common::GetU16StringValue(env, argv[0], reason) == nullptr) {
         BGTASK_LOGE("ParseParameters failed, reason is nullptr.");
+        Common::HandleParamErr(env, ERR_REASON_TYPE_ERR);
         return nullptr;
     }
 
     // arg[1] : callback
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-    NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Object expected.");
+    if (valuetype == napi_function) {
+        Common::HandleParamErr(env, ERR_CALLBACK_TYPE_ERR);
+    }
 
     if (GetExpiredCallback(env, argv[1], callback) == nullptr) {
         BGTASK_LOGE("ExpiredCallback parse failed");
@@ -235,8 +240,9 @@ napi_value RequestSuspendDelay(napi_env env, napi_callback_info info)
     }
 
     std::shared_ptr<DelaySuspendInfo> delaySuspendInfo;
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestSuspendDelay(reason, *callback, delaySuspendInfo);
+    Common::HandleErrCode(env, errCode);
     callbackInstances_[delaySuspendInfo->GetRequestId()] = callback;
 
     napi_value result = nullptr;
