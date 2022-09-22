@@ -335,17 +335,18 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_001, TestSiz
     SleepFor(SLEEP_TIME);
     auto subscriber =  std::make_shared<TestBackgroundTaskSubscriber>();
     EXPECT_NE(subscriber, nullptr);
-    auto resourceInfo = std::make_shared<ResourceCallbackInfo>(0, 0, 1, "");
-    subscriber->OnAppEfficiencyResourcesApply(resourceInfo);
-    subscriber->OnAppEfficiencyResourcesReset(resourceInfo);
-    subscriber->OnProcEfficiencyResourcesApply(resourceInfo);
-    subscriber->OnProcEfficiencyResourcesReset(resourceInfo);
-
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->AddSubscriber(
         subscriber->GetImpl()), (int32_t)ERR_OK);
     SleepFor(SLEEP_TIME);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->AddSubscriber(
         subscriber->GetImpl()), (int32_t)ERR_BGTASK_OBJECT_EXISTS);
+
+    auto subscriberImpl = subscriber->GetImpl();
+    auto resourceInfo = std::make_shared<ResourceCallbackInfo>(0, 0, 1, "");
+    subscriberImpl->OnAppEfficiencyResourcesApply(resourceInfo);
+    subscriberImpl->OnAppEfficiencyResourcesReset(resourceInfo);
+    subscriberImpl->OnProcEfficiencyResourcesApply(resourceInfo);
+    subscriberImpl->OnProcEfficiencyResourcesReset(resourceInfo);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->RemoveSubscriber(subscriber->GetImpl()), (int32_t)ERR_OK);
 }
 
@@ -369,16 +370,22 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_002, TestSiz
 
 /**
  * @tc.name: Marshalling_001
- * @tc.desc: marshalling resource callback info.
+ * @tc.desc: marshalling resource callback info and efficiency resources info.
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, Marshalling_001, TestSize.Level1)
 {
-    auto resourceInfo = std::make_shared<ResourceCallbackInfo>();
+    auto callbackInfo = std::make_shared<ResourceCallbackInfo>();
     MessageParcel data;
-    EXPECT_TRUE(resourceInfo->Marshalling(data));
+    EXPECT_TRUE(callbackInfo->Marshalling(data));
     EXPECT_TRUE(ResourceCallbackInfo::Unmarshalling(data) != nullptr);
+
+    auto resourceInfo = std::make_shared<EfficiencyResourceInfo>(1, true,
+        0, "apply", true, false);
+    MessageParcel out;
+    EXPECT_TRUE(resourceInfo->Marshalling(out));
+    EXPECT_TRUE(EfficiencyResourceInfo::Unmarshalling(out) != nullptr);
 }
 
 /**
