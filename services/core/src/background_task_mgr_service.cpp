@@ -18,6 +18,7 @@
 #include <functional>
 
 #include "ability_manager_client.h"
+#include "accesstoken_kit.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_constants.h"
 #include "common_event_manager.h"
@@ -84,6 +85,17 @@ void BackgroundTaskMgrService::OnStop()
     BGTASK_LOGI("background task manager stop");
 }
 
+bool BackgroundTaskMgrService::CheckCallingToken()
+{
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
+    auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (tokenFlag == Security::AccessToken::ATokenTypeEnum::TOKEN_NATIVE
+        || tokenFlag == Security::AccessToken::ATokenTypeEnum::TOKEN_SHELL) {
+        return true;
+    }
+    return false;
+}
+
 ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::u16string& reason,
     const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
@@ -118,17 +130,28 @@ ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abili
 
 ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
 {
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("GetTransientTaskApps not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
     return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetTransientTaskApps(list);
 }
 
 ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
 {
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("GetContinuousTaskApps not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
     return BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(list);
 }
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    BGTASK_LOGD("start to subscribe all background task!");
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("SubscribeBackgroundTask not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
         && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
@@ -143,7 +166,10 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    BGTASK_LOGD("start unscribe bgtask");
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("UnsubscribeBackgroundTask not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
         && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
@@ -181,11 +207,19 @@ ErrCode BackgroundTaskMgrService::GetEfficiencyResourcesInfos(
     std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
     std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
 {
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("GetEfficiencyResourcesInfos not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
     return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->GetEfficiencyResourcesInfos(appList, procList);
 }
 
 ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("StopContinuousTask not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
     BgContinuousTaskMgr::GetInstance()->StopContinuousTask(uid, pid, taskType);
     return ERR_OK;
 }

@@ -28,7 +28,9 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_info.h"
 #include "continuous_task_callback_info.h"
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 #include "task_notification_subscriber.h"
+#endif
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
 #include "ibackground_task_subscriber.h"
@@ -82,13 +84,11 @@ private:
     ErrCode GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
     void HandlePersistenceData();
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
-        const std::vector<sptr<Notification::Notification>> &allNotifications);
+        const std::set<std::string> &allLabels);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
-    std::string CreateNotificationLabel(int32_t uid, const std::string &bundleName,
-        const std::string &abilityName);
     uint32_t GetBackgroundModeInfo(int32_t uid, std::string &abilityName);
     bool AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool RegisterNotificationSubscriber();
@@ -104,6 +104,8 @@ private:
     bool checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, int32_t uid);
     int32_t RefreshTaskRecord();
     void HandleAppContinuousTaskStop(int32_t uid);
+    bool checkPidCondition(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t pid);
+    bool checkNotificationCondition(const std::set<std::string> &notificationLabels, const std::string &label);
 
 private:
     std::atomic<bool> isSysReady_ {false};
@@ -112,7 +114,9 @@ private:
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};
+#endif
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
     std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
     std::list<sptr<IBackgroundTaskSubscriber>> bgTaskSubscribers_ {};

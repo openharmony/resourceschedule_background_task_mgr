@@ -35,7 +35,7 @@ ohos_unittest("bgtask_unit_test") {
     "mock/mock_bundle_manager_helper.cpp",
     "mock/mock_event_handler.cpp",
     "mock/mock_ipc.cpp",
-    "mock/mock_notification_helper.cpp",
+    "mock/mock_notification_tools.cpp",
     "mock/mock_resource_manager.cpp",
   ]
 
@@ -45,7 +45,6 @@ ohos_unittest("bgtask_unit_test") {
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
-    "//base/notification/distributed_notification_service/frameworks/core:ans_core",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -70,6 +69,11 @@ ohos_unittest("bgtask_unit_test") {
   if (has_os_account_part) {
     cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
     external_deps += [ "os_account:os_account_innerkits" ]
+  }
+
+  if (distributed_notification_enable) {
+    cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
+    deps += [ "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits" ]
   }
 
   subsystem_name = "resourceschedule"
@@ -99,7 +103,6 @@ ohos_unittest("efficiency_mgr_unit_test") {
     "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
-    "//base/notification/distributed_notification_service/frameworks/core:ans_core",
     "//third_party/googletest:gtest_main",
   ]
 
