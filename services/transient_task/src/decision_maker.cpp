@@ -107,7 +107,8 @@ void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
     lock_guard<mutex> lock(decisionMaker_.lock_);
 
     auto key = std::make_shared<KeyInfo>(appStateData.bundleName, appStateData.uid);
-    if (appStateData.state == (int32_t)AppExecFwk::ApplicationState::APP_STATE_FOREGROUND) {
+    if (appStateData.state == (int32_t)AppExecFwk::ApplicationState::APP_STATE_FOREGROUND ||
+        appStateData.state == (int32_t)AppExecFwk::ApplicationState::APP_STATE_FOCUS) {
         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
         if (it != decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
             auto pkgInfo = it->second;
