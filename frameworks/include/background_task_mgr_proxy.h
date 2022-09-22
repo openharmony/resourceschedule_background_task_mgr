@@ -109,10 +109,9 @@ public:
      * @brief Apply or unapply efficiency resources.
      *
      * @param resourceInfo Request params.
-     * @param isSuccess succeed to apply efficiency resources.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo, bool &isSuccess) override;
+    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo) override;
 
     /**
      * @brief Reset all efficiency resources.

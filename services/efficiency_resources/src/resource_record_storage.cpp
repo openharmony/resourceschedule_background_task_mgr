@@ -118,7 +118,7 @@ ErrCode ResourceRecordStorage::ConvertStringToJson(const std::string &recordStri
 bool ResourceRecordStorage::CreateNodeFile(const std::string &filePath)
 {
     if (access(filePath.c_str(), F_OK) == ERR_OK) {
-        BGTASK_LOGD("the file: %{public}s already exists.", RESOURCE_RECORD_FILE_PATH.c_str());
+        BGTASK_LOGD("the file: %{public}s already exists", RESOURCE_RECORD_FILE_PATH.c_str());
         return true;
     }
     int32_t fd = open(filePath.c_str(), O_CREAT|O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
@@ -146,7 +146,7 @@ bool ResourceRecordStorage::ConvertFullPath(const std::string& partialPath, std:
 ErrCode ResourceRecordStorage::WriteStringToFile(const std::string &result, const std::string &filePath)
 {
     if (!CreateNodeFile(filePath)) {
-        BGTASK_LOGE("Create file failed.");
+        BGTASK_LOGE("Create file failed");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     std::ofstream fout;
@@ -157,7 +157,7 @@ ErrCode ResourceRecordStorage::WriteStringToFile(const std::string &result, cons
     }
     fout.open(realPath, std::ios::out);
     if (!fout.is_open()) {
-        BGTASK_LOGE("Open file failed.");
+        BGTASK_LOGE("Open file failed");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     fout << result.c_str() << std::endl;
