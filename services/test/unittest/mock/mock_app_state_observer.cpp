@@ -13,28 +13,26 @@
  * limitations under the License.
  */
 
-#include "resource_record_storage.h"
+#include "app_state_observer.h"
 
-#include "errors.h"
-#include "bundle_manager_helper.h"
-#include "common_utils.h"
-
-#include "bgtaskmgr_inner_errors.h"
-#include "efficiency_resource_log.h"
-#include "resource_application_record.h"
+#include "bg_efficiency_resources_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-ErrCode ResourceRecordStorage::RefreshResourceRecord(const ResourceRecordMap &appRecord,
-    const ResourceRecordMap &processRecord)
+
+void AppStateObserver::SetBgEfficiencyResourcesMgr(const std::shared_ptr<BgEfficiencyResourcesMgr> &resourceMgr)
 {
-    return ERR_OK;
+    bgEfficiencyResourcesMgr_ = resourceMgr;
 }
 
-ErrCode ResourceRecordStorage::RestoreResourceRecord(ResourceRecordMap &appRecord,
-    ResourceRecordMap &processRecord)
+bool AppStateObserver::Subscribe()
 {
-    return ERR_OK;
+    return true;
 }
+
+bool AppStateObserver::Unsubscribe()
+{
+    return true;
 }
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS

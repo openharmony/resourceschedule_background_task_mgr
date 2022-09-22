@@ -93,9 +93,9 @@ ohos_unittest("efficiency_mgr_unit_test") {
 
   sources = [
     "bg_efficiency_resources_mgr_test.cpp",
+    "mock/mock_app_state_observer.cpp",
     "mock/mock_bundle_manager_helper.cpp",
     "mock/mock_ipc.cpp",
-    "mock/mock_resource_record_storage.cpp",
   ]
 
   configs = [ "//commonlibrary/c_utils/base:utils_config" ]
