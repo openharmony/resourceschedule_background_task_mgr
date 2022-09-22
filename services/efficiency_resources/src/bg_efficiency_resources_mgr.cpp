@@ -599,8 +599,8 @@ void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> 
             BGTASK_LOGW("invalid dump param");
             return;
         }
-        int32_t mapKey = std::stoi(dumpOption[2]);
-        uint32_t cleanResource = static_cast<uint32_t>(std::stoi(dumpOption[3]));
+        int32_t mapKey = std::atoi(dumpOption[2].c_str());
+        uint32_t cleanResource = static_cast<uint32_t>(std::atoi(dumpOption[3].c_str()));
         RemoveTargetResourceRecord(infoMap, mapKey, cleanResource, type);
     }
 }
