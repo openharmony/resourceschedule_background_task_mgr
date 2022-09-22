@@ -600,7 +600,7 @@ void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> 
             return;
         }
         int32_t mapKey = std::stoi(dumpOption[2]);
-        uint32_t cleanResource = std::stoi(dumpOption[3]);
+        uint32_t cleanResource = static_cast<uint32_t>(std::stoi(dumpOption[3]));
         RemoveTargetResourceRecord(infoMap, mapKey, cleanResource, type);
     }
 }

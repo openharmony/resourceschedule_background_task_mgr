@@ -271,45 +271,6 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_001, TestSize
 }
 
 /**
- * @tc.name: AppEfficiencyResourcesApply_005
- * @tc.desc: reset all efficiency resources using ResetAllEfficiencyResources function.
- * @tc.type: FUNC
- * @tc.require: issuesI5OD7X
- */
-HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_002, TestSize.Level1)
-{
-    bool isSuccess = false;
-    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo();
-    resourceInfo->isApply_ = true;
-    resourceInfo->resourceNumber_ = 1;
-    resourceInfo->isPersist_ = true;
-    resourceInfo->reason_ = "apply";
-    SleepFor(WAIT_TIME);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo, isSuccess), (int32_t)ERR_OK);
-    resourceInfo->resourceNumber_ = 1 << 1;
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo, isSuccess), (int32_t)ERR_OK);
-    SleepFor(WAIT_TIME);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 1);
-    resourceInfo->isProcess_ = true;
-    resourceInfo->resourceNumber_ = 1;
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo, isSuccess), (int32_t)ERR_OK);
-    resourceInfo->resourceNumber_ = 1 << 1;
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo, isSuccess), (int32_t)ERR_OK);
-    SleepFor(WAIT_TIME);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources(), (int32_t)ERR_OK);
-    SleepFor(WAIT_TIME);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
-}
-
-/**
  * @tc.name: SubscribeEfficiencyResources_001
  * @tc.desc: subscribe efficiency resources callback test.
  * @tc.type: FUNC
