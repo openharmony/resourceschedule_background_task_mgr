@@ -18,20 +18,17 @@
 #include <iremote_broker.h>
 #include "gtest/gtest.h"
 
-#define private public
-
-#include "ibackground_task_mgr.h"
-#include "background_task_subscriber_stub.h"
-
 #include "bgtaskmgr_inner_errors.h"
 #include "background_mode.h"
 #include "background_task_mgr_helper.h"
 #include "background_task_subscriber.h"
+#include "background_task_subscriber_stub.h"
 #include "continuous_task_callback_info.h"
 #include "continuous_task_param.h"
 #include "delay_suspend_info.h"
 #include "efficiency_resource_info.h"
 #include "expired_callback.h"
+#include "ibackground_task_mgr.h"
 #include "resource_callback_info.h"
 #include "resource_type.h"
 #include "transient_task_app_info.h"
@@ -241,7 +238,6 @@ HWTEST_F(BgTaskClientUnitTest, GetTransientTaskApps_001, TestSize.Level1)
 {
     std::vector<std::shared_ptr<TransientTaskAppInfo>> list;
     EXPECT_EQ(BackgroundTaskMgrHelper::GetTransientTaskApps(list), ERR_OK);
-    EXPECT_EQ(list.size(), 0);
 }
 
 /**
@@ -254,7 +250,6 @@ HWTEST_F(BgTaskClientUnitTest, GetContinuousTaskApps_001, TestSize.Level1)
 {
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
     EXPECT_EQ(BackgroundTaskMgrHelper::GetContinuousTaskApps(list), ERR_OK);
-    EXPECT_EQ(list.size(), 0);
 }
 
 /**
@@ -268,8 +263,6 @@ HWTEST_F(BgTaskClientUnitTest, GetEfficiencyResourcesInfos_001, TestSize.Level1)
     std::vector<std::shared_ptr<ResourceCallbackInfo>> appList;
     std::vector<std::shared_ptr<ResourceCallbackInfo>> procList;
     EXPECT_EQ(BackgroundTaskMgrHelper::GetEfficiencyResourcesInfos(appList, procList), ERR_OK);
-    EXPECT_EQ(appList.size(), 0);
-    EXPECT_EQ(procList.size(), 0);
 }
 
 /**
