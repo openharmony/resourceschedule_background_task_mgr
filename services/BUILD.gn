@@ -37,7 +37,7 @@ ohos_shared_library("bgtaskmgr_service") {
     "continuous_task/src/bg_continuous_task_mgr.cpp",
     "continuous_task/src/continuous_task_record.cpp",
     "continuous_task/src/data_storage.cpp",
-    "continuous_task/src/task_notification_subscriber.cpp",
+    "continuous_task/src/notification_tools.cpp",
     "core/src/background_task_mgr_service.cpp",
     "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
     "efficiency_resources/src/resource_application_record.cpp",
@@ -58,10 +58,7 @@ ohos_shared_library("bgtaskmgr_service") {
 
   public_configs = [ ":bgtaskmgr_service_public_config" ]
 
-  public_deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
-    "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits",
-  ]
+  deps = [ "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk" ]
 
   external_deps = [
     "ability_base:base",
@@ -87,6 +84,12 @@ ohos_shared_library("bgtaskmgr_service") {
   if (has_os_account_part) {
     cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
     external_deps += [ "os_account:os_account_innerkits" ]
+  }
+
+  if (distributed_notification_enable) {
+    cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
+    deps += [ "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits" ]
+    sources += [ "continuous_task/src/task_notification_subscriber.cpp" ]
   }
 
   part_name = "background_task_mgr"

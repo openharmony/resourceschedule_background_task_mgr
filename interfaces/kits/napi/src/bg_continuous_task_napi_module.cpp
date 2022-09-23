@@ -137,7 +137,7 @@ std::string GetMainAbilityLabel(const std::string &bundleName)
 
 void StartBackgroundRunningExecuteCB(napi_env env, void *data)
 {
-    AsyncCallbackInfo *asyncCallbackInfo = (AsyncCallbackInfo *)data;
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo is nullptr");
         return;
