@@ -88,14 +88,6 @@ ohos_shared_library("bgtaskmgr_service") {
     cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
     external_deps += [ "os_account:os_account_innerkits" ]
   }
-  
-  cflags = [
-    "--coverage"
-  ]
-
-  ldflags = [
-    "--coverage"
-  ]
 
   part_name = "background_task_mgr"
 }

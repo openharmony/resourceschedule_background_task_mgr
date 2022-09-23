@@ -321,9 +321,9 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
 void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<ResourceCallbackInfo>
     callbackInfo, const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
-    BGTASK_LOGD("apply efficiency resources, uid:%{public}d, pid %{public}d, resource number: %{public}u, "\
-        "isPersist: %{public}d, timeOut: %{public}d, isProcess: %{public}d", callbackInfo->GetUid(), 
-        callbackInfo->GetPid(), resourceInfo->GetResourceNumber(), resourceInfo->IsPersist(), 
+    BGTASK_LOGD("apply efficiency resources, uid:%{public}d, pid %{public}d, resource number: %{public}u,"\
+        "isPersist: %{public}d, timeOut: %{public}u, isProcess: %{public}d", callbackInfo->GetUid(),
+        callbackInfo->GetPid(), resourceInfo->GetResourceNumber(), resourceInfo->IsPersist(),
         resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
     int32_t mapKey = resourceInfo->IsProcess() ? callbackInfo->GetPid() : callbackInfo->GetUid();
     auto &infoMap = resourceInfo->IsProcess() ? procResourceApplyMap_ : appResourceApplyMap_;
@@ -370,7 +370,7 @@ void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<Reso
         };
         auto resourceUnitIter = std::find_if(record->resourceUnitList_.begin(),
             record->resourceUnitList_.end(), task);
-        int64_t endtime = TimeProvider::GetCurrentTime() + resourceInfo->GetTimeOut();
+        int64_t endtime = TimeProvider::GetCurrentTime() + static_cast<int64_t>(resourceInfo->GetTimeOut());
         if (resourceUnitIter == record->resourceUnitList_.end()) {
             if (resourceInfo->IsPersist()) {
                 endtime = 0;

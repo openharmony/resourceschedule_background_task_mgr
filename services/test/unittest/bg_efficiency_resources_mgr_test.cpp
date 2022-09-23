@@ -421,6 +421,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SystemAbility_001, TestSize.Level1)
     bgEfficiencyResourcesMgr_->CheckAlivedApp(0);
     bgEfficiencyResourcesMgr_->Clear();
     bgEfficiencyResourcesMgr_->appStateObserver_ = nullptr;
+    bgEfficiencyResourcesMgr_->Clear();
     bgEfficiencyResourcesMgr_->CheckAlivedApp(0);
     EXPECT_TRUE(true);
 }
@@ -453,7 +454,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, EraseRecord_001, TestSize.Level1)
     auto appRecord = std::make_shared<ResourceApplicationRecord>();
     infoMap.emplace(0, appRecord);
     bgEfficiencyResourcesMgr_->EraseRecordIf(infoMap, returnFalse);
-    
+
     appRecord->resourceNumber_ = ResourceType::CPU | ResourceType::COMMON_EVENT;
     appRecord->resourceUnitList_.emplace_back(0, true, 0, "CPU");
     appRecord->resourceUnitList_.emplace_back(1, false, 0, "COMMON_EVENT");
@@ -499,7 +500,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SysUnload_001, TestSize.Level1)
     bgEfficiencyResourcesMgr_->isSysReady_.store(true);
     bgEfficiencyResourcesMgr_->RemoveAppRecord(0, "", false);
     bgEfficiencyResourcesMgr_->RemoveAppRecord(0, "", true);
-    EXPECT_TRUE(true);    
+    EXPECT_TRUE(true);
 }
 
 /**
@@ -536,6 +537,13 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, Dump_001, TestSize.Level1)
     bgEfficiencyResourcesMgr_->ShellDump({"-E", "--resetapp", "0", "1"}, dumpInfo);
     bgEfficiencyResourcesMgr_->ShellDump({"-E", "--resetproc", "0", "1"}, dumpInfo);
     bgEfficiencyResourcesMgr_->ShellDump({"-E", "--reset_proc", "0", "0"}, dumpInfo);
+
+    bgEfficiencyResourcesMgr_->ShellDump({"-E", "--reset_all"}, dumpInfo);
+    resourceInfo= new (std::nothrow) EfficiencyResourceInfo(
+        ResourceType::CPU, true, 0, "apply", true, true);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
+        resourceInfo), (int32_t)ERR_OK);
+    bgEfficiencyResourcesMgr_->ShellDump({"-E", "--all"}, dumpInfo);
 }
 
 /**
