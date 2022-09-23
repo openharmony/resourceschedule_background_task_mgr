@@ -26,6 +26,7 @@
 #include "bg_efficiency_resources_mgr.h"
 #include "resource_type.h"
 #include "system_ability_definition.h"
+#include "time_provider.h"
 
 using namespace testing::ext;
 
@@ -409,8 +410,10 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, Init_001, TestSize.Level1)
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, SystemAbility_001, TestSize.Level1)
 {
+    bgEfficiencyResourcesMgr_->OnRemoveSystemAbility(-1, "");
     bgEfficiencyResourcesMgr_->OnRemoveSystemAbility(APP_MGR_SERVICE_ID, "");
     bgEfficiencyResourcesMgr_->OnRemoveSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, "");
+    bgEfficiencyResourcesMgr_->OnAddSystemAbility(-1, "");
     bgEfficiencyResourcesMgr_->OnAddSystemAbility(APP_MGR_SERVICE_ID, "");
     bgEfficiencyResourcesMgr_->OnAddSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, "");
 
@@ -424,7 +427,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SystemAbility_001, TestSize.Level1)
 
 /**
  * @tc.name: EraseRecord_001
- * @tc.desc: cover EraseRecordIf function.
+ * @tc.desc: cover EraseRecordIf and RecoverDelayedTask function.
  * @tc.type: FUNC
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, EraseRecord_001, TestSize.Level1)
@@ -444,6 +447,17 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, EraseRecord_001, TestSize.Level1)
     SleepFor(WAIT_TIME);
     EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->procResourceApplyMap_.size()), 1);
     bgEfficiencyResourcesMgr_->HandlePersistenceData();
+
+    std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> infoMap {};
+    auto returnFalse = [](const auto &iter)  { return iter.first < 0; };
+    auto appRecord = std::make_shared<ResourceApplicationRecord>();
+    infoMap.emplace(0, appRecord);
+    bgEfficiencyResourcesMgr_->EraseRecordIf(infoMap, returnFalse);
+    
+    appRecord->resourceNumber_ = ResourceType::CPU | ResourceType::COMMON_EVENT;
+    appRecord->resourceUnitList_.emplace_back(0, true, 0, "CPU");
+    appRecord->resourceUnitList_.emplace_back(1, false, 0, "COMMON_EVENT");
+    bgEfficiencyResourcesMgr_->RecoverDelayedTask(false, infoMap);
     EXPECT_TRUE(true);
 }
 
@@ -485,7 +499,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SysUnload_001, TestSize.Level1)
     bgEfficiencyResourcesMgr_->isSysReady_.store(true);
     bgEfficiencyResourcesMgr_->RemoveAppRecord(0, "", false);
     bgEfficiencyResourcesMgr_->RemoveAppRecord(0, "", true);
-    EXPECT_TRUE(true);
+    EXPECT_TRUE(true);    
 }
 
 /**
@@ -520,10 +534,12 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, Dump_001, TestSize.Level1)
     EXPECT_EQ((int32_t)appList.size(), 1);
     EXPECT_EQ((int32_t)procList.size(), 1);
     bgEfficiencyResourcesMgr_->ShellDump({"-E", "--resetapp", "0", "1"}, dumpInfo);
+    bgEfficiencyResourcesMgr_->ShellDump({"-E", "--resetproc", "0", "1"}, dumpInfo);
+    bgEfficiencyResourcesMgr_->ShellDump({"-E", "--reset_proc", "0", "0"}, dumpInfo);
 }
 
 /**
- * @tc.name: BoundaryCondition
+ * @tc.name: BoundaryCondition_001
  * @tc.desc: cover the boundary condition.
  * @tc.type: FUNC
  */
@@ -534,9 +550,9 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, BoundaryCondition_001, TestSize.Level1)
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo), (int32_t)ERR_BGTASK_INVALID_PARAM);
     std::string bundleName {""};
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->IsCallingInfoLegal(-1, 0, bundleName), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->IsCallingInfoLegal(0, -1, bundleName), 0);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckRunningResourcesApply(0, "bundleName"), 1);
+    EXPECT_FALSE(bgEfficiencyResourcesMgr_->IsCallingInfoLegal(-1, 0, bundleName));
+    EXPECT_FALSE(bgEfficiencyResourcesMgr_->IsCallingInfoLegal(0, -1, bundleName));
+    EXPECT_TRUE(bgEfficiencyResourcesMgr_->CheckRunningResourcesApply(0, "bundleName"));
     std::list<PersistTime> resourceUnitList {};
     bgEfficiencyResourcesMgr_->RemoveListRecord(resourceUnitList, 0);
 
@@ -563,6 +579,45 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, BoundaryCondition_001, TestSize.Level1)
     SleepFor(WAIT_TIME);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 1);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 0);
+}
+
+/**
+ * @tc.name: ResetTimeOutResource_001
+ * @tc.desc: cover the ResetTimeOutResource and RemoveRelativeProcessRecord function.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, ResetTimeOutResource_001, TestSize.Level1)
+{
+    auto &procMap = bgEfficiencyResourcesMgr_->procResourceApplyMap_;
+    auto procRecord = std::make_shared<ResourceApplicationRecord>();
+    procMap.emplace(0, procRecord);
+
+    procRecord->resourceNumber_ = ResourceType::CPU;
+    procRecord->resourceUnitList_.emplace_back(0, true, 0, "CPU");
+    bgEfficiencyResourcesMgr_->ResetTimeOutResource(0, true);
+
+    procRecord->resourceNumber_ = ResourceType::CPU | ResourceType::COMMON_EVENT
+        | ResourceType::TIMER;
+    procRecord->resourceUnitList_.emplace_back(1, false, 0, "COMMON_EVENT");
+    procRecord->resourceUnitList_.emplace_back(2, false, TimeProvider::GetCurrentTime() + WAIT_TIME, "TIMER");
+    bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(1, 1);
+    bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(1, 64);
+    bgEfficiencyResourcesMgr_->ResetTimeOutResource(0, true);
+    bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(0, 0);
+}
+
+/**
+ * @tc.name: CheckProcApplyWorkScheduler_001
+ * @tc.desc: cover the CheckProcApplyWorkScheduler function.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, CheckProcApplyWorkScheduler_001, TestSize.Level1)
+{
+    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(
+        ResourceType::WORK_SCHEDULER, true, 0, "apply", true, true);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
+        resourceInfo), (int32_t)ERR_OK);
+    EXPECT_FALSE(bgEfficiencyResourcesMgr_->CheckProcApplyWorkScheduler(resourceInfo));
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
