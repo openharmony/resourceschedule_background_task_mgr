@@ -32,13 +32,14 @@
 #include "ibackground_task_subscriber.h"
 #include "resource_callback_info.h"
 #include "bundle_manager_helper.h"
-#include "resource_record_storage.h"
 #include "resource_application_record.h"
 #include "resources_subscriber_mgr.h"
 #include "app_state_observer.h"
+#include "data_storage_helper.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+class DataStorageHelper;
 class BgEfficiencyResourcesMgr : public DelayedSingleton<BgEfficiencyResourcesMgr>,
                             public std::enable_shared_from_this<BgEfficiencyResourcesMgr> {
 using ResourceRecordMap = std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>>;
@@ -102,7 +103,6 @@ private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> appResourceApplyMap_ {};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> procResourceApplyMap_ {};
-    std::unique_ptr<ResourceRecordStorage> recordStorage_ {nullptr};
     std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
     std::shared_ptr<ResourcesSubscriberMgr> subscriberMgr_ {nullptr};
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_ {nullptr};

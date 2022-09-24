@@ -133,25 +133,27 @@ void BgEfficiencyResourcesMgr::RegisterAppStateObserver()
 
 void BgEfficiencyResourcesMgr::HandlePersistenceData()
 {
-    recordStorage_ = std::make_unique<ResourceRecordStorage>();
     BGTASK_LOGD("ResourceRecordStorage service restart, restore data");
 
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
         if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
             BGTASK_LOGW("ResourceRecordStorage connect to app mgr service failed");
-            recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+            DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+                appResourceApplyMap_, procResourceApplyMap_);
             return;
         }
     }
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
     appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
     BGTASK_LOGI("start to recovery delayed task of apps and processes");
-    recordStorage_->RestoreResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreResourceRecord(
+        appResourceApplyMap_, procResourceApplyMap_);
     CheckPersistenceData(allAppProcessInfos);
     RecoverDelayedTask(true, procResourceApplyMap_);
     RecoverDelayedTask(false, appResourceApplyMap_);
-    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+        appResourceApplyMap_, procResourceApplyMap_);
 }
 
 void BgEfficiencyResourcesMgr::EraseRecordIf(ResourceRecordMap &infoMap,
@@ -342,7 +344,8 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
     uint32_t diffResourceNumber = iter->second->resourceNumber_ ^ (preResourceNumber & iter->second->resourceNumber_);
     if (diffResourceNumber == 0) {
         BGTASK_LOGD("after update end time, diff between resourcesNumbers is zero");
-        recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+        DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+            appResourceApplyMap_, procResourceApplyMap_);
         return;
     }
 
@@ -354,7 +357,8 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
     } else {
         subscriberMgr_->OnResourceChanged(callbackInfo, EfficiencyResourcesEventType::APP_RESOURCE_APPLY);
     }
-    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+        appResourceApplyMap_, procResourceApplyMap_);
 }
 
 void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo>
@@ -499,7 +503,8 @@ void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
             callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::APP_RESOURCE_RESET);
         RemoveRelativeProcessRecord(callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
     }
-    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+        appResourceApplyMap_, procResourceApplyMap_);
 }
 
 bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &bundleName)
@@ -549,7 +554,8 @@ ErrCode BgEfficiencyResourcesMgr::ShellDumpInner(const std::vector<std::string> 
     } else if (dumpOption[1] == DUMP_PARAM_RESET_PROC) {
         DumpResetResource(dumpOption, false, false);
     }
-    recordStorage_->RefreshResourceRecord(appResourceApplyMap_, procResourceApplyMap_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+        appResourceApplyMap_, procResourceApplyMap_);
     return ERR_OK;
 }
 
@@ -623,8 +629,8 @@ void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> 
             BGTASK_LOGW("invalid dump param");
             return;
         }
-        int32_t mapKey = std::stoi(dumpOption[2]);
-        uint32_t cleanResource = std::stoi(dumpOption[3]);
+        int32_t mapKey = std::atoi(dumpOption[2].c_str());
+        uint32_t cleanResource = static_cast<uint32_t>(std::atoi(dumpOption[3].c_str()));
         RemoveTargetResourceRecord(infoMap, mapKey, cleanResource, type);
     }
 }
