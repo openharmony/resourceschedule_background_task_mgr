@@ -207,6 +207,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string
         BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
+    BGTASK_LOGD("app died, uid: %{public}d, bundleName: %{public}s", uid, bundleName.c_str());
     ErrCode res = ERR_OK;
     handler_->PostTask([this, uid, bundleName, resetAll]() {
         int resourceNumber = resetAll ? MAX_RESOURCE_NUMBER : (MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER);
@@ -223,6 +224,8 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
         BGTASK_LOGW("Efficiency resources manager is not ready, remove process record failed");
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
+    BGTASK_LOGD("process died, uid: %{public}d, pid: %{public}d, bundleName: %{public}s",
+        uid, pid, bundleName.c_str());
     ErrCode res = ERR_OK;
     handler_->PostTask([this, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
@@ -318,9 +321,10 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
 void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<ResourceCallbackInfo>
     callbackInfo, const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
-    BGTASK_LOGD("apply efficiency resources, resource number: %{public}u, "\
-        "isPersist: %{public}d, timeOut: %{public}d, isProcess: %{public}d", resourceInfo->GetResourceNumber(),
-        resourceInfo->IsPersist(), resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
+    BGTASK_LOGD("apply efficiency resources, uid:%{public}d, pid %{public}d, resource number: %{public}u,"\
+        "isPersist: %{public}d, timeOut: %{public}u, isProcess: %{public}d", callbackInfo->GetUid(),
+        callbackInfo->GetPid(), resourceInfo->GetResourceNumber(), resourceInfo->IsPersist(),
+        resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
     int32_t mapKey = resourceInfo->IsProcess() ? callbackInfo->GetPid() : callbackInfo->GetUid();
     auto &infoMap = resourceInfo->IsProcess() ? procResourceApplyMap_ : appResourceApplyMap_;
     uint32_t preResourceNumber = 0;
@@ -366,7 +370,7 @@ void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<Reso
         };
         auto resourceUnitIter = std::find_if(record->resourceUnitList_.begin(),
             record->resourceUnitList_.end(), task);
-        int64_t endtime = TimeProvider::GetCurrentTime() + resourceInfo->GetTimeOut();
+        int64_t endtime = TimeProvider::GetCurrentTime() + static_cast<int64_t>(resourceInfo->GetTimeOut());
         if (resourceUnitIter == record->resourceUnitList_.end()) {
             if (resourceInfo->IsPersist()) {
                 endtime = 0;
@@ -484,8 +488,9 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
 void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
     const std::shared_ptr<ResourceCallbackInfo> &callbackInfo, bool isProcess)
 {
-    BGTASK_LOGD("reset efficiency resources inner, resource number: %{public}u, "\
-        " isProcess: %{public}d", callbackInfo->GetResourceNumber(), isProcess);
+    BGTASK_LOGD("reset efficiency resources inner,  uid:%{public}d, pid %{public}d,"\
+        " resource number: %{public}u, isProcess: %{public}d", callbackInfo->GetUid(),
+        callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), isProcess);
     if (isProcess) {
         RemoveTargetResourceRecord(procResourceApplyMap_, callbackInfo->GetPid(),
             callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::RESOURCE_RESET);
@@ -628,8 +633,8 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey, uint32_t cleanResource,
     EfficiencyResourcesEventType type)
 {
-    BGTASK_LOGD("resource record key: %{public}d", mapKey);
-    BGTASK_LOGD("resource record size(): %{public}d", static_cast<int32_t>(infoMap.size()));
+    BGTASK_LOGD("resource record key: %{public}d, resource record size(): %{public}d",
+        mapKey, static_cast<int32_t>(infoMap.size()));
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end() || (iter->second->resourceNumber_ & cleanResource) == 0) {
         BGTASK_LOGW("remove single resource record failure, no matched task: %{public}d", mapKey);
@@ -637,9 +642,6 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     }
     uint32_t eraseBit = (iter->second->resourceNumber_ & cleanResource);
     iter->second->resourceNumber_ ^= eraseBit;
-    if (eraseBit == 0) {
-        return true;
-    }
     RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
     if (iter->second->resourceNumber_ == 0) {
         infoMap.erase(iter);
