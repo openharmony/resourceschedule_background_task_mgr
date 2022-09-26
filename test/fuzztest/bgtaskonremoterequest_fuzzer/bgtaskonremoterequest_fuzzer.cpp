@@ -19,30 +19,42 @@
 #include "background_task_mgr_service.h"
 #include "background_task_mgr_stub.h"
 #include "bg_continuous_task_mgr.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
     constexpr int32_t MIN_LEN = 4;
-    constexpr int32_t MAX_CODE_TEST = 15; // current max code is 8
-    static bool isInited = false;
+    constexpr int32_t MAX_CODE_TEST = 15; // current max code is 13
+    std::mutex mutexLock;
+    sptr<IRemoteObject> remote;
+
+    bool DoInit()
+    {
+        std::lock_guard<std::mutex> lock(mutexLock);
+        if (remote != nullptr) {
+            return true;
+        }
+        sptr<ISystemAbilityManager> SystemAbilityManager =
+            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        if (SystemAbilityManager == nullptr) {
+            return false;
+        }
+        remote = SystemAbilityManager->GetSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID);
+        if (remote == nullptr) {
+            return false;
+        }
+        return true;
+    }
 
     int32_t OnRemoteRequest(uint32_t code, MessageParcel& data)
     {
+        if (!DoInit()) {
+            return -1;
+        }
         MessageParcel reply;
         MessageOption option;
-        if (!isInited) {
-            BgContinuousTaskMgr::GetInstance()->Init();
-            auto bgTransientTask = DelayedSingleton<BgTransientTaskMgr>::GetInstance();
-            bgTransientTask->runner_ = AppExecFwk::EventRunner::Create(true);
-            if (!bgTransientTask->runner_) {
-                return -1;
-            }
-            bgTransientTask->handler_ = std::make_shared<AppExecFwk::EventHandler>(bgTransientTask->runner_);
-            isInited = true;
-        }
-        int32_t ret =
-            DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(code, data, reply, option);
-        return ret;
+        return remote->SendRequest(code, data, reply, option);
     }
 
     void DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
@@ -77,4 +89,3 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::BackgroundTaskMgr::DoSomethingInterestingWithMyAPI(data, size);
     return 0;
 }
-
