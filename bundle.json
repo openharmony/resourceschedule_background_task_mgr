@@ -68,12 +68,16 @@
             "header": {
               "header_base": "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits/include",
               "header_files": [
+                "background_mode.h",
                 "background_task_mgr_helper.h",
                 "background_task_subscriber.h",
+                "continuous_task_callback_info.h",
+                "continuous_task_param.h",
                 "delay_suspend_info.h",
                 "efficiency_resource_info.h",
                 "expired_callback.h",
                 "resource_callback_info.h",
+                "resource_type.h",
                 "transient_task_app_info.h"
               ]
             },
