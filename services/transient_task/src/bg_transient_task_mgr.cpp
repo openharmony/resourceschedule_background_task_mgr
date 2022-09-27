@@ -39,7 +39,7 @@ using namespace std;
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-static const std::string All_BGTASKMGR_OPTION = "All";
+static const std::string ALL_BGTASKMGR_OPTION = "All";
 static const std::string LOW_BATTARY_OPTION = "BATTARY_LOW";
 static const std::string OKAY_BATTARY_OPTION = "BATTARY_OKAY";
 static const std::string CANCEL_DUMP_OPTION = "DUMP_CANCEL";
@@ -515,7 +515,7 @@ ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption
         return ERR_BGTASK_SERVICE_NOT_READY;
     }
     bool result = false;
-    if (dumpOption[1] == All_BGTASKMGR_OPTION) {
+    if (dumpOption[1] == ALL_BGTASKMGR_OPTION) {
         result = DumpAllRequestId(dumpInfo);
     } else if (dumpOption[1] == LOW_BATTARY_OPTION) {
         deviceInfoManeger_->SetDump(true);

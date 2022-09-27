@@ -48,6 +48,7 @@ private:
     inline bool ValidateAppStateData(const AppExecFwk::AppStateData &appStateData);
     void OnProcessDiedContinuousTask(const AppExecFwk::ProcessData &processData);
     void OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData);
+    bool CheckParamValid();
 
 private:
     std::mutex mutex_ {};

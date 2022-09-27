@@ -13,28 +13,25 @@
  * limitations under the License.
  */
 
-#include "resource_record_storage.h"
-
-#include "errors.h"
-#include "bundle_manager_helper.h"
-#include "common_utils.h"
-
-#include "bgtaskmgr_inner_errors.h"
-#include "efficiency_resource_log.h"
-#include "resource_application_record.h"
+#include "notification_tools.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-ErrCode ResourceRecordStorage::RefreshResourceRecord(const ResourceRecordMap &appRecord,
-    const ResourceRecordMap &processRecord)
+NotificationTools::NotificationTools() {}
+
+NotificationTools::~NotificationTools() {}
+
+ErrCode NotificationTools::PublishNotification(const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
+    const std::string &appName, const std::string &prompt, int32_t serviceUid)
 {
     return ERR_OK;
 }
 
-ErrCode ResourceRecordStorage::RestoreResourceRecord(ResourceRecordMap &appRecord,
-    ResourceRecordMap &processRecord)
+ErrCode NotificationTools::CancelNotification(const std::string &label, int32_t id)
 {
     return ERR_OK;
 }
+
+void NotificationTools::GetAllActiveNotificationsLabels(std::set<std::string> &notificationLabels) {}
 }
 }

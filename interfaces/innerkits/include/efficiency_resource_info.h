@@ -25,7 +25,7 @@ namespace BackgroundTaskMgr {
 class EfficiencyResourceInfo : public Parcelable {
 public:
     EfficiencyResourceInfo() = default;;
-    EfficiencyResourceInfo(uint32_t resourceNumber, bool isApply, int32_t timeOut, std::string reason,
+    EfficiencyResourceInfo(uint32_t resourceNumber, bool isApply, uint32_t timeOut, std::string reason,
         bool isPersist = false, bool isProcess = false) : resourceNumber_(resourceNumber), isApply_(isApply),
         timeOut_(timeOut), reason_(reason), isPersist_(isPersist), isProcess_(isProcess) {}
 
@@ -70,7 +70,7 @@ public:
      *
      * @return the timeout.
      */
-    inline int32_t GetTimeOut() const
+    inline uint32_t GetTimeOut() const
     {
         return timeOut_;
     }
@@ -129,7 +129,7 @@ private:
 
     uint32_t resourceNumber_;
     bool isApply_;
-    int32_t timeOut_;
+    uint32_t timeOut_;
     std::string reason_;
     bool isPersist_ {false};
     bool isProcess_ {false};

@@ -50,9 +50,7 @@
       },
       "build": {
         "group_type": {
-          "base_group": [
-           "//foundation/resourceschedule/background_task_mgr/resources:bgtaskmgr_resources"
-          ],
+          "base_group": [],
           "fwk_group": [
            "//foundation/resourceschedule/background_task_mgr/interfaces:bgtaskmgr_interfaces",
            "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_fwk"
@@ -60,7 +58,8 @@
           "service_group": [
            "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_sa_profile",
            "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_service_init",
-           "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service"
+           "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service",
+           "//foundation/resourceschedule/background_task_mgr/resources:bgtaskmgr_resources"
           ]
         },
         "inner_kits": [
@@ -68,12 +67,16 @@
             "header": {
               "header_base": "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits/include",
               "header_files": [
+                "background_mode.h",
                 "background_task_mgr_helper.h",
                 "background_task_subscriber.h",
+                "continuous_task_callback_info.h",
+                "continuous_task_param.h",
                 "delay_suspend_info.h",
                 "efficiency_resource_info.h",
                 "expired_callback.h",
                 "resource_callback_info.h",
+                "resource_type.h",
                 "transient_task_app_info.h"
               ]
             },

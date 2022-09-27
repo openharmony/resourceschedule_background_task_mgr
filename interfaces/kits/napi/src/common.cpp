@@ -190,7 +190,6 @@ napi_value Common::GetInt32NumberValue(const napi_env &env, const napi_value &va
     NAPI_ASSERT(env, valuetype == napi_number, "Wrong argument type. Number or function expected.");
     napi_get_value_int32(env, value, &result);
     BGTASK_LOGI("GetInt32NumberValue result: %{public}d", result);
-
     return Common::NapiGetNull(env);
 }
 
@@ -230,6 +229,13 @@ napi_value Common::SetDelaySuspendInfo(
 
 napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, std::string &result)
 {
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    NAPI_ASSERT(env, valuetype == napi_string, "Wrong argument type. String or function expected.");
+    if (valuetype != napi_string) {
+        return nullptr;
+    }
+
     char str[STR_MAX_SIZE] = {0};
     size_t strLen = 0;
     napi_status status = napi_get_value_string_utf8(env, value, str, STR_MAX_SIZE - 1, &strLen);
@@ -290,6 +296,15 @@ int32_t Common::FindErrCode(const napi_env &env, const int32_t errCodeIn)
         return ERR_BGTASK_INVALID_PARAM;
     }
     return errCodeIn;
+napi_value Common::GetBooleanValue(const napi_env &env, const napi_value &value, bool &result)
+{
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    NAPI_ASSERT(env, valuetype == napi_boolean, "Wrong argument type. Boolean or function expected.");
+    NAPI_CALL(env, napi_get_value_bool(env, value, &result));
+    BGTASK_LOGI("GetBooleanValue result: %{public}d", result);
+
+    return Common::NapiGetNull(env);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

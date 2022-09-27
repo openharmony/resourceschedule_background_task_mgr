@@ -381,8 +381,7 @@ ErrCode BackgroundTaskMgrProxy::InnerTransact(uint32_t code, MessageOption &flag
     }
 }
 
-ErrCode BackgroundTaskMgrProxy::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo,
-    bool &isSuccess)
+ErrCode BackgroundTaskMgrProxy::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
     if (resourceInfo == nullptr) {
         return ERR_BGTASK_INVALID_PARAM;
@@ -406,10 +405,6 @@ ErrCode BackgroundTaskMgrProxy::ApplyEfficiencyResources(const sptr<EfficiencyRe
         return ERR_BGTASK_TRANSACT_FAILED;
     }
     if (!reply.ReadInt32(result)) {
-        BGTASK_LOGE("ApplyEfficiencyResources fail: read result failed.");
-        return ERR_BGTASK_PARCELABLE_FAILED;
-    }
-    if (!reply.ReadBool(isSuccess)) {
         BGTASK_LOGE("ApplyEfficiencyResources fail: read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }

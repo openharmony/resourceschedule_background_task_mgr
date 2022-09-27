@@ -88,7 +88,7 @@ public:
      */
     virtual void OnContinuousTaskStop(
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) = 0;
-    
+
     /**
      * Called back when the app does not have continuous task.
      *

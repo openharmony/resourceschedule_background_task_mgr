@@ -21,8 +21,6 @@
 #include "parcel.h"
 #include "want_agent.h"
 
-#include "task_notification_subscriber.h"
-
 namespace OHOS {
 namespace BackgroundTaskMgr {
 extern const char *ContinuousTaskModeName[10];
@@ -61,6 +59,7 @@ private:
     std::string appName_ {""};
 
     friend class BgContinuousTaskMgr;
+    friend class NotificationTools;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -83,6 +83,7 @@ public:
     static std::string FindErrMsg(const napi_env &env, const int32_t errCode);
 
     int32_t FindErrCode(const napi_env &env, const int32_t errCodeIn);
+    static napi_value GetBooleanValue(const napi_env &env, const napi_value &value, bool &result);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

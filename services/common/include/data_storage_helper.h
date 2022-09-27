@@ -13,37 +13,40 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RES_RECORD_STORAGE_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RES_RECORD_STORAGE_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_DATA_STORAGE_HELPER_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_DATA_STORAGE_HELPER_H
 
-#include <unordered_map>
+#include "singleton.h"
 #include "nlohmann/json.hpp"
-#include "bgtaskmgr_inner_errors.h"
+
+#include "bg_efficiency_resources_mgr.h"
+#include "bg_continuous_task_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class ResourceApplicationRecord;
-
-class ResourceRecordStorage {
+class DataStorageHelper : public DelayedSingleton<BgContinuousTaskMgr> {
 using ResourceRecordMap = std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>>;
 public:
+    ErrCode RefreshTaskRecord(const std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> &allRecord);
+    ErrCode RestoreTaskRecord(std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> &allRecord);
     ErrCode RefreshResourceRecord(const ResourceRecordMap &appRecord, const ResourceRecordMap &processRecord);
     ErrCode RestoreResourceRecord(ResourceRecordMap &appRecord, ResourceRecordMap &processRecord);
 
 private:
+    int32_t SaveJsonValueToFile(const std::string &value, const std::string &filePath);
+    int32_t ParseJsonValueFromFile(nlohmann::json &value, const std::string &filePath);
+    bool CreateNodeFile(const std::string &filePath);
+    bool ConvertFullPath(const std::string &partialPath, std::string &fullPath);
     void ConvertMapToString(const ResourceRecordMap &appRecord,
         const ResourceRecordMap &processRecord, std::string &recordString);
     void ConvertMapToJson(const ResourceRecordMap &appRecord, nlohmann::json &root);
-    ErrCode ConvertStringToMap(const std::string &recordString,
+    void DivideJsonToMap(nlohmann::json &root,
         ResourceRecordMap &appRecord, ResourceRecordMap &processRecord);
     void ConvertJsonToMap(const nlohmann::json &value, ResourceRecordMap &recordMap);
     ErrCode ConvertStringToJson(const std::string &recordString,
         nlohmann::json &appRecord, nlohmann::json &processRecord);
-    bool CreateNodeFile(const std::string &filePath);
-    bool ConvertFullPath(const std::string &partialPath, std::string &fullPath);
-    ErrCode WriteStringToFile(const std::string &result, const std::string &filePath);
-    ErrCode ReadStringFromFile(std::string &result, const std::string &filePath);
+    DECLARE_DELAYED_SINGLETON(DataStorageHelper);
 };
-}
-}
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_EFFICIENCY_RESOURCES_INCLUDE_RES_RECORD_STORAGE_H
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_DATA_STORAGE_HELPER_H
