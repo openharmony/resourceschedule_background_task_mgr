@@ -47,6 +47,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
     // argv[0] : requestId
     if (Common::GetInt32NumberValue(env, argv[0], params.requestId) == nullptr) {
         BGTASK_LOGE("ParseParameters failed, requestId is nullptr.");
+        Common::HandleParamErr(env, ERR_REQUESTID_NULL_OR_ID_TYPE_ERR);
         return nullptr;
     }
 
@@ -54,12 +55,16 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
     if (argc == GET_REMAINING_DELAY_TIME_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
+        if (valuetype != napi_function) {
+            Common::HandleParamErr(env, ERR_REQUESTID_NULL_OR_ID_TYPE_ERR);
+        }
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
         NAPI_CALL(env, napi_create_reference(env, argv[1], 1, &params.callback));
     }
 
     if (params.requestId <= 0) {
         BGTASK_LOGI("ParseParameters failed, requestId is illegal.");
+        Common::HandleParamErr(env, ERR_REQUESTID_ILLEGAL);
         return nullptr;
     }
     return Common::NapiGetNull(env);
@@ -93,6 +98,7 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
                     GetRemainingDelayTime(asyncCallbackInfo->requestId, asyncCallbackInfo->delayTime);
+                asyncCallbackInfo->errMsg = Common::FindErrMsg(env, asyncCallbackInfo->errCode);
             }
         },
         [](napi_env env, napi_status status, void *data) {
@@ -101,6 +107,7 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
                 napi_create_int32(env, asyncCallbackInfo->delayTime, &result);
+                Common::HandleParamErr(env, asyncCallbackInfo->errCode);
                 Common::ReturnCallbackPromise(env, *asyncCallbackInfo, result);
             }
         },

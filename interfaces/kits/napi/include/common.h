@@ -35,6 +35,7 @@ struct AsyncWorkData {
     napi_ref callback = nullptr;
     bool isCallback = false;
     int32_t errCode = 0;
+    std::string errMsg = "";
 };
 
 class Common {
@@ -52,15 +53,17 @@ public:
     static void PaddingAsyncWorkData(
         const napi_env &env, const napi_ref &callback, AsyncWorkData &info, napi_value &promise);
 
-    static void ReturnCallbackPromise(const napi_env &env, const AsyncWorkData &info, const napi_value &result);
+    static napi_value GetCallbackErrorValue(napi_env env, const int32_t errCode, const std::string errMsg);
 
-    static void SetCallback(
-        const napi_env &env, const napi_ref &callbackIn, const int32_t &errorCode, const napi_value &result);
+    static void SetCallback(const napi_env &env, const AsyncWorkData &info, const napi_value &result);
 
-    static void SetCallback(
-        const napi_env &env, const napi_ref &callbackIn, const napi_value &result);
+    static void SetCallback(const napi_env &env, const napi_ref &callbackIn,
+        const int32_t &errCode, const napi_value &result)
 
     static napi_value SetPromise(const napi_env &env, const AsyncWorkData &info, const napi_value &result);
+
+    static void ReturnCallbackPromise(const napi_env &env, const AsyncWorkData &info,
+        const napi_value &result);
 
     static napi_value JSParaError(const napi_env &env, const napi_ref &callback);
 
@@ -76,6 +79,10 @@ public:
     static void HandleErrCode(const napi_env &env, int32_t errCode);
 
     static bool HandleParamErr(const napi_env &env, int32_t errCode);
+
+    static std::string FindErrMsg(const napi_env &env, const int32_t errCode);
+
+    int32_t FindErrCode(const napi_env &env, const int32_t errCodeIn);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

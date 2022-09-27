@@ -17,6 +17,7 @@
 
 #include "singleton.h"
 
+#include "common.h"
 #include "background_task_manager.h"
 #include "efficiency_resource_info.h"
 #include "efficiency_resource_log.h"
@@ -114,14 +115,17 @@ napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
         NAPI_CALL(env, napi_get_boolean(env, isSuccess, &result));
         return result;
     }
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(params, isSuccess);
+    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()
+        ->ApplyEfficiencyResources(params, isSuccess);
+    Common::HandleErr(env, errCode);
     NAPI_CALL(env, napi_get_boolean(env, isSuccess, &result));
     return result;
 }
 
 napi_value ResetAllEfficiencyResources(napi_env env, napi_callback_info info)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources();
+    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources();
+    Common::HandleErr(env, errCode);
     return Common::NapiGetNull(env);
 }
 }

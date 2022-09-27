@@ -147,39 +147,45 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         return;
     }
     if (asyncCallbackInfo->abilityContext == nullptr) {
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR);
         BGTASK_LOGE("abilityContext is null");
         return;
     }
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     if (info == nullptr) {
         BGTASK_LOGE("ability info is null");
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_ABILITY_INFO_EMPTY);
+        asyncCallbackInfo->errCode = ERR_ABILITY_INFO_EMPTY;
         return;
     }
 
     if (asyncCallbackInfo->wantAgent == nullptr) {
         BGTASK_LOGE("wantAgent param is nullptr");
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR);
+        asyncCallbackInfo->errCode = ERR_WANTAGENT_NULL_OR_TYPE_ERR;
         return;
     }
 
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
     if (!token) {
         BGTASK_LOGE("get ability token info failed");
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_GET_TOKEN_ERR);
+        asyncCallbackInfo->errCode = ERR_GET_TOKEN_ERR;
         return;
     }
 
     if (asyncCallbackInfo->bgMode < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgMode > BG_MODE_ID_END) {
         BGTASK_LOGE("request background mode id: %{public}u out of range", asyncCallbackInfo->bgMode);
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_BGMODE_RANGE_ERR);
+        asyncCallbackInfo->errCode = ERR_BGMODE_RANGE_ERR;
         return;
     }
 
     std::string appName = GetMainAbilityLabel(info->bundleName);
     if (appName.empty()) {
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_APP_NAME_EMPTY);
+        asyncCallbackInfo->errCode = ERR_APP_NAME_EMPTY;
         return;
     }
 
@@ -237,7 +243,9 @@ napi_value StartBackgroundRunningAsync(
 
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[argCallback], &valuetype));
-    NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
+    if (valuetype != napi_function) {
+        Common::HandleParamErr(env, ERR_CALLBACK_NULL_OR_TYPE_ERR);
+    }
     NAPI_CALL(env, napi_create_reference(env, argv[argCallback], 1, &asyncCallbackInfo->callback));
 
     NAPI_CALL(env, napi_create_async_work(env,
@@ -311,25 +319,29 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc > MAX_START_BG_RUNNING_PARAMS) {
         BGTASK_LOGE("wrong param nums");
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR);
         return nullptr;
     }
 
     // argv[0] : context : AbilityContext
     if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
         BGTASK_LOGE("Get ability context failed");
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR);
+        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
     }
 
     // argv[1] : bgMode : BackgroundMode
     if (GetBackgroundMode(env, argv[1], asyncCallbackInfo->bgMode) == nullptr) {
         BGTASK_LOGE("input bgmode param not number");
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_BGMODE_NULL_OR_TYPE_ERR);
+        asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
     }
 
     // argv[2] : wantAgent: WantAgent
     if (GetWantAgent(env, argv[2], asyncCallbackInfo->wantAgent) == nullptr) {
         BGTASK_LOGE("input wantAgent param is not object");
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR);
+        asyncCallbackInfo->errCode = ERR_WANTAGENT_NULL_OR_TYPE_ERR;
     }
 
     napi_value ret = 0;
@@ -360,21 +372,24 @@ void StopBackgroundRunningExecuteCB(napi_env env, void *data)
         return;
     }
     if (asyncCallbackInfo->abilityContext == nullptr) {
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
         BGTASK_LOGE("ability context is null");
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR);
+        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
         return;
     }
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     if (info == nullptr) {
         BGTASK_LOGE("abilityInfo is null");
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_ABILITY_INFO_EMPTY);
+        asyncCallbackInfo->errCode = ERR_ABILITY_INFO_EMPTY;
         return;
     }
 
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
     if (!token) {
         BGTASK_LOGE("get ability token info failed");
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_GET_TOKEN_ERR);
+        asyncCallbackInfo->errCode = ERR_GET_TOKEN_ERR;
         return;
     }
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStopBackgroundRunning(info->name, token);
@@ -448,13 +463,15 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc > MAX_STOP_BG_RUNNING_PARAMS) {
         BGTASK_LOGE("wrong param nums");
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR);
         return nullptr;
     }
 
     // argv[0] : context : AbilityContext
     if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
         BGTASK_LOGE("Get ability context failed");
-        asyncCallbackInfo->errCode = ERR_BGTASK_INVALID_PARAM;
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR);
+        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
     }
 
     napi_value ret = 0;

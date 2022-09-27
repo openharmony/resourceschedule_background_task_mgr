@@ -177,7 +177,7 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
     auto callbackIter = find_if(expiredCallbackMap_.begin(), expiredCallbackMap_.end(), findCallback);
     if (callbackIter != expiredCallbackMap_.end()) {
         BGTASK_LOGI("%{public}s request suspend failed, callback is already exists.", name.c_str());
-        return ERR_BGTASK_OBJECT_EXISTS;
+        return ERR_BGTASK_CALLBACK_EXISTS;
     }
 
     auto keyInfo = make_shared<KeyInfo>(name, uid, pid);
@@ -268,7 +268,7 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelay(int32_t requestId)
 
     if (!VerifyRequestIdLocked(name, uid, requestId)) {
         BGTASK_LOGI(" cancel suspend delay failed, requestId is illegal.");
-        return ERR_BGTASK_NOT_ALLOWED;
+        return ERR_BGTASK_CALLBACK_NOT_EXIST;
     }
 
     lock_guard<mutex> lock(expiredCallbackLock_);
@@ -284,7 +284,7 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelayLocked(int32_t requestId)
     auto iter = expiredCallbackMap_.find(requestId);
     if (iter == expiredCallbackMap_.end()) {
         BGTASK_LOGI("CancelSuspendDelayLocked Callback not found.");
-        return ERR_BGTASK_NOT_ALLOWED;
+        return ERR_BGTASK_CALLBACK_NOT_EXIST;
     }
     auto remote = iter->second->AsObject();
     if (remote != nullptr) {
@@ -332,7 +332,7 @@ ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &de
     if (!VerifyRequestIdLocked(name, uid, requestId)) {
         BGTASK_LOGE("get remain time failed, requestId is illegal.");
         delayTime = BG_INVALID_REMAIN_TIME;
-        return ERR_BGTASK_NOT_ALLOWED;
+        return ERR_BGTASK_INVALID_REQUEST_ID;
     }
 
     delayTime = decisionMaker_->GetRemainingDelayTime(keyInfoMap_[requestId], requestId);

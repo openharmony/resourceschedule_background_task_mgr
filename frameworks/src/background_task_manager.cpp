@@ -49,7 +49,7 @@ ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reason,
     sptr<ExpiredCallback::ExpiredCallbackImpl> callbackSptr = callback.GetImpl();
     if (callbackSptr == nullptr) {
         BGTASK_LOGE("callbackSptr is nullptr");
-        return ERR_CALLBACK_EMPTY_ERR;
+        return ERR_BGTASK_INVALID_PARAM;
     }
     return backgroundTaskMgrProxy_->RequestSuspendDelay(reason, callbackSptr, delayInfo);
 }
@@ -120,7 +120,7 @@ ErrCode BackgroundTaskManager::UnsubscribeBackgroundTask(const BackgroundTaskSub
     sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> subscriberSptr = subscriber.GetImpl();
     if (subscriberSptr == nullptr) {
         BGTASK_LOGE("subscriberSptr is nullptr");
-        return ERR_CALLBACK_EMPTY_ERR;
+        return ERR_BGTASK_INVALID_PARAM;
     }
     return backgroundTaskMgrProxy_->UnsubscribeBackgroundTask(subscriberSptr);
 }

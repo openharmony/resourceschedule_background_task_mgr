@@ -57,13 +57,37 @@ napi_value Common::NapiGetNull(napi_env env)
     return result;
 }
 
-void Common::ReturnCallbackPromise(const napi_env &env, const AsyncWorkData &info, const napi_value &result)
+napi_value Common::GetCallbackErrorValue(napi_env env, const int32_t errCode, const std::string errMsg)
 {
-    if (info.isCallback) {
-        SetCallback(env, info.callback, info.errCode, result);
-    } else {
-        SetPromise(env, info, result);
+    if (errCode == ERR_OK) {
+        return NapiGetNull(env);
     }
+    napi_value error = nullptr;
+    napi_value eCode = nullptr;
+    napi_value eMsg = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
+    NAPI_CALL(env, napi_create_string_utf8(env, errMsg.c_str(),
+        errMsg.length(), &eMsg));
+    NAPI_CALL(env, napi_create_object(env, &error));
+    NAPI_CALL(env, napi_set_named_property(env, error, "code", eCode));
+    NAPI_CALL(env, napi_set_named_property(env, error, "message", eMsg));
+    return error;
+}
+
+void Common::SetCallback(
+    const napi_env &env, const AsyncWorkData &info, const napi_value &result)
+{
+    napi_value undefined = nullptr;
+    napi_get_undefined(env, &undefined);
+
+    napi_value callback = nullptr;
+    napi_value resultout = nullptr;
+    napi_get_reference_value(env, info.callback, &callback);
+    napi_value results[ASYNC_CALLBACK_PARAM_NUM] = {nullptr};
+    results[0] = GetCallbackErrorValue(env, info.errCode, info.errMsg);
+    results[1] = result;
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback,
+        ASYNC_CALLBACK_PARAM_NUM, &results[0], &resultout));
 }
 
 void Common::SetCallback(
@@ -76,35 +100,11 @@ void Common::SetCallback(
     napi_value resultout = nullptr;
     napi_get_reference_value(env, callbackIn, &callback);
     napi_value results[ASYNC_CALLBACK_PARAM_NUM] = {nullptr};
-    results[0] = GetCallbackErrorValue(env, errCode);
+    std::string errMsg = FindErrMsg(env, errCode);
+    results[0] = GetCallbackErrorValue(env, errCode, errMsg);
     results[1] = result;
     NAPI_CALL_RETURN_VOID(env,
         napi_call_function(env, undefined, callback, ASYNC_CALLBACK_PARAM_NUM, &results[0], &resultout));
-}
-
-void Common::SetCallback(const napi_env &env, const napi_ref &callbackIn, const napi_value &result)
-{
-    napi_value undefined = nullptr;
-    napi_get_undefined(env, &undefined);
-
-    napi_value callback = nullptr;
-    napi_value resultout = nullptr;
-    napi_value res = nullptr;
-    res = GetExpireCallbackValue(env, 0, result);
-    napi_get_reference_value(env, callbackIn, &callback);
-    NAPI_CALL_RETURN_VOID(env,
-        napi_call_function(env, undefined, callback, EXPIRE_CALLBACK_PARAM_NUM, &res, &resultout));
-}
-
-napi_value Common::GetExpireCallbackValue(napi_env env, int32_t errCode, const napi_value &value)
-{
-    napi_value result = nullptr;
-    napi_value eCode = nullptr;
-    NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
-    NAPI_CALL(env, napi_create_object(env, &result));
-    NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
-    NAPI_CALL(env, napi_set_named_property(env, result, "data", value));
-    return result;
 }
 
 napi_value Common::SetPromise(
@@ -113,29 +113,28 @@ napi_value Common::SetPromise(
     if (info.errCode == ERR_OK) {
         napi_resolve_deferred(env, info.deferred, result);
     } else {
-        napi_value res = nullptr;
+        napi_value error = nullptr;
         napi_value eCode = nullptr;
+        napi_value eMsg = nullptr;
         NAPI_CALL(env, napi_create_int32(env, info.errCode, &eCode));
-        NAPI_CALL(env, napi_create_object(env, &res));
-        NAPI_CALL(env, napi_set_named_property(env, res, "data", eCode));
-        NAPI_CALL(env, napi_set_named_property(env, res, "code", eCode));
-        napi_reject_deferred(env, info.deferred, res);
+        NAPI_CALL(env, napi_create_string_utf8(env, info.errMsg.c_str(),
+            info.errMsg.length(), &eMsg));
+        NAPI_CALL(env, napi_create_object(env, &error));
+        NAPI_CALL(env, napi_set_named_property(env, error, "data", eCode));
+        NAPI_CALL(env, napi_set_named_property(env, error, "code", eCode));
+        NAPI_CALL(env, napi_set_named_property(env, error, "message", eMsg));
+        napi_reject_deferred(env, info.deferred, error);
     }
     return result;
 }
 
-napi_value Common::GetCallbackErrorValue(napi_env env, int32_t errCode)
+void Common::ReturnCallbackPromise(const napi_env &env, const AsyncWorkData &info, const napi_value &result)
 {
-    if (errCode == ERR_OK) {
-        return NapiGetNull(env);
+    if (info.isCallback) {
+        SetCallback(env, info, result);
+    } else {
+        SetPromise(env, info, result);
     }
-    napi_value result = nullptr;
-    napi_value eCode = nullptr;
-    NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
-    NAPI_CALL(env, napi_create_object(env, &result));
-    NAPI_CALL(env, napi_set_named_property(env, result, "data", eCode));
-    NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
-    return result;
 }
 
 napi_value Common::JSParaError(const napi_env &env, const napi_ref &callback)
@@ -150,10 +149,15 @@ napi_value Common::JSParaError(const napi_env &env, const napi_ref &callback)
 
         napi_value res = nullptr;
         napi_value eCode = nullptr;
+        napi_value eMsg = nullptr;
+        std::string errMsg = FindErrMsg(env, ERR_BGTASK_INVALID_PARAM);
         NAPI_CALL(env, napi_create_int32(env, ERR_BGTASK_INVALID_PARAM, &eCode));
+        NAPI_CALL(env, napi_create_string_utf8(env, errMsg.c_str(),
+            errMsg.length(), &eMsg));
         NAPI_CALL(env, napi_create_object(env, &res));
         NAPI_CALL(env, napi_set_named_property(env, res, "data", eCode));
         NAPI_CALL(env, napi_set_named_property(env, res, "code", eCode));
+        NAPI_CALL(env, napi_set_named_property(env, res, "message", eMsg));
         napi_reject_deferred(env, deferred, res);
         return promise;
     }
@@ -237,85 +241,55 @@ napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, 
     return Common::NapiGetNull(env);
 }
 
-void Common::HandleErrCode(const napi_env &env, int32_t errCode) {
-    int32_t errCodeInfo;
-    std::string errMessage = "BussinessError ";
-    switch (errCode) {
-        case ERR_APPLY_CONTINUOUS_TASK_REPEAT:
-            [[fallthrough]];
-        // case E_PARCEL_WRITE_FALIED:
-        //     errCodeInfo = E_PARCEL_OPERATION_FALIED;
-        //     errMessage.append(std::to_string(errCodeInfo)).append(": ").append(saErrCodeMsgMap[errCode]);
-        //     napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMessage.c_str());
-        //     break;
-        // case E_GET_SYSTEM_ABILITY_MANAGER_FALIED:
-        //     [[fallthrough]];
-        // case E_CHECK_SYSTEM_ABILITY_FALIED:
-        //     [[fallthrough]];
-        // case E_SERVICE_NOT_READY:
-        //     errCodeInfo = E_SYSTEM_SERVICE_OPERATION_FAILED;
-        //     errMessage.append(std::to_string(errCodeInfo)).append(": ").append(saErrCodeMsgMap[errCode]);
-        //     napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMessage.c_str());
-        //     break;
-        // case E_IPC_COMMUNICATION_FAILED:
-        //     [[fallthrough]];
-        // case E_CHECK_WORKINFO_FAILED:
-        //     [[fallthrough]];
-        // case E_WORK_NOT_EXIST_FAILED:
-        //     errMessage.append(std::to_string(errCode)).append(": ").append(saErrCodeMsgMap[errCode]);
-        //     napi_throw_error(env, std::to_string(errCode).c_str(), errMessage.c_str());
-        //     break;
-        // case E_ADD_REPEAT_WORK_ERR:
-        //     [[fallthrough]];
-        case ERR_APPLY_SYSTEM_RESOURCE_REPEAT:
-            errCodeInfo = ERR_BGTASK_EFFICIENCY_CALLER_VERIFY_FAILED;
-            errMessage.append(std::to_string(errCodeInfo)).append(": ").append(saErrCodeMsgMap[errCode]);
-            napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMessage.c_str());
-            break;
-        default:
-            HandleParamErr(env, errCode);
-            break;
+void Common::HandleErrCode(const napi_env &env, int32_t errCode)
+{
+    std::string errMsg = FindErrMsg(env, errCode);
+    int32_t errCodeInfo = FindErrCode(env, errCode);
+    if (errMsg != "") {
+        napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMessage.c_str());
     }
 }
 
-bool Common::HandleParamErr(const napi_env &env, int32_t errCode) {
-    int32_t errCodeInfo = ERR_BGTASK_INVALID_PARAM;
-    std::string errMessage = "BussinessError 401: Parameter error. ";
-    bool isParamErr = true;
-    switch (errCode) {
-        case ERR_PARAM_NUMBER_ERR:
-            [[fallthrough]];
-        // case E_WORK_INFO_TYPE_ERR:
-        //     [[fallthrough]];
-        // case E_BUNDLE_OR_ABILITY_NAME_EMPTY:
-        //     [[fallthrough]];
-        // case E_WORKID_ERR:
-        //     [[fallthrough]];
-        // case E_CONDITION_EMPTY:
-        //     [[fallthrough]];
-        // case E_NETWORK_TYPE_ERR:
-        //     [[fallthrough]];
-        // case E_CHARGER_TYPE_ERR:
-        //     [[fallthrough]];
-        // case E_BATTERY_LEVEL_ERR:
-        //     [[fallthrough]];
-        // case E_BATTERY_STATUS_ERR:
-        //     [[fallthrough]];
-        // case E_STORAGE_REQUEST_ERR:
-        //     [[fallthrough]];
-        // case E_REPEAT_CYCLE_TIME_ERR:
-        //     [[fallthrough]];
-        // case E_REPEAT_COUNT_ERR:
-        //     [[fallthrough]];
-        case ERR_CALLER_INFO_VERIFICATION_ERR:
-            errMessage.append(paramErrCodeMsgMap[errCode]);
-            napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMessage.c_str());
-            break;
-        default:
-            isParamErr = false;
-            break;
+bool Common::HandleParamErr(const napi_env &env, int32_t errCode)
+{
+    bool isParamErr = false;
+    auto iter = paramErrCodeMsgMap.find(errCodeIn);
+    if (iter != paramErrCodeMsgMap.end()) {
+        std::string errMessage = "BussinessError 401: Parameter error. ";
+        errMessage.append(paramErrCodeMsgMap[errCode]);
+        napi_throw_error(env, std::to_string(ERR_BGTASK_INVALID_PARAM).c_str(), errMessage.c_str());
+        isParamErr = true;
     }
     return isParamErr;
+}
+
+std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
+{
+    if (errCode == ERR_OK) {
+        return "";
+    }
+    auto iter = saErrCodeMsgMap.find(errCode);
+    if (iter != saErrCodeMsgMap.end()) {
+        std::string errMessage = "BussinessError ";
+        errMessage.append(std::to_string(errCode)).append(": ").append(saErrCodeMsgMap[errCode]);
+        return saErrCodeMsgMap[errCode];
+    }
+    iter = paramErrCodeMsgMap.find(errCode);
+    if (iter != paramErrCodeMsgMap.end()) {
+        std::string errMessage = "BussinessError 401: Parameter error. ";
+        errMessage.append(paramErrCodeMsgMap[errCode]);
+        return errMessage;
+    }
+    return "";
+}
+
+int32_t Common::FindErrCode(const napi_env &env, const int32_t errCodeIn)
+{
+    auto iter = paramErrCodeMsgMap.find(errCodeIn);
+    if (iter != paramErrCodeMsgMap.end()) {
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+    return errCodeIn;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

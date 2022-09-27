@@ -33,7 +33,7 @@ ErrCode BackgroundTaskMgrProxy::RequestSuspendDelay(const std::u16string& reason
 {
     if (callback == nullptr) {
         BGTASK_LOGE("RequestSuspendDelay callback is null");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_CALLBACK_NULL_OR_TYPE_ERR;
     }
 
     MessageParcel data;

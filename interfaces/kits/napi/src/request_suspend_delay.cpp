@@ -213,7 +213,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     // argv[0] : reason
     if (Common::GetU16StringValue(env, argv[0], reason) == nullptr) {
         BGTASK_LOGE("ParseParameters failed, reason is nullptr.");
-        Common::HandleParamErr(env, ERR_REASON_TYPE_ERR);
+        Common::HandleParamErr(env, ERR_REASON_NULL_OR_TYPE_ERR);
         return nullptr;
     }
 
@@ -221,7 +221,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
     if (valuetype == napi_function) {
-        Common::HandleParamErr(env, ERR_CALLBACK_TYPE_ERR);
+        Common::HandleParamErr(env, ERR_CALLBACK_NULL_OR_TYPE_ERR);
     }
 
     if (GetExpiredCallback(env, argv[1], callback) == nullptr) {
