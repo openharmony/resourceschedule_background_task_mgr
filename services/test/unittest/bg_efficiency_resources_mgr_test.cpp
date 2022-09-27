@@ -370,6 +370,30 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_002, TestSiz
 }
 
 /**
+ * @tc.name: EfficiencyResourcesCallback_001
+ * @tc.desc: efficiency resources callback test.
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, EfficiencyResourcesCallback_001, TestSize.Level1)
+{
+    auto subscriber =  std::make_shared<BackgroundTaskSubscriber>();
+    EXPECT_NE(subscriber, nullptr);
+    auto resourceInfo = std::make_shared<ResourceCallbackInfo>(0, 0, 0, "");
+    subscriber->OnAppEfficiencyResourcesApply(resourceInfo);
+    subscriber->OnAppEfficiencyResourcesReset(resourceInfo);
+    subscriber->OnProcEfficiencyResourcesApply(resourceInfo);
+    subscriber->OnProcEfficiencyResourcesReset(resourceInfo);
+
+    auto subscriberImpl = subscriber->GetImpl();
+    EXPECT_NE(subscriberImpl, nullptr);
+    subscriberImpl->OnAppEfficiencyResourcesApply(resourceInfo);
+    subscriberImpl->OnAppEfficiencyResourcesReset(resourceInfo);
+    subscriberImpl->OnProcEfficiencyResourcesApply(resourceInfo);
+    subscriberImpl->OnProcEfficiencyResourcesReset(resourceInfo);
+}
+
+/**
  * @tc.name: Marshalling_001
  * @tc.desc: marshalling resource callback info and efficiency resources info.
  * @tc.type: FUNC
