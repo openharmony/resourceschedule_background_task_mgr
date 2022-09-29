@@ -99,7 +99,6 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
                     GetRemainingDelayTime(asyncCallbackInfo->requestId, asyncCallbackInfo->delayTime);
-                asyncCallbackInfo->errMsg = Common::FindErrMsg(env, asyncCallbackInfo->errCode);
             }
         },
         [](napi_env env, napi_status status, void *data) {

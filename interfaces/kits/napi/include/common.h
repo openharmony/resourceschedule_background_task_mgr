@@ -17,6 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_COMMON_H
 
 #include <string_ex.h>
+#include <memory>
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
@@ -35,7 +36,6 @@ struct AsyncWorkData {
     napi_ref callback = nullptr;
     bool isCallback = false;
     int32_t errCode = 0;
-    std::string errMsg = "";
 };
 
 class Common {
@@ -55,10 +55,10 @@ public:
 
     static napi_value GetCallbackErrorValue(napi_env env, const int32_t errCode, const std::string errMsg);
 
-    static void SetCallback(const napi_env &env, const AsyncWorkData &info, const napi_value &result);
+    static void SetCallback(const napi_env &env, const napi_ref &callbackIn, const napi_value &result);
 
     static void SetCallback(const napi_env &env, const napi_ref &callbackIn,
-        const int32_t &errCode, const napi_value &result)
+        const int32_t &errCode, const napi_value &result);
 
     static napi_value SetPromise(const napi_env &env, const AsyncWorkData &info, const napi_value &result);
 
@@ -82,7 +82,8 @@ public:
 
     static std::string FindErrMsg(const napi_env &env, const int32_t errCode);
 
-    int32_t FindErrCode(const napi_env &env, const int32_t errCodeIn);
+    static int32_t FindErrCode(const napi_env &env, const int32_t errCodeIn);
+
     static napi_value GetBooleanValue(const napi_env &env, const napi_value &value, bool &result);
 };
 }  // namespace BackgroundTaskMgr

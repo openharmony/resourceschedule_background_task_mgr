@@ -224,6 +224,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
 
     if (GetExpiredCallback(env, argv[1], callback) == nullptr) {
         BGTASK_LOGE("ExpiredCallback parse failed");
+        Common::HandleParamErr(env, ERR_CALLBACK_NULL_OR_TYPE_ERR);
         return nullptr;
     }
     return Common::NapiGetNull(env);

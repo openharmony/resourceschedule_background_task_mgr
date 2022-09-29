@@ -47,6 +47,19 @@ napi_module _module = {
     .nm_priv = ((void *)0),
     .reserved = {0}
 };
+
+/*
+ * Module define
+ */
+napi_module _apiModule = {
+    .nm_version = 1,
+    .nm_flags = 0,
+    .nm_filename = nullptr,
+    .nm_register_func = Init,
+    .nm_modname = "resourceschedule.backgroundTaskManager",
+    .nm_priv = ((void *)0),
+    .reserved = {0}
+};
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_INIT_H

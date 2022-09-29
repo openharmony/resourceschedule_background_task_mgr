@@ -74,20 +74,29 @@ napi_value Common::GetCallbackErrorValue(napi_env env, const int32_t errCode, co
     return error;
 }
 
-void Common::SetCallback(
-    const napi_env &env, const AsyncWorkData &info, const napi_value &result)
+napi_value Common::GetExpireCallbackValue(napi_env env, int32_t errCode, const napi_value &value)
+{
+    napi_value result = nullptr;
+    napi_value eCode = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
+    NAPI_CALL(env, napi_create_object(env, &result));
+    NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
+    NAPI_CALL(env, napi_set_named_property(env, result, "data", value));
+    return result;
+}
+
+void Common::SetCallback(const napi_env &env, const napi_ref &callbackIn, const napi_value &result)
 {
     napi_value undefined = nullptr;
     napi_get_undefined(env, &undefined);
 
     napi_value callback = nullptr;
     napi_value resultout = nullptr;
-    napi_get_reference_value(env, info.callback, &callback);
-    napi_value results[ASYNC_CALLBACK_PARAM_NUM] = {nullptr};
-    results[0] = GetCallbackErrorValue(env, info.errCode, info.errMsg);
-    results[1] = result;
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback,
-        ASYNC_CALLBACK_PARAM_NUM, &results[0], &resultout));
+    napi_value res = nullptr;
+    res = GetExpireCallbackValue(env, 0, result);
+    napi_get_reference_value(env, callbackIn, &callback);
+    NAPI_CALL_RETURN_VOID(env,
+        napi_call_function(env, undefined, callback, EXPIRE_CALLBACK_PARAM_NUM, &res, &resultout));
 }
 
 void Common::SetCallback(
@@ -100,8 +109,12 @@ void Common::SetCallback(
     napi_value resultout = nullptr;
     napi_get_reference_value(env, callbackIn, &callback);
     napi_value results[ASYNC_CALLBACK_PARAM_NUM] = {nullptr};
-    std::string errMsg = FindErrMsg(env, errCode);
-    results[0] = GetCallbackErrorValue(env, errCode, errMsg);
+    if (errCode == ERR_OK) {
+        results[0] = NapiGetNull(env);
+    } else {
+        std::string errMsg = FindErrMsg(env, errCode);
+        results[0] = GetCallbackErrorValue(env, errCode, errMsg); 
+    }
     results[1] = result;
     NAPI_CALL_RETURN_VOID(env,
         napi_call_function(env, undefined, callback, ASYNC_CALLBACK_PARAM_NUM, &results[0], &resultout));
@@ -113,12 +126,13 @@ napi_value Common::SetPromise(
     if (info.errCode == ERR_OK) {
         napi_resolve_deferred(env, info.deferred, result);
     } else {
+        std::string errMsg = FindErrMsg(env, info.errCode);
         napi_value error = nullptr;
         napi_value eCode = nullptr;
         napi_value eMsg = nullptr;
         NAPI_CALL(env, napi_create_int32(env, info.errCode, &eCode));
-        NAPI_CALL(env, napi_create_string_utf8(env, info.errMsg.c_str(),
-            info.errMsg.length(), &eMsg));
+        NAPI_CALL(env, napi_create_string_utf8(env, errMsg.c_str(),
+            errMsg.length(), &eMsg));
         NAPI_CALL(env, napi_create_object(env, &error));
         NAPI_CALL(env, napi_set_named_property(env, error, "data", eCode));
         NAPI_CALL(env, napi_set_named_property(env, error, "code", eCode));
@@ -131,7 +145,7 @@ napi_value Common::SetPromise(
 void Common::ReturnCallbackPromise(const napi_env &env, const AsyncWorkData &info, const napi_value &result)
 {
     if (info.isCallback) {
-        SetCallback(env, info, result);
+        SetCallback(env, info.callback, info.errCode, result);
     } else {
         SetPromise(env, info, result);
     }
@@ -249,24 +263,29 @@ napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, 
 
 void Common::HandleErrCode(const napi_env &env, int32_t errCode)
 {
+    if (errCode == ERR_OK) {
+        return;
+    }
     std::string errMsg = FindErrMsg(env, errCode);
     int32_t errCodeInfo = FindErrCode(env, errCode);
     if (errMsg != "") {
-        napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMessage.c_str());
+        napi_throw_error(env, std::to_string(errCodeInfo).c_str(), errMsg.c_str());
     }
 }
 
 bool Common::HandleParamErr(const napi_env &env, int32_t errCode)
 {
-    bool isParamErr = false;
-    auto iter = paramErrCodeMsgMap.find(errCodeIn);
+    if (errCode == ERR_OK) {
+        return false;
+    }
+    auto iter = paramErrCodeMsgMap.find(errCode);
     if (iter != paramErrCodeMsgMap.end()) {
         std::string errMessage = "BussinessError 401: Parameter error. ";
         errMessage.append(paramErrCodeMsgMap[errCode]);
         napi_throw_error(env, std::to_string(ERR_BGTASK_INVALID_PARAM).c_str(), errMessage.c_str());
-        isParamErr = true;
+        return true;
     }
-    return isParamErr;
+    return false;
 }
 
 std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
@@ -278,7 +297,7 @@ std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
     if (iter != saErrCodeMsgMap.end()) {
         std::string errMessage = "BussinessError ";
         errMessage.append(std::to_string(errCode)).append(": ").append(saErrCodeMsgMap[errCode]);
-        return saErrCodeMsgMap[errCode];
+        return errMessage;
     }
     iter = paramErrCodeMsgMap.find(errCode);
     if (iter != paramErrCodeMsgMap.end()) {
@@ -286,7 +305,7 @@ std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
         errMessage.append(paramErrCodeMsgMap[errCode]);
         return errMessage;
     }
-    return "";
+    return "Inner error.";
 }
 
 int32_t Common::FindErrCode(const napi_env &env, const int32_t errCodeIn)
@@ -296,6 +315,8 @@ int32_t Common::FindErrCode(const napi_env &env, const int32_t errCodeIn)
         return ERR_BGTASK_INVALID_PARAM;
     }
     return errCodeIn;
+}
+
 napi_value Common::GetBooleanValue(const napi_env &env, const napi_value &value, bool &result)
 {
     napi_valuetype valuetype = napi_undefined;

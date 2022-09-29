@@ -372,35 +372,35 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
     return true;
 }
 
-bool BgContinuousTaskMgr::checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId,
+ErrCode BgContinuousTaskMgr::checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId,
     bool isNewApi, int32_t uid)
 {
     if (!isNewApi) {
         if (configuredBgMode == INVALID_BGMODE) {
             BGTASK_LOGE("ability without background mode config");
-            return false;
+            return ERR_BGMODE_NULL_OR_TYPE_ERR;
         } else {
-            return true;
+            return ERR_OK;
         }
     } else {
         uint32_t recordedBgMode = BG_MODE_INDEX_HEAD << (requestedBgModeId - 1);
         if ((recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION || recordedBgMode == SYSTEM_APP_BGMODE_VOIP)
             && !BundleManagerHelper::GetInstance()->IsSystemApp(uid)) {
             BGTASK_LOGE("voip and wifiInteraction background mode only support for system app");
-            return false;
+            return ERR_BGTASK_WIFI_VOIP_VERIFY_ERR;
         }
         if (recordedBgMode == PC_BGMODE_TASK_KEEPING
             && deviceType_ != DEVICE_TYPE_PC) {
             BGTASK_LOGE("task keeping background mode only support for pc device");
-            return false;
+            return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
         }
         if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode
             & (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
             BGTASK_LOGE("requested background mode is not declared in config file!");
-            return false;
+            return ERR_BGTASK_INVALID_BGMODE;
         }
     }
-    return true;
+    return ERR_OK;
 }
 
 uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, std::string &abilityName)
@@ -444,7 +444,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     }
 
     if (!CheckTaskParam(taskParam)) {
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_CHECK_TASK_PARAM;
     }
 
     ErrCode result = ERR_OK;
@@ -511,13 +511,16 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
 
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_,
         continuousTaskRecord->abilityName_);
-    if (!checkBgmodeType(configuredBgMode, continuousTaskRecord->bgModeId_, continuousTaskRecord->isNewApi_,
-        continuousTaskRecord->uid_)) {
+    ErrCode ret = checkBgmodeType(configuredBgMode, continuousTaskRecord->bgModeId_, continuousTaskRecord->isNewApi_,
+        continuousTaskRecord->uid_);
+    if (ret != ERR_OK) {
         BGTASK_LOGE("background mode invalid!");
-        return ERR_BGTASK_INVALID_BGMODE;
+        return ret;
     }
-
-    if (SendContinuousTaskNotification(continuousTaskRecord) != ERR_OK) {
+    ret = SendContinuousTaskNotification(continuousTaskRecord);
+    if (ret == ERR_BGTASK_NOTIFICATION_VERIFY_FAILED) {
+        return ret;
+    } else if (ret != ERR_OK) {
         BGTASK_LOGE("publish error");
         return ERR_BGTASK_NOTIFICATION_ERR;
     }
@@ -552,7 +555,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     }
     if (appName.empty() || notificationText.empty()) {
         BGTASK_LOGE("get notification prompt info failed");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
     }
 
     return NotificationTools::GetInstance()->PublishNotification(continuousTaskRecord,
@@ -589,7 +592,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     auto iter = continuousTaskInfosMap_.find(mapKey);
     if (iter == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("%{public}s continuous task not exists", mapKey.c_str());
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
     ErrCode result = NotificationTools::GetInstance()->CancelNotification(
         iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);

@@ -37,10 +37,11 @@ enum : int32_t {
     ERR_BGTASK_PERMISSION_DENIED = 201,
     ERR_BGTASK_INVALID_PARAM = 401,
     // errcode for Continuous Task
+    ERR_BGTASK_NO_MEMORY,
     ERR_BGTASK_SYS_NOT_READY = 9800001,
     ERR_BGTASK_SERVICE_NOT_CONNECTED,
     ERR_BGTASK_PARCELABLE_FAILED,
-    ERR_BGTASK_IPC_FAILED,
+    ERR_BGTASK_TRANSACT_FAILED,
     ERR_BGTASK_OBJECT_EXISTS,
     ERR_BGTASK_OBJECT_NOT_EXIST,
     ERR_BGTASK_WIFI_VOIP_VERIFY_ERR,
@@ -48,27 +49,26 @@ enum : int32_t {
     ERR_BGTASK_INVALID_BGMODE,
     ERR_BGTASK_NOTIFICATION_VERIFY_FAILED,
     ERR_BGTASK_NOTIFICATION_ERR,
-    ERR_BGTASK_DATA_STORAGE_ERR,
+    ERR_BGTASK_CHECK_TASK_PARAM,//wantAgent_和abilityName_不能为空
     // errcode for Transient Task
-    // ERR_BGTASK_CALLER_VERIFY_FAILED = 9900001,
     ERR_BGTASK_SERVICE_NOT_READY = 9900001,
+    ERR_BGTASK_CALLER_VERIFY_FAILED,
     ERR_BGTASK_INVALID_PID_OR_UID,
-    ERR_BGTASK_INVALID_BUNDLE_NAME,
-    ERR_BGTASK_INVALID_REQUEST_ID,
+    ERR_BGTASK_INVALID_BUNDLE_NAME,//没用
+    ERR_BGTASK_INVALID_REQUEST_ID,//找不到requestId
     ERR_BGTASK_CALLBACK_NOT_EXIST,
     ERR_BGTASK_CALLBACK_EXISTS,
     ERR_BGTASK_NOT_IN_PRESET_TIME,
     ERR_BGTASK_EXCEEDS_THRESHOLD,
-    ERR_BGTASK_TIME_INSUFFICIENT,
+    ERR_BGTASK_TIME_INSUFFICIENT,//找一下在哪
     // errcode for Efficiency Resource
-    ERR_BGTASK_EFFICIENCY_CALLER_VERIFY_FAILED = 18700001,
-    ERR_BGTASK_RESOURCES_EXIST,
-    ERR_BGTASK_INNER_ERROR,
+    ERR_BGTASK_EFFICIENCY_CALLER_VERIFY_FAILED = 18700001,//找一下在哪
+    ERR_BGTASK_RESOURCES_EXIST,//找一下在哪
+    ERR_BGTASK_RESOURCES_EXCEEDS_MAX,//
     // other inner errcode
-    ERR_BGTASK_TRANSACT_FAILED,
-    ERR_BGTASK_NOT_ALLOWED,
     ERR_BGTASK_METHOD_CALLED_FAILED,
-    ERR_BGTASK_NO_MEMORY,
+    ERR_BGTASK_DATA_STORAGE_ERR,
+    ERR_BGTASK_SERVICE_INNER_ERROR,
 };
 
 enum ParamErr: int32_t {
@@ -84,39 +84,38 @@ enum ParamErr: int32_t {
     ERR_GET_TOKEN_ERR,//
     ERR_BGMODE_RANGE_ERR,
     ERR_APP_NAME_EMPTY,//
-    ERR_RESOURCE_TYPE_ERR,
-    ERR_ISAPPLY_TYPE_ERR,
-    ERR_TIMEOUT_TYPE_ERR,
-    ERR_TIMEOUT_RANGE_ERR,
     ERR_RESOURCE_TYPES_INVALID,
-    ERR_CALLER_INFO_VERIFICATION_ERR,
+    ERR_ISAPPLY_NULL_OR_TYPE_ERR,
+    ERR_TIMEOUT_INVALID,
+    ERR_ISPERSIST_NULL_OR_TYPE_ERR,//
+    ERR_ISPROCESS_NULL_OR_TYPE_ERR,//
 };
 
 static std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_BGTASK_PERMISSION_DENIED, "Permission denied."},
-    {ERR_BGTASK_SERVICE_NOT_READY, "Parcel operation failed. Failed to read the parcel."},
-    {ERR_BGTASK_SERVICE_NOT_CONNECTED, "Parcel operation failed. Failed to write the parcel."},
-    {ERR_BGTASK_PARCELABLE_FAILED, "System service operation failed. Failed to get system ability manager."},
-    {ERR_BGTASK_IPC_FAILED, "System service operation failed. Failed to get system ability."},
-    {ERR_BGTASK_OBJECT_EXISTS, "System service operation failed. The service is not ready."},
-    {ERR_BGTASK_OBJECT_NOT_EXIST, "IPC communication failed. Failed to access the system service."},
-    {ERR_BGTASK_WIFI_VOIP_VERIFY_ERR, "Check workInfo failed. Current bundleUid and input uid do not match."},
-    {ERR_BGTASK_KEEPING_TASK_VERIFY_ERR, "StartWork failed. The work has been already added."},
-    {ERR_BGTASK_INVALID_BGMODE, "StartWork failed. Each uid can add up to 10 works."},
-    {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED, "The workId do not exist."},
-    {ERR_BGTASK_NOTIFICATION_ERR, "Check workInfo failed. Current bundleUid and input uid do not match."},
-    {ERR_BGTASK_DATA_STORAGE_ERR, "StartWork failed. The work has been already added."},
-    {ERR_BGTASK_INVALID_PID_OR_UID, "StartWork failed. Each uid can add up to 10 works."},
-    {ERR_BGTASK_INVALID_BUNDLE_NAME, "The workId do not exist."},
-    {ERR_BGTASK_INVALID_REQUEST_ID, "StartWork failed. The work has been already added."},
-    {ERR_BGTASK_CALLBACK_NOT_EXIST, "StartWork failed. Each uid can add up to 10 works."},
-    {ERR_BGTASK_CALLBACK_EXISTS, "The workId do not exist."},
-    {ERR_BGTASK_NOT_IN_PRESET_TIME, "Check workInfo failed. Current bundleUid and input uid do not match."},
-    {ERR_BGTASK_EXCEEDS_THRESHOLD, "StartWork failed. The work has been already added."},
+    {ERR_BGTASK_SERVICE_NOT_READY, "System service operation failed. The system service is not ready."},
+    {ERR_BGTASK_SERVICE_NOT_CONNECTED, "System service operation failed. The system service is not connected."},
+    {ERR_BGTASK_PARCELABLE_FAILED, "Parcel operation failed."},
+    {ERR_BGTASK_TRANSACT_FAILED, "IPC communication failed."},
+    {ERR_BGTASK_OBJECT_EXISTS, "Background Task verification failed. The application has applied for a background task."},
+    {ERR_BGTASK_OBJECT_NOT_EXIST, "Background Task verification failed. The application has not applied for a background task."},
+    {ERR_BGTASK_WIFI_VOIP_VERIFY_ERR, "Background Task verification failed. Only system application can apply for WIFI_INTERACTION or VoIP."},
+    {ERR_BGTASK_KEEPING_TASK_VERIFY_ERR, "Background Task verification failed. Only PC device can apply for KEEPING_TASK."},
+    {ERR_BGTASK_INVALID_BGMODE, "Background Task verification failed. The bgMode is invalid."},
+    {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED, "Notification verification failed. The title or text of the notification cannot be empty."},
+    {ERR_BGTASK_NOTIFICATION_ERR, "Failed to send or cancel the notification."},
+    {ERR_BGTASK_NO_MEMORY, "Memory operation failed. Failed to allocate the memory."},
+    {ERR_BGTASK_INVALID_PID_OR_UID, "Caller information verification failed. Invalid pid or uid."},
+    {ERR_BGTASK_INVALID_BUNDLE_NAME, "Caller information verification failed. The bundleName cannot be found."},
+    {ERR_BGTASK_INVALID_REQUEST_ID, "Caller information verification failed. Invalid requestId."},
+    {ERR_BGTASK_CALLBACK_NOT_EXIST, "SuspendDelay verification failed. The callback already exists."},
+    {ERR_BGTASK_CALLBACK_EXISTS, "SuspendDelay verification failed. The callback does not exist."},
+    {ERR_BGTASK_NOT_IN_PRESET_TIME, "SuspendDelay verification failed. Request is not allow after the preset time of entering background."},
+    {ERR_BGTASK_EXCEEDS_THRESHOLD, "SuspendDelay verification failed. The number of request exceeds the threshold."},
     {ERR_BGTASK_TIME_INSUFFICIENT, "StartWork failed. Each uid can add up to 10 works."},
     {ERR_BGTASK_EFFICIENCY_CALLER_VERIFY_FAILED, "The workId do not exist."},
-    {ERR_BGTASK_RESOURCES_EXIST, "StartWork failed. Each uid can add up to 10 works."},
-    {ERR_BGTASK_INNER_ERROR, "The workId do not exist."},
+    {ERR_BGTASK_RESOURCES_EXCEEDS_MAX, "Caller information verification failed. The number of resources applied exceeds maximun."},
+    {ERR_BGTASK_SERVICE_INNER_ERROR, "Service inner error."},
 };
 
 static std::map<int32_t, std::string> paramErrCodeMsgMap = {
@@ -132,13 +131,12 @@ static std::map<int32_t, std::string> paramErrCodeMsgMap = {
     {ERR_GET_TOKEN_ERR, "The token of context cannot be null."},
     {ERR_BGMODE_RANGE_ERR, "The value of bgMode ranges from BG_MODE_ID_BEGIN to BG_MODE_ID_END."},
     {ERR_APP_NAME_EMPTY, "The app name of abilityInfo cannot be null."},
-    {ERR_RESOURCE_TYPE_ERR, "The value of chargerType ranges from CHARGING_PLUGGED_ANY to CHARGING_UNPLUGGED."},
-    {ERR_ISAPPLY_TYPE_ERR, "The value of batteryLevel ranges from 0 to 100."},
-    {ERR_TIMEOUT_RANGE_ERR, "The value of batteryStatus ranges from BATTERY_STATUS_LOW to BATTERY_STATUS_LOW_OR_OKAY."},
-    {ERR_RESOURCE_TYPES_INVALID, "The value of storageRequest ranges from STORAGE_LEVEL_LOW to STORAGE_LEVEL_LOW_OR_OKAY."},
-    {ERR_CALLER_INFO_VERIFICATION_ERR, "The number of repeatCount must be greater than or equal to 0."},
+    {ERR_RESOURCE_TYPES_INVALID, "The resourcesType cannot be null and must be integer greater than 0."},
+    {ERR_ISAPPLY_NULL_OR_TYPE_ERR, "The isApply cannot be null and its type must be boolean."},
+    {ERR_TIMEOUT_INVALID, "The timeOut cannot be null and must be integer greater than 0."},
+    {ERR_ISPERSIST_NULL_OR_TYPE_ERR, "The isPersist cannot be null and must be boolean."},
+    {ERR_ISPROCESS_NULL_OR_TYPE_ERR, "The isProcess cannot be null and must be boolean."},
     {ERR_BGTASK_INVALID_PARAM, "The input param is invalid."}
-
 };
 
 }  // namespace BackgroundTaskMgr

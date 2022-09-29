@@ -209,7 +209,8 @@ void CallbackCompletedCB(napi_env env, napi_status status, void *data)
         napi_create_int32(env, 0, &result[1]);
     } else {
         result[1] = WrapUndefinedToJS(env);
-        result[0] = GetCallbackErrorValue(env, asyncCallbackInfo->errCode);
+        std::string errMsg = Common::FindErrMsg(env, asyncCallbackInfo->errCode);
+        result[0] = Common::GetCallbackErrorValue(env, asyncCallbackInfo->errCode, errMsg);
     }
 
     NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, asyncCallbackInfo->callback, &callback));
@@ -226,7 +227,8 @@ void PromiseCompletedCB(napi_env env, napi_status status, void *data)
         napi_create_int32(env, 0, &result);
         NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result));
     } else {
-        result = GetCallbackErrorValue(env, asyncCallbackInfo->errCode);
+        std::string errMsg = Common::FindErrMsg(env, asyncCallbackInfo->errCode);
+        result = Common::GetCallbackErrorValue(env, asyncCallbackInfo->errCode, errMsg);
         NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
     }
 }
@@ -320,7 +322,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
     if (argc > MAX_START_BG_RUNNING_PARAMS) {
         BGTASK_LOGE("wrong param nums");
         Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR);
-        return nullptr;
+        return WrapVoidToJS(env);
     }
 
     // argv[0] : context : AbilityContext

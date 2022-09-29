@@ -104,6 +104,7 @@ static napi_value Init(napi_env env, napi_value exports)
 __attribute__((constructor)) void RegisterModule(void)
 {
     napi_module_register(&_module);
+    napi_module_register(&_apiModule);
 }
 EXTERN_C_END
 }  // namespace BackgroundTaskMgr
