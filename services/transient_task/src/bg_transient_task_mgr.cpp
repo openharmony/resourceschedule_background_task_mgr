@@ -124,29 +124,29 @@ bool BgTransientTaskMgr::GetBundleNamesForUid(int32_t uid, std::string &bundleNa
     return true;
 }
 
-bool BgTransientTaskMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
+ErrCode BgTransientTaskMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
     const sptr<IExpiredCallback>& callback)
 {
     if (!VerifyCallingInfo(uid, pid)) {
         BGTASK_LOGE("pid or uid is invalid.");
-        return false;
+        return ERR_BGTASK_INVALID_PID_OR_UID;
     }
 
     if (!GetBundleNamesForUid(uid, name)) {
         BGTASK_LOGE("GetBundleNamesForUid fail.");
-        return false;
+        return ERR_BGTASK_INVALID_BUNDLE_NAME;
     }
 
     if (callback == nullptr) {
         BGTASK_LOGE("callback is null.");
-        return false;
+        return ERR_BGTASK_INVALID_CALLBACK;
     }
 
     if (callback->AsObject() == nullptr) {
         BGTASK_LOGE("remote in callback is null.");
-        return false;
+        return ERR_BGTASK_INVALID_CALLBACK;
     }
-    return true;
+    return ERR_OK;
 }
 
 ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
@@ -159,9 +159,10 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
     std::string name = "";
-    if (!IsCallingInfoLegal(uid, pid, name, callback)) {
+    ErrCode ret = IsCallingInfoLegal(uid, pid, name, callback);
+    if (ret != ERR_OK) {
         BGTASK_LOGI("Request suspend delay failed, calling info is illegal.");
-        return ERR_BGTASK_CALLER_VERIFY_FAILED;
+        return ret;
     }
     BGTASK_LOGD("request suspend delay pkg : %{public}s, reason : %{public}s, uid : %{public}d, pid : %{public}d",
         name.c_str(), Str16ToStr8(reason).c_str(), uid, pid);
@@ -181,7 +182,7 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
     }
 
     auto keyInfo = make_shared<KeyInfo>(name, uid, pid);
-    ErrCode ret = decisionMaker_->Decide(keyInfo, infoEx);
+    ret = decisionMaker_->Decide(keyInfo, infoEx);
     if (ret != ERR_OK) {
         BGTASK_LOGI("%{public}s request suspend failed.", name.c_str());
         return ret;

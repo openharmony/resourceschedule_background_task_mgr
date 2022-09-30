@@ -37,11 +37,11 @@ enum : int32_t {
     ERR_BGTASK_PERMISSION_DENIED = 201,
     ERR_BGTASK_INVALID_PARAM = 401,
     // errcode for Continuous Task
-    ERR_BGTASK_NO_MEMORY,
-    ERR_BGTASK_SYS_NOT_READY = 9800001,
-    ERR_BGTASK_SERVICE_NOT_CONNECTED,
+    ERR_BGTASK_NO_MEMORY = 9800001,
     ERR_BGTASK_PARCELABLE_FAILED,
     ERR_BGTASK_TRANSACT_FAILED,
+    ERR_BGTASK_SYS_NOT_READY,
+    ERR_BGTASK_SERVICE_NOT_CONNECTED,
     ERR_BGTASK_OBJECT_EXISTS,
     ERR_BGTASK_OBJECT_NOT_EXIST,
     ERR_BGTASK_WIFI_VOIP_VERIFY_ERR,
@@ -49,22 +49,20 @@ enum : int32_t {
     ERR_BGTASK_INVALID_BGMODE,
     ERR_BGTASK_NOTIFICATION_VERIFY_FAILED,
     ERR_BGTASK_NOTIFICATION_ERR,
-    ERR_BGTASK_CHECK_TASK_PARAM,//wantAgent_和abilityName_不能为空
+    ERR_BGTASK_CHECK_TASK_PARAM,
     // errcode for Transient Task
     ERR_BGTASK_SERVICE_NOT_READY = 9900001,
-    ERR_BGTASK_CALLER_VERIFY_FAILED,
     ERR_BGTASK_INVALID_PID_OR_UID,
-    ERR_BGTASK_INVALID_BUNDLE_NAME,//没用
-    ERR_BGTASK_INVALID_REQUEST_ID,//找不到requestId
-    ERR_BGTASK_CALLBACK_NOT_EXIST,
+    ERR_BGTASK_INVALID_BUNDLE_NAME,
+    ERR_BGTASK_INVALID_REQUEST_ID,
+    ERR_BGTASK_INVALID_CALLBACK,
     ERR_BGTASK_CALLBACK_EXISTS,
+    ERR_BGTASK_CALLBACK_NOT_EXIST,
     ERR_BGTASK_NOT_IN_PRESET_TIME,
     ERR_BGTASK_EXCEEDS_THRESHOLD,
-    ERR_BGTASK_TIME_INSUFFICIENT,//找一下在哪
+    ERR_BGTASK_TIME_INSUFFICIENT,
     // errcode for Efficiency Resource
-    ERR_BGTASK_EFFICIENCY_CALLER_VERIFY_FAILED = 18700001,//找一下在哪
-    ERR_BGTASK_RESOURCES_EXIST,//找一下在哪
-    ERR_BGTASK_RESOURCES_EXCEEDS_MAX,//
+    ERR_BGTASK_RESOURCES_EXCEEDS_MAX = 18700001,
     // other inner errcode
     ERR_BGTASK_METHOD_CALLED_FAILED,
     ERR_BGTASK_DATA_STORAGE_ERR,
@@ -108,12 +106,12 @@ static std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_BGTASK_INVALID_PID_OR_UID, "Caller information verification failed. Invalid pid or uid."},
     {ERR_BGTASK_INVALID_BUNDLE_NAME, "Caller information verification failed. The bundleName cannot be found."},
     {ERR_BGTASK_INVALID_REQUEST_ID, "Caller information verification failed. Invalid requestId."},
+    {ERR_BGTASK_INVALID_CALLBACK, "Caller information verification failed. The callback cannot be empty."},
     {ERR_BGTASK_CALLBACK_NOT_EXIST, "SuspendDelay verification failed. The callback already exists."},
     {ERR_BGTASK_CALLBACK_EXISTS, "SuspendDelay verification failed. The callback does not exist."},
     {ERR_BGTASK_NOT_IN_PRESET_TIME, "SuspendDelay verification failed. Request is not allow after the preset time of entering background."},
     {ERR_BGTASK_EXCEEDS_THRESHOLD, "SuspendDelay verification failed. The number of request exceeds the threshold."},
     {ERR_BGTASK_TIME_INSUFFICIENT, "StartWork failed. Each uid can add up to 10 works."},
-    {ERR_BGTASK_EFFICIENCY_CALLER_VERIFY_FAILED, "The workId do not exist."},
     {ERR_BGTASK_RESOURCES_EXCEEDS_MAX, "Caller information verification failed. The number of resources applied exceeds maximun."},
     {ERR_BGTASK_SERVICE_INNER_ERROR, "Service inner error."},
 };
