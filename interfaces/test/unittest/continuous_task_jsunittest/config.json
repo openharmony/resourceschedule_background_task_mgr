@@ -16,6 +16,7 @@
       "package": "com.continuoustask.test",
       "name": ".MyApplication",
       "deviceType": [
+        "default",
         "phone"
       ],
       "distro": {
