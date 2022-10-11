@@ -30,17 +30,9 @@ const std::string TASK_ON_PROCESS_DIED = "OnProcessDiedTask";
 const std::string TASK_ON_ABILITY_STATE_CHANGED = "OnAbilityStateChangedTask";
 }
 
-AppStateObserver::AppStateObserver()
-{
-    appMgrDeathRecipient_ = new (std::nothrow) RemoteDeathRecipient(std::bind(&AppStateObserver::OnRemoteDied,
-        this, std::placeholders::_1));
-}
+AppStateObserver::AppStateObserver() {}
 
-AppStateObserver::~AppStateObserver()
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    Disconnect();
-}
+AppStateObserver::~AppStateObserver() {}
 
 bool AppStateObserver::CheckParamValid()
 {
@@ -185,22 +177,7 @@ bool AppStateObserver::Connect()
         BGTASK_LOGE("get app mgr proxy failed!");
         return false;
     }
-    appMgrProxy_->AsObject()->AddDeathRecipient(appMgrDeathRecipient_);
     return true;
-}
-
-void AppStateObserver::Disconnect()
-{
-    if (appMgrProxy_ != nullptr && appMgrProxy_->AsObject() != nullptr) {
-        appMgrProxy_->AsObject()->RemoveDeathRecipient(appMgrDeathRecipient_);
-        appMgrProxy_ = nullptr;
-    }
-}
-
-void AppStateObserver::OnRemoteDied(const wptr<IRemoteObject> &object)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    Disconnect();
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

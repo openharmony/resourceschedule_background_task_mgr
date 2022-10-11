@@ -43,8 +43,6 @@ public:
 
 private:
     bool Connect();
-    void Disconnect();
-    void OnRemoteDied(const wptr<IRemoteObject> &object);
     inline bool ValidateAppStateData(const AppExecFwk::AppStateData &appStateData);
     void OnProcessDiedContinuousTask(const AppExecFwk::ProcessData &processData);
     void OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData);
