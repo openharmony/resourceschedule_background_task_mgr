@@ -32,7 +32,7 @@ namespace BackgroundTaskMgr {
  */
 const int OFFSET = 100;
 // Bgtask Common Error Code Defined.
-enum : int32_t { 
+enum : int32_t {
     // errcode for common
     ERR_BGTASK_PERMISSION_DENIED = 201,
     ERR_BGTASK_INVALID_PARAM = 401,
@@ -99,12 +99,17 @@ static std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_BGTASK_SERVICE_NOT_CONNECTED, "System service operation failed. The system service is not connected."},
     {ERR_BGTASK_PARCELABLE_FAILED, "Parcel operation failed."},
     {ERR_BGTASK_TRANSACT_FAILED, "IPC communication failed."},
-    {ERR_BGTASK_OBJECT_EXISTS, "Background Task verification failed. The application has applied for a background task."},
-    {ERR_BGTASK_OBJECT_NOT_EXIST, "Background Task verification failed. The application has not applied for a background task."},
-    {ERR_BGTASK_WIFI_VOIP_VERIFY_ERR, "Background Task verification failed. Only system application can apply for WIFI_INTERACTION or VoIP."},
-    {ERR_BGTASK_KEEPING_TASK_VERIFY_ERR, "Background Task verification failed. Only PC device can apply for KEEPING_TASK."},
+    {ERR_BGTASK_OBJECT_EXISTS,
+        "Background Task verification failed. The application has applied for a background task."},
+    {ERR_BGTASK_OBJECT_NOT_EXIST,
+        "Background Task verification failed. The application has not applied for a background task."},
+    {ERR_BGTASK_WIFI_VOIP_VERIFY_ERR,
+        "Background Task verification failed. Only system application can apply for WIFI_INTERACTION or VoIP."},
+    {ERR_BGTASK_KEEPING_TASK_VERIFY_ERR,
+        "Background Task verification failed. Only PC device can apply for KEEPING_TASK."},
     {ERR_BGTASK_INVALID_BGMODE, "Background Task verification failed. The bgMode is invalid."},
-    {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED, "Notification verification failed. The title or text of the notification cannot be empty."},
+    {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED,
+        "Notification verification failed. The title or text of the notification cannot be empty."},
     {ERR_BGTASK_NOTIFICATION_ERR, "Notification verification failed. Failed to send or cancel the notification."},
     {ERR_BGTASK_CREATE_FILE_ERR, "Task storage failed. Failed to create the storage task file."},
     {ERR_BGTASK_GET_ACTUAL_FILE_ERR, "Task storage failed. Failed to get the actual storage task file."},
@@ -115,11 +120,13 @@ static std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_BGTASK_INVALID_CALLBACK, "Caller information verification failed. The callback cannot be empty."},
     {ERR_BGTASK_CALLBACK_EXISTS, "SuspendDelay verification failed. The callback already exists."},
     {ERR_BGTASK_CALLBACK_NOT_EXIST, "SuspendDelay verification failed. The callback does not exist."},
-    {ERR_BGTASK_NOT_IN_PRESET_TIME, "SuspendDelay verification failed. Request is not allow after the preset time of entering background."},
+    {ERR_BGTASK_NOT_IN_PRESET_TIME,
+        "SuspendDelay verification failed. Request is not allow after the preset time of entering background."},
     {ERR_BGTASK_EXCEEDS_THRESHOLD, "SuspendDelay verification failed. The number of request exceeds the threshold."},
     {ERR_BGTASK_TIME_INSUFFICIENT,
-        "SuspendDelay verification failed. The remaining time for the application to run transient task is insufficient."},
-    {ERR_BGTASK_RESOURCES_EXCEEDS_MAX, "Caller information verification failed. The number of resources applied exceeds maximun."},
+        "SuspendDelay verification failed. The remaining time to run transient task is insufficient."},
+    {ERR_BGTASK_RESOURCES_EXCEEDS_MAX,
+        "Caller information verification failed. The number of resources applied exceeds maximun."},
     {ERR_BGTASK_SERVICE_INNER_ERROR, "Service inner error."},
 };
 

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import backgroundTaskManager from '@ohos.resourceschedule.backgroundTaskManager'
+import backgroundTaskManager from '@ohos.backgroundTaskManager'
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from 'deccjsunit/index'
 
@@ -50,7 +50,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest001
      * @tc.desc: test apply a efficiency resource
      * @tc.type: FUNC
-     * @tc.require: issuesI5OD7X issuesI5VOUF
+     * @tc.require: issuesI5OD7X issueI5QJR8
      */
     it("EfficiencyResourcesJsTest001", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest001---------------------------');
@@ -75,7 +75,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest002
      * @tc.desc: test reset a efficiency resource
      * @tc.type: FUNC
-     * @tc.require: issuesI5OD7X issuesI5VOUF
+     * @tc.require: issuesI5OD7X issueI5QJR8
      */
     it("EfficiencyResourcesJsTest002", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest002---------------------------');
@@ -98,7 +98,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest003
      * @tc.desc: test apply a efficiency resource without resourceTypes
      * @tc.type: FUNC
-     * @tc.require: issuesI5OD7X issuesI5VOUF
+     * @tc.require: issuesI5OD7X issueI5QJR8
      */
     it("EfficiencyResourcesJsTest003", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest003---------------------------');
@@ -120,7 +120,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest004
      * @tc.desc: test apply a efficiency resource without isApply
      * @tc.type: FUNC
-     * @tc.require: issuesI5OD7X issuesI5VOUF
+     * @tc.require: issuesI5OD7X issueI5QJR8
      */
     it("EfficiencyResourcesJsTest004", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest004--------------------------- ');
@@ -142,7 +142,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest005
      * @tc.desc: test apply a efficiency resource without timeOut
      * @tc.type: FUNC
-     * @tc.require: issuesI5OD7X issuesI5VOUF
+     * @tc.require: issuesI5OD7X issueI5QJR8
      */
     it("EfficiencyResourcesJsTest005", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest005---------------------------');
@@ -164,7 +164,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest006
      * @tc.desc: test apply a efficiency resource without reason
      * @tc.type: FUNC
-     * @tc.require: issuesI5OD7X issuesI5VOUF
+     * @tc.require: issuesI5OD7X issueI5QJR8
      */
     it("EfficiencyResourcesJsTest006", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest006---------------------------');
@@ -186,7 +186,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest007
      * @tc.desc: test apply a efficiency resource with timeout equals to 0
      * @tc.type: FUNC
-     * @tc.require: issuesI5OD7X issuesI5VOUF
+     * @tc.require: issuesI5OD7X issueI5QJR8
      */
     it("EfficiencyResourcesJsTest007", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest007---------------------------');
@@ -210,7 +210,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest008
      * @tc.desc: test apply a efficiency resource with resourceTypes equals to 0
      * @tc.type: FUNC
-     * @tc.require: issuesI5OD7X issuesI5VOUF
+     * @tc.require: issuesI5OD7X issueI5QJR8
      */
     it("EfficiencyResourcesJsTest008", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest008---------------------------');
@@ -233,7 +233,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest009
      * @tc.desc: test apply a efficiency resource with isPersist
      * @tc.type: FUNC
-     * @tc.require: issuesI5OD7X issuesI5VOUF
+     * @tc.require: issuesI5OD7X issueI5QJR8
      */
     it("EfficiencyResourcesJsTest009", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest009---------------------------');
@@ -257,7 +257,7 @@ describe("EfficiencyResourcesJsTest", function () {
      * @tc.name: EfficiencyResourcesJsTest010
      * @tc.desc: test apply a efficiency resource with isProcess
      * @tc.type: FUNC
-     * @tc.require: issuesI5OD7X issuesI5VOUF
+     * @tc.require: issuesI5OD7X issueI5QJR8
      */
     it("EfficiencyResourcesJsTest010", 0, async function (done) {
         console.info('----------------------EfficiencyResourcesJsTest010---------------------------');
