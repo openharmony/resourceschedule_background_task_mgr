@@ -518,16 +518,15 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         return ret;
     }
     ret = SendContinuousTaskNotification(continuousTaskRecord);
-    if (ret == ERR_BGTASK_NOTIFICATION_VERIFY_FAILED) {
-        return ret;
-    } else if (ret != ERR_OK) {
+    if (ret != ERR_OK) {
         BGTASK_LOGE("publish error");
-        return ERR_BGTASK_NOTIFICATION_ERR;
+        return ret;
     }
     continuousTaskInfosMap_.emplace(taskInfoMapKey, continuousTaskRecord);
     OnContinuousTaskChanged(continuousTaskRecord, ContinuousTaskEventTriggerType::TASK_START);
-    if (RefreshTaskRecord() != ERR_OK) {
-        return ERR_BGTASK_DATA_STORAGE_ERR;
+    ret = RefreshTaskRecord();
+    if (ret != ERR_OK) {
+        return ret;
     }
     return ERR_OK;
 }
@@ -1110,9 +1109,10 @@ void BgContinuousTaskMgr::HandleAppContinuousTaskStop(int32_t uid)
 
 int32_t BgContinuousTaskMgr::RefreshTaskRecord()
 {
-    if (DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_) != ERR_OK) {
+    int32_t ret = DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
+    if (ret != ERR_OK) {
         BGTASK_LOGE("refresh data failed");
-        return ERR_BGTASK_DATA_STORAGE_ERR;
+        return ret;
     }
     return ERR_OK;
 }

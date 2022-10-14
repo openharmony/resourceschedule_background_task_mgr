@@ -154,7 +154,7 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
 {
     if (!isReady_.load()) {
         BGTASK_LOGW("Transient task manager is not ready.");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
@@ -251,7 +251,7 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelay(int32_t requestId)
 {
     if (!isReady_.load()) {
         BGTASK_LOGE("Transient task manager is not ready.");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
@@ -270,7 +270,7 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelay(int32_t requestId)
 
     if (!VerifyRequestIdLocked(name, uid, requestId)) {
         BGTASK_LOGI(" cancel suspend delay failed, requestId is illegal.");
-        return ERR_BGTASK_CALLBACK_NOT_EXIST;
+        return ERR_BGTASK_INVALID_REQUEST_ID;
     }
 
     lock_guard<mutex> lock(expiredCallbackLock_);
@@ -312,7 +312,7 @@ ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &de
 {
     if (!isReady_.load()) {
         BGTASK_LOGW("Transient task manager is not ready.");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
@@ -514,7 +514,7 @@ ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption
 {
     if (!isReady_.load()) {
         BGTASK_LOGE("Transient task manager is not ready.");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     bool result = false;
     if (dumpOption[1] == ALL_BGTASKMGR_OPTION) {

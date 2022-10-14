@@ -112,8 +112,9 @@ void Common::SetCallback(
     if (errCode == ERR_OK) {
         results[0] = NapiGetNull(env);
     } else {
+        int32_t errCodeInfo = FindErrCode(env, errCode);
         std::string errMsg = FindErrMsg(env, errCode);
-        results[0] = GetCallbackErrorValue(env, errCode, errMsg); 
+        results[0] = GetCallbackErrorValue(env, errCodeInfo, errMsg); 
     }
     results[1] = result;
     NAPI_CALL_RETURN_VOID(env,
@@ -126,11 +127,12 @@ napi_value Common::SetPromise(
     if (info.errCode == ERR_OK) {
         napi_resolve_deferred(env, info.deferred, result);
     } else {
+        int32_t errCodeInfo = FindErrCode(env, info.errCode);
         std::string errMsg = FindErrMsg(env, info.errCode);
         napi_value error = nullptr;
         napi_value eCode = nullptr;
         napi_value eMsg = nullptr;
-        NAPI_CALL(env, napi_create_int32(env, info.errCode, &eCode));
+        NAPI_CALL(env, napi_create_int32(env, errCodeInfo, &eCode));
         NAPI_CALL(env, napi_create_string_utf8(env, errMsg.c_str(),
             errMsg.length(), &eMsg));
         NAPI_CALL(env, napi_create_object(env, &error));
@@ -261,9 +263,10 @@ napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, 
     return Common::NapiGetNull(env);
 }
 
-void Common::HandleErrCode(const napi_env &env, int32_t errCode)
+void Common::HandleErrCode(const napi_env &env, int32_t errCode, bool isThrow)
 {
-    if (errCode == ERR_OK) {
+    BGTASK_LOGI("HandleErrCode errCode = %{public}d, isThrow = %{public}d", errCode, isThrow);
+    if (!isThrow || errCode == ERR_OK) {
         return;
     }
     std::string errMsg = FindErrMsg(env, errCode);
@@ -273,9 +276,10 @@ void Common::HandleErrCode(const napi_env &env, int32_t errCode)
     }
 }
 
-bool Common::HandleParamErr(const napi_env &env, int32_t errCode)
+bool Common::HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow)
 {
-    if (errCode == ERR_OK) {
+    BGTASK_LOGI("HandleParamErr errCode = %{public}d, isThrow = %{public}d", errCode, isThrow);
+    if (!isThrow || errCode == ERR_OK) {
         return false;
     }
     auto iter = paramErrCodeMsgMap.find(errCode);
@@ -296,7 +300,8 @@ std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
     auto iter = saErrCodeMsgMap.find(errCode);
     if (iter != saErrCodeMsgMap.end()) {
         std::string errMessage = "BussinessError ";
-        errMessage.append(std::to_string(errCode)).append(": ").append(saErrCodeMsgMap[errCode]);
+        int32_t errCodeInfo = FindErrCode(env, errCode);
+        errMessage.append(std::to_string(errCodeInfo)).append(": ").append(iter->second);
         return errMessage;
     }
     iter = paramErrCodeMsgMap.find(errCode);
@@ -314,7 +319,7 @@ int32_t Common::FindErrCode(const napi_env &env, const int32_t errCodeIn)
     if (iter != paramErrCodeMsgMap.end()) {
         return ERR_BGTASK_INVALID_PARAM;
     }
-    return errCodeIn;
+    return errCodeIn > 1000 ? errCodeIn / OFFSET : errCodeIn;
 }
 
 napi_value Common::GetBooleanValue(const napi_env &env, const napi_value &value, bool &result)

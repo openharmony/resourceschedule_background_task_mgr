@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_INIT_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_INIT_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_INIT_BGTASKMGR_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_INIT_BGTASKMGR_H
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
@@ -27,9 +27,9 @@ extern "C" {
 
 __attribute__((constructor)) void RegisterModule(void);
 void SetNamedPropertyByInteger(napi_env env, napi_value dstObj, int32_t objName, const char *propName);
-napi_value BackgroundTaskManagerInit(napi_env env, napi_value exports);
+napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports);
 napi_value BackgroundModeInit(napi_env env, napi_value exports);
-static napi_value Init(napi_env env, napi_value exports);
+static napi_value InitApi(napi_env env, napi_value exports);
 
 #ifdef __cplusplus
 }
@@ -38,15 +38,15 @@ static napi_value Init(napi_env env, napi_value exports);
 /*
  * Module define
  */
-napi_module _module = {
+napi_module _apiModule = {
     .nm_version = 1,
     .nm_flags = 0,
     .nm_filename = nullptr,
-    .nm_register_func = Init,
-    .nm_modname = "backgroundTaskManager",
+    .nm_register_func = InitApi,
+    .nm_modname = "resourceschedule.backgroundTaskManager",
     .nm_priv = ((void *)0),
     .reserved = {0}
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_INIT_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_INIT_BGTASKMGR_H

@@ -207,7 +207,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     BGTASK_LOGD("app died, uid: %{public}d, bundleName: %{public}s", uid, bundleName.c_str());
     handler_->PostTask([this, uid, bundleName, resetAll]() {
@@ -223,7 +223,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready, remove process record failed");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     BGTASK_LOGD("process died, uid: %{public}d, pid: %{public}d, bundleName: %{public}s",
         uid, pid, bundleName.c_str());
@@ -282,7 +282,7 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     BGTASK_LOGD("start bgtaskefficiency");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
 
     if (!CheckResourceInfo(resourceInfo)) {
@@ -448,7 +448,7 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
     BGTASK_LOGD("start to reset all efficiency resources");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("efficiency resources manager is not ready");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
 
     auto uid = IPCSkeleton::GetCallingUid();
@@ -532,7 +532,7 @@ ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dump
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGE("manager is not ready");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     handler_->PostSyncTask([&]() {
         this->ShellDumpInner(dumpOption, dumpInfo);

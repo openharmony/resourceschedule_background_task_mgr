@@ -93,18 +93,18 @@ int32_t DataStorageHelper::SaveJsonValueToFile(const std::string &value, const s
 {
     if (!CreateNodeFile(filePath)) {
         BGTASK_LOGE("Create file failed.");
-        return ERR_BGTASK_DATA_STORAGE_ERR;
+        return ERR_BGTASK_CREATE_FILE_ERR;
     }
     std::ofstream fout;
     std::string realPath;
     if (!ConvertFullPath(filePath, realPath)) {
         BGTASK_LOGE("SaveJsonValueToFile Get real file path: %{public}s failed", filePath.c_str());
-        return ERR_BGTASK_DATA_STORAGE_ERR;
+        return ERR_BGTASK_GET_ACTUAL_FILE_ERR;
     }
     fout.open(realPath, std::ios::out);
     if (!fout.is_open()) {
         BGTASK_LOGE("Open file: %{public}s failed.", filePath.c_str());
-        return ERR_BGTASK_DATA_STORAGE_ERR;
+        return ERR_BGTASK_OPEN_FILE_ERR;
     }
     fout << value.c_str() << std::endl;
     fout.close();

@@ -157,9 +157,10 @@ ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::sh
     }
 
     auto pkgInfo = pkgDelaySuspendInfoMap_[key];
-    if (!pkgInfo->IsAllowRequest()) {
+    ErrCode ret = pkgInfo->IsAllowRequest();
+    if (ret != ERR_OK) {
         BGTASK_LOGI("Request not allow by its info");
-        return ERR_BGTASK_EXCEEDS_THRESHOLD;
+        return ret;
     }
 
     if (delayInfo == nullptr) {

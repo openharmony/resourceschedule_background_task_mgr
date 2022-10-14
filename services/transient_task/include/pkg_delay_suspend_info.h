@@ -34,7 +34,7 @@ public:
     PkgDelaySuspendInfo(const string& pkg, const int32_t& uid, const shared_ptr<TimerManager>& timerManager)
         : pkg_(pkg), uid_(uid), timerManager_(timerManager) {}
     ~PkgDelaySuspendInfo() = default;
-    bool IsAllowRequest();
+    ErrCode IsAllowRequest();
     void AddRequest(const shared_ptr<DelaySuspendInfoEx>& delayInfo, const int32_t delayTime);
     void RemoveRequest(const int32_t requestId);
     int32_t GetRemainDelayTime(const int32_t requestId);

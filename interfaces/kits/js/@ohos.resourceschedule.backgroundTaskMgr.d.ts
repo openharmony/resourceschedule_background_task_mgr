@@ -48,7 +48,13 @@ declare namespace backgroundTaskManager {
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
      * @param requestId Indicates the identifier of the delay request.
-     * @throws { BusinessError } If the input parameter is not valid parameter.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9900001 - Caller information verification failed.
+     * @throws { BusinessError } 9900002 - Background task verification failed.
      */
     function cancelSuspendDelay(requestId: number): void;
 
@@ -58,7 +64,13 @@ declare namespace backgroundTaskManager {
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
      * @param requestId Indicates the identifier of the delay request.
-     * @throws { BusinessError } If the input parameter is not valid parameter.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9900001 - Caller information verification failed.
+     * @throws { BusinessError } 9900002 - Background task verification failed.
      * @return The remaining delay time
      */
     function getRemainingDelayTime(requestId: number, callback: AsyncCallback<number>): void;
@@ -71,7 +83,13 @@ declare namespace backgroundTaskManager {
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
      * @param reason Indicates the reason for delayed transition to the suspended state.
      * @param callback The callback delay time expired.
-     * @throws { BusinessError } If the input parameter is not valid parameter.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9900001 - Caller information verification failed.
+     * @throws { BusinessError } 9900002 - Background task verification failed.
      * @return Info of delay request
      */
     function requestSuspendDelay(reason: string, callback: Callback<void>): DelaySuspendInfo;
@@ -86,7 +104,15 @@ declare namespace backgroundTaskManager {
      * @param context app running context.
      * @param bgMode Indicates which background mode to request.
      * @param wantAgent Indicates which ability to start when user click the notification bar.
-     * @throws { BusinessError } If the input parameter is not valid parameter.
+     * @throws { BusinessError } 201 - Permission denied.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9800005 - Background task verification failed.
+     * @throws { BusinessError } 9800006 - Notification verification failed.
+     * @throws { BusinessError } 9800007 - Task storage failed.
      */
     function startBackgroundRunning(context: Context, bgMode: BackgroundMode, wantAgent: WantAgent, callback: AsyncCallback<void>): void;
     function startBackgroundRunning(context: Context, bgMode: BackgroundMode, wantAgent: WantAgent): Promise<void>;
@@ -97,7 +123,15 @@ declare namespace backgroundTaskManager {
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
      * @param context app running context.
-     * @throws { BusinessError } If the input parameter is not valid parameter.
+     * @throws { BusinessError } 201 - Permission denied.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9800005 - Background task verification failed.
+     * @throws { BusinessError } 9800006 - Notification verification failed.
+     * @throws { BusinessError } 9800007 - Task storage failed.
      */
     function stopBackgroundRunning(context: Context, callback: AsyncCallback<void>): void;
     function stopBackgroundRunning(context: Context): Promise<void>;
@@ -107,7 +141,13 @@ declare namespace backgroundTaskManager {
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
-     * @throws { BusinessError } If the input parameter is not valid parameter.
+     * @throws { BusinessError } 201 - Permission denied.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 18700001 - Caller information verification failed.
      * @systemapi Hide this for inner system use.
      */
      function applyEfficiencyResources(request: EfficiencyResourcesRequest): void;
@@ -118,6 +158,13 @@ declare namespace backgroundTaskManager {
       * @since 9
       * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
       * @systemapi Hide this for inner system use.
+      * @throws { BusinessError } 201 - Permission denied.
+      * @throws { BusinessError } 401 - Parameter error.
+      * @throws { BusinessError } 9800001 - Memory operation failed.
+      * @throws { BusinessError } 9800002 - Parcel operation failed.
+      * @throws { BusinessError } 9800003 - Inner transact failed.
+      * @throws { BusinessError } 9800004 - System service operation failed.
+      * @throws { BusinessError } 18700001 - Caller information verification failed.
       */
      function resetAllEfficiencyResources(): void;
 

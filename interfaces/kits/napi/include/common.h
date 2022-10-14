@@ -76,9 +76,9 @@ public:
 
     static napi_value GetStringValue(const napi_env &env, const napi_value &value, std::string &result);
 
-    static void HandleErrCode(const napi_env &env, int32_t errCode);
+    static void HandleErrCode(const napi_env &env, int32_t errCode, bool isThrow);
 
-    static bool HandleParamErr(const napi_env &env, int32_t errCode);
+    static bool HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow);
 
     static std::string FindErrMsg(const napi_env &env, const int32_t errCode);
 

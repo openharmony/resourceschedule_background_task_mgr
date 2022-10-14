@@ -89,13 +89,14 @@ napi_value GetNamedStringValue(const napi_env &env, napi_value &object, std::str
     return Common::NapiGetNull(env);
 }
 
-napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, EfficiencyResourceInfo &params)
+napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
+    EfficiencyResourceInfo &params, bool isThrow)
 {
     size_t argc = APPLY_EFFICIENCY_RESOURCES_PARAMS;
     napi_value argv[APPLY_EFFICIENCY_RESOURCES_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc != APPLY_EFFICIENCY_RESOURCES_PARAMS) {
-        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR);
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
         return nullptr;
     }
     int32_t resourceNumber {0};
@@ -106,41 +107,41 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
     bool isProcess {false};
 
     if (!GetNamedInt32Value(env, argv[0], "resourceTypes", resourceNumber)) {
-        Common::HandleParamErr(env, ERR_RESOURCE_TYPES_INVALID);
+        Common::HandleParamErr(env, ERR_RESOURCE_TYPES_INVALID, isThrow);
         return nullptr;
     }
     if (!GetNamedBoolValue(env, argv[0], "isApply", isApply, true)) {
-        Common::HandleParamErr(env, ERR_ISAPPLY_NULL_OR_TYPE_ERR);
+        Common::HandleParamErr(env, ERR_ISAPPLY_NULL_OR_TYPE_ERR, isThrow);
         return nullptr;
     }
     if (!GetNamedInt32Value(env, argv[0], "timeOut", timeOut)) {
-        Common::HandleParamErr(env, ERR_TIMEOUT_INVALID);
+        Common::HandleParamErr(env, ERR_TIMEOUT_INVALID, isThrow);
         return nullptr;
     }
     if (!GetNamedStringValue(env, argv[0], reason)) {
-        Common::HandleParamErr(env, ERR_REASON_NULL_OR_TYPE_ERR);
+        Common::HandleParamErr(env, ERR_REASON_NULL_OR_TYPE_ERR, isThrow);
         return nullptr;
     }
     if (!GetNamedBoolValue(env, argv[0], "isPersist", isPersist, false)) {
-        Common::HandleParamErr(env, ERR_ISPERSIST_NULL_OR_TYPE_ERR);
+        Common::HandleParamErr(env, ERR_ISPERSIST_NULL_OR_TYPE_ERR, isThrow);
         return nullptr;
     }
     if (!GetNamedBoolValue(env, argv[0], "isProcess", isProcess, false)) {
-        Common::HandleParamErr(env, ERR_ISPROCESS_NULL_OR_TYPE_ERR);
+        Common::HandleParamErr(env, ERR_ISPROCESS_NULL_OR_TYPE_ERR, isThrow);
         return nullptr;
     }
     params = EfficiencyResourceInfo {resourceNumber, isApply, timeOut, reason, isPersist, isProcess};
     return Common::NapiGetNull(env);
 }
 
-bool CheckValidInfo(napi_env env, const EfficiencyResourceInfo &params)
+bool CheckValidInfo(napi_env env, const EfficiencyResourceInfo &params, bool isThrow)
 {
     if (params.GetResourceNumber() == 0) {
-        Common::HandleParamErr(env, ERR_RESOURCE_TYPES_INVALID);
+        Common::HandleParamErr(env, ERR_RESOURCE_TYPES_INVALID, isThrow);
         return false;
     }
     if (params.IsApply() && !params.IsPersist() && params.GetTimeOut() == 0) {
-        Common::HandleParamErr(env, ERR_TIMEOUT_INVALID);
+        Common::HandleParamErr(env, ERR_TIMEOUT_INVALID, isThrow);
         return false;
     }
     return true;
@@ -149,18 +150,18 @@ bool CheckValidInfo(napi_env env, const EfficiencyResourceInfo &params)
 napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
 {
     EfficiencyResourceInfo params;
-    if (ParseParameters(env, info, params) == nullptr || !CheckValidInfo(env, params)) {
+    if (ParseParameters(env, info, params, true) == nullptr || !CheckValidInfo(env, params, true)) {
         return Common::NapiGetNull(env);
     }
-    ErrCode suc = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(params);
-    Common::HandleErrCode(env, suc);
+    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(params);
+    Common::HandleErrCode(env, errCode, true);
     return Common::NapiGetNull(env);
 }
 
 napi_value ResetAllEfficiencyResources(napi_env env, napi_callback_info info)
 {
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources();
-    Common::HandleErrCode(env, errCode);
+    Common::HandleErrCode(env, errCode, true);
     return Common::NapiGetNull(env);
 }
 }

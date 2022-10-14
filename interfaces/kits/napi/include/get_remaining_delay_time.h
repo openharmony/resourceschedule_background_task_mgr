@@ -22,7 +22,9 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-    napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info);
+napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info);
+
+napi_value GetRemainingDelayTimeThrow(napi_env env, napi_callback_info info);
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_GET_REMAINING_DELAY_TIME_H
