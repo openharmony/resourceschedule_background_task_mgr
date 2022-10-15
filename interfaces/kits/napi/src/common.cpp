@@ -319,7 +319,7 @@ int32_t Common::FindErrCode(const napi_env &env, const int32_t errCodeIn)
     if (iter != paramErrCodeMsgMap.end()) {
         return ERR_BGTASK_INVALID_PARAM;
     }
-    return errCodeIn > 1000 ? errCodeIn / OFFSET : errCodeIn;
+    return errCodeIn > THRESHOLD ? errCodeIn / OFFSET : errCodeIn;
 }
 
 napi_value Common::GetBooleanValue(const napi_env &env, const napi_value &value, bool &result)

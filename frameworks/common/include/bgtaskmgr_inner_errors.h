@@ -31,6 +31,7 @@ namespace BackgroundTaskMgr {
  * +--+--+--+--+--+--+--+--+---+---+
  */
 const int OFFSET = 100;
+const int THRESHOLD = 1000;
 // Bgtask Common Error Code Defined.
 enum : int32_t {
     // errcode for common
