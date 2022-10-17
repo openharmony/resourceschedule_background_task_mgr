@@ -295,7 +295,7 @@ ErrCode BackgroundTaskMgrStub::HandleGetEfficiencyResourcesInfos(MessageParcel& 
     if (WriteInfoToParcel(appInfos, reply) != ERR_OK
         || WriteInfoToParcel(procInfos, reply) != ERR_OK) {
         BGTASK_LOGE("HandleGetEfficiencyResourcesInfos write result failed");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;
 }

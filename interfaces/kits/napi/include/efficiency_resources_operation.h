@@ -22,8 +22,9 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-    napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info);
-    napi_value ResetAllEfficiencyResources(napi_env env, napi_callback_info info);
+napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info);
+
+napi_value ResetAllEfficiencyResources(napi_env env, napi_callback_info info);
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_EFFICIENCY_RES_OPERATION_H

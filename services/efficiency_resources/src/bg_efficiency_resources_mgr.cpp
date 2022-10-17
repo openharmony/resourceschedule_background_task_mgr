@@ -207,28 +207,26 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready, RemoveAppRecord failed");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     BGTASK_LOGD("app died, uid: %{public}d, bundleName: %{public}s", uid, bundleName.c_str());
-    ErrCode res = ERR_OK;
     handler_->PostTask([this, uid, bundleName, resetAll]() {
         int resourceNumber = resetAll ? MAX_RESOURCE_NUMBER : (MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER);
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             0, resourceNumber, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, false);
     });
-    return res;
+    return ERR_OK;
 }
 
 ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, const std::string &bundleName)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready, remove process record failed");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     BGTASK_LOGD("process died, uid: %{public}d, pid: %{public}d, bundleName: %{public}s",
         uid, pid, bundleName.c_str());
-    ErrCode res = ERR_OK;
     handler_->PostTask([this, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             pid, MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER, bundleName);
@@ -237,7 +235,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
             this->ResetEfficiencyResourcesInner(callbackInfo, false);
         }
     });
-    return res;
+    return ERR_OK;
 }
 
 bool BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
@@ -284,11 +282,11 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     BGTASK_LOGD("start bgtaskefficiency");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
 
     if (!CheckResourceInfo(resourceInfo)) {
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_RESOURCES_EXCEEDS_MAX;
     }
 
     auto uid = IPCSkeleton::GetCallingUid();
@@ -296,7 +294,7 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     std::string bundleName = "";
     if (!IsCallingInfoLegal(uid, pid, bundleName)) {
         BGTASK_LOGI("apply efficiency resources failed, calling info is illegal");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_INVALID_PID_OR_UID;
     }
     if (!CheckRunningResourcesApply(uid, bundleName)) {
         BGTASK_LOGI("apply efficiency resources failed, running resource apply is false");
@@ -450,7 +448,7 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
     BGTASK_LOGD("start to reset all efficiency resources");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("efficiency resources manager is not ready");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
 
     auto uid = IPCSkeleton::GetCallingUid();
@@ -458,7 +456,7 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
     std::string bundleName = "";
     if (!IsCallingInfoLegal(uid, pid, bundleName)) {
         BGTASK_LOGE("reset efficiency resources failed, calling info is illegal");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_INVALID_PID_OR_UID;
     }
     if (!CheckRunningResourcesApply(uid, bundleName)) {
         BGTASK_LOGI("apply efficiency resources failed, running resource apply is false");
@@ -534,7 +532,7 @@ ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dump
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGE("manager is not ready");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     handler_->PostSyncTask([&]() {
         this->ShellDumpInner(dumpOption, dumpInfo);

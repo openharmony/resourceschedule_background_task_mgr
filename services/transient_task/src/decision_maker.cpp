@@ -131,12 +131,12 @@ void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
     }
 }
 
-bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::shared_ptr<DelaySuspendInfoEx>& delayInfo)
+ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::shared_ptr<DelaySuspendInfoEx>& delayInfo)
 {
     lock_guard<mutex> lock(lock_);
     if (key == nullptr) {
         BGTASK_LOGE("Invalid key");
-        return false;
+        return ERR_BGTASK_NO_MEMORY;
     }
 
     ResetDayQuotaLocked();
@@ -145,7 +145,7 @@ bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::share
         if (TimeProvider::GetCurrentTime() - findBgDurationIt->second > ALLOW_REQUEST_TIME_BG) {
             BGTASK_LOGI("Request not allow after entering background for a valid duration, %{public}s",
                 key->ToString().c_str());
-            return false;
+            return ERR_BGTASK_NOT_IN_PRESET_TIME;
         }
     }
 
@@ -157,14 +157,15 @@ bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::share
     }
 
     auto pkgInfo = pkgDelaySuspendInfoMap_[key];
-    if (!pkgInfo->IsAllowRequest()) {
+    ErrCode ret = pkgInfo->IsAllowRequest();
+    if (ret != ERR_OK) {
         BGTASK_LOGI("Request not allow by its info");
-        return false;
+        return ret;
     }
 
     if (delayInfo == nullptr) {
         BGTASK_LOGE("Invalid delayInfo");
-        return false;
+        return ERR_BGTASK_NO_MEMORY;
     }
     delayInfo->SetRequestId(NewDelaySuspendRequestId());
     pkgInfo->AddRequest(delayInfo, GetDelayTime());
@@ -180,7 +181,7 @@ bool DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::share
     if (CanStartAccountingLocked(pkgInfo)) {
         pkgInfo->StartAccounting(delayInfo->GetRequestId());
     }
-    return true;
+    return ERR_OK;
 }
 
 void DecisionMaker::RemoveRequest(const std::shared_ptr<KeyInfo>& key, const int32_t requestId)

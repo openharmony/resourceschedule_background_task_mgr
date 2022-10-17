@@ -36,17 +36,20 @@ struct GetRemainingDelayTimeParamsInfo {
     napi_ref callback = nullptr;
 };
 
-napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, GetRemainingDelayTimeParamsInfo &params)
+napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
+    GetRemainingDelayTimeParamsInfo &params, bool isThrow)
 {
     size_t argc = GET_REMAINING_DELAY_TIME_PARAMS;
     napi_value argv[GET_REMAINING_DELAY_TIME_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == GET_REMAINING_DELAY_TIME_MIN_PARAMS || argc == GET_REMAINING_DELAY_TIME_PARAMS,
-        "Wrong number of arguments");
+    if (argc != GET_REMAINING_DELAY_TIME_MIN_PARAMS && argc != GET_REMAINING_DELAY_TIME_PARAMS) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+    }
 
     // argv[0] : requestId
     if (Common::GetInt32NumberValue(env, argv[0], params.requestId) == nullptr) {
         BGTASK_LOGE("ParseParameters failed, requestId is nullptr.");
+        Common::HandleParamErr(env, ERR_REQUESTID_NULL_OR_ID_TYPE_ERR, isThrow);
         return nullptr;
     }
 
@@ -54,23 +57,24 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
     if (argc == GET_REMAINING_DELAY_TIME_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-        NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
+        if (valuetype != napi_function) {
+            Common::HandleParamErr(env, ERR_CALLBACK_NULL_OR_TYPE_ERR, isThrow);
+        }
         NAPI_CALL(env, napi_create_reference(env, argv[1], 1, &params.callback));
     }
 
     if (params.requestId <= 0) {
         BGTASK_LOGI("ParseParameters failed, requestId is illegal.");
+        Common::HandleParamErr(env, ERR_REQUESTID_ILLEGAL, isThrow);
         return nullptr;
     }
     return Common::NapiGetNull(env);
 }
 
-napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
+napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info, bool isThrow)
 {
     GetRemainingDelayTimeParamsInfo params;
-    if (ParseParameters(env, info, params) == nullptr) {
-        return Common::JSParaError(env, params.callback);
-    }
+    ParseParameters(env, info, params, isThrow);
 
     napi_value promise = nullptr;
     AsyncCallbackInfoGetRemainingDelayTime *asyncCallbackInfo =
@@ -115,6 +119,16 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
         return Common::NapiGetNull(env);
     }
     return promise;
+}
+
+napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info)
+{
+    return GetRemainingDelayTime(env, info, false);
+}
+
+napi_value GetRemainingDelayTimeThrow(napi_env env, napi_callback_info info)
+{
+    return GetRemainingDelayTime(env, info, true);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

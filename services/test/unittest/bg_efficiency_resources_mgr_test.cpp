@@ -477,7 +477,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SysUnload_001, TestSize.Level1)
     sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(1, true, 0, "apply",
         true, false);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(resourceInfo),
-        (int32_t)ERR_BGTASK_SERVICE_NOT_READY);
+        (int32_t)ERR_BGTASK_SYS_NOT_READY);
     bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources();
     std::vector<std::string> dumpInfo {};
     bgEfficiencyResourcesMgr_->ShellDump({"-E", "--reset_all"}, dumpInfo);

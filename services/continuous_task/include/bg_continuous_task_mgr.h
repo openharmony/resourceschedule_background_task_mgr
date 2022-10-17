@@ -101,7 +101,7 @@ private:
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);
-    bool checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, int32_t uid);
+    ErrCode checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, int32_t uid);
     int32_t RefreshTaskRecord();
     void HandleAppContinuousTaskStop(int32_t uid);
     bool checkPidCondition(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t pid);

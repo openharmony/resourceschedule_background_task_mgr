@@ -49,7 +49,7 @@ ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reason,
     sptr<ExpiredCallback::ExpiredCallbackImpl> callbackSptr = callback.GetImpl();
     if (callbackSptr == nullptr) {
         BGTASK_LOGE("callbackSptr is nullptr");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_CALLBACK_NULL_OR_TYPE_ERR;
     }
     return backgroundTaskMgrProxy_->RequestSuspendDelay(reason, callbackSptr, delayInfo);
 }

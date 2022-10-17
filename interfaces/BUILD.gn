@@ -15,5 +15,6 @@ group("bgtaskmgr_interfaces") {
   deps = [
     "innerkits:bgtaskmgr_innerkits",
     "kits:backgroundtaskmanager",
+    "kits:backgroundtaskmanager_napi",
   ]
 }

@@ -33,7 +33,7 @@ ErrCode BackgroundTaskMgrProxy::RequestSuspendDelay(const std::u16string& reason
 {
     if (callback == nullptr) {
         BGTASK_LOGE("RequestSuspendDelay callback is null");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_CALLBACK_NULL_OR_TYPE_ERR;
     }
 
     MessageParcel data;
@@ -274,7 +274,7 @@ ErrCode BackgroundTaskMgrProxy::GetTransientTaskApps(std::vector<std::shared_ptr
         auto info = TransientTaskAppInfo::Unmarshalling(reply);
         if (!info) {
             BGTASK_LOGE("GetTransientTaskApps Read Parcelable infos failed.");
-            return ERR_INVALID_VALUE;
+            return ERR_BGTASK_PARCELABLE_FAILED;
         }
         list.emplace_back(info);
     }
@@ -312,7 +312,7 @@ ErrCode BackgroundTaskMgrProxy::GetContinuousTaskApps(std::vector<std::shared_pt
         auto info = ContinuousTaskCallbackInfo::Unmarshalling(reply);
         if (!info) {
             BGTASK_LOGE("GetContinuousTaskApps Read Parcelable infos failed.");
-            return ERR_INVALID_VALUE;
+            return ERR_BGTASK_PARCELABLE_FAILED;
         }
         list.emplace_back(info);
     }
@@ -463,7 +463,7 @@ ErrCode BackgroundTaskMgrProxy::GetEfficiencyResourcesInfos(std::vector<std::sha
         auto info = ResourceCallbackInfo::Unmarshalling(reply);
         if (!info) {
             BGTASK_LOGE("GetContinuousTaskApps Read Parcelable infos failed.");
-            return ERR_INVALID_VALUE;
+            return ERR_BGTASK_PARCELABLE_FAILED;
         }
         appList.emplace_back(info);
     }
@@ -473,7 +473,7 @@ ErrCode BackgroundTaskMgrProxy::GetEfficiencyResourcesInfos(std::vector<std::sha
         auto info = ResourceCallbackInfo::Unmarshalling(reply);
         if (!info) {
             BGTASK_LOGE("GetContinuousTaskApps Read Parcelable infos failed.");
-            return ERR_INVALID_VALUE;
+            return ERR_BGTASK_PARCELABLE_FAILED;
         }
         procList.emplace_back(info);
     }

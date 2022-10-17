@@ -124,29 +124,29 @@ bool BgTransientTaskMgr::GetBundleNamesForUid(int32_t uid, std::string &bundleNa
     return true;
 }
 
-bool BgTransientTaskMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
+ErrCode BgTransientTaskMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
     const sptr<IExpiredCallback>& callback)
 {
     if (!VerifyCallingInfo(uid, pid)) {
         BGTASK_LOGE("pid or uid is invalid.");
-        return false;
+        return ERR_BGTASK_INVALID_PID_OR_UID;
     }
 
     if (!GetBundleNamesForUid(uid, name)) {
         BGTASK_LOGE("GetBundleNamesForUid fail.");
-        return false;
+        return ERR_BGTASK_INVALID_BUNDLE_NAME;
     }
 
     if (callback == nullptr) {
         BGTASK_LOGE("callback is null.");
-        return false;
+        return ERR_BGTASK_INVALID_CALLBACK;
     }
 
     if (callback->AsObject() == nullptr) {
         BGTASK_LOGE("remote in callback is null.");
-        return false;
+        return ERR_BGTASK_INVALID_CALLBACK;
     }
-    return true;
+    return ERR_OK;
 }
 
 ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
@@ -154,14 +154,15 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
 {
     if (!isReady_.load()) {
         BGTASK_LOGW("Transient task manager is not ready.");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
     std::string name = "";
-    if (!IsCallingInfoLegal(uid, pid, name, callback)) {
+    ErrCode ret = IsCallingInfoLegal(uid, pid, name, callback);
+    if (ret != ERR_OK) {
         BGTASK_LOGI("Request suspend delay failed, calling info is illegal.");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ret;
     }
     BGTASK_LOGD("request suspend delay pkg : %{public}s, reason : %{public}s, uid : %{public}d, pid : %{public}d",
         name.c_str(), Str16ToStr8(reason).c_str(), uid, pid);
@@ -177,13 +178,14 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
     auto callbackIter = find_if(expiredCallbackMap_.begin(), expiredCallbackMap_.end(), findCallback);
     if (callbackIter != expiredCallbackMap_.end()) {
         BGTASK_LOGI("%{public}s request suspend failed, callback is already exists.", name.c_str());
-        return ERR_BGTASK_OBJECT_EXISTS;
+        return ERR_BGTASK_CALLBACK_EXISTS;
     }
 
     auto keyInfo = make_shared<KeyInfo>(name, uid, pid);
-    if (!decisionMaker_->Decide(keyInfo, infoEx)) {
+    ret = decisionMaker_->Decide(keyInfo, infoEx);
+    if (ret != ERR_OK) {
         BGTASK_LOGI("%{public}s request suspend failed.", name.c_str());
-        return ERR_BGTASK_NOT_ALLOWED;
+        return ret;
     }
     BGTASK_LOGI("request suspend success, pkg : %{public}s, uid : %{public}d, requestId: %{public}d,"
         "delayTime: %{public}d", name.c_str(), uid, infoEx->GetRequestId(), infoEx->GetActualDelayTime());
@@ -249,26 +251,26 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelay(int32_t requestId)
 {
     if (!isReady_.load()) {
         BGTASK_LOGE("Transient task manager is not ready.");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
     if (!VerifyCallingInfo(uid, pid)) {
         BGTASK_LOGI("cancel suspend delay failed, pid or uid is invalid.");
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_INVALID_PID_OR_UID;
     }
 
     std::string name = "";
     if (!GetBundleNamesForUid(uid, name)) {
         BGTASK_LOGW("GetBundleNamesForUid fail, uid : %{public}d.", uid);
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_SERVICE_INNER_ERROR;
     }
     BGTASK_LOGI("cancel suspend delay pkg : %{public}s, uid : %{public}d, requestId : %{public}d",
         name.c_str(), uid, requestId);
 
     if (!VerifyRequestIdLocked(name, uid, requestId)) {
         BGTASK_LOGI(" cancel suspend delay failed, requestId is illegal.");
-        return ERR_BGTASK_NOT_ALLOWED;
+        return ERR_BGTASK_INVALID_REQUEST_ID;
     }
 
     lock_guard<mutex> lock(expiredCallbackLock_);
@@ -284,7 +286,7 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelayLocked(int32_t requestId)
     auto iter = expiredCallbackMap_.find(requestId);
     if (iter == expiredCallbackMap_.end()) {
         BGTASK_LOGI("CancelSuspendDelayLocked Callback not found.");
-        return ERR_BGTASK_NOT_ALLOWED;
+        return ERR_BGTASK_CALLBACK_NOT_EXIST;
     }
     auto remote = iter->second->AsObject();
     if (remote != nullptr) {
@@ -310,21 +312,21 @@ ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &de
 {
     if (!isReady_.load()) {
         BGTASK_LOGW("Transient task manager is not ready.");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
     if (!VerifyCallingInfo(uid, pid)) {
         BGTASK_LOGI("get remain time failed, uid or pid is invalid");
         delayTime = BG_INVALID_REMAIN_TIME;
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_INVALID_PID_OR_UID;
     }
 
     std::string name = "";
     if (!GetBundleNamesForUid(uid, name)) {
         BGTASK_LOGE("GetBundleNamesForUid fail.");
         delayTime = BG_INVALID_REMAIN_TIME;
-        return ERR_BGTASK_INVALID_PARAM;
+        return ERR_BGTASK_SERVICE_INNER_ERROR;
     }
     BGTASK_LOGI("get remain time pkg : %{public}s, uid : %{public}d, requestId : %{public}d",
         name.c_str(), uid, requestId);
@@ -332,7 +334,7 @@ ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &de
     if (!VerifyRequestIdLocked(name, uid, requestId)) {
         BGTASK_LOGE("get remain time failed, requestId is illegal.");
         delayTime = BG_INVALID_REMAIN_TIME;
-        return ERR_BGTASK_NOT_ALLOWED;
+        return ERR_BGTASK_INVALID_REQUEST_ID;
     }
 
     delayTime = decisionMaker_->GetRemainingDelayTime(keyInfoMap_[requestId], requestId);
@@ -512,7 +514,7 @@ ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption
 {
     if (!isReady_.load()) {
         BGTASK_LOGE("Transient task manager is not ready.");
-        return ERR_BGTASK_SERVICE_NOT_READY;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
     bool result = false;
     if (dumpOption[1] == ALL_BGTASKMGR_OPTION) {
@@ -532,7 +534,7 @@ ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption
         dumpInfo.push_back("Error transient dump command!\n");
     }
 
-    return result ? ERR_OK : ERR_BGTASK_NOT_ALLOWED;
+    return result ? ERR_OK : ERR_BGTASK_PERMISSION_DENIED;
 }
 
 void BgTransientTaskMgr::SendLowBatteryEvent(std::vector<std::string> &dumpInfo)

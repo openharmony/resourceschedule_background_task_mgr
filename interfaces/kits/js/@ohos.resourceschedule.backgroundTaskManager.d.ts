@@ -20,20 +20,16 @@ import Context from './application/BaseContext';
 /**
  * Manages background tasks.
  *
- * @since 7
+ * @since 9
  * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
- * @deprecated since 9
- * @useinstead @ohos.resourceschedule.backgroundTaskManager
  */
 declare namespace backgroundTaskManager {
     /**
      * The info of delay suspend.
      *
      * @name DelaySuspendInfo
-     * @since 7
+     * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.backgroundTaskManager.DelaySuspendInfo
      */
     interface DelaySuspendInfo {
         /**
@@ -49,23 +45,33 @@ declare namespace backgroundTaskManager {
     /**
      * Cancels delayed transition to the suspended state.
      *
-     * @since 7
+     * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
      * @param requestId Indicates the identifier of the delay request.
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.backgroundTaskManager.cancelSuspendDelay
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9900001 - Caller information verification failed.
+     * @throws { BusinessError } 9900002 - Background task verification failed.
      */
     function cancelSuspendDelay(requestId: number): void;
 
     /**
      * Obtains the remaining time before an application enters the suspended state.
      *
-     * @since 7
+     * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
      * @param requestId Indicates the identifier of the delay request.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9900001 - Caller information verification failed.
+     * @throws { BusinessError } 9900002 - Background task verification failed.
      * @return The remaining delay time
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.backgroundTaskManager.getRemainingDelayTime
      */
     function getRemainingDelayTime(requestId: number, callback: AsyncCallback<number>): void;
     function getRemainingDelayTime(requestId: number): Promise<number>;
@@ -73,13 +79,18 @@ declare namespace backgroundTaskManager {
     /**
      * Requests delayed transition to the suspended state.
      *
-     * @since 7
+     * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
      * @param reason Indicates the reason for delayed transition to the suspended state.
      * @param callback The callback delay time expired.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9900001 - Caller information verification failed.
+     * @throws { BusinessError } 9900002 - Background task verification failed.
      * @return Info of delay request
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.backgroundTaskManager.requestSuspendDelay
      */
     function requestSuspendDelay(reason: string, callback: Callback<void>): DelaySuspendInfo;
 
@@ -87,14 +98,21 @@ declare namespace backgroundTaskManager {
      * Service ability uses this method to request start running in background.
      * system will publish a notification related to the this service.
      *
-     * @since 8
+     * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
      * @permission ohos.permission.KEEP_BACKGROUND_RUNNING
      * @param context app running context.
      * @param bgMode Indicates which background mode to request.
      * @param wantAgent Indicates which ability to start when user click the notification bar.
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.backgroundTaskManager.startBackgroundRunning
+     * @throws { BusinessError } 201 - Permission denied.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9800005 - Background task verification failed.
+     * @throws { BusinessError } 9800006 - Notification verification failed.
+     * @throws { BusinessError } 9800007 - Task storage failed.
      */
     function startBackgroundRunning(context: Context, bgMode: BackgroundMode, wantAgent: WantAgent, callback: AsyncCallback<void>): void;
     function startBackgroundRunning(context: Context, bgMode: BackgroundMode, wantAgent: WantAgent): Promise<void>;
@@ -102,11 +120,18 @@ declare namespace backgroundTaskManager {
     /**
      * Service ability uses this method to request stop running in background.
      *
-     * @since 8
+     * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
      * @param context app running context.
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.backgroundTaskManager.stopBackgroundRunning
+     * @throws { BusinessError } 201 - Permission denied.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9800005 - Background task verification failed.
+     * @throws { BusinessError } 9800006 - Notification verification failed.
+     * @throws { BusinessError } 9800007 - Task storage failed.
      */
     function stopBackgroundRunning(context: Context, callback: AsyncCallback<void>): void;
     function stopBackgroundRunning(context: Context): Promise<void>;
@@ -116,12 +141,16 @@ declare namespace backgroundTaskManager {
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
-     * @return True if efficiency resources apply success, else false.
+     * @throws { BusinessError } 201 - Permission denied.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 18700001 - Caller information verification failed.
      * @systemapi Hide this for inner system use.
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.backgroundTaskManager.applyEfficiencyResources
      */
-     function applyEfficiencyResources(request: EfficiencyResourcesRequest): boolean;
+     function applyEfficiencyResources(request: EfficiencyResourcesRequest): void;
 
      /**
       * Reset all efficiency resources apply.
@@ -129,24 +158,27 @@ declare namespace backgroundTaskManager {
       * @since 9
       * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
       * @systemapi Hide this for inner system use.
-      * @deprecated since 9
-      * @useinstead @ohos.resourceschedule.backgroundTaskManager.resetAllEfficiencyResources
+      * @throws { BusinessError } 201 - Permission denied.
+      * @throws { BusinessError } 401 - Parameter error.
+      * @throws { BusinessError } 9800001 - Memory operation failed.
+      * @throws { BusinessError } 9800002 - Parcel operation failed.
+      * @throws { BusinessError } 9800003 - Inner transact failed.
+      * @throws { BusinessError } 9800004 - System service operation failed.
+      * @throws { BusinessError } 18700001 - Caller information verification failed.
       */
      function resetAllEfficiencyResources(): void;
 
     /**
      * supported background mode.
      *
-     * @since 8
+     * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.backgroundTaskManager.BackgroundMode
      */
     export enum BackgroundMode {
         /**
          * data transfer mode
          *
-         * @since 8
+         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          */
         DATA_TRANSFER = 1,
@@ -154,7 +186,7 @@ declare namespace backgroundTaskManager {
         /**
          * audio playback mode
          *
-         * @since 8
+         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          */
         AUDIO_PLAYBACK = 2,
@@ -162,7 +194,7 @@ declare namespace backgroundTaskManager {
         /**
          * audio recording mode
          *
-         * @since 8
+         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          */
         AUDIO_RECORDING = 3,
@@ -170,7 +202,7 @@ declare namespace backgroundTaskManager {
         /**
          * location mode
          *
-         * @since 8
+         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          */
         LOCATION = 4,
@@ -178,7 +210,7 @@ declare namespace backgroundTaskManager {
         /**
          * bluetooth interaction mode
          *
-         * @since 8
+         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          */
         BLUETOOTH_INTERACTION = 5,
@@ -186,7 +218,7 @@ declare namespace backgroundTaskManager {
         /**
          * multi-device connection mode
          *
-         * @since 8
+         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          */
         MULTI_DEVICE_CONNECTION = 6,
@@ -194,7 +226,7 @@ declare namespace backgroundTaskManager {
         /**
          * wifi interaction mode
          *
-         * @since 8
+         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          * @systemapi Hide this for inner system use.
          */
@@ -203,7 +235,7 @@ declare namespace backgroundTaskManager {
         /**
          * Voice over Internet Phone mode
          *
-         * @since 8
+         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          * @systemapi Hide this for inner system use.
          */
@@ -213,7 +245,7 @@ declare namespace backgroundTaskManager {
          * background continuous calculate mode, for example 3D render.
          * only supported in particular device
          *
-         * @since 8
+         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          */
         TASK_KEEPING = 9,
@@ -225,8 +257,6 @@ declare namespace backgroundTaskManager {
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
      * @systemapi Hide this for inner system use.
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.backgroundTaskManager.ResourceType
      */
      export enum ResourceType {
         /**
@@ -272,8 +302,6 @@ declare namespace backgroundTaskManager {
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
      * @systemapi Hide this for inner system use.
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.backgroundTaskManager.EfficiencyResourcesRequest
      */
     export interface EfficiencyResourcesRequest {
         /**

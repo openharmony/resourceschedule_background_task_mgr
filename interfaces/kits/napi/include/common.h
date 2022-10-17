@@ -17,6 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_COMMON_H
 
 #include <string_ex.h>
+#include <memory>
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
@@ -52,15 +53,17 @@ public:
     static void PaddingAsyncWorkData(
         const napi_env &env, const napi_ref &callback, AsyncWorkData &info, napi_value &promise);
 
-    static void ReturnCallbackPromise(const napi_env &env, const AsyncWorkData &info, const napi_value &result);
+    static napi_value GetCallbackErrorValue(napi_env env, const int32_t errCode, const std::string errMsg);
 
-    static void SetCallback(
-        const napi_env &env, const napi_ref &callbackIn, const int32_t &errorCode, const napi_value &result);
+    static void SetCallback(const napi_env &env, const napi_ref &callbackIn, const napi_value &result);
 
-    static void SetCallback(
-        const napi_env &env, const napi_ref &callbackIn, const napi_value &result);
+    static void SetCallback(const napi_env &env, const napi_ref &callbackIn,
+        const int32_t &errCode, const napi_value &result);
 
     static napi_value SetPromise(const napi_env &env, const AsyncWorkData &info, const napi_value &result);
+
+    static void ReturnCallbackPromise(const napi_env &env, const AsyncWorkData &info,
+        const napi_value &result);
 
     static napi_value JSParaError(const napi_env &env, const napi_ref &callback);
 
@@ -72,6 +75,14 @@ public:
         const napi_env &env, std::shared_ptr<DelaySuspendInfo>& delaySuspendInfo, napi_value &result);
 
     static napi_value GetStringValue(const napi_env &env, const napi_value &value, std::string &result);
+
+    static void HandleErrCode(const napi_env &env, int32_t errCode, bool isThrow);
+
+    static bool HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow);
+
+    static std::string FindErrMsg(const napi_env &env, const int32_t errCode);
+
+    static int32_t FindErrCode(const napi_env &env, const int32_t errCodeIn);
 
     static napi_value GetBooleanValue(const napi_env &env, const napi_value &value, bool &result);
 };

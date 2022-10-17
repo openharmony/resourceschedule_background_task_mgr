@@ -19,6 +19,8 @@
 
 #include "transient_task_log.h"
 #include "time_provider.h"
+#include "bgtaskmgr_inner_errors.h"
+#include "errors.h"
 
 using namespace std;
 
@@ -29,18 +31,18 @@ namespace {
     constexpr int32_t MIN_ALLOW_QUOTA_TIME = 10 * MSEC_PER_SEC; // 10s
 }
 
-bool PkgDelaySuspendInfo::IsAllowRequest()
+ErrCode PkgDelaySuspendInfo::IsAllowRequest()
 {
     if (requestList_.size() >= MAX_REQUEST_ID) {
-        return false;
+        return ERR_BGTASK_EXCEEDS_THRESHOLD;
     }
 
     UpdateQuota();
     if (quota_ >= MIN_ALLOW_QUOTA_TIME) {
-        return true;
+        return ERR_OK;
     }
 
-    return false;
+    return ERR_BGTASK_TIME_INSUFFICIENT;
 }
 
 void PkgDelaySuspendInfo::AddRequest(const shared_ptr<DelaySuspendInfoEx>& delayInfo,

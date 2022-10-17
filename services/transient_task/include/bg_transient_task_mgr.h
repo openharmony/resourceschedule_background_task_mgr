@@ -73,7 +73,7 @@ public:
         const TransientTaskEventType type);
 
 private:
-    bool IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
+    ErrCode IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
         const sptr<IExpiredCallback>& callback);
     bool GetBundleNamesForUid(int32_t uid, std::string &bundleName);
     bool VerifyCallingInfo(int32_t uid, int32_t pid);

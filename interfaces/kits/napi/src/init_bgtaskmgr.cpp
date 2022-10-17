@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "init.h"
+#include "init_bgtaskmgr.h"
 
 #include "background_mode.h"
 #include "bg_continuous_task_napi_module.h"
@@ -29,14 +29,14 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 EXTERN_C_START
 
-napi_value BackgroundTaskManagerInit(napi_env env, napi_value exports)
+napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
-        DECLARE_NAPI_FUNCTION("requestSuspendDelay", RequestSuspendDelay),
-        DECLARE_NAPI_FUNCTION("cancelSuspendDelay", CancelSuspendDelay),
-        DECLARE_NAPI_FUNCTION("getRemainingDelayTime", GetRemainingDelayTime),
-        DECLARE_NAPI_FUNCTION("startBackgroundRunning", StartBackgroundRunning),
-        DECLARE_NAPI_FUNCTION("stopBackgroundRunning", StopBackgroundRunning),
+        DECLARE_NAPI_FUNCTION("requestSuspendDelay", RequestSuspendDelayThrow),
+        DECLARE_NAPI_FUNCTION("cancelSuspendDelay", CancelSuspendDelayThrow),
+        DECLARE_NAPI_FUNCTION("getRemainingDelayTime", GetRemainingDelayTimeThrow),
+        DECLARE_NAPI_FUNCTION("startBackgroundRunning", StartBackgroundRunningThrow),
+        DECLARE_NAPI_FUNCTION("stopBackgroundRunning", StopBackgroundRunningThrow),
         DECLARE_NAPI_FUNCTION("applyEfficiencyResources", ApplyEfficiencyResources),
         DECLARE_NAPI_FUNCTION("resetAllEfficiencyResources", ResetAllEfficiencyResources),
     };
@@ -89,12 +89,12 @@ napi_value BackgroundModeInit(napi_env env, napi_value exports)
 /*
  * Module export function
  */
-static napi_value Init(napi_env env, napi_value exports)
+static napi_value InitApi(napi_env env, napi_value exports)
 {
     /*
      * Properties define
      */
-    BackgroundTaskManagerInit(env, exports);
+    BackgroundTaskMgrInit(env, exports);
     BackgroundModeInit(env, exports);
     return exports;
 }
@@ -104,7 +104,7 @@ static napi_value Init(napi_env env, napi_value exports)
  */
 __attribute__((constructor)) void RegisterModule(void)
 {
-    napi_module_register(&_module);
+    napi_module_register(&_apiModule);
 }
 EXTERN_C_END
 }  // namespace BackgroundTaskMgr
