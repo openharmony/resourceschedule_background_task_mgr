@@ -265,7 +265,7 @@ napi_value StartBackgroundRunningAsync(napi_env env, napi_value *argv,
         return nullptr;
     }
     NAPI_CALL(env, napi_create_reference(env, argv[argCallback], 1, &asyncCallbackInfo->callback));
-    if (!StartBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow)) {
+    if (!StartBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
         return nullptr;
     }
 
@@ -293,7 +293,9 @@ napi_value StartBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncC
     napi_value promise = 0;
     NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
     asyncCallbackInfo->deferred = deferred;
-    StartBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow);
+    if (!StartBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
+        return nullptr;
+    }
 
     NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
@@ -452,7 +454,7 @@ napi_value StopBackgroundRunningAsync(napi_env env, napi_value *argv,
     if (valuetype == napi_function) {
         NAPI_CALL(env, napi_create_reference(env, argv[argCallback], 1, &asyncCallbackInfo->callback));
     }
-    if (!StopBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow)) {
+    if (!StopBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
         return nullptr;
     }
 
@@ -480,7 +482,9 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
     napi_create_promise(env, &deferred, &promise);
 
     asyncCallbackInfo->deferred = deferred;
-    StopBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow);
+    if (!StopBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
+        return nullptr;
+    }
 
     napi_create_async_work(
         env,
