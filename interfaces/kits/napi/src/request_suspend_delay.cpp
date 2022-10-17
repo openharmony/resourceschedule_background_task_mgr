@@ -206,6 +206,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc != REQUEST_SUSPEND_DELAY_PARAMS) {
         Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        return nullptr;
     }
 
     // argv[0] : reason
@@ -220,6 +221,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
     if (valuetype != napi_function) {
         Common::HandleParamErr(env, ERR_CALLBACK_NULL_OR_TYPE_ERR, isThrow);
+        return nullptr;
     }
 
     if (GetExpiredCallback(env, argv[1], callback) == nullptr) {

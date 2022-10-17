@@ -44,6 +44,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc != GET_REMAINING_DELAY_TIME_MIN_PARAMS && argc != GET_REMAINING_DELAY_TIME_PARAMS) {
         Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        return nullptr;
     }
 
     // argv[0] : requestId
@@ -59,6 +60,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         if (valuetype != napi_function) {
             Common::HandleParamErr(env, ERR_CALLBACK_NULL_OR_TYPE_ERR, isThrow);
+            return nullptr;
         }
         NAPI_CALL(env, napi_create_reference(env, argv[1], 1, &params.callback));
     }
@@ -74,12 +76,17 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
 napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info, bool isThrow)
 {
     GetRemainingDelayTimeParamsInfo params;
-    ParseParameters(env, info, params, isThrow);
+    if (ParseParameters(env, info, params, isThrow) == nullptr) {
+        return nullptr;
+    }
 
     napi_value promise = nullptr;
     AsyncCallbackInfoGetRemainingDelayTime *asyncCallbackInfo =
         new (std::nothrow) AsyncCallbackInfoGetRemainingDelayTime(env);
     if (!asyncCallbackInfo) {
+        if (isThrow) {
+            return nullptr;
+        }
         return Common::JSParaError(env, params.callback);
     }
     std::unique_ptr<AsyncCallbackInfoGetRemainingDelayTime> callbackPtr {asyncCallbackInfo};
