@@ -41,6 +41,9 @@
 #include "continuous_task_log.h"
 #include "system_event_observer.h"
 #include "data_storage_helper.h"
+#ifdef SUPPORT_GRAPHICS
+#include "locale_config.h"
+#endif // SUPPORT_GRAPHICS
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -152,6 +155,10 @@ void BgContinuousTaskMgr::InitNecessaryState()
     }
     if (!RegisterSysCommEventListener()) {
         BGTASK_LOGE("RegisterSysCommEventListener failed");
+        return;
+    }
+    if (!RegisterConfigurationObserver()) {
+        BGTASK_LOGE("RegisterConfigurationObserver failed");
         return;
     }
     deviceType_ = OHOS::system::GetParameter("const.build.characteristics", "");
@@ -274,18 +281,28 @@ bool BgContinuousTaskMgr::RegisterAppStateObserver()
     return res;
 }
 
-bool BgContinuousTaskMgr::GetNotificationPrompt()
+bool BgContinuousTaskMgr::RegisterConfigurationObserver()
 {
-    AppExecFwk::BundleInfo bundleInfo;
-    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(BG_TASK_RES_BUNDLE_NAME,
-        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo)) {
-        BGTASK_LOGE("get background task res: %{public}s bundle info failed", BG_TASK_RES_BUNDLE_NAME);
+    auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
+    if (appMgrClient->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGW("connect to app mgr service failed");
         return false;
     }
+    configChangeObserver_ = sptr<AppExecFwk::IConfigurationObserver>(
+        new (std::nothrow) ConfigChangeObserver(handler_, shared_from_this()));
+    if (appMgrClient->RegisterConfigurationObserver(configChangeObserver_) != ERR_OK) {
+        return false;
+    }
+    return true;
+}
+
+std::shared_ptr<Global::Resource::ResourceManager> BgContinuousTaskMgr::GetBundleResMgr(
+    const AppExecFwk::BundleInfo &bundleInfo)
+{
     std::shared_ptr<Global::Resource::ResourceManager> resourceManager(Global::Resource::CreateResourceManager());
     if (!resourceManager) {
         BGTASK_LOGE("create resourceManager failed");
-        return false;
+        return nullptr;
     }
     for (auto moduleResPath : bundleInfo.moduleResPaths) {
         if (!moduleResPath.empty()) {
@@ -293,6 +310,30 @@ bool BgContinuousTaskMgr::GetNotificationPrompt()
                 BGTASK_LOGE("AddResource failed");
             }
         }
+    }
+    std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
+#ifdef SUPPORT_GRAPHICS
+    UErrorCode status = U_ZERO_ERROR;
+    icu::Locale locale = icu::Locale::forLanguageTag(Global::I18n::LocaleConfig::GetSystemLanguage(), status);
+    resConfig->SetLocaleInfo(locale);
+#endif // SUPPORT_GRAPHICS
+    resourceManager->UpdateResConfig(*resConfig);
+    return resourceManager;
+}
+
+bool BgContinuousTaskMgr::GetNotificationPrompt()
+{
+    continuousTaskText_.clear();
+    AppExecFwk::BundleInfo bundleInfo;
+    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(BG_TASK_RES_BUNDLE_NAME,
+        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo)) {
+        BGTASK_LOGE("get background task res: %{public}s bundle info failed", BG_TASK_RES_BUNDLE_NAME);
+        return false;
+    }
+    auto resourceManager = GetBundleResMgr(bundleInfo);
+    if (resourceManager == nullptr) {
+        BGTASK_LOGE("Get bgtask resource hap manager failed");
+        return false;
     }
     std::string taskText {""};
     for (std::string name : g_taskPromptResNames) {
@@ -505,8 +546,10 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     }
 
     if (cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
+        std::string mainAbilityLabel = GetMainAbilityLabel(continuousTaskRecord->bundleName_,
+            continuousTaskRecord->userId_);
         SetCachedBundleInfo(continuousTaskRecord->uid_, continuousTaskRecord->userId_,
-            continuousTaskRecord->bundleName_, continuousTaskRecord->appName_);
+            continuousTaskRecord->bundleName_, mainAbilityLabel);
     }
 
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_,
@@ -1115,6 +1158,64 @@ int32_t BgContinuousTaskMgr::RefreshTaskRecord()
         return ret;
     }
     return ERR_OK;
+}
+
+std::string BgContinuousTaskMgr::GetMainAbilityLabel(const std::string &bundleName, int32_t userId)
+{
+    AppExecFwk::BundleInfo bundleInfo;
+    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
+        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId)) {
+        BGTASK_LOGE("Get %{public}s bundle info failed", bundleName.c_str());
+        return "";
+    }
+    auto resourceManager = GetBundleResMgr(bundleInfo);
+    if (resourceManager == nullptr) {
+        BGTASK_LOGE("Get %{public}s resource manager failed", bundleName.c_str());
+        return "";
+    }
+
+    AAFwk::Want want;
+    want.SetAction("action.system.home");
+    want.AddEntity("entity.system.home");
+    want.SetElementName("", bundleName, "", "");
+    AppExecFwk::AbilityInfo abilityInfo;
+    if (!BundleManagerHelper::GetInstance()->QueryAbilityInfo(want,
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, abilityInfo)) {
+        BGTASK_LOGE("Get %{public}s main ability info failed", bundleName.c_str());
+        return "";
+    }
+    std::string mainAbilityLabel {""};
+    resourceManager->GetStringById(static_cast<uint32_t>(abilityInfo.labelId), mainAbilityLabel);
+    BGTASK_LOGI("Get main ability label: %{public}s by labelId: %{public}d", mainAbilityLabel.c_str(),
+        abilityInfo.labelId);
+    mainAbilityLabel = mainAbilityLabel.empty() ? abilityInfo.label : mainAbilityLabel;
+    return mainAbilityLabel;
+}
+
+void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration &configuration)
+{
+    BGTASK_LOGI("System language config has changed");
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+    GetNotificationPrompt();
+    cachedBundleInfos_.clear();
+    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        auto record = iter->second;
+        std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
+
+        std::string notificationText {""};
+        uint32_t index = GetBgModeNameIndex(record->bgModeId_, record->isNewApi_);
+        if (index < BGMODE_NUMS) {
+            notificationText = continuousTaskText_.at(index);
+        }
+        newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
+        iter++;
+    }
+    NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

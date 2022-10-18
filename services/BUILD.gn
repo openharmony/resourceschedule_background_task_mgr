@@ -36,6 +36,7 @@ ohos_shared_library("bgtaskmgr_service") {
     "common/src/system_event_observer.cpp",
     "common/src/time_provider.cpp",
     "continuous_task/src/bg_continuous_task_mgr.cpp",
+    "continuous_task/src/config_change_observer.cpp",
     "continuous_task/src/continuous_task_record.cpp",
     "continuous_task/src/notification_tools.cpp",
     "core/src/background_task_mgr_service.cpp",
@@ -61,6 +62,7 @@ ohos_shared_library("bgtaskmgr_service") {
 
   external_deps = [
     "ability_base:base",
+    "ability_base:configuration",
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:app_manager",
@@ -89,6 +91,12 @@ ohos_shared_library("bgtaskmgr_service") {
     cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
     deps += [ "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits" ]
     sources += [ "continuous_task/src/task_notification_subscriber.cpp" ]
+  }
+
+  if (background_task_mgr_graphics) {
+    cflags_cc += [ "-DSUPPORT_GRAPHICS" ]
+    deps += [ "//third_party/icu/icu4c:shared_icuuc" ]
+    external_deps += [ "i18n:intl_util" ]
   }
 
   part_name = "background_task_mgr"

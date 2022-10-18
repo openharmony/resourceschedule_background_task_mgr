@@ -21,6 +21,10 @@ bgtaskmgr_frameworks_path = "${bgtaskmgr_root_path}/frameworks"
 
 bgtaskmgr_services_path = "${bgtaskmgr_root_path}/services"
 
+declare_args() {
+  background_task_mgr_graphics = true
+}
+
 if (!defined(global_parts_info) ||
     defined(global_parts_info.account_os_account)) {
   has_os_account_part = true

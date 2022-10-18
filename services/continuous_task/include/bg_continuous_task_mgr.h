@@ -36,6 +36,7 @@
 #include "ibackground_task_subscriber.h"
 #include "remote_death_recipient.h"
 #include "system_event_observer.h"
+#include "config_change_observer.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -73,6 +74,7 @@ public:
     void Clear();
     int32_t GetBgTaskUid();
     void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
+    void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
@@ -94,6 +96,7 @@ private:
     bool RegisterNotificationSubscriber();
     bool RegisterSysCommEventListener();
     bool RegisterAppStateObserver();
+    bool RegisterConfigurationObserver();
     bool GetNotificationPrompt();
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName, const std::string &appName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
@@ -106,6 +109,8 @@ private:
     void HandleAppContinuousTaskStop(int32_t uid);
     bool checkPidCondition(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t pid);
     bool checkNotificationCondition(const std::set<std::string> &notificationLabels, const std::string &label);
+    std::shared_ptr<Global::Resource::ResourceManager> GetBundleResMgr(const AppExecFwk::BundleInfo &bundleInfo);
+    std::string GetMainAbilityLabel(const std::string &bundleName, int32_t userId);
 
 private:
     std::atomic<bool> isSysReady_ {false};
@@ -119,6 +124,7 @@ private:
 #endif
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
     std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
+    sptr<AppExecFwk::IConfigurationObserver> configChangeObserver_ {nullptr};
     std::list<sptr<IBackgroundTaskSubscriber>> bgTaskSubscribers_ {};
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> subscriberRecipients_ {};
     std::unordered_map<int32_t, CachedBundleInfo> cachedBundleInfos_ {};
