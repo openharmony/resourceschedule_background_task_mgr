@@ -63,6 +63,14 @@ bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const A
     return true;
 }
 
+bool BundleManagerHelper::QueryAbilityInfo(const AAFwk::Want &want, int32_t flags, int32_t userId,
+    AppExecFwk::AbilityInfo &abilityInfo)
+{
+    abilityInfo.labelId = 1;
+    abilityInfo.label = "ability";
+    return true;
+}
+
 bool BundleManagerHelper::Connect()
 {
     return true;
