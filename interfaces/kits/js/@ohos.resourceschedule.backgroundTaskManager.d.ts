@@ -169,7 +169,7 @@ declare namespace backgroundTaskManager {
      function resetAllEfficiencyResources(): void;
 
     /**
-     * supported background mode.
+     * Supported background mode.
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
