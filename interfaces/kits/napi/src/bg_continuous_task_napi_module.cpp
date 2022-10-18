@@ -314,7 +314,7 @@ napi_value GetBackgroundMode(const napi_env &env, const napi_value &value, uint3
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     if (valuetype != napi_number) {
         Common::HandleParamErr(env, ERR_BGMODE_NULL_OR_TYPE_ERR, true);
-        return WrapVoidToJS(env);
+        return nullptr;
     }
     napi_get_value_uint32(env, value, &bgMode);
 
@@ -328,7 +328,7 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value, AbilityRun
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     if (valuetype != napi_object) {
         Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR, true);
-        return WrapVoidToJS(env);
+        return nullptr;
     }
     napi_unwrap(env, value, (void **)&wantAgent);
 
