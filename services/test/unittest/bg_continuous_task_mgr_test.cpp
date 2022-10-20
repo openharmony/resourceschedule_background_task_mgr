@@ -87,20 +87,21 @@ public:
  */
 HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
 {
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
     taskParam->appName_ = "Entry";
     taskParam->isNewApi_ = true;
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
     taskParam->abilityName_ = "";
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
     taskParam->abilityName_ = "ability1";
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
     taskParam->bgModeId_ = 9;
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam),
+        (int32_t)ERR_BGTASK_KEEPING_TASK_VERIFY_ERR);
     taskParam->bgModeId_ = 1;
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
     taskParam->bgModeId_ = 4;
@@ -115,14 +116,14 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
  */
 HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
 {
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
     taskParam->appName_ = "Entry";
     taskParam->isNewApi_ = false;
     taskParam->bgModeId_ = 0;
     taskParam->abilityName_ = "";
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
     taskParam->abilityName_ = "ability1";
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
 }
@@ -143,7 +144,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
     taskParam->bgModeId_ = 4;
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(""), (int32_t)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_OBJECT_NOT_EXIST);
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
