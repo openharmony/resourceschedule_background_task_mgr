@@ -331,7 +331,7 @@ describe("ContinuousTaskJsTest", function () {
                 text: "text"
             };
 
-             let notificationContent = {
+            let notificationContent = {
                 contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
                 normal: basicContent
             };
