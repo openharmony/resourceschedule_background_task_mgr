@@ -33,7 +33,6 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
-static constexpr int32_t MIN_DUMP_PARAM_NUMS = 1;
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
 }
@@ -237,7 +236,7 @@ int32_t BackgroundTaskMgrService::Dump(int32_t fd, const std::vector<std::u16str
 
     if (argsInStr.size() == NO_DUMP_PARAM_NUMS) {
         DumpUsage(result);
-    } else if (argsInStr.size() >= MIN_DUMP_PARAM_NUMS) {
+    } else {
         std::vector<std::string> infos;
         if (argsInStr[0] == "-h") {
             DumpUsage(result);

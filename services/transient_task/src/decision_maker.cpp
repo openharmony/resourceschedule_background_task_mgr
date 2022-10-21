@@ -357,7 +357,7 @@ void DecisionMaker::HandleScreenOn()
 void DecisionMaker::HandleScreenOff()
 {
     lock_guard<mutex> lock(lock_);
-    for (auto &p : pkgDelaySuspendInfoMap_) {
+    for (const auto &p : pkgDelaySuspendInfoMap_) {
         auto pkgInfo = p.second;
         if (CanStartAccountingLocked(pkgInfo)) {
             pkgInfo->StartAccounting();
