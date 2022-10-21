@@ -81,7 +81,7 @@ void CallbackInstance::DeleteNapiRef()
         dataWorker = nullptr;
         return;
     }
-    work->data = (void *)dataWorker;
+    work->data = static_cast<void *>(dataWorker);
 
     int32_t ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkDeleteRef);
     if (ret != 0) {
@@ -167,7 +167,7 @@ void CallbackInstance::OnExpired()
         return;
     }
 
-    work->data = (void *)dataWorker;
+    work->data = static_cast<void *>(dataWorker);
 
     int32_t ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnExpired);
     if (ret != 0) {

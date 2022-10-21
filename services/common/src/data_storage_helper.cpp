@@ -41,7 +41,7 @@ ErrCode DataStorageHelper::RefreshTaskRecord(const std::unordered_map<std::strin
     std::shared_ptr<ContinuousTaskRecord>> &allRecord)
 {
     nlohmann::json root;
-    for (auto &iter : allRecord) {
+    for (const auto &iter : allRecord) {
         auto record = iter.second;
         std::string data = record->ParseToJsonStr();
         nlohmann::json recordJson = nlohmann::json::parse(data, nullptr, false);;
