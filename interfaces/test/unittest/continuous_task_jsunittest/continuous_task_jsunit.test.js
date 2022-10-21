@@ -325,24 +325,35 @@ describe("ContinuousTaskJsTest", function () {
             requestCode: 0,
             wantAgentFlags: [3]
         };
-        await wantAgent.getWantAgent(wantAgentInfo).then((data) => {
-            particleAbility.startBackgroundRunning(data);
-            setTimeout(() => {
-            }, 500);
-        });
+        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+            let basicContent = {
+                title: "title",
+                text: "text"
+            };
 
-        particleAbility.cancelBackgroundRunning().then(() => {
-            console.log("ContinuousTaskJsTest007 cancelBackgroundRunning success");
-            expect(true).assertTrue();
-            setTimeout(() => {
-                done();
-            }, 500);
-        }).catch((err) => {
-            expect(false).assertTrue();
-            console.log("ContinuousTaskJsTest007 cancelBackgroundRunning failure");
-            setTimeout(() => {
-                done();
-            }, 500);
+            let notificationContent = {
+                contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
+                normal: basicContent
+            };
+
+            let request = {
+                content: notificationContent,
+                wantAgent: data
+            }
+
+            let id = 1;
+            particleAbility.startBackgroundRunning(id, request).then((data) => {
+                console.log("ContinuousTaskJsTest007 startBackgroundRunning success");
+                particleAbility.cancelBackgroundRunning().then(() => {
+                    console.log("ContinuousTaskJsTest007 cancelBackgroundRunning success");
+                    expect(true).assertTrue();
+                    done();
+                }).catch((err) => {
+                    expect(false).assertTrue();
+                    console.log("ContinuousTaskJsTest007 cancelBackgroundRunning failure");
+                    done();
+                });
+            })
         });
     })
 
@@ -376,13 +387,27 @@ describe("ContinuousTaskJsTest", function () {
             requestCode: 0,
             wantAgentFlags: [3]
         };
-        await wantAgent.getWantAgent(wantAgentInfo).then((data) => {
-            particleAbility.startBackgroundRunning(data);
-            setTimeout(() => {
-            }, 500);
-        });
+        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+            let basicContent = {
+                title: "title",
+                text: "text"
+            };
 
-        particleAbility.cancelBackgroundRunning(conTaskCallback);
+            let notificationContent = {
+                contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
+                normal: basicContent
+            };
+            let request = {
+                content: notificationContent,
+                wantAgent: data
+            }
+
+            let id = 1;
+            particleAbility.startBackgroundRunning(id, request).then((data) => {
+                console.log("ContinuousTaskJsTest008 startBackgroundRunning success");
+                particleAbility.cancelBackgroundRunning(conTaskCallback);
+            })
+        });
     })
 
     /*
