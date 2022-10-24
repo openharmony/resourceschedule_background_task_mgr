@@ -89,13 +89,13 @@ private:
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
-    uint32_t GetBackgroundModeInfo(int32_t uid, std::string &abilityName);
+    uint32_t GetBackgroundModeInfo(int32_t uid, const std::string &abilityName);
     bool AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool RegisterNotificationSubscriber();
     bool RegisterSysCommEventListener();
     bool RegisterAppStateObserver();
     bool GetNotificationPrompt();
-    bool SetCachedBundleInfo(int32_t uid, int32_t userId, std::string &bundleName, const std::string &appName);
+    bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
     void RemoveSpecifiedBgTask(uint32_t taskType);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);

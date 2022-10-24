@@ -84,6 +84,7 @@
           }
         ],
         "test": [
+          "//foundation/resourceschedule/background_task_mgr/frameworks/test/unittest:unittest",
           "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/bgtask_manager_client_test:bgtask_client_unit_test",
           "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/continuous_task_jsunittest:js_unittest",
           "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/efficiency_resources_jsunittest:js_unittest",
