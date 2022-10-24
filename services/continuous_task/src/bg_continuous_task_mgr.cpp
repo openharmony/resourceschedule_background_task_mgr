@@ -337,7 +337,7 @@ int32_t BgContinuousTaskMgr::GetBgTaskUid()
 }
 
 bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId,
-    std::string &bundleName, const std::string &appName)
+    const std::string &bundleName, const std::string &appName)
 {
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
@@ -403,7 +403,7 @@ ErrCode BgContinuousTaskMgr::checkBgmodeType(uint32_t configuredBgMode, uint32_t
     return ERR_OK;
 }
 
-uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, std::string &abilityName)
+uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, const std::string &abilityName)
 {
     if (cachedBundleInfos_.find(uid) != cachedBundleInfos_.end()) {
         auto cachedBundleInfo = cachedBundleInfos_.at(uid);
@@ -909,7 +909,7 @@ bool BgContinuousTaskMgr::StopContinuousTaskByUser(const std::string &mapKey)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
-        return ERR_BGTASK_SYS_NOT_READY;
+        return false;
     }
     bool result = true;
     handler_->PostSyncTask([this, mapKey, &result]() {
