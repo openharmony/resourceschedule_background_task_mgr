@@ -690,7 +690,6 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_026, TestSize.Level1)
     bgTransientTaskMgr_->expiredCallbackMap_[1] = proxy;
     bgTransientTaskMgr_->HandleExpiredCallbackDeath(proxy);
 
-
     auto keyInfo = std::make_shared<KeyInfo>("bundleName", 1);
     bgTransientTaskMgr_->keyInfoMap_[1] = keyInfo;
     bgTransientTaskMgr_->expiredCallbackMap_[1] = proxy;
