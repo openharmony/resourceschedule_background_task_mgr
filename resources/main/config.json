@@ -19,6 +19,7 @@
     "module": {
         "package": "ohos.backgroundtaskmgr.resources",
         "deviceType": [
+            "tablet",
             "default",
             "tv",
             "car",
