@@ -93,6 +93,7 @@ ErrCode NotificationTools::PublishNotification(const std::shared_ptr<ContinuousT
 #endif
     return ERR_OK;
 }
+
 ErrCode NotificationTools::CancelNotification(const std::string &label, int32_t id)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
@@ -109,6 +110,29 @@ void NotificationTools::GetAllActiveNotificationsLabels(std::set<std::string> &n
     Notification::NotificationHelper::GetAllActiveNotifications(notifications);
     for (auto &var : notifications) {
         notificationLabels.emplace(var->GetLabel());
+    }
+#endif
+}
+
+void NotificationTools::RefreshContinuousNotifications(
+    const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos, int32_t serviceUid)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    std::vector<sptr<Notification::Notification>> notifications;
+    Notification::NotificationHelper::GetAllActiveNotifications(notifications);
+    for (auto &var : notifications) {
+        Notification::NotificationRequest request = var->GetNotificationRequest();
+        std::string label = var->GetLabel();
+        if (newPromptInfos.count(label) == 0 || request.GetCreatorUid() != serviceUid) {
+            continue;
+        }
+        auto &content = request.GetContent();
+        auto const &normalContent = content->GetNotificationContent();
+        normalContent->SetTitle(newPromptInfos.at(label).first);
+        normalContent->SetText(newPromptInfos.at(label).second);
+        if (Notification::NotificationHelper::PublishContinuousTaskNotification(request) != ERR_OK) {
+            BGTASK_LOGE("refresh notification error");
+        }
     }
 #endif
 }

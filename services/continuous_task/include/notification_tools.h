@@ -28,6 +28,8 @@ public:
         const std::string &appName, const std::string &prompt, int32_t serviceUid);
     ErrCode CancelNotification(const std::string &label, int32_t id);
     void GetAllActiveNotificationsLabels(std::set<std::string> &notificationLabels);
+    void RefreshContinuousNotifications(
+        const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos, int32_t serviceUid);
 
     DECLARE_DELAYED_SINGLETON(NotificationTools)
 };
