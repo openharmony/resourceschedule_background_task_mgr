@@ -98,6 +98,17 @@ bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const A
     return false;
 }
 
+bool BundleManagerHelper::QueryAbilityInfo(const AAFwk::Want &want, int32_t flags, int32_t userId,
+    AppExecFwk::AbilityInfo &abilityInfo)
+{
+    std::lock_guard<std::mutex> lock(connectionMutex_);
+    Connect();
+    if (bundleMgr_ != nullptr && bundleMgr_->QueryAbilityInfo(want, flags, userId, abilityInfo)) {
+        return true;
+    }
+    return false;
+}
+
 bool BundleManagerHelper::Connect()
 {
     if (bundleMgr_ != nullptr) {

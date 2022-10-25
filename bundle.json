@@ -17,7 +17,9 @@
         "SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask",
         "SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply"
       ],
-      "features": [],
+      "features": [
+        "background_task_mgr_graphics"
+      ],
       "adapted_system_type": [
         "mini",
         "small",

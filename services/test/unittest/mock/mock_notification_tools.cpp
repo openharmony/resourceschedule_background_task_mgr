@@ -33,5 +33,8 @@ ErrCode NotificationTools::CancelNotification(const std::string &label, int32_t 
 }
 
 void NotificationTools::GetAllActiveNotificationsLabels(std::set<std::string> &notificationLabels) {}
+
+void NotificationTools::RefreshContinuousNotifications(
+    const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos, int32_t serviceUid) {}
 }
 }

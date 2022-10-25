@@ -36,6 +36,9 @@ public:
         AppExecFwk::BundleInfo &bundleInfo, int32_t userId = UNSPECIFIED_USERID);
     bool GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
         const int userId, AppExecFwk::ApplicationInfo &appInfo);
+    bool QueryAbilityInfo(const AAFwk::Want &want, int32_t flags, int32_t userId,
+        AppExecFwk::AbilityInfo &abilityInfo);
+
 private:
     bool Connect();
     void Disconnect();
