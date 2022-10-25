@@ -98,16 +98,16 @@ public:
 HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_001, TestSize.Level1)
 {
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
+        nullptr), (int32_t)ERR_BGTASK_RESOURCES_EXCEEDS_MAX);
     sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo();
     resourceInfo->isApply_ = true;
     EXPECT_NE(resourceInfo, nullptr);
     resourceInfo->resourceNumber_ = 1 << MAX_RESOURCES_TYPE_NUM;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo), (int32_t)ERR_BGTASK_INVALID_PARAM);
+        resourceInfo), (int32_t)ERR_BGTASK_RESOURCES_EXCEEDS_MAX);
     resourceInfo->resourceNumber_ = 1;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo), (int32_t)ERR_BGTASK_INVALID_PARAM);
+        resourceInfo), (int32_t)ERR_BGTASK_RESOURCES_EXCEEDS_MAX);
     resourceInfo->isPersist_ = true;
     resourceInfo->reason_ = "apply";
     resourceInfo->timeOut_ = 0;
@@ -117,7 +117,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_001, TestSize.Leve
     resourceInfo->isPersist_ = false;
     resourceInfo->timeOut_ = 0;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo), (int32_t)ERR_BGTASK_INVALID_PARAM);
+        resourceInfo), (int32_t)ERR_BGTASK_RESOURCES_EXCEEDS_MAX);
     resourceInfo->timeOut_ = 10;
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo), (int32_t)ERR_OK);
@@ -541,7 +541,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, BoundaryCondition_001, TestSize.Level1)
     sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(0, true, 0, "apply",
         true, false);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo), (int32_t)ERR_BGTASK_INVALID_PARAM);
+        resourceInfo), (int32_t)ERR_BGTASK_RESOURCES_EXCEEDS_MAX);
     std::string bundleName {""};
     EXPECT_FALSE(bgEfficiencyResourcesMgr_->IsCallingInfoLegal(-1, 0, bundleName));
     EXPECT_FALSE(bgEfficiencyResourcesMgr_->IsCallingInfoLegal(0, -1, bundleName));
