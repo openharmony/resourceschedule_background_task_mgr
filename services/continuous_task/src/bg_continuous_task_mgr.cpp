@@ -165,7 +165,7 @@ void BgContinuousTaskMgr::HandlePersistenceData()
     DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreTaskRecord(continuousTaskInfosMap_);
     auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
-    if (appMgrClient == nullptr || appMgrClient->ConnectAppMgrService() != ERR_OK) {
+    if (appMgrClient->ConnectAppMgrService() != ERR_OK) {
         BGTASK_LOGW("connect to app mgr service failed");
         return;
     }
@@ -180,11 +180,10 @@ void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::Run
     const std::set<std::string> &allLabels)
 {
     int32_t recordPid;
-    std::string recordLabel;
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         recordPid = iter->second->GetPid();
-        recordLabel = iter->second->GetNotificationLabel();
+        const std::string recordLabel = iter->second->GetNotificationLabel();
         if (checkPidCondition(allProcesses, recordPid) && checkNotificationCondition(allLabels, recordLabel)) {
             BGTASK_LOGI("target continuous task exist");
             iter++;

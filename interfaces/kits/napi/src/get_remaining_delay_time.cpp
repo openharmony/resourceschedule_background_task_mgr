@@ -117,7 +117,7 @@ napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info, bool isT
                 Common::ReturnCallbackPromise(env, *asyncCallbackInfo, result);
             }
         },
-        (void *)asyncCallbackInfo,
+        static_cast<void *>(asyncCallbackInfo),
         &asyncCallbackInfo->asyncWork));
 
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));

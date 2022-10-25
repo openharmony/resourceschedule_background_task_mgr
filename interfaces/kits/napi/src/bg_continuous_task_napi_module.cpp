@@ -274,7 +274,7 @@ napi_value StartBackgroundRunningAsync(napi_env env, napi_value *argv,
         resourceName,
         StartBackgroundRunningExecuteCB,
         CallbackCompletedCB,
-        (void *)asyncCallbackInfo,
+        static_cast<void *>(asyncCallbackInfo),
         &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
 
@@ -302,7 +302,7 @@ napi_value StartBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncC
         resourceName,
         StartBackgroundRunningExecuteCB,
         PromiseCompletedCB,
-        (void *)asyncCallbackInfo,
+        static_cast<void *>(asyncCallbackInfo),
         &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     return promise;
@@ -463,7 +463,7 @@ napi_value StopBackgroundRunningAsync(napi_env env, napi_value *argv,
         resourceName,
         StopBackgroundRunningExecuteCB,
         CallbackCompletedCB,
-        (void *)asyncCallbackInfo,
+        static_cast<void *>(asyncCallbackInfo),
         &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     return WrapVoidToJS(env);
@@ -492,7 +492,7 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
         resourceName,
         StopBackgroundRunningExecuteCB,
         PromiseCompletedCB,
-        (void *)asyncCallbackInfo,
+        static_cast<void *>(asyncCallbackInfo),
         &asyncCallbackInfo->asyncWork);
     napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
     return promise;
