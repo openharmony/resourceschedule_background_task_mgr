@@ -297,7 +297,7 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         return ERR_BGTASK_INVALID_PARAM;
     }
     if (!CheckRunningResourcesApply(uid, bundleName)) {
-        BGTASK_LOGI("apply efficiency resources failed, running resource apply is false");
+        BGTASK_LOGE("apply efficiency resources failed, running resource apply is false");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     if (!CheckProcApplyWorkScheduler(resourceInfo)) {
@@ -321,7 +321,7 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
 void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<ResourceCallbackInfo>
     callbackInfo, const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
-    BGTASK_LOGD("apply efficiency resources, uid:%{public}d, pid %{public}d, resource number: %{public}u,"\
+    BGTASK_LOGI("apply efficiency resources, uid:%{public}d, pid %{public}d, resource number: %{public}u,"\
         "isPersist: %{public}d, timeOut: %{public}u, isProcess: %{public}d", callbackInfo->GetUid(),
         callbackInfo->GetPid(), resourceInfo->GetResourceNumber(), resourceInfo->IsPersist(),
         resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
@@ -347,8 +347,9 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
     }
 
     callbackInfo->SetResourceNumber(diffResourceNumber);
-    BGTASK_LOGD("after update end time, callbackInfo resource number is %{public}u",
-        callbackInfo->GetResourceNumber());
+    BGTASK_LOGI("after update end time, callbackInfo resource number is %{public}u,"\
+        " uid: %{public}d, bundle name: %{public}s", callbackInfo->GetResourceNumber(),
+        callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str());
     if (resourceInfo->IsProcess()) {
         subscriberMgr_->OnResourceChanged(callbackInfo, EfficiencyResourcesEventType::RESOURCE_APPLY);
     } else {
@@ -435,6 +436,9 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
     RemoveListRecord(resourceRecord->resourceUnitList_, eraseBit);
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(resourceRecord->uid_, resourceRecord->pid_, eraseBit,
         resourceRecord->bundleName_);
+    BGTASK_LOGI("after reset time out resources, callbackInfo resource number is %{public}u,"\
+        " uid: %{public}d, bundle name: %{public}s", callbackInfo->GetResourceNumber(),
+        callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str());
     subscriberMgr_->OnResourceChanged(callbackInfo, type);
     if (resourceRecord->resourceNumber_ == 0) {
         infoMap.erase(iter);
@@ -457,7 +461,7 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
         return ERR_BGTASK_INVALID_PARAM;
     }
     if (!CheckRunningResourcesApply(uid, bundleName)) {
-        BGTASK_LOGI("apply efficiency resources failed, running resource apply is false");
+        BGTASK_LOGE("reset efficiency resources failed, running resource apply is false");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
 
@@ -488,7 +492,7 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
 void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
     const std::shared_ptr<ResourceCallbackInfo> &callbackInfo, bool isProcess)
 {
-    BGTASK_LOGD("reset efficiency resources inner,  uid:%{public}d, pid %{public}d,"\
+    BGTASK_LOGI("reset efficiency resources inner,  uid:%{public}d, pid %{public}d,"\
         " resource number: %{public}u, isProcess: %{public}d", callbackInfo->GetUid(),
         callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), isProcess);
     if (isProcess) {
@@ -643,12 +647,14 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     uint32_t eraseBit = (iter->second->resourceNumber_ & cleanResource);
     iter->second->resourceNumber_ ^= eraseBit;
     RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
+    auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
+        iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
+    BGTASK_LOGI("remove record from info map, uid: %{public}d, bundle name: %{public}s",
+        callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str());
+    subscriberMgr_->OnResourceChanged(callbackInfo, type);
     if (iter->second->resourceNumber_ == 0) {
         infoMap.erase(iter);
     }
-    auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
-        iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
-    subscriberMgr_->OnResourceChanged(callbackInfo, type);
     return true;
 }
 
