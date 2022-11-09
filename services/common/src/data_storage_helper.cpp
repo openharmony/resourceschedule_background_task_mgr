@@ -26,7 +26,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-static constexpr int32_t MAX_BUFFER = 512;
+static constexpr int32_t MAX_BUFFER = 2048;
 static constexpr char TASK_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/running_task";
 static const std::string RESOURCE_RECORD_FILE_PATH = "/data/service/el1/public/background_task_mgr/resource_record";
 static const std::string APP_RESOURCE_RECORD = "appResourceRecord";
@@ -126,8 +126,7 @@ int32_t DataStorageHelper::ParseJsonValueFromFile(nlohmann::json &value, const s
     }
     char buffer[MAX_BUFFER];
     std::ostringstream os;
-    while (!fin.eof()) {
-        fin.getline(buffer, MAX_BUFFER);
+    while (fin.getline(buffer, MAX_BUFFER)) {
         os << buffer;
     }
     std::string data = os.str();
