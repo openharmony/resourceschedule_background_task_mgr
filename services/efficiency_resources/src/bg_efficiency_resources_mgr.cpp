@@ -96,6 +96,8 @@ void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const
             BGTASK_LOGI("bundle mgr service is ready!");
             dependsReady_ |= BUNDLE_MGR_READY;
             break;
+        default:
+            break;
     }
     if (dependsReady_ == ALL_DEPENDS_READY) {
         BGTASK_LOGI("necessary system service has been satisfied!");
@@ -115,6 +117,8 @@ void BgEfficiencyResourcesMgr::OnRemoveSystemAbility(int32_t systemAbilityId, co
         case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
             BGTASK_LOGI("bundle mgr service is removed!");
             dependsReady_ &= (~BUNDLE_MGR_READY);
+            break;
+        default:
             break;
     }
     if (dependsReady_ != ALL_DEPENDS_READY) {

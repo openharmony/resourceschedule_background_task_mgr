@@ -88,8 +88,8 @@ bool BackgroundTaskMgrService::CheckCallingToken()
 {
     Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
     auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
-    if (tokenFlag == Security::AccessToken::ATokenTypeEnum::TOKEN_NATIVE
-        || tokenFlag == Security::AccessToken::ATokenTypeEnum::TOKEN_SHELL) {
+    if (tokenFlag == Security::AccessToken::ATokenTypeEnum::TOKEN_NATIVE ||
+        tokenFlag == Security::AccessToken::ATokenTypeEnum::TOKEN_SHELL) {
         return true;
     }
     return false;

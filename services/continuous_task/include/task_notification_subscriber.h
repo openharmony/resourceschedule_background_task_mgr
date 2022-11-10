@@ -25,7 +25,7 @@ class BgContinuousTaskMgr;
 class TaskNotificationSubscriber : public Notification::NotificationSubscriber {
 public:
     TaskNotificationSubscriber();
-    virtual ~TaskNotificationSubscriber();
+    ~TaskNotificationSubscriber() override;
     void OnConnected() override;
     void OnDisconnected() override;
     void OnCanceled(const std::shared_ptr<Notification::Notification> &request) override;

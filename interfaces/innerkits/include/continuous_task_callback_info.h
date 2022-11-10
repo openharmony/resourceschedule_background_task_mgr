@@ -63,7 +63,7 @@ public:
      * @param parcel Indicates the parcel object for marshalling.
      * @return True if success, else false.
      */
-    bool Marshalling(Parcel &parcel) const;
+    bool Marshalling(Parcel &parcel) const override;
     static ContinuousTaskCallbackInfo *Unmarshalling(Parcel &parcel);
 
 private:

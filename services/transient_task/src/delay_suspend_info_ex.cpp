@@ -36,7 +36,7 @@ int32_t DelaySuspendInfoEx::GetRemainDelayTime()
 
 int32_t DelaySuspendInfoEx::GetAdvanceCallbackTime()
 {
-    int32_t advanceCallbackTime = GetRemainDelayTime() - ADVANCE_TIME;
+    int32_t advanceCallbackTime = GetRemainDelayTime() - advanceTime_;
     return (advanceCallbackTime > 0) ? advanceCallbackTime : 0;
 }
 

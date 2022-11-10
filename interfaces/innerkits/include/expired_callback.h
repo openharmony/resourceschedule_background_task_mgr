@@ -48,7 +48,7 @@ public:
 private:
     class ExpiredCallbackImpl final : public ExpiredCallbackStub {
     public:
-        ExpiredCallbackImpl(const std::shared_ptr<ExpiredCallback> &callback);
+        explicit ExpiredCallbackImpl(const std::shared_ptr<ExpiredCallback> &callback);
         ~ExpiredCallbackImpl() {}
 
         /**

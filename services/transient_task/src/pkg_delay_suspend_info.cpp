@@ -129,12 +129,12 @@ void PkgDelaySuspendInfo::StopAccountingAll()
 
 void PkgDelaySuspendInfo::UpdateQuota(bool reset)
 {
-    spendTime_ = isCounting_ ? ((int32_t)TimeProvider::GetCurrentTime() - baseTime_) : 0;
+    spendTime_ = isCounting_ ? (static_cast<int32_t>(TimeProvider::GetCurrentTime()) - baseTime_) : 0;
     quota_ -= spendTime_;
     if (quota_ < 0) {
         quota_ = 0;
     }
-    baseTime_ = (int32_t)TimeProvider::GetCurrentTime();
+    baseTime_ = static_cast<int32_t>(TimeProvider::GetCurrentTime());
     if (reset) {
         quota_ = INIT_QUOTA;
     }

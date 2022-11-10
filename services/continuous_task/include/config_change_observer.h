@@ -26,10 +26,10 @@ class BgContinuousTaskMgr;
 class ConfigChangeObserver : public AppExecFwk::ConfigurationObserverStub {
 public:
     ConfigChangeObserver() = default;
-    ~ConfigChangeObserver() = default;
+    ~ConfigChangeObserver() override = default;
     ConfigChangeObserver(const std::shared_ptr<AppExecFwk::EventHandler> handler,
         const std::shared_ptr<BgContinuousTaskMgr> bgContinuousTaskMgr);
-    virtual void OnConfigurationUpdated(const AppExecFwk::Configuration& configuration) override;
+    void OnConfigurationUpdated(const AppExecFwk::Configuration& configuration) override;
 
 private:
     bool CheckParamValid();

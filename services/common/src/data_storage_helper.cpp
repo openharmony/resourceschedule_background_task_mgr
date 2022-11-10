@@ -49,7 +49,7 @@ ErrCode DataStorageHelper::RefreshTaskRecord(const std::unordered_map<std::strin
             root[iter.first] = recordJson;
         }
     }
-    return SaveJsonValueToFile(root.dump(CommonUtils::JSON_FORMAT), TASK_RECORD_FILE_PATH);
+    return SaveJsonValueToFile(root.dump(CommonUtils::jsonFormat_), TASK_RECORD_FILE_PATH);
 }
 
 ErrCode DataStorageHelper::RestoreTaskRecord(std::unordered_map<std::string,
@@ -177,7 +177,7 @@ void DataStorageHelper::ConvertMapToString(const ResourceRecordMap &appRecord,
     nlohmann::json processValue;
     ConvertMapToJson(processRecord, processValue);
     root[PROCESS_RESOURCE_RECORD] = processValue;
-    recordString = root.dump(CommonUtils::JSON_FORMAT);
+    recordString = root.dump(CommonUtils::jsonFormat_);
 }
 
 void DataStorageHelper::ConvertMapToJson(const ResourceRecordMap &appRecord, nlohmann::json &root)
