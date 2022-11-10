@@ -296,7 +296,7 @@ RState ResourceManagerImpl::GetRawFileDescriptorFromHap(const std::string &rawFi
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::isLoadHap()
+RState ResourceManagerImpl::IsLoadHap()
 {
     return SUCCESS;
 }
