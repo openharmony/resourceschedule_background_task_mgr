@@ -49,7 +49,7 @@ bool AppStateObserver::CheckParamValid()
 
 void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData)
 {
-    if ((int32_t) AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED != abilityStateData.abilityState) {
+    if (abilityStateData.abilityState != static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED)) {
         return;
     }
     BGTASK_LOGD("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d",
@@ -57,8 +57,8 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     if (!CheckParamValid()) {
         return;
     }
-    auto task = [=]() {
-        bgContinuousTaskMgr_.lock()->OnAbilityStateChanged(abilityStateData.uid, abilityStateData.abilityName);
+    auto task = [this, abilityStateData]() {
+        this->bgContinuousTaskMgr_.lock()->OnAbilityStateChanged(abilityStateData.uid, abilityStateData.abilityName);
     };
     handler_.lock()->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
 }
@@ -75,8 +75,8 @@ void AppStateObserver::OnProcessDiedContinuousTask(const AppExecFwk::ProcessData
     if (!CheckParamValid()) {
         return;
     }
-    auto task = [=]() {
-        bgContinuousTaskMgr_.lock()->OnProcessDied(processData.uid, processData.pid);
+    auto task = [this, processData]() {
+        this->bgContinuousTaskMgr_.lock()->OnProcessDied(processData.uid, processData.pid);
     };
     handler_.lock()->PostTask(task, TASK_ON_PROCESS_DIED);
 }
@@ -113,8 +113,7 @@ void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData 
 
 inline bool AppStateObserver::ValidateAppStateData(const AppExecFwk::AppStateData &appStateData)
 {
-    return appStateData.uid > 0
-        && appStateData.bundleName.size() > 0;
+    return appStateData.uid > 0 && appStateData.bundleName.size() > 0;
 }
 
 void AppStateObserver::SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler)

@@ -107,8 +107,8 @@ void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
     lock_guard<mutex> lock(decisionMaker_.lock_);
 
     auto key = std::make_shared<KeyInfo>(appStateData.bundleName, appStateData.uid);
-    if (appStateData.state == (int32_t)AppExecFwk::ApplicationState::APP_STATE_FOREGROUND ||
-        appStateData.state == (int32_t)AppExecFwk::ApplicationState::APP_STATE_FOCUS) {
+    if (appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND) ||
+        appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS)) {
         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
         if (it != decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
             auto pkgInfo = it->second;
@@ -118,7 +118,7 @@ void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
         if (itBg != decisionMaker_.pkgBgDurationMap_.end()) {
             decisionMaker_.pkgBgDurationMap_.erase(itBg);
         }
-    } else if (appStateData.state == (int32_t)AppExecFwk::ApplicationState::APP_STATE_BACKGROUND) {
+    } else if (appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND)) {
         decisionMaker_.pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
         if (it == decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
@@ -286,7 +286,7 @@ int32_t DecisionMaker::GetDelayTime()
 int32_t DecisionMaker::NewDelaySuspendRequestId()
 {
     if (requestId_ == INT_MAX) {
-        requestId_ = INIT_REQUEST_ID;
+        requestId_ = initRequestId_;
     }
     return requestId_++;
 }

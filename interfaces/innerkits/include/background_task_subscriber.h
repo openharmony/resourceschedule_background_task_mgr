@@ -132,9 +132,9 @@ private:
     public:
         class DeathRecipient final : public IRemoteObject::DeathRecipient {
         public:
-            DeathRecipient(BackgroundTaskSubscriberImpl &subscriberImpl);
+            explicit DeathRecipient(BackgroundTaskSubscriberImpl &subscriberImpl);
 
-            ~DeathRecipient();
+            ~DeathRecipient() override;
 
             /**
              * @brief Called back when remote object has died.
@@ -148,7 +148,7 @@ private:
         };
 
     public:
-        BackgroundTaskSubscriberImpl(BackgroundTaskSubscriber &subscriber);
+        explicit BackgroundTaskSubscriberImpl(BackgroundTaskSubscriber &subscriber);
         ~BackgroundTaskSubscriberImpl() {}
 
         /**

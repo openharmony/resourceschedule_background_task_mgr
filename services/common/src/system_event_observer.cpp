@@ -86,7 +86,7 @@ void SystemEventObserver::OnReceiveEventContinuousTask(const EventFwk::CommonEve
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED) {
         int32_t userId = eventData.GetCode();
         BGTASK_LOGI("user of id :%{public}d state is changed, action is : %{public}s", userId, action.c_str());
-        auto task = [=]() { bgContinuousTaskMgr->OnAccountsStateChanged(userId); };
+        auto task = [bgContinuousTaskMgr, userId]() { bgContinuousTaskMgr->OnAccountsStateChanged(userId); };
         handler->PostTask(task, TASK_ON_OS_ACCOUNT_CHANGED);
         return;
     }
@@ -94,7 +94,9 @@ void SystemEventObserver::OnReceiveEventContinuousTask(const EventFwk::CommonEve
     int32_t uid = want.GetIntParam(AppExecFwk::Constants::UID, -1);
     BGTASK_LOGI("get common event action = %{public}s, bundleName = %{public}s, uid = %{public}d",
         action.c_str(), bundleName.c_str(), uid);
-    auto task = [=]() { bgContinuousTaskMgr->OnBundleInfoChanged(action, bundleName, uid); };
+    auto task = [bgContinuousTaskMgr, action, bundleName, uid]() {
+        bgContinuousTaskMgr->OnBundleInfoChanged(action, bundleName, uid);
+    };
     handler->PostTask(task, TASK_ON_BUNDLEINFO_CHANGED);
 }
 

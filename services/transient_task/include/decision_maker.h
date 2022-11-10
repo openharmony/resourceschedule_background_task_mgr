@@ -54,7 +54,7 @@ private:
     class ApplicationStateObserver : public AppExecFwk::ApplicationStateObserverStub {
     public:
         explicit ApplicationStateObserver(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
-        ~ApplicationStateObserver() {}
+        ~ApplicationStateObserver() override {}
         void OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData) override;
         void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
         {}
@@ -74,9 +74,9 @@ private:
     public:
         explicit AppMgrDeathRecipient(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
 
-        ~AppMgrDeathRecipient() {}
+        ~AppMgrDeathRecipient() override {}
 
-        void OnRemoteDied(const wptr<IRemoteObject> &object) override;
+        void OnRemoteDied(const wptr<IRemoteObject> &remote) override;
 
     private:
         DecisionMaker &decisionMaker_;
@@ -96,8 +96,8 @@ private:
     bool IsAfterOneDay(int64_t lastRequestTime, int64_t currentTime);
     bool CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo);
 
-    const int32_t INIT_REQUEST_ID = 1;
-    int32_t requestId_ {INIT_REQUEST_ID};
+    const int32_t initRequestId_ = 1;
+    int32_t requestId_ {initRequestId_};
     std::mutex lock_;
     int64_t lastRequestTime_ {0};
     SuspendController suspendController_;

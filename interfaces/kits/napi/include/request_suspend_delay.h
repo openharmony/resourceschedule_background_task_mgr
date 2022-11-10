@@ -28,7 +28,7 @@ class CallbackInstance : public ExpiredCallback {
 public:
     CallbackInstance();
 
-    virtual ~CallbackInstance();
+    ~CallbackInstance() override;
 
     void OnExpired() override;
 

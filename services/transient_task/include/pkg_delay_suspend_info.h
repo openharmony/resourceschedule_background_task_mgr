@@ -41,7 +41,7 @@ public:
     void StartAccounting(const int32_t requestId = -1);
     void StopAccounting(const int32_t requestId);
     void StopAccountingAll();
-    void UpdateQuota(bool result = false);
+    void UpdateQuota(bool reset = false);
 
     inline const string& GetPkg() const
     {

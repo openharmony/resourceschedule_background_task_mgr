@@ -43,7 +43,7 @@ AsyncWorkData::~AsyncWorkData()
     }
 }
 
-napi_value Common::NapiGetboolean(const napi_env &env, bool isValue)
+napi_value Common::NapiGetboolean(const napi_env &env, const bool isValue)
 {
     napi_value result = nullptr;
     NAPI_CALL(env, napi_get_boolean(env, isValue, &result));
