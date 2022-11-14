@@ -209,10 +209,10 @@ void CallbackCompletedCB(napi_env env, napi_status status, void *data)
 {
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
-    napi_value callback = 0;
-    napi_value undefined = 0;
-    napi_value result[CALLBACK_RESULT_PARAMS_NUM] = {0};
-    napi_value callResult = 0;
+    napi_value callback {nullptr};
+    napi_value undefined {nullptr};
+    napi_value result[CALLBACK_RESULT_PARAMS_NUM] = {nullptr};
+    napi_value callResult = {nullptr};
     NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
     if (asyncCallbackInfo->errCode == ERR_OK) {
         result[0] = WrapUndefinedToJS(env);
@@ -233,7 +233,7 @@ void PromiseCompletedCB(napi_env env, napi_status status, void *data)
 {
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
-    napi_value result = 0;
+    napi_value result {nullptr};
     if (asyncCallbackInfo->errCode == ERR_OK) {
         napi_create_int32(env, 0, &result);
         NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result));
@@ -255,7 +255,7 @@ napi_value StartBackgroundRunningAsync(napi_env env, napi_value *argv,
     if (isThrow && asyncCallbackInfo->errCode != ERR_OK) {
         return nullptr;
     }
-    napi_value resourceName = 0;
+    napi_value resourceName {nullptr};
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
@@ -290,7 +290,7 @@ napi_value StartBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncC
     napi_value resourceName;
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     napi_deferred deferred;
-    napi_value promise = 0;
+    napi_value promise {nullptr};
     NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
     asyncCallbackInfo->deferred = deferred;
     if (!StartBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
@@ -330,8 +330,9 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value, AbilityRun
         Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR, true);
         return nullptr;
     }
-    napi_unwrap(env, value, (void **)&wantAgent);
-
+    auto wantAgentPtr = static_cast<void *>(wantAgent);
+    napi_unwrap(env, value, static_cast<void **>(&wantAgentPtr));
+  
     return WrapVoidToJS(env);
 }
 
@@ -374,7 +375,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool is
         asyncCallbackInfo->errCode = ERR_WANTAGENT_NULL_OR_TYPE_ERR;
     }
 
-    napi_value ret = 0;
+    napi_value ret {nullptr};
 
     if (argc == MAX_START_BG_RUNNING_PARAMS) {
         ret = StartBackgroundRunningAsync(env, argv, MAX_START_BG_RUNNING_PARAMS - 1, asyncCallbackInfo, isThrow);
@@ -446,7 +447,7 @@ napi_value StopBackgroundRunningAsync(napi_env env, napi_value *argv,
     if (isThrow && asyncCallbackInfo->errCode != ERR_OK) {
         return nullptr;
     }
-    napi_value resourceName = 0;
+    napi_value resourceName {nullptr};
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
@@ -475,10 +476,10 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
         BGTASK_LOGE("param is nullptr");
         return nullptr;
     }
-    napi_value resourceName = 0;
+    napi_value resourceName {nullptr};
     napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
     napi_deferred deferred;
-    napi_value promise = 0;
+    napi_value promise {nullptr};
     napi_create_promise(env, &deferred, &promise);
 
     asyncCallbackInfo->deferred = deferred;
@@ -524,7 +525,7 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info, bool isT
         asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
     }
 
-    napi_value ret = 0;
+    napi_value ret {nullptr};
     if (argc == MAX_STOP_BG_RUNNING_PARAMS) {
         ret = StopBackgroundRunningAsync(env, argv, MAX_STOP_BG_RUNNING_PARAMS - 1, asyncCallbackInfo, isThrow);
     } else {

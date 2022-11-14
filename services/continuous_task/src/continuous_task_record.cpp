@@ -20,7 +20,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const char *ContinuousTaskModeName[10] = {
+const char *g_continuousTaskModeName[10] = {
     "dataTransfer",
     "audioPlayback",
     "audioRecording",
@@ -95,7 +95,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
         info["abilityName"] = wantAgentInfo_->abilityName_;
         root["wantAgentInfo"] = info;
     }
-    return root.dump(CommonUtils::JSON_FORMAT);
+    return root.dump(CommonUtils::jsonFormat_);
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)

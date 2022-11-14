@@ -59,23 +59,27 @@ napi_value BackgroundModeInit(napi_env env, napi_value exports)
     napi_value obj = nullptr;
     napi_create_object(env, &obj);
 
-    SetNamedPropertyByInteger(env, obj, (uint32_t)BackgroundMode::DATA_TRANSFER, "DATA_TRANSFER");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)BackgroundMode::AUDIO_PLAYBACK, "AUDIO_PLAYBACK");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)BackgroundMode::AUDIO_RECORDING, "AUDIO_RECORDING");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)BackgroundMode::LOCATION, "LOCATION");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)BackgroundMode::BLUETOOTH_INTERACTION, "BLUETOOTH_INTERACTION");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)BackgroundMode::MULTI_DEVICE_CONNECTION, "MULTI_DEVICE_CONNECTION");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)BackgroundMode::WIFI_INTERACTION, "WIFI_INTERACTION");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)BackgroundMode::VOIP, "VOIP");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)BackgroundMode::TASK_KEEPING, "TASK_KEEPING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::DATA_TRANSFER), "DATA_TRANSFER");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::AUDIO_PLAYBACK), "AUDIO_PLAYBACK");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::AUDIO_RECORDING),
+        "AUDIO_RECORDING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::LOCATION),
+        "LOCATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::BLUETOOTH_INTERACTION),
+        "BLUETOOTH_INTERACTION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::MULTI_DEVICE_CONNECTION),
+        "MULTI_DEVICE_CONNECTION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::WIFI_INTERACTION), "WIFI_INTERACTION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::VOIP), "VOIP");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::TASK_KEEPING), "TASK_KEEPING");
 
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::CPU, "CPU");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::COMMON_EVENT, "COMMON_EVENT");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::TIMER, "TIMER");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::WORK_SCHEDULER, "WORK_SCHEDULER");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::BLUETOOTH, "BLUETOOTH");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::GPS, "GPS");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::AUDIO, "AUDIO");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::CPU), "CPU");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::COMMON_EVENT), "COMMON_EVENT");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::TIMER), "TIMER");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::WORK_SCHEDULER), "WORK_SCHEDULER");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::BLUETOOTH), "BLUETOOTH");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::GPS), "GPS");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::AUDIO), "AUDIO");
 
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("BackgroundMode", obj),
@@ -104,7 +108,7 @@ static napi_value InitApi(napi_env env, napi_value exports)
  */
 __attribute__((constructor)) void RegisterModule(void)
 {
-    napi_module_register(&_apiModule);
+    napi_module_register(&g_apiModule);
 }
 EXTERN_C_END
 }  // namespace BackgroundTaskMgr

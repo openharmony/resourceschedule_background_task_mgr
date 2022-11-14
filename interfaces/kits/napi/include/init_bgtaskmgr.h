@@ -38,14 +38,14 @@ static napi_value InitApi(napi_env env, napi_value exports);
 /*
  * Module define
  */
-napi_module _apiModule = {
+napi_module g_apiModule = {
     .nm_version = 1,
     .nm_flags = 0,
     .nm_filename = nullptr,
     .nm_register_func = InitApi,
     .nm_modname = "resourceschedule.backgroundTaskManager",
-    .nm_priv = ((void *)0),
-    .reserved = {0}
+    .nm_priv = nullptr,
+    .reserved = {nullptr}
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

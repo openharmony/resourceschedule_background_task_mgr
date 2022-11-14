@@ -23,7 +23,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-extern const char *ContinuousTaskModeName[10];
+extern const char *g_continuousTaskModeName[10];
 
 struct WantAgentInfo {
     std::string bundleName_ {""};

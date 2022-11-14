@@ -33,7 +33,7 @@ public:
     }
 
 public:
-    static constexpr int32_t JSON_FORMAT = 4;
+    static constexpr int32_t jsonFormat_ = 4;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

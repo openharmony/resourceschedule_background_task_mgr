@@ -23,7 +23,7 @@ namespace BackgroundTaskMgr {
 class DeviceInfoManager : public IEventListener {
 public:
     DeviceInfoManager() = default;
-    ~DeviceInfoManager() = default;
+    ~DeviceInfoManager() override = default;
     void OnInputEvent(const EventInfo& eventInfo) override;
 
     inline bool IsScreenOn() const

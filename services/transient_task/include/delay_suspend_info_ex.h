@@ -25,7 +25,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class DelaySuspendInfoEx : public DelaySuspendInfo {
 public:
-    DelaySuspendInfoEx(const int32_t& pid, const int32_t& requestId = -1, const int32_t& delaytime = 0);
+    explicit DelaySuspendInfoEx(const int32_t& pid, const int32_t& requestId = -1, const int32_t& delaytime = 0);
     ~DelaySuspendInfoEx() override = default;
     int32_t GetRemainDelayTime();
     int32_t GetAdvanceCallbackTime();
@@ -48,7 +48,7 @@ public:
     }
 
 private:
-    const int32_t ADVANCE_TIME = 6 * MSEC_PER_SEC; // 6s
+    const int32_t advanceTime_ = 6 * MSEC_PER_SEC; // 6s
     int32_t pid_ {-1};
     int64_t baseTime_ {0};
     int64_t spendTime_ {0};

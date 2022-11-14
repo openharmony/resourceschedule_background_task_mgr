@@ -60,7 +60,7 @@ std::string ResourceApplicationRecord::ParseToJsonStr()
 {
     nlohmann::json root;
     ParseToJson(root);
-    return root.dump(CommonUtils::JSON_FORMAT);
+    return root.dump(CommonUtils::jsonFormat_);
 }
 
 void ResourceApplicationRecord::ParseToJson(nlohmann::json &root)

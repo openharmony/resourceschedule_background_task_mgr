@@ -152,7 +152,7 @@ private:
     public:
         explicit BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager);
 
-        ~BgTaskMgrDeathRecipient();
+        ~BgTaskMgrDeathRecipient() override;
 
         void OnRemoteDied(const wptr<IRemoteObject> &object) override;
 
