@@ -58,6 +58,7 @@ napi_value CancelSuspendDelay(napi_env env, napi_callback_info info, bool isThro
 
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(requestId);
     Common::HandleErrCode(env, errCode, isThrow);
+    std::lock_guard<std::mutex> lock(callbackLock_);
     auto findCallback = callbackInstances_.find(requestId);
     if (findCallback != callbackInstances_.end()) {
         callbackInstances_.erase(findCallback);

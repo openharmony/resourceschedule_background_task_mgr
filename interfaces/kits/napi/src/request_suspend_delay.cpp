@@ -25,6 +25,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 std::map<int32_t, std::shared_ptr<ExpiredCallback>> callbackInstances_;
+std::mutex callbackLock_;
 static const uint32_t REQUEST_SUSPEND_DELAY_PARAMS = 2;
 
 struct CallbackReceiveDataWorker {
@@ -111,6 +112,7 @@ void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
 
     Common::SetCallback(dataWorkerData->env, dataWorkerData->ref, Common::NapiGetNull(dataWorkerData->env));
 
+    std::lock_guard<std::mutex> lock(callbackLock_);
     auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
         [&](const auto& callbackInstance) { return callbackInstance.second == dataWorkerData->callback; }
     );
@@ -125,6 +127,7 @@ void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
 
 void CallbackInstance::OnExpired()
 {
+    std::lock_guard<std::mutex> lock(callbackLock_);
     auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
         [&](const auto& callbackInstance) { return callbackInstance.second.get() == this; }
     );
@@ -247,7 +250,10 @@ napi_value RequestSuspendDelay(napi_env env, napi_callback_info info, bool isThr
     if (!delaySuspendInfo) {
         return Common::NapiGetNull(env);
     }
-    callbackInstances_[delaySuspendInfo->GetRequestId()] = callback;
+    {
+        std::lock_guard<std::mutex> lock(callbackLock_);
+        callbackInstances_[delaySuspendInfo->GetRequestId()] = callback;
+    }
 
     napi_value result = nullptr;
     napi_create_object(env, &result);
