@@ -42,7 +42,7 @@ struct AsyncCallbackInfo : public AsyncWorkData {
     explicit AsyncCallbackInfo(napi_env env) : AsyncWorkData(env) {}
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
     uint32_t bgMode {0};
-    AbilityRuntime::WantAgent::WantAgent *wantAgent {nullptr};
+    std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent {nullptr};
 };
 
 napi_value WrapVoidToJS(napi_env env)
@@ -200,8 +200,8 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
 
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
-        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*asyncCallbackInfo->wantAgent),
-        info->name, asyncCallbackInfo->abilityContext->GetToken(), GetMainAbilityLabel(info->bundleName));
+        asyncCallbackInfo->wantAgent, info->name, asyncCallbackInfo->abilityContext->GetToken(),
+        GetMainAbilityLabel(info->bundleName));
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
 }
 
@@ -322,16 +322,18 @@ napi_value GetBackgroundMode(const napi_env &env, const napi_value &value, uint3
     return WrapVoidToJS(env);
 }
 
-napi_value GetWantAgent(const napi_env &env, const napi_value &value, AbilityRuntime::WantAgent::WantAgent *&wantAgent)
+napi_value GetWantAgent(const napi_env &env, const napi_value &value,
+    std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent)
 {
     napi_valuetype valuetype = napi_undefined;
+    AbilityRuntime::WantAgent::WantAgent *wantAgentPtr = nullptr;
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     if (valuetype != napi_object) {
         Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR, true);
         return nullptr;
     }
-    auto wantAgentPtr = static_cast<void *>(wantAgent);
-    napi_unwrap(env, value, static_cast<void **>(&wantAgentPtr));
+    napi_unwrap(env, value, (void **)&wantAgentPtr);
+    wantAgent = std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*wantAgentPtr);
   
     return WrapVoidToJS(env);
 }
