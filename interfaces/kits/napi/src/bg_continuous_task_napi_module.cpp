@@ -330,9 +330,8 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value, AbilityRun
         Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR, true);
         return nullptr;
     }
-    auto wantAgentPtr = static_cast<void *>(wantAgent);
-    napi_unwrap(env, value, static_cast<void **>(&wantAgentPtr));
-  
+    napi_unwrap(env, value, (void **)&wantAgent);
+
     return WrapVoidToJS(env);
 }
 
