@@ -266,12 +266,12 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelay(int32_t requestId)
     BGTASK_LOGI("cancel suspend delay pkg : %{public}s, uid : %{public}d, requestId : %{public}d",
         name.c_str(), uid, requestId);
 
+    lock_guard<mutex> lock(expiredCallbackLock_);
     if (!VerifyRequestIdLocked(name, uid, requestId)) {
         BGTASK_LOGI(" cancel suspend delay failed, requestId is illegal.");
         return ERR_BGTASK_NOT_ALLOWED;
     }
 
-    lock_guard<mutex> lock(expiredCallbackLock_);
     return CancelSuspendDelayLocked(requestId);
 }
 
@@ -329,6 +329,7 @@ ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &de
     BGTASK_LOGI("get remain time pkg : %{public}s, uid : %{public}d, requestId : %{public}d",
         name.c_str(), uid, requestId);
 
+    lock_guard<mutex> lock(expiredCallbackLock_);
     if (!VerifyRequestIdLocked(name, uid, requestId)) {
         BGTASK_LOGE("get remain time failed, requestId is illegal.");
         delayTime = BG_INVALID_REMAIN_TIME;
