@@ -799,7 +799,6 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
         iter->first->RemoveDeathRecipient(iter->second);
         subscriberRecipients_.erase(iter);
     }
-    subscriber->OnDisconnected();
     bgTaskSubscribers_.erase(subscriberIter);
     BGTASK_LOGD("Remove continuous task subscriber succeed");
     return ERR_OK;
