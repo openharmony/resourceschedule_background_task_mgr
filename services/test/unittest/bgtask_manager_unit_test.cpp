@@ -143,30 +143,30 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_002, TestSize.Level1)
 
 /**
  * @tc.name: BgTaskManagerUnitTest_003
- * @tc.desc: test checkBgmodeType.
+ * @tc.desc: test CheckBgmodeType.
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
 HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_003, TestSize.Level1)
 {
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(0, 1, false, 1), ERR_BGMODE_NULL_OR_TYPE_ERR);
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(1, 1, false, 1), ERR_OK);
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(BGMODE_WIFI_INTERACTION, BGMODE_WIFI_INTERACTION_ID,
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(0, 1, false, 1), ERR_BGMODE_NULL_OR_TYPE_ERR);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(1, 1, false, 1), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_WIFI_INTERACTION, BGMODE_WIFI_INTERACTION_ID,
         true, NO_SYSTEM_APP_UID), ERR_BGTASK_WIFI_VOIP_VERIFY_ERR);
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(BGMODE_VOIP, BGMODE_VOIP_ID, true, NO_SYSTEM_APP_UID),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_VOIP, BGMODE_VOIP_ID, true, NO_SYSTEM_APP_UID),
         ERR_BGTASK_WIFI_VOIP_VERIFY_ERR);
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(BGMODE_WIFI_INTERACTION, BGMODE_WIFI_INTERACTION_ID,
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_WIFI_INTERACTION, BGMODE_WIFI_INTERACTION_ID,
         true, 1), ERR_OK);
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(BGMODE_VOIP, BGMODE_VOIP_ID, true, 1), ERR_OK);
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true, 1),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_VOIP, BGMODE_VOIP_ID, true, 1), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true, 1),
         ERR_BGTASK_KEEPING_TASK_VERIFY_ERR);
     bgContinuousTaskMgr_->deviceType_ = "pc";
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true, 1),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true, 1),
         ERR_OK);
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(BGMODE_VOIP, BGMODE_VOIP_ID, true, 1), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_VOIP, BGMODE_VOIP_ID, true, 1), ERR_OK);
     bgContinuousTaskMgr_->deviceType_ = "default";
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(LOCATION_BGMODE, LOCATION_BGMODE_ID, true, 1), ERR_OK);
-    EXPECT_EQ(bgContinuousTaskMgr_->checkBgmodeType(BLUETOOTH_INTERACTION, LOCATION_BGMODE_ID, true, 1),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(LOCATION_BGMODE, LOCATION_BGMODE_ID, true, 1), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BLUETOOTH_INTERACTION, LOCATION_BGMODE_ID, true, 1),
         ERR_BGTASK_INVALID_BGMODE);
 }
 

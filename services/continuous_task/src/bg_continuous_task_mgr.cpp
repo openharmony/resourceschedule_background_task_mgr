@@ -412,7 +412,7 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
     return true;
 }
 
-ErrCode BgContinuousTaskMgr::checkBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId,
+ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId,
     bool isNewApi, int32_t uid)
 {
     if (!isNewApi) {
@@ -434,8 +434,8 @@ ErrCode BgContinuousTaskMgr::checkBgmodeType(uint32_t configuredBgMode, uint32_t
             BGTASK_LOGE("task keeping background mode only support for pc device");
             return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
         }
-        if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode
-            & (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
+        if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode &
+            (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
             BGTASK_LOGE("requested background mode is not declared in config file!");
             return ERR_BGTASK_INVALID_BGMODE;
         }
@@ -553,7 +553,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
 
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_,
         continuousTaskRecord->abilityName_);
-    ErrCode ret = checkBgmodeType(configuredBgMode, continuousTaskRecord->bgModeId_, continuousTaskRecord->isNewApi_,
+    ErrCode ret = CheckBgmodeType(configuredBgMode, continuousTaskRecord->bgModeId_, continuousTaskRecord->isNewApi_,
         continuousTaskRecord->uid_);
     if (ret != ERR_OK) {
         BGTASK_LOGE("background mode invalid!");
@@ -882,7 +882,7 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
         stream << "\t\tbundleName: " << iter->second->GetBundleName() << "\n";
         stream << "\t\tabilityName: " << iter->second->GetAbilityName() << "\n";
         stream << "\t\tisFromNewApi: " << (iter->second->IsNewApi() ? "true" : "false") << "\n";
-        stream << "\t\tbackgroundMode: " << ContinuousTaskModeName[GetBgModeNameIndex(
+        stream << "\t\tbackgroundMode: " << g_continuousTaskModeName[GetBgModeNameIndex(
             iter->second->GetBgModeId(), iter->second->IsNewApi())] << "\n";
         stream << "\t\tuid: " << iter->second->GetUid() << "\n";
         stream << "\t\tuserId: " << iter->second->GetUserId() << "\n";

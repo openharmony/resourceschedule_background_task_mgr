@@ -28,7 +28,7 @@ class SystemEventObserver : public EventFwk::CommonEventSubscriber,
                             public std::enable_shared_from_this<SystemEventObserver> {
 public:
     explicit SystemEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo);
-    ~SystemEventObserver() = default;
+    ~SystemEventObserver() override = default;
     void OnReceiveEvent(const EventFwk::CommonEventData &eventData) override;
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
     void SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr_);

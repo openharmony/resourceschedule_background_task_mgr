@@ -48,8 +48,8 @@ class BackgroundTaskMgrService final : public SystemAbility, public BackgroundTa
     DECLARE_DELAYED_SINGLETON(BackgroundTaskMgrService);
 public:
     BackgroundTaskMgrService(const int32_t systemAbilityId, bool runOnCreate);
-    void OnStart() override final;
-    void OnStop() override final;
+    void OnStart() final;
+    void OnStop() final;
 
     ErrCode RequestSuspendDelay(const std::u16string& reason,
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo) override;
