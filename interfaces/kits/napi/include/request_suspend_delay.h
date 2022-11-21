@@ -16,6 +16,7 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_REQUEST_SUSPEND_DELAY_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_REQUEST_SUSPEND_DELAY_H
 
+#include <mutex>
 #include <string>
 
 #include "common.h"
@@ -45,6 +46,7 @@ private:
 };
 
 extern std::map<int32_t, std::shared_ptr<ExpiredCallback>> callbackInstances_;
+extern std::mutex callbackLock_;
 
 napi_value RequestSuspendDelay(napi_env env, napi_callback_info info);
 }  // namespace BackgroundTaskMgr

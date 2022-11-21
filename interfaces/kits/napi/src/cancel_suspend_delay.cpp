@@ -52,6 +52,7 @@ napi_value CancelSuspendDelay(napi_env env, napi_callback_info info)
     }
 
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(requestId);
+    std::lock_guard<std::mutex> lock(callbackLock_);
     auto findCallback = callbackInstances_.find(requestId);
     if (findCallback != callbackInstances_.end()) {
         callbackInstances_.erase(findCallback);
