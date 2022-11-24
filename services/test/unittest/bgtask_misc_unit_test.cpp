@@ -52,10 +52,15 @@
 using namespace testing::ext;
 
 namespace OHOS {
+extern void SetPublishContinuousTaskNotificationFlag(int32_t flag);
+extern void SetCancelContinuousTaskNotificationFlag(int32_t flag);
+extern void SetGetAllActiveNotificationsFlag(int32_t flag);
+
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t SLEEP_TIME = 500;
 static constexpr int32_t BGTASKMGR_UID = 3051;
+static constexpr int32_t TEST_NUM_ONE = 1;
 static constexpr int32_t TEST_NUM_TWO = 2;
 static constexpr int32_t MIN_ALLOW_QUOTA_TIME = 10 * MSEC_PER_SEC; // 10s
 }
@@ -91,15 +96,20 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
     sptr<AppStateObserver> appStateObserver = sptr<AppStateObserver>(new AppStateObserver());
     AppExecFwk::ProcessData processData = AppExecFwk::ProcessData();
     appStateObserver->OnProcessDied(processData);
+    appStateObserver->OnProcessDiedContinuousTask(processData);
+    appStateObserver->OnProcessDiedEfficiencyRes(processData);
     AppExecFwk::AbilityStateData abilityStateData = AppExecFwk::AbilityStateData();
     appStateObserver->OnAbilityStateChanged(abilityStateData);
     EXPECT_FALSE(appStateObserver->CheckParamValid());
     auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
     appStateObserver->SetEventHandler(handler);
     EXPECT_FALSE(appStateObserver->CheckParamValid());
+    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
+    appStateObserver->OnAbilityStateChanged(abilityStateData);
     auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
     appStateObserver->SetBgContinuousTaskMgr(bgContinuousTaskMgr);
     EXPECT_TRUE(appStateObserver->CheckParamValid());
+    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_BEGIN);
     appStateObserver->OnAbilityStateChanged(abilityStateData);
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
     appStateObserver->OnAbilityStateChanged(abilityStateData);
@@ -140,6 +150,16 @@ HWTEST_F(BgTaskMiscUnitTest, BundleManagerHelperTest_001, TestSize.Level1)
     BundleManagerHelper::GetInstance()->OnRemoteDied(nullptr);
     BundleManagerHelper::GetInstance()->bundleMgr_ = nullptr;
     BundleManagerHelper::GetInstance()->OnRemoteDied(nullptr);
+    AAFwk::Want want;
+    want.SetAction("action.system.home");
+    want.AddEntity("entity.system.home");
+    want.SetElementName("", "bundleName", "", "");
+    AppExecFwk::AbilityInfo abilityInfo;
+    BundleManagerHelper::GetInstance()->QueryAbilityInfo(want,
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, 0, abilityInfo);
+    BundleManagerHelper::GetInstance()->bundleMgr_ = nullptr;
+    BundleManagerHelper::GetInstance()->QueryAbilityInfo(want,
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, 0, abilityInfo);
 }
 
 /**
@@ -160,20 +180,27 @@ HWTEST_F(BgTaskMiscUnitTest, SystemEventObserver_001, TestSize.Level1)
     EventFwk::CommonEventData eventData = EventFwk::CommonEventData();
     systemEventListener->OnReceiveEvent(eventData);
 
-    systemEventListener->SetEventHandler(
-        std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr));
+    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
+    systemEventListener->SetEventHandler(handler);
     systemEventListener->OnReceiveEventContinuousTask(eventData);
-    systemEventListener->SetBgContinuousTaskMgr(std::make_shared<BgContinuousTaskMgr>());
+    auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
+    systemEventListener->SetBgContinuousTaskMgr(bgContinuousTaskMgr);
     systemEventListener->OnReceiveEventContinuousTask(eventData);
     AAFwk::Want want = AAFwk::Want();
     want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
     eventData.SetWant(want);
     systemEventListener->OnReceiveEventContinuousTask(eventData);
-    
+    want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_USER_ADDED);
+    eventData.SetWant(want);
+    systemEventListener->OnReceiveEventContinuousTask(eventData);
+    want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED);
+    eventData.SetWant(want);
+    systemEventListener->OnReceiveEventContinuousTask(eventData);
+
     EventFwk::CommonEventData eventData2 = EventFwk::CommonEventData();
     AAFwk::Want want2 = AAFwk::Want();
     want2.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
-    eventData2.SetWant(want);
+    eventData2.SetWant(want2);
     systemEventListener->OnReceiveEventEfficiencyRes(eventData2);
     EXPECT_TRUE(true);
 }
@@ -214,12 +241,28 @@ HWTEST_F(BgTaskMiscUnitTest, ContinuousTaskRecordTest_001, TestSize.Level1)
  */
 HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_001, TestSize.Level1)
 {
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     auto taskRecord = std::make_shared<ContinuousTaskRecord>();
     NotificationTools::GetInstance()->PublishNotification(taskRecord, "appName", "prompt", 1);
+    SetPublishContinuousTaskNotificationFlag(1);
+    EXPECT_EQ(NotificationTools::GetInstance()->PublishNotification(taskRecord, "appName", "prompt", 1),
+        ERR_BGTASK_NOTIFICATION_ERR);
     NotificationTools::GetInstance()->CancelNotification("label", 0);
+    SetCancelContinuousTaskNotificationFlag(1);
+    EXPECT_EQ(NotificationTools::GetInstance()->CancelNotification("label", 0), ERR_BGTASK_NOTIFICATION_ERR);
     std::set<std::string> notificationLabels;
     NotificationTools::GetInstance()->GetAllActiveNotificationsLabels(notificationLabels);
-    EXPECT_TRUE(true);
+
+    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
+    newPromptInfos.emplace("label", std::make_pair<std::string, std::string>("test1", "test2"));
+    SetGetAllActiveNotificationsFlag(TEST_NUM_ONE);
+    SetPublishContinuousTaskNotificationFlag(0);
+    SetPublishContinuousTaskNotificationFlag(0);
+    NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, 0);
+    SetGetAllActiveNotificationsFlag(TEST_NUM_TWO);
+    SetPublishContinuousTaskNotificationFlag(1);
+    NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, 0);
+#endif
 }
 
 /**
@@ -253,12 +296,12 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_001, TestSize.Level1)
     extraInfo->SetParam("abilityName", AAFwk::String::Box("abilityName"));
     notification->request_->additionalParams_ = extraInfo;
     subscriber->OnCanceled(notification, notificationMap,
-        Notification::NotificationConstant::APP_CANCEL_REASON_DELETE);
+        Notification::NotificationConstant::USER_STOPPED_REASON_DELETE);
 
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     BgContinuousTaskMgr::GetInstance()->continuousTaskInfosMap_["1_abilityName"] = continuousTaskRecord;
     subscriber->OnCanceled(notification, notificationMap,
-        Notification::NotificationConstant::APP_CANCEL_REASON_DELETE);
+        Notification::NotificationConstant::USER_STOPPED_REASON_DELETE);
     EXPECT_TRUE(true);
 }
 
@@ -546,6 +589,112 @@ HWTEST_F(BgTaskMiscUnitTest, WatchdogTest_001, TestSize.Level1)
     auto watchdog = std::make_shared<Watchdog>(bgtaskService, decisionMaker);
     EXPECT_TRUE(watchdog->KillApplicationByUid("bundleName", 1));
     EXPECT_TRUE(watchdog->KillApplicationByUid("bundleName", 1));
+}
+
+/**
+ * @tc.name: ConfigChangeObserver_001
+ * @tc.desc: test Watchdog class.
+ * @tc.type: FUNC
+ * @tc.require: issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_001, TestSize.Level1)
+{
+    sptr<ConfigChangeObserver> configChangeObserver1 = sptr<ConfigChangeObserver>(
+        new ConfigChangeObserver(nullptr, nullptr));
+    EXPECT_FALSE(configChangeObserver1->CheckParamValid());
+    AppExecFwk::Configuration configuration;
+    configChangeObserver1->OnConfigurationUpdated(configuration);
+    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
+    auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
+    sptr<ConfigChangeObserver> configChangeObserver2 = sptr<ConfigChangeObserver>(
+        new ConfigChangeObserver(handler, nullptr));
+    EXPECT_FALSE(configChangeObserver2->CheckParamValid());
+    sptr<ConfigChangeObserver> configChangeObserver3 = sptr<ConfigChangeObserver>(
+        new ConfigChangeObserver(handler, bgContinuousTaskMgr));
+    EXPECT_TRUE(configChangeObserver3->CheckParamValid());
+    configChangeObserver3->OnConfigurationUpdated(configuration);
+}
+
+/**
+ * @tc.name: DataStorageHelper_001
+ * @tc.desc: test Watchdog class.
+ * @tc.type: FUNC
+ * @tc.require: issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_001, TestSize.Level1)
+{
+    std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap1;
+    auto continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskInfosMap1.emplace("key", continuousTaskRecord);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap1);
+    std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap2;
+    EXPECT_EQ(DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreTaskRecord(continuousTaskInfosMap2),
+        ERR_OK);
+    EXPECT_EQ(DelayedSingleton<DataStorageHelper>::GetInstance()->SaveJsonValueToFile("", ""),
+        ERR_BGTASK_CREATE_FILE_ERR);
+    nlohmann::json json1;
+    EXPECT_EQ(DelayedSingleton<DataStorageHelper>::GetInstance()->ParseJsonValueFromFile(json1, ""),
+        ERR_BGTASK_DATA_STORAGE_ERR);
+    EXPECT_FALSE(DelayedSingleton<DataStorageHelper>::GetInstance()->CreateNodeFile(""));
+    std::string fullPath;
+    EXPECT_FALSE(DelayedSingleton<DataStorageHelper>::GetInstance()->ConvertFullPath("", fullPath));
+}
+
+/**
+ * @tc.name: DecisionMakerTest_003
+ * @tc.desc: test Watchdog class.
+ * @tc.type: FUNC
+ * @tc.require: issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_003, TestSize.Level1)
+{
+    auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
+    auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
+    auto timerManager = std::make_shared<TimerManager>(bgtaskService);
+    auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
+    auto applicationStateObserver = sptr<DecisionMaker::ApplicationStateObserver>(
+        new (std::nothrow) DecisionMaker::ApplicationStateObserver(*decisionMaker));
+
+    AppExecFwk::AppStateData appStateData;
+    appStateData.uid = 1;
+    appStateData.bundleName = "bundleName1";
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND);
+    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS);
+    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+
+    auto keyInfo1 = std::make_shared<KeyInfo>("bundleName1", 1);
+    auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", 1, timerManager);
+    auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1);
+    pkgDelaySuspendInfo->requestList_.push_back(delayInfo);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
+    auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
+    decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND);
+    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS);
+    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+
+    decisionMaker->pkgDelaySuspendInfoMap_.clear();
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND);
+    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
+    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+}
+
+/**
+ * @tc.name: DelaySuspendInfoEx_001
+ * @tc.desc: test DelaySuspendInfoEx.
+ * @tc.type: FUNC
+ * @tc.require: issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskMiscUnitTest, DelaySuspendInfoEx_001, TestSize.Level1)
+{
+    auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1);
+    delayInfo->baseTime_ = 1;
+    delayInfo->StartAccounting();
+    delayInfo->baseTime_ = 0;
+    delayInfo->StopAccounting();
 }
 }
 }

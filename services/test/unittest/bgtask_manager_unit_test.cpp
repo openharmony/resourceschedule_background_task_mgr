@@ -29,6 +29,7 @@
 #include "expired_callback_stub.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
+#include "resources_subscriber_mgr.h"
 #include "system_ability_definition.h"
 #include "want_agent.h"
 
@@ -51,7 +52,9 @@ static constexpr uint32_t INVALID_BGMODE_ID = 11;
 static constexpr int32_t NO_SYSTEM_APP_UID = -100;
 static constexpr int32_t DEFAULT_USERID = 100;
 static constexpr int32_t TEST_NUM_ONE = 1;
+static constexpr uint32_t TEST_NUM_UONE = 1;
 static constexpr int32_t TEST_NUM_TWO = 2;
+static constexpr uint32_t TEST_NUM_UTWO = 2;
 static constexpr int32_t TEST_NUM_THREE = 3;
 static constexpr char LAUNCHER_BUNDLE_NAME[] = "com.ohos.launcher";
 }
@@ -261,7 +264,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_006, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
     bgContinuousTaskMgr_->StopContinuousTask(1, 1, 1);
-    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    SleepForFC();
     EXPECT_TRUE(true);
 }
 
@@ -273,6 +276,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_006, TestSize.Level1)
  */
 HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_007, TestSize.Level1)
 {
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     bgContinuousTaskMgr_->isSysReady_.store(false);
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
     EXPECT_EQ(bgContinuousTaskMgr_->GetContinuousTaskApps(list), ERR_BGTASK_SYS_NOT_READY);
@@ -829,6 +833,272 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_032, TestSize.Level1)
     dumpOption.pop_back();
     dumpOption.emplace_back("invalid");
     EXPECT_EQ(bgTransientTaskMgr_->ShellDump(dumpOption, dumpInfo), ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_033
+ * @tc.desc: test CheckPersistenceData.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_033, TestSize.Level1)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->pid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->notificationLabel_ = "label1";
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->pid_ = TEST_NUM_TWO;
+    continuousTaskRecord1->notificationLabel_ = "label1";
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord3 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->pid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->notificationLabel_ = "label2";
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord4 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->pid_ = TEST_NUM_TWO;
+    continuousTaskRecord1->notificationLabel_ = "label2";
+
+    std::vector<AppExecFwk::RunningProcessInfo> allProcesses;
+    AppExecFwk::RunningProcessInfo processInfo1;
+    processInfo1.pid_ = TEST_NUM_ONE;
+    std::set<std::string> allLabels;
+    allLabels.emplace("label1");
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
+    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses, allLabels);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
+    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses, allLabels);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
+    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses, allLabels);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
+    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses, allLabels);
+#endif
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_034
+ * @tc.desc: test HandleStopContinuousTask.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_034, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_ONE;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_TWO;
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    bgContinuousTaskMgr_->HandleStopContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, TEST_NUM_ONE);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_035
+ * @tc.desc: test RemoveSpecifiedBgTask.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_035, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_UONE;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_UTWO;
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    bgContinuousTaskMgr_->RemoveSpecifiedBgTask(TEST_NUM_UONE);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->RemoveSpecifiedBgTask(TEST_NUM_UONE);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_036
+ * @tc.desc: test SubscriberChange.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_036, TestSize.Level1)
+{
+    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
+    bgContinuousTaskMgr_->AddSubscriberInner(subscriber1.GetImpl());
+    EXPECT_EQ(bgContinuousTaskMgr_->AddSubscriberInner(subscriber1.GetImpl()), ERR_BGTASK_OBJECT_EXISTS);
+    sptr<BackgroundTaskSubscriberProxy> subscirberProxy1
+        = sptr<BackgroundTaskSubscriberProxy>(new BackgroundTaskSubscriberProxy(nullptr));
+    EXPECT_EQ(bgContinuousTaskMgr_->AddSubscriberInner(subscirberProxy1), ERR_BGTASK_INVALID_PARAM);
+
+    bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->RemoveSubscriberInner(subscirberProxy1), ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ(bgContinuousTaskMgr_->RemoveSubscriberInner(subscriber1.GetImpl()), ERR_BGTASK_INVALID_PARAM);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_037
+ * @tc.desc: test DumpAllTaskInfo.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_037, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->pid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->notificationLabel_ = "label1";
+
+    std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+    info->bundleName_ = "wantAgentBundleName";
+    info->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord1->wantAgentInfo_ = info;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    std::vector<std::string> dumpInfo;
+    bgContinuousTaskMgr_->DumpAllTaskInfo(dumpInfo);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_038
+ * @tc.desc: test DumpCancelTask.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_038, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->pid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->notificationLabel_ = "label1";
+
+    std::vector<std::string> dumpOption;
+    dumpOption.emplace_back("param1");
+    dumpOption.emplace_back("param2");
+    dumpOption.emplace_back("key1");
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->DumpCancelTask(dumpOption, false);
+    dumpOption.pop_back();
+    dumpOption.emplace_back("key2");
+    bgContinuousTaskMgr_->DumpCancelTask(dumpOption, false);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_039
+ * @tc.desc: test OnConfigurationChanged.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_039, TestSize.Level1)
+{
+    AppExecFwk::Configuration configuration;
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_ONE;
+    continuousTaskRecord1->isNewApi_ = true;
+
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord2->bgModeId_ = INVALID_BGMODE_ID;
+    continuousTaskRecord1->isNewApi_ = true;
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_040
+ * @tc.desc: test ResourcesSubscriberMgr AddSubscriber.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_040, TestSize.Level1)
+{
+    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->subscriberList_.clear();
+    sptr<BackgroundTaskSubscriberProxy> subscirberProxy1
+        = sptr<BackgroundTaskSubscriberProxy>(new BackgroundTaskSubscriberProxy(nullptr));
+    EXPECT_EQ(DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->AddSubscriber(subscirberProxy1),
+        ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ(DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->RemoveSubscriber(subscirberProxy1),
+        ERR_BGTASK_INVALID_PARAM);
+    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
+    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->deathRecipient_ = nullptr;
+    EXPECT_EQ(DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->AddSubscriber(subscriber1.GetImpl()),
+        ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ(DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->RemoveSubscriber(subscriber1.GetImpl()),
+        ERR_BGTASK_OBJECT_EXISTS);
+
+    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->deathRecipient_
+        = new (std::nothrow) ObserverDeathRecipient();
+    EXPECT_EQ(DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->RemoveSubscriber(subscriber1.GetImpl()),
+        ERR_BGTASK_OBJECT_EXISTS);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_041
+ * @tc.desc: test ResourcesSubscriberMgr OnResourceChanged.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_041, TestSize.Level1)
+{
+    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->OnResourceChanged(nullptr,
+        EfficiencyResourcesEventType::APP_RESOURCE_APPLY);
+    auto callbackInfo = std::make_shared<ResourceCallbackInfo>();
+    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
+    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->subscriberList_.emplace_back(subscriber1.GetImpl());
+
+    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->OnResourceChanged(callbackInfo,
+        EfficiencyResourcesEventType::APP_RESOURCE_APPLY);
+    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->OnResourceChanged(callbackInfo,
+        EfficiencyResourcesEventType::RESOURCE_APPLY);
+    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->OnResourceChanged(callbackInfo,
+        EfficiencyResourcesEventType::APP_RESOURCE_RESET);
+    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->OnResourceChanged(callbackInfo,
+        EfficiencyResourcesEventType::RESOURCE_RESET);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_042
+ * @tc.desc: test BgTransientTaskMgr NotifyTransientTaskSuscriber.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_042, TestSize.Level1)
+{
+    auto taskInfo = std::make_shared<TransientTaskAppInfo>();
+    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
+    bgTransientTaskMgr_->subscriberList_.emplace_back(subscriber1.GetImpl());
+
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo,
+        TransientTaskEventType::TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo,
+        TransientTaskEventType::TASK_END);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo,
+        TransientTaskEventType::APP_TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo,
+        TransientTaskEventType::APP_TASK_END);
 }
 }
 }
