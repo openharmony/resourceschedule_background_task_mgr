@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import backgroundTaskManager from '@ohos.backgroundTaskManager'
+import backgroundTaskManager from '@ohos.resourceschedule.backgroundTaskManager'
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from 'deccjsunit/index'
 
