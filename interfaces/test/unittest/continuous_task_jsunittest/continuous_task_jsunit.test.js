@@ -18,7 +18,6 @@ import wantAgent from '@ohos.wantAgent';
 import particleAbility from '@ohos.ability.particleAbility'
 import backgroundTaskManager from '@ohos.backgroundTaskManager'
 import featureAbility from '@ohos.ability.featureAbility'
-import workScheduler from '@ohos.workScheduler'
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from 'deccjsunit/index'
 
