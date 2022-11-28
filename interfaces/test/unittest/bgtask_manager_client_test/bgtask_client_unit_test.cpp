@@ -319,6 +319,31 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: BackgroundTaskSubscriber_002
+ * @tc.desc: test BackgroundTaskSubscriber.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_002, TestSize.Level1)
+{
+    auto subscriber = BackgroundTaskSubscriber();
+    subscriber.OnConnected();
+    subscriber.OnDisconnected();
+    subscriber.OnTransientTaskStart(nullptr);
+    subscriber.OnTransientTaskEnd(nullptr);
+    subscriber.OnAppTransientTaskStart(nullptr);
+    subscriber.OnAppTransientTaskEnd(nullptr);
+    subscriber.OnContinuousTaskStart(nullptr);
+    subscriber.OnContinuousTaskStop(nullptr);
+    subscriber.OnAppContinuousTaskStop(1);
+    subscriber.OnRemoteDied(nullptr);
+    subscriber.OnAppEfficiencyResourcesApply(nullptr);
+    subscriber.OnAppEfficiencyResourcesReset(nullptr);
+    subscriber.OnProcEfficiencyResourcesApply(nullptr);
+    subscriber.OnProcEfficiencyResourcesReset(nullptr);
+}
+
+/**
  * @tc.name: ContinuousTaskCallbackInfo_001
  * @tc.desc: test ContinuousTaskCallbackInfo.
  * @tc.type: FUNC
