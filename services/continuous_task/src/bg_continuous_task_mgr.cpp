@@ -303,11 +303,14 @@ std::shared_ptr<Global::Resource::ResourceManager> BgContinuousTaskMgr::GetBundl
         BGTASK_LOGE("create resourceManager failed");
         return nullptr;
     }
-    for (auto moduleResPath : bundleInfo.moduleResPaths) {
-        if (!moduleResPath.empty()) {
-            if (!resourceManager->AddResource(moduleResPath.c_str())) {
-                BGTASK_LOGE("AddResource failed");
-            }
+    for (auto hapModuleInfo : bundleInfo.hapModuleInfos) {
+        std::string moduleResPath = hapModuleInfo.hapPath.empty() ? hapModuleInfo.resourcePath : hapModuleInfo.hapPath;
+        if (moduleResPath.empty()) {
+            continue;
+        }
+        BGTASK_LOGD("GetBundleResMgr, moduleResPath: %{private}s", moduleResPath.c_str());
+        if (!resourceManager->AddResource(moduleResPath.c_str())) {
+            BGTASK_LOGW("GetBundleResMgr AddResource failed");
         }
     }
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
