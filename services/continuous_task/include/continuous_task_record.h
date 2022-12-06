@@ -33,6 +33,8 @@ struct WantAgentInfo {
 class ContinuousTaskRecord {
 public:
     ContinuousTaskRecord() = default;
+    ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
+         int32_t pid, int32_t uid, uint32_t bgModeId);
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
     bool IsNewApi() const;
@@ -57,6 +59,7 @@ private:
     std::string notificationLabel_ {""};
     std::shared_ptr<WantAgentInfo> wantAgentInfo_ {nullptr};
     std::string appName_ {""};
+    uint64_t fullTokenId_ {0};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

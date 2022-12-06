@@ -416,7 +416,7 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
 }
 
 ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId,
-    bool isNewApi, int32_t uid)
+    bool isNewApi, uint64_t fullTokenId)
 {
     if (!isNewApi) {
         if (configuredBgMode == INVALID_BGMODE) {
@@ -428,7 +428,7 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
     } else {
         uint32_t recordedBgMode = BG_MODE_INDEX_HEAD << (requestedBgModeId - 1);
         if ((recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION || recordedBgMode == SYSTEM_APP_BGMODE_VOIP)
-            && !BundleManagerHelper::GetInstance()->IsSystemApp(uid)) {
+            && !BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
             BGTASK_LOGE("voip and wifiInteraction background mode only support for system app");
             return ERR_BGTASK_WIFI_VOIP_VERIFY_ERR;
         }
@@ -494,6 +494,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     pid_t callingPid = IPCSkeleton::GetCallingPid();
+    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     int32_t userId = -1;
 #ifdef HAS_OS_ACCOUNT_PART
@@ -507,16 +508,13 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
         return ERR_BGTASK_PERMISSION_DENIED;
     }
 
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord->bundleName_ = bundleName;
-    continuousTaskRecord->abilityName_ = taskParam->abilityName_;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
+        taskParam->abilityName_, callingUid, callingPid, taskParam->bgModeId_);
     continuousTaskRecord->wantAgent_ = taskParam->wantAgent_;
     continuousTaskRecord->userId_ = userId;
-    continuousTaskRecord->uid_ = callingUid;
-    continuousTaskRecord->pid_ = callingPid;
-    continuousTaskRecord->bgModeId_ = taskParam->bgModeId_;
     continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
     continuousTaskRecord->appName_ = taskParam->appName_;
+    continuousTaskRecord->fullTokenId_ = fullTokenId;
 
     if (taskParam->wantAgent_ != nullptr && taskParam->wantAgent_->GetPendingWant() != nullptr) {
         auto target = taskParam->wantAgent_->GetPendingWant()->GetTarget();
@@ -557,7 +555,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_,
         continuousTaskRecord->abilityName_);
     ErrCode ret = CheckBgmodeType(configuredBgMode, continuousTaskRecord->bgModeId_, continuousTaskRecord->isNewApi_,
-        continuousTaskRecord->uid_);
+        continuousTaskRecord->fullTokenId_);
     if (ret != ERR_OK) {
         BGTASK_LOGE("background mode invalid!");
         return ret;

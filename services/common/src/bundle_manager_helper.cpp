@@ -18,6 +18,7 @@
 #include "accesstoken_kit.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
+#include "tokenid_kit.h"
 
 #include "continuous_task_log.h"
 
@@ -60,15 +61,9 @@ bool BundleManagerHelper::CheckPermission(const std::string &permission)
     return true;
 }
 
-bool BundleManagerHelper::IsSystemApp(int32_t uid)
+bool BundleManagerHelper::IsSystemApp(uint64_t fullTokenId)
 {
-    bool isSystemApp = false;
-    std::lock_guard<std::mutex> lock(connectionMutex_);
-    Connect();
-    if (bundleMgr_ != nullptr) {
-        isSystemApp = bundleMgr_->CheckIsSystemAppByUid(uid);
-    }
-    return isSystemApp;
+    return Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(fullTokenId);
 }
 
 bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const AppExecFwk::BundleFlag flag,

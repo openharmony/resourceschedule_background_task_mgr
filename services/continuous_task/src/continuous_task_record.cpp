@@ -33,6 +33,10 @@ const char *g_continuousTaskModeName[10] = {
     "default",
 };
 
+ContinuousTaskRecord::ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
+    int32_t uid, int32_t pid, uint32_t bgModeId) : bundleName_(bundleName), abilityName_(abilityName),
+    uid_(pid), pid_(uid), bgModeId_(bgModeId) {}
+
 std::string ContinuousTaskRecord::GetBundleName() const
 {
     return bundleName_;

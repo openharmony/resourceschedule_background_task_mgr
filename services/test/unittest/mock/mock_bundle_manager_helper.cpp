@@ -24,7 +24,7 @@ namespace BackgroundTaskMgr {
 namespace {
 static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
 static constexpr uint32_t ALL_NEED_CHECK_BGMODE = 62;
-static constexpr int32_t NO_SYSTEM_APP_UID = -100;
+static constexpr uint64_t NO_SYSTEM_APP_TOKEN_ID = -100;
 }
 
 BundleManagerHelper::BundleManagerHelper() {}
@@ -41,9 +41,9 @@ bool BundleManagerHelper::CheckPermission(const std::string &permission)
     return true;
 }
 
-bool BundleManagerHelper::IsSystemApp(int32_t uid)
+bool BundleManagerHelper::IsSystemApp(uint64_t fullTokenId)
 {
-    if (uid == NO_SYSTEM_APP_UID) {
+    if (fullTokenId == NO_SYSTEM_APP_TOKEN_ID) {
         return false;
     }
     return true;
