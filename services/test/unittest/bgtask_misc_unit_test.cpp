@@ -140,7 +140,7 @@ HWTEST_F(BgTaskMiscUnitTest, BundleManagerHelperTest_001, TestSize.Level1)
 {
     EXPECT_EQ(BundleManagerHelper::GetInstance()->GetClientBundleName(1), "");
     EXPECT_FALSE(BundleManagerHelper::GetInstance()->CheckPermission("permission"));
-    EXPECT_FALSE(BundleManagerHelper::GetInstance()->IsSystemApp(1));
+    EXPECT_FALSE(BundleManagerHelper::GetInstance()->IsSystemApp(1LLU));
     AppExecFwk::BundleInfo bundleInfo;
     EXPECT_FALSE(BundleManagerHelper::GetInstance()->GetBundleInfo("bundleName",
         AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo));
