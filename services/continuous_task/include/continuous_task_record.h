@@ -34,7 +34,7 @@ class ContinuousTaskRecord {
 public:
     ContinuousTaskRecord() = default;
     ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
-         int32_t pid, int32_t uid, uint32_t bgModeId);
+         int32_t uid, int32_t pid, uint32_t bgModeId);
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
     bool IsNewApi() const;
