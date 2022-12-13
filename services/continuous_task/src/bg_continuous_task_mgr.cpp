@@ -430,7 +430,7 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
         if ((recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION || recordedBgMode == SYSTEM_APP_BGMODE_VOIP)
             && !BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
             BGTASK_LOGE("voip and wifiInteraction background mode only support for system app");
-            return ERR_BGTASK_WIFI_VOIP_VERIFY_ERR;
+            return ERR_BGTASK_NOT_SYSTEM_APP;
         }
         if (recordedBgMode == PC_BGMODE_TASK_KEEPING
             && deviceType_ != DEVICE_TYPE_PC) {

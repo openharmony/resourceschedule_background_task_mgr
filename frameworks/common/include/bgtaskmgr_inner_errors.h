@@ -36,6 +36,7 @@ const int THRESHOLD = 1000;
 enum : int32_t {
     // errcode for common
     ERR_BGTASK_PERMISSION_DENIED = 201,
+    ERR_BGTASK_NOT_SYSTEM_APP = 202,
     ERR_BGTASK_INVALID_PARAM = 401,
     // errcode for Continuous Task
     ERR_BGTASK_NO_MEMORY = 980000101,
@@ -45,7 +46,6 @@ enum : int32_t {
     ERR_BGTASK_SERVICE_NOT_CONNECTED,
     ERR_BGTASK_OBJECT_EXISTS = 980000501,
     ERR_BGTASK_OBJECT_NOT_EXIST,
-    ERR_BGTASK_WIFI_VOIP_VERIFY_ERR,
     ERR_BGTASK_KEEPING_TASK_VERIFY_ERR,
     ERR_BGTASK_INVALID_BGMODE,
     ERR_BGTASK_NOTIFICATION_VERIFY_FAILED = 980000601,
@@ -95,6 +95,7 @@ enum ParamErr: int32_t {
 
 static std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_BGTASK_PERMISSION_DENIED, "Permission denied."},
+    {ERR_BGTASK_NOT_SYSTEM_APP, "System API is not allowed called by third HAP."},
     {ERR_BGTASK_NO_MEMORY, "Memory operation failed. Failed to allocate the memory."},
     {ERR_BGTASK_SYS_NOT_READY, "System service operation failed. The system service is not ready."},
     {ERR_BGTASK_SERVICE_NOT_CONNECTED, "System service operation failed. The system service is not connected."},
@@ -104,8 +105,6 @@ static std::map<int32_t, std::string> saErrCodeMsgMap = {
         "Continuous Task verification failed. The application has applied for a continuous task."},
     {ERR_BGTASK_OBJECT_NOT_EXIST,
         "Continuous Task verification failed. The application has not applied for a continuous task."},
-    {ERR_BGTASK_WIFI_VOIP_VERIFY_ERR,
-        "Continuous Task verification failed. Only system application can apply for WIFI_INTERACTION or VoIP."},
     {ERR_BGTASK_KEEPING_TASK_VERIFY_ERR,
         "Continuous Task verification failed. Only PC device can apply for KEEPING_TASK."},
     {ERR_BGTASK_INVALID_BGMODE, "Continuous Task verification failed. The bgMode is invalid."},
