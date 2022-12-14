@@ -95,7 +95,8 @@ enum ParamErr: int32_t {
 
 static std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_BGTASK_PERMISSION_DENIED, "Permission denied."},
-    {ERR_BGTASK_NOT_SYSTEM_APP, "System API is not allowed called by third HAP."},
+    {ERR_BGTASK_NOT_SYSTEM_APP,
+        "System API verification failed. Only system application can apply for WIFI_INTERACTION or VoIP."},
     {ERR_BGTASK_NO_MEMORY, "Memory operation failed. Failed to allocate the memory."},
     {ERR_BGTASK_SYS_NOT_READY, "System service operation failed. The system service is not ready."},
     {ERR_BGTASK_SERVICE_NOT_CONNECTED, "System service operation failed. The system service is not connected."},
