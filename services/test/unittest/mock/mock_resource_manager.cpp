@@ -286,7 +286,8 @@ RState ResourceManagerImpl::GetProfileDataByName(const char *name, size_t &len, 
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetRawFileFromHap(const std::string &rawFileName, std::unique_ptr<RawFile> &rawFile)
+RState ResourceManagerImpl::GetRawFileFromHap(const std::string &rawFileName, size_t &len,
+    std::unique_ptr<uint8_t[]> &outValue)
 {
     return SUCCESS;
 }
@@ -296,7 +297,7 @@ RState ResourceManagerImpl::GetRawFileDescriptorFromHap(const std::string &rawFi
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::IsLoadHap()
+RState ResourceManagerImpl::IsLoadHap(std::string &hapPath)
 {
     return SUCCESS;
 }
