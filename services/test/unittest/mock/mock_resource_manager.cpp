@@ -301,6 +301,11 @@ RState ResourceManagerImpl::IsLoadHap(std::string &hapPath)
 {
     return SUCCESS;
 }
+
+RState ResourceManagerImpl::GetRawFileList(const std::string rawDirPath, std::vector<std::string>& rawfileList)
+{
+    return SUCCESS;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS
