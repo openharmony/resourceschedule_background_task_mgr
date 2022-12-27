@@ -58,7 +58,7 @@ ohos_systemtest("BgtaskDumpTest") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "relational_store:native_rdb",
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",

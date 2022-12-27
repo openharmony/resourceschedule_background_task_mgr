@@ -77,7 +77,7 @@ ohos_shared_library("bgtaskmgr_service") {
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",

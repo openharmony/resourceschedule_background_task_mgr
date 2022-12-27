@@ -50,7 +50,7 @@ ohos_shared_library("bgtaskmgr_fwk") {
     "c_utils:utils",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 
