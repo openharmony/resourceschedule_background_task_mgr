@@ -48,5 +48,6 @@ ohos_shared_library("bgtaskmgr_innerkits") {
 
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
+  innerapi_tags = [ "platformsdk" ]
   version_script = "libbgtaskmgr_innerkits.versionscript"
 }
