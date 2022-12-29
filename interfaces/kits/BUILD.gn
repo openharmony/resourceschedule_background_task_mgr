@@ -51,6 +51,7 @@ ohos_shared_library("backgroundtaskmanager") {
     "napi:ace_napi",
     "samgr:samgr_proxy",
   ]
+  configs = [ "//build/config/gcc:symbol_visibility_hidden" ]
   relative_install_dir = "module"
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
@@ -87,6 +88,7 @@ ohos_shared_library("backgroundtaskmanager_napi") {
     "napi:ace_napi",
     "samgr:samgr_proxy",
   ]
+  configs = [ "//build/config/gcc:symbol_visibility_hidden" ]
   relative_install_dir = "module/resourceschedule"
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"

@@ -100,5 +100,6 @@ ohos_shared_library("bgtaskmgr_service") {
     external_deps += [ "i18n:intl_util" ]
   }
 
+  configs = [ "//build/config/gcc:symbol_visibility_hidden" ]
   part_name = "background_task_mgr"
 }
