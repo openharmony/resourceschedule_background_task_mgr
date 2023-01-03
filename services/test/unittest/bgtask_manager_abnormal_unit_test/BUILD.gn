@@ -58,7 +58,7 @@ ohos_unittest("bgtask_manager_abnormal_unit_test") {
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "multimedia_image_framework:image_native",
     "relational_store:native_rdb",
     "safwk:system_ability_fwk",

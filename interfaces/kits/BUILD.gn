@@ -47,7 +47,7 @@ ohos_shared_library("backgroundtaskmanager") {
     "bundle_framework:appexecfwk_base",
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "napi:ace_napi",
     "samgr:samgr_proxy",
   ]
@@ -83,7 +83,7 @@ ohos_shared_library("backgroundtaskmanager_napi") {
     "bundle_framework:appexecfwk_base",
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "napi:ace_napi",
     "samgr:samgr_proxy",
   ]

@@ -50,7 +50,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",

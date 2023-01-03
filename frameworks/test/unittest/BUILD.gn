@@ -44,7 +44,7 @@ ohos_unittest("bgtask_framework_unit_test") {
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 
@@ -80,7 +80,7 @@ ohos_unittest("bgtask_framework_abnormal_unit_test") {
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 
