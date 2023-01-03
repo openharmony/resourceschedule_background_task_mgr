@@ -306,6 +306,11 @@ RState ResourceManagerImpl::GetRawFileList(const std::string rawDirPath, std::ve
 {
     return SUCCESS;
 }
+
+RState ResourceManagerImpl::IsLoadHap()
+{
+    return SUCCESS;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS
