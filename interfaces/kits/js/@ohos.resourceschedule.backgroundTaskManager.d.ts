@@ -105,6 +105,7 @@ declare namespace backgroundTaskManager {
      * @param bgMode Indicates which background mode to request.
      * @param wantAgent Indicates which ability to start when user click the notification bar.
      * @throws { BusinessError } 201 - Permission denied.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Parameter error.
      * @throws { BusinessError } 9800001 - Memory operation failed.
      * @throws { BusinessError } 9800002 - Parcel operation failed.
@@ -142,6 +143,7 @@ declare namespace backgroundTaskManager {
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
      * @throws { BusinessError } 201 - Permission denied.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Parameter error.
      * @throws { BusinessError } 9800001 - Memory operation failed.
      * @throws { BusinessError } 9800002 - Parcel operation failed.
@@ -159,6 +161,7 @@ declare namespace backgroundTaskManager {
       * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
       * @systemapi Hide this for inner system use.
       * @throws { BusinessError } 201 - Permission denied.
+      * @throws { BusinessError } 202 - Not System App.
       * @throws { BusinessError } 401 - Parameter error.
       * @throws { BusinessError } 9800001 - Memory operation failed.
       * @throws { BusinessError } 9800002 - Parcel operation failed.
