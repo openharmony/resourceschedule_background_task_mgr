@@ -28,6 +28,7 @@
 #include "time_provider.h"
 #include "bundle_manager_helper.h"
 #include "efficiency_resource_log.h"
+#include "tokenid_kit.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -300,6 +301,11 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGI("apply efficiency resources failed, calling info is illegal");
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
+    uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId)) {
+        BGTASK_LOGE("apply efficiency resources failed,  %{public}s is not system app", bundleName.c_str());
+        return ERR_BGTASK_NOT_SYSTEM_APP;
+    }
     if (!CheckRunningResourcesApply(uid, bundleName)) {
         BGTASK_LOGE("apply efficiency resources failed, running resource apply is false");
         return ERR_BGTASK_PERMISSION_DENIED;
@@ -465,6 +471,11 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
     if (!IsCallingInfoLegal(uid, pid, bundleName)) {
         BGTASK_LOGE("reset efficiency resources failed, calling info is illegal");
         return ERR_BGTASK_INVALID_PID_OR_UID;
+    }
+    uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId)) {
+        BGTASK_LOGE("reset efficiency resources failed, %{public}s is not system app", bundleName.c_str());
+        return ERR_BGTASK_NOT_SYSTEM_APP;
     }
     if (!CheckRunningResourcesApply(uid, bundleName)) {
         BGTASK_LOGE("reset efficiency resources failed, running resource apply is false");
