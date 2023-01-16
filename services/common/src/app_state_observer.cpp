@@ -57,8 +57,10 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     if (!CheckParamValid()) {
         return;
     }
-    auto task = [this, abilityStateData]() {
-        this->bgContinuousTaskMgr_.lock()->OnAbilityStateChanged(abilityStateData.uid, abilityStateData.abilityName);
+    int32_t uid = abilityStateData.uid;
+    std::string abilityName = abilityStateData.abilityName;
+    auto task = [this, uid, abilityName]() {
+        this->bgContinuousTaskMgr_.lock()->OnAbilityStateChanged(uid, abilityName);
     };
     handler_.lock()->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
 }
