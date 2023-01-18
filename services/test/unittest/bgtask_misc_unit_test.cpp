@@ -109,7 +109,7 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
     auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
     appStateObserver->SetBgContinuousTaskMgr(bgContinuousTaskMgr);
     EXPECT_TRUE(appStateObserver->CheckParamValid());
-    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_BEGIN);
+    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_CREATE);
     appStateObserver->OnAbilityStateChanged(abilityStateData);
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
     appStateObserver->OnAbilityStateChanged(abilityStateData);
