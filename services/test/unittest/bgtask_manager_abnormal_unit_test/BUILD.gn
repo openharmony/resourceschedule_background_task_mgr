@@ -40,7 +40,6 @@ ohos_unittest("bgtask_manager_abnormal_unit_test") {
   configs = [ "//commonlibrary/c_utils/base:utils_config" ]
 
   deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
     "//third_party/googletest:gtest_main",

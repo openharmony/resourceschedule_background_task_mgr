@@ -28,7 +28,6 @@ ohos_unittest("bgtask_client_unit_test") {
   sources = [ "bgtask_client_unit_test.cpp" ]
 
   deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "//third_party/googletest:gtest_main",
   ]
