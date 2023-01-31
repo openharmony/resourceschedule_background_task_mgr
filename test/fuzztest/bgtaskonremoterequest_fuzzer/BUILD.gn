@@ -32,7 +32,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
 
   deps = [
     "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits:bgtaskmgr_innerkits",
-    "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service",
+    "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service_static",
   ]
 
   external_deps = [
