@@ -24,6 +24,9 @@
     *ResourceCallbackInfo*;
     *ResourceType*;
     *TransientTaskAppInfo*;
+    *BackgroundTaskManager*;
+    *BgTaskMgrLogWrapper*;
+    *BackgroundTaskMgrProxy*;
   local:
     *;
 };
