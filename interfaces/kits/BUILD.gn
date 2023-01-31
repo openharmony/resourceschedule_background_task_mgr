@@ -33,10 +33,7 @@ ohos_shared_library("backgroundtaskmanager") {
 
   public_configs = [ ":bgtaskmgr_public_config" ]
 
-  deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
-    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-  ]
+  deps = [ "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits" ]
 
   external_deps = [
     "ability_base:want",
@@ -69,10 +66,7 @@ ohos_shared_library("backgroundtaskmanager_napi") {
 
   public_configs = [ ":bgtaskmgr_public_config" ]
 
-  deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
-    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-  ]
+  deps = [ "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits" ]
 
   external_deps = [
     "ability_base:want",
