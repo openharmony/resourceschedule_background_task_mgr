@@ -31,7 +31,6 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
   sources = [ "bgtaskonremoterequest_fuzzer.cpp" ]
 
   deps = [
-    "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_fwk",
     "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits:bgtaskmgr_innerkits",
     "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service",
   ]

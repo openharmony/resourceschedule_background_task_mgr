@@ -29,12 +29,12 @@ ohos_unittest("bgtask_framework_unit_test") {
   ]
 
   sources = [
+    "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
     "bgtask_framework_unit_test.cpp",
     "mock/src/mock_service_registry.cpp",
   ]
 
   deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "//third_party/googletest:gtest_main",
   ]
@@ -64,13 +64,13 @@ ohos_unittest("bgtask_framework_abnormal_unit_test") {
   ]
 
   sources = [
+    "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
     "bgtask_framework_abnormal_unit_test.cpp",
     "mock/parcel_abnormal/src/mock_message_parcel.cpp",
     "mock/src/mock_background_task_mgr_proxy.cpp",
   ]
 
   deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "//third_party/googletest:gtest_main",
   ]

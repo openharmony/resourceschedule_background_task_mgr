@@ -39,7 +39,6 @@ ohos_systemtest("BgtaskDumpTest") {
   }
 
   deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
     "//third_party/googletest:gtest_main",
   ]

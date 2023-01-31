@@ -42,7 +42,6 @@ ohos_unittest("bgtask_unit_test") {
   configs = [ "//commonlibrary/c_utils/base:utils_config" ]
 
   deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
     "//third_party/googletest:gtest_main",
@@ -101,7 +100,6 @@ ohos_unittest("efficiency_mgr_unit_test") {
   configs = [ "//commonlibrary/c_utils/base:utils_config" ]
 
   deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
     "//third_party/googletest:gtest_main",
@@ -158,7 +156,6 @@ ohos_unittest("bgtask_manager_unit_test") {
   configs = [ "//commonlibrary/c_utils/base:utils_config" ]
 
   deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
     "//third_party/googletest:gtest_main",
@@ -217,7 +214,6 @@ ohos_unittest("bgtask_misc_unit_test") {
   configs = [ "//commonlibrary/c_utils/base:utils_config" ]
 
   deps = [
-    "${bgtaskmgr_frameworks_path}:bgtaskmgr_fwk",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service",
     "//third_party/googletest:gtest_main",

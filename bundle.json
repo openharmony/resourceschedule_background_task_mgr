@@ -54,8 +54,7 @@
         "group_type": {
           "base_group": [],
           "fwk_group": [
-           "//foundation/resourceschedule/background_task_mgr/interfaces:bgtaskmgr_interfaces",
-           "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_fwk"
+           "//foundation/resourceschedule/background_task_mgr/interfaces:bgtaskmgr_interfaces"
           ],
           "service_group": [
            "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_sa_profile",
