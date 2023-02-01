@@ -14,6 +14,7 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
+import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 module_output_path = "background_task_mgr/bgtaskservice"
 
 ##############################fuzztest##########################################
@@ -31,8 +32,8 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
   sources = [ "bgtaskonremoterequest_fuzzer.cpp" ]
 
   deps = [
-    "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits:bgtaskmgr_innerkits",
-    "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service_static",
+    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
+    "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
   ]
 
   external_deps = [
