@@ -103,6 +103,8 @@ void TaskNotificationSubscriber::OnDoNotDisturbDateChange(
 void TaskNotificationSubscriber::OnEnabledNotificationChanged(
     const std::shared_ptr<Notification::EnabledNotificationCallbackData> &callbackData) {}
 
+void TaskNotificationSubscriber::OnBadgeChanged(const std::shared_ptr<Notification::BadgeNumberCallbackData> &badgeData) {}
+
 std::vector<std::string> TaskNotificationSubscriber::StringSplit(const std::string &str, const char &delim)
 {
     std::vector<std::string> ret;
