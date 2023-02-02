@@ -28,6 +28,36 @@ config("bgtaskmgr_service_public_config") {
   ]
 }
 
+BgTaskMgrServicecSrc = [
+  "${bgtaskmgr_frameworks_path}/src/background_task_mgr_stub.cpp",
+  "${bgtaskmgr_frameworks_path}/src/background_task_subscriber_proxy.cpp",
+  "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
+  "common/src/app_state_observer.cpp",
+  "common/src/bundle_manager_helper.cpp",
+  "common/src/data_storage_helper.cpp",
+  "common/src/system_event_observer.cpp",
+  "common/src/time_provider.cpp",
+  "continuous_task/src/bg_continuous_task_mgr.cpp",
+  "continuous_task/src/config_change_observer.cpp",
+  "continuous_task/src/continuous_task_record.cpp",
+  "continuous_task/src/notification_tools.cpp",
+  "core/src/background_task_mgr_service.cpp",
+  "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
+  "efficiency_resources/src/resource_application_record.cpp",
+  "efficiency_resources/src/resources_subscriber_mgr.cpp",
+  "transient_task/src/bg_transient_task_mgr.cpp",
+  "transient_task/src/bgtask_common.cpp",
+  "transient_task/src/decision_maker.cpp",
+  "transient_task/src/delay_suspend_info_ex.cpp",
+  "transient_task/src/device_info_manager.cpp",
+  "transient_task/src/event_hub.cpp",
+  "transient_task/src/input_manager.cpp",
+  "transient_task/src/pkg_delay_suspend_info.cpp",
+  "transient_task/src/suspend_controller.cpp",
+  "transient_task/src/timer_manager.cpp",
+  "transient_task/src/watchdog.cpp",
+]
+
 ohos_shared_library("bgtaskmgr_service") {
   shlib_type = "sa"
 
@@ -38,35 +68,7 @@ ohos_shared_library("bgtaskmgr_service") {
     "-fvisibility-inlines-hidden",
     "-Os",
   ]
-  sources = [
-    "${bgtaskmgr_frameworks_path}/src/background_task_mgr_stub.cpp",
-    "${bgtaskmgr_frameworks_path}/src/background_task_subscriber_proxy.cpp",
-    "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
-    "common/src/app_state_observer.cpp",
-    "common/src/bundle_manager_helper.cpp",
-    "common/src/data_storage_helper.cpp",
-    "common/src/system_event_observer.cpp",
-    "common/src/time_provider.cpp",
-    "continuous_task/src/bg_continuous_task_mgr.cpp",
-    "continuous_task/src/config_change_observer.cpp",
-    "continuous_task/src/continuous_task_record.cpp",
-    "continuous_task/src/notification_tools.cpp",
-    "core/src/background_task_mgr_service.cpp",
-    "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
-    "efficiency_resources/src/resource_application_record.cpp",
-    "efficiency_resources/src/resources_subscriber_mgr.cpp",
-    "transient_task/src/bg_transient_task_mgr.cpp",
-    "transient_task/src/bgtask_common.cpp",
-    "transient_task/src/decision_maker.cpp",
-    "transient_task/src/delay_suspend_info_ex.cpp",
-    "transient_task/src/device_info_manager.cpp",
-    "transient_task/src/event_hub.cpp",
-    "transient_task/src/input_manager.cpp",
-    "transient_task/src/pkg_delay_suspend_info.cpp",
-    "transient_task/src/suspend_controller.cpp",
-    "transient_task/src/timer_manager.cpp",
-    "transient_task/src/watchdog.cpp",
-  ]
+  sources = BgTaskMgrServicecSrc
 
   public_configs = [ ":bgtaskmgr_service_public_config" ]
 
@@ -117,35 +119,7 @@ ohos_shared_library("bgtaskmgr_service") {
 
 ohos_static_library("bgtaskmgr_service_static") {
   cflags_cc = [ "-DBGTASK_MGR_UNIT_TEST" ]
-  sources = [
-    "${bgtaskmgr_frameworks_path}/src/background_task_mgr_stub.cpp",
-    "${bgtaskmgr_frameworks_path}/src/background_task_subscriber_proxy.cpp",
-    "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
-    "common/src/app_state_observer.cpp",
-    "common/src/bundle_manager_helper.cpp",
-    "common/src/data_storage_helper.cpp",
-    "common/src/system_event_observer.cpp",
-    "common/src/time_provider.cpp",
-    "continuous_task/src/bg_continuous_task_mgr.cpp",
-    "continuous_task/src/config_change_observer.cpp",
-    "continuous_task/src/continuous_task_record.cpp",
-    "continuous_task/src/notification_tools.cpp",
-    "core/src/background_task_mgr_service.cpp",
-    "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
-    "efficiency_resources/src/resource_application_record.cpp",
-    "efficiency_resources/src/resources_subscriber_mgr.cpp",
-    "transient_task/src/bg_transient_task_mgr.cpp",
-    "transient_task/src/bgtask_common.cpp",
-    "transient_task/src/decision_maker.cpp",
-    "transient_task/src/delay_suspend_info_ex.cpp",
-    "transient_task/src/device_info_manager.cpp",
-    "transient_task/src/event_hub.cpp",
-    "transient_task/src/input_manager.cpp",
-    "transient_task/src/pkg_delay_suspend_info.cpp",
-    "transient_task/src/suspend_controller.cpp",
-    "transient_task/src/timer_manager.cpp",
-    "transient_task/src/watchdog.cpp",
-  ]
+  sources = BgTaskMgrServicecSrc
 
   public_configs = [ ":bgtaskmgr_service_public_config" ]
 
