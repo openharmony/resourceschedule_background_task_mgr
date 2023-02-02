@@ -30,6 +30,12 @@ const std::string TASK_ON_PROCESS_DIED = "OnProcessDiedTask";
 const std::string TASK_ON_ABILITY_STATE_CHANGED = "OnAbilityStateChangedTask";
 }
 
+#ifdef BGTASK_MGR_UNIT_TEST
+#define WEAK_FUNC __attribute__((weak))
+#else
+#define WEAK_FUNC
+#endif
+
 AppStateObserver::AppStateObserver() {}
 
 AppStateObserver::~AppStateObserver() {}
@@ -128,12 +134,13 @@ void AppStateObserver::SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuous
     bgContinuousTaskMgr_ = bgContinuousTaskMgr;
 }
 
-void AppStateObserver::SetBgEfficiencyResourcesMgr(const std::shared_ptr<BgEfficiencyResourcesMgr> &resourceMgr)
+void WEAK_FUNC AppStateObserver::SetBgEfficiencyResourcesMgr(
+    const std::shared_ptr<BgEfficiencyResourcesMgr> &resourceMgr)
 {
     bgEfficiencyResourcesMgr_ = resourceMgr;
 }
 
-bool AppStateObserver::Subscribe()
+bool WEAK_FUNC AppStateObserver::Subscribe()
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -144,7 +151,7 @@ bool AppStateObserver::Subscribe()
     return true;
 }
 
-bool AppStateObserver::Unsubscribe()
+bool WEAK_FUNC AppStateObserver::Unsubscribe()
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!Connect()) {

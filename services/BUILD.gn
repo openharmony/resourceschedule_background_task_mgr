@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//base/notification/distributed_notification_service/notification.gni")
 import("//build/test.gni")
 import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
@@ -27,37 +28,47 @@ config("bgtaskmgr_service_public_config") {
   ]
 }
 
+BgTaskMgrServicecSrc = [
+  "${bgtaskmgr_frameworks_path}/src/background_task_mgr_stub.cpp",
+  "${bgtaskmgr_frameworks_path}/src/background_task_subscriber_proxy.cpp",
+  "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
+  "common/src/app_state_observer.cpp",
+  "common/src/bundle_manager_helper.cpp",
+  "common/src/data_storage_helper.cpp",
+  "common/src/system_event_observer.cpp",
+  "common/src/time_provider.cpp",
+  "continuous_task/src/bg_continuous_task_mgr.cpp",
+  "continuous_task/src/config_change_observer.cpp",
+  "continuous_task/src/continuous_task_record.cpp",
+  "continuous_task/src/notification_tools.cpp",
+  "core/src/background_task_mgr_service.cpp",
+  "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
+  "efficiency_resources/src/resource_application_record.cpp",
+  "efficiency_resources/src/resources_subscriber_mgr.cpp",
+  "transient_task/src/bg_transient_task_mgr.cpp",
+  "transient_task/src/bgtask_common.cpp",
+  "transient_task/src/decision_maker.cpp",
+  "transient_task/src/delay_suspend_info_ex.cpp",
+  "transient_task/src/device_info_manager.cpp",
+  "transient_task/src/event_hub.cpp",
+  "transient_task/src/input_manager.cpp",
+  "transient_task/src/pkg_delay_suspend_info.cpp",
+  "transient_task/src/suspend_controller.cpp",
+  "transient_task/src/timer_manager.cpp",
+  "transient_task/src/watchdog.cpp",
+]
+
 ohos_shared_library("bgtaskmgr_service") {
-  cflags_cc = []
-  sources = [
-    "${bgtaskmgr_frameworks_path}/src/background_task_mgr_stub.cpp",
-    "${bgtaskmgr_frameworks_path}/src/background_task_subscriber_proxy.cpp",
-    "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
-    "common/src/app_state_observer.cpp",
-    "common/src/bundle_manager_helper.cpp",
-    "common/src/data_storage_helper.cpp",
-    "common/src/system_event_observer.cpp",
-    "common/src/time_provider.cpp",
-    "continuous_task/src/bg_continuous_task_mgr.cpp",
-    "continuous_task/src/config_change_observer.cpp",
-    "continuous_task/src/continuous_task_record.cpp",
-    "continuous_task/src/notification_tools.cpp",
-    "core/src/background_task_mgr_service.cpp",
-    "efficiency_resources/src/bg_efficiency_resources_mgr.cpp",
-    "efficiency_resources/src/resource_application_record.cpp",
-    "efficiency_resources/src/resources_subscriber_mgr.cpp",
-    "transient_task/src/bg_transient_task_mgr.cpp",
-    "transient_task/src/bgtask_common.cpp",
-    "transient_task/src/decision_maker.cpp",
-    "transient_task/src/delay_suspend_info_ex.cpp",
-    "transient_task/src/device_info_manager.cpp",
-    "transient_task/src/event_hub.cpp",
-    "transient_task/src/input_manager.cpp",
-    "transient_task/src/pkg_delay_suspend_info.cpp",
-    "transient_task/src/suspend_controller.cpp",
-    "transient_task/src/timer_manager.cpp",
-    "transient_task/src/watchdog.cpp",
+  shlib_type = "sa"
+
+  cflags_cc = [
+    "-fvisibility=hidden",
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fvisibility-inlines-hidden",
+    "-Os",
   ]
+  sources = BgTaskMgrServicecSrc
 
   public_configs = [ ":bgtaskmgr_service_public_config" ]
 
@@ -93,7 +104,58 @@ ohos_shared_library("bgtaskmgr_service") {
 
   if (distributed_notification_enable) {
     cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
-    deps += [ "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits" ]
+    deps += [ "${component_path}/frameworks/ans:ans_innerkits" ]
+    sources += [ "continuous_task/src/task_notification_subscriber.cpp" ]
+  }
+
+  if (background_task_mgr_graphics) {
+    cflags_cc += [ "-DSUPPORT_GRAPHICS" ]
+    deps += [ "//third_party/icu/icu4c:shared_icuuc" ]
+    external_deps += [ "i18n:intl_util" ]
+  }
+
+  part_name = "background_task_mgr"
+}
+
+ohos_static_library("bgtaskmgr_service_static") {
+  cflags_cc = [ "-DBGTASK_MGR_UNIT_TEST" ]
+  sources = BgTaskMgrServicecSrc
+
+  public_configs = [ ":bgtaskmgr_service_public_config" ]
+
+  deps = [ "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits" ]
+
+  external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
+    "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
+    "access_token:libaccesstoken_sdk",
+    "access_token:libtokenid_sdk",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
+    "common_event_service:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
+    "hitrace_native:hitrace_meter",
+    "hiviewdfx_hilog_native:libhilog",
+    "init:libbegetutil",
+    "ipc:ipc_single",
+    "resource_management:global_resmgr",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
+
+  if (has_os_account_part) {
+    cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+
+  if (distributed_notification_enable) {
+    cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
+    deps += [ "${component_path}/frameworks/ans:ans_innerkits" ]
     sources += [ "continuous_task/src/task_notification_subscriber.cpp" ]
   }
 

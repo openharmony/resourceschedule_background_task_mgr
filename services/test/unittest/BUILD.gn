@@ -43,7 +43,7 @@ ohos_unittest("bgtask_unit_test") {
 
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "${bgtaskmgr_services_path}:bgtaskmgr_service",
+    "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -101,7 +101,7 @@ ohos_unittest("efficiency_mgr_unit_test") {
 
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "${bgtaskmgr_services_path}:bgtaskmgr_service",
+    "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -157,7 +157,7 @@ ohos_unittest("bgtask_manager_unit_test") {
 
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "${bgtaskmgr_services_path}:bgtaskmgr_service",
+    "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -215,7 +215,7 @@ ohos_unittest("bgtask_misc_unit_test") {
 
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "${bgtaskmgr_services_path}:bgtaskmgr_service",
+    "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
     "//third_party/googletest:gtest_main",
   ]
 
