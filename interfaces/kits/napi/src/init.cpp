@@ -37,8 +37,6 @@ napi_value BackgroundTaskManagerInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getRemainingDelayTime", GetRemainingDelayTime),
         DECLARE_NAPI_FUNCTION("startBackgroundRunning", StartBackgroundRunning),
         DECLARE_NAPI_FUNCTION("stopBackgroundRunning", StopBackgroundRunning),
-        DECLARE_NAPI_FUNCTION("applyEfficiencyResources", ApplyEfficiencyResources),
-        DECLARE_NAPI_FUNCTION("resetAllEfficiencyResources", ResetAllEfficiencyResources),
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
@@ -71,17 +69,8 @@ napi_value BackgroundModeInit(napi_env env, napi_value exports)
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::VOIP), "VOIP");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundMode::TASK_KEEPING), "TASK_KEEPING");
 
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::CPU, "CPU");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::COMMON_EVENT, "COMMON_EVENT");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::TIMER, "TIMER");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::WORK_SCHEDULER, "WORK_SCHEDULER");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::BLUETOOTH, "BLUETOOTH");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::GPS, "GPS");
-    SetNamedPropertyByInteger(env, obj, (uint32_t)ResourceType::AUDIO, "AUDIO");
-
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("BackgroundMode", obj),
-        DECLARE_NAPI_PROPERTY("ResourceType", obj),
     };
 
     napi_define_properties(env, exports, sizeof(exportFuncs) / sizeof(*exportFuncs), exportFuncs);
