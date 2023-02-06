@@ -20,16 +20,16 @@ import Context from './application/BaseContext';
 /**
  * Manages background tasks.
  *
+ * @namespace backgroundTaskManager
  * @since 9
- * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
  */
 declare namespace backgroundTaskManager {
     /**
      * The info of delay suspend.
      *
-     * @name DelaySuspendInfo
-     * @since 9
+     * @interface DelaySuspendInfo
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
+     * @since 9
      */
     interface DelaySuspendInfo {
         /**
@@ -45,9 +45,7 @@ declare namespace backgroundTaskManager {
     /**
      * Cancels delayed transition to the suspended state.
      *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
-     * @param requestId Indicates the identifier of the delay request.
+     * @param { number } requestId - The identifier of the delay request.
      * @throws { BusinessError } 401 - Parameter error.
      * @throws { BusinessError } 9800001 - Memory operation failed.
      * @throws { BusinessError } 9800002 - Parcel operation failed.
@@ -55,15 +53,16 @@ declare namespace backgroundTaskManager {
      * @throws { BusinessError } 9800004 - System service operation failed.
      * @throws { BusinessError } 9900001 - Caller information verification failed.
      * @throws { BusinessError } 9900002 - Background task verification failed.
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
+     * @since 9
      */
     function cancelSuspendDelay(requestId: number): void;
 
     /**
      * Obtains the remaining time before an application enters the suspended state.
      *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
-     * @param requestId Indicates the identifier of the delay request.
+     * @param { number } requestId - The identifier of the delay request.
+     * @param { AsyncCallback<number> } callback - The callback of the remaining delay time.
      * @throws { BusinessError } 401 - Parameter error.
      * @throws { BusinessError } 9800001 - Memory operation failed.
      * @throws { BusinessError } 9800002 - Parcel operation failed.
@@ -71,18 +70,34 @@ declare namespace backgroundTaskManager {
      * @throws { BusinessError } 9800004 - System service operation failed.
      * @throws { BusinessError } 9900001 - Caller information verification failed.
      * @throws { BusinessError } 9900002 - Background task verification failed.
-     * @return The remaining delay time
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
+     * @since 9
      */
     function getRemainingDelayTime(requestId: number, callback: AsyncCallback<number>): void;
+
+    /**
+     * Obtains the remaining time before an application enters the suspended state.
+     *
+     * @since 9
+     * @param { number } requestId - The identifier of the delay request.
+     * @returns { Promise<number> } The promise returns the remaining delay time.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9900001 - Caller information verification failed.
+     * @throws { BusinessError } 9900002 - Background task verification failed.
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
+     */
     function getRemainingDelayTime(requestId: number): Promise<number>;
 
     /**
      * Requests delayed transition to the suspended state.
      *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
-     * @param reason Indicates the reason for delayed transition to the suspended state.
-     * @param callback The callback delay time expired.
+     * @param { string } reason - Indicates the reason for delayed transition to the suspended state.
+     * @param { Callback<void> } callback - The callback delay time expired.
+     * @returns { DelaySuspendInfo } Info of delay request.
      * @throws { BusinessError } 401 - Parameter error.
      * @throws { BusinessError } 9800001 - Memory operation failed.
      * @throws { BusinessError } 9800002 - Parcel operation failed.
@@ -90,20 +105,20 @@ declare namespace backgroundTaskManager {
      * @throws { BusinessError } 9800004 - System service operation failed.
      * @throws { BusinessError } 9900001 - Caller information verification failed.
      * @throws { BusinessError } 9900002 - Background task verification failed.
-     * @return Info of delay request
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
+     * @since 9
      */
     function requestSuspendDelay(reason: string, callback: Callback<void>): DelaySuspendInfo;
 
     /**
      * Service ability uses this method to request start running in background.
-     * system will publish a notification related to the this service.
+     * <p> System will publish a notification related to the this service. </p>
      *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
      * @permission ohos.permission.KEEP_BACKGROUND_RUNNING
-     * @param context app running context.
-     * @param bgMode Indicates which background mode to request.
-     * @param wantAgent Indicates which ability to start when user click the notification bar.
+     * @param { Context } context - App running context.
+     * @param { BackgroundMode } bgMode - Indicates which background mode to request.
+     * @param { WantAgent } wantAgent - Indicates which ability to start when user click the notification bar.
+     * @param { AsyncCallback<void> } callback - The callback of the function.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Parameter error.
@@ -114,16 +129,40 @@ declare namespace backgroundTaskManager {
      * @throws { BusinessError } 9800005 - Background task verification failed.
      * @throws { BusinessError } 9800006 - Notification verification failed.
      * @throws { BusinessError } 9800007 - Task storage failed.
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+     * @since 9
      */
     function startBackgroundRunning(context: Context, bgMode: BackgroundMode, wantAgent: WantAgent, callback: AsyncCallback<void>): void;
+
+    /**
+     * Service ability uses this method to request start running in background.
+     * <p> System will publish a notification related to the this service. </p>
+     *
+     * @permission ohos.permission.KEEP_BACKGROUND_RUNNING
+     * @param { Context } context - App running context.
+     * @param { BackgroundMode } bgMode - Indicates which background mode to request.
+     * @param { WantAgent } wantAgent - Indicates which ability to start when user click the notification bar.
+     * @returns { Promise<void> } The promise returned by the function.
+     * @throws { BusinessError } 201 - Permission denied.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9800005 - Background task verification failed.
+     * @throws { BusinessError } 9800006 - Notification verification failed.
+     * @throws { BusinessError } 9800007 - Task storage failed.
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+     * @since 9
+     */
     function startBackgroundRunning(context: Context, bgMode: BackgroundMode, wantAgent: WantAgent): Promise<void>;
 
     /**
      * Service ability uses this method to request stop running in background.
      *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
-     * @param context app running context.
+     * @param { Context } context - App running context.
+     * @param { AsyncCallback<void> } callback - The callback of the function.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 401 - Parameter error.
      * @throws { BusinessError } 9800001 - Memory operation failed.
@@ -133,15 +172,33 @@ declare namespace backgroundTaskManager {
      * @throws { BusinessError } 9800005 - Background task verification failed.
      * @throws { BusinessError } 9800006 - Notification verification failed.
      * @throws { BusinessError } 9800007 - Task storage failed.
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+     * @since 9
      */
     function stopBackgroundRunning(context: Context, callback: AsyncCallback<void>): void;
+
+    /**
+     * Service ability uses this method to request stop running in background.
+     *
+     * @param { Context } context - App running context.
+     * @returns { Promise<void> } The promise returned by the function.
+     * @throws { BusinessError } 201 - Permission denied.
+     * @throws { BusinessError } 401 - Parameter error.
+     * @throws { BusinessError } 9800001 - Memory operation failed.
+     * @throws { BusinessError } 9800002 - Parcel operation failed.
+     * @throws { BusinessError } 9800003 - Inner transact failed.
+     * @throws { BusinessError } 9800004 - System service operation failed.
+     * @throws { BusinessError } 9800005 - Background task verification failed.
+     * @throws { BusinessError } 9800006 - Notification verification failed.
+     * @throws { BusinessError } 9800007 - Task storage failed.
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+     * @since 9
+     */
     function stopBackgroundRunning(context: Context): Promise<void>;
 
     /**
      * Apply or unapply efficiency resources.
      *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Parameter error.
@@ -150,16 +207,15 @@ declare namespace backgroundTaskManager {
      * @throws { BusinessError } 9800003 - Inner transact failed.
      * @throws { BusinessError } 9800004 - System service operation failed.
      * @throws { BusinessError } 18700001 - Caller information verification failed.
+     * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
      function applyEfficiencyResources(request: EfficiencyResourcesRequest): void;
 
      /**
       * Reset all efficiency resources apply.
       *
-      * @since 9
-      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
-      * @systemapi Hide this for inner system use.
       * @throws { BusinessError } 201 - Permission denied.
       * @throws { BusinessError } 202 - Not System App.
       * @throws { BusinessError } 401 - Parameter error.
@@ -168,79 +224,83 @@ declare namespace backgroundTaskManager {
       * @throws { BusinessError } 9800003 - Inner transact failed.
       * @throws { BusinessError } 9800004 - System service operation failed.
       * @throws { BusinessError } 18700001 - Caller information verification failed.
+      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+      * @systemapi Hide this for inner system use.
+      * @since 9
       */
      function resetAllEfficiencyResources(): void;
 
     /**
      * Supported background mode.
      *
-     * @since 9
+     * @enum { number }
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+     * @since 9
      */
     export enum BackgroundMode {
         /**
          * data transfer mode
          *
-         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+         * @since 9
          */
         DATA_TRANSFER = 1,
 
         /**
          * audio playback mode
          *
-         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+         * @since 9
          */
         AUDIO_PLAYBACK = 2,
 
         /**
          * audio recording mode
          *
-         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+         * @since 9
          */
         AUDIO_RECORDING = 3,
 
         /**
          * location mode
          *
-         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+         * @since 9
          */
         LOCATION = 4,
 
         /**
          * bluetooth interaction mode
          *
-         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+         * @since 9
          */
         BLUETOOTH_INTERACTION = 5,
 
         /**
          * multi-device connection mode
          *
-         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+         * @since 9
          */
         MULTI_DEVICE_CONNECTION = 6,
 
         /**
          * wifi interaction mode
          *
-         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          * @systemapi Hide this for inner system use.
+         * @since 9
          */
         WIFI_INTERACTION = 7,
 
         /**
          * Voice over Internet Phone mode
          *
-         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
          * @systemapi Hide this for inner system use.
+         * @since 9
          */
         VOIP = 8,
 
@@ -248,8 +308,8 @@ declare namespace backgroundTaskManager {
          * background continuous calculate mode, for example 3D render.
          * only supported in particular device
          *
-         * @since 9
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask
+         * @since 9
          */
         TASK_KEEPING = 9,
     }
@@ -257,9 +317,10 @@ declare namespace backgroundTaskManager {
     /**
      * The type of resource.
      *
-     * @since 9
+     * @enum { number }
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
      export enum ResourceType {
         /**
@@ -301,10 +362,10 @@ declare namespace backgroundTaskManager {
     /**
      * The request of efficiency resources.
      *
-     * @name EfficiencyResourcesRequest
-     * @since 9
+     * @interface EfficiencyResourcesRequest
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
     export interface EfficiencyResourcesRequest {
         /**
