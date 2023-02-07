@@ -40,6 +40,7 @@ public:
         const std::shared_ptr<Notification::NotificationDoNotDisturbDate> &date) override;
     void OnEnabledNotificationChanged(
         const std::shared_ptr<Notification::EnabledNotificationCallbackData> &callbackData) override;
+    void OnBadgeChanged(const std::shared_ptr<Notification::BadgeNumberCallbackData> &badgeData) override;
 
 private:
     std::vector<std::string> StringSplit(const std::string &str, const char &delim);
