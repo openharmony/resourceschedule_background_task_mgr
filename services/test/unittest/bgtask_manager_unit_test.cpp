@@ -237,7 +237,9 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_006, TestSize.Level1)
     bgContinuousTaskMgr_->StopContinuousTask(1, 1, 1);
     bgContinuousTaskMgr_->isSysReady_.store(true);
     bgContinuousTaskMgr_->StopContinuousTask(-1, 1, 1);
+    SleepForFC();
     bgContinuousTaskMgr_->StopContinuousTask(1, 1, 1);
+    SleepForFC();
 
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord1->uid_ = TEST_NUM_ONE;
@@ -257,6 +259,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_006, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
     bgContinuousTaskMgr_->StopContinuousTask(-1, 1, 1);
+    SleepForFC();
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
