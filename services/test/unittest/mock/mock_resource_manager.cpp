@@ -189,22 +189,12 @@ RState ResourceManagerImpl::GetProfileByName(const char *name, std::string &outV
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetMediaById(uint32_t id, std::string &outValue)
+RState ResourceManagerImpl::GetMediaById(uint32_t id, std::string &outValue, uint32_t density)
 {
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetMediaById(uint32_t id, uint32_t density, std::string &outValue)
-{
-    return SUCCESS;
-}
-
-RState ResourceManagerImpl::GetMediaByName(const char *name, std::string &outValue)
-{
-    return SUCCESS;
-}
-
-RState ResourceManagerImpl::GetMediaByName(const char *name, uint32_t density, std::string &outValue)
+RState ResourceManagerImpl::GetMediaByName(const char *name, std::string &outValue, uint32_t density)
 {
     return SUCCESS;
 }
@@ -224,54 +214,24 @@ RState ResourceManagerImpl::CloseRawFileDescriptor(const std::string &name)
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetMediaBase64ByIdData(uint32_t id, uint32_t density, std::string &base64Data)
+RState ResourceManagerImpl::GetMediaDataById(uint32_t id, size_t &len, std::unique_ptr<uint8_t[]> &outValue,
+    uint32_t density)
 {
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetMediaBase64ByNameData(const char *name, uint32_t density, std::string &base64Data)
+RState ResourceManagerImpl::GetMediaDataByName(const char *name, size_t &len, std::unique_ptr<uint8_t[]> &outValue,
+    uint32_t density)
 {
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetMediaDataById(uint32_t id, size_t &len, std::unique_ptr<uint8_t[]> &outValue)
+RState ResourceManagerImpl::GetMediaBase64DataById(uint32_t id, std::string &outValue, uint32_t density)
 {
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetMediaDataByName(const char *name, size_t &len, std::unique_ptr<uint8_t[]> &outValue)
-{
-    return SUCCESS;
-}
-
-RState ResourceManagerImpl::GetMediaDataById(uint32_t id, uint32_t density, size_t &len,
-    std::unique_ptr<uint8_t[]> &outValue)
-{
-    return SUCCESS;
-}
-
-RState ResourceManagerImpl::GetMediaDataByName(const char *name, uint32_t density, size_t &len,
-    std::unique_ptr<uint8_t[]> &outValue)
-{
-    return SUCCESS;
-}
-
-RState ResourceManagerImpl::GetMediaBase64DataById(uint32_t id, std::string &outValue)
-{
-    return SUCCESS;
-}
-
-RState ResourceManagerImpl::GetMediaBase64DataByName(const char *name, std::string &outValue)
-{
-    return SUCCESS;
-}
-
-RState ResourceManagerImpl::GetMediaBase64DataById(uint32_t id, uint32_t density, std::string &outValue)
-{
-    return SUCCESS;
-}
-
-RState ResourceManagerImpl::GetMediaBase64DataByName(const char *name, uint32_t density, std::string &outValue)
+RState ResourceManagerImpl::GetMediaBase64DataByName(const char *name, std::string &outValue, uint32_t density)
 {
     return SUCCESS;
 }
