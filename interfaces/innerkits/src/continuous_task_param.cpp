@@ -15,6 +15,8 @@
 
 #include "continuous_task_param.h"
 
+#include "string_ex.h"
+
 #include "continuous_task_log.h"
 
 namespace OHOS {
@@ -40,15 +42,19 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
         }
     }
 
-    if (!parcel.ReadString(abilityName_)) {
+    std::u16string u16AbilityName;
+    if (!parcel.ReadString16(u16AbilityName)) {
         BGTASK_LOGE("Failed to read ability name");
         return false;
     }
+    abilityName_ = Str16ToStr8(u16AbilityName);
 
-    if (!parcel.ReadString(appName_)) {
+    std::u16string u16AppName;
+    if (!parcel.ReadString16(u16AppName)) {
         BGTASK_LOGE("Failed to read app name");
         return false;
     }
+    appName_ = Str16ToStr8(u16AppName);
     return true;
 }
 
@@ -86,11 +92,13 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         }
     }
 
-    if (!parcel.WriteString(abilityName_)) {
+    std::u16string u16AbilityName = Str8ToStr16(abilityName_);
+    if (!parcel.WriteString16(u16AbilityName)) {
         BGTASK_LOGE("Failed to write abilityName");
         return false;
     }
-    if (!parcel.WriteString(appName_)) {
+    std::u16string u16AppName = Str8ToStr16(appName_);
+    if (!parcel.WriteString16(u16AppName)) {
         BGTASK_LOGE("Failed to write appName");
         return false;
     }

@@ -162,7 +162,8 @@ ErrCode BackgroundTaskMgrProxy::StopBackgroundRunning(const std::string &ability
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
-    if (!data.WriteString(abilityName)) {
+    std::u16string u16AbilityName = Str8ToStr16(abilityName);
+    if (!data.WriteString16(u16AbilityName)) {
         BGTASK_LOGE("StopBackgroundRunning parcel ability Name failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
