@@ -170,11 +170,12 @@ ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data,
 ErrCode BackgroundTaskMgrStub::HandleStopBackgroundRunning(MessageParcel &data, MessageParcel &reply)
 {
     StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleStopBackgroundRunning");
-    std::string abilityName;
-    if (!data.ReadString(abilityName)) {
+    std::u16string u16AbilityName;
+    if (!data.ReadString16(u16AbilityName)) {
         FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
+    std::string abilityName = Str16ToStr8(u16AbilityName);
     sptr<IRemoteObject> abilityToken = data.ReadRemoteObject();
     ErrCode result = StopBackgroundRunning(abilityName, abilityToken);
     if (!reply.WriteInt32(result)) {
