@@ -15,6 +15,8 @@
 
 #include "continuous_task_callback_info.h"
 
+#include "string_ex.h"
+
 #include "continuous_task_log.h"
 
 namespace OHOS {
@@ -62,7 +64,8 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
         return false;
     }
 
-    if (!parcel.WriteString(abilityName_)) {
+    std::u16string u16AbilityName = Str8ToStr16(abilityName_);
+    if (!parcel.WriteString16(u16AbilityName)) {
         BGTASK_LOGE("Failed to write ability name");
         return false;
     }
@@ -87,10 +90,12 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     creatorUid_ = static_cast<int32_t>(parcel.ReadInt32());
     creatorPid_ = static_cast<pid_t>(parcel.ReadInt32());
 
-    if (!parcel.ReadString(abilityName_)) {
+    std::u16string u16AbilityName;
+    if (!parcel.ReadString16(u16AbilityName)) {
         BGTASK_LOGE("Failed to read creator ability name");
         return false;
     }
+    abilityName_ = Str16ToStr8(u16AbilityName);
     return true;
 }
 }  // namespace BackgroundTaskMgr
