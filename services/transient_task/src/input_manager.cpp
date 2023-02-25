@@ -29,14 +29,17 @@ InputManager::InputManager()
     if (eventRunner.get() != nullptr) {
         SetEventRunner(eventRunner);
     }
+}
 
+InputManager::~InputManager() {}
+
+void InputManager::RegisterEventHub()
+{
     eventHub_ = EventHub::RegisterEvent(*this);
     if (eventHub_ == nullptr) {
         BGTASK_LOGE("Failed to register event");
     }
 }
-
-InputManager::~InputManager() {}
 
 void InputManager::RegisterEventListener(const std::shared_ptr<IEventListener>& listener)
 {
