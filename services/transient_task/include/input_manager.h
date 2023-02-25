@@ -35,6 +35,7 @@ class InputManager : public AppExecFwk::EventHandler {
 public:
     InputManager();
     ~InputManager() override;
+    void RegisterEventHub();
     void SendEventInfo(const std::shared_ptr<EventInfo>& eventInfo);
     void RegisterEventListener(const std::shared_ptr<IEventListener>& listener);
     void UnRegisterEventListener(const std::shared_ptr<IEventListener>& listener);

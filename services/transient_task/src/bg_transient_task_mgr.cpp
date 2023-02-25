@@ -92,6 +92,11 @@ void BgTransientTaskMgr::InitNecessaryState()
     watchdog_ = make_shared<Watchdog>(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get(), decisionMaker_);
 
     inputManager_ = make_shared<InputManager>();
+    if (inputManager_ == nullptr) {
+        BGTASK_LOGE("Fail to make inputManager");
+        return;
+    }
+    inputManager_->RegisterEventHub();
     inputManager_->RegisterEventListener(deviceInfoManeger_);
     inputManager_->RegisterEventListener(decisionMaker_);
     isReady_.store(true);
