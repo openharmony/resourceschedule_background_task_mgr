@@ -266,6 +266,18 @@ RState ResourceManagerImpl::GetRawFileList(const std::string rawDirPath, std::ve
 {
     return SUCCESS;
 }
+
+RState ResourceManagerImpl::GetDrawableInfoById(uint32_t id, std::string &type, size_t &len,
+    std::unique_ptr<uint8_t[]> &outValue, uint32_t density)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetDrawableInfoByName(const char *name, std::string &type, size_t &len,
+    std::unique_ptr<uint8_t[]> &outValue, uint32_t density)
+{
+    return SUCCESS;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS
