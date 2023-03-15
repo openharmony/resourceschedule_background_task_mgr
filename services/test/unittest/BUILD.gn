@@ -176,6 +176,7 @@ ohos_unittest("bgtask_manager_unit_test") {
     "ipc:ipc_core",
     "multimedia_image_framework:image_native",
     "relational_store:native_rdb",
+    "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
