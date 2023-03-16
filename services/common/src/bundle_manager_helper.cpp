@@ -44,7 +44,7 @@ std::string BundleManagerHelper::GetClientBundleName(int32_t uid)
     std::lock_guard<std::mutex> lock(connectionMutex_);
     Connect();
     if (bundleMgr_ != nullptr) {
-        bundleMgr_->GetBundleNameForUid(uid, bundle);
+        bundleMgr_->GetNameForUid(uid, bundle);
     }
     BGTASK_LOGD("get client Bundle Name: %{public}s", bundle.c_str());
     return bundle;

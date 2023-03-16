@@ -122,7 +122,7 @@ bool BgTransientTaskMgr::GetBundleNamesForUid(int32_t uid, std::string &bundleNa
         return false;
     }
 
-    if (!bundleMgrProxy->GetBundleNameForUid(uid, bundleName)) {
+    if (bundleMgrProxy->GetNameForUid(uid, bundleName) != ERR_OK) {
         BGTASK_LOGE("Get bundle name failed");
         return false;
     }
