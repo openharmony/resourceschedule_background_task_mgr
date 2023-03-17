@@ -84,7 +84,7 @@ private:
     bool DumpAllRequestId(std::vector<std::string> &dumpInfo);
     void SendLowBatteryEvent(std::vector<std::string> &dumpInfo);
     void SendOkayBatteryEvent(std::vector<std::string> &dumpInfo);
-    void InitNecessaryState();
+    void InitNecessaryState(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
 
     std::atomic<bool> isReady_ {false};
     std::mutex suscriberLock_;
