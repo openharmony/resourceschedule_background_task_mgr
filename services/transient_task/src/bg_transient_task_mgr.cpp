@@ -88,7 +88,8 @@ void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::Ev
     deviceInfoManeger_ = make_shared<DeviceInfoManager>();
     timerManager_ = make_shared<TimerManager>(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get(), runner);
     decisionMaker_ = make_shared<DecisionMaker>(timerManager_, deviceInfoManeger_);
-    watchdog_ = make_shared<Watchdog>(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get(), decisionMaker_, runner);
+    watchdog_ = make_shared<Watchdog>(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get(),
+        decisionMaker_, runner);
 
     inputManager_ = make_shared<InputManager>(runner);
     if (inputManager_ == nullptr) {

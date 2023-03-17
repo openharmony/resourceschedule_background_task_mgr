@@ -315,7 +315,8 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_001, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
-    auto timerManager = std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto timerManager = std::make_shared<TimerManager>(bgtaskService,
+        AppExecFwk::EventRunner::Create("tdd_test_handler"));
     auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
     decisionMaker->lastRequestTime_ = TimeProvider::GetCurrentTime();
     EXPECT_EQ(decisionMaker->Decide(nullptr, nullptr), ERR_BGTASK_NO_MEMORY);
@@ -356,7 +357,8 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_002, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
-    auto timerManager = std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto timerManager = std::make_shared<TimerManager>(bgtaskService,
+        AppExecFwk::EventRunner::Create("tdd_test_handler"));
     auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
 
     decisionMaker->RemoveRequest(nullptr, -1);
@@ -478,7 +480,8 @@ HWTEST_F(BgTaskMiscUnitTest, InputManagerTest_001, TestSize.Level1)
 HWTEST_F(BgTaskMiscUnitTest, PkgDelaySuspendInfoTest_001, TestSize.Level1)
 {
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
-    auto timerManager = std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto timerManager = std::make_shared<TimerManager>(bgtaskService,
+        AppExecFwk::EventRunner::Create("tdd_test_handler"));
     auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", 1, timerManager);
     pkgDelaySuspendInfo->isCounting_ = true;
     pkgDelaySuspendInfo->baseTime_ = (int32_t)TimeProvider::GetCurrentTime() + MIN_ALLOW_QUOTA_TIME;
@@ -586,7 +589,8 @@ HWTEST_F(BgTaskMiscUnitTest, WatchdogTest_001, TestSize.Level1)
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
     auto timerManager = std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
     auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
-    auto watchdog = std::make_shared<Watchdog>(bgtaskService, decisionMaker, AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto watchdog = std::make_shared<Watchdog>(bgtaskService, decisionMaker,
+        AppExecFwk::EventRunner::Create("tdd_test_handler"));
     EXPECT_TRUE(watchdog->KillApplicationByUid("bundleName", 1));
     EXPECT_TRUE(watchdog->KillApplicationByUid("bundleName", 1));
 }
