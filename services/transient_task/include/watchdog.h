@@ -31,7 +31,8 @@ class BackgroundTaskMgrService;
 
 class Watchdog : public AppExecFwk::EventHandler {
 public:
-    Watchdog(const wptr<BackgroundTaskMgrService>& service, const std::shared_ptr<DecisionMaker>& decision);
+    Watchdog(const wptr<BackgroundTaskMgrService>& service, const std::shared_ptr<DecisionMaker>& decision,
+        const std::shared_ptr<AppExecFwk::EventRunner>& runner);
     ~Watchdog() override = default;
     bool AddWatchdog(int32_t requestId, const std::shared_ptr<KeyInfo>& info, int32_t interval);
     void RemoveWatchdog(int32_t requestId);

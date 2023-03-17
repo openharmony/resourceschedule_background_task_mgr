@@ -33,6 +33,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
+const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
 }
@@ -71,9 +72,10 @@ void BackgroundTaskMgrService::OnRemoveSystemAbility(int32_t systemAbilityId, co
 
 void BackgroundTaskMgrService::Init()
 {
-    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->Init();
-    DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Init();
-    BgContinuousTaskMgr::GetInstance()->Init();
+    runner_ = AppExecFwk::EventRunner::Create(BGTASK_SERVICE_NAME);
+    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->Init(runner_);
+    DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Init(runner_);
+    BgContinuousTaskMgr::GetInstance()->Init(runner_);
 }
 
 void BackgroundTaskMgrService::OnStop()

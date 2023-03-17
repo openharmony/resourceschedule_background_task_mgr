@@ -61,7 +61,6 @@ static const char *g_taskPromptResNames[] = {
     "ohos_bgmode_prompt_default_value",
 };
 
-static constexpr char BG_CONTINUOUS_TASK_MGR_NAME[] = "BgContinuousTaskMgr";
 static constexpr char SEPARATOR[] = "_";
 static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_CANCEL_ALL[] = "--cancel_all";
@@ -94,14 +93,13 @@ BgContinuousTaskMgr::BgContinuousTaskMgr() {}
 
 BgContinuousTaskMgr::~BgContinuousTaskMgr() {}
 
-bool BgContinuousTaskMgr::Init()
+bool BgContinuousTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
-    runner_ = AppExecFwk::EventRunner::Create(BG_CONTINUOUS_TASK_MGR_NAME);
-    if (runner_ == nullptr) {
+    if (runner == nullptr) {
         BGTASK_LOGE("BgContinuousTaskMgr runner create failed!");
         return false;
     }
-    handler_ = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner_);
+    handler_ = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner);
     if (handler_ == nullptr) {
         BGTASK_LOGE("BgContinuousTaskMgr handler create failed!");
         return false;

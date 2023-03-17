@@ -127,7 +127,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_001, TestSize.Level1)
     bgContinuousTaskMgr_->Clear();
     EXPECT_EQ(bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), ERR_BGTASK_SYS_NOT_READY);
     EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunning("test"), ERR_BGTASK_SYS_NOT_READY);
-    bgContinuousTaskMgr_->Init();
+    bgContinuousTaskMgr_->Init(AppExecFwk::EventRunner::Create("tdd_test_handler"));
     EXPECT_EQ(bgContinuousTaskMgr_->isSysReady_.load(), true);
 }
 
@@ -526,7 +526,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_017, TestSize.Level1)
 HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_018, TestSize.Level1)
 {
     EXPECT_EQ(bgTransientTaskMgr_->isReady_.load(), false);
-    bgTransientTaskMgr_->Init();
+    bgTransientTaskMgr_->Init(AppExecFwk::EventRunner::Create("tdd_test_handler"));
     EXPECT_EQ(bgTransientTaskMgr_->isReady_.load(), true);
 }
 

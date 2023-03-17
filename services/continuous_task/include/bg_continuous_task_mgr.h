@@ -68,7 +68,7 @@ public:
     void OnAbilityStateChanged(int32_t uid, const std::string &abilityName);
     void OnProcessDied(int32_t uid, int32_t pid);
     void OnRemoteSubscriberDied(const wptr<IRemoteObject> &object);
-    bool Init();
+    bool Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
     void InitNecessaryState();
     void InitRequiredResourceInfo();
     void Clear();
@@ -116,7 +116,6 @@ private:
     std::atomic<bool> isSysReady_ {false};
     std::string deviceType_ {""};
     int32_t bgTaskUid_ {-1};
-    std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE

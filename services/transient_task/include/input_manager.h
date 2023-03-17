@@ -33,7 +33,7 @@ public:
 
 class InputManager : public AppExecFwk::EventHandler {
 public:
-    InputManager();
+    InputManager(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
     ~InputManager() override;
     void RegisterEventHub();
     void SendEventInfo(const std::shared_ptr<EventInfo>& eventInfo);

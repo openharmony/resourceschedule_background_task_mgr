@@ -82,6 +82,7 @@ private:
 
 private:
     ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};
+    std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

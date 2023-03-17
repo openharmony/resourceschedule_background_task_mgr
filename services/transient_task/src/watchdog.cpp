@@ -25,14 +25,12 @@ using namespace std;
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const std::string BACKGROUND_WATCHDOG = "BgTaskWatchdog";
 
-Watchdog::Watchdog(const wptr<BackgroundTaskMgrService>& service, const std::shared_ptr<DecisionMaker>& decision)
-    : service_(service), decision_(decision)
+Watchdog::Watchdog(const wptr<BackgroundTaskMgrService>& service, const std::shared_ptr<DecisionMaker>& decision,
+    const std::shared_ptr<AppExecFwk::EventRunner>& runner) : service_(service), decision_(decision)
 {
-    std::shared_ptr<AppExecFwk::EventRunner> eventRunner = AppExecFwk::EventRunner::Create(BACKGROUND_WATCHDOG);
-    if (eventRunner.get() != nullptr) {
-        SetEventRunner(eventRunner);
+    if (!runner) {
+        SetEventRunner(runner);
     }
 }
 

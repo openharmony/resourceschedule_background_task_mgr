@@ -20,13 +20,12 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const std::string BACKGROUND_TASK_TIMER = "BgTaskTimer";
 
-TimerManager::TimerManager(const wptr<BackgroundTaskMgrService>& service) : service_(service)
+TimerManager::TimerManager(const wptr<BackgroundTaskMgrService>& service,
+    const std::shared_ptr<AppExecFwk::EventRunner>& runner) : service_(service)
 {
-    std::shared_ptr<AppExecFwk::EventRunner> eventRunner = AppExecFwk::EventRunner::Create(BACKGROUND_TASK_TIMER);
-    if (eventRunner.get() != nullptr) {
-        SetEventRunner(eventRunner);
+    if (!runner) {
+        SetEventRunner(runner);
     }
 }
 

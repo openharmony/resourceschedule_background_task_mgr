@@ -21,13 +21,11 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const std::string BACKGROUND_TASK_INPUT = "BgtaskInput";
 
-InputManager::InputManager()
+InputManager::InputManager(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
-    std::shared_ptr<AppExecFwk::EventRunner> eventRunner = AppExecFwk::EventRunner::Create(BACKGROUND_TASK_INPUT);
-    if (eventRunner.get() != nullptr) {
-        SetEventRunner(eventRunner);
+    if (!runner) {
+        SetEventRunner(runner);
     }
 }
 

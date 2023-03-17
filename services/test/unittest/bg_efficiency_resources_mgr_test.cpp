@@ -58,9 +58,9 @@ void BgEfficiencyResourcesMgrTest::SetUpTestCase()
 {
     bgEfficiencyResourcesMgr_ = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance();
     bgEfficiencyResourcesMgr_->subscriberMgr_ = DelayedSingleton<ResourcesSubscriberMgr>::GetInstance();
-    bgEfficiencyResourcesMgr_->runner_ = AppExecFwk::EventRunner::Create(MOCK_EFFICIENCY_RESOURCES_MGR_NAME);
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(MOCK_EFFICIENCY_RESOURCES_MGR_NAME);
     bgEfficiencyResourcesMgr_->handler_ =
-        std::make_shared<AppExecFwk::EventHandler>(bgEfficiencyResourcesMgr_->runner_);
+        std::make_shared<AppExecFwk::EventHandler>(runner);
     bgEfficiencyResourcesMgr_->isSysReady_.store(true);
 }
 
@@ -381,10 +381,10 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, Marshalling_001, TestSize.Level1)
  */
 HWTEST_F(BgEfficiencyResourcesMgrTest, Init_001, TestSize.Level1)
 {
-    bgEfficiencyResourcesMgr_->runner_ = nullptr;
-    bgEfficiencyResourcesMgr_->Init();
-    bgEfficiencyResourcesMgr_->runner_ = AppExecFwk::EventRunner::Create(MOCK_EFFICIENCY_RESOURCES_MGR_NAME);
-    bgEfficiencyResourcesMgr_->Init();
+    std::shared_ptr<AppExecFwk::EventRunner> runner = nullptr;
+    bgEfficiencyResourcesMgr_->Init(runner);
+    runner = AppExecFwk::EventRunner::Create(MOCK_EFFICIENCY_RESOURCES_MGR_NAME);
+    bgEfficiencyResourcesMgr_->Init(runner);
     EXPECT_TRUE(true);
 }
 
