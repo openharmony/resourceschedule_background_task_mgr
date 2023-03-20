@@ -55,7 +55,7 @@ class BgTransientTaskMgr {
     DECLARE_DELAYED_SINGLETON(BgTransientTaskMgr);
 
 public:
-    void Init();
+    void Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
     ErrCode RequestSuspendDelay(const std::u16string& reason,
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo);
     ErrCode CancelSuspendDelay(int32_t requestId);
@@ -84,7 +84,7 @@ private:
     bool DumpAllRequestId(std::vector<std::string> &dumpInfo);
     void SendLowBatteryEvent(std::vector<std::string> &dumpInfo);
     void SendOkayBatteryEvent(std::vector<std::string> &dumpInfo);
-    void InitNecessaryState();
+    void InitNecessaryState(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
 
     std::atomic<bool> isReady_ {false};
     std::mutex suscriberLock_;
@@ -100,7 +100,6 @@ private:
     std::shared_ptr<InputManager> inputManager_ {nullptr};
     std::shared_ptr<DeviceInfoManager> deviceInfoManeger_ {nullptr};
     std::shared_ptr<DecisionMaker> decisionMaker_ {nullptr};
-    std::shared_ptr<AppExecFwk::EventRunner> runner_;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
 };
 

@@ -33,7 +33,6 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-    const std::string BG_EFFICIENCY_RESOURCES_MGR_NAME = "BgEfficiencyResourcesMgr";
     const std::string DUMP_PARAM_LIST_ALL = "--all";
     const std::string DUMP_PARAM_RESET_ALL = "--reset_all";
     const std::string DUMP_PARAM_RESET_APP = "--resetapp";
@@ -58,15 +57,14 @@ BgEfficiencyResourcesMgr::BgEfficiencyResourcesMgr() {}
 
 BgEfficiencyResourcesMgr::~BgEfficiencyResourcesMgr() {}
 
-bool BgEfficiencyResourcesMgr::Init()
+bool BgEfficiencyResourcesMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
     subscriberMgr_ = DelayedSingleton<ResourcesSubscriberMgr>::GetInstance();
-    runner_ = AppExecFwk::EventRunner::Create(BG_EFFICIENCY_RESOURCES_MGR_NAME);
-    if (runner_ == nullptr) {
+    if (runner == nullptr) {
         BGTASK_LOGE("efficiency resources mgr runner create failed!");
         return false;
     }
-    handler_ = std::make_shared<AppExecFwk::EventHandler>(runner_);
+    handler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
     if (!handler_) {
         BGTASK_LOGE("efficiency resources mgr handler create failed!");
         return false;

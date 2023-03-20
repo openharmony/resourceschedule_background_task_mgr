@@ -52,14 +52,13 @@ constexpr int32_t SERVICE_WAIT_TIME = 2000;
 BgTransientTaskMgr::BgTransientTaskMgr() {}
 BgTransientTaskMgr::~BgTransientTaskMgr() {}
 
-void BgTransientTaskMgr::Init()
+void BgTransientTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
-    runner_ = AppExecFwk::EventRunner::Create(true);
-    if (!runner_) {
+    if (runner == nullptr) {
         BGTASK_LOGE("Failed to init due to create runner error");
         return;
     }
-    handler_ = std::make_shared<AppExecFwk::EventHandler>(runner_);
+    handler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
     if (!handler_) {
         BGTASK_LOGE("Failed to init due to create handler error");
     }
@@ -68,10 +67,10 @@ void BgTransientTaskMgr::Init()
     susriberDeathRecipient_ = new (std::nothrow)
         SubscriberDeathRecipient(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
 
-    InitNecessaryState();
+    InitNecessaryState(runner);
 }
 
-void BgTransientTaskMgr::InitNecessaryState()
+void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
     sptr<ISystemAbilityManager> systemAbilityManager
         = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -81,17 +80,18 @@ void BgTransientTaskMgr::InitNecessaryState()
         || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr) {
         isReady_.store(false);
         BGTASK_LOGI("request system service is not ready yet!");
-        std::function <void()> InitNecessaryStateFunc = std::bind(&BgTransientTaskMgr::InitNecessaryState, this);
+        auto InitNecessaryStateFunc = std::bind(&BgTransientTaskMgr::InitNecessaryState, this, runner);
         handler_->PostTask(InitNecessaryStateFunc, SERVICE_WAIT_TIME);
         return;
     }
 
     deviceInfoManeger_ = make_shared<DeviceInfoManager>();
-    timerManager_ = make_shared<TimerManager>(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
+    timerManager_ = make_shared<TimerManager>(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get(), runner);
     decisionMaker_ = make_shared<DecisionMaker>(timerManager_, deviceInfoManeger_);
-    watchdog_ = make_shared<Watchdog>(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get(), decisionMaker_);
+    watchdog_ = make_shared<Watchdog>(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get(),
+        decisionMaker_, runner);
 
-    inputManager_ = make_shared<InputManager>();
+    inputManager_ = make_shared<InputManager>(runner);
     if (inputManager_ == nullptr) {
         BGTASK_LOGE("Fail to make inputManager");
         return;

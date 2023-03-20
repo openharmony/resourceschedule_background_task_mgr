@@ -26,7 +26,8 @@ class BackgroundTaskMgrService;
 
 class TimerManager : public AppExecFwk::EventHandler {
 public:
-    explicit TimerManager(const wptr<BackgroundTaskMgrService>& service);
+    explicit TimerManager(const wptr<BackgroundTaskMgrService>& service,
+        const std::shared_ptr<AppExecFwk::EventRunner>& runner);
     ~TimerManager() override = default;
     bool AddTimer(int32_t requestId, int32_t interval);
     void RemoveTimer(int32_t requestId);

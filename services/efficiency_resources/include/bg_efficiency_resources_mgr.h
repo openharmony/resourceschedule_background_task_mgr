@@ -47,7 +47,7 @@ using ResourceRecordPair = std::pair<const int32_t, std::shared_ptr<
     OHOS::BackgroundTaskMgr::ResourceApplicationRecord>>;
 public:
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
-    bool Init();
+    bool Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
     void InitNecessaryState();
     void Clear();
     ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo);
@@ -99,7 +99,6 @@ private:
 
 private:
     std::atomic<bool> isSysReady_ {false};
-    std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> appResourceApplyMap_ {};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> procResourceApplyMap_ {};
