@@ -29,7 +29,7 @@ namespace BackgroundTaskMgr {
 Watchdog::Watchdog(const wptr<BackgroundTaskMgrService>& service, const std::shared_ptr<DecisionMaker>& decision,
     const std::shared_ptr<AppExecFwk::EventRunner>& runner) : service_(service), decision_(decision)
 {
-    if (!runner) {
+    if (runner == nullptr) {
         SetEventRunner(runner);
     }
 }
