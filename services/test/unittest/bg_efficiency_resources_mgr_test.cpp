@@ -366,13 +366,14 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, Marshalling_001, TestSize.Level1)
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>();
     MessageParcel data;
     EXPECT_TRUE(callbackInfo->Marshalling(data));
-    EXPECT_TRUE(ResourceCallbackInfo::Unmarshalling(data) != nullptr);
-
+    std::shared_ptr<ResourceCallbackInfo> callbackInfoPtr (ResourceCallbackInfo::Unmarshalling(data));
+    EXPECT_TRUE(callbackInfoPtr != nullptr);
     auto resourceInfo = std::make_shared<EfficiencyResourceInfo>(1, true,
         0, "apply", true, false);
     MessageParcel out;
     EXPECT_TRUE(resourceInfo->Marshalling(out));
-    EXPECT_TRUE(EfficiencyResourceInfo::Unmarshalling(out) != nullptr);
+    std::shared_ptr<EfficiencyResourceInfo> resourceInfoPtr (EfficiencyResourceInfo::Unmarshalling(out));
+    EXPECT_TRUE(resourceInfoPtr != nullptr);
 }
 
 /**
@@ -601,17 +602,17 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetTimeOutResource_001, TestSize.Level1
 }
 
 /**
- * @tc.name: CheckProcApplyWorkScheduler_001
- * @tc.desc: cover the CheckProcApplyWorkScheduler function.
+ * @tc.name: CheckProcApplyLimtedRes_001
+ * @tc.desc: cover the CheckProcApplyLimtedRes_001 function.
  * @tc.type: FUNC
  */
-HWTEST_F(BgEfficiencyResourcesMgrTest, CheckProcApplyWorkScheduler_001, TestSize.Level1)
+HWTEST_F(BgEfficiencyResourcesMgrTest, CheckProcApplyLimtedRes_001, TestSize.Level1)
 {
     sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(
         ResourceType::WORK_SCHEDULER, true, 0, "apply", true, true);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
         resourceInfo), (int32_t)ERR_OK);
-    EXPECT_FALSE(bgEfficiencyResourcesMgr_->CheckProcApplyWorkScheduler(resourceInfo));
+    EXPECT_FALSE(bgEfficiencyResourcesMgr_->CheckProcApplyLimtedRes(resourceInfo, ResourceType::WORK_SCHEDULER));
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

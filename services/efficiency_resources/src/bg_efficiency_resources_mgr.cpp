@@ -41,15 +41,6 @@ namespace {
     const uint32_t APP_MGR_READY = 1;
     const uint32_t BUNDLE_MGR_READY = 2;
     const uint32_t ALL_DEPENDS_READY = 3;
-    const std::vector<std::string> ResourceTypeName = {
-        "CPU",
-        "COMMON_EVENT",
-        "TIMER",
-        "WORK_SCHEDULER",
-        "BLUETOOTH",
-        "GPS",
-        "AUDIO",
-    };
     const uint32_t MAX_RESOURCES_TYPE_NUM = ResourceTypeName.size();
     const uint32_t MAX_RESOURCE_NUMBER = (1 << ResourceTypeName.size()) - 1;
 }
@@ -214,7 +205,8 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string
     }
     BGTASK_LOGD("app died, uid: %{public}d, bundleName: %{public}s", uid, bundleName.c_str());
     handler_->PostTask([this, uid, bundleName, resetAll]() {
-        int resourceNumber = resetAll ? MAX_RESOURCE_NUMBER : (MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER);
+        int resourceNumber = resetAll ? MAX_RESOURCE_NUMBER : (MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER ^
+            ResourceType::TIMER);
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             0, resourceNumber, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, false);
@@ -232,7 +224,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
         uid, pid, bundleName.c_str());
     handler_->PostTask([this, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-            pid, MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER, bundleName);
+            pid, MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER ^ ResourceType::TIMER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, true);
         if (!this->CheckAlivedApp(uid)) {
             this->ResetEfficiencyResourcesInner(callbackInfo, false);
@@ -260,9 +252,6 @@ bool BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
 
 void BgEfficiencyResourcesMgr::Clear()
 {
-    if (appStateObserver_) {
-        appStateObserver_->Unsubscribe();
-    }
 }
 
 bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
@@ -308,8 +297,12 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGE("apply efficiency resources failed, running resource apply is false");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    if (!CheckProcApplyWorkScheduler(resourceInfo)) {
+    if (!CheckProcApplyLimtedRes(resourceInfo, ResourceType::WORK_SCHEDULER)) {
         BGTASK_LOGW("apply work scheduler resources by process is not recommend");
+        return ERR_OK;
+    }
+    if (!CheckProcApplyLimtedRes(resourceInfo, ResourceType::TIMER)) {
+        BGTASK_LOGW("apply timer resources by process is not recommend");
         return ERR_OK;
     }
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
@@ -734,17 +727,18 @@ int32_t BgEfficiencyResourcesMgr::GetUserIdByUid(int32_t uid)
     return uid / BASE_USER_RANGE;
 }
 
-bool BgEfficiencyResourcesMgr::CheckProcApplyWorkScheduler(const sptr<EfficiencyResourceInfo> &resourceInfo)
+bool BgEfficiencyResourcesMgr::CheckProcApplyLimtedRes(const sptr<EfficiencyResourceInfo> &resourceInfo,
+    uint32_t resourceType)
 {
-    if (resourceInfo->IsProcess() && (resourceInfo->GetResourceNumber() & ResourceType::WORK_SCHEDULER) != 0) {
-        int resourceNumber = resourceInfo->GetResourceNumber() ^ ResourceType::WORK_SCHEDULER;
+    if (resourceInfo->IsProcess() && (resourceInfo->GetResourceNumber() & resourceType) != 0) {
+        int resourceNumber = resourceInfo->GetResourceNumber() ^ resourceType;
         if (resourceNumber != 0) {
             sptr<EfficiencyResourceInfo> procResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
             procResourceInfo->SetResourceNumber(resourceNumber);
             ApplyEfficiencyResources(procResourceInfo);
         }
         sptr<EfficiencyResourceInfo> appResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
-        appResourceInfo->SetResourceNumber(ResourceType::WORK_SCHEDULER);
+        appResourceInfo->SetResourceNumber(resourceType);
         appResourceInfo->SetProcess(false);
         ApplyEfficiencyResources(appResourceInfo);
         return false;

@@ -16,6 +16,9 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_RESOURCE_TYPE_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_RESOURCE_TYPE_H
 
+#include <vector>
+#include <string>
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class ResourceType {
@@ -31,6 +34,8 @@ public:
         AUDIO = 1 << 6
     };
 };
+
+extern const std::vector<std::string> ResourceTypeName;
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_RESOURCE_TYPE_H
