@@ -30,7 +30,7 @@ namespace BackgroundTaskMgr {
 static std::map<std::string, EventId> g_actionMap = {
     { EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_ON, EVENT_SCREEN_ON },
     { EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_OFF, EVENT_SCREEN_OFF },
-    { EventFwk::CommonEventSupport::COMMON_EVENT_USER_PRESENT, EVENT_SCREEN_UNLOCK },
+    { EventFwk::CommonEventSupport::COMMON_EVENT_SCREEN_UNLOCKED, EVENT_SCREEN_UNLOCK },
     { EventFwk::CommonEventSupport::COMMON_EVENT_BATTERY_LOW, EVENT_BATTERY_LOW },
     { EventFwk::CommonEventSupport::COMMON_EVENT_BATTERY_OKAY, EVENT_BATTERY_OKAY },
 };
