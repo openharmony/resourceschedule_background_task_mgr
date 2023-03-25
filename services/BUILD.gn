@@ -59,7 +59,9 @@ BgTaskMgrServicecSrc = [
 ]
 
 ohos_shared_library("bgtaskmgr_service") {
-  shlib_type = "sa"
+  if (!use_clang_coverage) {
+    shlib_type = "sa"
+  }
 
   cflags_cc = [
     "-fvisibility=hidden",
