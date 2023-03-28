@@ -181,12 +181,6 @@ bool StartBackgroundRunningCheckParam(napi_env env, AsyncCallbackInfo *asyncCall
         return false;
     }
 
-    std::string appName = GetMainAbilityLabel(info->bundleName);
-    if (appName.empty()) {
-        Common::HandleParamErr(env, ERR_APP_NAME_EMPTY, isThrow);
-        asyncCallbackInfo->errCode = ERR_APP_NAME_EMPTY;
-        return false;
-    }
     return true;
 }
 
