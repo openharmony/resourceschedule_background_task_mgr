@@ -696,7 +696,7 @@ HWTEST_F(BgTaskMiscUnitTest, DelaySuspendInfoEx_001, TestSize.Level1)
     delayInfo->StartAccounting();
     delayInfo->baseTime_ = 0;
     delayInfo->StopAccounting();
-    EXPECT_EQ(delayInfo->spentTime_, 0);
+    EXPECT_EQ(delayInfo->spendTime_, 0);
 }
 }
 }
