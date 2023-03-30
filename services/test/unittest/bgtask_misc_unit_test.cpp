@@ -684,6 +684,7 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_003, TestSize.Level1)
     applicationStateObserver->OnForegroundApplicationChanged(appStateData);
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
     applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+    EXPECT_EQ((int32_t)decisionMaker->pkgDelaySuspendInfoMap_.size(), 1);
 }
 
 /**
@@ -699,6 +700,7 @@ HWTEST_F(BgTaskMiscUnitTest, DelaySuspendInfoEx_001, TestSize.Level1)
     delayInfo->StartAccounting();
     delayInfo->baseTime_ = 0;
     delayInfo->StopAccounting();
+    EXPECT_EQ(delayInfo->spentTime_, 0);
 }
 }
 }

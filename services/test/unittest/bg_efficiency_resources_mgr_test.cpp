@@ -598,6 +598,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetTimeOutResource_001, TestSize.Level1
     bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(1, 64);
     bgEfficiencyResourcesMgr_->ResetTimeOutResource(0, true);
     bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(0, 0);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
 }
 
 /**
