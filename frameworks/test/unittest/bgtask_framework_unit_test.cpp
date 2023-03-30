@@ -348,7 +348,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_001, TestSiz
     subscirberProxy2.OnConnected();
     subscirberProxy1.OnDisconnected();
     subscirberProxy2.OnDisconnected();
-    EXPECT_EQ(true, true);
+    EXPECT_NE(subscirberStub, nullptr);
 }
 
 /**
@@ -376,7 +376,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_002, TestSiz
     subscirberProxy2.OnTransientTaskEnd(info);
     subscirberProxy2.OnAppTransientTaskStart(info);
     subscirberProxy2.OnAppTransientTaskEnd(info);
-    EXPECT_EQ(true, true);
+    EXPECT_NE(subscirberStub, nullptr);
 }
 
 /**
@@ -400,7 +400,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_003, TestSiz
     std::shared_ptr<ContinuousTaskCallbackInfo> info = std::make_shared<ContinuousTaskCallbackInfo>();
     subscirberProxy2.OnContinuousTaskStart(info);
     subscirberProxy2.OnContinuousTaskStop(info);
-    EXPECT_EQ(true, true);
+    EXPECT_NE(subscirberStub, nullptr);
 }
 
 /**
@@ -428,7 +428,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_004, TestSiz
     subscirberProxy2.OnAppEfficiencyResourcesReset(info);
     subscirberProxy2.OnProcEfficiencyResourcesApply(info);
     subscirberProxy2.OnProcEfficiencyResourcesReset(info);
-    EXPECT_EQ(true, true);
+    EXPECT_NE(subscirberStub, nullptr);
 }
 
 /**
@@ -607,7 +607,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, ExpiredCallbackProxyTest_001, TestSize.Level1)
     ExpiredCallbackProxy proxy2 = ExpiredCallbackProxy(expiredCallbackStub->AsObject());
     proxy1.OnExpired();
     proxy2.OnExpired();
-    EXPECT_EQ(true, true);
+    EXPECT_NE(expiredCallbackStub, nullptr);
 }
 
 /**
