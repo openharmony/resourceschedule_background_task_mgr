@@ -40,6 +40,11 @@ bool ResourceManagerImpl::AddResource(const std::string &path, const std::vector
     return true;
 }
 
+bool ResourceManagerImpl::RemoveResource(const std::string &path, const std::vector<std::string> &overlayPaths)
+{
+    return true;
+}
+
 RState ResourceManagerImpl::UpdateResConfig(ResConfig &resConfig)
 {
     return SUCCESS;
