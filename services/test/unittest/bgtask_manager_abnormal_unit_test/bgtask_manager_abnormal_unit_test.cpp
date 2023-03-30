@@ -50,6 +50,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_001
     BackgroundTaskMgrService_->OnStart();
 
     BackgroundTaskMgrService_->OnRemoveSystemAbility(-1, "");
+    EXPECT_EQ(BackgroundTaskMgrService_->state_, ServiceRunningState::STATE_NOT_START);
 }
 
 /**

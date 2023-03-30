@@ -887,6 +887,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_033, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
     bgContinuousTaskMgr_->CheckPersistenceData(allProcesses, allLabels);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 #endif
 }
 
@@ -976,6 +977,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_037, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     std::vector<std::string> dumpInfo;
     bgContinuousTaskMgr_->DumpAllTaskInfo(dumpInfo);
+    EXPECT_NE((int32_t)dumpInfo.size(), 0);
 }
 
 /**
@@ -1080,6 +1082,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_041, TestSize.Level1)
         EfficiencyResourcesEventType::APP_RESOURCE_RESET);
     DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->OnResourceChanged(callbackInfo,
         EfficiencyResourcesEventType::RESOURCE_RESET);
+    EXPECT_EQ((int32_t)DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->subscriberList_.size(), 1);
 }
 
 /**
@@ -1102,6 +1105,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_042, TestSize.Level1)
         TransientTaskEventType::APP_TASK_START);
     bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo,
         TransientTaskEventType::APP_TASK_END);
+    EXPECT_EQ((int32_t)bgTransientTaskMgr_->subscriberList_.size(), 2);
 }
 }
 }
