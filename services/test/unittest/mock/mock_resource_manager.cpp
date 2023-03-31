@@ -283,6 +283,18 @@ RState ResourceManagerImpl::GetDrawableInfoByName(const char *name, std::string 
 {
     return SUCCESS;
 }
+
+RState ResourceManagerImpl::GetStringFormatById(uint32_t id, std::string &outValue,
+    std::vector<std::tuple<ResourceManager::NapiValueType, std::string>> &jsParams)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetStringFormatByName(const char *name, std::string &outValue,
+    std::vector<std::tuple<ResourceManager::NapiValueType, std::string>> &jsParams)
+{
+    return SUCCESS;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS
