@@ -36,11 +36,11 @@ const std::string INIT_QUOTA_PARAM = "persist.sys.bgtask_init_quota";
 const std::string QUOTA_UPDATE_PARAM = "persist.sys.bgtask_quota_update";
 const std::string TASK_KEEPING_PARAM = "persist.sys.bgtask_support_task_keeping";
 
-const bool SUPPORT_TASK_KEEPING = GetBoolParameter(TASK_KEEPING_PARAM, false);
 const int32_t DELAY_TIME_NORMAL = GetIntParameter(DELAY_TIME_NOMAL_PARAM, DELAY_TIME_NORMAL_DEFAULT);
 const int32_t DELAY_TIME_LOW_POWER = DELAY_TIME_LOW_POWER_DEFAULT;
 const int32_t ALLOW_REQUEST_TIME_BG = ALLOW_REQUEST_TIME_BG_DEFAULT;
 const int32_t INIT_QUOTA = GetIntParameter(INIT_QUOTA_PARAM, INIT_QUOTA_DEFAULT);
 const int64_t QUOTA_UPDATE = GetIntParameter(QUOTA_UPDATE_PARAM, QUOTA_UPDATE_DEFAULT);
+const bool SUPPORT_TASK_KEEPING = GetBoolParameter(TASK_KEEPING_PARAM, false);
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
