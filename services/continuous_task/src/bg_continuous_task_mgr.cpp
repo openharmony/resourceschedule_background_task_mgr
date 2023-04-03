@@ -68,7 +68,6 @@ static constexpr char DUMP_PARAM_CANCEL_ALL[] = "--cancel_all";
 static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "ohos.backgroundtaskmgr.resources";
-static constexpr char DEVICE_TYPE_PC[] = "pc";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
