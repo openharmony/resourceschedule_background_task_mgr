@@ -34,6 +34,9 @@ constexpr int64_t QUOTA_UPDATE_DEFAULT = 1 * MSEC_PER_DAY; // 1day
 const std::string DELAY_TIME_NOMAL_PARAM = "persist.sys.bgtask_delaytime_normal";
 const std::string INIT_QUOTA_PARAM = "persist.sys.bgtask_init_quota";
 const std::string QUOTA_UPDATE_PARAM = "persist.sys.bgtask_quota_update";
+const std::string TASK_KEEPING_PARAM = "persist.sys.bgtask_support_task_keeping";
+
+const bool SUPPORT_TASK_KEEPING = GetBoolParameter(TASK_KEEPING_PARAM, false);
 
 const int32_t DELAY_TIME_NORMAL = GetIntParameter(DELAY_TIME_NOMAL_PARAM, DELAY_TIME_NORMAL_DEFAULT);
 const int32_t DELAY_TIME_LOW_POWER = DELAY_TIME_LOW_POWER_DEFAULT;

@@ -36,6 +36,7 @@
 #include "string_wrapper.h"
 #include "system_ability_definition.h"
 
+#include "bgtask_common.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_record.h"
 #include "continuous_task_log.h"
@@ -431,7 +432,7 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
             return ERR_BGTASK_NOT_SYSTEM_APP;
         }
         if (recordedBgMode == PC_BGMODE_TASK_KEEPING
-            && deviceType_ != DEVICE_TYPE_PC) {
+            && SUPPORT_TASK_KEEPING) {
             BGTASK_LOGE("task keeping background mode only support for pc device");
             return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
         }
