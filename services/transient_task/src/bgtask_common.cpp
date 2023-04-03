@@ -37,7 +37,6 @@ const std::string QUOTA_UPDATE_PARAM = "persist.sys.bgtask_quota_update";
 const std::string TASK_KEEPING_PARAM = "persist.sys.bgtask_support_task_keeping";
 
 const bool SUPPORT_TASK_KEEPING = GetBoolParameter(TASK_KEEPING_PARAM, false);
-
 const int32_t DELAY_TIME_NORMAL = GetIntParameter(DELAY_TIME_NOMAL_PARAM, DELAY_TIME_NORMAL_DEFAULT);
 const int32_t DELAY_TIME_LOW_POWER = DELAY_TIME_LOW_POWER_DEFAULT;
 const int32_t ALLOW_REQUEST_TIME_BG = ALLOW_REQUEST_TIME_BG_DEFAULT;
