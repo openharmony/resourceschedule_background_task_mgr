@@ -21,6 +21,7 @@
 #include "time_provider.h"
 
 using OHOS::system::GetIntParameter;
+using OHOS::system::GetBoolParameter;
 using OHOS::system::GetParameter;
 
 namespace OHOS {
