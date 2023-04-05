@@ -28,7 +28,6 @@ public:
     ~TaskNotificationSubscriber() override;
     void OnConnected() override;
     void OnDisconnected() override;
-    void OnCanceled(const std::shared_ptr<Notification::Notification> &request) override;
     void OnCanceled(const std::shared_ptr<Notification::Notification> &request,
         const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap, int deleteReason) override;
     void OnConsumed(const std::shared_ptr<Notification::Notification> &request) override;

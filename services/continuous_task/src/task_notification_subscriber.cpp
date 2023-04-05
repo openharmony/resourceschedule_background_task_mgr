@@ -43,8 +43,6 @@ void TaskNotificationSubscriber::OnConnected() {}
 
 void TaskNotificationSubscriber::OnDisconnected() {}
 
-void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::Notification> &notification) {}
-
 void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::Notification> &notification,
     const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap, int deleteReason)
 {
