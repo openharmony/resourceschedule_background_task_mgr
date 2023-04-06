@@ -18,6 +18,9 @@
 #include <uv.h>
 
 #include "singleton.h"
+#ifdef SUPPORT_JSSTACK
+#include "xpower_event_js.h"
+#endif
 
 #include "background_task_manager.h"
 #include "transient_task_log.h"
@@ -237,6 +240,9 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
 
 napi_value RequestSuspendDelay(napi_env env, napi_callback_info info, bool isThrow)
 {
+#ifdef SUPPORT_JSSTACK
+    HiviewDFX::ReportXPowerJsStackSysEvent(env, "TRANSIENT_TASK_APPLY");
+#endif
     std::shared_ptr<CallbackInstance> callback = nullptr;
     std::u16string reason;
     if (ParseParameters(env, info, reason, callback, isThrow) == nullptr) {

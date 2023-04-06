@@ -18,7 +18,8 @@
         "SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply"
       ],
       "features": [
-        "background_task_mgr_graphics"
+        "background_task_mgr_graphics",
+        "background_task_mgr_jsstack"
       ],
       "adapted_system_type": [
         "mini",
@@ -27,6 +28,9 @@
       ],
       "rom": "2048KB",
       "ram": "10240KB",
+      "hisysevent": [
+        "//foundation/resourceschedule/background_task_mgr/hisysevent.yaml"
+      ],
       "deps": {
         "components": [
           "ability_base",

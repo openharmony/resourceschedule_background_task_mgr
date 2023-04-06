@@ -23,6 +23,7 @@
 #include "time_provider.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
+#include "hisysevent.h"
 
 using namespace std;
 
@@ -181,6 +182,9 @@ ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::sh
     if (CanStartAccountingLocked(pkgInfo)) {
         pkgInfo->StartAccounting(delayInfo->GetRequestId());
     }
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "TRANSIENT_TASK_APPLY",
+        HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", key->GetUid(), "APP_PID", key->GetPid(),
+        "APP_NAME", key->GetPkg(), "TASKID", delayInfo->GetRequestId(), "VALUE", delayInfo->GetActualDelayTime());
     return ERR_OK;
 }
 
@@ -206,6 +210,9 @@ void DecisionMaker::RemoveRequest(const std::shared_ptr<KeyInfo>& key, const int
                 ->HandleTransientTaskSuscriberTask(info, TransientTaskEventType::APP_TASK_END);
         }
         BGTASK_LOGD("Remove requestId: %{public}d", requestId);
+        HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "TRANSIENT_TASK_CANCEL",
+            HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", key->GetUid(), "APP_PID", key->GetPid(),
+            "APP_NAME", key->GetPkg(), "TASKID", requestId);
     }
 }
 

@@ -20,6 +20,9 @@
 #include "napi_base_context.h"
 #include "system_ability_definition.h"
 #include "want_agent.h"
+#ifdef SUPPORT_JSSTACK
+#include "xpower_event_js.h"
+#endif
 
 #include "background_mode.h"
 #include "background_task_mgr_helper.h"
@@ -334,6 +337,9 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value,
 
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool isThrow)
 {
+#ifdef SUPPORT_JSSTACK
+    HiviewDFX::ReportXPowerJsStackSysEvent(env, "CONTINUOUS_TASK_APPLY");
+#endif
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo == nullpter");
@@ -497,6 +503,9 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
 
 napi_value StopBackgroundRunning(napi_env env, napi_callback_info info, bool isThrow)
 {
+#ifdef SUPPORT_JSSTACK
+    HiviewDFX::ReportXPowerJsStackSysEvent(env, "CONTINUOUS_TASK_CANCEL");
+#endif
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo is nullpter");

@@ -48,6 +48,13 @@ ohos_shared_library("backgroundtaskmanager") {
     "napi:ace_napi",
     "samgr:samgr_proxy",
   ]
+
+  defines = []
+  if (background_task_mgr_jsstack) {
+    defines += [ "SUPPORT_JSSTACK" ]
+    external_deps += [ "hiview:libxpower_event_js" ]
+  }
+
   relative_install_dir = "module"
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
@@ -81,6 +88,13 @@ ohos_shared_library("backgroundtaskmanager_napi") {
     "napi:ace_napi",
     "samgr:samgr_proxy",
   ]
+
+  defines = []
+  if (background_task_mgr_jsstack) {
+    defines += [ "SUPPORT_JSSTACK" ]
+    external_deps += [ "hiview:libxpower_event_js" ]
+  }
+
   relative_install_dir = "module/resourceschedule"
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"

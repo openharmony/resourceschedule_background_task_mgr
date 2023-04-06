@@ -16,6 +16,9 @@
 #include "cancel_suspend_delay.h"
 
 #include "singleton.h"
+#ifdef SUPPORT_JSSTACK
+#include "xpower_event_js.h"
+#endif
 
 #include "background_task_manager.h"
 #include "request_suspend_delay.h"
@@ -51,6 +54,9 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
 
 napi_value CancelSuspendDelay(napi_env env, napi_callback_info info, bool isThrow)
 {
+#ifdef SUPPORT_JSSTACK
+    HiviewDFX::ReportXPowerJsStackSysEvent(env, "TRANSIENT_TASK_CANCEL");
+#endif
     int32_t requestId;
     if (ParseParameters(env, info, requestId, isThrow) == nullptr) {
         return Common::NapiGetNull(env);

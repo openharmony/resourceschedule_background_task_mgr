@@ -23,6 +23,7 @@ bgtaskmgr_services_path = "${bgtaskmgr_root_path}/services"
 
 declare_args() {
   background_task_mgr_graphics = true
+  background_task_mgr_jsstack = true
 }
 
 if (!defined(global_parts_info) ||

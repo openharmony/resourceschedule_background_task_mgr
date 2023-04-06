@@ -25,6 +25,7 @@
 #include "errors.h"
 #include "hitrace_meter.h"
 #include "if_system_ability_manager.h"
+#include "hisysevent.h"
 #include "iremote_object.h"
 #include "iservice_registry.h"
 #ifdef HAS_OS_ACCOUNT_PART
@@ -1058,12 +1059,20 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
                 BGTASK_LOGD("continuous task start callback trigger");
                 (*iter)->OnContinuousTaskStart(continuousTaskCallbackInfo);
             }
+            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_APPLY",
+                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", continuousTaskInfo->GetUid(),
+                "APP_PID", continuousTaskInfo->GetPid(), "APP_NAME", continuousTaskInfo->GetBundleName(),
+                "ABILITY", continuousTaskInfo->GetAbilityName(), "BGMODE", continuousTaskInfo->GetBgModeId());
             break;
         case ContinuousTaskEventTriggerType::TASK_CANCEL:
             for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task stop callback trigger");
                 (*iter)->OnContinuousTaskStop(continuousTaskCallbackInfo);
             }
+            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_CANCEL",
+                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", continuousTaskInfo->GetUid(),
+                "APP_PID", continuousTaskInfo->GetPid(), "APP_NAME", continuousTaskInfo->GetBundleName(),
+                "ABILITY", continuousTaskInfo->GetAbilityName(), "BGMODE", continuousTaskInfo->GetBgModeId());
             break;
     }
 }
