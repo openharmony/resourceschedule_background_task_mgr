@@ -37,6 +37,7 @@
 #include "string_wrapper.h"
 #include "system_ability_definition.h"
 
+#include "bgtask_common.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_record.h"
 #include "continuous_task_log.h"
@@ -68,7 +69,6 @@ static constexpr char DUMP_PARAM_CANCEL_ALL[] = "--cancel_all";
 static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "ohos.backgroundtaskmgr.resources";
-static constexpr char DEVICE_TYPE_PC[] = "pc";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
@@ -431,9 +431,9 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
             BGTASK_LOGE("voip and wifiInteraction background mode only support for system app");
             return ERR_BGTASK_NOT_SYSTEM_APP;
         }
-        if (recordedBgMode == PC_BGMODE_TASK_KEEPING
-            && deviceType_ != DEVICE_TYPE_PC) {
-            BGTASK_LOGE("task keeping background mode only support for pc device");
+        if (recordedBgMode == PC_BGMODE_TASK_KEEPING && !SUPPORT_TASK_KEEPING) {
+            BGTASK_LOGE("task keeping is not supported, please set param "
+                "persist.sys.bgtask_support_task_keeping.");
             return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
         }
         if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode &
