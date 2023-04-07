@@ -430,9 +430,9 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
             BGTASK_LOGE("voip and wifiInteraction background mode only support for system app");
             return ERR_BGTASK_NOT_SYSTEM_APP;
         }
-        if (recordedBgMode == PC_BGMODE_TASK_KEEPING
-            && SUPPORT_TASK_KEEPING) {
-            BGTASK_LOGE("task keeping background mode only support for pc device");
+        if (recordedBgMode == PC_BGMODE_TASK_KEEPING && !SUPPORT_TASK_KEEPING) {
+            BGTASK_LOGE("task keeping is not supported, please set param "
+                "persist.sys.bgtask_support_task_keeping.");
             return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
         }
         if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode &
