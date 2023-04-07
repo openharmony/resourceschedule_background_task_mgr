@@ -1,0 +1,45 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+domain: BACKGROUND_TASK
+
+TRANSIENT_TASK_APPLY:
+  __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: apply transient task}
+  APP_UID: {type: INT32, desc: package uid}
+  APP_PID: {type: INT32, desc: thread pid}
+  APP_NAME: {type: STRING, desc: package name}
+  TASKID: {type: STRING, desc: task id}
+  VALUE: {type: INT32, desc: second of delay time}
+
+TRANSIENT_TASK_CANCEL:
+  __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: cancel transient task}
+  APP_UID: {type: INT32, desc: package uid}
+  APP_PID: {type: INT32, desc: thread pid}
+  APP_NAME: {type: STRING, desc: package name}
+  TASKID: {type: STRING, desc: task id}
+
+CONTINUOUS_TASK_APPLY:
+  __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: apply continuous task}
+  APP_UID: {type: INT32, desc: package uid}
+  APP_PID: {type: INT32, desc: thread pid}
+  APP_NAME: {type: STRING, desc: package name}
+  ABILITY: {type: STRING, desc: package ability}
+  BGMODE: {type: INT32, desc: task background mode}
+
+CONTINUOUS_TASK_CANCEL:
+  __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: cancel continuous task}
+  APP_UID: {type: INT32, desc: package uid}
+  APP_PID: {type: INT32, desc: thread pid}
+  APP_NAME: {type: STRING, desc: package name}
+  ABILITY: {type: STRING, desc: package ability}
+  BGMODE: {type: INT32, desc: task background mode}
