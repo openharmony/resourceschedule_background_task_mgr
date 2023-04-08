@@ -28,7 +28,7 @@
       ],
       "rom": "2048KB",
       "ram": "10240KB",
-      "hisysevent": [
+      "hisysevent_config": [
         "//foundation/resourceschedule/background_task_mgr/hisysevent.yaml"
       ],
       "deps": {
