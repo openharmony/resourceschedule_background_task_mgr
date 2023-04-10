@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { AsyncCallback , Callback} from './basic';
+import { AsyncCallback , Callback} from './@ohos.base';
 import { WantAgent } from "./@ohos.wantAgent";
 import Context from './application/BaseContext';
 
