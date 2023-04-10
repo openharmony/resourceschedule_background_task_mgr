@@ -165,7 +165,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_003, TestSize.Level1)
     if (SUPPORT_TASK_KEEPING) {
         EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true, 1ULL),
             ERR_OK);
-    } esle {
+    } else {
         EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true, 1ULL),
             ERR_BGTASK_KEEPING_TASK_VERIFY_ERR);
     }
