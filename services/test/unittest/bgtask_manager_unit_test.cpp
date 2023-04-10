@@ -18,6 +18,7 @@
 #include <thread>
 #include <gtest/gtest.h>
 
+#include "bgtask_common.h"
 #include "background_task_subscriber.h"
 #include "background_task_subscriber_proxy.h"
 #include "bg_continuous_task_mgr.h"
@@ -161,8 +162,13 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_003, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_WIFI_INTERACTION, BGMODE_WIFI_INTERACTION_ID,
         true, 1ULL), ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_VOIP, BGMODE_VOIP_ID, true, 1ULL), ERR_OK);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true, 1ULL),
-        ERR_BGTASK_KEEPING_TASK_VERIFY_ERR);
+    if (SUPPORT_TASK_KEEPING) {
+        EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true, 1ULL),
+            ERR_OK);
+    } esle {
+        EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true, 1ULL),
+            ERR_BGTASK_KEEPING_TASK_VERIFY_ERR);
+    }
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_VOIP, BGMODE_VOIP_ID, true, 1ULL), ERR_OK);
     bgContinuousTaskMgr_->deviceType_ = "default";
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(LOCATION_BGMODE, LOCATION_BGMODE_ID, true, 1ULL), ERR_OK);
