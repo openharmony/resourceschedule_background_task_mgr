@@ -135,7 +135,8 @@ HWTEST_F(BgTransientTaskMgrTest, Marshalling_001, TestSize.Level1)
     MessageParcel data;
     EXPECT_TRUE(appInfo->Marshalling(data));
 
-    EXPECT_TRUE(TransientTaskAppInfo::Unmarshalling(data) != nullptr);
+    std::shared_ptr<TransientTaskAppInfo> transientTaskAppInfo (TransientTaskAppInfo::Unmarshalling(data));
+    EXPECT_TRUE(transientTaskAppInfo != nullptr);
 }
 
 /**
@@ -147,7 +148,8 @@ HWTEST_F(BgTransientTaskMgrTest, Marshalling_001, TestSize.Level1)
 HWTEST_F(BgTransientTaskMgrTest, Unmarshalling_001, TestSize.Level1)
 {
     MessageParcel data;
-    EXPECT_TRUE(TransientTaskAppInfo::Unmarshalling(data) == nullptr);
+    std::shared_ptr<TransientTaskAppInfo> transientTaskAppInfo (TransientTaskAppInfo::Unmarshalling(data));
+    EXPECT_TRUE(transientTaskAppInfo == nullptr);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

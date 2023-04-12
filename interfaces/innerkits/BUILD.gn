@@ -39,6 +39,7 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "src/efficiency_resource_info.cpp",
     "src/expired_callback.cpp",
     "src/resource_callback_info.cpp",
+    "src/resource_type.cpp",
     "src/transient_task_app_info.cpp",
   ]
 
