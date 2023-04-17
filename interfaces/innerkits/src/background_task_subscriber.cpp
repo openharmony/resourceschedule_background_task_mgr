@@ -67,24 +67,15 @@ const sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> BackgroundTas
 }
 
 BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::BackgroundTaskSubscriberImpl(
-    BackgroundTaskSubscriber &subscriber) : subscriber_(subscriber)
-{
-    recipient_ = new (std::nothrow) DeathRecipient(*this);
-}
+    BackgroundTaskSubscriber &subscriber) : subscriber_(subscriber) {}
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnConnected()
 {
-    if (GetBackgroundTaskMgrProxy() && recipient_ != nullptr) {
-        proxy_->AsObject()->AddDeathRecipient(recipient_);
-    }
     subscriber_.OnConnected();
 }
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnDisconnected()
 {
-    if (GetBackgroundTaskMgrProxy() && recipient_ != nullptr) {
-        proxy_->AsObject()->RemoveDeathRecipient(recipient_);
-    }
     subscriber_.OnDisconnected();
 }
 
@@ -177,13 +168,5 @@ bool BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::GetBackgroundTaskMg
     }
     return true;
 }
-
-BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::DeathRecipient(
-    BackgroundTaskSubscriberImpl &subscriberImpl) : subscriberImpl_(subscriberImpl) {}
-
-BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::~DeathRecipient() {}
-
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::OnRemoteDied(
-    const wptr<IRemoteObject> &object) {}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
