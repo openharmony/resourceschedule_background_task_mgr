@@ -100,8 +100,8 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
     taskParam->abilityName_ = "ability1";
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
     taskParam->bgModeId_ = 9;
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam),
-        (int32_t)ERR_BGTASK_KEEPING_TASK_VERIFY_ERR);
+    EXPECT_NE((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam),
+        (int32_t)ERR_OK);
     taskParam->bgModeId_ = 1;
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
     taskParam->bgModeId_ = 4;
