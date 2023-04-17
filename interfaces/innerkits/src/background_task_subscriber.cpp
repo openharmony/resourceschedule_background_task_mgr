@@ -155,10 +155,10 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppContinuousTask
 
 bool BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::GetBackgroundTaskMgrProxy()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (proxy_) {
         return true;
     }
-    std::lock_guard<std::mutex> lock(mutex_);
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (!systemAbilityManager) {
@@ -184,10 +184,6 @@ BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::DeathRec
 BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::~DeathRecipient() {}
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::OnRemoteDied(
-    const wptr<IRemoteObject> &object)
-{
-    subscriberImpl_.proxy_ = nullptr;
-    subscriberImpl_.subscriber_.OnRemoteDied(object);
-}
+    const wptr<IRemoteObject> &object) {}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
