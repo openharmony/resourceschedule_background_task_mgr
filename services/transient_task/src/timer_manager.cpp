@@ -24,7 +24,7 @@ namespace BackgroundTaskMgr {
 TimerManager::TimerManager(const wptr<BackgroundTaskMgrService>& service,
     const std::shared_ptr<AppExecFwk::EventRunner>& runner) : service_(service)
 {
-    if (runner == nullptr) {
+    if (runner != nullptr) {
         SetEventRunner(runner);
     }
 }
