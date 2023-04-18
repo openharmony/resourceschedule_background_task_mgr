@@ -24,7 +24,7 @@ namespace BackgroundTaskMgr {
 
 InputManager::InputManager(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
-    if (runner == nullptr) {
+    if (runner != nullptr) {
         SetEventRunner(runner);
     }
 }
