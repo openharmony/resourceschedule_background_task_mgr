@@ -130,24 +130,6 @@ public:
 private:
     class BackgroundTaskSubscriberImpl final : public BackgroundTaskSubscriberStub {
     public:
-        class DeathRecipient final : public IRemoteObject::DeathRecipient {
-        public:
-            explicit DeathRecipient(BackgroundTaskSubscriberImpl &subscriberImpl);
-
-            ~DeathRecipient() override;
-
-            /**
-             * @brief Called back when remote object has died.
-             *
-             * @param object Obiect which has died.
-             */
-            void OnRemoteDied(const wptr<IRemoteObject> &object) override;
-
-        private:
-            BackgroundTaskSubscriberImpl &subscriberImpl_;
-        };
-
-    public:
         explicit BackgroundTaskSubscriberImpl(BackgroundTaskSubscriber &subscriber);
         ~BackgroundTaskSubscriberImpl() {}
 
@@ -249,7 +231,6 @@ private:
 
     public:
         BackgroundTaskSubscriber &subscriber_;
-        sptr<DeathRecipient> recipient_ {nullptr};
         sptr<IBackgroundTaskMgr> proxy_ {nullptr};
         std::mutex mutex_ {};
     };
