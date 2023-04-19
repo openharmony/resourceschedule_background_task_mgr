@@ -80,6 +80,7 @@ napi_value BackgroundModeInit(napi_env env, napi_value exports)
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::BLUETOOTH), "BLUETOOTH");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::GPS), "GPS");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::AUDIO), "AUDIO");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::RUNNING_LOCK), "RUNNING_LOCK");
 
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("BackgroundMode", obj),

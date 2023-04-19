@@ -31,7 +31,8 @@ public:
         WORK_SCHEDULER = 1 << 3,
         BLUETOOTH = 1 << 4,
         GPS = 1 << 5,
-        AUDIO = 1 << 6
+        AUDIO = 1 << 6,
+        RUNNING_LOCK = 1 << 7
     };
 };
 
