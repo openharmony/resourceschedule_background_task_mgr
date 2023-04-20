@@ -25,6 +25,7 @@ const std::vector<std::string> ResourceTypeName = {
     "BLUETOOTH",
     "GPS",
     "AUDIO",
+    "RUNNING_LOCK"
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
