@@ -23,8 +23,8 @@ ohos_unittest("bgtask_unit_test") {
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
+    "${bgtaskmgr_services_path}/test/unittest/mock/include",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
-    "//base/global/resource_management/frameworks/resmgr/include",
     "//third_party/icu/icu4c/source/i18n",
   ]
 
@@ -39,8 +39,6 @@ ohos_unittest("bgtask_unit_test") {
     "mock/mock_resource_manager.cpp",
   ]
 
-  configs = [ "//commonlibrary/c_utils/base:utils_config" ]
-
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
@@ -62,6 +60,7 @@ ohos_unittest("bgtask_unit_test") {
     "ipc:ipc_single",
     "multimedia_image_framework:image_native",
     "relational_store:native_rdb",
+    "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
@@ -73,7 +72,7 @@ ohos_unittest("bgtask_unit_test") {
 
   if (distributed_notification_enable) {
     cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
-    deps += [ "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits" ]
+    external_deps += [ "distributed_notification_service:ans_innerkits" ]
   }
 
   subsystem_name = "resourceschedule"
@@ -87,7 +86,6 @@ ohos_unittest("efficiency_mgr_unit_test") {
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
-    "//base/global/resource_management/frameworks/resmgr/include",
     "//third_party/icu/icu4c/source/i18n",
   ]
 
@@ -97,8 +95,6 @@ ohos_unittest("efficiency_mgr_unit_test") {
     "mock/mock_bundle_manager_helper.cpp",
     "mock/mock_ipc.cpp",
   ]
-
-  configs = [ "//commonlibrary/c_utils/base:utils_config" ]
 
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
@@ -121,6 +117,7 @@ ohos_unittest("efficiency_mgr_unit_test") {
     "ipc:ipc_single",
     "multimedia_image_framework:image_native",
     "relational_store:native_rdb",
+    "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
@@ -143,8 +140,8 @@ ohos_unittest("bgtask_manager_unit_test") {
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
+    "${bgtaskmgr_services_path}/test/unittest/mock/include",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
-    "//base/global/resource_management/frameworks/resmgr/include",
     "//third_party/icu/icu4c/source/i18n",
   ]
 
@@ -154,8 +151,6 @@ ohos_unittest("bgtask_manager_unit_test") {
     "mock/mock_ipc_skeleton.cpp",
     "mock/mock_resource_manager.cpp",
   ]
-
-  configs = [ "//commonlibrary/c_utils/base:utils_config" ]
 
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
@@ -191,7 +186,7 @@ ohos_unittest("bgtask_manager_unit_test") {
 
   if (distributed_notification_enable) {
     cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
-    deps += [ "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits" ]
+    external_deps += [ "distributed_notification_service:ans_innerkits" ]
     sources += [ "mock/mock_notification_helper.cpp" ]
   }
 
@@ -209,13 +204,10 @@ ohos_unittest("bgtask_misc_unit_test") {
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
-    "//base/global/resource_management/frameworks/resmgr/include",
     "//third_party/icu/icu4c/source/i18n",
   ]
 
   sources = [ "bgtask_misc_unit_test.cpp" ]
-
-  configs = [ "//commonlibrary/c_utils/base:utils_config" ]
 
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
@@ -240,6 +232,7 @@ ohos_unittest("bgtask_misc_unit_test") {
     "ipc:ipc_single",
     "multimedia_image_framework:image_native",
     "relational_store:native_rdb",
+    "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
@@ -251,7 +244,7 @@ ohos_unittest("bgtask_misc_unit_test") {
 
   if (distributed_notification_enable) {
     cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
-    deps += [ "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits" ]
+    external_deps += [ "distributed_notification_service:ans_innerkits" ]
     sources += [ "mock/mock_notification_helper.cpp" ]
   }
 

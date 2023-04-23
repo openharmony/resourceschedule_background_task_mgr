@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "resource_manager_impl.h"
+#include "mock_resource_manager_impl.h"
 
 namespace OHOS {
 namespace Global {
