@@ -67,24 +67,15 @@ const sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> BackgroundTas
 }
 
 BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::BackgroundTaskSubscriberImpl(
-    BackgroundTaskSubscriber &subscriber) : subscriber_(subscriber)
-{
-    recipient_ = new (std::nothrow) DeathRecipient(*this);
-}
+    BackgroundTaskSubscriber &subscriber) : subscriber_(subscriber) {}
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnConnected()
 {
-    if (GetBackgroundTaskMgrProxy() && recipient_ != nullptr) {
-        proxy_->AsObject()->AddDeathRecipient(recipient_);
-    }
     subscriber_.OnConnected();
 }
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnDisconnected()
 {
-    if (GetBackgroundTaskMgrProxy() && recipient_ != nullptr) {
-        proxy_->AsObject()->RemoveDeathRecipient(recipient_);
-    }
     subscriber_.OnDisconnected();
 }
 
@@ -155,10 +146,10 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppContinuousTask
 
 bool BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::GetBackgroundTaskMgrProxy()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (proxy_) {
         return true;
     }
-    std::lock_guard<std::mutex> lock(mutex_);
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (!systemAbilityManager) {
@@ -176,18 +167,6 @@ bool BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::GetBackgroundTaskMg
         return false;
     }
     return true;
-}
-
-BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::DeathRecipient(
-    BackgroundTaskSubscriberImpl &subscriberImpl) : subscriberImpl_(subscriberImpl) {}
-
-BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::~DeathRecipient() {}
-
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient::OnRemoteDied(
-    const wptr<IRemoteObject> &object)
-{
-    subscriberImpl_.proxy_ = nullptr;
-    subscriberImpl_.subscriber_.OnRemoteDied(object);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
