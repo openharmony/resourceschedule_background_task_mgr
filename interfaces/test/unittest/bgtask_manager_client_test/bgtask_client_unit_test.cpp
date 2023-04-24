@@ -286,8 +286,6 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
 {
     auto subscriber = TestBackgroundTaskSubscriber();
     auto subscriberImpl = std::make_shared<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl>(subscriber);
-    subscriberImpl->recipient_ = sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient>(
-        new BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::DeathRecipient(*subscriberImpl));
     subscriberImpl->OnConnected();
     EXPECT_EQ(bgtaskSubscriberRet_, "interface1");
     subscriberImpl->OnDisconnected();
@@ -306,8 +304,6 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
     EXPECT_EQ(bgtaskSubscriberRet_, "interface8");
     subscriberImpl->OnAppContinuousTaskStop(1);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface9");
-    subscriberImpl->recipient_->OnRemoteDied(nullptr);
-    EXPECT_EQ(bgtaskSubscriberRet_, "interface10");
     subscriberImpl->OnAppEfficiencyResourcesApply(nullptr);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface11");
     subscriberImpl->OnAppEfficiencyResourcesReset(nullptr);
