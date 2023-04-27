@@ -360,12 +360,21 @@ declare namespace backgroundTaskManager {
 
         /**
          * The resource for not being running lock.
-         * 
+         *
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
          * @systemapi Hide this for inner system use.
          * @since 10
          */
-        RUNNING_LOCK = 1 << 7
+        RUNNING_LOCK = 1 << 7,
+
+        /**
+         * The resource for not being sensor.
+         *
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 10
+         */
+        SENSOR = 1 << 8
     }
 
     /**

@@ -56,6 +56,7 @@ constexpr uint32_t BLUETOOTH_TYPE = 16;
 constexpr uint32_t GPS_TYPE = 32;
 constexpr uint32_t AUDIO_TYPE = 64;
 constexpr uint32_t RUNNING_LOCK = 128;
+constexpr uint32_t SENSOR = 256;
 }
 class BgTaskClientUnitTest : public testing::Test {
 public:
@@ -490,6 +491,7 @@ HWTEST_F(BgTaskClientUnitTest, ResourceType_001, TestSize.Level1)
     EXPECT_EQ(GPS_TYPE, (uint32_t)ResourceType::GPS);
     EXPECT_EQ(AUDIO_TYPE, (uint32_t)ResourceType::AUDIO);
     EXPECT_EQ(RUNNING_LOCK, (uint32_t)ResourceType::RUNNING_LOCK);
+    EXPECT_EQ(SENSOR, (uint32_t)ResourceType::SENSOR);
 }
 
 /**

@@ -32,7 +32,8 @@ public:
         BLUETOOTH = 1 << 4,
         GPS = 1 << 5,
         AUDIO = 1 << 6,
-        RUNNING_LOCK = 1 << 7
+        RUNNING_LOCK = 1 << 7,
+        SENSOR = 1 << 8
     };
 };
 
