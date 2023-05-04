@@ -282,6 +282,35 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_006, TestSize.Leve
 }
 
 /**
+ * @tc.name: AppEfficiencyResources_007
+ * @tc.desc: repeatedly apply SENSOR resources.
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, AppEfficiencyResources_007, TestSize.Level1)
+{
+    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(1, true, 2000, "apply",
+        false, true);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
+        resourceInfo), (int32_t)ERR_OK);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
+        resourceInfo), (int32_t)ERR_OK);
+    SleepFor(WAIT_TIME);
+    EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->procResourceApplyMap_.size()), 1);
+    bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources();
+    SleepFor(WAIT_TIME);
+    EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->procResourceApplyMap_.size()), 0);
+
+    resourceInfo->resourceNumber_ = ResourceType::SENSOR
+        | ResourceType::TIMER | ResourceType::COMMON_EVENT;
+    resourceInfo->resourceNumber_ = ResourceType::SENSOR;
+    resourceInfo->timeOut_ = 0;
+    resourceInfo->isPersist_ = true;
+    EXPECT_TRUE((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
+        resourceInfo) != (int32_t)ERR_OK);
+}
+
+/**
  * @tc.name: ResetAllEfficiencyResources_001
  * @tc.desc: reset all efficiency resources using ResetAllEfficiencyResources function.
  * @tc.type: FUNC
