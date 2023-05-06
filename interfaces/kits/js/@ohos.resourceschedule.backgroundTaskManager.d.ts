@@ -34,10 +34,16 @@ declare namespace backgroundTaskManager {
     interface DelaySuspendInfo {
         /**
          * The unique identifier of the delay request.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
+         * @since 9
          */
         requestId: number;
         /**
          * The actual delay duration (ms).
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
+         * @since 9
          */
         actualDelayTime: number;
     }
@@ -78,7 +84,6 @@ declare namespace backgroundTaskManager {
     /**
      * Obtains the remaining time before an application enters the suspended state.
      *
-     * @since 9
      * @param { number } requestId - The identifier of the delay request.
      * @returns { Promise<number> } The promise returns the remaining delay time.
      * @throws { BusinessError } 401 - Parameter error.
@@ -89,7 +94,8 @@ declare namespace backgroundTaskManager {
      * @throws { BusinessError } 9900001 - Caller information verification failed.
      * @throws { BusinessError } 9900002 - Background task verification failed.
      * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
-     */
+     * @since 9
+    */
     function getRemainingDelayTime(requestId: number): Promise<number>;
 
     /**
@@ -199,6 +205,7 @@ declare namespace backgroundTaskManager {
     /**
      * Apply or unapply efficiency resources.
      *
+     * @param { EfficiencyResourcesRequest } request - The request of apply or unapply efficiency resources.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Parameter error.
@@ -313,7 +320,7 @@ declare namespace backgroundTaskManager {
          */
         TASK_KEEPING = 9,
     }
-    
+
     /**
      * The type of resource.
      *
@@ -325,36 +332,64 @@ declare namespace backgroundTaskManager {
      export enum ResourceType {
         /**
          * The cpu resource for not being suspended.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         CPU = 1,
 
         /**
          * The resource for not being proxyed common_event.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         COMMON_EVENT = 1 << 1,
 
         /**
          * The resource for not being proxyed timer.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         TIMER = 1 << 2,
 
         /**
          * The resource for not being proxyed workscheduler.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         WORK_SCHEDULER = 1 << 3,
 
         /**
          * The resource for not being proxyed bluetooth.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         BLUETOOTH = 1 << 4,
 
         /**
          * The resource for not being proxyed gps.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         GPS = 1 << 5,
 
         /**
          * The resource for not being proxyed audio.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         AUDIO = 1 << 6
     }
@@ -370,31 +405,55 @@ declare namespace backgroundTaskManager {
     export interface EfficiencyResourcesRequest {
         /**
          * The set of resource types that app wants to apply.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         resourceTypes: number;
 
         /**
          * True if the app begin to use, else false.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         isApply: boolean;
 
         /**
          * The duration that the resource can be used most.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         timeOut: number;
 
         /**
          * True if the apply action is persist, else false. Default value is false.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         isPersist?: boolean;
 
         /**
          * True if apply action is for process, false is for package. Default value is false.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         isProcess?: boolean;
 
         /**
-         *  The apply reason.
+         * The apply reason.
+         * 
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 9
          */
         reason: string;
     }
