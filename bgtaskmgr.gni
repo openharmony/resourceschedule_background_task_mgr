@@ -21,6 +21,8 @@ bgtaskmgr_frameworks_path = "${bgtaskmgr_root_path}/frameworks"
 
 bgtaskmgr_services_path = "${bgtaskmgr_root_path}/services"
 
+bgtaskmgr_test_path = "${bgtaskmgr_root_path}/test"
+
 declare_args() {
   background_task_mgr_graphics = true
   background_task_mgr_jsstack = true

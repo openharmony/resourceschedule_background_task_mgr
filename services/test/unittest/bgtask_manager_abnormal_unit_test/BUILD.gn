@@ -27,7 +27,6 @@ ohos_unittest("bgtask_manager_abnormal_unit_test") {
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
-    "//base/global/resource_management/frameworks/resmgr/include",
     "//third_party/icu/icu4c/source/i18n",
   ]
 
@@ -36,8 +35,6 @@ ohos_unittest("bgtask_manager_abnormal_unit_test") {
     "mock/src/mock_accesstoken_kit.cpp",
     "mock/src/mock_system_ability.cpp",
   ]
-
-  configs = [ "//commonlibrary/c_utils/base:utils_config" ]
 
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
@@ -61,6 +58,7 @@ ohos_unittest("bgtask_manager_abnormal_unit_test") {
     "ipc:ipc_single",
     "multimedia_image_framework:image_native",
     "relational_store:native_rdb",
+    "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
@@ -72,7 +70,7 @@ ohos_unittest("bgtask_manager_abnormal_unit_test") {
 
   if (distributed_notification_enable) {
     cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
-    deps += [ "//base/notification/distributed_notification_service/frameworks/ans:ans_innerkits" ]
+    external_deps += [ "distributed_notification_service:ans_innerkits" ]
   }
 
   subsystem_name = "resourceschedule"

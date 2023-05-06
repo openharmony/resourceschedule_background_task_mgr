@@ -12,7 +12,7 @@
     "component": {
       "name": "background_task_mgr",
       "subsystem": "resourceschedule",
-      "syscap": [ 
+      "syscap": [
         "SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask",
         "SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask",
         "SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply"
@@ -36,7 +36,6 @@
           "ability_base",
           "ability_runtime",
           "access_token",
-          "appexecfwk_standard",
           "bundle_framework",
           "common_event_service",
           "eventhandler",
@@ -49,10 +48,14 @@
           "resource_management",
           "safwk",
           "samgr",
-          "startup_l2",
-          "c_utils"
+          "c_utils",
+          "distributed_notification_service",
+          "hisysevent_native",
+          "hiview",
+          "icu",
+          "i18n"
         ],
-        "third_party": [ "googletest" ]
+        "third_party": []
       },
       "build": {
         "group_type": {
