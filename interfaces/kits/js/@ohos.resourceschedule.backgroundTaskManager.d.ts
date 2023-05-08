@@ -372,7 +372,7 @@ declare namespace backgroundTaskManager {
          *
          * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
          * @systemapi Hide this for inner system use.
-         * @since 10
+         * @since 11
          */
         SENSOR = 1 << 8
     }
