@@ -724,7 +724,7 @@ ErrCode BgContinuousTaskMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber>
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    handler_->PostTask([=]() {
+    handler_->PostSyncTask([=]() {
         AddSubscriberInner(subscriber);
     });
     return ERR_OK;
@@ -771,7 +771,7 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscrib
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    handler_->PostTask([=]() {
+    handler_->PostSyncTask([=]() {
         RemoveSubscriberInner(subscriber);
     });
     return ERR_OK;
