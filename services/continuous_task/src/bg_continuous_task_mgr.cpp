@@ -724,7 +724,7 @@ ErrCode BgContinuousTaskMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber>
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    handler_->PostTask([=]() {
+    handler_->PostSyncTask([=]() {
         AddSubscriberInner(subscriber);
     });
     return ERR_OK;
@@ -746,9 +746,11 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscr
     bgTaskSubscribers_.emplace_back(subscriber);
 
     if (subscriber->AsObject() == nullptr) {
+        BGTASK_LOGW("subscriber is nullptr.");
         return ERR_BGTASK_INVALID_PARAM;
     }
     if (subscriberRecipients_.find(subscriber->AsObject()) != subscriberRecipients_.end()) {
+        BGTASK_LOGW("bgtask subscriber object not exist.");
         return ERR_BGTASK_OBJECT_EXISTS;
     }
     sptr<RemoteDeathRecipient> deathRecipient = new (std::nothrow) RemoteDeathRecipient(
@@ -760,7 +762,7 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscr
     subscriber->AsObject()->AddDeathRecipient(deathRecipient);
     subscriberRecipients_.emplace(subscriber->AsObject(), deathRecipient);
     subscriber->OnConnected();
-    BGTASK_LOGD("Add continuous task subscriber succeed");
+    BGTASK_LOGI("Add continuous task subscriber succeed");
     return ERR_OK;
 }
 
@@ -771,7 +773,7 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscrib
         return ERR_BGTASK_INVALID_PARAM;
     }
 
-    handler_->PostTask([=]() {
+    handler_->PostSyncTask([=]() {
         RemoveSubscriberInner(subscriber);
     });
     return ERR_OK;
@@ -800,7 +802,7 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
         subscriberRecipients_.erase(iter);
     }
     bgTaskSubscribers_.erase(subscriberIter);
-    BGTASK_LOGD("Remove continuous task subscriber succeed");
+    BGTASK_LOGI("Remove continuous task subscriber succeed");
     return ERR_OK;
 }
 
