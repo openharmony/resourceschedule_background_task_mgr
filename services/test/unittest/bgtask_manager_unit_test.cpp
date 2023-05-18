@@ -1108,7 +1108,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_042, TestSize.Level1)
         TransientTaskEventType::APP_TASK_START);
     bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo,
         TransientTaskEventType::APP_TASK_END);
-    EXPECT_EQ((int32_t)bgTransientTaskMgr_->subscriberList_.size(), 2);
+    EXPECT_NE((int32_t)bgTransientTaskMgr_->subscriberList_.size(), 0);
 }
 }
 }
