@@ -295,6 +295,11 @@ RState ResourceManagerImpl::GetStringFormatByName(const char *name, std::string 
 {
     return SUCCESS;
 }
+
+uint32_t ResourceManagerImpl::GetResourceLimitKeys()
+{
+    return 0;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS

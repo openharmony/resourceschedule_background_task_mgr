@@ -481,6 +481,13 @@ public:
      */
     virtual RState GetStringFormatByName(const char *name, std::string &outValue,
         std::vector<std::tuple<ResourceManager::NapiValueType, std::string>> &jsParams);
+
+    /**
+     * Get the resource limit keys value which every binary bit corresponds to existing limit key {@link KeyType}
+     *
+     * @return the resource limit keys
+     */
+    virtual uint32_t GetResourceLimitKeys();
 };
 } // namespace Resource
 } // namespace Global
