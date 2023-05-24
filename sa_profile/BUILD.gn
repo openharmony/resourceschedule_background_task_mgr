@@ -22,7 +22,7 @@ ohos_prebuilt_etc("bgtaskmgr_service_init") {
 }
 
 ohos_sa_profile("bgtaskmgr_sa_profile") {
-  sources = [ "1903.xml" ]
+  sources = [ "1903.json" ]
 
   part_name = "background_task_mgr"
 }
