@@ -53,7 +53,8 @@
           "hisysevent_native",
           "hiview",
           "icu",
-          "i18n"
+          "i18n",
+          "relational_store"
         ],
         "third_party": []
       },
