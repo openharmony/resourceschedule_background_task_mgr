@@ -297,14 +297,35 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGE("apply efficiency resources failed, running resource apply is false");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    if (!CheckProcApplyLimtedRes(resourceInfo, ResourceType::WORK_SCHEDULER)) {
-        BGTASK_LOGW("apply work scheduler resources by process is not recommend");
-        return ERR_OK;
+    ApplyEfficiencyForPkgAndProc(uid, pid, bundleName, resourceInfo);
+    return ERROR_OK
+}
+
+void BgEfficiencyResourcesMgr::ApplyEfficiencyForPkgAndProc(int32_t uid, int32_t pid, const std::string &bundleName,
+    const sptr<EfficiencyResourceInfo> &resourceInfo)
+{
+    if(!resourceInfo->IsProcess()) {
+        SendResourceApplyTask(uid, pid, bundleName,resourceInfo);
+        return;
     }
-    if (!CheckProcApplyLimtedRes(resourceInfo, ResourceType::TIMER)) {
-        BGTASK_LOGW("apply timer resources by process is not recommend");
-        return ERR_OK;
+    // Only cpu can apply for process
+    if(resourceInfo->GetResourceNumber() & ResourceType::CPU !=0){
+        sptr<EfficiencyResourceInfo> procResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
+        procResourceInfo->SeteResourceNumber(ResourceType::CPU);
+        SendResourceApplyTask(uid, pid, bundleName, procResourceInfo);
     }
+    int resourceNumber = resourceInfo->GetResourceNumber() & (~ResourceType::CPU);
+    if(resourceNumber != 0){
+        sptr<EfficiencyResourceInfo> appResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
+        appResourceInfo->SetResourceNumber(resourceNumber);
+        appResourceInfo->process(false);
+        SendResourceApplyTask(uid, pid, bundleName, appResourceInfo);
+    }
+}
+
+void BgEfficiencyResourcesMgr::SendResourceApplyTask(int32_t uid, int32_t pid, const std::string &bundleName,
+    const sptr<EfficiencyResourceInfo> &resourceInfo)
+{
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, resourceInfo->GetResourceNumber(), bundleName);
     if (resourceInfo->IsApply()) {
@@ -316,7 +337,6 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
             this->ResetEfficiencyResourcesInner(callbackInfo, resourceInfo->IsProcess());
         });
     }
-    return ERR_OK;
 }
 
 void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<ResourceCallbackInfo>
@@ -725,25 +745,6 @@ int32_t BgEfficiencyResourcesMgr::GetUserIdByUid(int32_t uid)
 {
     const int32_t BASE_USER_RANGE = 200000;
     return uid / BASE_USER_RANGE;
-}
-
-bool BgEfficiencyResourcesMgr::CheckProcApplyLimtedRes(const sptr<EfficiencyResourceInfo> &resourceInfo,
-    uint32_t resourceType)
-{
-    if (resourceInfo->IsProcess() && (resourceInfo->GetResourceNumber() & resourceType) != 0) {
-        int resourceNumber = resourceInfo->GetResourceNumber() ^ resourceType;
-        if (resourceNumber != 0) {
-            sptr<EfficiencyResourceInfo> procResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
-            procResourceInfo->SetResourceNumber(resourceNumber);
-            ApplyEfficiencyResources(procResourceInfo);
-        }
-        sptr<EfficiencyResourceInfo> appResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
-        appResourceInfo->SetResourceNumber(resourceType);
-        appResourceInfo->SetProcess(false);
-        ApplyEfficiencyResources(appResourceInfo);
-        return false;
-    }
-    return true;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
