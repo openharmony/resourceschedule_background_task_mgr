@@ -601,5 +601,31 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetTimeOutResource_001, TestSize.Level1
     bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(0, 0);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
 }
+
+/**
+ * @tc.name: ApplyEfficiencyResource_001
+ * @tc.desc: cover the ResetTimeOutResource and ApplyEfficiencyForPkgAndProc function.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, ResetTimeOutResource_001, TestSize.Level1)
+{
+    auto &procMap = bgEfficiencyResourcesMgr_->procResourceApplyMap_;
+    auto procRecord = std::make_shared<ResourceApplicationRecord>();
+    procMap.emplace(0, procRecord);
+
+    procRecord->resourceNumber_ = ResourceType::CPU;
+    procRecord->resourceUnitList_.emplace_back(0, true, 0, "CPU");
+    bgEfficiencyResourcesMgr_->ResetTimeOutResource(0, true);
+
+    procRecord->resourceNumber_ = ResourceType::CPU | ResourceType::COMMON_EVENT
+        | ResourceType::TIMER;
+    procRecord->resourceUnitList_.emplace_back(1, false, 0, "COMMON_EVENT");
+    procRecord->resourceUnitList_.emplace_back(2, false, TimeProvider::GetCurrentTime() + WAIT_TIME, "TIMER");
+    bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(1, 1);
+    bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(1, 64);
+    bgEfficiencyResourcesMgr_->ResetTimeOutResource(0, true);
+    bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(0, 0);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
