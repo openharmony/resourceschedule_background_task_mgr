@@ -305,7 +305,7 @@ void BgEfficiencyResourcesMgr::ApplyResourceForPkgAndProc(int32_t uid, int32_t p
     const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
     if (!resourceInfo->IsProcess()) {
-        SendResourceApplyTask(uid, pid, bundleName,resourceInfo);
+        SendResourceApplyTask(uid, pid, bundleName, resourceInfo);
         return;
     }
     // Only cpu can apply for process
