@@ -601,19 +601,5 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetTimeOutResource_001, TestSize.Level1
     bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(0, 0);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
 }
-
-/**
- * @tc.name: CheckProcApplyLimtedRes_001
- * @tc.desc: cover the CheckProcApplyLimtedRes_001 function.
- * @tc.type: FUNC
- */
-HWTEST_F(BgEfficiencyResourcesMgrTest, CheckProcApplyLimtedRes_001, TestSize.Level1)
-{
-    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(
-        ResourceType::WORK_SCHEDULER, true, 0, "apply", true, true);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(
-        resourceInfo), (int32_t)ERR_OK);
-    EXPECT_FALSE(bgEfficiencyResourcesMgr_->CheckProcApplyLimtedRes(resourceInfo, ResourceType::WORK_SCHEDULER));
-}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -391,7 +391,25 @@ declare namespace backgroundTaskManager {
          * @systemapi Hide this for inner system use.
          * @since 9
          */
-        AUDIO = 1 << 6
+        AUDIO = 1 << 6,
+
+        /**
+         * The resource for not being proxyed running lock.
+         *
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 10
+         */
+        RUNNING_LOCK = 1 << 7,
+
+        /**
+         * The resource for not being proxyed sensor.
+         *
+         * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply
+         * @systemapi Hide this for inner system use.
+         * @since 10
+         */
+        SENSOR = 1 << 8
     }
 
     /**

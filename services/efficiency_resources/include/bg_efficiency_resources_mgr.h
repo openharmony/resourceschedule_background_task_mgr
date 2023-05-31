@@ -95,7 +95,10 @@ private:
     bool CheckRunningResourcesApply(const int32_t uid, const std::string &bundleName);
     bool CheckAlivedApp(int32_t uid);
     int32_t GetUserIdByUid(int32_t uid);
-    bool CheckProcApplyLimtedRes(const sptr<EfficiencyResourceInfo> &resourceInfo, uint32_t resourceType);
+    void ApplyResourceForPkgAndProc(int32_t uid, int32_t pid, const std::string &bundleName,
+        const sptr<EfficiencyResourceInfo> &resourceInfo);
+    void SendResourceApplyTask(int32_t uid, int32_t pid, const std::string &bundleName,
+        const sptr<EfficiencyResourceInfo> &resourceInfo);
 
 private:
     std::atomic<bool> isSysReady_ {false};
