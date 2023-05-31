@@ -298,7 +298,7 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     ApplyResourceForPkgAndProc(uid, pid, bundleName, resourceInfo);
-    return ERROR_OK;
+    return ERR_OK;
 }
 
 void BgEfficiencyResourcesMgr::ApplyResourceForPkgAndProc(int32_t uid, int32_t pid, const std::string &bundleName,
