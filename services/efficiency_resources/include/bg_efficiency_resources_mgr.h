@@ -95,7 +95,7 @@ private:
     bool CheckRunningResourcesApply(const int32_t uid, const std::string &bundleName);
     bool CheckAlivedApp(int32_t uid);
     int32_t GetUserIdByUid(int32_t uid);
-    void ApplyEfficiencyForPkgAndProc(int32_t uid, int32_t pid, const std::string &bundleName,
+    void ApplyResourceForPkgAndProc(int32_t uid, int32_t pid, const std::string &bundleName,
         const sptr<EfficiencyResourceInfo> &resourceInfo);
     void SendResourceApplyTask(int32_t uid, int32_t pid, const std::string &bundleName,
         const sptr<EfficiencyResourceInfo> &resourceInfo);
