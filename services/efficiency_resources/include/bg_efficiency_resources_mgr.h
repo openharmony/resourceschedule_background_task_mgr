@@ -99,6 +99,7 @@ private:
 
 private:
     std::atomic<bool> isSysReady_ {false};
+    std::mutex sysAbilityLock_;
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> appResourceApplyMap_ {};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> procResourceApplyMap_ {};
