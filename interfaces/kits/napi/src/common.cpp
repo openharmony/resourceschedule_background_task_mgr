@@ -201,11 +201,11 @@ napi_value Common::GetU16StringValue(const napi_env &env, const napi_value &valu
 napi_value Common::GetInt32NumberValue(const napi_env &env, const napi_value &value, int32_t &result)
 {
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    BGTASK_NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     if (valuetype != napi_number) {
         return nullptr;
     }
-    napi_get_value_int32(env, value, &result);
+    BGTASK_NAPI_CALL(env, napi_get_value_int32(env, value, &result));
     BGTASK_LOGI("GetInt32NumberValue result: %{public}d", result);
     return Common::NapiGetNull(env);
 }
@@ -247,7 +247,7 @@ napi_value Common::SetDelaySuspendInfo(
 napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, std::string &result)
 {
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    BGTASK_NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     if (valuetype != napi_string) {
         return nullptr;
     }
@@ -325,11 +325,11 @@ int32_t Common::FindErrCode(const napi_env &env, const int32_t errCodeIn)
 napi_value Common::GetBooleanValue(const napi_env &env, const napi_value &value, bool &result)
 {
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    BGTASK_NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     if (valuetype != napi_boolean) {
         return nullptr;
     }
-    NAPI_CALL(env, napi_get_value_bool(env, value, &result));
+    BGTASK_NAPI_CALL(env, napi_get_value_bool(env, value, &result));
     BGTASK_LOGI("GetBooleanValue result: %{public}d", result);
 
     return Common::NapiGetNull(env);
