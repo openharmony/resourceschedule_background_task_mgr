@@ -68,6 +68,9 @@ const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageP
         {BackgroundTaskMgrStub::STOP_CONTINUOUS_TASK,
             std::bind(&BackgroundTaskMgrStub::HandleStopContinuousTask,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
+        {BackgroundTaskMgrStub::REQUEST_BACKGROUND_RUNNING_FOR_INNER,
+            std::bind(&BackgroundTaskMgrStub::HandleBackgroundRunningForInner,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
 };
 
 ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
@@ -145,6 +148,27 @@ ErrCode BackgroundTaskMgrStub::HandleGetRemainingDelayTime(MessageParcel& data, 
         BGTASK_LOGE("HandleGetRemainingDelayTime Write result fail.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleBackgroundRunningForInner(MessageParcel &data, MessageParcel &reply)
+{
+    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleBackgroundRunningForInner");
+    sptr<ContinuousTaskParamForInner> taskParam = data.ReadParcelable<ContinuousTaskParamForInner>();
+    if (taskParam == nullptr) {
+        BGTASK_LOGE("ContinuousTaskParamForInner ReadParcelable failed");
+        FinishTrace(HITRACE_TAG_OHOS);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    ErrCode result = RequestBackgroundRunningForInner(taskParam);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleStopBackgroundRunningForInner write result failed, ErrCode=%{public}d", result);
+        FinishTrace(HITRACE_TAG_OHOS);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    FinishTrace(HITRACE_TAG_OHOS);
     return ERR_OK;
 }
 

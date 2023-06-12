@@ -478,6 +478,31 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
     return true;
 }
 
+ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+
+    if (!taskParam) {
+        BGTASK_LOGE("continuous task param is null!");
+        return ERR_BGTASK_CHECK_TASK_PARAM;
+    }
+
+    if (taskParam->isStart_) {
+        return StartBackgroundRunningForInner(taskParam);
+    }
+    return StopBackgroundRunningForInner(taskParam);
+}
+
+ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
+{
+    BGTASK_LOGI("webview start background running info, uid: %{public}d, bgModeId: %{public}u, isStart: %{public}d!",
+                taskParam->uid_, taskParam->bgModeId_, taskParam->isStart_);
+    return ERR_OK;
+}
+
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     if (!isSysReady_.load()) {
@@ -601,6 +626,13 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
 
     return NotificationTools::GetInstance()->PublishNotification(continuousTaskRecord,
         appName, notificationText, bgTaskUid_);
+}
+
+ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
+{
+    BGTASK_LOGI("webview stop background running info, uid: %{public}d, bgModeId: %{public}u, isStart: %{public}d!",
+                taskParam->uid_, taskParam->bgModeId_, taskParam->isStart_);
+    return ERR_OK;
 }
 
 ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityName)

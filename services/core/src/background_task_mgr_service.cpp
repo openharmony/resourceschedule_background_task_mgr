@@ -123,6 +123,11 @@ ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const sptr<ContinuousTa
     return BgContinuousTaskMgr::GetInstance()->StartBackgroundRunning(taskParam);
 }
 
+ErrCode BackgroundTaskMgrService::RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
+{
+    return BgContinuousTaskMgr::GetInstance()->RequestBackgroundRunningForInner(taskParam);
+}
+
 ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken)
 {

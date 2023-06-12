@@ -31,6 +31,14 @@ public:
     static ErrCode RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam);
 
     /**
+     * @brief Request service to keep or stop running background for inner ability.
+     *
+     * @param taskParam Request params.
+     * @return ERR_OK if success, else fail.
+     */
+    static ErrCode RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam);
+
+    /**
      * @brief Request service to stop running background
      *
      * @param abilityName Ability name of the requester ability
