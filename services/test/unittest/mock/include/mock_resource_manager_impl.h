@@ -488,6 +488,20 @@ public:
      * @return the resource limit keys
      */
     virtual uint32_t GetResourceLimitKeys();
+
+    /**
+     * Add the overlay resource for current application
+     * @param path the overlay resource path
+     * @return true if add resource path success, else false
+     */
+    virtual bool AddAppOverlay(const std::string &path);
+
+    /**
+     * Remove the overlay resource for current application
+     * @param path the overlay resource path
+     * @return true if add resource path success, else false
+     */
+    virtual bool RemoveAppOverlay(const std::string &path);
 };
 } // namespace Resource
 } // namespace Global

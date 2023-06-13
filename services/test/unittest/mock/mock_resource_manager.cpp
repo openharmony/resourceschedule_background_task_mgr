@@ -300,6 +300,16 @@ uint32_t ResourceManagerImpl::GetResourceLimitKeys()
 {
     return 0;
 }
+
+bool AddOverlayResource(const std::string &path)
+{
+    return true;
+}
+
+bool RemoveOverlayResource(const std::string &path)
+{
+    return true;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS
