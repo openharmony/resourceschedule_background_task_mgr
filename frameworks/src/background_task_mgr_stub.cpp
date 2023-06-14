@@ -39,8 +39,6 @@ ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
         return ERR_TRANSACTION_FAILED;
     }
 
-    BGTASK_LOGE("BackgroundTaskMgrStub: Failed to call interface %{public}u, err:%{public}d", code, result);
-    return result;
     switch(code) {
         case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_SUSPEND_DELAY):
             HandleRequestSuspendDelay(data, reply);
