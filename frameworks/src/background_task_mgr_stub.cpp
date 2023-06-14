@@ -22,6 +22,7 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "bgtaskmgr_log_wrapper.h"
 #include "delay_suspend_info.h"
+#include "ibackground_task_mgr_ipc_interface_code.h"
 
 using namespace std;
 
