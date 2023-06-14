@@ -16,7 +16,7 @@
 /* SAID: 1903 */
 namespace OHOS {
 namespace BackgroundTaskMgr {
-    enum class IBackgroundTaskSubscriberInterfaceCode {
+    enum class BackgroundTaskMgrStubInterfaceCode {
         REQUEST_SUSPEND_DELAY = MIN_TRANSACTION_ID,
         CANCEL_SUSPEND_DELAY,
         GET_REMAINING_DELAY_TIME,
