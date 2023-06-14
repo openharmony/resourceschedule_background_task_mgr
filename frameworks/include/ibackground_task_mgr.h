@@ -74,6 +74,14 @@ public:
     virtual ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) = 0;
 
     /**
+     * @brief Request service to keep or stop running background for inner ability.
+     *
+     * @param taskParam Request params.
+     * @return ERR_OK if success, else fail.
+     */
+    virtual ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam) = 0;
+
+    /**
      * @brief Request service to stop running background.
      *
      * @param abilityName Ability name of the requester ability.
@@ -163,6 +171,7 @@ protected:
         RESET_ALL_EFFICIENCY_RESOURCES,
         GET_EFFICIENCY_RESOURCES_INFOS,
         STOP_CONTINUOUS_TASK,
+        REQUEST_BACKGROUND_RUNNING_FOR_INNER,
     };
 };
 }  // namespace BackgroundTaskMgr

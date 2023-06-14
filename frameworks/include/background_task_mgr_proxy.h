@@ -40,7 +40,7 @@ public:
      */
     ErrCode RequestSuspendDelay(const std::u16string& reason,
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo) override;
-    
+
     /**
      * @brief Cancel delay suspend of background task.
      *
@@ -65,6 +65,14 @@ public:
      * @return ERR_OK if success, else fail.
      */
     ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) override;
+
+    /**
+     * @brief Request service to keep or stop running background for inner ability.
+     *
+     * @param taskParam Request params.
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam) override;
 
     /**
      * @brief Request service to stop running background.

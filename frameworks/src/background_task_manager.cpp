@@ -86,6 +86,23 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTas
     return ret;
 }
 
+ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
+    }
+
+    sptr<ContinuousTaskParamForInner> taskParamPtr = new (std::nothrow) ContinuousTaskParamForInner(taskParam);
+    if (taskParamPtr == nullptr) {
+        BGTASK_LOGE("Failed to create continuous task param");
+        return ERR_BGTASK_NO_MEMORY;
+    }
+
+    return backgroundTaskMgrProxy_->RequestBackgroundRunningForInner(taskParamPtr);
+}
+
 ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken)
 {

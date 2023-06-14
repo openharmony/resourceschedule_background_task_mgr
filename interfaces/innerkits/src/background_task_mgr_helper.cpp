@@ -34,6 +34,12 @@ ErrCode BackgroundTaskMgrHelper::RequestStopBackgroundRunning(const std::string 
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestStopBackgroundRunning(abilityName, abilityToken);
 }
+
+ErrCode BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam);
+}
+
 ErrCode BackgroundTaskMgrHelper::SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SubscribeBackgroundTask(subscriber);
