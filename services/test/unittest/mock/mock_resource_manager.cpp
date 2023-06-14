@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "resource_manager_impl.h"
+#include "mock_resource_manager_impl.h"
 
 namespace OHOS {
 namespace Global {
@@ -294,6 +294,11 @@ RState ResourceManagerImpl::GetStringFormatByName(const char *name, std::string 
     std::vector<std::tuple<ResourceManager::NapiValueType, std::string>> &jsParams)
 {
     return SUCCESS;
+}
+
+uint32_t ResourceManagerImpl::GetResourceLimitKeys()
+{
+    return 0;
 }
 }  // namespace Resource
 }  // namespace Global

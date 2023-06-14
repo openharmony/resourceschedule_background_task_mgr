@@ -20,7 +20,8 @@ module_output_path = "background_task_mgr/bgtaskservice"
 ##############################fuzztest##########################################
 ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
   module_out_path = module_output_path
-  fuzz_config_file = "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskonremoterequest_fuzzer"
+  fuzz_config_file =
+      "${bgtaskmgr_test_path}/fuzztest/bgtaskonremoterequest_fuzzer"
 
   include_dirs = []
   cflags = [

@@ -124,6 +124,36 @@ ErrCode BackgroundTaskMgrProxy::GetRemainingDelayTime(int32_t requestId, int32_t
     return result;
 }
 
+ErrCode BackgroundTaskMgrProxy::RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
+{
+    if (taskParam == nullptr) {
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
+    MessageParcel dataInfo;
+    if (!dataInfo.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!dataInfo.WriteParcelable(taskParam)) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+
+    ErrCode result = InnerTransact(REQUEST_BACKGROUND_RUNNING_FOR_INNER, option, dataInfo, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("RequestBackgroundRunningForInner fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("RequestBackgroundRunningForInner fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return result;
+}
+
 ErrCode BackgroundTaskMgrProxy::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     if (taskParam == nullptr) {

@@ -58,9 +58,40 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
     return true;
 }
 
+bool ContinuousTaskParamForInner::ReadFromParcel(Parcel &parcel)
+{
+    if (!parcel.ReadBool(isStart_)) {
+        BGTASK_LOGE("Failed to read the flag which indicate keep or stop running background");
+        return false;
+    }
+
+    if (!parcel.ReadUint32(bgModeId_)) {
+        BGTASK_LOGE("Failed to read request background mode info");
+        return false;
+    }
+
+    if (!parcel.ReadInt32(uid_)) {
+        BGTASK_LOGE("Failed to read uid info");
+        return false;
+    }
+
+    return true;
+}
+
 ContinuousTaskParam *ContinuousTaskParam::Unmarshalling(Parcel &parcel)
 {
     ContinuousTaskParam *param = new (std::nothrow) ContinuousTaskParam();
+    if (param && !param->ReadFromParcel(parcel)) {
+        BGTASK_LOGE("read from parcel failed");
+        delete param;
+        param = nullptr;
+    }
+    return param;
+}
+
+ContinuousTaskParamForInner *ContinuousTaskParamForInner::Unmarshalling(Parcel &parcel)
+{
+    ContinuousTaskParamForInner *param = new (std::nothrow) ContinuousTaskParamForInner();
     if (param && !param->ReadFromParcel(parcel)) {
         BGTASK_LOGE("read from parcel failed");
         delete param;
@@ -102,6 +133,26 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         BGTASK_LOGE("Failed to write appName");
         return false;
     }
+    return true;
+}
+
+bool ContinuousTaskParamForInner::Marshalling(Parcel &parcel) const
+{
+    if (!parcel.WriteBool(isStart_)) {
+        BGTASK_LOGE("Failed to write the flag which indicate keep or stop running background");
+        return false;
+    }
+
+    if (!parcel.WriteUint32(bgModeId_)) {
+        BGTASK_LOGE("Failed to write request background mode info");
+        return false;
+    }
+
+    if (!parcel.WriteInt32(uid_)) {
+        BGTASK_LOGE("Failed to write uid info");
+        return false;
+    }
+
     return true;
 }
 }  // namespace BackgroundTaskMgr

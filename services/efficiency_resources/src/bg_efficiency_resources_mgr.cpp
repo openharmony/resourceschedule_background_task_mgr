@@ -77,6 +77,7 @@ void BgEfficiencyResourcesMgr::InitNecessaryState()
 void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
     BGTASK_LOGI("add system ability, systemAbilityId : %{public}d", systemAbilityId);
+    std::lock_guard<std::mutex> lock(sysAbilityLock_);
     switch (systemAbilityId) {
         case APP_MGR_SERVICE_ID:
             BGTASK_LOGI("app mgr service is ready!");
@@ -99,6 +100,7 @@ void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const
 void BgEfficiencyResourcesMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
     BGTASK_LOGI("remove system ability, systemAbilityId : %{public}d", systemAbilityId);
+    std::lock_guard<std::mutex> lock(sysAbilityLock_);
     switch (systemAbilityId) {
         case APP_MGR_SERVICE_ID:
             BGTASK_LOGI("app mgr service is removed!");

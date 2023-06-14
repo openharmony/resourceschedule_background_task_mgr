@@ -137,6 +137,27 @@ ErrCode BackgroundTaskMgrStub::HandleGetRemainingDelayTime(MessageParcel& data, 
     return ERR_OK;
 }
 
+ErrCode BackgroundTaskMgrStub::HandleBackgroundRunningForInner(MessageParcel &data, MessageParcel &reply)
+{
+    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleBackgroundRunningForInner");
+    sptr<ContinuousTaskParamForInner> taskParam = data.ReadParcelable<ContinuousTaskParamForInner>();
+    if (taskParam == nullptr) {
+        BGTASK_LOGE("ContinuousTaskParamForInner ReadParcelable failed");
+        FinishTrace(HITRACE_TAG_OHOS);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    ErrCode result = RequestBackgroundRunningForInner(taskParam);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleStopBackgroundRunningForInner write result failed, ErrCode=%{public}d", result);
+        FinishTrace(HITRACE_TAG_OHOS);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    FinishTrace(HITRACE_TAG_OHOS);
+    return ERR_OK;
+}
+
 ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data, MessageParcel &reply)
 {
     StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleStartBackgroundRunning");

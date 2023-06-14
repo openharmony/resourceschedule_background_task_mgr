@@ -85,8 +85,6 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
     }
 }
 
-void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::Notification> &notification) {}
-
 void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::Notification> &notification,
     const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap) {}
 

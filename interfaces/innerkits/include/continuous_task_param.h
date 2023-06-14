@@ -44,6 +44,20 @@ struct ContinuousTaskParam : public Parcelable {
     bool Marshalling(Parcel &parcel) const override;
     static ContinuousTaskParam *Unmarshalling(Parcel &parcel);
 };
+
+struct ContinuousTaskParamForInner : public Parcelable {
+    int32_t uid_ {0};
+    uint32_t bgModeId_ {0};
+    bool isStart_ {false};
+
+    ContinuousTaskParamForInner() = default;
+    ContinuousTaskParamForInner(int32_t uid, uint32_t bgModeId, bool isStart)
+        : uid_(uid), bgModeId_(bgModeId), isStart_(isStart) {}
+
+    bool ReadFromParcel(Parcel &parcel);
+    bool Marshalling(Parcel &parcel) const override;
+    static ContinuousTaskParamForInner *Unmarshalling(Parcel &parcel);
+};
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_PARAMS_H
