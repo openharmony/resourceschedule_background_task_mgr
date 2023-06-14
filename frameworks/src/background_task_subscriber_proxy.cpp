@@ -349,7 +349,8 @@ void BackgroundTaskSubscriberProxy::OnAppEfficiencyResourcesReset(
 
     MessageParcel reply;
     MessageOption option;
-    int32_t result = remote->SendRequest(static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_EFFICIENCY_RESOURCES_RESET), data, reply, option);
+    int32_t result = remote->SendRequest(static_cast<uint32_t>(
+        IBackgroundTaskSubscriberInterfaceCode::ON_APP_EFFICIENCY_RESOURCES_RESET), data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("OnAppEfficiencyResourcesReset SendRequest error");
     }
@@ -381,7 +382,8 @@ void BackgroundTaskSubscriberProxy::OnProcEfficiencyResourcesApply(
 
     MessageParcel reply;
     MessageOption option;
-    int32_t result = remote->SendRequest(static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_PROC_EFFICIENCY_RESOURCES_APPLY), data, reply, option);
+    int32_t result = remote->SendRequest(static_cast<uint32_t>(
+        IBackgroundTaskSubscriberInterfaceCode::ON_PROC_EFFICIENCY_RESOURCES_APPLY), data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("OnProcEfficiencyResourcesApply SendRequest error");
     }

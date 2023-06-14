@@ -42,7 +42,8 @@ void ExpiredCallbackProxy::OnExpired()
         BGTASK_LOGE("OnExpired write descriptor failed.");
         return;
     }
-    remote->SendRequest(static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_EXPIRED), data, reply, option);
+    remote->SendRequest(
+        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_EXPIRED), data, reply, option);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
