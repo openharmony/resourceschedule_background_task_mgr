@@ -16,7 +16,6 @@
 /* SAID: 1903 */
 namespace OHOS {
 namespace BackgroundTaskMgr {
-protected:
     enum class IExpiredCallbackInterfaceCode {
         ON_EXPIRED = FIRST_CALL_TRANSACTION,
     };
