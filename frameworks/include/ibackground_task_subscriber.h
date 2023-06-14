@@ -129,23 +129,6 @@ public:
         const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) = 0;
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskSubscriber");
-
-protected:
-    enum InterfaceId : uint32_t {
-        ON_CONNECTED = FIRST_CALL_TRANSACTION,
-        ON_DISCONNECTED,
-        ON_TRANSIENT_TASK_START,
-        ON_TRANSIENT_TASK_END,
-        ON_APP_TRANSIENT_TASK_START,
-        ON_APP_TRANSIENT_TASK_END,
-        ON_CONTINUOUS_TASK_START,
-        ON_CONTINUOUS_TASK_STOP,
-        ON_APP_CONTINUOUS_TASK_STOP,
-        ON_APP_EFFICIENCY_RESOURCES_APPLY,
-        ON_APP_EFFICIENCY_RESOURCES_RESET,
-        ON_PROC_EFFICIENCY_RESOURCES_APPLY,
-        ON_PROC_EFFICIENCY_RESOURCES_RESET,
-    };
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

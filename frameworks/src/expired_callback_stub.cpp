@@ -18,6 +18,7 @@
 #include <errors.h>
 
 #include "transient_task_log.h"
+#include "iexpired_callback_ipc_interface_code.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -34,11 +35,12 @@ ErrCode ExpiredCallbackStub::OnRemoteRequest(uint32_t code,
         return ERR_TRANSACTION_FAILED;
     }
     switch (code) {
-        case ON_EXPIRED:
+        case static_cast<uint32_t>(IExpiredCallbackInterfaceCode::ON_EXPIRED):
             return HandleOnExpired(data);
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
+    return ERR_OK;
 }
 
 int32_t ExpiredCallbackStub::HandleOnExpired(MessageParcel& data)

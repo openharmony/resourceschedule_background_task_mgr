@@ -27,48 +27,6 @@ using namespace std;
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const std::map<uint32_t, std::function<ErrCode(BackgroundTaskMgrStub *, MessageParcel &, MessageParcel &)>>
-    BackgroundTaskMgrStub::interfaces_ = {
-        {BackgroundTaskMgrStub::REQUEST_SUSPEND_DELAY,
-            std::bind(&BackgroundTaskMgrStub::HandleRequestSuspendDelay,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::CANCEL_SUSPEND_DELAY,
-            std::bind(&BackgroundTaskMgrStub::HandleCancelSuspendDelay,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::GET_REMAINING_DELAY_TIME,
-            std::bind(&BackgroundTaskMgrStub::HandleGetRemainingDelayTime,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::START_BACKGROUND_RUNNING,
-            std::bind(&BackgroundTaskMgrStub::HandleStartBackgroundRunning,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::STOP_BACKGROUND_RUNNING,
-            std::bind(&BackgroundTaskMgrStub::HandleStopBackgroundRunning,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::SUBSCRIBE_BACKGROUND_TASK,
-            std::bind(&BackgroundTaskMgrStub::HandleSubscribeBackgroundTask,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::UNSUBSCRIBE_BACKGROUND_TASK,
-            std::bind(&BackgroundTaskMgrStub::HandleUnsubscribeBackgroundTask,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::GET_TRANSIENT_TASK_APPS,
-            std::bind(&BackgroundTaskMgrStub::HandleGetTransientTaskApps,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::GET_CONTINUOUS_TASK_APPS,
-            std::bind(&BackgroundTaskMgrStub::HandleGetContinuousTaskApps,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::APPLY_EFFICIENCY_RESOURCES,
-            std::bind(&BackgroundTaskMgrStub::HandleApplyEfficiencyResources,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::RESET_ALL_EFFICIENCY_RESOURCES,
-            std::bind(&BackgroundTaskMgrStub::HandleResetAllEfficiencyResources,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::GET_EFFICIENCY_RESOURCES_INFOS,
-            std::bind(&BackgroundTaskMgrStub::HandleGetEfficiencyResourcesInfos,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-        {BackgroundTaskMgrStub::STOP_CONTINUOUS_TASK,
-            std::bind(&BackgroundTaskMgrStub::HandleStopContinuousTask,
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)},
-};
 
 ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
     MessageParcel& data, MessageParcel& reply, MessageOption& option)
@@ -79,23 +37,54 @@ ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
         BGTASK_LOGE("BackgroundTaskMgrStub: Local descriptor not match remote.");
         return ERR_TRANSACTION_FAILED;
     }
-    auto it = interfaces_.find(code);
-    if (it == interfaces_.end()) {
-        return IRemoteStub<IBackgroundTaskMgr>::OnRemoteRequest(code, data, reply, option);
-    }
-
-    auto fun = it->second;
-    if (fun == nullptr) {
-        return IRemoteStub<IBackgroundTaskMgr>::OnRemoteRequest(code, data, reply, option);
-    }
-
-    ErrCode result = fun(this, data, reply);
-    if (SUCCEEDED(result)) {
-        return ERR_OK;
-    }
 
     BGTASK_LOGE("BackgroundTaskMgrStub: Failed to call interface %{public}u, err:%{public}d", code, result);
     return result;
+    switch(code) {
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_SUSPEND_DELAY):
+            HandleRequestSuspendDelay(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::CANCEL_SUSPEND_DELAY):
+            HandleCancelSuspendDelay(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_REMAINING_DELAY_TIME):
+            HandleGetRemainingDelayTime(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::START_BACKGROUND_RUNNING):
+            HandleStartBackgroundRunning(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_BACKGROUND_RUNNING):
+            HandleStopBackgroundRunning(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::SUBSCRIBE_BACKGROUND_TASK):
+            HandleSubscribeBackgroundTask(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::UNSUBSCRIBE_BACKGROUND_TASK):
+            HandleUnsubscribeBackgroundTask(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_TRANSIENT_TASK_APPS):
+            HandleGetTransientTaskApps(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_CONTINUOUS_TASK_APPS):
+            HandleGetContinuousTaskApps(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::APPLY_EFFICIENCY_RESOURCES):
+        HandleApplyEfficiencyResources(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::RESET_ALL_EFFICIENCY_RESOURCES):
+            HandleResetAllEfficiencyResources(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_EFFICIENCY_RESOURCES_INFOS):
+            HandleGetEfficiencyResourcesInfos(data, reply);
+            break;
+        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_CONTINUOUS_TASK):
+            HandleStopContinuousTask(data, reply);
+            break;
+        default:
+            return IRemoteStub::OnRemoteRequest(code, data, reply, option);
+    }
+    BGTASK_LOGE("BackgroundTaskMgrStub: Failed to call interface %{public}u", code);
+    return ERR_OK;
 }
 
 ErrCode BackgroundTaskMgrStub::HandleRequestSuspendDelay(MessageParcel& data, MessageParcel& reply)

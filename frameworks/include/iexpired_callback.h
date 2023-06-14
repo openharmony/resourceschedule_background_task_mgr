@@ -33,11 +33,6 @@ public:
     virtual void OnExpired()= 0;
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IExpiredCallback");
-
-protected:
-    enum InterfaceId : uint32_t {
-        ON_EXPIRED = FIRST_CALL_TRANSACTION,
-    };
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
