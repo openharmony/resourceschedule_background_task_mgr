@@ -19,6 +19,7 @@
 #include <string_ex.h>
 
 #include "bgtaskmgr_log_wrapper.h"
+#include "ibackground_task_mgr_ipc_interface_code.h"
 
 using namespace std;
 
