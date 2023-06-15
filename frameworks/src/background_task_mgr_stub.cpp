@@ -40,43 +40,43 @@ ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
     }
 
     switch (code) {
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_SUSPEND_DELAY):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_SUSPEND_DELAY):
             HandleRequestSuspendDelay(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::CANCEL_SUSPEND_DELAY):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::CANCEL_SUSPEND_DELAY):
             HandleCancelSuspendDelay(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_REMAINING_DELAY_TIME):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_REMAINING_DELAY_TIME):
             HandleGetRemainingDelayTime(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::START_BACKGROUND_RUNNING):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::START_BACKGROUND_RUNNING):
             HandleStartBackgroundRunning(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_BACKGROUND_RUNNING):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_BACKGROUND_RUNNING):
             HandleStopBackgroundRunning(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::SUBSCRIBE_BACKGROUND_TASK):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::SUBSCRIBE_BACKGROUND_TASK):
             HandleSubscribeBackgroundTask(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::UNSUBSCRIBE_BACKGROUND_TASK):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::UNSUBSCRIBE_BACKGROUND_TASK):
             HandleUnsubscribeBackgroundTask(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_TRANSIENT_TASK_APPS):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_TRANSIENT_TASK_APPS):
             HandleGetTransientTaskApps(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_CONTINUOUS_TASK_APPS):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_CONTINUOUS_TASK_APPS):
             HandleGetContinuousTaskApps(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::APPLY_EFFICIENCY_RESOURCES):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::APPLY_EFFICIENCY_RESOURCES):
         HandleApplyEfficiencyResources(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::RESET_ALL_EFFICIENCY_RESOURCES):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::RESET_ALL_EFFICIENCY_RESOURCES):
             HandleResetAllEfficiencyResources(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_EFFICIENCY_RESOURCES_INFOS):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_EFFICIENCY_RESOURCES_INFOS):
             HandleGetEfficiencyResourcesInfos(data, reply);
             break;
-        case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_CONTINUOUS_TASK):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_CONTINUOUS_TASK):
             HandleStopContinuousTask(data, reply);
             break;
         default:

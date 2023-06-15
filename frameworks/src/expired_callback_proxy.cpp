@@ -43,7 +43,7 @@ void ExpiredCallbackProxy::OnExpired()
         return;
     }
     remote->SendRequest(
-        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_EXPIRED), data, reply, option);
+        static_cast<uint32_t>(IExpiredCallbackInterfaceCode::ON_EXPIRED), data, reply, option);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
