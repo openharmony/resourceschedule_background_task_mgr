@@ -16,7 +16,6 @@
 /* SAID: 1903 */
 namespace OHOS {
 namespace BackgroundTaskMgr {
-protected:
     enum class IBackgroundTaskSubscriberInterfaceCode {
         ON_CONNECTED = FIRST_CALL_TRANSACTION,
         ON_DISCONNECTED,
