@@ -53,7 +53,7 @@ ErrCode BackgroundTaskMgrProxy::RequestSuspendDelay(const std::u16string& reason
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::REQUEST_SUSPEND_DELAY), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::REQUEST_SUSPEND_DELAY), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("RequestSuspendDelay transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -85,7 +85,7 @@ ErrCode BackgroundTaskMgrProxy::CancelSuspendDelay(int32_t requestId)
     }
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::CANCEL_SUSPEND_DELAY), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::CANCEL_SUSPEND_DELAY), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("RequestSuspendDelay fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -112,7 +112,7 @@ ErrCode BackgroundTaskMgrProxy::GetRemainingDelayTime(int32_t requestId, int32_t
     }
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::GET_REMAINING_DELAY_TIME), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::GET_REMAINING_DELAY_TIME), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("GetRemainingDelayTime fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -147,7 +147,7 @@ ErrCode BackgroundTaskMgrProxy::RequestBackgroundRunningForInner(const sptr<Cont
     MessageOption option = {MessageOption::TF_SYNC};
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::REQUEST_BACKGROUND_RUNNING_FOR_INNER), option, dataInfo, reply);
+        BackgroundTaskMgrStubInterfaceCode::REQUEST_BACKGROUND_RUNNING_FOR_INNER), option, dataInfo, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("RequestBackgroundRunningForInner fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -178,7 +178,7 @@ ErrCode BackgroundTaskMgrProxy::StartBackgroundRunning(const sptr<ContinuousTask
     MessageOption option = {MessageOption::TF_SYNC};
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::START_BACKGROUND_RUNNING), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::START_BACKGROUND_RUNNING), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("StartBackgroundRunning fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -213,7 +213,7 @@ ErrCode BackgroundTaskMgrProxy::StopBackgroundRunning(const std::string &ability
     MessageOption option = {MessageOption::TF_SYNC};
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::STOP_BACKGROUND_RUNNING), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::STOP_BACKGROUND_RUNNING), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("StopBackgroundRunning transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -245,7 +245,7 @@ ErrCode BackgroundTaskMgrProxy::SubscribeBackgroundTask(const sptr<IBackgroundTa
     }
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::SUBSCRIBE_BACKGROUND_TASK), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::SUBSCRIBE_BACKGROUND_TASK), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("SubscribeBackgroundTask fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -277,7 +277,7 @@ ErrCode BackgroundTaskMgrProxy::UnsubscribeBackgroundTask(const sptr<IBackground
     }
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::UNSUBSCRIBE_BACKGROUND_TASK), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::UNSUBSCRIBE_BACKGROUND_TASK), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("UnsubscribeBackgroundTask fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -300,7 +300,7 @@ ErrCode BackgroundTaskMgrProxy::GetTransientTaskApps(std::vector<std::shared_ptr
     }
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::GET_TRANSIENT_TASK_APPS), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::GET_TRANSIENT_TASK_APPS), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("GetTransientTaskApps fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -334,7 +334,7 @@ ErrCode BackgroundTaskMgrProxy::GetContinuousTaskApps(std::vector<std::shared_pt
     }
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::GET_CONTINUOUS_TASK_APPS), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::GET_CONTINUOUS_TASK_APPS), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("GetContinuousTaskApps fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -388,7 +388,7 @@ ErrCode BackgroundTaskMgrProxy::StopContinuousTask(int32_t uid, int32_t pid, uin
     MessageOption option = {MessageOption::TF_SYNC};
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::STOP_CONTINUOUS_TASK), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::STOP_CONTINUOUS_TASK), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("StopContinuousTask transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -443,7 +443,7 @@ ErrCode BackgroundTaskMgrProxy::ApplyEfficiencyResources(const sptr<EfficiencyRe
     }
     BGTASK_LOGD("start send data in apply res function from bgtask proxy");
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::APPLY_EFFICIENCY_RESOURCES), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::APPLY_EFFICIENCY_RESOURCES), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("ApplyEfficiencyResources fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -466,7 +466,7 @@ ErrCode BackgroundTaskMgrProxy::ResetAllEfficiencyResources()
     }
     BGTASK_LOGD("start send data in reset all res function from bgtask proxy");
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::RESET_ALL_EFFICIENCY_RESOURCES), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::RESET_ALL_EFFICIENCY_RESOURCES), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("ResetAllEfficiencyResources fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
@@ -490,7 +490,7 @@ ErrCode BackgroundTaskMgrProxy::GetEfficiencyResourcesInfos(std::vector<std::sha
     }
 
     ErrCode result = InnerTransact(static_cast<uint32_t>(
-        IBackgroundTaskSubscriberInterfaceCode::GET_EFFICIENCY_RESOURCES_INFOS), option, data, reply);
+        BackgroundTaskMgrStubInterfaceCode::GET_EFFICIENCY_RESOURCES_INFOS), option, data, reply);
     if (result != ERR_OK) {
         BGTASK_LOGE("GetEfficiencyResourcesInfos fail: transact ErrCode=%{public}d", result);
         return ERR_BGTASK_TRANSACT_FAILED;
