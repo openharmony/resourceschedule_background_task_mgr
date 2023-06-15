@@ -155,7 +155,7 @@ public:
 
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskMgr");
-};
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_INCLUDE_IBACKGROUND_TASK_MGR_H

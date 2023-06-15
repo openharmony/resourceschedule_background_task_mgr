@@ -39,7 +39,7 @@ ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
         return ERR_TRANSACTION_FAILED;
     }
 
-    switch(code) {
+    switch (code) {
         case static<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_SUSPEND_DELAY):
             HandleRequestSuspendDelay(data, reply);
             break;

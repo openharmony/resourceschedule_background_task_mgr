@@ -156,8 +156,8 @@ void BackgroundTaskSubscriberProxy::OnAppTransientTaskStart(const std::shared_pt
     }
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t ret = remote->SendRequest(
-        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_START), data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(
+        IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_START), data, reply, option);
     if (ret != ERR_NONE) {
         BGTASK_LOGE("OnAppTransientTaskStart SendRequest failed, error code: %{public}d", ret);
     }
@@ -281,8 +281,8 @@ void BackgroundTaskSubscriberProxy::OnAppContinuousTaskStop(int32_t uid)
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t result = remote->SendRequest(
-        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_CONTINUOUS_TASK_STOP), data, reply, option);
+    int32_t result = remote->SendRequest(static_cast<uint32_t>(
+        IBackgroundTaskSubscriberInterfaceCode::ON_APP_CONTINUOUS_TASK_STOP), data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("OnAppContinuousTaskStop SendRequest error");
     }
