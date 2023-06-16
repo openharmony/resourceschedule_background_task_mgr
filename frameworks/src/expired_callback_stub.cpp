@@ -37,6 +37,7 @@ ErrCode ExpiredCallbackStub::OnRemoteRequest(uint32_t code,
     switch (code) {
         case static_cast<uint32_t>(IExpiredCallbackInterfaceCode::ON_EXPIRED):
             return HandleOnExpired(data);
+            break;
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
