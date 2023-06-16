@@ -68,7 +68,7 @@ ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
             HandleGetContinuousTaskApps(data, reply);
             break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::APPLY_EFFICIENCY_RESOURCES):
-        HandleApplyEfficiencyResources(data, reply);
+            HandleApplyEfficiencyResources(data, reply);
             break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::RESET_ALL_EFFICIENCY_RESOURCES):
             HandleResetAllEfficiencyResources(data, reply);
