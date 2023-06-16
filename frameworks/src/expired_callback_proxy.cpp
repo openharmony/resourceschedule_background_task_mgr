@@ -18,7 +18,7 @@
 #include <message_parcel.h>
 
 #include "transient_task_log.h"
-#include "ibackground_task_subscriber_ipc_interface_code.h"
+#include "iexpired_callback_ipc_interface_code.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
