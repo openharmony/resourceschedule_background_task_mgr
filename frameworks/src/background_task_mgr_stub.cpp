@@ -82,7 +82,6 @@ ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
         default:
             return IRemoteStub::OnRemoteRequest(code, data, reply, option);
     }
-    BGTASK_LOGE("BackgroundTaskMgrStub: Failed to call interface %{public}u", code);
     return ERR_OK;
 }
 
