@@ -333,6 +333,24 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_013, TestSize.Level1)
 }
 
 /**
+ * @tc.name: BgTaskFrameworkUnitTest_014
+ * @tc.desc: test RequestBackgroundRunningForInner.
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_014, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    ContinuousTaskParamForInner taskParam = ContinuousTaskParamForInner();
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam),
+        ERR_OK);
+}
+
+/**
  * @tc.name: BackgroundTaskSubscriberProxyTest_001
  * @tc.desc: test BackgroundTaskSubscriberProxy.
  * @tc.type: FUNC

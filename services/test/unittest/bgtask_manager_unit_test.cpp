@@ -1110,5 +1110,24 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_042, TestSize.Level1)
         TransientTaskEventType::APP_TASK_END);
     EXPECT_NE((int32_t)bgTransientTaskMgr_->subscriberList_.size(), 0);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_043
+ * @tc.desc: test RequestBackgroundRunningForInner.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_043, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestBackgroundRunningForInner(nullptr), ERR_BGTASK_SYS_NOT_READY);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestBackgroundRunningForInner(nullptr), ERR_BGTASK_CHECK_TASK_PARAM);
+    sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
+        new ContinuousTaskParamForInner(1, 1, true));
+    EXPECT_EQ(bgContinuousTaskMgr_->StartBackgroundRunningForInner(taskParam), ERR_OK);
+    taskParam->isStart_ = false;
+    EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunningForInner(taskParam), ERR_OK);
+}
 }
 }
