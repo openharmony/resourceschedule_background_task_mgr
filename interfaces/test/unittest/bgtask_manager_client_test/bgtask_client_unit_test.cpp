@@ -215,6 +215,18 @@ HWTEST_F(BgTaskClientUnitTest, RequestStopBackgroundRunning_001, TestSize.Level1
 }
 
 /**
+ * @tc.name: RequestBackgroundRunningForInner_001
+ * @tc.desc: test RequestBackgroundRunningForInner interface.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, RequestBackgroundRunningForInner_001, TestSize.Level1)
+{
+    ContinuousTaskParamForInner taskParam = ContinuousTaskParamForInner();
+    EXPECT_EQ(BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(taskParam), ERR_OK);
+}
+
+/**
  * @tc.name: SubscribeBackgroundTask_001
  * @tc.desc: test SubscribeBackgroundTask interface.
  * @tc.type: FUNC
@@ -389,6 +401,31 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskParam_001, TestSize.Level1)
     EXPECT_EQ(info4->abilityName_, "abilityName");
     EXPECT_EQ(info4->abilityToken_, nullptr);
     EXPECT_EQ(info4->appName_, "appName");
+}
+
+/**
+ * @tc.name: ContinuousTaskParamForInner_001
+ * @tc.desc: test ContinuousTaskParamForInner.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskParamForInner_001, TestSize.Level1)
+{
+    sptr<ContinuousTaskParamForInner> info1 = sptr<ContinuousTaskParamForInner>(new ContinuousTaskParamForInner());
+    sptr<ContinuousTaskParamForInner> info2 = sptr<ContinuousTaskParamForInner>(
+        new ContinuousTaskParamForInner(1, 1, true));
+
+    Parcel parcel1 = Parcel();
+    info2->Marshalling(parcel1);
+    sptr<ContinuousTaskParamForInner> info3 = sptr<ContinuousTaskParamForInner>(new ContinuousTaskParamForInner());
+    info3->ReadFromParcel(parcel1);
+    Parcel parcel2 = Parcel();
+    info3->Marshalling(parcel2);
+    sptr<ContinuousTaskParamForInner> info4 = sptr<ContinuousTaskParamForInner>(
+        ContinuousTaskParamForInner::Unmarshalling(parcel2));
+    EXPECT_EQ(info4->uid_, 1);
+    EXPECT_EQ(info4->bgModeId_, 1);
+    EXPECT_EQ(info4->isStart_, true);
 }
 
 /**
