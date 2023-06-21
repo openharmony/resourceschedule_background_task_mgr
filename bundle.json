@@ -56,7 +56,7 @@
           "i18n",
           "relational_store"
         ],
-        "third_party": []
+        "third_party": [ "icu" ]
       },
       "build": {
         "group_type": {
