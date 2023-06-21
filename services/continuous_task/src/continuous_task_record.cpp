@@ -52,6 +52,11 @@ bool ContinuousTaskRecord::IsNewApi() const
     return isNewApi_;
 }
 
+bool ContinuousTaskRecord::IsFromWebview() const
+{
+    return isFromWebview_;
+}
+
 uint32_t ContinuousTaskRecord::GetBgModeId() const
 {
     return bgModeId_;
@@ -92,6 +97,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["pid"] = pid_;
     root["bgModeId"] = bgModeId_;
     root["isNewApi"] = isNewApi_;
+    root["isFromWebview"] = isFromWebview_;
     root["notificationLabel"] = notificationLabel_;
     if (wantAgentInfo_ != nullptr) {
         nlohmann::json info;
@@ -105,7 +111,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
 {
     if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value, { "bundleName",
-        "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "notificationLabel" })) {
+        "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel" })) {
         return false;
     }
     this->bundleName_ = value.at("bundleName").get<std::string>();
@@ -115,6 +121,7 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
     this->pid_ = value.at("pid").get<int32_t>();
     this->bgModeId_ = value.at("bgModeId").get<uint32_t>();
     this->isNewApi_ = value.at("isNewApi").get<bool>();
+    this->isFromWebview_ = value.at("isFromWebview").get<bool>();
     this->notificationLabel_ = value.at("notificationLabel").get<std::string>();
 
     if (value.find("wantAgentInfo") != value.end()) {

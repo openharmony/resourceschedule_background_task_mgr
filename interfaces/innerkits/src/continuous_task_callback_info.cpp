@@ -23,10 +23,6 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo() {}
 
-ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid,
-    pid_t creatorPid, std::string abilityName)
-    : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), abilityName_(abilityName) {}
-
 uint32_t ContinuousTaskCallbackInfo::GetTypeId() const
 {
     return typeId_;
@@ -47,6 +43,11 @@ std::string ContinuousTaskCallbackInfo::GetAbilityName() const
     return abilityName_;
 }
 
+bool ContinuousTaskCallbackInfo::IsFromWebview() const
+{
+    return isFromWebview_;
+}
+
 bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteUint32(typeId_)) {
@@ -61,6 +62,11 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
 
     if (!parcel.WriteInt32(creatorPid_)) {
         BGTASK_LOGE("Failed to write creator pid");
+        return false;
+    }
+
+    if (!parcel.WriteBool(isFromWebview_)) {
+        BGTASK_LOGE("Failed to write the flag which indicates from webview");
         return false;
     }
 
@@ -89,6 +95,11 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
 
     creatorUid_ = static_cast<int32_t>(parcel.ReadInt32());
     creatorPid_ = static_cast<pid_t>(parcel.ReadInt32());
+
+    if (!parcel.ReadBool(isFromWebview_)) {
+        BGTASK_LOGE("Failed to read the flag which indicates from webview");
+        return false;
+    }
 
     std::u16string u16AbilityName;
     if (!parcel.ReadString16(u16AbilityName)) {
