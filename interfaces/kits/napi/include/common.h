@@ -25,6 +25,15 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "delay_suspend_info.h"
 
+#define BGTASK_NAPI_CALL_BASE(env, theCall, retVal) \
+    do {                                     \
+        if ((theCall) != napi_ok) {          \
+            return retVal;                   \
+        }                                    \
+    } while (0)
+
+#define BGTASK_NAPI_CALL(env, theCall) BGTASK_NAPI_CALL_BASE(env, theCall, nullptr)
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 struct AsyncWorkData {

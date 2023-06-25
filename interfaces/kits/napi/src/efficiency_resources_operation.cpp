@@ -41,7 +41,7 @@ napi_value GetNamedBoolValue(const napi_env &env, napi_value &object, const char
             return Common::NapiGetNull(env);
         }
     }
-    NAPI_CALL(env, napi_get_named_property(env, object, utf8name, &boolValue));
+    BGTASK_NAPI_CALL(env, napi_get_named_property(env, object, utf8name, &boolValue));
     if (!Common::GetBooleanValue(env, boolValue, result)) {
         BGTASK_LOGE("ParseParameters failed, %{public}s is nullptr", utf8name);
         return nullptr;
@@ -59,7 +59,7 @@ napi_value GetNamedInt32Value(const napi_env &env, napi_value &object, const cha
         BGTASK_LOGE("ParseParameters failed, %{public}s not exist, is nullptr", utf8name);
         return nullptr;
     }
-    NAPI_CALL(env, napi_get_named_property(env, object, utf8name, &intValue));
+    BGTASK_NAPI_CALL(env, napi_get_named_property(env, object, utf8name, &intValue));
     if (!Common::GetInt32NumberValue(env, intValue, result)) {
         BGTASK_LOGE("ParseParameters failed, %{public}s is nullptr", utf8name);
         return nullptr;
@@ -80,7 +80,7 @@ napi_value GetNamedStringValue(const napi_env &env, napi_value &object, std::str
         BGTASK_LOGE("ParseParameters failed, reason not exist, is nullptr");
         return nullptr;
     }
-    NAPI_CALL(env, napi_get_named_property(env, object, "reason", &stringValue));
+    BGTASK_NAPI_CALL(env, napi_get_named_property(env, object, "reason", &stringValue));
     if (!Common::GetStringValue(env, stringValue, result)) {
         BGTASK_LOGE("ParseParameters failed, reason is nullptr");
         return nullptr;
@@ -94,7 +94,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
 {
     size_t argc = APPLY_EFFICIENCY_RESOURCES_PARAMS;
     napi_value argv[APPLY_EFFICIENCY_RESOURCES_PARAMS] = {nullptr};
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    BGTASK_NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc != APPLY_EFFICIENCY_RESOURCES_PARAMS) {
         Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
         return nullptr;
