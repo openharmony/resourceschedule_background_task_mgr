@@ -163,7 +163,7 @@ ErrCode BackgroundTaskMgrStub::HandleBackgroundRunningForInner(MessageParcel &da
 
     ErrCode result = RequestBackgroundRunningForInner(taskParam);
     if (!reply.WriteInt32(result)) {
-        BGTASK_LOGE("HandleStopBackgroundRunningForInner write result failed, ErrCode=%{public}d", result);
+        BGTASK_LOGE("HandleBackgroundRunningForInner write result failed, ErrCode=%{public}d", result);
         FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
@@ -183,7 +183,7 @@ ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data,
     }
     ErrCode result = StartBackgroundRunning(taskParam);
     if (!reply.WriteInt32(result)) {
-        BGTASK_LOGE("HandleStopBackgroundRunning write result failed, ErrCode=%{public}d", result);
+        BGTASK_LOGE("HandleStartBackgroundRunning write result failed, ErrCode=%{public}d", result);
         FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
@@ -302,7 +302,7 @@ ErrCode BackgroundTaskMgrStub::HandleResetAllEfficiencyResources(MessageParcel& 
     BGTASK_LOGD("start receive data in reset all res function from bgtask proxy");
     ErrCode result = ResetAllEfficiencyResources();
     if (!reply.WriteInt32(result)) {
-        BGTASK_LOGE("HandleCancelSuspendDelay Write result failed, ErrCode=%{public}d", result);
+        BGTASK_LOGE("HandleResetAllEfficiencyResources Write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;

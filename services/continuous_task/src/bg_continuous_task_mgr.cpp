@@ -196,6 +196,12 @@ void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::Run
             continue;
         }
 
+        if (iter->second->IsFromWebview()) {
+            BGTASK_LOGI("Webview continuous task exist.");
+            iter++;
+            continue;
+        }
+
         if (!checkPidCondition(allProcesses, recordPid) && checkNotificationCondition(allLabels, recordLabel)) {
             BGTASK_LOGI("pid: %{public}d not exist, label: %{public}s exist", recordPid, recordLabel.c_str());
             NotificationTools::GetInstance()->CancelNotification(recordLabel, DEFAULT_NOTIFICATION_ID);
@@ -478,6 +484,15 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
     return true;
 }
 
+ErrCode BgContinuousTaskMgr::CheckBgmodeTypeForInner(uint32_t requestedBgModeId)
+{
+    if (requestedBgModeId == INVALID_BGMODE || requestedBgModeId >= BGMODE_NUMS) {
+        BGTASK_LOGE("requested background mode is not declared in config file!");
+        return ERR_BGTASK_INVALID_BGMODE;
+    }
+    return ERR_OK;
+}
+
 ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
 {
     if (!isSysReady_.load()) {
@@ -498,9 +513,36 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
 {
+    ErrCode result = ERR_OK;
+    int32_t uid = taskParam->uid_;
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+    std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
+    int32_t userId = -1;
+
+#ifdef HAS_OS_ACCOUNT_PART
+    AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);
+#else // HAS_OS_ACCOUNT_PART
+    GetOsAccountIdFromUid(uid, userId);
+#endif // HAS_OS_ACCOUNT_PART
+
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
+        abilityName, uid, callingPid, taskParam->bgModeId_);
+    continuousTaskRecord->isNewApi_ = true;
+    continuousTaskRecord->isFromWebview_ = true;
+    continuousTaskRecord->userId_ = userId;
+    continuousTaskRecord->fullTokenId_ = fullTokenId;
+
+    StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StartBackgroundRunningInner");
+    handler_->PostSyncTask([this, continuousTaskRecord, &result]() mutable {
+        result = this->StartBackgroundRunningInner(continuousTaskRecord);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    FinishTrace(HITRACE_TAG_OHOS);
+
     BGTASK_LOGI("webview start background running info, uid: %{public}d, bgModeId: %{public}u, isStart: %{public}d!",
                 taskParam->uid_, taskParam->bgModeId_, taskParam->isStart_);
-    return ERR_OK;
+    return result;
 }
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
@@ -569,33 +611,38 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         return ERR_BGTASK_OBJECT_EXISTS;
     }
 
-    if (cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
+    if (!continuousTaskRecord->isFromWebview_
+        && cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
         std::string mainAbilityLabel = GetMainAbilityLabel(continuousTaskRecord->bundleName_,
             continuousTaskRecord->userId_);
         SetCachedBundleInfo(continuousTaskRecord->uid_, continuousTaskRecord->userId_,
             continuousTaskRecord->bundleName_, mainAbilityLabel);
     }
 
-    uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_,
-        continuousTaskRecord->abilityName_);
-    ErrCode ret = CheckBgmodeType(configuredBgMode, continuousTaskRecord->bgModeId_, continuousTaskRecord->isNewApi_,
-        continuousTaskRecord->fullTokenId_);
+    ErrCode ret;
+    if (continuousTaskRecord->isFromWebview_) {
+        ret = CheckBgmodeTypeForInner(continuousTaskRecord->bgModeId_);
+    } else {
+        uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_,
+            continuousTaskRecord->abilityName_);
+        ret = CheckBgmodeType(configuredBgMode, continuousTaskRecord->bgModeId_, continuousTaskRecord->isNewApi_,
+            continuousTaskRecord->fullTokenId_);
+    }
     if (ret != ERR_OK) {
         BGTASK_LOGE("background mode invalid!");
         return ret;
     }
-    ret = SendContinuousTaskNotification(continuousTaskRecord);
-    if (ret != ERR_OK) {
-        BGTASK_LOGE("publish error");
-        return ret;
+
+    if (!continuousTaskRecord->isFromWebview_) {
+        ret = SendContinuousTaskNotification(continuousTaskRecord);
+        if (ret != ERR_OK) {
+            BGTASK_LOGE("publish error");
+            return ret;
+        }
     }
     continuousTaskInfosMap_.emplace(taskInfoMapKey, continuousTaskRecord);
     OnContinuousTaskChanged(continuousTaskRecord, ContinuousTaskEventTriggerType::TASK_START);
-    ret = RefreshTaskRecord();
-    if (ret != ERR_OK) {
-        return ret;
-    }
-    return ERR_OK;
+    return RefreshTaskRecord();
 }
 
 uint32_t GetBgModeNameIndex(uint32_t bgModeId, bool isNewApi)
@@ -630,9 +677,19 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
 
 ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
 {
+    ErrCode result = ERR_OK;
+    int32_t uid = taskParam->uid_;
+    std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
+
+    StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StopBackgroundRunningInner");
+    handler_->PostSyncTask([this, uid, abilityName, &result]() {
+        result = this->StopBackgroundRunningInner(uid, abilityName);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    FinishTrace(HITRACE_TAG_OHOS);
+
     BGTASK_LOGI("webview stop background running info, uid: %{public}d, bgModeId: %{public}u, isStart: %{public}d!",
                 taskParam->uid_, taskParam->bgModeId_, taskParam->isStart_);
-    return ERR_OK;
+    return result;
 }
 
 ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityName)
@@ -667,8 +724,13 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
         BGTASK_LOGW("%{public}s continuous task not exists", mapKey.c_str());
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
-    ErrCode result = NotificationTools::GetInstance()->CancelNotification(
-        iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+
+    ErrCode result = ERR_OK;
+    if (!iter->second->isFromWebview_) {
+        result = NotificationTools::GetInstance()->CancelNotification(
+            iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+    }
+
     RemoveContinuousTaskRecord(mapKey);
     return result;
 }
@@ -862,7 +924,7 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
 
     for (auto record : continuousTaskInfosMap_) {
         auto appInfo = std::make_shared<ContinuousTaskCallbackInfo>(record.second->bgModeId_, record.second->uid_,
-            record.second->pid_, record.second->abilityName_);
+            record.second->pid_, record.second->abilityName_, record.second->isFromWebview_);
         list.push_back(appInfo);
     }
     return ERR_OK;
@@ -1033,11 +1095,13 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
     }
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
-        if (iter->second->uid_ == uid && iter->second->abilityName_ == abilityName) {
+        if (iter->second->uid_ == uid && (iter->second->abilityName_ == abilityName || iter->second->isFromWebview_)) {
             auto record = iter->second;
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
-            NotificationTools::GetInstance()->CancelNotification(
-                record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+            if (!iter->second->isFromWebview_) {
+                NotificationTools::GetInstance()->CancelNotification(
+                    record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+            }
             iter = continuousTaskInfosMap_.erase(iter);
             HandleAppContinuousTaskStop(record->uid_);
             RefreshTaskRecord();
@@ -1085,7 +1149,8 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
 
     std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo
         = std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskInfo->GetBgModeId(),
-        continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName());
+        continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName(),
+        continuousTaskInfo->IsFromWebview());
 
     switch (changeEventType) {
         case ContinuousTaskEventTriggerType::TASK_START:

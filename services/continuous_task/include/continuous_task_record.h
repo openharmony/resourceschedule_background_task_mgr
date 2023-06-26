@@ -38,6 +38,7 @@ public:
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
     bool IsNewApi() const;
+    bool IsFromWebview() const;
     uint32_t GetBgModeId() const;
     int32_t GetUserId() const;
     int32_t GetUid() const;
@@ -56,6 +57,7 @@ private:
     pid_t pid_ {0};
     uint32_t bgModeId_ {0};
     bool isNewApi_ {false};
+    bool isFromWebview_ {false};
     std::string notificationLabel_ {""};
     std::shared_ptr<WantAgentInfo> wantAgentInfo_ {nullptr};
     std::string appName_ {""};

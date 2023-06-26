@@ -27,7 +27,10 @@ namespace BackgroundTaskMgr {
 class ContinuousTaskCallbackInfo : public Parcelable {
 public:
     ContinuousTaskCallbackInfo();
-    ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid, pid_t creatorPid, std::string abilityName);
+    ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid,
+        pid_t creatorPid, std::string abilityName, bool isFromWebview = false)
+        : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), abilityName_(abilityName),
+        isFromWebview_(isFromWebview) {}
 
     /**
      * @brief Get the id of type.
@@ -58,6 +61,13 @@ public:
     std::string GetAbilityName() const;
 
     /**
+     * @brief Judge whether this ability come from webview.
+     *
+     * @return True if success, else false.
+     */
+    bool IsFromWebview() const;
+
+    /**
      * @brief Marshals a purpose into a parcel.
      *
      * @param parcel Indicates the parcel object for marshalling.
@@ -74,6 +84,7 @@ private:
     int32_t creatorUid_ {0};
     pid_t creatorPid_ {0};
     std::string abilityName_ {""};
+    bool isFromWebview_ {false};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
