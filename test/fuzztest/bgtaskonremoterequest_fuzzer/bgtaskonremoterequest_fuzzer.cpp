@@ -42,7 +42,7 @@ namespace BackgroundTaskMgr {
         datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        DelayedSingleton<BackgroundTaskMgrStub>::GetIntance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
+        DelayedSingleton<BackgroundTaskMgrStub>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
         return true;
     }
 } // BackgroundTaskMgr
