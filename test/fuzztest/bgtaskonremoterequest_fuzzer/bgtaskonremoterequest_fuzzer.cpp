@@ -14,13 +14,9 @@
  */
 
 #include "bgtaskonremoterequest_fuzzer.h"
+#include "securec.h"
 
-#define private public
 #include "background_task_mgr_service.h"
-#include "background_task_mgr_stub.h"
-#include "bg_continuous_task_mgr.h"
-#include "iservice_registry.h"
-#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -42,7 +38,7 @@ namespace BackgroundTaskMgr {
         datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        DelayedSingleton<BackgroundTaskMgrStub>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
+        DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
         return true;
     }
 } // BackgroundTaskMgr
@@ -59,16 +55,19 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     if (size < OHOS::BackgroundTaskMgr::U32_AT_SIZE) {
         return 0;
     }
+
     char* ch = (char *)malloc(size + 1);
     if (ch == nullptr) {
         return 0;
     }
-    (void)memset_s(ch, size+1, 0x00, size+1);
+
+    (void)memset_s(ch, size + 1, 0x00, size+1);
     if(memcpy_s(ch, size, data, size) != EOK) {
         free(ch);
         ch = nullptr;
         return 0;
     }
+
     OHOS::BackgroundTaskMgr::DoSomethingInterestingWithMyAPI(ch, size);
     free(ch);
     ch = nullptr;
