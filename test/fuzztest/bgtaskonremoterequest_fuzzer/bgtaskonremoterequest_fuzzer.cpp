@@ -40,9 +40,9 @@ namespace BackgroundTaskMgr {
         datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        if (!isOnstart) {
+        if (!isOnstarted) {
             DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->Onstart();
-            isOnstart = true;
+            isOnstarted = true;
         }
         DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(
             code % MAX_CODE, datas, reply, option);
