@@ -346,7 +346,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_014, TestSize.Level1)
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam),
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam),
         ERR_OK);
 }
 

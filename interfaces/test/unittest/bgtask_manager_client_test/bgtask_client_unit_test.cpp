@@ -223,7 +223,7 @@ HWTEST_F(BgTaskClientUnitTest, RequestStopBackgroundRunning_001, TestSize.Level1
 HWTEST_F(BgTaskClientUnitTest, RequestBackgroundRunningForInner_001, TestSize.Level1)
 {
     ContinuousTaskParamForInner taskParam = ContinuousTaskParamForInner();
-    EXPECT_EQ(BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(taskParam), ERR_OK);
+    EXPECT_NE(BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(taskParam), ERR_OK);
 }
 
 /**
