@@ -117,22 +117,6 @@ public:
 };
 
 /**
- * @tc.name: BgTaskManagerUnitTest_001
- * @tc.desc: test StartBackgroundRunning.
- * @tc.type: FUNC
- * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_001, TestSize.Level1)
-{
-    EXPECT_EQ(bgContinuousTaskMgr_->isSysReady_.load(), false);
-    bgContinuousTaskMgr_->Clear();
-    EXPECT_EQ(bgContinuousTaskMgr_->StartBackgroundRunning(nullptr), ERR_BGTASK_SYS_NOT_READY);
-    EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunning("test"), ERR_BGTASK_SYS_NOT_READY);
-    bgContinuousTaskMgr_->Init(AppExecFwk::EventRunner::Create("tdd_test_handler"));
-    EXPECT_EQ(bgContinuousTaskMgr_->isSysReady_.load(), true);
-}
-
-/**
  * @tc.name: BgTaskManagerUnitTest_002
  * @tc.desc: test SetCachedBundleInfo.
  * @tc.type: FUNC

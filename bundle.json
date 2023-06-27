@@ -22,8 +22,6 @@
         "background_task_mgr_jsstack"
       ],
       "adapted_system_type": [
-        "mini",
-        "small",
         "standard"
       ],
       "rom": "2048KB",
