@@ -22,6 +22,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
     constexpr int32_t U32_AT_SIZE = 1;
     constexpr int32_t MAX_CODE = 15;
+    bool isOnstart = false;
     const std::u16string BACKGROUND_TASK_MGR_STUB_TOKEN = u"OHOS.ResourceSchedule.EfficiencyManager.SuspendManager";
 
     uint32_t GetU32Data(const char* ptr)
@@ -38,7 +39,12 @@ namespace BackgroundTaskMgr {
         datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
+        if(!isOnstart) {
+            DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->Onstart();
+            isOnstart = true;
+        }
+        DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(
+            code % MAX_CODE, datas, reply, option);
         return true;
     }
 } // BackgroundTaskMgr
