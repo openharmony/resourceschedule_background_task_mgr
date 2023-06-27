@@ -23,7 +23,7 @@ namespace BackgroundTaskMgr {
     constexpr int32_t U32_AT_SIZE = 1;
     constexpr int32_t MAX_CODE = 15;
     bool isOnstart = false;
-    const std::u16string BACKGROUND_TASK_MGR_STUB_TOKEN = u"OHOS.ResourceSchedule.EfficiencyManager.SuspendManager";
+    const std::u16string BACKGROUND_TASK_MGR_STUB_TOKEN = u"OHOS.resourceschedule.IBackgroundTaskMgr";
 
     uint32_t GetU32Data(const char* ptr)
     {

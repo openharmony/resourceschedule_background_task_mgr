@@ -28,7 +28,7 @@ FuzztestHelper::~FuzztestHelper() {}
 void FuzztestHelper::NativeTokenGet()
 {
     if (isPermissionSet_) {
-    return;
+        return;
     }
     uint64_t tokenId;
     static const char *perms[] = {

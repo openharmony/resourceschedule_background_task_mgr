@@ -17,6 +17,7 @@
 #define TEST_FUZZTEST_BGTASKONREMOTEREQUEST_FUZZER_H
 
 #define FUZZ_PROJECT_NAME "bgtaskonremoterequest_fuzzer"
+
 #include "fuzztest_helper.h"
 
 #endif
