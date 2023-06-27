@@ -22,11 +22,12 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
     constexpr int32_t U32_AT_SIZE = 1;
     constexpr int32_t MAX_CODE = 15;
-    bool isOnstart = false;
+    bool isOnstarted = false;
     const std::u16string BACKGROUND_TASK_MGR_STUB_TOKEN = u"OHOS.resourceschedule.IBackgroundTaskMgr";
 
     uint32_t GetU32Data(const char* ptr)
     {
+        // 将第0个数字左移24位，将第1个数字左移16位，将第2个数字左移8位，第三个数字不左移
         return (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | (ptr[3]);
     }
 
@@ -39,7 +40,7 @@ namespace BackgroundTaskMgr {
         datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        if(!isOnstart) {
+        if (!isOnstart) {
             DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->Onstart();
             isOnstart = true;
         }
@@ -68,7 +69,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     }
 
     (void)memset_s(ch, size + 1, 0x00, size+1);
-    if(memcpy_s(ch, size, data, size) != EOK) {
+    if (memcpy_s(ch, size, data, size) != EOK) {
         free(ch);
         ch = nullptr;
         return 0;

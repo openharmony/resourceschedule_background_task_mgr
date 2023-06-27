@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
- #include "fuzztest_helper.h"
+#include "fuzztest_helper.h"
 
 #include "accesstoken_kit.h"
 #include "nativetoken_kit.h"
