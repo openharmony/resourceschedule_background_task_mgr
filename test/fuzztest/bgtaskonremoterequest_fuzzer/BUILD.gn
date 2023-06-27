@@ -59,7 +59,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "hisysevent_native:libhisysevent"，
+    "hisysevent_native:libhisysevent",
     "init:libbegetutil",
     "ipc:ipc_single",
     "resource_management:global_resmgr",
