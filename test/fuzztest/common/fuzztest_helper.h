@@ -28,7 +28,7 @@ public:
 
 private:
     bool isPermissionSet_ = false;
-}
+};
 } // BackgroundTaskMgr
 } // OHOS
 #endif // BGGTASK_ONREMOTE_REQUEST_FUZZER_H

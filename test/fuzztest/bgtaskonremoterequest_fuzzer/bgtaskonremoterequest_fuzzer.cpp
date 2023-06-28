@@ -41,7 +41,7 @@ namespace BackgroundTaskMgr {
         MessageParcel reply;
         MessageOption option;
         if (!isOnstarted) {
-            DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->Onstart();
+            DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnStart();
             isOnstarted = true;
         }
         DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(
