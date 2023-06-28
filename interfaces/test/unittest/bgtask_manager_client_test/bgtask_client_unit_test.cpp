@@ -339,6 +339,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_002, TestSize.Level1)
     subscriber.OnAppEfficiencyResourcesReset(nullptr);
     subscriber.OnProcEfficiencyResourcesApply(nullptr);
     subscriber.OnProcEfficiencyResourcesReset(nullptr);
+    EXPECT_NE(subscriber.GetImpl(), nullptr);
 }
 
 /**
