@@ -1129,5 +1129,17 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_043, TestSize.Level1)
     taskParam->isStart_ = false;
     EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunningForInner(taskParam), ERR_OK);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_044
+ * @tc.desc: test CheckBgmodeTypeForInner.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_044, TestSize.Level1)
+{
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeTypeForInner(0), ERR_BGTASK_INVALID_BGMODE);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeTypeForInner(1), ERR_OK);
+}
 }
 }
