@@ -13,11 +13,22 @@
  * limitations under the License.
  */
 
-#ifndef TEST_FUZZTEST_BGTASKONREMOTEREQUEST_FUZZER_H
-#define TEST_FUZZTEST_BGTASKONREMOTEREQUEST_FUZZER_H
+#ifndef BGGTASK_ONREMOTE_REQUEST_FUZZER_H
+#define BGGTASK_ONREMOTE_REQUEST_FUZZER_H
+ 
+#include "securec.h"
+#include "singleton.h"
 
-#define FUZZ_PROJECT_NAME "bgtaskonremoterequest_fuzzer"
+namespace OHOS {
+namespace BackgroundTaskMgr {
+class FuzztestHelper : public DelayedSingleton<FuzztestHelper> {
+    DECLARE_DELAYED_SINGLETON(FuzztestHelper);
+public:
+    void NativeTokenGet();
 
-#include "fuzztest_helper.h"
-
-#endif
+private:
+    bool isPermissionSet_ = false;
+};
+} // BackgroundTaskMgr
+} // OHOS
+#endif // BGGTASK_ONREMOTE_REQUEST_FUZZER_H

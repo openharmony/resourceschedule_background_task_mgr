@@ -14,70 +14,39 @@
  */
 
 #include "bgtaskonremoterequest_fuzzer.h"
+#include "securec.h"
 
-#define private public
 #include "background_task_mgr_service.h"
-#include "background_task_mgr_stub.h"
-#include "bg_continuous_task_mgr.h"
-#include "iservice_registry.h"
-#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-    constexpr int32_t MIN_LEN = 4;
-    constexpr int32_t MAX_CODE_TEST = 15; // current max code is 13
-    std::mutex mutexLock;
-    sptr<IRemoteObject> remote;
+    constexpr int32_t U32_AT_SIZE = 1;
+    constexpr int32_t MAX_CODE = 15;
+    bool isOnstarted = false;
+    const std::u16string BACKGROUND_TASK_MGR_STUB_TOKEN = u"OHOS.resourceschedule.IBackgroundTaskMgr";
 
-    bool DoInit()
+    uint32_t GetU32Data(const char* ptr)
     {
-        std::lock_guard<std::mutex> lock(mutexLock);
-        if (remote != nullptr) {
-            return true;
-        }
-        sptr<ISystemAbilityManager> SystemAbilityManager =
-            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (SystemAbilityManager == nullptr) {
-            return false;
-        }
-        remote = SystemAbilityManager->GetSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID);
-        if (remote == nullptr) {
-            return false;
-        }
-        return true;
+        // 将第0个数字左移24位，将第1个数字左移16位，将第2个数字左移8位，第三个数字不左移
+        return (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | (ptr[3]);
     }
 
-    int32_t OnRemoteRequest(uint32_t code, MessageParcel& data)
+    bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
-        if (!DoInit()) {
-            return -1;
-        }
+        uint32_t code = GetU32Data(data);
+        MessageParcel datas;
+        datas.WriteInterfaceToken(BACKGROUND_TASK_MGR_STUB_TOKEN);
+        datas.WriteBuffer(data, size);
+        datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        return remote->SendRequest(code, data, reply, option);
-    }
-
-    void DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
-    {
-        if (size <= MIN_LEN) {
-            return;
+        if (!isOnstarted) {
+            DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnStart();
+            isOnstarted = true;
         }
-
-        MessageParcel dataMessageParcel;
-        if (!dataMessageParcel.WriteInterfaceToken(BackgroundTaskMgrStub::GetDescriptor())) {
-            return;
-        }
-
-        uint32_t code = *(reinterpret_cast<const uint32_t*>(data));
-        if (code > MAX_CODE_TEST) {
-            return;
-        }
-        size -= sizeof(uint32_t);
-
-        dataMessageParcel.WriteBuffer(data + sizeof(uint32_t), size);
-        dataMessageParcel.RewindRead(0);
-
-        OnRemoteRequest(code, dataMessageParcel);
+        DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(
+            code % MAX_CODE, datas, reply, option);
+        return true;
     }
 } // BackgroundTaskMgr
 } // OHOS
@@ -86,6 +55,28 @@ namespace BackgroundTaskMgr {
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::BackgroundTaskMgr::DoSomethingInterestingWithMyAPI(data, size);
+    if (data == nullptr) {
+        return 0;
+    }
+
+    if (size < OHOS::BackgroundTaskMgr::U32_AT_SIZE) {
+        return 0;
+    }
+
+    char* ch = (char *)malloc(size + 1);
+    if (ch == nullptr) {
+        return 0;
+    }
+
+    (void)memset_s(ch, size + 1, 0x00, size+1);
+    if (memcpy_s(ch, size, data, size) != EOK) {
+        free(ch);
+        ch = nullptr;
+        return 0;
+    }
+
+    OHOS::BackgroundTaskMgr::DoSomethingInterestingWithMyAPI(ch, size);
+    free(ch);
+    ch = nullptr;
     return 0;
 }
