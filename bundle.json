@@ -22,8 +22,6 @@
         "background_task_mgr_jsstack"
       ],
       "adapted_system_type": [
-        "mini",
-        "small",
         "standard"
       ],
       "rom": "2048KB",
@@ -39,8 +37,8 @@
           "bundle_framework",
           "common_event_service",
           "eventhandler",
-          "hitrace_native",
-          "hiviewdfx_hilog_native",
+          "hitrace",
+          "hilog",
           "ipc",
           "init",
           "napi",
@@ -50,13 +48,13 @@
           "samgr",
           "c_utils",
           "distributed_notification_service",
-          "hisysevent_native",
+          "hisysevent",
           "hiview",
           "icu",
           "i18n",
           "relational_store"
         ],
-        "third_party": []
+        "third_party": [ "icu" ]
       },
       "build": {
         "group_type": {

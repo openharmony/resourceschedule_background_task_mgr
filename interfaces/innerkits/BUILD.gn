@@ -49,8 +49,8 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
-    "hitrace_native:hitrace_meter",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
+    "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
