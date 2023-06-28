@@ -23,9 +23,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
   fuzz_config_file =
       "${bgtaskmgr_test_path}/fuzztest/bgtaskonremoterequest_fuzzer"
 
-  include_dirs = [
-    "../common"
-  ]
+  include_dirs = [ "../common" ]
   cflags = [
     "-g",
     "-O0",
@@ -58,8 +56,8 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
-    "hiviewdfx_hilog_native:libhilog",
     "hisysevent_native:libhisysevent",
+    "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
     "ipc:ipc_single",
     "resource_management:global_resmgr",
