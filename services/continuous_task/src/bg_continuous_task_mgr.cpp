@@ -182,40 +182,56 @@ void BgContinuousTaskMgr::HandlePersistenceData()
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
 }
 
+bool BgContinuousTaskMgr::CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
+    int32_t uid)
+{
+    for (const auto &runningProcessInfo : allProcesses) {
+        if (runningProcessInfo.uid_ == uid) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
     const std::set<std::string> &allLabels)
 {
     int32_t recordPid;
     auto iter = continuousTaskInfosMap_.begin();
+    bool pidConditionFlag;
+    bool notificationConditionFlag;
+
     while (iter != continuousTaskInfosMap_.end()) {
         recordPid = iter->second->GetPid();
         const std::string recordLabel = iter->second->GetNotificationLabel();
-        if (checkPidCondition(allProcesses, recordPid) && checkNotificationCondition(allLabels, recordLabel)) {
+        pidConditionFlag = checkPidCondition(allProcesses, recordPid);
+        notificationConditionFlag = checkNotificationCondition(allLabels, recordLabel);
+        if (pidConditionFlag && notificationConditionFlag) {
             BGTASK_LOGI("target continuous task exist");
             iter++;
             continue;
         }
 
-        if (iter->second->IsFromWebview()) {
+        if (iter->second->IsFromWebview() && CheckProcessUidInfo(allProcesses, iter->second->GetUid())) {
             BGTASK_LOGI("Webview continuous task exist.");
             iter++;
             continue;
         }
 
-        if (!checkPidCondition(allProcesses, recordPid) && checkNotificationCondition(allLabels, recordLabel)) {
+        if (!pidConditionFlag && notificationConditionFlag) {
             BGTASK_LOGI("pid: %{public}d not exist, label: %{public}s exist", recordPid, recordLabel.c_str());
             NotificationTools::GetInstance()->CancelNotification(recordLabel, DEFAULT_NOTIFICATION_ID);
             iter = continuousTaskInfosMap_.erase(iter);
             continue;
         }
 
-        if (checkPidCondition(allProcesses, recordPid) && !checkNotificationCondition(allLabels, recordLabel)) {
+        if (pidConditionFlag && !notificationConditionFlag) {
             BGTASK_LOGI("pid: %{public}d exist, label: %{public}s not exist", recordPid, recordLabel.c_str());
             iter = continuousTaskInfosMap_.erase(iter);
             continue;
         }
 
-        if (!checkPidCondition(allProcesses, recordPid) && !checkNotificationCondition(allLabels, recordLabel)) {
+        if (!pidConditionFlag && !notificationConditionFlag) {
             BGTASK_LOGI("pid: %{public}d not exist, label: %{public}s not exist", recordPid, recordLabel.c_str());
             iter = continuousTaskInfosMap_.erase(iter);
             continue;
@@ -540,8 +556,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
         }, AppExecFwk::EventQueue::Priority::HIGH);
     FinishTrace(HITRACE_TAG_OHOS);
 
-    BGTASK_LOGI("webview start background running info, uid: %{public}d, bgModeId: %{public}u, isStart: %{public}d!",
-                taskParam->uid_, taskParam->bgModeId_, taskParam->isStart_);
     return result;
 }
 
@@ -687,8 +701,6 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<Continuous
         }, AppExecFwk::EventQueue::Priority::HIGH);
     FinishTrace(HITRACE_TAG_OHOS);
 
-    BGTASK_LOGI("webview stop background running info, uid: %{public}d, bgModeId: %{public}u, isStart: %{public}d!",
-                taskParam->uid_, taskParam->bgModeId_, taskParam->isStart_);
     return result;
 }
 

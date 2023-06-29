@@ -1141,5 +1141,25 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_044, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeTypeForInner(0), ERR_BGTASK_INVALID_BGMODE);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeTypeForInner(1), ERR_OK);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_045
+ * @tc.desc: test CheckProcessUidInfo.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_045, TestSize.Level1)
+{
+    std::vector<AppExecFwk::RunningProcessInfo> allProcesses;
+
+    AppExecFwk::RunningProcessInfo info1;
+    info1.uid_ = TEST_NUM_ONE;
+    allProcesses.push_back(info1);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckProcessUidInfo(allProcesses, TEST_NUM_TWO), false);
+    AppExecFwk::RunningProcessInfo info2;
+    info2.uid_ = TEST_NUM_TWO;
+    allProcesses.push_back(info2);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckProcessUidInfo(allProcesses, TEST_NUM_TWO), true);
+}
 }
 }
