@@ -1008,7 +1008,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_038, TestSize.Level1)
     dumpOption.pop_back();
     dumpOption.emplace_back("key2");
     bgContinuousTaskMgr_->DumpCancelTask(dumpOption, false);
-    EXPECT_NE((int32_t)dumpInfo.size(), 0);
+    EXPECT_NE((int32_t)dumpOption.size(), 0);
 }
 
 /**
