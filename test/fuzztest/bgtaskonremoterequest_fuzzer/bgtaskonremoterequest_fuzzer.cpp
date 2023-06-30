@@ -22,13 +22,17 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
     constexpr int32_t U32_AT_SIZE = 1;
     constexpr int32_t MAX_CODE = 15;
-    bool isOnstarted = false;
+    constexpr uint8_t TWENTYFOUR = 24;
+    constexpr uint8_t SIXTEEN = 16;
+    constexpr uint8_t EIGHT = 8;
+    constexpr int32_t THREE = 3;
+    constexpr int32_t TWO = 2;
+    bool g_isOnstarted = false;
     const std::u16string BACKGROUND_TASK_MGR_STUB_TOKEN = u"OHOS.resourceschedule.IBackgroundTaskMgr";
 
     uint32_t GetU32Data(const char* ptr)
     {
-        // 将第0个数字左移24位，将第1个数字左移16位，将第2个数字左移8位，第三个数字不左移
-        return (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | (ptr[3]);
+        return (ptr[0] << TWENTYFOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
     }
 
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
@@ -40,9 +44,9 @@ namespace BackgroundTaskMgr {
         datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        if (!isOnstarted) {
+        if (!g_isOnstarted) {
             DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnStart();
-            isOnstarted = true;
+            g_isOnstarted = true;
         }
         DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(
             code % MAX_CODE, datas, reply, option);
