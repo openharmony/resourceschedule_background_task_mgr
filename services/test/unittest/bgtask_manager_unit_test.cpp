@@ -913,6 +913,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_034, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     bgContinuousTaskMgr_->HandleStopContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, TEST_NUM_ONE);
+    EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
 /**
@@ -938,6 +939,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_035, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->RemoveSpecifiedBgTask(TEST_NUM_UONE);
+    EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
 /**
@@ -1006,6 +1008,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_038, TestSize.Level1)
     dumpOption.pop_back();
     dumpOption.emplace_back("key2");
     bgContinuousTaskMgr_->DumpCancelTask(dumpOption, false);
+    EXPECT_NE((int32_t)dumpOption.size(), 0);
 }
 
 /**
@@ -1033,6 +1036,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_039, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
+    EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
 /**
