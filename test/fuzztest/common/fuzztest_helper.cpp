@@ -33,6 +33,7 @@ void FuzztestHelper::NativeTokenGet()
     uint64_t tokenId;
     static const char *perms[] = {
         "ohos.resourceschedule.IBackgroundTaskMgr",
+        "ohos.resourceschedule.IBackgroundTaskSubscriber",
     };
 
     NativeTokenInfoParams infoInstance = {
