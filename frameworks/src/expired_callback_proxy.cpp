@@ -18,6 +18,7 @@
 #include <message_parcel.h>
 
 #include "transient_task_log.h"
+#include "iexpired_callback_ipc_interface_code.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -41,7 +42,8 @@ void ExpiredCallbackProxy::OnExpired()
         BGTASK_LOGE("OnExpired write descriptor failed.");
         return;
     }
-    remote->SendRequest(ON_EXPIRED, data, reply, option);
+    remote->SendRequest(
+        static_cast<uint32_t>(IExpiredCallbackInterfaceCode::ON_EXPIRED), data, reply, option);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

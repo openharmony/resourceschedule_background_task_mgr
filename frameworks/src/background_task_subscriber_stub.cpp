@@ -20,6 +20,8 @@
 
 #include "transient_task_log.h"
 #include "background_task_subscriber_proxy.h"
+#include "ibackground_task_subscriber_ipc_interface_code.h"
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
@@ -52,48 +54,49 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequestInner(uint32_t code,
     MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
     switch (code) {
-        case ON_CONNECTED: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONNECTED): {
             return HandleOnConnected();
         }
-        case ON_DISCONNECTED: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_DISCONNECTED): {
             return HandleOnDisconnected();
         }
-        case ON_TRANSIENT_TASK_START: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_START): {
             return HandleOnTransientTaskStart(data);
         }
-        case ON_TRANSIENT_TASK_END: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_END): {
             return HandleOnTransientTaskEnd(data);
         }
-        case ON_APP_TRANSIENT_TASK_START: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_START): {
             return HandleOnAppTransientTaskStart(data);
         }
-        case ON_APP_TRANSIENT_TASK_END: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_END): {
             return HandleOnAppTransientTaskEnd(data);
         }
-        case ON_CONTINUOUS_TASK_START: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_START): {
             return HandleOnContinuousTaskStart(data);
         }
-        case ON_CONTINUOUS_TASK_STOP: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_STOP): {
             return HandleOnContinuousTaskCancel(data);
         }
-        case ON_APP_CONTINUOUS_TASK_STOP: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_CONTINUOUS_TASK_STOP): {
             return HandleOnAppContinuousTaskStop(data);
         }
-        case ON_APP_EFFICIENCY_RESOURCES_APPLY: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_EFFICIENCY_RESOURCES_APPLY): {
             return HandleOnAppEfficiencyResourcesApply(data);
         }
-        case ON_APP_EFFICIENCY_RESOURCES_RESET: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_EFFICIENCY_RESOURCES_RESET): {
             return HandleOnAppEfficiencyResourcesReset(data);
         }
-        case ON_PROC_EFFICIENCY_RESOURCES_APPLY: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_PROC_EFFICIENCY_RESOURCES_APPLY): {
             return HandleOnProcEfficiencyResourcesApply(data);
         }
-        case ON_PROC_EFFICIENCY_RESOURCES_RESET: {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_PROC_EFFICIENCY_RESOURCES_RESET): {
             return HandleOnProcEfficiencyResourcesReset(data);
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
+    return ERR_OK;
 }
 
 ErrCode BackgroundTaskSubscriberStub::HandleOnConnected()

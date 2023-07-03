@@ -13,27 +13,15 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_INCLUDE_IEXPIRED_CALLBACK_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_INCLUDE_IEXPIRED_CALLBACK_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_IBACKGROUND_TASK_SUBSCRIBER_IPC_INTERFACE_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_IBACKGROUND_TASK_SUBSCRIBER_IPC_INTERFACE_H
 
-#include <ipc_types.h>
-#include <iremote_broker.h>
-#include <nocopyable.h>
-
-#include "refbase.h"
-
+/* SAID: 1903 */
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class IExpiredCallback : public IRemoteBroker {
-public:
-    IExpiredCallback() = default;
-    ~IExpiredCallback() override = default;
-    DISALLOW_COPY_AND_MOVE(IExpiredCallback);
-
-    virtual void OnExpired()= 0;
-public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IExpiredCallback");
-};
+    enum class IExpiredCallbackInterfaceCode {
+        ON_EXPIRED = FIRST_CALL_TRANSACTION,
+    };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_INCLUDE_IEXPIRED_CALLBACK_H
+#endif // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_IBACKGROUND_TASK_SUBSCRIBER_IPC_INTERFACE_H
