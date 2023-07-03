@@ -988,6 +988,7 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
         stream << "\tcontinuousTaskValue:" << "\n";
         stream << "\t\tbundleName: " << iter->second->GetBundleName() << "\n";
         stream << "\t\tabilityName: " << iter->second->GetAbilityName() << "\n";
+        stream << "\t\tisFromWebview: " << (iter->second->IsFromWebview() ? "true" : "false") << "\n";
         stream << "\t\tisFromNewApi: " << (iter->second->IsNewApi() ? "true" : "false") << "\n";
         stream << "\t\tbackgroundMode: " << g_continuousTaskModeName[GetBgModeNameIndex(
             iter->second->GetBgModeId(), iter->second->IsNewApi())] << "\n";
