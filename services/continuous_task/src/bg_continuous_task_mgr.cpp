@@ -80,6 +80,10 @@ static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 
+static constexpr uint32_t WEBVIEW_PARAM_UID = 2;
+static constexpr uint32_t WEBVIEW_PARAM_BGMODE = 3;
+static constexpr uint32_t WEBVIEW_PARAM_IS_START = 4;
+
 #ifndef HAS_OS_ACCOUNT_PART
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
@@ -965,6 +969,13 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
         DumpCancelTask(dumpOption, true);
     } else if (dumpOption[1] == DUMP_PARAM_CANCEL) {
         DumpCancelTask(dumpOption, false);
+    } else if (dumpOption[1] == "Webview") {
+        sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
+            new ContinuousTaskParamForInner());
+        taskParam->uid_ = std::stoi(dumpOption[WEBVIEW_PARAM_UID]);
+        taskParam->bgModeId_ = std::stoi(dumpOption[WEBVIEW_PARAM_BGMODE]);
+        taskParam->isStart_ = dumpOption[WEBVIEW_PARAM_IS_START] == "Start" ? true : false;
+        RequestBackgroundRunningForInner(taskParam);
     } else {
         BGTASK_LOGW("invalid dump param");
     }
