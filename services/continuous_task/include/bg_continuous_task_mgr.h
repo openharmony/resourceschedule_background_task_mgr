@@ -91,6 +91,7 @@ private:
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
         const std::set<std::string> &allLabels);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
+    bool DumpCheckWebviewInfo(const std::vector<std::string> &dumpOption);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);

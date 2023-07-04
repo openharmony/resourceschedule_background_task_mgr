@@ -836,5 +836,24 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_045, TestSize.Level1)
     allProcesses.push_back(info2);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckProcessUidInfo(allProcesses, TEST_NUM_TWO), true);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_046
+ * @tc.desc: test DumpCheckWebviewInfo.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_046, TestSize.Level1)
+{
+    std::vector<std::string> dumpOption;
+    dumpOption.push_back("-C");
+    dumpOption.push_back("Webview");
+    dumpOption.push_back("20010075");
+    dumpOption.push_back("1");
+    dumpOption.push_back("Test");
+    EXPECT_EQ(bgContinuousTaskMgr_->DumpCheckWebviewInfo(dumpOption), false);
+    dumpOption[4] = "Start";
+    EXPECT_EQ(bgContinuousTaskMgr_->DumpCheckWebviewInfo(dumpOption), true);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
