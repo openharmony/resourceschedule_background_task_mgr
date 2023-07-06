@@ -972,7 +972,7 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
         sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
             new ContinuousTaskParamForInner());
         taskParam->uid_ = std::stoi(dumpOption[WEBVIEW_PARAM_UID]);
-        taskParam->bgModeId_ = std::stoi(dumpOption[WEBVIEW_PARAM_BGMODE]);
+        taskParam->bgModeId_ = static_cast<uint32_t>(std::stoi(dumpOption[WEBVIEW_PARAM_BGMODE]));
         taskParam->isStart_ = dumpOption[WEBVIEW_PARAM_IS_START] == "Start" ? true : false;
         RequestBackgroundRunningForInner(taskParam);
     } else if (dumpOption[1] == DUMP_PARAM_CANCEL) {
