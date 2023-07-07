@@ -39,6 +39,12 @@ ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
         return ERR_TRANSACTION_FAILED;
     }
 
+    return HandleOnRemoteResquestFunc(code, data, reply, option);
+}
+
+ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
+    MessageParcel& data, MessageParcel& reply, MessageOption& option)
+{
     switch (code) {
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_SUSPEND_DELAY):
             HandleRequestSuspendDelay(data, reply);
@@ -78,6 +84,9 @@ ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
             break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_CONTINUOUS_TASK):
             HandleStopContinuousTask(data, reply);
+            break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_BACKGROUND_RUNNING_FOR_INNER):
+            HandleBackgroundRunningForInner(data, reply);
             break;
         default:
             return IRemoteStub::OnRemoteRequest(code, data, reply, option);
