@@ -45,6 +45,7 @@ public:
 private:
     static const std::map<uint32_t,
         std::function<ErrCode(BackgroundTaskMgrStub *, MessageParcel &, MessageParcel &)>> interfaces_;
+    ErrCode HandleOnRemoteResquestFunc(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option);
     ErrCode HandleRequestSuspendDelay(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleCancelSuspendDelay(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetRemainingDelayTime(MessageParcel& data, MessageParcel& reply);
