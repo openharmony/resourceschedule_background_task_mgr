@@ -35,10 +35,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "bgtaskonremoterequest_fuzzer.cpp",
   ]
 
-  deps = [
-    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-  ]
+  deps = [ "${bgtaskmgr_services_path}:bgtaskmgr_service_static" ]
 
   external_deps = [
     "ability_base:base",
@@ -68,7 +65,8 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
 
 ohos_fuzztest("BgTaskSubcriberFuzzTest") {
   module_out_path = module_output_path
-  fuzz_config_file = "${bgtaskmgr_test_path}/fuzztest/bgtaskSubscriber_fuzzer"
+  fuzz_config_file =
+      "${bgtaskmgr_test_path}/fuzztest/bgtaskonremoterequest_fuzzer"
 
   include_dirs = [ "../common" ]
   cflags = [
@@ -82,10 +80,7 @@ ohos_fuzztest("BgTaskSubcriberFuzzTest") {
     "bgtaskSubscriber_fuzzer.cpp",
   ]
 
-  deps = [
-    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-  ]
+  deps = [ "${bgtaskmgr_services_path}:bgtaskmgr_service_static" ]
 
   external_deps = [
     "ability_base:base",
