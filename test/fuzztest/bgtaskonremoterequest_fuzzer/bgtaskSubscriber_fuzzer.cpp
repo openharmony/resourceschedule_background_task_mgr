@@ -13,10 +13,13 @@
  * limitations under the License.
  */
 
+#include "background_task_subscriber_stub.h"
 #include "bgtaskSubscriber_fuzzer.h"
+#include "ibackground_task_subscriber.h"
 #include "securec.h"
 
-#include "background_task_subscriber_stub.h"
+#define private public
+#include "background_task_subscriber.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
