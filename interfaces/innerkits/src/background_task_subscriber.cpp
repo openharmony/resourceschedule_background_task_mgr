@@ -143,30 +143,5 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppContinuousTask
 {
     subscriber_.OnAppContinuousTaskStop(uid);
 }
-
-bool BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::GetBackgroundTaskMgrProxy()
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (proxy_) {
-        return true;
-    }
-    sptr<ISystemAbilityManager> systemAbilityManager =
-        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (!systemAbilityManager) {
-        return false;
-    }
-
-    sptr<IRemoteObject> remoteObject =
-        systemAbilityManager->GetSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID);
-    if (!remoteObject) {
-        return false;
-    }
-
-    proxy_ = iface_cast<IBackgroundTaskMgr>(remoteObject);
-    if ((!proxy_) || (proxy_->AsObject() == nullptr)) {
-        return false;
-    }
-    return true;
-}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
