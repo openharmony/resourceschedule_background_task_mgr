@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,9 +27,11 @@ namespace BackgroundTaskMgr {
     constexpr uint8_t EIGHT = 8;
     constexpr int32_t THREE = 3;
     constexpr int32_t TWO = 2;
-    // bool g_isOnstarted = false;
-    const std::u16string BACKGROUND_TASK_MGR_SUBSCRIBER_TOKEN = u"OHOS.resourceschedule.IBackgroundTaskSubscriber";
-
+    const std::u16string BACKGROUND_TASK_MGR_SUBSCRIBER_TOKEN = u"ohos.resourceschedule.IBackgroundTaskSubscriber";
+class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
+public:
+    TestBackgroundTaskSubscriber() : BackgroundTaskSubscriber() {}
+};
     uint32_t GetU32Data(const char* ptr)
     {
         return (ptr[0] << TWENTYFOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
@@ -44,12 +46,9 @@ namespace BackgroundTaskMgr {
         datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        // if (!isOnstarted) {
-        //     DelayedSingleton<BackgroundTaskSubscriberStub>::GetInstance()->OnStart();
-        //     isOnstarted = true;
-        // }
-        DelayedSingleton<BackgroundTaskSubscriberStub>::GetInstance()->OnRemoteRequest(
-            code % MAX_CODE, datas, reply, option);
+        auto subscriber = TestBackgroundTaskSubscriber();
+        auto subscriberImpl = std::make_shared<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl>(subscriber);
+        subscriberImpl->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
         return true;
     }
 } // BackgroundTaskMgr
