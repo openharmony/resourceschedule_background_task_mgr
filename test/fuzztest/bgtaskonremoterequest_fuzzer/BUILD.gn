@@ -35,7 +35,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "bgtaskonremoterequest_fuzzer.cpp",
   ]
 
-  deps = [ "${bgtaskmgr_services_path}:bgtaskmgr_service_static", ]
+  deps = [ "${bgtaskmgr_services_path}:bgtaskmgr_service_static" ]
 
   external_deps = [
     "ability_base:base",
