@@ -65,7 +65,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "samgr:samgr_proxy",
   ]
 }
- 
+
 ohos_fuzztest("BgTaskSubcriberFuzzTest") {
   module_out_path = module_output_path
   fuzz_config_file =
