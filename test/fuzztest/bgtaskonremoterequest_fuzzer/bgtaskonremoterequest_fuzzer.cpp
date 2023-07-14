@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,24 +16,19 @@
 #include "bgtaskonremoterequest_fuzzer.h"
 #include "securec.h"
 
-#define "private public"
 #include "background_task_mgr_service.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-    constexpr int32_t U32_AT_SIZE = 4;
+    constexpr int32_t U32_AT_SIZE = 1;
     constexpr int32_t MAX_CODE = 15;
-    constexpr uint8_t TWENTYFOUR = 24;
-    constexpr uint8_t SIXTEEN = 16;
-    constexpr uint8_t EIGHT = 8;
-    constexpr int32_t THREE = 3;
-    constexpr int32_t TWO = 2;
-    bool g_isOnstarted = false;
-    const std::u16string BACKGROUND_TASK_MGR_STUB_TOKEN = u"ohos.resourceschedule.IBackgroundTaskMgr";
+    bool isOnstarted = false;
+    const std::u16string BACKGROUND_TASK_MGR_STUB_TOKEN = u"OHOS.resourceschedule.IBackgroundTaskMgr";
 
     uint32_t GetU32Data(const char* ptr)
     {
-        return (ptr[0] << TWENTYFOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
+        // 将第0个数字左移24位，将第1个数字左移16位，将第2个数字左移8位，第三个数字不左移
+        return (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | (ptr[3]);
     }
 
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
@@ -45,11 +40,9 @@ namespace BackgroundTaskMgr {
         datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        if (!g_isOnstarted) {
-            std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
-            runner_ = AppExecFwk::EventRunner::Create(BGTASK_SERVICE_NAME);
-            BgContinuousTaskMgr::GetInstance()->Init(runner_);
-            g_isOnstarted = true;
+        if (!isOnstarted) {
+            DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnStart();
+            isOnstarted = true;
         }
         DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(
             code % MAX_CODE, datas, reply, option);
