@@ -48,6 +48,7 @@ namespace BackgroundTaskMgr {
         if (!g_isOnstarted) {
             std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
             runner_ = AppExecFwk::EventRunner::Create(BGTASK_SERVICE_NAME);
+            DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Init(runner_);
             BgContinuousTaskMgr::GetInstance()->Init(runner_);
             g_isOnstarted = true;
         }
@@ -87,3 +88,4 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     ch = nullptr;
     return 0;
 }
+
