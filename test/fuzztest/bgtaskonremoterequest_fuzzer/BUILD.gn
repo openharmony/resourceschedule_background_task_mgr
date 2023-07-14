@@ -61,6 +61,26 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
+
+  if (has_os_account_part) {
+    cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+
+  if (distributed_notification_enable) {
+    cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
+    external_deps += [ "distributed_notification_service:ans_innerkits" ]
+    sources += [ "continuous_task/src/task_notification_subscriber.cpp" ]
+  }
+
+  if (background_task_mgr_graphics) {
+    cflags_cc += [ "-DSUPPORT_GRAPHICS" ]
+    deps += [ "//third_party/icu/icu4c:shared_icuuc" ]
+    external_deps += [ "i18n:intl_util" ]
+  }
+
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
 }
 
 ohos_fuzztest("BgTaskSubcriberFuzzTest") {

@@ -23,7 +23,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-    constexpr int32_t U32_AT_SIZE = 1;
+    constexpr int32_t U32_AT_SIZE = 4;
     constexpr int32_t MAX_CODE = 15;
     constexpr uint8_t TWENTYFOUR = 24;
     constexpr uint8_t SIXTEEN = 16;
