@@ -84,7 +84,6 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
 
   if (background_task_mgr_graphics) {
     cflags_cc += [ "-DSUPPORT_GRAPHICS" ]
-    deps += [ "//third_party/icu/icu4c:shared_icuuc" ]
     external_deps += [ "i18n:intl_util" ]
   }
 
