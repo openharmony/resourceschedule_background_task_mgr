@@ -79,7 +79,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
   if (distributed_notification_enable) {
     cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
     external_deps += [ "distributed_notification_service:ans_innerkits" ]
-    sources += [ "${bgtaskmgr_services_path}:continuous_task/src/task_notification_subscriber.cpp" ]
+    sources += [ "${bgtaskmgr_services_path}/continuous_task/src/task_notification_subscriber.cpp" ]
   }
 
   if (background_task_mgr_graphics) {
