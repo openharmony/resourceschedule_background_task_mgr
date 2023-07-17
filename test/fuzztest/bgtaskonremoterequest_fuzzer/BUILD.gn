@@ -66,7 +66,7 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
   ]
 }
 
-ohos_fuzztest("BgTaskSubcriberFuzzTest") {
+ohos_fuzztest("BgTaskSubscriberFuzzTest") {
   module_out_path = module_output_path
   fuzz_config_file =
       "${bgtaskmgr_test_path}/fuzztest/bgtaskonremoterequest_fuzzer"
