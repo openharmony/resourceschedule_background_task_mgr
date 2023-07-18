@@ -16,11 +16,12 @@
 #include "bgtaskonremoterequest_fuzzer.h"
 #include "securec.h"
 
-#define "private public"
+#define private public
 #include "background_task_mgr_service.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+    const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
     constexpr int32_t U32_AT_SIZE = 4;
     constexpr int32_t MAX_CODE = 15;
     constexpr uint8_t TWENTYFOUR = 24;
