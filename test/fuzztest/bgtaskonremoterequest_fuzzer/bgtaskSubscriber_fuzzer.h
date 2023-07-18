@@ -16,7 +16,7 @@
 #ifndef TEST_FUZZTEST_BGTASKSUBSCRIBERTEST_FUZZER_H
 #define TEST_FUZZTEST_BGTASKSUBSCRIBERTEST_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "bgtaskonremoterequest_fuzzer"
+#define FUZZ_PROJECT_NAME "bgtaskSubscriber_fuzzer"
 
 #include "fuzztest_helper.h"
 
