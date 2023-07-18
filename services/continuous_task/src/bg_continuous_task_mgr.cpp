@@ -80,6 +80,11 @@ static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 
+static constexpr uint32_t WEBVIEW_PARAM_UID = 2;
+static constexpr uint32_t WEBVIEW_PARAM_BGMODE = 3;
+static constexpr uint32_t WEBVIEW_PARAM_IS_START = 4;
+static constexpr uint32_t WEBVIEW_PARAM_SIZE = 5;
+
 #ifndef HAS_OS_ACCOUNT_PART
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
@@ -182,40 +187,56 @@ void BgContinuousTaskMgr::HandlePersistenceData()
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
 }
 
+bool BgContinuousTaskMgr::CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
+    int32_t uid)
+{
+    for (const auto &runningProcessInfo : allProcesses) {
+        if (runningProcessInfo.uid_ == uid) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
     const std::set<std::string> &allLabels)
 {
     int32_t recordPid;
     auto iter = continuousTaskInfosMap_.begin();
+    bool pidConditionFlag;
+    bool notificationConditionFlag;
+
     while (iter != continuousTaskInfosMap_.end()) {
         recordPid = iter->second->GetPid();
         const std::string recordLabel = iter->second->GetNotificationLabel();
-        if (checkPidCondition(allProcesses, recordPid) && checkNotificationCondition(allLabels, recordLabel)) {
+        pidConditionFlag = checkPidCondition(allProcesses, recordPid);
+        notificationConditionFlag = checkNotificationCondition(allLabels, recordLabel);
+        if (pidConditionFlag && notificationConditionFlag) {
             BGTASK_LOGI("target continuous task exist");
             iter++;
             continue;
         }
 
-        if (iter->second->IsFromWebview()) {
+        if (iter->second->IsFromWebview() && CheckProcessUidInfo(allProcesses, iter->second->GetUid())) {
             BGTASK_LOGI("Webview continuous task exist.");
             iter++;
             continue;
         }
 
-        if (!checkPidCondition(allProcesses, recordPid) && checkNotificationCondition(allLabels, recordLabel)) {
+        if (!pidConditionFlag && notificationConditionFlag) {
             BGTASK_LOGI("pid: %{public}d not exist, label: %{public}s exist", recordPid, recordLabel.c_str());
             NotificationTools::GetInstance()->CancelNotification(recordLabel, DEFAULT_NOTIFICATION_ID);
             iter = continuousTaskInfosMap_.erase(iter);
             continue;
         }
 
-        if (checkPidCondition(allProcesses, recordPid) && !checkNotificationCondition(allLabels, recordLabel)) {
+        if (pidConditionFlag && !notificationConditionFlag) {
             BGTASK_LOGI("pid: %{public}d exist, label: %{public}s not exist", recordPid, recordLabel.c_str());
             iter = continuousTaskInfosMap_.erase(iter);
             continue;
         }
 
-        if (!checkPidCondition(allProcesses, recordPid) && !checkNotificationCondition(allLabels, recordLabel)) {
+        if (!pidConditionFlag && !notificationConditionFlag) {
             BGTASK_LOGI("pid: %{public}d not exist, label: %{public}s not exist", recordPid, recordLabel.c_str());
             iter = continuousTaskInfosMap_.erase(iter);
             continue;
@@ -540,8 +561,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
         }, AppExecFwk::EventQueue::Priority::HIGH);
     FinishTrace(HITRACE_TAG_OHOS);
 
-    BGTASK_LOGI("webview start background running info, uid: %{public}d, bgModeId: %{public}u, isStart: %{public}d!",
-                taskParam->uid_, taskParam->bgModeId_, taskParam->isStart_);
     return result;
 }
 
@@ -687,8 +706,6 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<Continuous
         }, AppExecFwk::EventQueue::Priority::HIGH);
     FinishTrace(HITRACE_TAG_OHOS);
 
-    BGTASK_LOGI("webview stop background running info, uid: %{public}d, bgModeId: %{public}u, isStart: %{public}d!",
-                taskParam->uid_, taskParam->bgModeId_, taskParam->isStart_);
     return result;
 }
 
@@ -951,12 +968,28 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
         DumpAllTaskInfo(dumpInfo);
     } else if (dumpOption[1] == DUMP_PARAM_CANCEL_ALL) {
         DumpCancelTask(dumpOption, true);
+    } else if (DumpCheckWebviewInfo(dumpOption)) {
+        sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
+            new ContinuousTaskParamForInner());
+        taskParam->uid_ = std::stoi(dumpOption[WEBVIEW_PARAM_UID]);
+        taskParam->bgModeId_ = static_cast<uint32_t>(std::stoi(dumpOption[WEBVIEW_PARAM_BGMODE]));
+        taskParam->isStart_ = dumpOption[WEBVIEW_PARAM_IS_START] == "Start" ? true : false;
+        RequestBackgroundRunningForInner(taskParam);
     } else if (dumpOption[1] == DUMP_PARAM_CANCEL) {
         DumpCancelTask(dumpOption, false);
     } else {
         BGTASK_LOGW("invalid dump param");
     }
     return ERR_OK;
+}
+
+bool BgContinuousTaskMgr::DumpCheckWebviewInfo(const std::vector<std::string> &dumpOption)
+{
+    return (dumpOption[1] == "Webview" && dumpOption.size() == WEBVIEW_PARAM_SIZE
+        && !dumpOption[WEBVIEW_PARAM_UID].empty() && !dumpOption[WEBVIEW_PARAM_BGMODE].empty()
+        && dumpOption[WEBVIEW_PARAM_UID].find_first_not_of("0123456789") == std::string::npos
+        && dumpOption[WEBVIEW_PARAM_BGMODE].find_first_not_of("0123456789") == std::string::npos
+        && (dumpOption[WEBVIEW_PARAM_IS_START] == "Start" || dumpOption[WEBVIEW_PARAM_IS_START] == "Stop"));
 }
 
 void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
@@ -976,6 +1009,7 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
         stream << "\tcontinuousTaskValue:" << "\n";
         stream << "\t\tbundleName: " << iter->second->GetBundleName() << "\n";
         stream << "\t\tabilityName: " << iter->second->GetAbilityName() << "\n";
+        stream << "\t\tisFromWebview: " << (iter->second->IsFromWebview() ? "true" : "false") << "\n";
         stream << "\t\tisFromNewApi: " << (iter->second->IsNewApi() ? "true" : "false") << "\n";
         stream << "\t\tbackgroundMode: " << g_continuousTaskModeName[GetBgModeNameIndex(
             iter->second->GetBgModeId(), iter->second->IsNewApi())] << "\n";

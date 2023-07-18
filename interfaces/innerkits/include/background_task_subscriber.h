@@ -195,13 +195,6 @@ private:
         void OnAppContinuousTaskStop(int32_t uid) override;
 
         /**
-         * @brief Get managed proxy of background tasks.
-         *
-         * @return True if success, else false.
-         */
-        bool GetBackgroundTaskMgrProxy();
-
-        /**
          * @brief Apply or unapply efficiency resources of App.
          *
          * @param resourceInfo Request params.

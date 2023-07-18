@@ -50,7 +50,6 @@
           "distributed_notification_service",
           "hisysevent",
           "hiview",
-          "icu",
           "i18n",
           "relational_store"
         ],

@@ -14,6 +14,7 @@
  */
 
 #include "background_task_subscriber_proxy.h"
+#include "ibackground_task_subscriber_ipc_interface_code.h"
 
 #include <message_parcel.h>
 
@@ -40,7 +41,8 @@ void BackgroundTaskSubscriberProxy::OnConnected()
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t ret = remote->SendRequest(ON_CONNECTED, data, reply, option);
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONNECTED), data, reply, option);
     if (ret!= ERR_OK) {
         BGTASK_LOGE("OnConnected SendRequest failed, error code: %d", ret);
     }
@@ -61,7 +63,8 @@ void BackgroundTaskSubscriberProxy::OnDisconnected()
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t ret = remote->SendRequest(ON_DISCONNECTED, data, reply, option);
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_DISCONNECTED), data, reply, option);
     if (ret != ERR_OK) {
         BGTASK_LOGE("OnDisconnected SendRequest failed, error code: %d", ret);
     }
@@ -91,7 +94,8 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskStart(const std::shared_ptr<T
     }
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t ret = remote->SendRequest(ON_TRANSIENT_TASK_START, data, reply, option);
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_START), data, reply, option);
     if (ret != ERR_NONE) {
         BGTASK_LOGE("OnTransientTaskStart SendRequest failed, error code: %{public}d", ret);
     }
@@ -121,7 +125,8 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskEnd(const std::shared_ptr<Tra
     }
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t ret = remote->SendRequest(ON_TRANSIENT_TASK_END, data, reply, option);
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_END), data, reply, option);
     if (ret != ERR_NONE) {
         BGTASK_LOGE("OnTransientTaskEnd SendRequest failed, error code: %{public}d", ret);
     }
@@ -151,7 +156,8 @@ void BackgroundTaskSubscriberProxy::OnAppTransientTaskStart(const std::shared_pt
     }
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t ret = remote->SendRequest(ON_APP_TRANSIENT_TASK_START, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(
+        IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_START), data, reply, option);
     if (ret != ERR_NONE) {
         BGTASK_LOGE("OnAppTransientTaskStart SendRequest failed, error code: %{public}d", ret);
     }
@@ -181,7 +187,8 @@ void BackgroundTaskSubscriberProxy::OnAppTransientTaskEnd(const std::shared_ptr<
     }
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t ret = remote->SendRequest(ON_APP_TRANSIENT_TASK_END, data, reply, option);
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_END), data, reply, option);
     if (ret != ERR_NONE) {
         BGTASK_LOGE("OnAppTransientTaskEndSendRequest failed, error code: %{public}d", ret);
     }
@@ -213,7 +220,8 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStart(
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t result = remote->SendRequest(ON_CONTINUOUS_TASK_START, data, reply, option);
+    int32_t result = remote->SendRequest(
+        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_START), data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("OnContinuousTaskStart SendRequest error");
     }
@@ -245,7 +253,8 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStop(
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t result = remote->SendRequest(ON_CONTINUOUS_TASK_STOP, data, reply, option);
+    int32_t result = remote->SendRequest(
+        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_STOP), data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("OnContinuousTaskStop SendRequest error");
     }
@@ -272,7 +281,8 @@ void BackgroundTaskSubscriberProxy::OnAppContinuousTaskStop(int32_t uid)
 
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
-    int32_t result = remote->SendRequest(ON_APP_CONTINUOUS_TASK_STOP, data, reply, option);
+    int32_t result = remote->SendRequest(static_cast<uint32_t>(
+        IBackgroundTaskSubscriberInterfaceCode::ON_APP_CONTINUOUS_TASK_STOP), data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("OnAppContinuousTaskStop SendRequest error");
     }
@@ -305,7 +315,8 @@ void BackgroundTaskSubscriberProxy::OnAppEfficiencyResourcesApply(
 
     MessageParcel reply;
     MessageOption option;
-    int32_t result = remote->SendRequest(ON_APP_EFFICIENCY_RESOURCES_APPLY, data, reply, option);
+    int32_t result = remote->SendRequest(static_cast<uint32_t>(
+        IBackgroundTaskSubscriberInterfaceCode::ON_APP_EFFICIENCY_RESOURCES_APPLY), data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("OnAppEfficiencyResourcesApply SendRequest error");
     }
@@ -338,7 +349,8 @@ void BackgroundTaskSubscriberProxy::OnAppEfficiencyResourcesReset(
 
     MessageParcel reply;
     MessageOption option;
-    int32_t result = remote->SendRequest(ON_APP_EFFICIENCY_RESOURCES_RESET, data, reply, option);
+    int32_t result = remote->SendRequest(static_cast<uint32_t>(
+        IBackgroundTaskSubscriberInterfaceCode::ON_APP_EFFICIENCY_RESOURCES_RESET), data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("OnAppEfficiencyResourcesReset SendRequest error");
     }
@@ -370,7 +382,8 @@ void BackgroundTaskSubscriberProxy::OnProcEfficiencyResourcesApply(
 
     MessageParcel reply;
     MessageOption option;
-    int32_t result = remote->SendRequest(ON_PROC_EFFICIENCY_RESOURCES_APPLY, data, reply, option);
+    int32_t result = remote->SendRequest(static_cast<uint32_t>(
+        IBackgroundTaskSubscriberInterfaceCode::ON_PROC_EFFICIENCY_RESOURCES_APPLY), data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("OnProcEfficiencyResourcesApply SendRequest error");
     }
@@ -403,7 +416,8 @@ void BackgroundTaskSubscriberProxy::OnProcEfficiencyResourcesReset(
 
     MessageParcel reply;
     MessageOption option;
-    int32_t result = remote->SendRequest(ON_PROC_EFFICIENCY_RESOURCES_RESET, data, reply, option);
+    int32_t result = remote->SendRequest(static_cast<uint32_t>(
+        IBackgroundTaskSubscriberInterfaceCode::ON_PROC_EFFICIENCY_RESOURCES_RESET), data, reply, option);
     if (result != ERR_OK) {
         BGTASK_LOGE("OnProcEfficiencyResourcesReset SendRequest error");
     }
