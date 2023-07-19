@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -30,15 +30,21 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
+
+  cflags_cc = [
+    "-fvisibility=hidden",
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fvisibility-inlines-hidden",
+    "-Os",
+  ]
+
   sources = [
     "../common/fuzztest_helper.cpp",
     "bgtaskonremoterequest_fuzzer.cpp",
   ]
 
-  deps = [
-    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-  ]
+  deps = [ "${bgtaskmgr_services_path}:bgtaskmgr_service_static" ]
 
   external_deps = [
     "ability_base:base",
@@ -64,6 +70,25 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
+
+  if (has_os_account_part) {
+    cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+
+  if (distributed_notification_enable) {
+    cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
+    external_deps += [ "distributed_notification_service:ans_innerkits" ]
+    sources += [ "${bgtaskmgr_services_path}/continuous_task/src/task_notification_subscriber.cpp" ]
+  }
+
+  if (background_task_mgr_graphics) {
+    cflags_cc += [ "-DSUPPORT_GRAPHICS" ]
+    external_deps += [ "i18n:intl_util" ]
+  }
+
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
 }
 
 ohos_fuzztest("BgTaskSubscriberFuzzTest") {
