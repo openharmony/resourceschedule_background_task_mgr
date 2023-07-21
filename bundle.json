@@ -97,7 +97,8 @@
           "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/transient_task_jsunittest:js_unittest",
           "//foundation/resourceschedule/background_task_mgr/services/test/unittest:unittest",
           "//foundation/resourceschedule/background_task_mgr/test/systemtest:systemtest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskonremoterequest_fuzzer:fuzztest"
+          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskonremoterequest_fuzzer:fuzztest",
+          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtasksubscriber_fuzzer:fuzztest"
         ]
       }
     }
