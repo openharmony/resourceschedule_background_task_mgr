@@ -18,10 +18,9 @@ import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 module_output_path = "background_task_mgr/bgtaskservice"
 
 ##############################fuzztest##########################################
-ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
+ohos_fuzztest("BgTaskSubscriberFuzzTest") {
   module_out_path = module_output_path
-  fuzz_config_file =
-      "${bgtaskmgr_test_path}/fuzztest/bgtaskonremoterequest_fuzzer"
+  fuzz_config_file = "${bgtaskmgr_test_path}/fuzztest/bgtasksubscriber_fuzzer"
 
   include_dirs = [ "../common" ]
   cflags = [
@@ -30,18 +29,9 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-
-  cflags_cc = [
-    "-fvisibility=hidden",
-    "-fdata-sections",
-    "-ffunction-sections",
-    "-fvisibility-inlines-hidden",
-    "-Os",
-  ]
-
   sources = [
     "../common/fuzztest_helper.cpp",
-    "bgtaskonremoterequest_fuzzer.cpp",
+    "bgtaskSubscriber_fuzzer.cpp",
   ]
 
   deps = [ "${bgtaskmgr_services_path}:bgtaskmgr_service_static" ]
@@ -70,25 +60,6 @@ ohos_fuzztest("BgTaskOnRemoteRequestFuzzTest") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
-
-  if (has_os_account_part) {
-    cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
-    external_deps += [ "os_account:os_account_innerkits" ]
-  }
-
-  if (distributed_notification_enable) {
-    cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
-    external_deps += [ "distributed_notification_service:ans_innerkits" ]
-    sources += [ "${bgtaskmgr_services_path}/continuous_task/src/task_notification_subscriber.cpp" ]
-  }
-
-  if (background_task_mgr_graphics) {
-    cflags_cc += [ "-DSUPPORT_GRAPHICS" ]
-    external_deps += [ "i18n:intl_util" ]
-  }
-
-  subsystem_name = "resourceschedule"
-  part_name = "background_task_mgr"
 }
 
 ###############################################################################
@@ -97,7 +68,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":BgTaskOnRemoteRequestFuzzTest",
+    ":BgTaskSubscriberFuzzTest",
   ]
 }
 ###############################################################################
