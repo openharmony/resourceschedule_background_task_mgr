@@ -35,6 +35,7 @@ class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
 public:
     TestBackgroundTaskSubscriber() : BackgroundTaskSubscriber() {}
 };
+
     uint32_t GetU32Data(const char* ptr)
     {
         return (ptr[0] << TWENTYFOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
