@@ -93,7 +93,7 @@ enum ParamErr: int32_t {
     ERR_ISPROCESS_NULL_OR_TYPE_ERR,
 };
 
-static std::map<int32_t, std::string> saErrCodeMsgMap = {
+const inline std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_BGTASK_PERMISSION_DENIED, "Permission denied."},
     {ERR_BGTASK_NOT_SYSTEM_APP,
         "System API verification failed. Only system application can apply."},
@@ -135,7 +135,7 @@ static std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_BGTASK_SERVICE_INNER_ERROR, "Service inner error."},
 };
 
-static std::map<int32_t, std::string> paramErrCodeMsgMap = {
+const inline std::map<int32_t, std::string> paramErrCodeMsgMap = {
     {ERR_PARAM_NUMBER_ERR, "The number of arguments is wrong."},
     {ERR_REASON_NULL_OR_TYPE_ERR, "The reason cannot be null and its type must be string."},
     {ERR_CALLBACK_NULL_OR_TYPE_ERR, "The callback cannot be null and its type must be function."},
