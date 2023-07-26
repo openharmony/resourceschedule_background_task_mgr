@@ -550,20 +550,20 @@ bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std:
 ErrCode BgEfficiencyResourcesMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
     BGTASK_LOGI("add subscriber to efficiency resources succeed");
-    ErrCode result = ERR_OK;
-    handler_->PostSyncTask([this, &result, &subscriber]) {
+    ErrCode result {};
+    handler_->PostSyncTask([this, &result, &subscriber]() {
         result = subscriberMgr_->AddSubscriber(subscriber);
-    }
+    });
     return result;
 }
 
 ErrCode BgEfficiencyResourcesMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
     BGTASK_LOGI("remove subscriber to efficiency resources succeed");
-    ErrCode result = ERR_OK;
-    handler_->PostSyncTask([this, &result, &subscriber]) {
+    ErrCode result {};
+    handler_->PostSyncTask([this, &result, &subscriber]() {
         result = subscriberMgr_->RemoveSubscriber(subscriber);
-    }
+    });
     return result;
 }
 
