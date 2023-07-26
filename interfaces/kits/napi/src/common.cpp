@@ -285,7 +285,7 @@ bool Common::HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow)
     auto iter = paramErrCodeMsgMap.find(errCode);
     if (iter != paramErrCodeMsgMap.end()) {
         std::string errMessage = "BussinessError 401: Parameter error. ";
-        errMessage.append(paramErrCodeMsgMap[errCode]);
+        errMessage.append(iter->second);
         napi_throw_error(env, std::to_string(ERR_BGTASK_INVALID_PARAM).c_str(), errMessage.c_str());
         return true;
     }
@@ -307,7 +307,7 @@ std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
     iter = paramErrCodeMsgMap.find(errCode);
     if (iter != paramErrCodeMsgMap.end()) {
         std::string errMessage = "BussinessError 401: Parameter error. ";
-        errMessage.append(paramErrCodeMsgMap[errCode]);
+        errMessage.append(iter->second);
         return errMessage;
     }
     return "Inner error.";
