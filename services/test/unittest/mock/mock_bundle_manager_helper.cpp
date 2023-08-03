@@ -72,7 +72,7 @@ bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const App
 bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
     const int userId, AppExecFwk::ApplicationInfo &appInfo)
 {
-    appInfo.runningResourcesApply = true;
+    appInfo.resourcesApply = {0};
     return true;
 }
 

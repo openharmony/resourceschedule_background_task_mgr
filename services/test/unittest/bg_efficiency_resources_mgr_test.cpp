@@ -84,7 +84,7 @@ public:
     void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
 
     void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
-    
+
     void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
 
     void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
@@ -426,7 +426,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, EraseRecord_001, TestSize.Level1)
         resourceInfo), (int32_t)ERR_OK);
     SleepFor(WAIT_TIME);
     EXPECT_EQ((int32_t)(bgEfficiencyResourcesMgr_->appResourceApplyMap_.size()), 1);
-    
+
     resourceInfo->isProcess_ = true;
     resourceInfo->isPersist_ = false;
     resourceInfo->timeOut_ = 2000;
@@ -547,7 +547,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, BoundaryCondition_001, TestSize.Level1)
     std::string bundleName {""};
     EXPECT_FALSE(bgEfficiencyResourcesMgr_->IsCallingInfoLegal(-1, 0, bundleName));
     EXPECT_FALSE(bgEfficiencyResourcesMgr_->IsCallingInfoLegal(0, -1, bundleName));
-    EXPECT_TRUE(bgEfficiencyResourcesMgr_->CheckRunningResourcesApply(0, "bundleName"));
+    EXPECT_TRUE(!bgEfficiencyResourcesMgr_->QueryRunningResourcesApply(0, "bundleName").empty());
     std::list<PersistTime> resourceUnitList {};
     bgEfficiencyResourcesMgr_->RemoveListRecord(resourceUnitList, 0);
 
@@ -600,6 +600,18 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetTimeOutResource_001, TestSize.Level1
     bgEfficiencyResourcesMgr_->ResetTimeOutResource(0, true);
     bgEfficiencyResourcesMgr_->RemoveRelativeProcessRecord(0, 0);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->procResourceApplyMap_.size(), 1);
+}
+
+/**
+ * @tc.name: Should_Return_All_Resource_Type_When_0_in_ResourceApply
+ * @tc.desc: if 0 in resource apply, request of all type is permitted.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, ResetTimeOutResource_001, TestSize.Level1)
+{
+    auto resourceNumber = (1 << MAX_RESOURCES_TYPE_NUM);
+    auto ret = bgEfficiencyResourcesMgr_->FilterOutUnpermittedResType(resourceNumber, 0, "bundleName");
+    EXPECT_EQ(ret, resourceNumber);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
