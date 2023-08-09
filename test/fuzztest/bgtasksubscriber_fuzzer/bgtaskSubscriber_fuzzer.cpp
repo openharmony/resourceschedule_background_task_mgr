@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #include "bgtaskSubscriber_fuzzer.h"
 #include "ibackground_task_subscriber.h"
 #include "securec.h"
@@ -54,7 +54,7 @@ public:
         subscriberImpl->HandleOnDisconnected();
         subscriberImpl->HandleOnAppContinuousTaskStop(datas);
         for (uint32_t i = 1; i <MAX_CODE; i++) {
-            subscriberImpl->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
+            subscriberImpl->OnRemoteRequest(i, datas, reply, option);
         }
         return true;
     }
