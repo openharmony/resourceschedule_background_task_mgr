@@ -43,6 +43,7 @@ public:
 
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
+        uint32_t code = GetU32Data(data);
         MessageParcel datas;
         datas.WriteInterfaceToken(BACKGROUND_TASK_MGR_SUBSCRIBER_TOKEN);
         datas.WriteBuffer(data, size);
@@ -51,11 +52,20 @@ public:
         MessageOption option;
         auto subscriber = TestBackgroundTaskSubscriber();
         auto subscriberImpl = std::make_shared<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl>(subscriber);
+        subscriberImpl->HandleOnConnected();
         subscriberImpl->HandleOnDisconnected();
+        subscriberImpl->HandleOnTransientTaskStart(data);
+        subscriberImpl->HandleOnTransientTaskEnd(data);
+        subscriberImpl->HandleOnAppTransientTaskStart(data);
+        subscriberImpl->HandleOnAppTransientTaskEnd(data);
+        subscriberImpl->HandleOnContinuousTaskStart(data);
+        subscriberImpl->HandleOnContinuousTaskCancel(data);
         subscriberImpl->HandleOnAppContinuousTaskStop(datas);
-        for (uint32_t i = 1; i < MAX_CODE; i++) {
-            subscriberImpl->OnRemoteRequest(i, datas, reply, option);
-        }
+        subscriberImpl->HandleOnAppEfficiencyResourcesApply(data);
+        subscriberImpl->HandleOnAppEfficiencyResourcesReset(data);
+        subscriberImpl->HandleOnProcEfficiencyResourcesApply(data);
+        subscriberImpl->HandleOnProcEfficiencyResourcesReset(data);
+        subscriberImpl->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
         return true;
     }
 } // BackgroundTaskMgr
