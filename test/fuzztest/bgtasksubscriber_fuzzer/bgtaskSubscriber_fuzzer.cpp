@@ -53,7 +53,7 @@ public:
         auto subscriberImpl = std::make_shared<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl>(subscriber);
         subscriberImpl->HandleOnDisconnected();
         subscriberImpl->HandleOnAppContinuousTaskStop(datas);
-        for (uint32_t i = 1; i <MAX_CODE; i++) {
+        for (uint32_t i = 1; i < MAX_CODE; i++) {
             subscriberImpl->OnRemoteRequest(i, datas, reply, option);
         }
         return true;
