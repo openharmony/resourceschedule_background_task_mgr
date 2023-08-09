@@ -54,17 +54,17 @@ public:
         auto subscriberImpl = std::make_shared<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl>(subscriber);
         subscriberImpl->HandleOnConnected();
         subscriberImpl->HandleOnDisconnected();
-        subscriberImpl->HandleOnTransientTaskStart(data);
-        subscriberImpl->HandleOnTransientTaskEnd(data);
-        subscriberImpl->HandleOnAppTransientTaskStart(data);
-        subscriberImpl->HandleOnAppTransientTaskEnd(data);
-        subscriberImpl->HandleOnContinuousTaskStart(data);
-        subscriberImpl->HandleOnContinuousTaskCancel(data);
+        subscriberImpl->HandleOnTransientTaskStart(datas);
+        subscriberImpl->HandleOnTransientTaskEnd(datas);
+        subscriberImpl->HandleOnAppTransientTaskStart(datas);
+        subscriberImpl->HandleOnAppTransientTaskEnd(datas);
+        subscriberImpl->HandleOnContinuousTaskStart(datas);
+        subscriberImpl->HandleOnContinuousTaskCancel(datas);
         subscriberImpl->HandleOnAppContinuousTaskStop(datas);
-        subscriberImpl->HandleOnAppEfficiencyResourcesApply(data);
-        subscriberImpl->HandleOnAppEfficiencyResourcesReset(data);
-        subscriberImpl->HandleOnProcEfficiencyResourcesApply(data);
-        subscriberImpl->HandleOnProcEfficiencyResourcesReset(data);
+        subscriberImpl->HandleOnAppEfficiencyResourcesApply(datas);
+        subscriberImpl->HandleOnAppEfficiencyResourcesReset(datas);
+        subscriberImpl->HandleOnProcEfficiencyResourcesApply(datas);
+        subscriberImpl->HandleOnProcEfficiencyResourcesReset(datas);
         subscriberImpl->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
         return true;
     }
