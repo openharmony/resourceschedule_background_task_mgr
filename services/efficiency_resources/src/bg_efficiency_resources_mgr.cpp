@@ -777,11 +777,11 @@ std::set<int32_t> BgEfficiencyResourcesMgr::QueryRunningResourcesApply(const int
     if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, GetUserIdByUid(uid), applicationInfo)) {
         BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
-        return false;
+        return {}};
     }
-    BGTASK_LOGD("size of applicationInfo.runningResourcesApply is %{public}d",
-        static_cast<int32_t>(applicationInfo.resourcesApply));
-    return std::set{applicationInfo.resourcesApply.cbegin(), applicationInfo.resourcesApply.cend()};
+    BGTASK_LOGD("size of applicationInfo.resourcesApply is %{public}d",
+        static_cast<int32_t>(applicationInfo.resourcesApply.size()));
+    return std::set<int32_t>(applicationInfo.resourcesApply.begin(), applicationInfo.resourcesApply.end());
 }
 
 int32_t BgEfficiencyResourcesMgr::GetUserIdByUid(int32_t uid)
