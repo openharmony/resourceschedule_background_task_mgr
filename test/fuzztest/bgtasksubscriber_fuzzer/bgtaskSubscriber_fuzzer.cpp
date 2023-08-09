@@ -12,13 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include "background_task_subscriber_stub.h"
+ 
 #include "bgtaskSubscriber_fuzzer.h"
 #include "ibackground_task_subscriber.h"
 #include "securec.h"
 
 #define private public
+#include "background_task_subscriber_stub.h"
 #include "background_task_subscriber.h"
 
 namespace OHOS {
@@ -43,7 +43,6 @@ public:
 
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
-        uint32_t code = GetU32Data(data);
         MessageParcel datas;
         datas.WriteInterfaceToken(BACKGROUND_TASK_MGR_SUBSCRIBER_TOKEN);
         datas.WriteBuffer(data, size);
@@ -52,7 +51,11 @@ public:
         MessageOption option;
         auto subscriber = TestBackgroundTaskSubscriber();
         auto subscriberImpl = std::make_shared<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl>(subscriber);
-        subscriberImpl->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
+        subscriberImpl->HandleOnDisconnected();
+        subscriberImpl->HandleOnAppContinuousTaskStop(datas);
+        for (uint32_t i = 1; i <MAX_CODE; i++) {
+            subscriberImpl->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
+        }
         return true;
     }
 } // BackgroundTaskMgr
