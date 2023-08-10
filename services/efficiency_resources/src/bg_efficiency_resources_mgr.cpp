@@ -777,7 +777,7 @@ std::set<int32_t> BgEfficiencyResourcesMgr::QueryRunningResourcesApply(const int
     if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, GetUserIdByUid(uid), applicationInfo)) {
         BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
-        return {}};
+        return {};
     }
     BGTASK_LOGD("size of applicationInfo.resourcesApply is %{public}d",
         static_cast<int32_t>(applicationInfo.resourcesApply.size()));
