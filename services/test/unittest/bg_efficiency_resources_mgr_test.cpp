@@ -607,7 +607,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetTimeOutResource_001, TestSize.Level1
  * @tc.desc: if 0 in resource apply, request of all type is permitted.
  * @tc.type: FUNC
  */
-HWTEST_F(BgEfficiencyResourcesMgrTest, ResetTimeOutResource_001, TestSize.Level1)
+HWTEST_F(BgEfficiencyResourcesMgrTest, Should_Return_All_Resource_Type_When_0_in_ResourceApply, TestSize.Level1)
 {
     auto resourceNumber = (1 << MAX_RESOURCES_TYPE_NUM);
     auto ret = bgEfficiencyResourcesMgr_->FilterOutUnpermittedResType(resourceNumber, 0, "bundleName");
