@@ -765,8 +765,10 @@ uint32_t BgEfficiencyResourcesMgr::FilterOutUnpermittedResType(uint32_t resource
         }
         permittedResourceNumber += (1 << resourceIndex);
     }
+    permittedResourceNumber &= resourceNumber;
     BGTASK_LOGD("after filter, uid: %{public}d, bundleName: %{public}s, origin resource number: %{public}u, return "\
         "resource number: %{public}u", uid, bundleName.c_str(), resourceNumber, permittedResourceNumber);
+
     return permittedResourceNumber;
 }
 
