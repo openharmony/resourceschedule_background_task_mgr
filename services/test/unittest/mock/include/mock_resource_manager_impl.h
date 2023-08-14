@@ -432,7 +432,7 @@ public:
      * @param rawfileList the rawfile list write to
      * @return SUCCESS if resource exist, else not found
      */
-    virtual RState GetRawFileList(const std::string rawDirPath, std::vector<std::string>& rawfileList);
+    virtual RState GetRawFileList(const std::string &rawDirPath, std::vector<std::string>& rawfileList);
 
     /**
      * Get the drawable information for given resId, mainly about type, len, buffer
