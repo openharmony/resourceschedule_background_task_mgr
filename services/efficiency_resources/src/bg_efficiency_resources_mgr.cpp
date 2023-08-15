@@ -297,9 +297,9 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         return ERR_BGTASK_NOT_SYSTEM_APP;
     }
 
-    auto exemptedResources = GetExemptedResourceType(resourceInfo->GetResourceNumber(), uid, bundleName);
-    resourceInfo->SetResourceNumber(exemptedResources);
-    if (exemptedResources == 0) {
+    auto exemptedResourceType = GetExemptedResourceType(resourceInfo->GetResourceNumber(), uid, bundleName);
+    resourceInfo->SetResourceNumber(exemptedResourceType);
+    if (exemptedResourceType == 0) {
         BGTASK_LOGE("apply efficiency resources failed, no permitted resource type");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
@@ -495,15 +495,15 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
         return ERR_BGTASK_NOT_SYSTEM_APP;
     }
 
-    auto exemptedResources = GetExemptedResourceType(MAX_RESOURCE_MASK, uid, bundleName);
-    if (exemptedResources == 0) {
+    auto exemptedResourceType = GetExemptedResourceType(MAX_RESOURCE_MASK, uid, bundleName);
+    if (exemptedResourceType == 0) {
         BGTASK_LOGE("reset efficiency resources failed, no permitted resource type");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
 
-    handler_->PostTask([this, exemptedResources, uid, pid, bundleName]() {
+    handler_->PostTask([this, exemptedResourceType, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-            pid, exemptedResources, bundleName);
+            pid, exemptedResourceType, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, false);
     });
     return ERR_OK;
