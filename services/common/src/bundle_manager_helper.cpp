@@ -24,6 +24,12 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+#ifdef BGTASK_MGR_UNIT_TEST
+#define WEAK_FUNC __attribute__((weak))
+#else
+#define WEAK_FUNC
+#endif
+
 using OHOS::AppExecFwk::Constants::PERMISSION_GRANTED;
 
 BundleManagerHelper::BundleManagerHelper()
@@ -79,7 +85,7 @@ bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const App
     return false;
 }
 
-bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
+bool WEAK_FUNC BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
     const int userId, AppExecFwk::ApplicationInfo &appInfo)
 {
     BGTASK_LOGD("start get application info");
