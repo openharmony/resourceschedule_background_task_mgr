@@ -26,7 +26,7 @@ namespace {
 static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
 static constexpr uint32_t ALL_NEED_CHECK_BGMODE = 62;
 static constexpr uint64_t NO_SYSTEM_APP_TOKEN_ID = -100;
-std::shared_ptr<IBundleManagerHelper> bundleManaerHelperMock;
+std::shared_ptr<IBundleManagerHelper> bundleManagerHelperMock;
 }
 
 BundleManagerHelper::BundleManagerHelper() {}
@@ -43,7 +43,7 @@ void CleanBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
     bundleManagerHelperMock.reset();
 }
 
-bool WEAK_FUNC BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
+bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
     const int userId, AppExecFwk::ApplicationInfo &appInfo)
 {
     bool ret {false};

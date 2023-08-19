@@ -760,6 +760,9 @@ uint32_t BgEfficiencyResourcesMgr::GetExemptedResourceType(uint32_t resourceNumb
 
     // filter out unpermitted resource type
     for (const auto resourceType : resourcesApply) {
+        if (resourceType < 0 || resourceType > MAX_RESOURCES_TYPE_NUM) {
+            continue;
+        }
         exemptedResources |= (1 << (resourceType - 1));
     }
     exemptedResources &= resourceNumber;
