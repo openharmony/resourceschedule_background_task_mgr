@@ -142,15 +142,15 @@ ohos_unittest("mock_efficiency_mgr_unit_test") {
   ]
 
   sources = [
-    "mock_efficiency_resources_mgr_test.cpp",
     "mock/mock_bundle_manager_helper.cpp",
+    "mock_efficiency_resources_mgr_test.cpp",
   ]
 
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-    "//third_party/googletest:gtest_main",
     "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
