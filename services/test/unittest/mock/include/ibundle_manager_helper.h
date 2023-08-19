@@ -13,17 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TEST_GMOCK_BUNDLE_MANAGER_HELPER_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TEST_GMOCK_BUNDLE_MANAGER_HELPER_H
-
-#include "bundle_mgr_interface.h"
-#include "gmock/gmock.h"
-#include "ipc_skeleton.h"
-#include "iremote_object.h"
-#include "resource_manager.h"
-#include "singleton.h"
-
-#include "remote_death_recipient.h"
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TEST_IBUNDLE_MANAGER_HELPER_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TEST_IBUNDLE_MANAGER_HELPER_H
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -36,15 +27,6 @@ public:
 
 void SetBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock);
 void CleanBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock);
-
-class MockBundleManagerHelper final : public IBundleManagerHelper
-{
-public:
-    ~IBundleManagerHelper() override = default;
-
-    MOCK_METHOD4(GetApplicationInfo, bool(const std::string &, const AppExecFwk::ApplicationFlag,
-        const int, AppExecFwk::ApplicationInfo &));
-}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TEST_GMOCK_BUNDLE_MANAGER_HELPER_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TEST_IBUNDLE_MANAGER_HELPER_H

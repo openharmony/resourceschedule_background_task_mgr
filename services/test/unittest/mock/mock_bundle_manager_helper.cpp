@@ -18,6 +18,7 @@
 #include "bundle_manager_helper.h"
 
 #include "continuous_task_log.h"
+#include "include/ibundle_manager_helper.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -25,11 +26,32 @@ namespace {
 static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
 static constexpr uint32_t ALL_NEED_CHECK_BGMODE = 62;
 static constexpr uint64_t NO_SYSTEM_APP_TOKEN_ID = -100;
+std::shared_ptr<IBundleManagerHelper> bundleManaerHelperMock;
 }
 
 BundleManagerHelper::BundleManagerHelper() {}
 
 BundleManagerHelper::~BundleManagerHelper() {}
+
+void SetBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
+{
+    bundleManagerHelperMock = mock;
+}
+
+void CleanBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
+{
+    bundleManagerHelperMock.reset();
+}
+
+bool WEAK_FUNC BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
+    const int userId, AppExecFwk::ApplicationInfo &appInfo)
+{
+    bool ret {false};
+    if (bundleManagerHelperMock) {
+        ret = bundleManagerHelperMock->GetApplicationInfo(appName, flag, userId, appInfo);
+    }
+    return ret;
+}
 
 std::string BundleManagerHelper::GetClientBundleName(int32_t uid)
 {
@@ -66,13 +88,6 @@ bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const App
     abilityInfo.backgroundModes = ALL_NEED_CHECK_BGMODE;
     bundleInfo.abilityInfos.emplace_back(abilityInfo);
     bundleInfo.name = TEST_DEFAULT_BUNDLE;
-    return true;
-}
-
-bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
-    const int userId, AppExecFwk::ApplicationInfo &appInfo)
-{
-    appInfo.resourcesApply = {0};
     return true;
 }
 

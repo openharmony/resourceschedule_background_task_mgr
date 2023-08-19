@@ -28,7 +28,8 @@
 #include "resource_type.h"
 #include "system_ability_definition.h"
 #include "time_provider.h"
-#include "gmock_bundle_manager_helper.h"
+
+#include "ibundle_manager_helper_mock.h"
 
 using namespace testing::ext;
 using namespace testing;
@@ -42,7 +43,6 @@ static constexpr int32_t TIMER_INDEX = 3;
 static constexpr int32_t WAIT_TIME = 1000;
 static const uint32_t MAX_RESOURCES_TYPE_NUM = ResourceTypeName.size();
 static const uint32_t MAX_RESOURCES_MASK = (1 << MAX_RESOURCES_TYPE_NUM) - 1;
-static constexpr char MOCK_EFFICIENCY_RESOURCES_MGR_NAME[] = "MockEfficiencyResourcesMgr";
 
 class MockEfficiencyResourcesMgrTest : public testing::Test {
 public:
@@ -61,12 +61,6 @@ std::shared_ptr<IBundleManagerHelper> MockEfficiencyResourcesMgrTest::bundleMana
 void MockEfficiencyResourcesMgrTest::SetUpTestCase()
 {
     bgEfficiencyResourcesMgr_ = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance();
-    bgEfficiencyResourcesMgr_->subscriberMgr_ = DelayedSingleton<ResourcesSubscriberMgr>::GetInstance();
-    std::shared_ptr<AppExecFwk::EventRunner> runner =
-        AppExecFwk::EventRunner::Create(MOCK_EFFICIENCY_RESOURCES_MGR_NAME);
-    bgEfficiencyResourcesMgr_->handler_ =
-        std::make_shared<AppExecFwk::EventHandler>(runner);
-    bgEfficiencyResourcesMgr_->isSysReady_.store(true);
 }
 
 void MockEfficiencyResourcesMgrTest::TearDownTestCase()
@@ -85,17 +79,6 @@ void MockEfficiencyResourcesMgrTest::TearDown()
     CleanBundleManagerHelper();
 }
 
-class TestBackgroundTaskSubscriber : public BackgroundTaskMgr::BackgroundTaskSubscriber {
-public:
-    void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
-
-    void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
-
-    void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
-
-    void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
-};
-
 /**
  * @tc.name: GetExemptedResourceType_001
  * @tc.desc: should return 0 when failed to get application info
@@ -104,7 +87,7 @@ public:
 HWTEST_F(MockEfficiencyResourcesMgrTest, GetExemptedResourceType_001, TestSize.Level1)
 {
     EXPECT_CALL(*bundleManagerHelperMock_, GetApplicationInfo(_, _, _, _)).WillOnce(Return(false));
-    auto exemptedType = bundleManagerHelperMock_->GetExemptedResourceType(MAX_RESOURCES_MASK, -1, "");
+    auto exemptedType = bgEfficiencyResourcesMgr_->GetExemptedResourceType(MAX_RESOURCES_MASK, -1, "");
     EXPECT_EQ(exemptedType, 0u);
 }
 
@@ -119,7 +102,7 @@ HWTEST_F(MockEfficiencyResourcesMgrTest, GetExemptedResourceType_002, TestSize.L
     info.resourcesApply = { TIMER_INDEX };
     EXPECT_CALL(*bundleManagerHelperMock_, GetApplicationInfo(_, _, _, _))
         .WillOnce(DoAll(SetArgReferee<3>(info), Return(true)));
-    auto exemptedType = bundleManagerHelperMock_->GetExemptedResourceType(ResourceType::CPU, -1, "");
+    auto exemptedType = bgEfficiencyResourcesMgr_->GetExemptedResourceType(ResourceType::CPU, -1, "");
     EXPECT_EQ(exemptedType, 0u);
 }
 
@@ -134,7 +117,7 @@ HWTEST_F(MockEfficiencyResourcesMgrTest, GetExemptedResourceType_003, TestSize.L
     info.resourcesApply = { 0 };
     EXPECT_CALL(*bundleManagerHelperMock_, GetApplicationInfo(_, _, _, _))
         .WillOnce(DoAll(SetArgReferee<3>(info), Return(true)));
-    auto exemptedType = bundleManagerHelperMock_->GetExemptedResourceType(MAX_RESOURCES_MASK, -1, "");
+    auto exemptedType = bgEfficiencyResourcesMgr_->GetExemptedResourceType(MAX_RESOURCES_MASK, -1, "");
     EXPECT_EQ(exemptedType, MAX_RESOURCES_MASK);
 }
 
@@ -148,8 +131,8 @@ HWTEST_F(MockEfficiencyResourcesMgrTest, GetExemptedResourceType_004, TestSize.L
     AppExecFwk::ApplicationInfo info {};
     info1.resourcesApply = { CPU_INDEX };
     EXPECT_CALL(*bundleManagerHelperMock_, GetApplicationInfo(_, _, _, _))
-        .WillOnce(DoAll(SetArgReferee<3>(info), Return(true)))
-    auto exemptedType = bundleManagerHelperMock_->GetExemptedResourceType(MAX_RESOURCES_MASK, -1, "");
+        .WillOnce(DoAll(SetArgReferee<3>(info), Return(true)));
+    auto exemptedType = bgEfficiencyResourcesMgr_->GetExemptedResourceType(MAX_RESOURCES_MASK, -1, "");
     EXPECT_EQ(exemptedType, ResourceType::CPU);
 }
 }  // namespace BackgroundTaskMgr
