@@ -27,7 +27,6 @@
 #include "bg_efficiency_resources_mgr.h"
 #include "resource_type.h"
 #include "system_ability_definition.h"
-#include "time_provider.h"
 
 #include "ibundle_manager_helper_mock.h"
 

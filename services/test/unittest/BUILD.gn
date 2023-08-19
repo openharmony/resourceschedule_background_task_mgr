@@ -137,8 +137,8 @@ ohos_unittest("mock_efficiency_mgr_unit_test") {
   include_dirs = [
     "${bgtaskmgr_services_path}/common/include",
     "${bgtaskmgr_services_path}/efficiency_resources/inlcude",
-    "${bgtaskmgr_interfaces_path}/core/include",
-    "${bgtaskmgr_interfaces_path}/test/unittest/mock/include",
+    "${bgtaskmgr_services_path}/core/include",
+    "${bgtaskmgr_services_path}/test/unittest/mock/include",
   ]
 
   sources = [
