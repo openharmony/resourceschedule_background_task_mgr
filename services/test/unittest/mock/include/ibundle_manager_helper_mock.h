@@ -24,7 +24,7 @@ namespace BackgroundTaskMgr {
 class MockBundleManagerHelper final : public IBundleManagerHelper
 {
 public:
-    ~IBundleManagerHelper() override = default;
+    ~MockBundleManagerHelper() override = default;
 
     MOCK_METHOD4(GetApplicationInfo, bool(const std::string &, const AppExecFwk::ApplicationFlag,
         const int, AppExecFwk::ApplicationInfo &));
