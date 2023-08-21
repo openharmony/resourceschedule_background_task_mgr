@@ -133,7 +133,10 @@ ohos_unittest("efficiency_mgr_unit_test") {
 
 ohos_unittest("mock_efficiency_mgr_unit_test") {
   module_out_path = module_output_path
-  cflags_cc = []
+  cflags_cc = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
   include_dirs = [
     "${bgtaskmgr_services_path}/common/include",
     "${bgtaskmgr_services_path}/efficiency_resources/inlcude",

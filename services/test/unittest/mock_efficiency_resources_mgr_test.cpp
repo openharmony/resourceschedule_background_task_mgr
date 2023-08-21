@@ -20,8 +20,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#define private public
-
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_subscriber.h"
 #include "bg_efficiency_resources_mgr.h"
@@ -39,7 +37,6 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 static constexpr int32_t CPU_INDEX = 1;
 static constexpr int32_t TIMER_INDEX = 3;
-static constexpr int32_t WAIT_TIME = 1000;
 static const uint32_t MAX_RESOURCES_TYPE_NUM = ResourceTypeName.size();
 static const uint32_t MAX_RESOURCES_MASK = (1 << MAX_RESOURCES_TYPE_NUM) - 1;
 
@@ -51,11 +48,11 @@ public:
     void TearDown();
 
     static std::shared_ptr<BgEfficiencyResourcesMgr> bgEfficiencyResourcesMgr_;
-    static std::shared_ptr<IBundleManagerHelper> bundleManagerHelperMock_;
+    static std::shared_ptr<MockBundleManagerHelper> bundleManagerHelperMock_;
 };
 
 std::shared_ptr<BgEfficiencyResourcesMgr> MockEfficiencyResourcesMgrTest::bgEfficiencyResourcesMgr_ = nullptr;
-std::shared_ptr<IBundleManagerHelper> MockEfficiencyResourcesMgrTest::bundleManagerHelperMock_ = nullptr;
+std::shared_ptr<MockBundleManagerHelper> MockEfficiencyResourcesMgrTest::bundleManagerHelperMock_ = nullptr;
 
 void MockEfficiencyResourcesMgrTest::SetUpTestCase()
 {

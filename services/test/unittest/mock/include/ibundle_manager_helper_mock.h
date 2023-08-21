@@ -21,8 +21,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class MockBundleManagerHelper final : public IBundleManagerHelper
-{
+class MockBundleManagerHelper final : public IBundleManagerHelper {
 public:
     ~MockBundleManagerHelper() override = default;
 

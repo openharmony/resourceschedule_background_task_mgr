@@ -85,8 +85,8 @@ bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const App
     return false;
 }
 
-bool WEAK_FUNC BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
-    const int userId, AppExecFwk::ApplicationInfo &appInfo)
+bool WEAK_FUNC BundleManagerHelper::GetApplicationInfo(const std::string &appName,
+    const AppExecFwk::ApplicationFlag flag, const int userId, AppExecFwk::ApplicationInfo &appInfo)
 {
     BGTASK_LOGD("start get application info");
     std::lock_guard<std::mutex> lock(connectionMutex_);
