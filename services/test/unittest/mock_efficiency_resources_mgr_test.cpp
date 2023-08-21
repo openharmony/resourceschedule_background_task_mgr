@@ -69,7 +69,7 @@ void MockEfficiencyResourcesMgrTest::TearDownTestCase()
 
 void MockEfficiencyResourcesMgrTest::SetUp()
 {
-    bundleManagerHelperMock_ = std::make_shared<IBundleManagerHelper>();
+    bundleManagerHelperMock_ = std::make_shared<MockBundleManagerHelper>();
     SetBundleManagerHelper(bundleManagerHelperMock_);
 }
 
