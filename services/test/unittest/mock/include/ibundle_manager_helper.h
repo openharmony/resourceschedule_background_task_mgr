@@ -22,11 +22,11 @@ class IBundleManagerHelper {
 public:
     virtual ~IBundleManagerHelper() = default;
     virtual bool GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
-        const int userId, AppExecFwk::ApplicationInfo &appInfo);
+        const int userId, AppExecFwk::ApplicationInfo &appInfo) = 0;
 };
 
 void SetBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock);
-void CleanBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock);
+void CleanBundleManagerHelper();
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TEST_IBUNDLE_MANAGER_HELPER_H

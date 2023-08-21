@@ -38,7 +38,7 @@ void SetBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
     bundleManagerHelperMock = mock;
 }
 
-void CleanBundleManagerHelper(std::shared_ptr<IBundleManagerHelper> mock)
+void CleanBundleManagerHelper()
 {
     bundleManagerHelperMock.reset();
 }

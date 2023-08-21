@@ -128,7 +128,7 @@ HWTEST_F(MockEfficiencyResourcesMgrTest, GetExemptedResourceType_003, TestSize.L
 HWTEST_F(MockEfficiencyResourcesMgrTest, GetExemptedResourceType_004, TestSize.Level1)
 {
     AppExecFwk::ApplicationInfo info {};
-    info1.resourcesApply = { CPU_INDEX };
+    info.resourcesApply = { CPU_INDEX };
     EXPECT_CALL(*bundleManagerHelperMock_, GetApplicationInfo(_, _, _, _))
         .WillOnce(DoAll(SetArgReferee<3>(info), Return(true)));
     auto exemptedType = bgEfficiencyResourcesMgr_->GetExemptedResourceType(MAX_RESOURCES_MASK, -1, "");

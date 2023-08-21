@@ -28,7 +28,7 @@ public:
 
     MOCK_METHOD4(GetApplicationInfo, bool(const std::string &, const AppExecFwk::ApplicationFlag,
         const int, AppExecFwk::ApplicationInfo &));
-}
+};
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TEST_IBUNDLE_MANAGER_HELPER_MOCK_H
