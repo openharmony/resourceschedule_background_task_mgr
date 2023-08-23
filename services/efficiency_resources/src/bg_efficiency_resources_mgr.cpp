@@ -748,21 +748,22 @@ uint32_t BgEfficiencyResourcesMgr::GetExemptedResourceType(uint32_t resourceNumb
 {
     const std::vector<int32_t>& resourcesApply = QueryRunningResourcesApply(uid, bundleName);
 
-    // this app is permitted to use all type of resources
-    if (std::find(resourcesApply.begin(), resourcesApply.end(), FREEZE_ALL_RESOURCES) != resourcesApply.end()) {
-        return resourceNumber;
-    }
-
     uint32_t exemptedResources = 0;
     if (resourcesApply.empty()) {
         return exemptedResources;
     }
 
-    // filter out unpermitted resource type
+    // application is permitted to use all type of resources if FREEZE_ALL_RESOURCES in resourceApply
+    if (std::find(resourcesApply.begin(), resourcesApply.end(), FREEZE_ALL_RESOURCES) != resourcesApply.end()) {
+        return resourceNumber;
+    }
+
+    // traverse resourcesApply and get exempted resource type
     for (const auto resourceType : resourcesApply) {
         if (resourceType < 0 || resourceType > MAX_RESOURCES_TYPE_NUM) {
             continue;
         }
+        // (1 << (resourceType - 1)) map number in resourceApply to resourceType defined in resource_type.h
         exemptedResources |= (1 << (resourceType - 1));
     }
     exemptedResources &= resourceNumber;
@@ -772,6 +773,8 @@ uint32_t BgEfficiencyResourcesMgr::GetExemptedResourceType(uint32_t resourceNumb
     return exemptedResources;
 }
 
+// meaning of number in resourcesApply list: 0 - all type of resources, 1 - cpu, 2 - COMMON_EVENT, 3 - TIMER,
+// 4 - WORK_SCHEDULER, 5 - BLUETOOTH, 6 - GPS, 7 - AUDIO, 8 - RUNNING_LOCK, 9 - SENSOR
 std::vector<int32_t> BgEfficiencyResourcesMgr::QueryRunningResourcesApply(const int32_t uid,
     const std::string &bundleName)
 {
