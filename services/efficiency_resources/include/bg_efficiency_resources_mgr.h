@@ -92,7 +92,8 @@ private:
     void RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit);
     void GetEfficiencyResourcesInfosInner(const ResourceRecordMap &infoMap,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &list);
-    bool CheckRunningResourcesApply(const int32_t uid, const std::string &bundleName);
+    uint32_t GetExemptedResourceType(uint32_t resourceNumber, const int32_t uid, const std::string &bundleName);
+    std::vector<int32_t> QueryRunningResourcesApply(const int32_t uid, const std::string &bundleName);
     bool CheckAlivedApp(int32_t uid);
     int32_t GetUserIdByUid(int32_t uid);
     void ApplyResourceForPkgAndProc(int32_t uid, int32_t pid, const std::string &bundleName,

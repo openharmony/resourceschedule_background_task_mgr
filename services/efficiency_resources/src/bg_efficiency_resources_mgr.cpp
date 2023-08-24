@@ -41,8 +41,9 @@ namespace {
     const uint32_t APP_MGR_READY = 1;
     const uint32_t BUNDLE_MGR_READY = 2;
     const uint32_t ALL_DEPENDS_READY = 3;
+    const uint32_t FREEZE_ALL_RESOURCES = 0;
     const uint32_t MAX_RESOURCES_TYPE_NUM = ResourceTypeName.size();
-    const uint32_t MAX_RESOURCE_NUMBER = (1 << ResourceTypeName.size()) - 1;
+    const uint32_t MAX_RESOURCE_MASK = (1 << ResourceTypeName.size()) - 1;
 }
 BgEfficiencyResourcesMgr::BgEfficiencyResourcesMgr() {}
 
@@ -207,7 +208,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string
     }
     BGTASK_LOGD("app died, uid: %{public}d, bundleName: %{public}s", uid, bundleName.c_str());
     handler_->PostTask([this, uid, bundleName, resetAll]() {
-        int resourceNumber = resetAll ? MAX_RESOURCE_NUMBER : (MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER ^
+        int resourceNumber = resetAll ? MAX_RESOURCE_MASK : (MAX_RESOURCE_MASK ^ ResourceType::WORK_SCHEDULER ^
             ResourceType::TIMER);
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             0, resourceNumber, bundleName);
@@ -226,7 +227,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
         uid, pid, bundleName.c_str());
     handler_->PostTask([this, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-            pid, MAX_RESOURCE_NUMBER ^ ResourceType::WORK_SCHEDULER ^ ResourceType::TIMER, bundleName);
+            pid, MAX_RESOURCE_MASK ^ ResourceType::WORK_SCHEDULER ^ ResourceType::TIMER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, true);
         if (!this->CheckAlivedApp(uid)) {
             this->ResetEfficiencyResourcesInner(callbackInfo, false);
@@ -262,7 +263,7 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
         BGTASK_LOGE("apply efficiency resource request params is null!");
         return false;
     }
-    if (resourceInfo->GetResourceNumber() == 0 || resourceInfo->GetResourceNumber() > MAX_RESOURCE_NUMBER
+    if (resourceInfo->GetResourceNumber() == 0 || resourceInfo->GetResourceNumber() > MAX_RESOURCE_MASK
         || (resourceInfo->IsApply() && !resourceInfo->IsPersist() && resourceInfo->GetTimeOut() == 0)) {
         BGTASK_LOGE("efficiency resources params invalid!");
         return false;
@@ -295,8 +296,11 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGE("apply efficiency resources failed,  %{public}s is not system app", bundleName.c_str());
         return ERR_BGTASK_NOT_SYSTEM_APP;
     }
-    if (!CheckRunningResourcesApply(uid, bundleName)) {
-        BGTASK_LOGE("apply efficiency resources failed, running resource apply is false");
+
+    auto exemptedResourceType = GetExemptedResourceType(resourceInfo->GetResourceNumber(), uid, bundleName);
+    resourceInfo->SetResourceNumber(exemptedResourceType);
+    if (exemptedResourceType == 0) {
+        BGTASK_LOGE("apply efficiency resources failed, no permitted resource type");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     ApplyResourceForPkgAndProc(uid, pid, bundleName, resourceInfo);
@@ -490,16 +494,16 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
         BGTASK_LOGE("reset efficiency resources failed, %{public}s is not system app", bundleName.c_str());
         return ERR_BGTASK_NOT_SYSTEM_APP;
     }
-    if (!CheckRunningResourcesApply(uid, bundleName)) {
-        BGTASK_LOGE("reset efficiency resources failed, running resource apply is false");
+
+    auto exemptedResourceType = GetExemptedResourceType(MAX_RESOURCE_MASK, uid, bundleName);
+    if (exemptedResourceType == 0) {
+        BGTASK_LOGE("reset efficiency resources failed, no permitted resource type");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
 
-    BGTASK_LOGD("reset efficiency resources uid : %{public}d, pid : %{public}d, resource number : %{public}d", uid,
-        pid, MAX_RESOURCE_NUMBER);
-    handler_->PostTask([this, uid, pid, bundleName]() {
+    handler_->PostTask([this, exemptedResourceType, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-            pid, MAX_RESOURCE_NUMBER, bundleName);
+            pid, exemptedResourceType, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, false);
     });
     return ERR_OK;
@@ -739,16 +743,50 @@ void BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfosInner(const ResourceRe
     }
 }
 
-bool BgEfficiencyResourcesMgr::CheckRunningResourcesApply(const int32_t uid, const std::string &bundleName)
+uint32_t BgEfficiencyResourcesMgr::GetExemptedResourceType(uint32_t resourceNumber, const int32_t uid,
+    const std::string &bundleName)
+{
+    const std::vector<int32_t>& resourcesApply = QueryRunningResourcesApply(uid, bundleName);
+
+    uint32_t exemptedResources = 0;
+    if (resourcesApply.empty()) {
+        return exemptedResources;
+    }
+
+    // application is permitted to use all type of resources if FREEZE_ALL_RESOURCES in resourceApply
+    if (std::find(resourcesApply.begin(), resourcesApply.end(), FREEZE_ALL_RESOURCES) != resourcesApply.end()) {
+        return resourceNumber;
+    }
+
+    // traverse resourcesApply and get exempted resource type
+    for (const auto resourceType : resourcesApply) {
+        if (resourceType < 0 || resourceType > MAX_RESOURCES_TYPE_NUM) {
+            continue;
+        }
+        // (1 << (resourceType - 1)) map number in resourceApply to resourceType defined in resource_type.h
+        exemptedResources |= (1 << (resourceType - 1));
+    }
+    exemptedResources &= resourceNumber;
+    BGTASK_LOGD("after filter, uid: %{public}d, bundleName: %{public}s, origin resource number: %{public}u, return "\
+        "resource number: %{public}u", uid, bundleName.c_str(), resourceNumber, exemptedResources);
+
+    return exemptedResources;
+}
+
+// meaning of number in resourcesApply list: 0 - all type of resources, 1 - cpu, 2 - COMMON_EVENT, 3 - TIMER,
+// 4 - WORK_SCHEDULER, 5 - BLUETOOTH, 6 - GPS, 7 - AUDIO, 8 - RUNNING_LOCK, 9 - SENSOR
+std::vector<int32_t> BgEfficiencyResourcesMgr::QueryRunningResourcesApply(const int32_t uid,
+    const std::string &bundleName)
 {
     AppExecFwk::ApplicationInfo applicationInfo;
     if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
         AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, GetUserIdByUid(uid), applicationInfo)) {
         BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
-        return false;
+        return {};
     }
-    BGTASK_LOGD("applicationInfo.runningResourcesApply is %{public}d", applicationInfo.runningResourcesApply);
-    return applicationInfo.runningResourcesApply;
+    BGTASK_LOGD("size of applicationInfo.resourcesApply is %{public}d",
+        static_cast<int32_t>(applicationInfo.resourcesApply.size()));
+    return applicationInfo.resourcesApply;
 }
 
 int32_t BgEfficiencyResourcesMgr::GetUserIdByUid(int32_t uid)
