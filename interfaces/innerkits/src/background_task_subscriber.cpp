@@ -66,15 +66,9 @@ const sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> BackgroundTas
 BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::BackgroundTaskSubscriberImpl(
     BackgroundTaskSubscriber &subscriber) : subscriber_(subscriber) {}
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnConnected()
-{
-    subscriber_.OnConnected();
-}
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnConnected() {}
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnDisconnected()
-{
-    subscriber_.OnDisconnected();
-}
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnDisconnected() {}
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyResourcesApply(
     const std::shared_ptr<ResourceCallbackInfo> &resourceInfo)
