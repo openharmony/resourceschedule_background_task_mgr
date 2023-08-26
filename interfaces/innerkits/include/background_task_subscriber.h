@@ -37,11 +37,13 @@ public:
 
     /**
      * Called back when the subscriber is connected to Background Task Manager Service.
+     * @deprecated
      */
     virtual void OnConnected();
 
     /**
      * Called back when the subscriber is disconnected from Background Task Manager Service.
+     * @deprecated
      */
     virtual void OnDisconnected();
 
