@@ -46,9 +46,11 @@ void CleanBundleManagerHelper()
 bool BundleManagerHelper::GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
     const int userId, AppExecFwk::ApplicationInfo &appInfo)
 {
-    bool ret {false};
+    bool ret {true};
     if (bundleManagerHelperMock) {
         ret = bundleManagerHelperMock->GetApplicationInfo(appName, flag, userId, appInfo);
+    } else {
+        appInfo.resourcesApply = { 0 };
     }
     return ret;
 }
