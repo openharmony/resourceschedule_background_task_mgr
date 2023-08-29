@@ -80,11 +80,6 @@ static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 
-static constexpr uint32_t WEBVIEW_PARAM_UID = 2;
-static constexpr uint32_t WEBVIEW_PARAM_BGMODE = 3;
-static constexpr uint32_t WEBVIEW_PARAM_IS_START = 4;
-static constexpr uint32_t WEBVIEW_PARAM_SIZE = 5;
-
 #ifndef HAS_OS_ACCOUNT_PART
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
@@ -967,28 +962,12 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
         DumpAllTaskInfo(dumpInfo);
     } else if (dumpOption[1] == DUMP_PARAM_CANCEL_ALL) {
         DumpCancelTask(dumpOption, true);
-    } else if (DumpCheckWebviewInfo(dumpOption)) {
-        sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
-            new ContinuousTaskParamForInner());
-        taskParam->uid_ = std::stoi(dumpOption[WEBVIEW_PARAM_UID]);
-        taskParam->bgModeId_ = static_cast<uint32_t>(std::stoi(dumpOption[WEBVIEW_PARAM_BGMODE]));
-        taskParam->isStart_ = dumpOption[WEBVIEW_PARAM_IS_START] == "Start" ? true : false;
-        RequestBackgroundRunningForInner(taskParam);
     } else if (dumpOption[1] == DUMP_PARAM_CANCEL) {
         DumpCancelTask(dumpOption, false);
     } else {
         BGTASK_LOGW("invalid dump param");
     }
     return ERR_OK;
-}
-
-bool BgContinuousTaskMgr::DumpCheckWebviewInfo(const std::vector<std::string> &dumpOption)
-{
-    return (dumpOption[1] == "Webview" && dumpOption.size() == WEBVIEW_PARAM_SIZE
-        && !dumpOption[WEBVIEW_PARAM_UID].empty() && !dumpOption[WEBVIEW_PARAM_BGMODE].empty()
-        && dumpOption[WEBVIEW_PARAM_UID].find_first_not_of("0123456789") == std::string::npos
-        && dumpOption[WEBVIEW_PARAM_BGMODE].find_first_not_of("0123456789") == std::string::npos
-        && (dumpOption[WEBVIEW_PARAM_IS_START] == "Start" || dumpOption[WEBVIEW_PARAM_IS_START] == "Stop"));
 }
 
 void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
