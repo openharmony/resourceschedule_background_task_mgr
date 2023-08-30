@@ -54,7 +54,11 @@ pid_t IPCSkeleton::GetCallingPid()
 
 pid_t IPCSkeleton::GetCallingUid()
 {
-    return DebugGetUidByBundleName("com.ohos.launcher", DEFAULT_UID);
+    int32_t uid = DebugGetUidByBundleName("com.ohos.launcher", DEFAULT_UID);
+    if (uid == -1) {
+        uid = DebugGetUidByBundleName("com.ohos.sceneboard", DEFAULT_UID);
+    }
+    return uid;
 }
 
 std::string IPCSkeleton::ResetCallingIdentity()
