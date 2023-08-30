@@ -30,7 +30,6 @@
 #include "iservice_registry.h"
 #include "resources_subscriber_mgr.h"
 #include "system_ability_definition.h"
-#include "want_agent.h"
 
 using namespace testing::ext;
 
@@ -40,6 +39,7 @@ namespace {
 static constexpr int32_t SLEEP_TIME = 500;
 static constexpr int32_t DEFAULT_USERID = 100;
 static constexpr char LAUNCHER_BUNDLE_NAME[] = "com.ohos.launcher";
+static constexpr char SCB_BUNDLE_NAME[] = "com.ohos.sceneboard";
 }
 class BgTaskManagerUnitTest : public testing::Test {
 public:
@@ -120,6 +120,9 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_019, TestSize.Level1)
     EXPECT_EQ(bgTransientTaskMgr_->IsCallingInfoLegal(-1, -1, bundleName, nullptr), ERR_BGTASK_INVALID_PID_OR_UID);
     EXPECT_EQ(bgTransientTaskMgr_->IsCallingInfoLegal(1, 1, bundleName, nullptr), ERR_BGTASK_INVALID_BUNDLE_NAME);
     int32_t uid = GetUidByBundleName(LAUNCHER_BUNDLE_NAME, DEFAULT_USERID);
+    if (uid == -1) {
+        uid = GetUidByBundleName(SCB_BUNDLE_NAME, DEFAULT_USERID);
+    }
     EXPECT_EQ(bgTransientTaskMgr_->IsCallingInfoLegal(uid, 1, bundleName, nullptr), ERR_BGTASK_INVALID_CALLBACK);
     sptr<ExpiredCallbackProxy> proxy1 = sptr<ExpiredCallbackProxy>(new ExpiredCallbackProxy(nullptr));
     EXPECT_EQ(bgTransientTaskMgr_->IsCallingInfoLegal(uid, 1, bundleName, proxy1), ERR_BGTASK_INVALID_CALLBACK);
@@ -192,8 +195,13 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_022, TestSize.Level1)
     EXPECT_EQ(bgTransientTaskMgr_->CancelSuspendDelay(-1), ERR_BGTASK_SYS_NOT_READY);
     bgTransientTaskMgr_->isReady_.store(true);
     EXPECT_EQ(bgTransientTaskMgr_->CancelSuspendDelay(1), ERR_BGTASK_INVALID_REQUEST_ID);
-    int32_t uid = GetUidByBundleName(LAUNCHER_BUNDLE_NAME, 100);
-    auto keyInfo = std::make_shared<KeyInfo>(LAUNCHER_BUNDLE_NAME, uid);
+    std::string bundleName = LAUNCHER_BUNDLE_NAME;
+    int32_t uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
+    if (uid == -1) {
+        bundleName = SCB_BUNDLE_NAME;
+        uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
+    }
+    auto keyInfo = std::make_shared<KeyInfo>(bundleName, uid);
     bgTransientTaskMgr_->keyInfoMap_[1] = keyInfo;
     bgTransientTaskMgr_->CancelSuspendDelay(1);
     EXPECT_TRUE(true);
@@ -250,8 +258,13 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_025, TestSize.Level1)
     EXPECT_EQ(bgTransientTaskMgr_->GetRemainingDelayTime(-1, delayTime), ERR_BGTASK_SYS_NOT_READY);
     bgTransientTaskMgr_->isReady_.store(true);
     EXPECT_EQ(bgTransientTaskMgr_->GetRemainingDelayTime(1, delayTime), ERR_BGTASK_INVALID_REQUEST_ID);
-    int32_t uid = GetUidByBundleName(LAUNCHER_BUNDLE_NAME, DEFAULT_USERID);
-    auto keyInfo = std::make_shared<KeyInfo>(LAUNCHER_BUNDLE_NAME, uid);
+    std::string bundleName = LAUNCHER_BUNDLE_NAME;
+    int32_t uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
+    if (uid == -1) {
+        bundleName = SCB_BUNDLE_NAME;
+        uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
+    }
+    auto keyInfo = std::make_shared<KeyInfo>(bundleName, uid);
     bgTransientTaskMgr_->keyInfoMap_[1] = keyInfo;
     bgTransientTaskMgr_->GetRemainingDelayTime(1, delayTime);
     EXPECT_TRUE(true);
