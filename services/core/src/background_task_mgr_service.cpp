@@ -164,8 +164,7 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
         BGTASK_LOGD("all bgtask subscribe success");
         return ERR_OK;
     } else {
-        BGTASK_LOGD("subscribe background task failed");
-        UnsubscribeBackgroundTask(subscriber);
+        BGTASK_LOGW("subscribe background task failed");
     }
     return ERR_BGTASK_SYS_NOT_READY;
 }
