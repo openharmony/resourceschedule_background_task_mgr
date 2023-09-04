@@ -760,7 +760,7 @@ uint32_t BgEfficiencyResourcesMgr::GetExemptedResourceType(uint32_t resourceNumb
 
     // traverse resourcesApply and get exempted resource type
     for (const auto resourceType : resourcesApply) {
-        if (resourceType < 0 || resourceType > MAX_RESOURCES_TYPE_NUM) {
+        if (resourceType < 0 || resourceType > static_cast<int32_t>(MAX_RESOURCES_TYPE_NUM)) {
             continue;
         }
         // (1 << (resourceType - 1)) map number in resourceApply to resourceType defined in resource_type.h
