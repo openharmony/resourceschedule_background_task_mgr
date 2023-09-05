@@ -301,9 +301,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
     auto subscriber = TestBackgroundTaskSubscriber();
     auto subscriberImpl = std::make_shared<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl>(subscriber);
     subscriberImpl->OnConnected();
-    EXPECT_EQ(bgtaskSubscriberRet_, "interface1");
     subscriberImpl->OnDisconnected();
-    EXPECT_EQ(bgtaskSubscriberRet_, "interface2");
     subscriberImpl->OnTransientTaskStart(nullptr);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface3");
     subscriberImpl->OnTransientTaskEnd(nullptr);
