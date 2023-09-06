@@ -502,6 +502,15 @@ public:
      * @return true if add resource path success, else false
      */
     virtual bool RemoveAppOverlay(const std::string &path);
+
+    /**
+     * Get the rawFile descriptor from resource name
+     *
+     * @param name the resource name
+     * @param descriptor the obtain raw file member fd, length, offet write to
+     * @return SUCCESS if resource exist, else ERROR
+     */
+    virtual RState GetRawFdNdkFromHap(const std::string &name, RawFileDescriptor &descriptor);
 };
 } // namespace Resource
 } // namespace Global
