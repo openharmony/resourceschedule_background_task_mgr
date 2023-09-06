@@ -310,6 +310,11 @@ bool RemoveOverlayResource(const std::string &path)
 {
     return true;
 }
+
+RState GetRawFdNdkFromHap(const std::string &name, ResourceManager::RawFileDescriptor &descriptor)
+{
+    return SUCCESS;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS
