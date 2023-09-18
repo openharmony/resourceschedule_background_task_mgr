@@ -54,8 +54,8 @@ void EventHandler::RemoveEvent(uint32_t innerEventId, int64_t param) {}
 
 void EventHandler::RemoveTask(const std::string &name) {}
 
-ErrCode EventHandler::AddFileDescriptorListener(
-    int32_t fileDescriptor, uint32_t events, const std::shared_ptr<FileDescriptorListener> &listener)
+ErrCode EventHandler::AddFileDescriptorListener(int32_t fileDescriptor, uint32_t events,
+    const std::shared_ptr<FileDescriptorListener> &listener, const std::string &taskName)
 {
     return EVENT_HANDLER_ERR_INVALID_PARAM;
 }
