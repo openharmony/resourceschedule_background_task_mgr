@@ -396,8 +396,7 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_002, TestSize.Level1)
     decisionMaker->pkgDelaySuspendInfoMap_.clear();
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo] = pkgDelaySuspendInfo;
     auto keyInfo2 = std::make_shared<KeyInfo>("bundleName2", TEST_NUM_TWO);
-    auto pkgDelaySuspendInfo2 = std::make_shared<PkgDelaySuspendInfo>(
-        "bundleName2", TEST_NUM_TWO, timerManager);
+    auto pkgDelaySuspendInfo2 = std::make_shared<PkgDelaySuspendInfo>("bundleName2", TEST_NUM_TWO, timerManager);
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo2] = pkgDelaySuspendInfo2;
     decisionMaker->ResetDayQuotaLocked();
 
