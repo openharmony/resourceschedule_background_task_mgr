@@ -315,6 +315,11 @@ RState GetRawFdNdkFromHap(const std::string &name, ResourceManager::RawFileDescr
 {
     return SUCCESS;
 }
+
+RState GetResId(const std::string &resTypeName, uint32_t &resId)
+{
+    return SUCCESS;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS

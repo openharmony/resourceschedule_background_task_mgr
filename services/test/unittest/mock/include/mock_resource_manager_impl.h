@@ -511,6 +511,15 @@ public:
      * @return SUCCESS if resource exist, else ERROR
      */
     virtual RState GetRawFdNdkFromHap(const std::string &name, RawFileDescriptor &descriptor);
+
+    /**
+     * Get the resource id by resType and resName
+     *
+     * @param resTypeName the resType and resName
+     * @param resId the resId write to
+     * @return SUCCESS if resource exist, else ERROR
+     */
+    virtual RState GetResId(const std::string &resTypeName, uint32_t &resId);
 };
 } // namespace Resource
 } // namespace Global
