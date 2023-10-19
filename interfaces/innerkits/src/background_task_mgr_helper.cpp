@@ -66,6 +66,16 @@ ErrCode BackgroundTaskMgrHelper::GetEfficiencyResourcesInfos(std::vector<std::sh
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetEfficiencyResourcesInfos(appList, procList);
 }
 
+ErrCode BackgroundTaskMgrHelper::ApplyEfficiencyResources(const EfficiencyResourceInfo &resourceInfo)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(resourceInfo);
+}
+
+ErrCode BackgroundTaskMgrHelper::ResetAllEfficiencyResources()
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources();
+}
+
 ErrCode BackgroundTaskMgrHelper::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(uid, pid, taskType);

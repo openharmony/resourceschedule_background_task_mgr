@@ -17,6 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_TASK_MGR_HELPER_H
 
 #include "background_task_subscriber.h"
+#include "efficiency_resource_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -86,6 +87,21 @@ public:
      */
     static ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList);
+
+    /**
+     * @brief Apply or unapply efficiency resources.
+     *
+     * @param resourceInfo Request params.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    static ErrCode ApplyEfficiencyResources(const EfficiencyResourceInfo &resourceInfo);
+
+    /**
+     * @brief Reset all efficiency resources.
+     *
+     * @return ERR_OK if success, else fail.
+     */
+    static ErrCode ResetAllEfficiencyResources();
 
     /**
      * @brief Request stop continuous task.
