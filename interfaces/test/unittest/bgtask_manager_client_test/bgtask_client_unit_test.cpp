@@ -280,6 +280,29 @@ HWTEST_F(BgTaskClientUnitTest, GetEfficiencyResourcesInfos_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: ApplyEfficiencyResources_001
+ * @tc.desc: test ApplyEfficiencyResources interface.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, ApplyEfficiencyResources_001, TestSize.Level1)
+{
+    EfficiencyResourceInfo resourceInfo = EfficiencyResourceInfo();
+    EXPECT_NE(BackgroundTaskMgrHelper::ApplyEfficiencyResources(resourceInfo), ERR_OK);
+}
+
+/**
+ * @tc.name: ResetAllEfficiencyResources_001
+ * @tc.desc: test ResetAllEfficiencyResources interface.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, ResetAllEfficiencyResources_001, TestSize.Level1)
+{
+    EXPECT_NE((int32_t)BackgroundTaskMgrHelper::ResetAllEfficiencyResources(), (int32_t)ERR_OK);
+}
+
+/**
  * @tc.name: StopContinuousTask_001
  * @tc.desc: request stop target continuous task api test.
  * @tc.type: FUNC
