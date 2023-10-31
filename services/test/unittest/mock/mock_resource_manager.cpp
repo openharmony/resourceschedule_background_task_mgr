@@ -320,6 +320,8 @@ RState GetResId(const std::string &resTypeName, uint32_t &resId)
 {
     return SUCCESS;
 }
+
+void GetLocales(std::vector<std::string> &outValue, bool includeSystem = false) {}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS
