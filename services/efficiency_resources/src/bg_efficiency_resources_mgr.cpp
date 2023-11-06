@@ -174,7 +174,14 @@ void BgEfficiencyResourcesMgr::CheckPersistenceData(const std::vector<AppExecFwk
         runningUid.emplace(iter.uid_);
         runningPid.emplace(iter.pid_);
     });
-    auto removeUid = [&runningUid](const auto &iter) { return runningUid.find(iter.first) == runningUid.end(); };
+    auto removeUid = [&runningUid](const auto &iter) {
+        std::shared_ptr<ResourceApplicationRecord> record = iter.second;
+        if ((record->GetResourceNumber() & ResourceType::WORK_SCHEDULER) != 0 ||
+            (record->GetResourceNumber() & ResourceType::TIMER) != 0) {
+                return false;
+            }
+	    return runningUid.find(iter.first) == runningUid.end(); 
+    };
     EraseRecordIf(appResourceApplyMap_, removeUid);
     auto removePid = [&runningPid](const auto &iter)  { return runningPid.find(iter.first) == runningPid.end(); };
     EraseRecordIf(procResourceApplyMap_, removePid);
