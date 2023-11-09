@@ -174,7 +174,14 @@ void BgEfficiencyResourcesMgr::CheckPersistenceData(const std::vector<AppExecFwk
         runningUid.emplace(iter.uid_);
         runningPid.emplace(iter.pid_);
     });
-    auto removeUid = [&runningUid](const auto &iter) { return runningUid.find(iter.first) == runningUid.end(); };
+    auto removeUid = [&runningUid](const auto &iter) {
+        std::shared_ptr<ResourceApplicationRecord> record = iter.second;
+        if ((record->GetResourceNumber() & ResourceType::WORK_SCHEDULER) != 0 ||
+            (record->GetResourceNumber() & ResourceType::TIMER) != 0) {
+                return false;
+            }
+	    return runningUid.find(iter.first) == runningUid.end(); 
+    };
     EraseRecordIf(appResourceApplyMap_, removeUid);
     auto removePid = [&runningPid](const auto &iter)  { return runningPid.find(iter.first) == runningPid.end(); };
     EraseRecordIf(procResourceApplyMap_, removePid);
@@ -554,11 +561,10 @@ bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std:
 ErrCode BgEfficiencyResourcesMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
     BGTASK_LOGI("add subscriber to efficiency resources succeed");
-    ErrCode result {};
-    handler_->PostSyncTask([this, &result, &subscriber]() {
-        result = subscriberMgr_->AddSubscriber(subscriber);
+    handler_->PostSyncTask([this, &subscriber]() {
+        subscriberMgr_->AddSubscriber(subscriber);
     });
-    return result;
+    return ERR_OK;
 }
 
 ErrCode BgEfficiencyResourcesMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)

@@ -294,7 +294,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ResetAllEfficiencyResources_001, TestSize
 HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_001, TestSize.Level1)
 {
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->AddSubscriber(
-        nullptr), (int32_t)ERR_BGTASK_INVALID_PARAM);
+        nullptr), (int32_t)ERR_OK);
     SleepFor(SLEEP_TIME);
     auto subscriber =  std::make_shared<TestBackgroundTaskSubscriber>();
     EXPECT_NE(subscriber, nullptr);

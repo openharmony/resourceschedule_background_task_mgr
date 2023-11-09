@@ -361,6 +361,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool is
         BGTASK_LOGE("Get ability context failed");
         Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
         asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
+        return WrapVoidToJS(env);
     }
 
     // argv[1] : bgMode : BackgroundMode
@@ -368,6 +369,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool is
         BGTASK_LOGE("input bgmode param not number");
         Common::HandleParamErr(env, ERR_BGMODE_NULL_OR_TYPE_ERR, isThrow);
         asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
+        return WrapVoidToJS(env);
     }
 
     // argv[2] : wantAgent: WantAgent
@@ -375,6 +377,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool is
         BGTASK_LOGE("input wantAgent param is not object");
         Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR, isThrow);
         asyncCallbackInfo->errCode = ERR_WANTAGENT_NULL_OR_TYPE_ERR;
+        return WrapVoidToJS(env);
     }
 
     napi_value ret {nullptr};
@@ -528,6 +531,7 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info, bool isT
         BGTASK_LOGE("Get ability context failed");
         Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
         asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
+        return nullptr;
     }
 
     napi_value ret {nullptr};

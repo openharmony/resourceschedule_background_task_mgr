@@ -511,6 +511,25 @@ public:
      * @return SUCCESS if resource exist, else ERROR
      */
     virtual RState GetRawFdNdkFromHap(const std::string &name, RawFileDescriptor &descriptor);
+
+    /**
+     * Get the resource id by resType and resName
+     *
+     * @param resTypeName the resType and resName
+     * @param resId the resId write to
+     * @return SUCCESS if resource exist, else ERROR
+     */
+    virtual RState GetResId(const std::string &resTypeName, uint32_t &resId);
+
+    /**
+     * Get locale list
+     *
+     * @param outValue the locales write to, the locale string is divided into three parts: language,
+     *     script (optional), and region (optional), concatenated by the connector (-).
+     * @param includeSystem the parameter controls whether to include system resources,
+     *     the default value is false, it has no effect when only system resources query the locales list.
+     */
+    virtual void GetLocales(std::vector<std::string> &outValue, bool includeSystem = false);
 };
 } // namespace Resource
 } // namespace Global
