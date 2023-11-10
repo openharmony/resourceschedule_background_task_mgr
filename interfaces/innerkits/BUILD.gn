@@ -24,6 +24,12 @@ config("bgtaskmgr_innerkits_public_config") {
 }
 
 ohos_shared_library("bgtaskmgr_innerkits") {
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "${bgtaskmgr_frameworks_path}/common/src/bgtaskmgr_log_wrapper.cpp",
     "${bgtaskmgr_frameworks_path}/src/background_task_manager.cpp",
