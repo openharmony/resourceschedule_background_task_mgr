@@ -46,6 +46,7 @@
 #ifdef SUPPORT_GRAPHICS
 #include "locale_config.h"
 #endif // SUPPORT_GRAPHICS
+#include "background_mode.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -683,6 +684,11 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     if (appName.empty() || notificationText.empty()) {
         BGTASK_LOGE("get notification prompt info failed");
         return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
+    if (continuousTaskRecord->GetBgModeId() == BackgroundMode::AUDIO_PLAYBACK) {
+        BGTASK_LOGI("background mode AUDIO_PLAYBACK don't send notification, bundle name:%{public}s",
+            continuousTaskRecord->GetBundleName().c_str());
+        return ERR_OK;
     }
 
     return NotificationTools::GetInstance()->PublishNotification(continuousTaskRecord,

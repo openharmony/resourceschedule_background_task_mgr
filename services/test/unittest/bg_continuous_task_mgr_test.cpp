@@ -836,5 +836,26 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_045, TestSize.Level1)
     allProcesses.push_back(info2);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckProcessUidInfo(allProcesses, TEST_NUM_TWO), true);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_046
+ * @tc.desc: test SendContinuousTaskNotification.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_046, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->bgModeId_ = 2;
+    continuousTaskRecord->isNewApi_ = true;
+    continuousTaskRecord->uid_ = 1;
+
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["abilityName"] = 2;
+    info.appName_ = "appName";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+    
+    EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(continuousTaskRecord), ERR_OK);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
