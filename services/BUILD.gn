@@ -126,12 +126,6 @@ ohos_shared_library("bgtaskmgr_service") {
 }
 
 ohos_static_library("bgtaskmgr_service_static") {
-  branch_protector_ret = "pac_ret"
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-  }
   cflags_cc = [ "-DBGTASK_MGR_UNIT_TEST" ]
   sources = BgTaskMgrServicecSrc
 
