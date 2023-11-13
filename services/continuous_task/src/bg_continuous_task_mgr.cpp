@@ -744,7 +744,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     }
 
     ErrCode result = ERR_OK;
-    if (!iter->second->isFromWebview_) {
+    if (!iter->second->isFromWebview_ && iter->second->GetBgModeId() != BackgroundMode::AUDIO_PLAYBACK) {
         result = NotificationTools::GetInstance()->CancelNotification(
             iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
     }
