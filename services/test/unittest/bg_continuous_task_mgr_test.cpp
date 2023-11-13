@@ -172,6 +172,25 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: StopBackgroundRunning_002
+ * @tc.desc: stop background runnging test.
+ * @tc.type: FUNC
+ * @tc.require: issues#I8FWJH
+ */
+HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_002, TestSize.Level1)
+{
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
+    EXPECT_NE(taskParam, nullptr);
+    taskParam->appName_ = "Entry";
+    taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
+    taskParam->abilityName_ = "ability1";
+    taskParam->bgModeId_ = 2;
+    bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
+    SleepForFC();
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_OK);
+}
+
+/**
  * @tc.name: SubscribeContinuousTask_001
  * @tc.desc: subscribe continuous task event callback test.
  * @tc.type: FUNC
