@@ -28,11 +28,13 @@
 #include "string_ex.h"
 
 #include "bgtaskmgr_log_wrapper.h"
+#include <parameters.h>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
+const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
@@ -229,8 +231,26 @@ ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, u
     return ERR_OK;
 }
 
+bool BackgroundTaskMgrService::AllowDump()
+{
+    if (ENG_MODE == 0) {
+        BGTASK_LOGE("Not eng mode");
+        return false;
+    }
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetFirstTokenID();
+    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, "ohos.permission.DUMP");
+    if (ret != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
+        BGTASK_LOGE("CheckPermission failed");
+        return false;
+    }
+    return true;
+}
+
 int32_t BackgroundTaskMgrService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
+    if (!AllowDump()) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
     std::vector<std::string> argsInStr;
     std::transform(args.begin(), args.end(), std::back_inserter(argsInStr),
         [](const std::u16string &arg) {
