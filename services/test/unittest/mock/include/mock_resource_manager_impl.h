@@ -18,6 +18,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <tuple>
 #include "resource_manager.h"
 
 namespace OHOS {
@@ -530,6 +531,32 @@ public:
      *     the default value is false, it has no effect when only system resources query the locales list.
      */
     virtual void GetLocales(std::vector<std::string> &outValue, bool includeSystem = false);
+
+    /**
+     * Get the drawable information for given resId, mainly about type, len, buffer
+     * @param id the resource id
+     * @param drawableInfo the drawable info
+     * @param outValue the drawable buffer write to
+     * @param iconType the drawable type
+     * @param density the drawable density
+     * @return SUCCESS if resource exist, else not found
+     */
+    virtual RState GetDrawableInfoById(uint32_t id,
+        std::tuple<std::string, size_t, std::string> &drawableInfo,
+        std::unique_ptr<uint8_t[]> &outValue, uint32_t iconType, uint32_t density = 0);
+
+    /**
+     * Get the drawable information for given resName, mainly about type, len, buffer
+     * @param name the resource Name
+     * @param drawableInfo the drawable info
+     * @param outValue the drawable buffer write to
+     * @param iconType the drawable type
+     * @param density the drawable density
+     * @return SUCCESS if resource exist, else not found
+     */
+    virtual RState GetDrawableInfoByName(const char *name,
+        std::tuple<std::string, size_t, std::string> &drawableInfo,
+        std::unique_ptr<uint8_t[]> &outValue, uint32_t iconType, uint32_t density = 0);
 };
 } // namespace Resource
 } // namespace Global

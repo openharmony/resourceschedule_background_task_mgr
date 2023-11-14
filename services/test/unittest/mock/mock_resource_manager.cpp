@@ -284,12 +284,6 @@ RState ResourceManagerImpl::GetDrawableInfoByName(const char *name, std::string 
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetStringFormatById(uint32_t id, std::string &outValue,
-    std::vector<std::tuple<ResourceManager::NapiValueType, std::string>> &jsParams)
-{
-    return SUCCESS;
-}
-
 RState ResourceManagerImpl::GetStringFormatByName(const char *name, std::string &outValue,
     std::vector<std::tuple<ResourceManager::NapiValueType, std::string>> &jsParams)
 {
@@ -322,6 +316,20 @@ RState GetResId(const std::string &resTypeName, uint32_t &resId)
 }
 
 void GetLocales(std::vector<std::string> &outValue, bool includeSystem = false) {}
+
+RState ResourceManagerImpl::GetDrawableInfoById(uint32_t id,
+    std::tuple<std::string, size_t, std::string> &drawableInfo,
+    std::unique_ptr<uint8_t[]> &outValue, uint32_t iconType, uint32_t density)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetDrawableInfoByName(const char *name,
+    std::tuple<std::string, size_t, std::string> &drawableInfo,
+    std::unique_ptr<uint8_t[]> &outValue, uint32_t iconType, uint32_t density)
+{
+    return SUCCESS;
+}
 }  // namespace Resource
 }  // namespace Global
 }  // namespace OHOS
