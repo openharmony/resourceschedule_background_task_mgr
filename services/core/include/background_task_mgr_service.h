@@ -77,6 +77,7 @@ public:
 private:
     void Init();
     void DumpUsage(std::string &result);
+    bool AllowDump();
     bool CheckCallingToken();
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
