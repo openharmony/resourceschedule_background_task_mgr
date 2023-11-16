@@ -39,7 +39,8 @@ public:
     void OnEnabledNotificationChanged(
         const std::shared_ptr<Notification::EnabledNotificationCallbackData> &callbackData) override;
     void OnBadgeChanged(const std::shared_ptr<Notification::BadgeNumberCallbackData> &badgeData) override;
-
+    void OnBatchCanceled(const std::vector<std::shared_ptr<Notification::Notification>> &requestList,
+        const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap, int32_t deleteReason) override;
 private:
     std::vector<std::string> StringSplit(const std::string &str, const char &delim);
 

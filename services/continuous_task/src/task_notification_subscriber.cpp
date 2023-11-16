@@ -101,6 +101,9 @@ void TaskNotificationSubscriber::OnEnabledNotificationChanged(
 
 void TaskNotificationSubscriber::OnBadgeChanged(const std::shared_ptr<Notification::BadgeNumberCallbackData> &badgeData) {}
 
+void TaskNotificationSubscriber::OnBatchCanceled(const std::vector<std::shared_ptr<Notification::Notification>>
+    &requestList, const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap, int32_t deleteReason) {}
+
 std::vector<std::string> TaskNotificationSubscriber::StringSplit(const std::string &str, const char &delim)
 {
     std::vector<std::string> ret;
