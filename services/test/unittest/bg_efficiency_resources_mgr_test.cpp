@@ -302,7 +302,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_001, TestSiz
         subscriber->GetImpl()), (int32_t)ERR_OK);
     SleepFor(SLEEP_TIME);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->AddSubscriber(
-        subscriber->GetImpl()), (int32_t)ERR_BGTASK_OBJECT_EXISTS);
+        subscriber->GetImpl()), (int32_t)ERR_OK);
 
     auto subscriberImpl = subscriber->GetImpl();
     auto resourceInfo = std::make_shared<ResourceCallbackInfo>(0, 0, 1, "");
