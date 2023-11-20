@@ -242,6 +242,13 @@ void PromiseCompletedCB(napi_env env, napi_status status, void *data)
     }
 }
 
+void ReportXPowerJsStackSysEventByType(napi_env env, const std::string &taskType)
+{
+    #ifdef SUPPORT_JSSTACK
+        HiviewDFX::ReportXPowerJsStackSysEvent(env, taskType);
+    #endif
+}
+
 napi_value StartBackgroundRunningAsync(napi_env env, napi_value *argv,
     const uint32_t argCallback, AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
 {
@@ -337,9 +344,7 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value,
 
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool isThrow)
 {
-#ifdef SUPPORT_JSSTACK
-    HiviewDFX::ReportXPowerJsStackSysEvent(env, "CONTINUOUS_TASK_APPLY");
-#endif
+    ReportXPowerJsStackSysEventByType(env, "CONTINUOUS_TASK_APPLY");
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo == nullpter");
@@ -506,9 +511,7 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
 
 napi_value StopBackgroundRunning(napi_env env, napi_callback_info info, bool isThrow)
 {
-#ifdef SUPPORT_JSSTACK
-    HiviewDFX::ReportXPowerJsStackSysEvent(env, "CONTINUOUS_TASK_CANCEL");
-#endif
+    ReportXPowerJsStackSysEventByType(env, "CONTINUOUS_TASK_CANCEL");
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo is nullpter");
