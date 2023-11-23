@@ -21,7 +21,7 @@ ExpiredCallback::ExpiredCallback() {}
 
 ExpiredCallback::~ExpiredCallback() {}
 
-void ExpiredCallback::Init()
+__attribute__((no_sanitize("cfi"))) void ExpiredCallback::Init()
 {
     impl_ = new (std::nothrow) ExpiredCallbackImpl(shared_from_this());
 }

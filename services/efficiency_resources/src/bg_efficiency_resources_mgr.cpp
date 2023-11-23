@@ -120,7 +120,7 @@ void BgEfficiencyResourcesMgr::OnRemoveSystemAbility(int32_t systemAbilityId, co
     }
 }
 
-void BgEfficiencyResourcesMgr::RegisterAppStateObserver()
+__attribute__((no_sanitize("cfi"))) void BgEfficiencyResourcesMgr::RegisterAppStateObserver()
 {
     appStateObserver_ = DelayedSingleton<AppStateObserver>::GetInstance();
     if (appStateObserver_) {
@@ -187,7 +187,8 @@ void BgEfficiencyResourcesMgr::CheckPersistenceData(const std::vector<AppExecFwk
     EraseRecordIf(procResourceApplyMap_, removePid);
 }
 
-void BgEfficiencyResourcesMgr::RecoverDelayedTask(bool isProcess, ResourceRecordMap& infoMap)
+__attribute__((no_sanitize("cfi"))) void BgEfficiencyResourcesMgr::RecoverDelayedTask(bool isProcess,
+    ResourceRecordMap& infoMap)
 {
     BGTASK_LOGD("start to recovery delayed task");
     const auto &mgr = shared_from_this();
@@ -394,8 +395,8 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
         appResourceApplyMap_, procResourceApplyMap_);
 }
 
-void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo>
-    &callbackInfo, std::shared_ptr<ResourceApplicationRecord> &record,
+__attribute__((no_sanitize("cfi"))) void BgEfficiencyResourcesMgr::UpdateResourcesEndtime(
+    const std::shared_ptr<ResourceCallbackInfo> &callbackInfo, std::shared_ptr<ResourceApplicationRecord> &record,
     const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
     for (uint32_t resourceIndex = 0; resourceIndex < MAX_RESOURCES_TYPE_NUM; ++resourceIndex) {

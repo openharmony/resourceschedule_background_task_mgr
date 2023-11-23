@@ -290,7 +290,7 @@ bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
     return res;
 }
 
-bool BgContinuousTaskMgr::RegisterAppStateObserver()
+__attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterAppStateObserver()
 {
     bool res = true;
     appStateObserver_ = DelayedSingleton<AppStateObserver>::GetInstance();
@@ -302,7 +302,7 @@ bool BgContinuousTaskMgr::RegisterAppStateObserver()
     return res;
 }
 
-bool BgContinuousTaskMgr::RegisterConfigurationObserver()
+__attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterConfigurationObserver()
 {
     auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
     if (appMgrClient->ConnectAppMgrService() != ERR_OK) {
@@ -372,7 +372,7 @@ bool BgContinuousTaskMgr::GetNotificationPrompt()
     return true;
 }
 
-bool BgContinuousTaskMgr::RegisterSysCommEventListener()
+__attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterSysCommEventListener()
 {
     bool res = true;
     EventFwk::MatchingSkills matchingSkills;
