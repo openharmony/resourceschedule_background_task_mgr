@@ -128,7 +128,7 @@ void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
     delete work;
 }
 
-void CallbackInstance::OnExpired()
+__attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpired()
 {
     std::lock_guard<std::mutex> lock(callbackLock_);
     auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),

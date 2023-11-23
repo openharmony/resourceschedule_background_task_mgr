@@ -33,7 +33,7 @@ const std::string TASK_ON_OS_ACCOUNT_CHANGED = "OnOsAccountChanged";
 SystemEventObserver::SystemEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo)
     : EventFwk::CommonEventSubscriber(subscribeInfo) {}
 
-bool SystemEventObserver::Subscribe()
+__attribute__((no_sanitize("cfi"))) bool SystemEventObserver::Subscribe()
 {
     if (!EventFwk::CommonEventManager::SubscribeCommonEvent(shared_from_this())) {
         BGTASK_LOGI("SubscribeCommonEvent occur exception.");
@@ -42,7 +42,7 @@ bool SystemEventObserver::Subscribe()
     return true;
 }
 
-bool SystemEventObserver::Unsubscribe()
+__attribute__((no_sanitize("cfi"))) bool SystemEventObserver::Unsubscribe()
 {
     if (!EventFwk::CommonEventManager::UnSubscribeCommonEvent(shared_from_this())) {
         BGTASK_LOGI("UnsubscribeCommonEvent occur exception.");
