@@ -209,7 +209,7 @@ RState ResourceManagerImpl::GetSymbolById(uint32_t id, uint32_t &outValue)
     return SUCCESS;
 }
 
-RState ResourceManagerImpl::GetSymbolByName(const std::string &name, uint32_t &outValue)
+RState ResourceManagerImpl::GetSymbolByName(const char *name, uint32_t &outValue)
 {
     return SUCCESS;
 }
