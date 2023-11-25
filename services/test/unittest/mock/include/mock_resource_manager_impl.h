@@ -330,7 +330,7 @@ public:
      * @param outValue the obtain resource value convert to uint32_t write to
      * @return SUCCESS if resource exist, else NOT_FOUND
      */
-    virtual RState GetSymbolByName(const char *name, uint32_t &outValue);
+    virtual RState GetSymbolByName(const std::string &name, uint32_t &outValue);
 
     /**
      * Get the raw file path by resource name
