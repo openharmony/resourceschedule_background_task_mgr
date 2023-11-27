@@ -34,6 +34,6 @@ ohos_hap("backgroundtaskresources_hap") {
     certificate_profile = "//vendor/tools/hap_sign_conf/applications/prebuilt_hap/BackgroundTaskResources.p7b"
     key_alias = "HwBackgroundTaskMgr release"
     private_key_path = "HwBackgroundTaskMgr release"
-    compatible_version = "8"
+    compatible_version = "9"
   }
 }
