@@ -95,6 +95,7 @@ private:
     void ResetDayQuotaLocked();
     bool IsAfterOneDay(int64_t lastRequestTime, int64_t currentTime);
     bool CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo);
+    int GetAllowRequestTime();
 
     const int32_t initRequestId_ = 1;
     int32_t requestId_ {initRequestId_};
