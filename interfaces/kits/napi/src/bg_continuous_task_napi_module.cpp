@@ -342,6 +342,35 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value,
     return WrapVoidToJS(env);
 }
 
+bool StartBackgroundRunningCheckParamBeforeSubmit(napi_env env, napi_value *argv, bool isThrow,
+    AsyncCallbackInfo *asyncCallbackInfo)
+{
+    // argv[0] : context : AbilityContext
+    if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
+        BGTASK_LOGE("Get ability context failed");
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
+        return false;
+    }
+
+    // argv[1] : bgMode : BackgroundMode
+    if (GetBackgroundMode(env, argv[1], asyncCallbackInfo->bgMode) == nullptr) {
+        BGTASK_LOGE("input bgmode param not number");
+        Common::HandleParamErr(env, ERR_BGMODE_NULL_OR_TYPE_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
+        return false;
+    }
+
+    // argv[2] : wantAgent: WantAgent
+    if (GetWantAgent(env, argv[2], asyncCallbackInfo->wantAgent) == nullptr) {
+        BGTASK_LOGE("input wantAgent param is not object");
+        Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_WANTAGENT_NULL_OR_TYPE_ERR;
+        return false;
+    }
+    return true;
+}
+
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool isThrow)
 {
     ReportXPowerJsStackSysEventByType(env, "CONTINUOUS_TASK_APPLY");
@@ -361,27 +390,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool is
         return WrapVoidToJS(env);
     }
 
-    // argv[0] : context : AbilityContext
-    if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
-        BGTASK_LOGE("Get ability context failed");
-        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
-        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
-        return WrapVoidToJS(env);
-    }
-
-    // argv[1] : bgMode : BackgroundMode
-    if (GetBackgroundMode(env, argv[1], asyncCallbackInfo->bgMode) == nullptr) {
-        BGTASK_LOGE("input bgmode param not number");
-        Common::HandleParamErr(env, ERR_BGMODE_NULL_OR_TYPE_ERR, isThrow);
-        asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
-        return WrapVoidToJS(env);
-    }
-
-    // argv[2] : wantAgent: WantAgent
-    if (GetWantAgent(env, argv[2], asyncCallbackInfo->wantAgent) == nullptr) {
-        BGTASK_LOGE("input wantAgent param is not object");
-        Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR, isThrow);
-        asyncCallbackInfo->errCode = ERR_WANTAGENT_NULL_OR_TYPE_ERR;
+    if (!StartBackgroundRunningCheckParamBeforeSubmit(env, argv, isThrow, asyncCallbackInfo)) {
         return WrapVoidToJS(env);
     }
 
