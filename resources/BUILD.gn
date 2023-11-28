@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("./signature/BackgroundTaskResources.gni")
 
 group("bgtaskmgr_resources") {
   deps = [ ":backgroundtaskresources_hap" ]
@@ -26,8 +27,14 @@ ohos_hap("backgroundtaskresources_hap") {
   deps = [ ":backgroundtask_res" ]
   hap_profile = "./main/config.json"
   hap_name = "BackgroundTaskResources"
-  module_install_dir = "app/ohos.backgroundtaskmgr.resources"
+  module_install_dir = "app/com.ohos.backgroundtaskmgr.resources"
   certificate_profile = "./BackgroundTaskResources.p7b"
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
+  if (defined(sign_hap_py_path)) {
+    certificate_profile = "${certificate_profile_path}"
+    key_alias = "HwBackgroundTaskMgr release"
+    private_key_path = "HwBackgroundTaskMgr release"
+    compatible_version = "9"
+  }
 }

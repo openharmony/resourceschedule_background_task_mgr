@@ -1,6 +1,6 @@
 {
     "app": {
-        "bundleName": "ohos.backgroundtaskmgr.resources",
+        "bundleName": "com.ohos.backgroundtaskmgr.resources",
         "singleton": true,
         "vendor": "ohos",
         "version": {
@@ -17,7 +17,7 @@
         }
     },
     "module": {
-        "package": "ohos.backgroundtaskmgr.resources",
+        "package": "com.ohos.backgroundtaskmgr.resources",
         "deviceType": [
             "tablet",
             "default",
