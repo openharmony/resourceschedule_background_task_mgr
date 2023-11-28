@@ -204,6 +204,16 @@ RState ResourceManagerImpl::GetMediaByName(const char *name, std::string &outVal
     return SUCCESS;
 }
 
+RState ResourceManagerImpl::GetSymbolById(uint32_t id, uint32_t &outValue)
+{
+    return SUCCESS;
+}
+
+RState ResourceManagerImpl::GetSymbolByName(const char *name, uint32_t &outValue)
+{
+    return SUCCESS;
+}
+
 RState ResourceManagerImpl::GetRawFilePathByName(const std::string &name, std::string &outValue)
 {
     return SUCCESS;

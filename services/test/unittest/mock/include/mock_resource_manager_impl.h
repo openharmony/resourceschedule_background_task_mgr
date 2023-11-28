@@ -317,6 +317,22 @@ public:
     virtual RState GetMediaByName(const char *name, std::string &outValue, uint32_t density = 0);
 
     /**
+     * Get the SYMBOL resource by resource id
+     * @param id the resource id
+     * @param outValue the obtain resource value convert to uint32_t write to
+     * @return SUCCESS if resource exist, else NOT_FOUND
+     */
+    virtual RState GetSymbolById(uint32_t id, uint32_t &outValue);
+
+    /**
+     * Get the Symbol resource by resource name
+     * @param name the resource name
+     * @param outValue the obtain resource value convert to uint32_t write to
+     * @return SUCCESS if resource exist, else NOT_FOUND
+     */
+    virtual RState GetSymbolByName(const char *name, uint32_t &outValue);
+
+    /**
      * Get the raw file path by resource name
      * @param name the resource name
      * @param outValue the obtain resource path write to
