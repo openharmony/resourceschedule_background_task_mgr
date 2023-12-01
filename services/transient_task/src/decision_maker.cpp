@@ -24,6 +24,7 @@
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 #include "hisysevent.h"
+#include "parameters.h"
 
 using namespace std;
 
@@ -132,6 +133,20 @@ void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
     }
 }
 
+int DecisionMaker::GetAllowRequestTime()
+{
+    static int time = 0;
+
+    if (time != 0) {
+        return time;
+    }
+    time = OHOS::system::GetIntParameter("persist.resourceschedule.enter_doze_time", -1);
+    if (time == -1 || time <= 0) {
+        time = ALLOW_REQUEST_TIME_BG;
+    }
+    return time;
+}
+
 ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::shared_ptr<DelaySuspendInfoEx>& delayInfo)
 {
     lock_guard<mutex> lock(lock_);
@@ -143,7 +158,7 @@ ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::sh
     ResetDayQuotaLocked();
     auto findBgDurationIt = pkgBgDurationMap_.find(key);
     if (findBgDurationIt != pkgBgDurationMap_.end()) {
-        if (TimeProvider::GetCurrentTime() - findBgDurationIt->second > ALLOW_REQUEST_TIME_BG) {
+        if (TimeProvider::GetCurrentTime() - findBgDurationIt->second > GetAllowRequestTime()) {
             BGTASK_LOGI("Request not allow after entering background for a valid duration, %{public}s",
                 key->ToString().c_str());
             return ERR_BGTASK_NOT_IN_PRESET_TIME;
