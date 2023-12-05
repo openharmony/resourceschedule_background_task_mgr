@@ -29,7 +29,8 @@ public:
     ContinuousTaskCallbackInfo();
     ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid,
         pid_t creatorPid, std::string abilityName, bool isFromWebview = false)
-        : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), abilityName_(abilityName),
+        : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), 
+        abilityName_(abilityName),
         isFromWebview_(isFromWebview) {}
 
     /**
@@ -74,6 +75,7 @@ public:
      * @return True if success, else false.
      */
     bool Marshalling(Parcel &parcel) const override;
+    
     static ContinuousTaskCallbackInfo *Unmarshalling(Parcel &parcel);
 
 private:
