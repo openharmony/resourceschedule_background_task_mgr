@@ -93,7 +93,14 @@ void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const
     }
     if (dependsReady_ == ALL_DEPENDS_READY) {
         BGTASK_LOGI("necessary system service has been satisfied!");
-        auto task = [this]() { this->InitNecessaryState(); };
+        auto task = [weak = weak_from_this()]() {
+            auto self = weak.lock();
+            if (!self) {
+                BGTASK_LOGE("weak.lock return null");
+                return;
+            }
+            self->InitNecessaryState();
+        };
         handler_->PostSyncTask(task);
     }
 }
