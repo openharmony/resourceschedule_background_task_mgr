@@ -48,7 +48,12 @@ void ConfigChangeObserver::OnConfigurationUpdated(const AppExecFwk::Configuratio
     auto task = [this, configuration]() {
         this->bgContinuousTaskMgr_.lock()->OnConfigurationChanged(configuration);
     };
-    handler_.lock()->PostTask(task);
+
+    auto handler = handler_.lock();
+    if (handler == nullptr) {
+        return;
+    }
+    handler->PostTask(task);
 }
 }
 }
