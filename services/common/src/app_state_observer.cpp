@@ -68,7 +68,12 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     auto task = [this, uid, abilityName]() {
         this->bgContinuousTaskMgr_.lock()->OnAbilityStateChanged(uid, abilityName);
     };
-    handler_.lock()->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
+
+    auto handler = handler_.lock();
+    if (handler == nullptr) {
+        return;
+    }
+    handler->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
 }
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
