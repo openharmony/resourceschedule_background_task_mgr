@@ -60,7 +60,7 @@ public:
      * @param resConfig the resource config
      * @return SUCCESS if the resConfig updated success, else HAP_INIT_FAILED
      */
-    virtual RState UpdateResConfig(ResConfig &resConfig);
+    virtual RState UpdateResConfig(ResConfig &resConfig, bool isUpdateTheme = false);
 
     /**
      * Get the resConfig
