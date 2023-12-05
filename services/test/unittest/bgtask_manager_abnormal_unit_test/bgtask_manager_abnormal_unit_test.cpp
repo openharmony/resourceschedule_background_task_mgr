@@ -99,7 +99,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_003
     BackgroundTaskMgrService_->Dump(-1, args1);
     args1.clear();
     args1.emplace_back(Str8ToStr16("Invalid"));
-    EXPECT_EQ(BackgroundTaskMgrService_->Dump(-1, args1), ERR_BGTASK_METHOD_CALLED_FAILED);
+    EXPECT_EQ(BackgroundTaskMgrService_->Dump(-1, args1), ERR_BGTASK_PERMISSION_DENIED);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
