@@ -40,14 +40,14 @@ public:
     uint32_t GetTypeId() const;
 
     /**
-     * @brief Get the uid of notification crector.
+     * @brief Get the uid of notification creator.
      *
      * @return The uid of the notification creator.
      */
     int32_t GetCreatorUid() const;
 
     /**
-     * @brief Get the pid of notification crector.
+     * @brief Get the pid of notification creator.
      *
      * @return The pid of the notification creator.
      */
