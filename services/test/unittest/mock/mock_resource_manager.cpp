@@ -45,7 +45,7 @@ bool ResourceManagerImpl::RemoveResource(const std::string &path, const std::vec
     return true;
 }
 
-RState ResourceManagerImpl::UpdateResConfig(ResConfig &resConfig)
+RState ResourceManagerImpl::UpdateResConfig(ResConfig &resConfig, bool isUpdateTheme)
 {
     return SUCCESS;
 }
