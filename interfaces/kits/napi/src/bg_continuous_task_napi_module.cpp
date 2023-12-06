@@ -342,7 +342,7 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value,
     return WrapVoidToJS(env);
 }
 
-bool StartBackgroundRunningCheckParamBeforeSubmit(napi_env env, napi_value *argv, size_t argc, bool isThrow,
+bool StartBackgroundRunningCheckParamBeforeSubmit(napi_env env, napi_value *argv, size_t len, bool isThrow,
     AsyncCallbackInfo *asyncCallbackInfo)
 {
     // argv[0] : context : AbilityContext
@@ -390,7 +390,8 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool is
         return WrapVoidToJS(env);
     }
 
-    if (!StartBackgroundRunningCheckParamBeforeSubmit(env, argv, argc, isThrow, asyncCallbackInfo)) {
+    if (!StartBackgroundRunningCheckParamBeforeSubmit(env, argv, MAX_START_BG_RUNNING_PARAMS, isThrow,
+        asyncCallbackInfo)) {
         return WrapVoidToJS(env);
     }
 
