@@ -104,24 +104,20 @@ void AppStateObserver::OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData 
     bgEfficiencyResourcesMgr->RemoveProcessRecord(processData.uid, processData.pid, processData.bundleName);
 }
 
-void AppStateObserver::OnApplicationStateChanged(const AppExecFwk::AppStateData &appStateData)
+void AppStateObserver::OnAppStopped(const AppExecFwk::AppStateData &appStateData)
 {
     if (!ValidateAppStateData(appStateData)) {
-        BGTASK_LOGD("%{public}s : validate app state data failed!", __func__);
+        BGTASK_LOGE("%{public}s : validate app state data failed!", __func__);
         return;
     }
     auto uid = appStateData.uid;
     auto bundleName = appStateData.bundleName;
-    auto state = appStateData.state;
-    if (state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_TERMINATED) || state ==
-        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END)) {
-        auto bgEfficiencyResourcesMgr = bgEfficiencyResourcesMgr_.lock();
-        if (!bgEfficiencyResourcesMgr) {
-            BGTASK_LOGE("bgEfficiencyResourcesMgr is null");
-            return;
-        }
-        bgEfficiencyResourcesMgr->RemoveAppRecord(uid, bundleName, false);
+    auto bgEfficiencyResourcesMgr = bgEfficiencyResourcesMgr_.lock();
+    if (!bgEfficiencyResourcesMgr) {
+        BGTASK_LOGE("bgEfficiencyResourcesMgr is null");
+        return;
     }
+    bgEfficiencyResourcesMgr->RemoveAppRecord(uid, bundleName, false);
 }
 
 inline bool AppStateObserver::ValidateAppStateData(const AppExecFwk::AppStateData &appStateData)
