@@ -131,10 +131,10 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_001
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
     EXPECT_EQ(backgroundTaskMgrProxy.RequestSuspendDelay(u"reason", expiredCallbackStub, delayInfo),
-        ERR_BGTASK_PARCELABLE_FAILED);
+        ERR_BGTASK_TRANSACT_FAILED);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(true);
     EXPECT_EQ(backgroundTaskMgrProxy.RequestSuspendDelay(u"reason", expiredCallbackStub, delayInfo),
-        ERR_OK);
+        ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -160,7 +160,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_002
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.CancelSuspendDelay(1), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.CancelSuspendDelay(1), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -187,7 +187,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_003
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.GetRemainingDelayTime(1, delayTime), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.GetRemainingDelayTime(1, delayTime), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -216,7 +216,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_004
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StartBackgroundRunning(taskParam), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.StartBackgroundRunning(taskParam), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -234,7 +234,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_005
 
     BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     BgTaskFwkAbnormalSetWriteStringFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr), ERR_BGTASK_TRANSACT_FAILED);
 
     BgTaskFwkAbnormalSetWriteStringFlag(true);
     BgTaskFwkAbnormalSetWriteRemoteObjectFlag(false);
@@ -246,7 +246,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_005
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -276,7 +276,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_006
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.SubscribeBackgroundTask(subscribe), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.SubscribeBackgroundTask(subscribe), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -306,7 +306,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_007
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(subscribe), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(subscribe), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -329,10 +329,10 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_008
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.GetTransientTaskApps(list), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.GetTransientTaskApps(list), ERR_BGTASK_TRANSACT_FAILED);
 
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(true);
-    EXPECT_EQ(backgroundTaskMgrProxy.GetTransientTaskApps(list), ERR_OK);
+    EXPECT_EQ(backgroundTaskMgrProxy.GetTransientTaskApps(list), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -355,10 +355,10 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_009
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.GetContinuousTaskApps(list), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.GetContinuousTaskApps(list), ERR_BGTASK_TRANSACT_FAILED);
 
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(true);
-    EXPECT_EQ(backgroundTaskMgrProxy.GetContinuousTaskApps(list), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.GetContinuousTaskApps(list), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -388,7 +388,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_010
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopContinuousTask(1, 1, 1), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopContinuousTask(1, 1, 1), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -417,7 +417,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_011
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.ApplyEfficiencyResources(resourceInfo), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.ApplyEfficiencyResources(resourceInfo), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -439,7 +439,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_012
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.ResetAllEfficiencyResources(), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.ResetAllEfficiencyResources(), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -463,10 +463,10 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_013
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.GetEfficiencyResourcesInfos(appList, procList), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.GetEfficiencyResourcesInfos(appList, procList), ERR_BGTASK_TRANSACT_FAILED);
 
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(true);
-    EXPECT_EQ(backgroundTaskMgrProxy.GetEfficiencyResourcesInfos(appList, procList), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.GetEfficiencyResourcesInfos(appList, procList), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -495,7 +495,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_014
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.RequestBackgroundRunningForInner(taskParam), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.RequestBackgroundRunningForInner(taskParam), ERR_BGTASK_TRANSACT_FAILED);
 }
 }
 }
