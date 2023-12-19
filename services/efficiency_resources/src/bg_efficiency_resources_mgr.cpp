@@ -287,6 +287,19 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
     return true;
 }
 
+bool BgEfficiencyResourcesMgr::isServiceExtensionType(pid_t pid) {
+    if (appMgrClient_ == nullptr) {
+        appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
+        if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+            BGTASK_LOGW("connect to app mgr service failed");
+            return false;
+        }
+    }
+    AppExecFwk::RunningProcessInfo runningProcessInfo;
+    appMgrClient_->GetRunningProcessInfoByPid(pid, runningProcessInfo);
+    return runningProcessInfo.extensionType_ == OHOS::AppExecFwk::ExtensionAbilityType::SERVICE;
+}
+
 ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
@@ -308,20 +321,8 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
 
-    if (appMgrClient_ == nullptr) {
-        appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
-        if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
-            BGTASK_LOGW("connect to app mgr service failed");
-            DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
-                appResourceApplyMap_, procResourceApplyMap_);
-            return ERR_BGTASK_SERVICE_INNER_ERROR;
-        }
-    }
-    AppExecFwk::RunningProcessInfo runningProcessInfo;
-    appMgrClient_->GetRunningProcessInfoByPid(pid, runningProcessInfo);
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
-    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId)
-        && runningProcessInfo.extensionType_ != OHOS::AppExecFwk::ExtensionAbilityType::SERVICE) {
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId) && !isServiceExtensionType(pid)) {
         BGTASK_LOGE("apply efficiency resources failed, %{public}s is not system app and service extension type",
             bundleName.c_str());
         return ERR_BGTASK_NOT_SYSTEM_APP;
