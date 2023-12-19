@@ -287,7 +287,7 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
     return true;
 }
 
-bool BgEfficiencyResourcesMgr::isServiceExtensionType(pid_t pid) {
+bool BgEfficiencyResourcesMgr::isServiceExtensionType(const pid_t pid) {
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
         if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
