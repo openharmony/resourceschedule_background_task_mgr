@@ -100,7 +100,7 @@ private:
         const sptr<EfficiencyResourceInfo> &resourceInfo);
     void SendResourceApplyTask(int32_t uid, int32_t pid, const std::string &bundleName,
         const sptr<EfficiencyResourceInfo> &resourceInfo);
-    bool isServiceExtensionType(pid_t pid);
+    bool isServiceExtensionType(const pid_t pid);
 
 private:
     std::atomic<bool> isSysReady_ {false};
