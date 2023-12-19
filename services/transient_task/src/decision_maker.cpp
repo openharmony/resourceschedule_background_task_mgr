@@ -141,7 +141,7 @@ int DecisionMaker::GetAllowRequestTime()
         return time;
     }
     time = OHOS::system::GetIntParameter("persist.resourceschedule.enter_doze_time", -1);
-    if (time == -1 || time <= 0) {
+    if (time <= 0) {
         time = ALLOW_REQUEST_TIME_BG;
     }
     return time;
