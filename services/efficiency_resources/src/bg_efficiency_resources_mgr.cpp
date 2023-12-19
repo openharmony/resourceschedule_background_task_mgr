@@ -289,12 +289,10 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
 
 bool BgEfficiencyResourcesMgr::isServiceExtensionType(const pid_t pid) {
     if (appMgrClient_ == nullptr) {
-        appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
-        if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
-            BGTASK_LOGW("connect to app mgr service failed");
-            return false;
-        }
+        BGTASK_LOGW("app mgr client is nullptr");
+        return false;
     }
+
     AppExecFwk::RunningProcessInfo runningProcessInfo;
     appMgrClient_->GetRunningProcessInfoByPid(pid, runningProcessInfo);
     return runningProcessInfo.extensionType_ == OHOS::AppExecFwk::ExtensionAbilityType::SERVICE;
