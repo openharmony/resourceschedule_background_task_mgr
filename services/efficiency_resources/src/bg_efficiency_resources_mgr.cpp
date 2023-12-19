@@ -29,6 +29,7 @@
 #include "bundle_manager_helper.h"
 #include "efficiency_resource_log.h"
 #include "tokenid_kit.h"
+#include "extension_ability_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -187,7 +188,7 @@ void BgEfficiencyResourcesMgr::CheckPersistenceData(const std::vector<AppExecFwk
             (record->GetResourceNumber() & ResourceType::TIMER) != 0) {
                 return false;
             }
-	    return runningUid.find(iter.first) == runningUid.end(); 
+        return runningUid.find(iter.first) == runningUid.end();
     };
     EraseRecordIf(appResourceApplyMap_, removeUid);
     auto removePid = [&runningPid](const auto &iter)  { return runningPid.find(iter.first) == runningPid.end(); };
@@ -306,9 +307,23 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGI("apply efficiency resources failed, calling info is illegal");
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
+
+    if (appMgrClient_ == nullptr) {
+        appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
+        if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+            BGTASK_LOGW("connect to app mgr service failed");
+            DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
+                appResourceApplyMap_, procResourceApplyMap_);
+            return ERR_BGTASK_SERVICE_INNER_ERROR;
+        }
+    }
+    AppExecFwk::RunningProcessInfo runningProcessInfo;
+    appMgrClient_->GetRunningProcessInfoByPid(pid, runningProcessInfo);
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
-    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId)) {
-        BGTASK_LOGE("apply efficiency resources failed,  %{public}s is not system app", bundleName.c_str());
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId)
+        && runningProcessInfo.extensionType_ != OHOS::AppExecFwk::ExtensionAbilityType::SERVICE) {
+        BGTASK_LOGE("apply efficiency resources failed, %{public}s is not system app and service extension type",
+            bundleName.c_str());
         return ERR_BGTASK_NOT_SYSTEM_APP;
     }
 
