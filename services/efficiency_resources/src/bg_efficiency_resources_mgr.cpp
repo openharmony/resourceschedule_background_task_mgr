@@ -29,6 +29,7 @@
 #include "bundle_manager_helper.h"
 #include "efficiency_resource_log.h"
 #include "tokenid_kit.h"
+#include "extension_ability_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -187,7 +188,7 @@ void BgEfficiencyResourcesMgr::CheckPersistenceData(const std::vector<AppExecFwk
             (record->GetResourceNumber() & ResourceType::TIMER) != 0) {
                 return false;
             }
-	    return runningUid.find(iter.first) == runningUid.end(); 
+        return runningUid.find(iter.first) == runningUid.end();
     };
     EraseRecordIf(appResourceApplyMap_, removeUid);
     auto removePid = [&runningPid](const auto &iter)  { return runningPid.find(iter.first) == runningPid.end(); };
@@ -286,6 +287,24 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
     return true;
 }
 
+bool BgEfficiencyResourcesMgr::IsServiceExtensionType(const pid_t pid)
+{
+    if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGE("ApplyEfficiencyResources connect to app mgr service failed");
+        return false;
+    }
+
+    int32_t proId = static_cast<int32_t>(pid);
+    std::vector<AppExecFwk::RunningProcessInfo> allRunningProcessInfos;
+    appMgrClient_->GetAllRunningProcesses(allRunningProcessInfos);
+    for (const auto &info : allRunningProcessInfos) {
+        if (info.pid_ == proId && info.extensionType_ == OHOS::AppExecFwk::ExtensionAbilityType::SERVICE) {
+            return true;
+        }
+    }
+    return false;
+}
+
 ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
@@ -306,9 +325,11 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGI("apply efficiency resources failed, calling info is illegal");
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
+
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
-    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId)) {
-        BGTASK_LOGE("apply efficiency resources failed,  %{public}s is not system app", bundleName.c_str());
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId) && !IsServiceExtensionType(pid)) {
+        BGTASK_LOGE("apply efficiency resources failed, %{public}s is not system app and service extension type",
+            bundleName.c_str());
         return ERR_BGTASK_NOT_SYSTEM_APP;
     }
 
