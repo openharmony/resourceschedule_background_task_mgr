@@ -287,21 +287,22 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
     return true;
 }
 
-bool BgEfficiencyResourcesMgr::isServiceExtensionType(const pid_t pid) {
-    auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
-    if (appMgrClient->ConnectAppMgrService() != ERR_OK) {
-        BGTASK_LOGW("connect to app mgr service failed");
+bool BgEfficiencyResourcesMgr::IsServiceExtensionType(const pid_t pid)
+{
+    if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGE("ApplyEfficiencyResources connect to app mgr service failed");
         return false;
     }
 
-    int32_t pro_id = static_cast<int32_t>(pid);
-    std::vector<AppExecFwk::RunningProcessInfo> runningProcessInfos;
-    appMgrClient_->GetAllRunningProcesses(pid, runningProcessInfos);
-    for (const auto &info : runningProcessInfos) {
-        if (info.pid_ == pro_id && info.extensionType_ == OHOS::AppExecFwk::ExtensionAbilityType::SERVICE) {
+    int32_t proId = static_cast<int32_t>(pid);
+    std::vector<AppExecFwk::RunningProcessInfo> allRunningProcessInfos;
+    appMgrClient_->GetAllRunningProcesses(allRunningProcessInfos);
+    for (const auto &info : allRunningProcessInfos) {
+        if (info.pid_ == proId && info.extensionType_ == OHOS::AppExecFwk::ExtensionAbilityType::SERVICE) {
             return true;
         }
     }
+    return false;
 }
 
 ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
@@ -326,7 +327,7 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     }
 
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
-    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId) && !isServiceExtensionType(pid)) {
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId) && !IsServiceExtensionType(pid)) {
         BGTASK_LOGE("apply efficiency resources failed, %{public}s is not system app and service extension type",
             bundleName.c_str());
         return ERR_BGTASK_NOT_SYSTEM_APP;
