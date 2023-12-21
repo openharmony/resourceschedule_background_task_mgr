@@ -526,8 +526,9 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
-    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId)) {
-        BGTASK_LOGE("reset efficiency resources failed, %{public}s is not system app", bundleName.c_str());
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId) && !IsServiceExtensionType(pid)) {
+        BGTASK_LOGE("reset efficiency resources failed, %{public}s is not system app and service extension type",
+            bundleName.c_str());
         return ERR_BGTASK_NOT_SYSTEM_APP;
     }
 
