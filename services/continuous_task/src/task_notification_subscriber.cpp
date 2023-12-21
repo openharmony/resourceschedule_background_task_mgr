@@ -66,7 +66,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
     }
 
     if (deleteReason == Notification::NotificationConstant::APP_CANCEL_REASON_DELETE) {
-        BGTASK_LOGI("notification remove action is already triggered by cancel method.");
+        BGTASK_LOGD("notification remove action is already triggered by cancel method.");
         return;
     }
 
@@ -75,7 +75,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         BGTASK_LOGE("notification extraInfo is null");
         return;
     }
-    BGTASK_LOGD("stop continuous task by user, the label is : %{public}s", notificationLabel.c_str());
+    BGTASK_LOGI("stop continuous task by user, the label is : %{public}s", notificationLabel.c_str());
 
     std::string abilityName = AAFwk::String::Unbox(AAFwk::IString::Query(extraInfo->GetParam("abilityName")));
     std::string taskInfoMapKey = labelSplits[LABEL_APP_UID_POS] + LABEL_SPLITER + abilityName;
