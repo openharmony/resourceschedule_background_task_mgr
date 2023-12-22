@@ -206,7 +206,7 @@ napi_value Common::GetInt32NumberValue(const napi_env &env, const napi_value &va
         return nullptr;
     }
     BGTASK_NAPI_CALL(env, napi_get_value_int32(env, value, &result));
-    BGTASK_LOGI("GetInt32NumberValue result: %{public}d", result);
+    BGTASK_LOGD("GetInt32NumberValue result: %{public}d", result);
     return Common::NapiGetNull(env);
 }
 
@@ -265,7 +265,7 @@ napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, 
 
 void Common::HandleErrCode(const napi_env &env, int32_t errCode, bool isThrow)
 {
-    BGTASK_LOGI("HandleErrCode errCode = %{public}d, isThrow = %{public}d", errCode, isThrow);
+    BGTASK_LOGD("HandleErrCode errCode = %{public}d, isThrow = %{public}d", errCode, isThrow);
     if (!isThrow || errCode == ERR_OK) {
         return;
     }
@@ -278,7 +278,7 @@ void Common::HandleErrCode(const napi_env &env, int32_t errCode, bool isThrow)
 
 bool Common::HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow)
 {
-    BGTASK_LOGI("HandleParamErr errCode = %{public}d, isThrow = %{public}d", errCode, isThrow);
+    BGTASK_LOGD("HandleParamErr errCode = %{public}d, isThrow = %{public}d", errCode, isThrow);
     if (!isThrow || errCode == ERR_OK) {
         return false;
     }
@@ -330,7 +330,7 @@ napi_value Common::GetBooleanValue(const napi_env &env, const napi_value &value,
         return nullptr;
     }
     BGTASK_NAPI_CALL(env, napi_get_value_bool(env, value, &result));
-    BGTASK_LOGI("GetBooleanValue result: %{public}d", result);
+    BGTASK_LOGD("GetBooleanValue result: %{public}d", result);
 
     return Common::NapiGetNull(env);
 }

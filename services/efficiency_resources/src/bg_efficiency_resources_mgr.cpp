@@ -245,9 +245,6 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             pid, MAX_RESOURCE_MASK ^ ResourceType::WORK_SCHEDULER ^ ResourceType::TIMER, bundleName);
         this->ResetEfficiencyResourcesInner(callbackInfo, true);
-        if (!this->CheckAlivedApp(uid)) {
-            this->ResetEfficiencyResourcesInner(callbackInfo, false);
-        }
     });
     return ERR_OK;
 }
@@ -563,7 +560,7 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
 void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
     const std::shared_ptr<ResourceCallbackInfo> &callbackInfo, bool isProcess)
 {
-    BGTASK_LOGI("reset efficiency resources inner,  uid:%{public}d, pid %{public}d,"\
+    BGTASK_LOGD("reset efficiency resources inner,  uid:%{public}d, pid %{public}d,"\
         " resource number: %{public}u, isProcess: %{public}d", callbackInfo->GetUid(),
         callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), isProcess);
     if (isProcess) {
@@ -721,7 +718,7 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
         mapKey, static_cast<int32_t>(infoMap.size()));
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end() || (iter->second->resourceNumber_ & cleanResource) == 0) {
-        BGTASK_LOGW("remove single resource record failure, no matched task: %{public}d", mapKey);
+        BGTASK_LOGD("remove single resource record failure, no matched task: %{public}d", mapKey);
         return false;
     }
     uint32_t eraseBit = (iter->second->resourceNumber_ & cleanResource);
@@ -729,8 +726,8 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
         iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
-    BGTASK_LOGI("remove record from info map, uid: %{public}d, bundle name: %{public}s",
-        callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str());
+    BGTASK_LOGI("remove record from info map, mapkey %{public}d, uid: %{public}d, bundle name: %{public}s"
+        "erasebit %{public}d", mapKey, callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str(), eraseBit);
     subscriberMgr_->OnResourceChanged(callbackInfo, type);
     if (iter->second->resourceNumber_ == 0) {
         infoMap.erase(iter);

@@ -91,7 +91,7 @@ ErrCode ResourcesSubscriberMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubsc
 void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
     EfficiencyResourcesEventType type)
 {
-    BGTASK_LOGI("start OnResourceChanged");
+    BGTASK_LOGD("start OnResourceChanged");
     if (callbackInfo == nullptr) {
         BGTASK_LOGW("ResourceCallbackInfo is null");
         return;

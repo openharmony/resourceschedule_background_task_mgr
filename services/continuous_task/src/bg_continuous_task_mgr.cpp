@@ -742,7 +742,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
         BGTASK_LOGW("%{public}s continuous task not exists", mapKey.c_str());
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
-
+    BGTASK_LOGI("%{public}s stop continuous task", mapKey.c_str());
     ErrCode result = ERR_OK;
     if (!iter->second->isFromWebview_ && iter->second->GetBgModeId() != BackgroundMode::AUDIO_PLAYBACK) {
         result = NotificationTools::GetInstance()->CancelNotification(
@@ -769,6 +769,8 @@ void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uin
 {
     // uid == -1 means target type continuoust task required condition is not met, so cancel all this kind of tasks;
     if (uid == UNSET_UID) {
+        BGTASK_LOGI("SA die, StopContinuousTask begin uid: %{public}d, pid: %{public}d, taskType: %{public}d",
+            uid, pid, taskType);
         RemoveSpecifiedBgTask(taskType);
         return;
     }
@@ -785,6 +787,8 @@ void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uin
         uidNum++;
         uidExist = true;
         if (bgmodeId == taskType) {
+            BGTASK_LOGI("StopContinuousTask by suspend sa, uid: %{public}d, pid: %{public}d, taskType: %{public}d",
+                uid, pid, taskType);
             OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
             NotificationTools::GetInstance()->CancelNotification(
                 iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
@@ -1115,6 +1119,9 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->uid_ == uid && (iter->second->abilityName_ == abilityName || iter->second->isFromWebview_)) {
             auto record = iter->second;
+            BGTASK_LOGI("OnAbilityStateChanged uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
+                "bgModeId: %{public}d", uid, record->bundleName_.c_str(),
+                record->abilityName_.c_str(), record->bgModeId_);
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             if (!iter->second->isFromWebview_) {
                 NotificationTools::GetInstance()->CancelNotification(
@@ -1140,6 +1147,9 @@ void BgContinuousTaskMgr::OnProcessDied(int32_t uid, int32_t pid)
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->GetPid() == pid) {
             auto record = iter->second;
+            BGTASK_LOGI("OnProcessDied uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
+                "bgModeId: %{public}d", record->uid_, record->bundleName_.c_str(),
+                record->abilityName_.c_str(), record->bgModeId_);
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             NotificationTools::GetInstance()->CancelNotification(
                 record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
