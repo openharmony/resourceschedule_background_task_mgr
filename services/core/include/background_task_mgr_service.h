@@ -81,10 +81,12 @@ private:
     bool CheckCallingToken();
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
+    void PublishIfReady();
 
 private:
     ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
+    std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

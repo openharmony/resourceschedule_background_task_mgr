@@ -60,6 +60,7 @@ public:
     ErrCode RemoveAppRecord(int32_t uid, const std::string &bundleName, bool resetAll);
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
+    bool IsReady();
 
 private:
     void ApplyEfficiencyResourcesInner(std::shared_ptr<ResourceCallbackInfo> callbackInfo,

@@ -115,6 +115,11 @@ bool BgContinuousTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& r
     return true;
 }
 
+bool BgContinuousTaskMgr::IsReady()
+{
+    return isSysReady_.load();
+}
+
 void BgContinuousTaskMgr::Clear()
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
