@@ -128,6 +128,11 @@ void BgEfficiencyResourcesMgr::OnRemoveSystemAbility(int32_t systemAbilityId, co
     }
 }
 
+bool BgEfficiencyResourcesMgr::IsReady()
+{
+    return isSysReady_.load();
+}
+
 __attribute__((no_sanitize("cfi"))) void BgEfficiencyResourcesMgr::RegisterAppStateObserver()
 {
     appStateObserver_ = DelayedSingleton<AppStateObserver>::GetInstance();
@@ -753,6 +758,10 @@ void BgEfficiencyResourcesMgr::RemoveListRecord(std::list<PersistTime> &resource
 ErrCode BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<
     ResourceCallbackInfo>> &appList, std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
 {
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("Efficiency resources manager is not ready, GetEfficiencyResourcesInfos failed");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
     handler_->PostSyncTask([this, &appList, &procList]() {
         this->GetEfficiencyResourcesInfosInner(appResourceApplyMap_, appList);
         this->GetEfficiencyResourcesInfosInner(procResourceApplyMap_, procList);

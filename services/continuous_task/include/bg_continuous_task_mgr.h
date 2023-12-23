@@ -76,6 +76,7 @@ public:
     int32_t GetBgTaskUid();
     void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
+    bool IsReady();
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
