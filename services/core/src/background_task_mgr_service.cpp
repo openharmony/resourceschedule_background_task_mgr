@@ -75,6 +75,7 @@ void BackgroundTaskMgrService::PublishIfReady()
         if (handler_) {
             handler_->PostTask(task, DELAY_TIME);
         }
+        return;
     }
     if (!Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get())) {
         BGTASK_LOGE("Service start failed!");
