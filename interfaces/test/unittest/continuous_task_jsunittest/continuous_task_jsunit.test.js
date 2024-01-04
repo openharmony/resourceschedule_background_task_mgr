@@ -113,11 +113,11 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility2"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 2,
             wantAgentFlags: [3]
         };
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
@@ -137,22 +137,22 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility3"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 3,
             wantAgentFlags: [3]
         };
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
-            let basicContent = {
-                title: "title",
-                text: "text"
+            let basicContent3 = {
+                title: "title3",
+                text: "text3"
             };
 
             let notificationContent = {
                 contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
-                normal: basicContent
+                normal: basicContent3
             };
 
             let request = {
@@ -201,22 +201,22 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility4"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 4,
             wantAgentFlags: [3]
         };
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
-            let basicContent = {
-                title: "title",
-                text: "text"
+            let basicContent4 = {
+                title: "title4",
+                text: "text4"
             };
 
             let notificationContent = {
                 contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
-                normal: basicContent
+                normal: basicContent4
             };
 
             let request = {
@@ -241,11 +241,11 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility5"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 5,
             wantAgentFlags: [3]
         };
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
@@ -291,11 +291,11 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility6"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 6,
             wantAgentFlags: [3]
         };
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
@@ -317,22 +317,22 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility7"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 7,
             wantAgentFlags: [3]
         };
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
-            let basicContent = {
-                title: "title",
-                text: "text"
+            let basicContent7 = {
+                title: "title7",
+                text: "text7"
             };
 
             let notificationContent = {
                 contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
-                normal: basicContent
+                normal: basicContent7
             };
 
             let request = {
@@ -379,22 +379,22 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility8"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 8,
             wantAgentFlags: [3]
         };
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
-            let basicContent = {
-                title: "title",
-                text: "text"
+            let basicContent8 = {
+                title: "title8",
+                text: "text8"
             };
 
             let notificationContent = {
                 contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
-                normal: basicContent
+                normal: basicContent8
             };
             let request = {
                 content: notificationContent,
@@ -419,11 +419,11 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility9"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 9,
             wantAgentFlags: [3]
         };
         let startTime = (new Date()).valueOf()
@@ -472,11 +472,11 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility10"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 10,
             wantAgentFlags: [3]
         };
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
@@ -503,11 +503,11 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility11"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 11,
             wantAgentFlags: [3]
         };
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
@@ -556,11 +556,11 @@ describe("ContinuousTaskJsTest", function () {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
-                    abilityName: "com.continuoustask.test.MainAbility"
+                    abilityName: "com.continuoustask.test.MainAbility12"
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 12,
             wantAgentFlags: [3]
         };
         wantAgent.getWantAgent(wantAgentInfo).then((data) => {
