@@ -109,7 +109,7 @@ describe("ContinuousTaskJsTest", function () {
                 done();
             }, 500);
         }
-        let wantAgentInfo = {
+        let wantAgentInfo2 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -117,10 +117,10 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 2,
             wantAgentFlags: [3]
         };
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+        wantAgent.getWantAgent(wantAgentInfo2).then((data) => {
             backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
                 backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data, conTaskCallback);
         });
@@ -133,7 +133,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.require: SR000GGT7V AR000GH6ER AR000GH6EM AR000GH6G9 AR000GH56K
      */
     it("ContinuousTaskJsTest003", 0, async function (done) {
-        let wantAgentInfo = {
+        let wantAgentInfo3 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -141,18 +141,18 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 3,
             wantAgentFlags: [3]
         };
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
-            let basicContent = {
-                title: "title",
-                text: "text"
+        wantAgent.getWantAgent(wantAgentInfo3).then((data) => {
+            let basicContent3 = {
+                title: "title3",
+                text: "text3"
             };
 
             let notificationContent = {
                 contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
-                normal: basicContent
+                normal: basicContent3
             };
 
             let request = {
@@ -197,7 +197,7 @@ describe("ContinuousTaskJsTest", function () {
                 done();
             }, 500);
         }
-        let wantAgentInfo = {
+        let wantAgentInfo4 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -205,18 +205,18 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 4,
             wantAgentFlags: [3]
         };
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
-            let basicContent = {
-                title: "title",
-                text: "text"
+        wantAgent.getWantAgent(wantAgentInfo4).then((data) => {
+            let basicContent4 = {
+                title: "title4",
+                text: "text4"
             };
 
             let notificationContent = {
                 contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
-                normal: basicContent
+                normal: basicContent4
             };
 
             let request = {
@@ -237,7 +237,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.require: SR000GGT7U AR000GH6ES AR000GH6EM AR000GH6EN AR000GH6EO
      */
     it("ContinuousTaskJsTest005", 0, async function (done) {
-        let wantAgentInfo = {
+        let wantAgentInfo5 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -245,10 +245,10 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 5,
             wantAgentFlags: [3]
         };
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+        wantAgent.getWantAgent(wantAgentInfo5).then((data) => {
             backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
                 backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then((data) => {
                     backgroundTaskManager.stopBackgroundRunning(featureAbility.getContext()).then((data) => {
@@ -287,7 +287,7 @@ describe("ContinuousTaskJsTest", function () {
                 done();
             }, 500);
         }
-        let wantAgentInfo = {
+        let wantAgentInfo6 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -295,10 +295,10 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 6,
             wantAgentFlags: [3]
         };
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+        wantAgent.getWantAgent(wantAgentInfo6).then((data) => {
             backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
                 backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then((data) => {
                     backgroundTaskManager.stopBackgroundRunning(featureAbility.getContext(), conTaskCallback);
@@ -313,7 +313,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.require: SR000GGT7V AR000GH6ES AR000GH6EM AR000GH6G9 AR000GH56K
      */
     it("ContinuousTaskJsTest007", 0, async function (done) {
-        let wantAgentInfo = {
+        let wantAgentInfo7 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -321,18 +321,18 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 7,
             wantAgentFlags: [3]
         };
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
-            let basicContent = {
-                title: "title",
-                text: "text"
+        wantAgent.getWantAgent(wantAgentInfo7).then((data) => {
+            let basicContent7 = {
+                title: "title7",
+                text: "text7"
             };
 
             let notificationContent = {
                 contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
-                normal: basicContent
+                normal: basicContent7
             };
 
             let request = {
@@ -375,7 +375,7 @@ describe("ContinuousTaskJsTest", function () {
                 done();
             }, 500);
         }
-        let wantAgentInfo = {
+        let wantAgentInfo8 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -383,18 +383,18 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 8,
             wantAgentFlags: [3]
         };
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
-            let basicContent = {
-                title: "title",
-                text: "text"
+        wantAgent.getWantAgent(wantAgentInfo8).then((data) => {
+            let basicContent8 = {
+                title: "title8",
+                text: "text8"
             };
 
             let notificationContent = {
                 contentType: notification.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
-                normal: basicContent
+                normal: basicContent8
             };
             let request = {
                 content: notificationContent,
@@ -415,7 +415,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.type: FUNC
      */
     it("ContinuousTaskJsTest009", 0, async function (done) {
-        let wantAgentInfo = {
+        let wantAgentInfo9 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -423,11 +423,11 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 9,
             wantAgentFlags: [3]
         };
         let startTime = (new Date()).valueOf()
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+        wantAgent.getWantAgent(wantAgentInfo9).then((data) => {
             backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
                 backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then(() => {
                     let endTime = (new Date()).valueOf()
@@ -468,7 +468,7 @@ describe("ContinuousTaskJsTest", function () {
                 done();
             }, 500);
         }
-        let wantAgentInfo = {
+        let wantAgentInfo10 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -476,10 +476,10 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 10,
             wantAgentFlags: [3]
         };
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+        wantAgent.getWantAgent(wantAgentInfo10).then((data) => {
             let startTime = (new Date()).valueOf()
             backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
                 backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data, conTaskCallback);
@@ -499,7 +499,7 @@ describe("ContinuousTaskJsTest", function () {
      * @tc.type: FUNC
      */
     it("ContinuousTaskJsTest011", 0, async function (done) {
-        let wantAgentInfo = {
+        let wantAgentInfo11 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -507,10 +507,10 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 11,
             wantAgentFlags: [3]
         };
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+        wantAgent.getWantAgent(wantAgentInfo11).then((data) => {
             backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
                 backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then((data) => {
                     let startTime = (new Date()).valueOf()
@@ -552,7 +552,7 @@ describe("ContinuousTaskJsTest", function () {
                 done();
             }, 500);
         }
-        let wantAgentInfo = {
+        let wantAgentInfo12 = {
             wants: [
                 {
                     bundleName: "com.continuoustask.test",
@@ -560,10 +560,10 @@ describe("ContinuousTaskJsTest", function () {
                 }
             ],
             operationType: 2,
-            requestCode: 0,
+            requestCode: 12,
             wantAgentFlags: [3]
         };
-        wantAgent.getWantAgent(wantAgentInfo).then((data) => {
+        wantAgent.getWantAgent(wantAgentInfo12).then((data) => {
             backgroundTaskManager.startBackgroundRunning(featureAbility.getContext(),
                 backgroundTaskManager.BackgroundMode.DATA_TRANSFER, data).then((data) => {
                     let startTime = (new Date()).valueOf()

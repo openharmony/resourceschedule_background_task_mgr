@@ -58,7 +58,7 @@ describe("EfficiencyResourcesJsTest", function () {
             resourceTypes: 1,
             isApply: true,
             timeOut: 10,
-            reason: "apply",
+            reason: "applyEfficiencyResourcesJsTest001",
             isPersist: false,
             isProcess: false,
         };
@@ -83,7 +83,7 @@ describe("EfficiencyResourcesJsTest", function () {
             resourceTypes: 1,
             isApply: false,
             timeOut: 10,
-            reason: "apply"
+            reason: "applyEfficiencyResourcesJsTest002"
         };
         try {
             backgroundTaskManager.applyEfficiencyResources(resRequest);
@@ -105,7 +105,7 @@ describe("EfficiencyResourcesJsTest", function () {
         let resRequest = {
             isApply: true,
             timeOut: 0,
-            reason: "apply"
+            reason: "applyEfficiencyResourcesJsTest003"
         };
         try {
             backgroundTaskManager.applyEfficiencyResources(resRequest);
@@ -127,7 +127,7 @@ describe("EfficiencyResourcesJsTest", function () {
         let resRequest = {
             resourceTypes: 1,
             timeOut: 10,
-            reason: "apply"
+            reason: "applyEfficiencyResourcesJsTest004"
         };
         try {
             backgroundTaskManager.applyEfficiencyResources(resRequest);
@@ -149,7 +149,7 @@ describe("EfficiencyResourcesJsTest", function () {
         let resRequest = {
             resourceTypes: 1,
             isApply: true,
-            reason: "apply"
+            reason: "applyEfficiencyResourcesJsTest005"
         };
         try {
             backgroundTaskManager.applyEfficiencyResources(resRequest);
@@ -194,7 +194,7 @@ describe("EfficiencyResourcesJsTest", function () {
             resourceTypes: 1,
             isApply: true,
             timeOut: 0,
-            reason: "apply",
+            reason: "applyEfficiencyResourcesJsTest007",
             isPersist: false,
         };
         try {
@@ -218,7 +218,7 @@ describe("EfficiencyResourcesJsTest", function () {
             resourceTypes: 0,
             isApply: true,
             timeOut: 10,
-            reason: "apply",
+            reason: "applyEfficiencyResourcesJsTest008",
         };
         try {
             backgroundTaskManager.applyEfficiencyResources(resRequest);
@@ -241,7 +241,7 @@ describe("EfficiencyResourcesJsTest", function () {
             resourceTypes: 1,
             isApply: true,
             timeOut: 0,
-            reason: "apply",
+            reason: "applyEfficiencyResourcesJsTest009",
             isPersist: true,
         };
         try {
@@ -265,7 +265,7 @@ describe("EfficiencyResourcesJsTest", function () {
             resourceTypes: 1,
             isApply: true,
             timeOut: 10,
-            reason: "apply",
+            reason: "applyEfficiencyResourcesJsTest010",
             isProcess: true,
         };
         try {
