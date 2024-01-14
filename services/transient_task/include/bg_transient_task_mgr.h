@@ -71,7 +71,6 @@ public:
     void HandleRequestExpired(const int32_t requestId);
     void HandleTransientTaskSuscriberTask(const shared_ptr<TransientTaskAppInfo>& appInfo,
         const TransientTaskEventType type);
-    bool IsReady();
 
 private:
     ErrCode IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
