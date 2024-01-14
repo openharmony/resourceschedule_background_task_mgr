@@ -70,11 +70,6 @@ void BgTransientTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& ru
     InitNecessaryState(runner);
 }
 
-bool BgTransientTaskMgr::IsReady()
-{
-    return isReady_.load();
-}
-
 void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
     sptr<ISystemAbilityManager> systemAbilityManager

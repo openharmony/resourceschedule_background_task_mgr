@@ -128,11 +128,6 @@ void BgEfficiencyResourcesMgr::OnRemoveSystemAbility(int32_t systemAbilityId, co
     }
 }
 
-bool BgEfficiencyResourcesMgr::IsReady()
-{
-    return isSysReady_.load();
-}
-
 __attribute__((no_sanitize("cfi"))) void BgEfficiencyResourcesMgr::RegisterAppStateObserver()
 {
     appStateObserver_ = DelayedSingleton<AppStateObserver>::GetInstance();
@@ -732,7 +727,7 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
         iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
     BGTASK_LOGI("remove record from info map, mapkey %{public}d, uid: %{public}d, bundle name: %{public}s"
-        " erasebit %{public}d", mapKey, callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str(), eraseBit);
+        "erasebit %{public}d", mapKey, callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str(), eraseBit);
     subscriberMgr_->OnResourceChanged(callbackInfo, type);
     if (iter->second->resourceNumber_ == 0) {
         infoMap.erase(iter);
@@ -758,10 +753,6 @@ void BgEfficiencyResourcesMgr::RemoveListRecord(std::list<PersistTime> &resource
 ErrCode BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<
     ResourceCallbackInfo>> &appList, std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
 {
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("Efficiency resources manager is not ready, GetEfficiencyResourcesInfos failed");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     handler_->PostSyncTask([this, &appList, &procList]() {
         this->GetEfficiencyResourcesInfosInner(appResourceApplyMap_, appList);
         this->GetEfficiencyResourcesInfosInner(procResourceApplyMap_, procList);

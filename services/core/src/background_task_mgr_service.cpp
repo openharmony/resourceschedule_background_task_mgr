@@ -34,7 +34,6 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
-const int32_t DELAY_TIME = 2000;
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
@@ -55,28 +54,6 @@ void BackgroundTaskMgrService::OnStart()
     Init();
     AddSystemAbilityListener(APP_MGR_SERVICE_ID);
     AddSystemAbilityListener(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-    PublishIfReady();
-}
-
-void BackgroundTaskMgrService::PublishIfReady()
-{
-    if (!DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->IsReady() ||
-        !DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsReady() ||
-        !BgContinuousTaskMgr::GetInstance()->IsReady()) {
-        BGTASK_LOGE("inner service is not ready");
-        auto task = [weak = weak_from_this()]() {
-            auto self = weak.lock();
-            if (!self) {
-                BGTASK_LOGE("weak.lock return null");
-                return;
-            }
-            self->PublishIfReady();
-        };
-        if (handler_) {
-            handler_->PostTask(task, DELAY_TIME);
-        }
-        return;
-    }
     if (!Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get())) {
         BGTASK_LOGE("Service start failed!");
         return;
@@ -98,11 +75,6 @@ void BackgroundTaskMgrService::OnRemoveSystemAbility(int32_t systemAbilityId, co
 void BackgroundTaskMgrService::Init()
 {
     runner_ = AppExecFwk::EventRunner::Create(BGTASK_SERVICE_NAME);
-    handler_ = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner_);
-    if (handler_ == nullptr) {
-        BGTASK_LOGE("BackgroundTaskMgrService handler create failed!");
-        return;
-    }
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->Init(runner_);
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Init(runner_);
     BgContinuousTaskMgr::GetInstance()->Init(runner_);
@@ -184,11 +156,6 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
-        BGTASK_LOGE("service is not publish");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
-
     if (!CheckCallingToken()) {
         BGTASK_LOGW("SubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
@@ -206,10 +173,6 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    if (state_ != ServiceRunningState::STATE_RUNNING) {
-        BGTASK_LOGE("service is not publish");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     if (!CheckCallingToken()) {
         BGTASK_LOGW("UnsubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;

@@ -61,10 +61,7 @@ private:
 #define BGTASK_PRINT_LOG(LEVEL, Level, fmt, ...)                  \
     if (BackgroundTaskMgr::BgTaskMgrLogWrapper::JudgeLevel(BackgroundTaskMgr::BgTaskMgrLogLevel::LEVEL))     \
     OHOS::HiviewDFX::HiLog::Level(BackgroundTaskMgr::BGTASK_MGR_LABEL,               \
-        "[%{public}s(%{public}s):%{public}d] " fmt,        \
-        OHOS::BackgroundTaskMgr::BgTaskMgrLogWrapper::GetBriefFileName(__FILE__).c_str(), \
-        __FUNCTION__,                                      \
-        __LINE__,                                          \
+        fmt,        \
         ##__VA_ARGS__)
 
 #define BGTASK_LOGD(fmt, ...) BGTASK_PRINT_LOG(DEBUG, Debug, fmt, ##__VA_ARGS__)
