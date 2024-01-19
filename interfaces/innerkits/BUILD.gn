@@ -31,7 +31,6 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     debug = false
   }
   sources = [
-    "${bgtaskmgr_frameworks_path}/common/src/bgtaskmgr_log_wrapper.cpp",
     "${bgtaskmgr_frameworks_path}/src/background_task_manager.cpp",
     "${bgtaskmgr_frameworks_path}/src/background_task_mgr_proxy.cpp",
     "${bgtaskmgr_frameworks_path}/src/background_task_subscriber_proxy.cpp",
