@@ -650,22 +650,5 @@ HWTEST_F(BgTaskFrameworkUnitTest, ExpiredCallbackStubTest_001, TestSize.Level1)
     data3.WriteInterfaceToken(TestExpiredCallbackStub::GetDescriptor());
     EXPECT_EQ(expiredCallbackStub.OnRemoteRequest(FIRST_CALL_TRANSACTION, data3, reply, option), ERR_OK);
 }
-
-/**
- * @tc.name: BgTaskMgrLogWrapperTest_001
- * @tc.desc: test BgTaskMgrLogWrapper.
- * @tc.type: FUNC
- * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgTaskFrameworkUnitTest, BgTaskMgrLogWrapperTest_001, TestSize.Level1)
-{
-    BgTaskMgrLogWrapper::SetLogLevel(BgTaskMgrLogLevel::INFO);
-    EXPECT_FALSE(BgTaskMgrLogWrapper::JudgeLevel(BgTaskMgrLogLevel::DEBUG));
-    EXPECT_TRUE(BgTaskMgrLogWrapper::JudgeLevel(BgTaskMgrLogLevel::WARN));
-
-    EXPECT_EQ(BgTaskMgrLogWrapper::GetBriefFileName(nullptr), "");
-    EXPECT_EQ(BgTaskMgrLogWrapper::GetBriefFileName("test"), "");
-    EXPECT_EQ(BgTaskMgrLogWrapper::GetBriefFileName("test/test"), "test");
-}
 }
 }

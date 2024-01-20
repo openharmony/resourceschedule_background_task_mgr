@@ -16,59 +16,40 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_COMMON_INCLUDE_BGTASKMGR_LOG_WRAPPER_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_COMMON_INCLUDE_BGTASKMGR_LOG_WRAPPER_H
 
-#include <string>
-
 #include "hilog/log.h"
+
+#ifdef LOG_DOMAIN
+#undef LOG_DOMAIN
+#endif
+#define LOG_DOMAIN 0xD001711
+
+#ifdef LOG_TAG
+#undef LOG_TAG
+#endif
+#define LOG_TAG "BACKGROUND_TASK"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-#ifndef BGTASK_MGR_LOG_DOMAIN
-#define BGTASK_MGR_LOG_DOMAIN 0xD001711
+
+#ifndef FILENAME
+#define FILENAME                (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#ifndef BGTASK_MGR_LOG_TAG
-#define BGTASK_MGR_LOG_TAG "BACKGROUND_TASK"
+#ifndef FORMAT_LOG
+#define FORMAT_LOG(fmt, ...) "[%{public}s(%{public}s):%{public}d] " fmt, FILENAME, __FUNCTION__, __LINE__, ##__VA_ARGS__
 #endif
 
-enum class BgTaskMgrLogLevel : uint8_t { DEBUG = 0, INFO, WARN, ERROR, FATAL };
+#define BACKGROUND_TASK_PRINT_LOGD(fmt, ...) HILOG_DEBUG(LOG_CORE, fmt, ##__VA_ARGS__)
+#define BACKGROUND_TASK_PRINT_LOGI(fmt, ...) HILOG_INFO(LOG_CORE, fmt, ##__VA_ARGS__)
+#define BACKGROUND_TASK_PRINT_LOGW(fmt, ...) HILOG_WARN(LOG_CORE, fmt, ##__VA_ARGS__)
+#define BACKGROUND_TASK_PRINT_LOGE(fmt, ...) HILOG_ERROR(LOG_CORE, fmt, ##__VA_ARGS__)
+#define BACKGROUND_TASK_PRINT_LOGF(fmt, ...) HILOG_FATAL(LOG_CORE, fmt, ##__VA_ARGS__)
 
-static constexpr OHOS::HiviewDFX::HiLogLabel BGTASK_MGR_LABEL = {LOG_CORE, BGTASK_MGR_LOG_DOMAIN,
-    BGTASK_MGR_LOG_TAG};
-
-class BgTaskMgrLogWrapper {
-public:
-    BgTaskMgrLogWrapper() = delete;
-    ~BgTaskMgrLogWrapper() = delete;
-
-    static bool JudgeLevel(const BgTaskMgrLogLevel &level);
-
-    static void SetLogLevel(const BgTaskMgrLogLevel &level)
-    {
-        level_ = level;
-    }
-
-    static const BgTaskMgrLogLevel &GetLogLevel()
-    {
-        return level_;
-    }
-
-    static std::string GetBriefFileName(const char *str);
-
-private:
-    static BgTaskMgrLogLevel level_;
-};
-
-#define BGTASK_PRINT_LOG(LEVEL, Level, fmt, ...)                  \
-    if (BackgroundTaskMgr::BgTaskMgrLogWrapper::JudgeLevel(BackgroundTaskMgr::BgTaskMgrLogLevel::LEVEL))     \
-    OHOS::HiviewDFX::HiLog::Level(BackgroundTaskMgr::BGTASK_MGR_LABEL,               \
-        fmt,        \
-        ##__VA_ARGS__)
-
-#define BGTASK_LOGD(fmt, ...) BGTASK_PRINT_LOG(DEBUG, Debug, fmt, ##__VA_ARGS__)
-#define BGTASK_LOGI(fmt, ...) BGTASK_PRINT_LOG(INFO, Info, fmt, ##__VA_ARGS__)
-#define BGTASK_LOGW(fmt, ...) BGTASK_PRINT_LOG(WARN, Warn, fmt, ##__VA_ARGS__)
-#define BGTASK_LOGE(fmt, ...) BGTASK_PRINT_LOG(ERROR, Error, fmt, ##__VA_ARGS__)
-#define BGTASK_LOGF(fmt, ...) BGTASK_PRINT_LOG(FATAL, Fatal, fmt, ##__VA_ARGS__)
+#define BGTASK_LOGD(...) BACKGROUND_TASK_PRINT_LOGD(FORMAT_LOG(__VA_ARGS__))
+#define BGTASK_LOGI(...) BACKGROUND_TASK_PRINT_LOGI(FORMAT_LOG(__VA_ARGS__))
+#define BGTASK_LOGW(...) BACKGROUND_TASK_PRINT_LOGW(FORMAT_LOG(__VA_ARGS__))
+#define BGTASK_LOGE(...) BACKGROUND_TASK_PRINT_LOGE(FORMAT_LOG(__VA_ARGS__))
+#define BGTASK_LOGF(...) BACKGROUND_TASK_PRINT_LOGF(FORMAT_LOG(__VA_ARGS__))
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_COMMON_INCLUDE_BGTASKMGR_LOG_WRAPPER_H
