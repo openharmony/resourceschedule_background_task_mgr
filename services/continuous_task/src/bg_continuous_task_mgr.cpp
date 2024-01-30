@@ -521,7 +521,11 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
         BGTASK_LOGE("continuous task param is null!");
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
-
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    if (callingUid != taskParam->uid_) {
+        BGTASK_LOGE("continuous task param uid %{public}d is invalid, real %{public}d", taskParam->uid_, callingUid);
+        return ERR_BGTASK_CHECK_TASK_PARAM;
+    }
     if (taskParam->isStart_) {
         return StartBackgroundRunningForInner(taskParam);
     }
