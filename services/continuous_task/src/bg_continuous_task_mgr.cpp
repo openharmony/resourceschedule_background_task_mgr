@@ -691,7 +691,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     }
     if (continuousTaskRecord->GetBgModeId() == BackgroundMode::AUDIO_PLAYBACK ||
         continuousTaskRecord->GetBgModeId() == BackgroundMode::VOIP) {
-        BGTASK_LOGI("background mode AUDIO_PLAYBACK or VOIPdon't send notification, bundle name:%{public}s",
+        BGTASK_LOGI("background mode AUDIO_PLAYBACK or VOIP don't send notification, bundle name:%{public}s",
             continuousTaskRecord->GetBundleName().c_str());
         return ERR_OK;
     }
@@ -750,7 +750,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     BGTASK_LOGI("%{public}s stop continuous task", mapKey.c_str());
     ErrCode result = ERR_OK;
     if (!iter->second->isFromWebview_ && (iter->second->GetBgModeId() != BackgroundMode::AUDIO_PLAYBACK ||
-        iter->second->GetBgModeId() != BackgroundMode::VOIP) {
+        iter->second->GetBgModeId() != BackgroundMode::VOIP)) {
         result = NotificationTools::GetInstance()->CancelNotification(
             iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
     }
