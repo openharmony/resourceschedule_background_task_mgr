@@ -16,6 +16,7 @@
 #include "bg_continuous_task_napi_module.h"
 
 #include "ability.h"
+#include "bundle_mgr_interface.h"
 #include "iservice_registry.h"
 #include "napi_base_context.h"
 #include "system_ability_definition.h"
