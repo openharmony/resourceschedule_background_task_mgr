@@ -574,7 +574,12 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     if (!CheckTaskParam(taskParam)) {
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
-
+    if (taskParam->isBatchApi_) {
+        BGTASK_LOGW("lpf mode size %{public}d", taskParam->bgmodes_.size());
+        for (unsigned i = 0; i < taskParam->bgmodes_.size(); i++) {
+            BGTASK_LOGW("lpf mode %{public}d", taskParam->bgmodes_[i]);
+        }
+    }
     ErrCode result = ERR_OK;
 
     int32_t callingUid = IPCSkeleton::GetCallingUid();

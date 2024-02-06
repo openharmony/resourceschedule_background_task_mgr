@@ -55,6 +55,19 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
         return false;
     }
     appName_ = Str16ToStr8(u16AppName);
+
+    if (!parcel.ReadBool(isBatchApi_)) {
+        BGTASK_LOGE("Failed to read the flag isBatchApi_");
+        return false;
+    }
+    valid = parcel.ReadBool();
+    if (valid) {
+        if (!parcel.ReadUInt32Vector(&bgmodes_)) {
+            BGTASK_LOGE("read parce bgmodes_ error");
+            return false;
+        }
+        BGTASK_LOGE("read parce bgmodes_ size %{public}d", bgmodes_.size());
+    }
     return true;
 }
 
@@ -133,6 +146,24 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         BGTASK_LOGE("Failed to write appName");
         return false;
     }
+    if (!parcel.WriteBool(isBatchApi_)) {
+        BGTASK_LOGE("Failed to write the isBatchApi_");
+        return false;
+    }
+
+    valid = (bgmodes_.size() > 0);
+    if (!parcel.WriteBool(valid)) {
+        BGTASK_LOGE("Failed to write the flag which indicate whether bgmodes_ is empty");
+        return false;
+    }
+    if (valid) {
+        BGTASK_LOGE("write modes %{public}d", bgmodes_.size());
+        if (!parcel.WriteUInt32Vector(bgmodes_)) {
+            BGTASK_LOGE("Failed to write wantAgent");
+            return false;
+        }
+    }
+
     return true;
 }
 
