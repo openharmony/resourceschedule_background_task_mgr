@@ -74,13 +74,20 @@ public:
     virtual ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) = 0;
 
     /**
+     * @brief Request service to update running background.
+     *
+     * @param taskParam Request params.
+     * @return ERR_OK if success, else fail.
+     */
+    virtual ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) = 0;
+
+    /**
      * @brief Request service to keep or stop running background for inner ability.
      *
      * @param taskParam Request params.
      * @return ERR_OK if success, else fail.
      */
     virtual ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam) = 0;
-
     /**
      * @brief Request service to stop running background.
      *

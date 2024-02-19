@@ -56,6 +56,7 @@ public:
     ErrCode CancelSuspendDelay(int32_t requestId) override;
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime) override;
     ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) override;
+    ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) override;
     ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam) override;
     ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken) override;
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;

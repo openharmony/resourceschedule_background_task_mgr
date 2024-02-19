@@ -34,7 +34,7 @@ class ContinuousTaskRecord {
 public:
     ContinuousTaskRecord() = default;
     ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
-         int32_t uid, int32_t pid, uint32_t bgModeId);
+         int32_t uid, int32_t pid, uint32_t bgModeId, bool isBatchApi = false, std::vector<uint32_t> bgModeIds = {});
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
     bool IsNewApi() const;
@@ -47,8 +47,10 @@ public:
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
     std::string ParseToJsonStr();
     bool ParseFromJson(const nlohmann::json &value);
+    std::string ToString(std::vector<uint32_t> bgmodes);
 
 private:
+    std::vector<uint32_t> ToVector(std::string str);
     std::string bundleName_ {""};
     std::string abilityName_ {""};
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
@@ -62,6 +64,9 @@ private:
     std::shared_ptr<WantAgentInfo> wantAgentInfo_ {nullptr};
     std::string appName_ {""};
     uint64_t fullTokenId_ {0};
+public:
+    bool isBatchApi_ {false};
+    std::vector<uint32_t> bgModeIds_ {};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

@@ -67,6 +67,14 @@ public:
     ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) override;
 
     /**
+     * @brief Request service to update running background.
+     *
+     * @param taskParam Request params.
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) override;
+
+    /**
      * @brief Request service to keep or stop running background for inner ability.
      *
      * @param taskParam Request params.
@@ -127,7 +135,7 @@ public:
      * @return ERR_OK if success, else fail.
      */
     ErrCode ResetAllEfficiencyResources() override;
-    
+
     /**
      * @brief Get all effficiency resources running infos.
      * @param appList EFficiency Resources infos of apps.

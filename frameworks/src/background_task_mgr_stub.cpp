@@ -58,6 +58,9 @@ ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::START_BACKGROUND_RUNNING):
             HandleStartBackgroundRunning(data, reply);
             break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::UPDATE_BACKGROUND_RUNNING):
+            HandleUpdateBackgroundRunning(data, reply);
+            break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_BACKGROUND_RUNNING):
             HandleStopBackgroundRunning(data, reply);
             break;
@@ -89,6 +92,7 @@ ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
             HandleBackgroundRunningForInner(data, reply);
             break;
         default:
+            BGTASK_LOGE("BackgroundTaskMgrStub: code is not match");
             return IRemoteStub::OnRemoteRequest(code, data, reply, option);
     }
     return ERR_OK;
@@ -177,6 +181,25 @@ ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data,
     ErrCode result = StartBackgroundRunning(taskParam);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleStartBackgroundRunning write result failed, ErrCode=%{public}d", result);
+        FinishTrace(HITRACE_TAG_OHOS);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    FinishTrace(HITRACE_TAG_OHOS);
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleUpdateBackgroundRunning(MessageParcel &data, MessageParcel &reply)
+{
+    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleUpdateBackgroundRunning");
+    sptr<ContinuousTaskParam> taskParam = data.ReadParcelable<ContinuousTaskParam>();
+    if (taskParam == nullptr) {
+        BGTASK_LOGE("ContinuousTaskParam ReadParcelable failed");
+        FinishTrace(HITRACE_TAG_OHOS);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    ErrCode result = UpdateBackgroundRunning(taskParam);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleUpdateBackgroundRunning write result failed, ErrCode=%{public}d", result);
         FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }

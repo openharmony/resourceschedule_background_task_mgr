@@ -82,6 +82,14 @@ public:
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) = 0;
 
     /**
+     * @brief Called back when a continuous task update.
+     *
+     * @param continuousTaskCallbackInfo Continuous task app info.
+     */
+    virtual void OnContinuousTaskUpdate(
+        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) = 0;
+
+    /**
      * @brief Called back when a continuous task stop.
      *
      * @param continuousTaskCallbackInfo Continuous task app info.

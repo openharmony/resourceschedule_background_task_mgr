@@ -83,6 +83,13 @@ public:
     virtual void OnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
 
     /**
+     * Called back when a continuous task update.
+     *
+     * @param info Transient task app info.
+     **/
+    virtual void OnContinuousTaskUpdate(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+
+    /**
      * Called back when a continuous task end.
      *
      * @param info Transient task app info.
@@ -179,6 +186,13 @@ private:
          * @param continuousTaskCallbackInfo Continuous task app info.
          */
         void OnContinuousTaskStart(
+            const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+        /**
+         * @brief Called back when a continuous task update.
+         *
+         * @param continuousTaskCallbackInfo Continuous task app info.
+         */
+        void OnContinuousTaskUpdate(
             const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
 
         /**

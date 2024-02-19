@@ -19,7 +19,6 @@
 #include <cstdint>
 #include <sys/types.h>
 #include <string>
-
 #include "parcel.h"
 
 namespace OHOS {
@@ -28,10 +27,8 @@ class ContinuousTaskCallbackInfo : public Parcelable {
 public:
     ContinuousTaskCallbackInfo();
     ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid,
-        pid_t creatorPid, std::string abilityName, bool isFromWebview = false)
-        : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), 
-        abilityName_(abilityName),
-        isFromWebview_(isFromWebview) {}
+        pid_t creatorPid, std::string abilityName, bool isFromWebview = false, bool isBatchApi = false,
+        std::vector<uint32_t> typeIds = {});
 
     /**
      * @brief Get the id of type.
@@ -39,6 +36,20 @@ public:
      * @return The id of type.
      */
     uint32_t GetTypeId() const;
+
+    /**
+     * @brief Get the id of types.
+     *
+     * @return The id of types.
+     */
+    std::vector<uint32_t>& GetTypeIds();
+
+    /**
+     * @brief Get the batch api flag.
+     *
+     * @return The flag of batch api.
+     */
+    bool IsBatchApi() const;
 
     /**
      * @brief Get the uid of notification creator.
@@ -75,7 +86,7 @@ public:
      * @return True if success, else false.
      */
     bool Marshalling(Parcel &parcel) const override;
-    
+
     static ContinuousTaskCallbackInfo *Unmarshalling(Parcel &parcel);
 
 private:
@@ -87,6 +98,9 @@ private:
     pid_t creatorPid_ {0};
     std::string abilityName_ {""};
     bool isFromWebview_ {false};
+public:    
+    bool isBatchApi_ {false};
+    std::vector<uint32_t> typeIds_ {};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

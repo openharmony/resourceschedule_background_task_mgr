@@ -160,6 +160,7 @@ bool CheckBackgroundMode(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, boo
             }
         }
     }
+    BGTASK_LOGE("ok");
     return true;
 }
 
@@ -205,6 +206,20 @@ bool StartBackgroundRunningCheckParam(napi_env env, AsyncCallbackInfo *asyncCall
     return true;
 }
 
+void UpdateBackgroundRunningExecuteCB(napi_env env, void *data)
+{
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
+    if (asyncCallbackInfo == nullptr || asyncCallbackInfo->errCode != ERR_OK) {
+        BGTASK_LOGE("input params error");
+        return;
+    }
+    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+    ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode, nullptr, info->name, 
+        asyncCallbackInfo->abilityContext->GetToken(), GetMainAbilityLabel(info->bundleName), true, asyncCallbackInfo->bgModes);
+    BGTASK_LOGD("StartBackgroundRunningExecuteCB %{public}d, %{public}u", taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam);
+}
+
 void StartBackgroundRunningExecuteCB(napi_env env, void *data)
 {
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
@@ -213,10 +228,10 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         return;
     }
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
-
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode, asyncCallbackInfo->wantAgent,
         info->name, asyncCallbackInfo->abilityContext->GetToken(), GetMainAbilityLabel(info->bundleName),
         asyncCallbackInfo->isBatchApi, asyncCallbackInfo->bgModes);
+    BGTASK_LOGD("StartBackgroundRunningExecuteCB %{public}d, %{public}u", taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
 }
 
@@ -303,6 +318,33 @@ napi_value StartBackgroundRunningAsync(napi_env env, napi_value *argv,
     return WrapVoidToJS(env);
 }
 
+napi_value UpdateBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("param is nullptr");
+        return nullptr;
+    }
+    if (!CheckBackgroundMode(env, asyncCallbackInfo, isThrow)) {
+        return nullptr;
+    }
+    napi_value resourceName;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    napi_deferred deferred;
+    napi_value promise {nullptr};
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    asyncCallbackInfo->deferred = deferred;
+    BGTASK_LOGE("11");
+    NAPI_CALL(env, napi_create_async_work(env,
+        nullptr,
+        resourceName,
+        UpdateBackgroundRunningExecuteCB,
+        PromiseCompletedCB,
+        static_cast<void *>(asyncCallbackInfo),
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+    return promise;
+}
+
 napi_value StartBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
 {
     if (asyncCallbackInfo == nullptr) {
@@ -318,7 +360,7 @@ napi_value StartBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncC
     if (!StartBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
         return nullptr;
     }
-
+    BGTASK_LOGE("11");
     NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
@@ -341,9 +383,9 @@ bool CheckTypeForNapiValue(napi_env env, napi_value param, napi_valuetype expect
 
 napi_value GetBackgroundMode(const napi_env &env, const napi_value &value, AsyncCallbackInfo *asyncCallbackInfo)
 {
+    BGTASK_LOGI("lpf interface");
     bool isArray = false;
     if (napi_is_array(env, value, &isArray) != napi_ok || isArray == false) {
-        BGTASK_LOGI("use old interface");
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, value, &valuetype));
         if (valuetype != napi_number) {
@@ -373,7 +415,7 @@ napi_value GetBackgroundMode(const napi_env &env, const napi_value &value, Async
                 Common::HandleParamErr(env, ERR_BGMODE_NULL_OR_TYPE_ERR, true);
                 return nullptr;
             }
-            BGTASK_LOGI("GetBackgroundMode %{%public}d.", result);
+            BGTASK_LOGI("GetBackgroundMode %{public}d.", result);
             asyncCallbackInfo->bgModes.push_back(result);
         }
         return WrapVoidToJS(env);
@@ -423,6 +465,54 @@ bool StartBackgroundRunningCheckParamBeforeSubmit(napi_env env, napi_value *argv
         return false;
     }
     return true;
+}
+
+
+napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool isThrow)
+{
+    ReportXPowerJsStackSysEventByType(env, "CONTINUOUS_TASK_UPDATE");
+    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo == nullpter");
+        return WrapVoidToJS(env);
+    }
+
+    size_t argc = 2;
+    napi_value argv[2] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc > 2) {
+        BGTASK_LOGE("wrong param nums");
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        return WrapVoidToJS(env);
+    }
+
+    // argv[0] : context : AbilityContext
+    if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
+        BGTASK_LOGE("Get ability context failed");
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
+        return WrapVoidToJS(env);
+    }
+
+    // argv[1] : bgMode : BackgroundMode
+    if (GetBackgroundMode(env, argv[1], asyncCallbackInfo) == nullptr) {
+        BGTASK_LOGE("input bgmode param not number");
+        Common::HandleParamErr(env, ERR_BGMODE_NULL_OR_TYPE_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
+        return WrapVoidToJS(env);
+    }
+
+    napi_value ret {nullptr};
+    ret = UpdateBackgroundRunningPromise(env, asyncCallbackInfo, isThrow);
+    if (ret == nullptr) {
+        BGTASK_LOGE("ret is nullpter");
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        ret = WrapVoidToJS(env);
+    }
+    return ret;
 }
 
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool isThrow)
@@ -633,6 +723,11 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info)
 napi_value StartBackgroundRunningThrow(napi_env env, napi_callback_info info)
 {
     return StartBackgroundRunning(env, info, true);
+}
+
+napi_value UpdateBackgroundRunningThrow(napi_env env, napi_callback_info info)
+{
+    return UpdateBackgroundRunning(env, info, true);
 }
 
 napi_value StopBackgroundRunningThrow(napi_env env, napi_callback_info info)

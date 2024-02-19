@@ -50,6 +50,7 @@ private:
     ErrCode HandleCancelSuspendDelay(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetRemainingDelayTime(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleStartBackgroundRunning(MessageParcel &data, MessageParcel &reply);
+    ErrCode HandleUpdateBackgroundRunning(MessageParcel &data, MessageParcel &reply);
     ErrCode HandleStopBackgroundRunning(MessageParcel &data, MessageParcel &reply);
     ErrCode HandleBackgroundRunningForInner(MessageParcel &data, MessageParcel &reply);
     ErrCode HandleSubscribeBackgroundTask(MessageParcel& data, MessageParcel& reply);

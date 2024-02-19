@@ -75,6 +75,9 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequestInner(uint32_t code,
         case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_START): {
             return HandleOnContinuousTaskStart(data);
         }
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_UPDATE): {
+            return HandleOnContinuousTaskUpdate(data);
+        }
         case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_STOP): {
             return HandleOnContinuousTaskCancel(data);
         }
@@ -165,6 +168,19 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskStart(MessageParcel 
     }
 
     OnContinuousTaskStart(continuousTaskCallbackInfo);
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnContinuousTaskUpdate(MessageParcel &data)
+{
+    std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo
+        = std::shared_ptr<ContinuousTaskCallbackInfo>(data.ReadParcelable<ContinuousTaskCallbackInfo>());
+    if (!continuousTaskCallbackInfo) {
+        BGTASK_LOGE("HandleOnContinuousTaskUpdate ContinuousTaskCallbackInfo ReadParcelable failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    OnContinuousTaskUpdate(continuousTaskCallbackInfo);
     return ERR_OK;
 }
 
