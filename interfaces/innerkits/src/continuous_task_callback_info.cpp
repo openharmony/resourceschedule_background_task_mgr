@@ -23,9 +23,10 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo() {}
-ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid, pid_t creatorPid, std::string abilityName, 
-    bool isFromWebview, bool isBatchApi, std::vector<uint32_t> typeIds) : typeId_(typeId), creatorUid_(creatorUid),
-    creatorPid_(creatorPid), abilityName_(abilityName), isFromWebview_(isFromWebview), isBatchApi_(isBatchApi), typeIds_(typeIds) {}
+ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid, pid_t creatorPid, std::string abilityName,
+    bool isFromWebview, bool isBatchApi, std::vector<uint32_t> typeIds, int32_t abilityId) : typeId_(typeId), creatorUid_(creatorUid),
+    creatorPid_(creatorPid), abilityName_(abilityName), isFromWebview_(isFromWebview),
+    isBatchApi_(isBatchApi), typeIds_(typeIds), abilityId_(abilityId) {}
 
 uint32_t ContinuousTaskCallbackInfo::GetTypeId() const
 {
@@ -40,6 +41,11 @@ std::vector<uint32_t>& ContinuousTaskCallbackInfo::GetTypeIds()
 bool ContinuousTaskCallbackInfo::IsBatchApi() const
 {
     return isBatchApi_;
+}
+
+int ContinuousTaskCallbackInfo::GetAbilityId() const
+{
+    return abilityId_;
 }
 
 int32_t ContinuousTaskCallbackInfo::GetCreatorUid() const
@@ -99,7 +105,11 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
             BGTASK_LOGE("Failed to write typeIds_");
             return false;
         }
-    }    
+    }
+    if (!parcel.WriteInt32(abilityId_)) {
+        BGTASK_LOGE("Failed to write abilityId_");
+        return false;
+    }
     return true;
 }
 
@@ -143,6 +153,7 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
         }
         BGTASK_LOGD("read parce bgmodes_ size %{public}u", static_cast<uint32_t>(typeIds_.size()));
     }
+    abilityId_ = static_cast<int32_t>(parcel.ReadInt32());
     return true;
 }
 }  // namespace BackgroundTaskMgr

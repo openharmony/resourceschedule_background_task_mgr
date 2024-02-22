@@ -37,9 +37,9 @@ const char *g_continuousTaskModeName[10] = {
 };
 
 ContinuousTaskRecord::ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
-    int32_t uid, int32_t pid, uint32_t bgModeId, bool isBatchApi, std::vector<uint32_t> bgModeIds) :
+    int32_t uid, int32_t pid, uint32_t bgModeId, bool isBatchApi, std::vector<uint32_t> bgModeIds, int32_t abilityId) :
     bundleName_(bundleName), abilityName_(abilityName), uid_(uid), pid_(pid), bgModeId_(bgModeId), 
-    isBatchApi_(isBatchApi), bgModeIds_(bgModeIds) {
+    isBatchApi_(isBatchApi), bgModeIds_(bgModeIds), abilityId_(abilityId) {
     if (isBatchApi_) {
         auto findDataTransfer = [](const auto &target) {
             return  target != BackgroundMode::DATA_TRANSFER;
