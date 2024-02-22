@@ -579,12 +579,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     if (!CheckTaskParam(taskParam)) {
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
-    if (taskParam->isBatchApi_) {
-        BGTASK_LOGI("new mode size %{public}u", static_cast<uint32_t>(taskParam->bgModeIds_.size()));
-        for (auto mode : taskParam->bgModeIds_) {
-            BGTASK_LOGI("mode %{public}u", mode);
-        }
-    }
     ErrCode result = ERR_OK;
 
     int32_t callingUid = IPCSkeleton::GetCallingUid();
@@ -633,7 +627,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 
 ErrCode BgContinuousTaskMgr::UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
-    BGTASK_LOGW("UpdateBackgroundRunning");
    if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
@@ -663,8 +656,14 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string task
         BGTASK_LOGW("continuous task is not exist: %{public}s, use start befor update", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
+
     auto continuousTaskRecord = iter->second;
     auto oldModes = continuousTaskRecord->bgModeIds_;
+    BGTASK_LOGI("continuous task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d",
+        continuousTaskRecord->bgModeId_,
+        continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
+        continuousTaskRecord->ToString(updateModes).c_str(),
+        continuousTaskRecord->isBatchApi_);
     // todo diff compare old and new
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_, continuousTaskRecord->abilityName_);
     for (auto it =  updateModes.begin(); it != updateModes.end(); it++) {
@@ -692,6 +691,8 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string task
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
+    BGTASK_LOGI("continuous task mode: %{public}u, modes %{public}s, isBatchApi %{public}d", continuousTaskRecord->bgModeId_,
+        continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(), continuousTaskRecord->isBatchApi_);
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
         + continuousTaskRecord->abilityName_;
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
