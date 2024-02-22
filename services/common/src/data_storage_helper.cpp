@@ -82,7 +82,7 @@ ErrCode DataStorageHelper::RestoreResourceRecord(ResourceRecordMap &appRecord,
 {
     nlohmann::json root;
     if (ParseJsonValueFromFile(root, RESOURCE_RECORD_FILE_PATH) != ERR_OK) {
-        BGTASK_LOGD("can not read string form file: %{public}s", RESOURCE_RECORD_FILE_PATH.c_str());
+        BGTASK_LOGD("can not read string form file: %{private}s", RESOURCE_RECORD_FILE_PATH.c_str());
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     DivideJsonToMap(root, appRecord, processRecord);
@@ -98,12 +98,12 @@ int32_t DataStorageHelper::SaveJsonValueToFile(const std::string &value, const s
     std::ofstream fout;
     std::string realPath;
     if (!ConvertFullPath(filePath, realPath)) {
-        BGTASK_LOGE("SaveJsonValueToFile Get real file path: %{public}s failed", filePath.c_str());
+        BGTASK_LOGE("SaveJsonValueToFile Get real file path: %{private}s failed", filePath.c_str());
         return ERR_BGTASK_GET_ACTUAL_FILE_ERR;
     }
     fout.open(realPath, std::ios::out);
     if (!fout.is_open()) {
-        BGTASK_LOGE("Open file: %{public}s failed.", filePath.c_str());
+        BGTASK_LOGE("Open file: %{private}s failed.", filePath.c_str());
         return ERR_BGTASK_OPEN_FILE_ERR;
     }
     fout << value.c_str() << std::endl;
@@ -121,7 +121,7 @@ int32_t DataStorageHelper::ParseJsonValueFromFile(nlohmann::json &value, const s
     }
     fin.open(realPath, std::ios::in);
     if (!fin.is_open()) {
-        BGTASK_LOGE("cannot open file %{public}s", realPath.c_str());
+        BGTASK_LOGE("cannot open file %{private}s", realPath.c_str());
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     char buffer[MAX_BUFFER];
@@ -141,12 +141,12 @@ int32_t DataStorageHelper::ParseJsonValueFromFile(nlohmann::json &value, const s
 bool DataStorageHelper::CreateNodeFile(const std::string &filePath)
 {
     if (access(filePath.c_str(), F_OK) == ERR_OK) {
-        BGTASK_LOGD("the file: %{public}s already exists.", filePath.c_str());
+        BGTASK_LOGD("the file: %{private}s already exists.", filePath.c_str());
         return true;
     }
     int32_t fd = open(filePath.c_str(), O_CREAT|O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
     if (fd < ERR_OK) {
-        BGTASK_LOGE("Fail to open file: %{public}s", filePath.c_str());
+        BGTASK_LOGE("Fail to open file: %{private}s", filePath.c_str());
         return false;
     }
     close(fd);
