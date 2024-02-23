@@ -107,7 +107,11 @@ void NotificationTools::GetAllActiveNotificationsLabels(std::set<std::string> &n
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::vector<sptr<Notification::Notification>> notifications;
-    Notification::NotificationHelper::GetAllActiveNotifications(notifications);
+    ErrCode ret = Notification::NotificationHelper::GetAllActiveNotifications(notifications);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("get all active notification fail!");
+        return;
+    }
     for (auto &var : notifications) {
         notificationLabels.emplace(var->GetLabel());
     }
@@ -119,7 +123,11 @@ void NotificationTools::RefreshContinuousNotifications(
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::vector<sptr<Notification::Notification>> notifications;
-    Notification::NotificationHelper::GetAllActiveNotifications(notifications);
+    ErrCode ret = Notification::NotificationHelper::GetAllActiveNotifications(notifications);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("get all active notification fail!");
+        return;
+    }
     for (auto &var : notifications) {
         Notification::NotificationRequest request = var->GetNotificationRequest();
         std::string label = var->GetLabel();
