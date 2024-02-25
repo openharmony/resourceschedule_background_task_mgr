@@ -42,6 +42,32 @@ ErrCode BackgroundTaskMgrStub::OnRemoteRequest(uint32_t code,
     return HandleOnRemoteResquestFunc(code, data, reply, option);
 }
 
+void BackgroundTaskMgrStub::HandleContinuousTask(uint32_t code, MessageParcel& data, MessageParcel& reply)
+{
+    switch (code) {
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::START_BACKGROUND_RUNNING):
+            HandleStartBackgroundRunning(data, reply);
+            break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::UPDATE_BACKGROUND_RUNNING):
+            HandleUpdateBackgroundRunning(data, reply);
+            break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_BACKGROUND_RUNNING):
+            HandleStopBackgroundRunning(data, reply);
+            break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_CONTINUOUS_TASK_APPS):
+            HandleGetContinuousTaskApps(data, reply);
+            break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_CONTINUOUS_TASK):
+            HandleStopContinuousTask(data, reply);
+            break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_BACKGROUND_RUNNING_FOR_INNER):
+            HandleBackgroundRunningForInner(data, reply);
+            break;
+        default:
+            BGTASK_LOGE("code is error");
+    }
+}
+
 ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
     MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
@@ -56,13 +82,13 @@ ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
             HandleGetRemainingDelayTime(data, reply);
             break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::START_BACKGROUND_RUNNING):
-            HandleStartBackgroundRunning(data, reply);
-            break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::UPDATE_BACKGROUND_RUNNING):
-            HandleUpdateBackgroundRunning(data, reply);
-            break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_BACKGROUND_RUNNING):
-            HandleStopBackgroundRunning(data, reply);
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_CONTINUOUS_TASK_APPS):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_CONTINUOUS_TASK):
+            [[fallthrough]];
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_BACKGROUND_RUNNING_FOR_INNER):
+            HandleContinuousTask(code, data, reply);
             break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::SUBSCRIBE_BACKGROUND_TASK):
             HandleSubscribeBackgroundTask(data, reply);
@@ -73,9 +99,6 @@ ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_TRANSIENT_TASK_APPS):
             HandleGetTransientTaskApps(data, reply);
             break;
-        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_CONTINUOUS_TASK_APPS):
-            HandleGetContinuousTaskApps(data, reply);
-            break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::APPLY_EFFICIENCY_RESOURCES):
             HandleApplyEfficiencyResources(data, reply);
             break;
@@ -84,12 +107,6 @@ ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
             break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_EFFICIENCY_RESOURCES_INFOS):
             HandleGetEfficiencyResourcesInfos(data, reply);
-            break;
-        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::STOP_CONTINUOUS_TASK):
-            HandleStopContinuousTask(data, reply);
-            break;
-        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_BACKGROUND_RUNNING_FOR_INNER):
-            HandleBackgroundRunningForInner(data, reply);
             break;
         default:
             BGTASK_LOGE("BackgroundTaskMgrStub: code is not match");

@@ -35,7 +35,7 @@ public:
     ContinuousTaskRecord() = default;
     ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
          int32_t uid, int32_t pid, uint32_t bgModeId, bool isBatchApi = false,
-         std::vector<uint32_t> bgModeIds = {}, int32_t abilityId = -1);
+         const std::vector<uint32_t> &bgModeIds = {}, int32_t abilityId = -1);
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
     bool IsNewApi() const;
@@ -48,10 +48,10 @@ public:
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
     std::string ParseToJsonStr();
     bool ParseFromJson(const nlohmann::json &value);
-    std::string ToString(std::vector<uint32_t> bgmodes);
+    std::string ToString(std::vector<uint32_t> &bgmodes);
 
 private:
-    std::vector<uint32_t> ToVector(std::string str);
+    std::vector<uint32_t> ToVector(std::string &str);
     std::string bundleName_ {""};
     std::string abilityName_ {""};
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};

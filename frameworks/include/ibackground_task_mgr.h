@@ -88,6 +88,7 @@ public:
      * @return ERR_OK if success, else fail.
      */
     virtual ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam) = 0;
+    
     /**
      * @brief Request service to stop running background.
      *

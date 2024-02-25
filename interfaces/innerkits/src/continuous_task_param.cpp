@@ -153,7 +153,7 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
     if (isBatchApi_) {
         BGTASK_LOGD("write modes %{public}u", static_cast<uint32_t>(bgModeIds_.size()));
         if (!parcel.WriteUInt32Vector(bgModeIds_)) {
-            BGTASK_LOGE("Failed to write wantAgent");
+            BGTASK_LOGE("Failed to write bgModeIds_");
             return false;
         }
     }

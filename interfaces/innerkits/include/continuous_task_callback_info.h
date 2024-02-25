@@ -28,7 +28,9 @@ public:
     ContinuousTaskCallbackInfo();
     ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid,
         pid_t creatorPid, std::string abilityName, bool isFromWebview = false, bool isBatchApi = false,
-        std::vector<uint32_t> typeIds = {}, int32_t abilityId = -1);
+        const std::vector<uint32_t> &typeIds = {}, int32_t abilityId = -1)
+        : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), abilityName_(abilityName),
+          isFromWebview_(isFromWebview), isBatchApi_(isBatchApi), typeIds_(typeIds), abilityId_(abilityId) {}
 
     /**
      * @brief Get the id of type.
@@ -70,7 +72,7 @@ public:
      *
      * @return The id of types.
      */
-    std::vector<uint32_t>& GetTypeIds();
+    const std::vector<uint32_t>& GetTypeIds() const;
 
     /**
      * @brief Get the batch api flag.
@@ -93,6 +95,7 @@ public:
      * @return True if success, else false.
      */
     bool Marshalling(Parcel &parcel) const override;
+
     static ContinuousTaskCallbackInfo *Unmarshalling(Parcel &parcel);
 
 private:

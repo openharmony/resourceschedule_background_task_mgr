@@ -18,22 +18,17 @@
 #include "string_ex.h"
 
 #include "continuous_task_log.h"
-#include "background_mode.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo() {}
-ContinuousTaskCallbackInfo::ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid, 
-    pid_t creatorPid, std::string abilityName, bool isFromWebview, bool isBatchApi, std::vector<uint32_t> typeIds, int32_t abilityId) :
-    typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), abilityName_(abilityName), 
-    isFromWebview_(isFromWebview), isBatchApi_(isBatchApi), typeIds_(typeIds), abilityId_(abilityId) {}
 
 uint32_t ContinuousTaskCallbackInfo::GetTypeId() const
 {
     return typeId_;
 }
 
-std::vector<uint32_t>& ContinuousTaskCallbackInfo::GetTypeIds()
+const std::vector<uint32_t>& ContinuousTaskCallbackInfo::GetTypeIds() const
 {
     return typeIds_;
 }

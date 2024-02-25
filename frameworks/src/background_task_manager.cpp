@@ -79,10 +79,13 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTas
     sptr<ContinuousTaskParam> taskParamPtr = new (std::nothrow) ContinuousTaskParam(taskParam);
     if (taskParamPtr == nullptr) {
         BGTASK_LOGE("Failed to create continuous task param");
+        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_NO_MEMORY;
     }
-    BGTASK_LOGD(" %{public}u = %{public}u, %{public}d = %{public}d", static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
-        static_cast<uint32_t>(taskParam.bgModeIds_.size()), taskParamPtr->isBatchApi_, taskParam.isBatchApi_);
+    BGTASK_LOGD("%{public}u = %{public}u, %{public}d = %{public}d",
+        static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
+        static_cast<uint32_t>(taskParam.bgModeIds_.size()),
+        taskParamPtr->isBatchApi_, taskParam.isBatchApi_);
     ErrCode ret = backgroundTaskMgrProxy_->StartBackgroundRunning(taskParamPtr);
     FinishTrace(HITRACE_TAG_OHOS);
     return ret;
@@ -101,9 +104,11 @@ ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(const ContinuousTa
     sptr<ContinuousTaskParam> taskParamPtr = new (std::nothrow) ContinuousTaskParam(taskParam);
     if (taskParamPtr == nullptr) {
         BGTASK_LOGE("Failed to create continuous task param");
+        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_NO_MEMORY;
     }
-    BGTASK_LOGD(" %{public}u = %{public}u, %{public}d = %{public}d", static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
+    BGTASK_LOGD(" %{public}u = %{public}u, %{public}d = %{public}d",
+        static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
         static_cast<uint32_t>(taskParam.bgModeIds_.size()), taskParamPtr->isBatchApi_, taskParam.isBatchApi_);
     ErrCode ret = backgroundTaskMgrProxy_->UpdateBackgroundRunning(taskParamPtr);
     FinishTrace(HITRACE_TAG_OHOS);

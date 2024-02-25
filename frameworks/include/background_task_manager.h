@@ -68,7 +68,7 @@ public:
     ErrCode RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam);
 
     /**
-     * @brief Request service to keep running background.
+     * @brief Request service to update running background.
      *
      * @param taskParam Request params.
      * @return ERR_OK if success, else fail.

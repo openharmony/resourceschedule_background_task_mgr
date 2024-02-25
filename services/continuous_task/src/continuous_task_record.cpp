@@ -17,7 +17,6 @@
 
 #include "common_utils.h"
 #include "iremote_object.h"
-#include <sstream>
 #include "background_mode.h"
 #include "continuous_task_log.h"
 
@@ -36,23 +35,23 @@ const char *g_continuousTaskModeName[10] = {
     "default",
 };
 
-ContinuousTaskRecord::ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName,
-    int32_t uid, int32_t pid, uint32_t bgModeId, bool isBatchApi, std::vector<uint32_t> bgModeIds, int32_t abilityId) :
-    bundleName_(bundleName), abilityName_(abilityName), uid_(uid), pid_(pid), bgModeId_(bgModeId), 
-    isBatchApi_(isBatchApi), bgModeIds_(bgModeIds), abilityId_(abilityId) {
+ContinuousTaskRecord::ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName, int32_t uid,
+    int32_t pid, uint32_t bgModeId, bool isBatchApi, const std::vector<uint32_t> &bgModeIds, int32_t abilityId)
+    : bundleName_(bundleName), abilityName_(abilityName), uid_(uid), pid_(pid), bgModeId_(bgModeId),
+      isBatchApi_(isBatchApi), bgModeIds_(bgModeIds), abilityId_(abilityId) {
     if (isBatchApi_) {
-        auto findDataTransfer = [](const auto &target) {
+        auto findNonDataTransfer = [](const auto &target) {
             return  target != BackgroundMode::DATA_TRANSFER;
         };
-        auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findDataTransfer);
+        auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findNonDataTransfer);
         if (iter != bgModeIds_.end()) {
             bgModeId_ = *iter;
-            BGTASK_LOGI("batch api, find non datatransfer mode, set %{public}d", bgModeId_);
+            BGTASK_LOGI("batch api, find non-datatransfer mode, set %{public}d", bgModeId_);
         } else {
             bgModeId_ = bgModeIds_[0];
         }
     } else {
-        bgModeIds_.push_back(bgModeId); 
+        bgModeIds_.push_back(bgModeId);
     }
 }
 
@@ -106,7 +105,7 @@ std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> ContinuousTaskRecord::GetW
     return wantAgent_;
 }
 
-std::string ContinuousTaskRecord::ToString(std::vector<uint32_t> bgmodes)
+std::string ContinuousTaskRecord::ToString(std::vector<uint32_t> &bgmodes)
 {
     std::string result;
     for (auto it : bgmodes) {
@@ -116,16 +115,15 @@ std::string ContinuousTaskRecord::ToString(std::vector<uint32_t> bgmodes)
     return result;
 }
 
-std::vector<uint32_t> ContinuousTaskRecord::ToVector(std::string str)
+std::vector<uint32_t> ContinuousTaskRecord::ToVector(std::string &str)
 {
-    std::vector<uint32_t> tokens;
-    std::stringstream ss(str);
-    std::string tmp;
-
-    while (getline(ss, tmp, ',')) {
-        tokens.push_back(std::stoi(tmp));
+    std::vector<std::string> stringTokens;
+    std::vector<uint32_t> modeTokens;
+    OHOS::SplitStr(str, ",", stringTokens);
+    for (auto mode : stringTokens) {
+        modeTokens.push_back(std::stoi(mode));
     }
-    return tokens;
+    return modeTokens;
 }
 
 std::string ContinuousTaskRecord::ParseToJsonStr()
@@ -166,9 +164,13 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
     this->isNewApi_ = value.at("isNewApi").get<bool>();
     this->isFromWebview_ = value.at("isFromWebview").get<bool>();
     this->notificationLabel_ = value.at("notificationLabel").get<std::string>();
-    this->isBatchApi_ = value.at("isBatchApi").get<bool>();
-    this->bgModeIds_ = ToVector(value.at("bgModeIds").get<std::string>());
-
+    if (value.contains("isBatchApi") && value["isBatchApi"].is_boolean()) {
+        this->isBatchApi_ = value.at("isBatchApi").get<bool>();
+    }
+    if (value.contains("bgModeIds") && value["bgModeIds"].is_string()) {
+        auto modes = value.at("bgModeIds").get<std::string>();
+        this->bgModeIds_ = ToVector(modes);
+    }
     if (value.find("wantAgentInfo") != value.end()) {
         nlohmann::json infoVal = value["wantAgentInfo"];
         if (!CommonUtils::CheckJsonValue(infoVal, { "bundleName", "abilityName" })) {
