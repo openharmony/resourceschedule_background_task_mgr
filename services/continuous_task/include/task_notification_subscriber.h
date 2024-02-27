@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,6 +39,7 @@ public:
     void OnEnabledNotificationChanged(
         const std::shared_ptr<Notification::EnabledNotificationCallbackData> &callbackData) override;
     void OnBadgeChanged(const std::shared_ptr<Notification::BadgeNumberCallbackData> &badgeData) override;
+    void OnBadgeEnabledChanged(const sptr<Notification::EnabledNotificationCallbackData> &callbackData) override;
     void OnBatchCanceled(const std::vector<std::shared_ptr<Notification::Notification>> &requestList,
         const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap, int32_t deleteReason) override;
 private:
