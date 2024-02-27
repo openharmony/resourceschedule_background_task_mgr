@@ -125,6 +125,11 @@ ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const sptr<ContinuousTa
     return BgContinuousTaskMgr::GetInstance()->StartBackgroundRunning(taskParam);
 }
 
+ErrCode BackgroundTaskMgrService::UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
+{
+    return BgContinuousTaskMgr::GetInstance()->UpdateBackgroundRunning(taskParam);
+}
+
 ErrCode BackgroundTaskMgrService::RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
 {
     return BgContinuousTaskMgr::GetInstance()->RequestBackgroundRunningForInner(taskParam);

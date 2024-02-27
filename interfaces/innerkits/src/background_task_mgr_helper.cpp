@@ -28,6 +28,11 @@ ErrCode BackgroundTaskMgrHelper::RequestStartBackgroundRunning(const ContinuousT
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStartBackgroundRunning(taskParam);
 }
 
+ErrCode BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(const ContinuousTaskParam &taskParam)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestUpdateBackgroundRunning(taskParam);
+}
+
 ErrCode BackgroundTaskMgrHelper::RequestStopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken)
 {

@@ -45,8 +45,10 @@ class DataStorageHelper;
 
 enum class ContinuousTaskEventTriggerType: uint32_t {
     TASK_START,
+    TASK_UPDATE,
     TASK_CANCEL,
 };
+
 
 struct CachedBundleInfo {
     std::unordered_map<std::string, uint32_t> abilityBgMode_ {};
@@ -57,6 +59,7 @@ class BgContinuousTaskMgr : public DelayedSingleton<BgContinuousTaskMgr>,
                             public std::enable_shared_from_this<BgContinuousTaskMgr> {
 public:
     ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
+    ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode StopBackgroundRunning(const std::string &abilityName);
     ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
@@ -79,6 +82,7 @@ public:
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
+    ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey, std::vector<uint32_t> &updateModes);
     ErrCode StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName);
     ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
@@ -123,6 +127,7 @@ private:
     int32_t bgTaskUid_ {-1};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
+    std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMapForBatch_ {};
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};
 #endif

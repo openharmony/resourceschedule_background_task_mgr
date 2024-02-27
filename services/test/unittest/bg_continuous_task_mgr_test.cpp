@@ -121,6 +121,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
     taskParam->abilityName_ = "ability1";
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
     taskParam->bgModeId_ = 9;
+    taskParam->bgModeIds_.clear();
     EXPECT_NE((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), -1);
     taskParam->bgModeId_ = 1;
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
@@ -295,6 +296,8 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_005, TestSize.Level1)
 {
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord->bgModeId_ = 1;
+    continuousTaskRecord->bgModeIds_.clear();
+    continuousTaskRecord->bgModeIds_.push_back(continuousTaskRecord->bgModeId_);
     continuousTaskRecord->isNewApi_ = false;
     EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(continuousTaskRecord),
         ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
@@ -302,6 +305,8 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_005, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(continuousTaskRecord),
         ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
     continuousTaskRecord->bgModeId_ = INVALID_BGMODE_ID;
+    continuousTaskRecord->bgModeIds_.clear();
+    continuousTaskRecord->bgModeIds_.push_back(continuousTaskRecord->bgModeId_);
     EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(continuousTaskRecord),
         ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
 
@@ -313,6 +318,8 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_005, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(continuousTaskRecord),
         ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
     continuousTaskRecord->bgModeId_ = 1;
+    continuousTaskRecord->bgModeIds_.clear();
+    continuousTaskRecord->bgModeIds_.push_back(continuousTaskRecord->bgModeId_);
     EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(continuousTaskRecord), ERR_OK);
 }
 
@@ -534,6 +541,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_014, TestSize.Level1)
     TestBackgroundTaskSubscriber subscriber = TestBackgroundTaskSubscriber();
     bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(subscriber.GetImpl());
     bgContinuousTaskMgr_->OnContinuousTaskChanged(continuousTaskInfo, ContinuousTaskEventTriggerType::TASK_START);
+    bgContinuousTaskMgr_->OnContinuousTaskChanged(continuousTaskInfo, ContinuousTaskEventTriggerType::TASK_UPDATE);
     bgContinuousTaskMgr_->OnContinuousTaskChanged(continuousTaskInfo, ContinuousTaskEventTriggerType::TASK_CANCEL);
     EXPECT_TRUE(true);
 }

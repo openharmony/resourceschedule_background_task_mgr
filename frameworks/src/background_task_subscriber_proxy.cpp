@@ -227,6 +227,40 @@ void BackgroundTaskSubscriberProxy::OnContinuousTaskStart(
     }
 }
 
+
+void BackgroundTaskSubscriberProxy::OnContinuousTaskUpdate(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        BGTASK_LOGE("OnContinuousTaskUpdate remote is dead.");
+        return;
+    }
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("OnContinuousTaskUpdate continuousTaskCallbackInfo is nullptr.");
+        return;
+    }
+
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor())) {
+        BGTASK_LOGE("OnContinuousTaskUpdate write interface token failed.");
+        return;
+    }
+
+    if (!data.WriteParcelable(continuousTaskCallbackInfo.get())) {
+        BGTASK_LOGE("OnContinuousTaskUpdate write continuousTaskCallbackInfo failed.");
+        return;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    int32_t result = remote->SendRequest(
+        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_UPDATE), data, reply, option);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("OnContinuousTaskUpdate SendRequest error");
+    }
+}
+
 void BackgroundTaskSubscriberProxy::OnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {

@@ -50,6 +50,7 @@ private:
     ErrCode HandleCancelSuspendDelay(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetRemainingDelayTime(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleStartBackgroundRunning(MessageParcel &data, MessageParcel &reply);
+    ErrCode HandleUpdateBackgroundRunning(MessageParcel &data, MessageParcel &reply);
     ErrCode HandleStopBackgroundRunning(MessageParcel &data, MessageParcel &reply);
     ErrCode HandleBackgroundRunningForInner(MessageParcel &data, MessageParcel &reply);
     ErrCode HandleSubscribeBackgroundTask(MessageParcel& data, MessageParcel& reply);
@@ -60,6 +61,7 @@ private:
     ErrCode HandleResetAllEfficiencyResources(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetEfficiencyResourcesInfos(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleStopContinuousTask(MessageParcel& data, MessageParcel& reply);
+    void HandleContinuousTask(uint32_t code, MessageParcel& data, MessageParcel& reply);
     ErrCode WriteInfoToParcel(const std::vector<std::shared_ptr<ResourceCallbackInfo>>& infoMap, MessageParcel& reply);
 };
 }  // namespace BackgroundTaskMgr

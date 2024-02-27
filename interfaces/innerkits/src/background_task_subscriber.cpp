@@ -39,6 +39,9 @@ void BackgroundTaskSubscriber::OnAppTransientTaskEnd(const std::shared_ptr<Trans
 void BackgroundTaskSubscriber::OnContinuousTaskStart(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) {}
 
+void BackgroundTaskSubscriber::OnContinuousTaskUpdate(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) {}
+
 void BackgroundTaskSubscriber::OnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) {}
 
@@ -122,6 +125,12 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskSta
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     subscriber_.OnContinuousTaskStart(continuousTaskCallbackInfo);
+}
+
+void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskUpdate(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    subscriber_.OnContinuousTaskUpdate(continuousTaskCallbackInfo);
 }
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStop(

@@ -190,6 +190,37 @@ ErrCode BackgroundTaskMgrProxy::StartBackgroundRunning(const sptr<ContinuousTask
     return result;
 }
 
+ErrCode BackgroundTaskMgrProxy::UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
+{
+    if (taskParam == nullptr) {
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteParcelable(taskParam)) {
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+
+    ErrCode result = InnerTransact(static_cast<uint32_t>(
+        BackgroundTaskMgrStubInterfaceCode::UPDATE_BACKGROUND_RUNNING), option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("UpdateBackgroundRunning fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("UpdateBackgroundRunning fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return result;
+}
+
 ErrCode BackgroundTaskMgrProxy::StopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken)
 {

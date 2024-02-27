@@ -48,6 +48,7 @@ private:
     ErrCode HandleOnAppTransientTaskStart(MessageParcel& data);
     ErrCode HandleOnAppTransientTaskEnd(MessageParcel& data);
     ErrCode HandleOnContinuousTaskStart(MessageParcel &data);
+    ErrCode HandleOnContinuousTaskUpdate(MessageParcel &data);
     ErrCode HandleOnContinuousTaskCancel(MessageParcel &data);
     ErrCode HandleOnAppContinuousTaskStop(MessageParcel &data);
     ErrCode HandleOnAppEfficiencyResourcesApply(MessageParcel &data);
