@@ -671,7 +671,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
         continuousTaskRecord->ToString(updateModes).c_str(),
         continuousTaskRecord->isBatchApi_);
-    // todo diff compare old and new
+
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_, continuousTaskRecord->abilityName_);
     for (auto it =  updateModes.begin(); it != updateModes.end(); it++) {
         ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord->fullTokenId_);
@@ -679,12 +679,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
             BGTASK_LOGE("CheckBgmodeType error!");
             return ret;
         }
-    }
-    ret = NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
-        DEFAULT_NOTIFICATION_ID);
-    if (ret != ERR_OK) {
-        BGTASK_LOGE("CancelNotification error");
-        return ret;
     }
     continuousTaskRecord->bgModeIds_ = updateModes;
     ret = SendContinuousTaskNotification(continuousTaskRecord);
@@ -771,6 +765,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
         if (mode == BackgroundMode::AUDIO_PLAYBACK || mode == BackgroundMode::VOIP) {
             continue;
         }
+        BGTASK_LOGD("mode %{public}d", mode);
         uint32_t index = GetBgModeNameIndex(mode, continuousTaskRecord->isNewApi_);
         if (index < BGMODE_NUMS) {
             notificationText += continuousTaskText_.at(index);
@@ -783,6 +778,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     if (notificationText.empty()) {
         return ERR_OK;
     }
+    BGTASK_LOGD("notificationText %{public}s", notificationText.c_str());
     return NotificationTools::GetInstance()->PublishNotification(continuousTaskRecord,
         appName, notificationText, bgTaskUid_);
 }
