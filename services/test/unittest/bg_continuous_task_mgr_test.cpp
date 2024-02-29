@@ -54,6 +54,7 @@ static constexpr uint32_t TEST_NUM_UONE = 1;
 static constexpr int32_t TEST_NUM_TWO = 2;
 static constexpr uint32_t TEST_NUM_UTWO = 2;
 static constexpr int32_t TEST_NUM_THREE = 3;
+static constexpr uint32_t CONFIGURE_ALL_MODES = 0x1FF;
 }
 class BgContinuousTaskMgrTest : public testing::Test {
 public:
@@ -147,6 +148,61 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
     taskParam->abilityName_ = "ability1";
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
+}
+
+/**
+ * @tc.name: StartAndUpdateBackgroundRunning_001
+ * @tc.desc: use batch api.
+ * @tc.type: FUNC
+ * @tc.require: issueI94UH9
+ */
+HWTEST_F(BgContinuousTaskMgrTest, StartAndUpdateBackgroundRunning_001, TestSize.Level1)
+{
+    // 1 modes is empty
+    sptr<ContinuousTaskParam> taskParam1 = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {});
+    EXPECT_NE(taskParam1, nullptr);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam1), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
+
+    // 2 set configure mode is CONFIGURE_ALL_MODES
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundModeInfo(1, "abilityName"), 0u);
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+
+    // 3 start ok
+    sptr<ContinuousTaskParam> taskParam2 = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1, 2, 3});
+    EXPECT_NE(taskParam2, nullptr);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam2), (int32_t)ERR_OK);
+
+    // 4 update ok
+    sptr<ContinuousTaskParam> taskParam3 = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {4});
+    EXPECT_NE(taskParam3, nullptr);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam3), (int32_t)ERR_OK);
+
+    // 5 update invalid
+    sptr<ContinuousTaskParam> taskParam4 = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {10});
+    EXPECT_NE(taskParam4, nullptr);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam4), (int32_t)ERR_BGTASK_INVALID_BGMODE);
+
+    // 6 stop ok
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(taskParam2->abilityName_), (int32_t)ERR_OK);
+
+    // 7 no start then update error
+    sptr<ContinuousTaskParam> taskParam5 = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1, 2});
+    EXPECT_NE(taskParam5, nullptr);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam5), (int32_t)ERR_BGTASK_OBJECT_EXISTS);
 }
 
 /**
@@ -880,7 +936,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_046, TestSize.Level1)
     info.abilityBgMode_["abilityName"] = 2;
     info.appName_ = "appName";
     bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
-    
+
     EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(continuousTaskRecord), ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
