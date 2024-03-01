@@ -160,6 +160,12 @@ public:
     {
         BgTaskClientUnitTest::bgtaskSubscriberRet_ = "interface14";
     }
+
+    void OnContinuousTaskUpdate(const std::shared_ptr<ContinuousTaskCallbackInfo>
+        &continuousTaskCallbackInfo) override
+    {
+        BgTaskClientUnitTest::bgtaskSubscriberRet_ = "interface15";
+    }
 };
 
 class TestExpiredCallback : public ExpiredCallback {
@@ -201,6 +207,18 @@ HWTEST_F(BgTaskClientUnitTest, RequestStartBackgroundRunning_001, TestSize.Level
 {
     ContinuousTaskParam taskParam = ContinuousTaskParam();
     EXPECT_NE(BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam), ERR_OK);
+}
+
+/**
+ * @tc.name: RequestUpdateBackgroundRunning_001
+ * @tc.desc: test RequestUpdateBackgroundRunning interface.
+ * @tc.type: FUNC
+ * @tc.require: issueI94UH9
+ */
+HWTEST_F(BgTaskClientUnitTest, RequestUpdateBackgroundRunning_001, TestSize.Level1)
+{
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    EXPECT_NE(BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam), ERR_OK);
 }
 
 /**
@@ -347,6 +365,8 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
     EXPECT_EQ(bgtaskSubscriberRet_, "interface13");
     subscriberImpl->OnProcEfficiencyResourcesReset(nullptr);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface14");
+    subscriberImpl->OnContinuousTaskUpdate(nullptr);
+    EXPECT_EQ(bgtaskSubscriberRet_, "interface15");
 }
 
 /**
@@ -365,6 +385,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_002, TestSize.Level1)
     subscriber.OnAppTransientTaskStart(nullptr);
     subscriber.OnAppTransientTaskEnd(nullptr);
     subscriber.OnContinuousTaskStart(nullptr);
+    subscriber.OnContinuousTaskUpdate(nullptr);
     subscriber.OnContinuousTaskStop(nullptr);
     subscriber.OnAppContinuousTaskStop(1);
     subscriber.OnRemoteDied(nullptr);

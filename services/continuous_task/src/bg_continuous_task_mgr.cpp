@@ -693,16 +693,15 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
-    BGTASK_LOGI("continuous task mode: %{public}u, modes %{public}s, isBatchApi %{public}d",
-        continuousTaskRecord->bgModeId_, continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
-        continuousTaskRecord->isBatchApi_);
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
         + continuousTaskRecord->abilityName_;
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
-
+    BGTASK_LOGI("continuous task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d",
+        continuousTaskRecord->bgModeId_, continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
+        continuousTaskRecord->isBatchApi_, continuousTaskRecord->uid_);
     if (!continuousTaskRecord->isFromWebview_
         && cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
         std::string mainAbilityLabel = GetMainAbilityLabel(continuousTaskRecord->bundleName_,
