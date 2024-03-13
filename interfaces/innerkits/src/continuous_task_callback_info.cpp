@@ -94,12 +94,10 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
         BGTASK_LOGE("Failed to write isBatchApi_");
         return false;
     }
-    if (isBatchApi_) {
-        BGTASK_LOGD("write modes %{public}u", static_cast<uint32_t>(typeIds_.size()));
-        if (!parcel.WriteUInt32Vector(typeIds_)) {
-            BGTASK_LOGE("Failed to write typeIds_");
-            return false;
-        }
+    BGTASK_LOGD("write typeIds_ size %{public}u", static_cast<uint32_t>(typeIds_.size()));
+    if (!parcel.WriteUInt32Vector(typeIds_)) {
+        BGTASK_LOGE("Failed to write typeIds_");
+        return false;
     }
     if (!parcel.WriteInt32(abilityId_)) {
         BGTASK_LOGE("Failed to write abilityId_");
@@ -141,13 +139,11 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
         BGTASK_LOGE("Failed to read the flag isBatchApi_");
         return false;
     }
-    if (isBatchApi_) {
-        if (!parcel.ReadUInt32Vector(&typeIds_)) {
-            BGTASK_LOGE("read parce bgmodes_ error");
-            return false;
-        }
-        BGTASK_LOGD("read parce bgmodes_ size %{public}u", static_cast<uint32_t>(typeIds_.size()));
+    if (!parcel.ReadUInt32Vector(&typeIds_)) {
+        BGTASK_LOGE("read parce typeIds_ error");
+        return false;
     }
+    BGTASK_LOGD("read parce typeIds_ size %{public}u", static_cast<uint32_t>(typeIds_.size()));
     abilityId_ = static_cast<int32_t>(parcel.ReadInt32());
     return true;
 }
