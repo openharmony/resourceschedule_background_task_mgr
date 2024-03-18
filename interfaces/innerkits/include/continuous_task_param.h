@@ -34,14 +34,16 @@ struct ContinuousTaskParam : public Parcelable {
     std::string appName_ {""};
     bool isBatchApi_ {false};
     std::vector<uint32_t> bgModeIds_ {};
+    int32_t abilityId_ {-1};
 
     ContinuousTaskParam() = default;
     ContinuousTaskParam(bool isNewApi, uint32_t bgModeId,
         const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent, const std::string abilityName,
         const sptr<IRemoteObject> abilityToken, const std::string &appName, bool isBatchApi = false,
-        const std::vector<uint32_t> &bgModeIds = {})
+        const std::vector<uint32_t> &bgModeIds = {}, int32_t abilityId = -1)
         : isNewApi_(isNewApi), bgModeId_(bgModeId), wantAgent_(wantAgent), abilityName_(abilityName),
-          abilityToken_(abilityToken), appName_(appName), isBatchApi_(isBatchApi), bgModeIds_(bgModeIds) {}
+          abilityToken_(abilityToken), appName_(appName), isBatchApi_(isBatchApi), bgModeIds_(bgModeIds),
+          abilityId_(abilityId) {}
     bool ReadFromParcel(Parcel &parcel);
     bool Marshalling(Parcel &parcel) const override;
     static ContinuousTaskParam *Unmarshalling(Parcel &parcel);
@@ -51,10 +53,11 @@ struct ContinuousTaskParamForInner : public Parcelable {
     int32_t uid_ {0};
     uint32_t bgModeId_ {0};
     bool isStart_ {false};
+    int32_t abilityId_ {-1};
 
     ContinuousTaskParamForInner() = default;
-    ContinuousTaskParamForInner(int32_t uid, uint32_t bgModeId, bool isStart)
-        : uid_(uid), bgModeId_(bgModeId), isStart_(isStart) {}
+    ContinuousTaskParamForInner(int32_t uid, uint32_t bgModeId, bool isStart, int32_t abilityId = -1)
+        : uid_(uid), bgModeId_(bgModeId), isStart_(isStart), abilityId_(abilityId) {}
 
     bool ReadFromParcel(Parcel &parcel);
     bool Marshalling(Parcel &parcel) const override;

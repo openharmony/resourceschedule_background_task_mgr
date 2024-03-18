@@ -154,7 +154,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
  * @tc.name: StartAndUpdateBackgroundRunning_001
  * @tc.desc: use batch api.
  * @tc.type: FUNC
- * @tc.require: issueI94UH9
+ * @tc.require: issueI94UH9 issueI99HSB
  */
 HWTEST_F(BgContinuousTaskMgrTest, StartAndUpdateBackgroundRunning_001, TestSize.Level1)
 {
@@ -176,26 +176,26 @@ HWTEST_F(BgContinuousTaskMgrTest, StartAndUpdateBackgroundRunning_001, TestSize.
     // 3 start ok
     sptr<ContinuousTaskParam> taskParam2 = new (std::nothrow) ContinuousTaskParam(true, 0,
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
-        "ability1", nullptr, "Entry", true, {1, 2, 3});
+        "ability1", nullptr, "Entry", true, {1, 2, 3}, 1);
     EXPECT_NE(taskParam2, nullptr);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam2), (int32_t)ERR_OK);
 
     // 4 update ok
     sptr<ContinuousTaskParam> taskParam3 = new (std::nothrow) ContinuousTaskParam(true, 0,
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
-        "ability1", nullptr, "Entry", true, {4});
+        "ability1", nullptr, "Entry", true, {4}, 1);
     EXPECT_NE(taskParam3, nullptr);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam3), (int32_t)ERR_OK);
 
     // 5 update invalid
     sptr<ContinuousTaskParam> taskParam4 = new (std::nothrow) ContinuousTaskParam(true, 0,
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
-        "ability1", nullptr, "Entry", true, {10});
+        "ability1", nullptr, "Entry", true, {10}, 1);
     EXPECT_NE(taskParam4, nullptr);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam4), (int32_t)ERR_BGTASK_INVALID_BGMODE);
 
     // 6 stop ok
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(taskParam2->abilityName_), (int32_t)ERR_OK);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(taskParam2->abilityName_, 1), (int32_t)ERR_OK);
 
     // 7 no start then update error
     sptr<ContinuousTaskParam> taskParam5 = new (std::nothrow) ContinuousTaskParam(true, 0,
@@ -209,7 +209,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartAndUpdateBackgroundRunning_001, TestSize.
  * @tc.name: StopBackgroundRunning_001
  * @tc.desc: stop background runnging test.
  * @tc.type: FUNC
- * @tc.require: SR000GGT7V AR000GH6ES AR000GH6EM AR000GH6G9 AR000GH56K
+ * @tc.require: SR000GGT7V AR000GH6ES AR000GH6EM AR000GH6G9 AR000GH56K issueI99HSB
  */
 HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
 {
@@ -219,20 +219,23 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     taskParam->abilityName_ = "ability1";
     taskParam->bgModeId_ = 4;
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(""), (int32_t)ERR_BGTASK_INVALID_PARAM);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("", 1), (int32_t)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_BGTASK_OBJECT_NOT_EXIST);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1", -1), (int32_t)ERR_BGTASK_INVALID_PARAM);
+    SleepForFC();
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1", 1),
+        (int32_t)ERR_BGTASK_OBJECT_NOT_EXIST);
     SleepForFC();
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_OK);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1", 1), (int32_t)ERR_OK);
 }
 
 /**
  * @tc.name: StopBackgroundRunning_002
  * @tc.desc: stop background runnging test.
  * @tc.type: FUNC
- * @tc.require: issues#I8FWJH
+ * @tc.require: issues#I8FWJH issueI99HSB
  */
 HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_002, TestSize.Level1)
 {
@@ -242,9 +245,10 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_002, TestSize.Level1)
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     taskParam->abilityName_ = "ability1";
     taskParam->bgModeId_ = 2;
+    taskParam->abilityId_ = 1;
     bgContinuousTaskMgr_->StartBackgroundRunning(taskParam);
     SleepForFC();
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1"), (int32_t)ERR_OK);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1", 1), (int32_t)ERR_OK);
 }
 
 /**
@@ -538,14 +542,14 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_011, TestSize.Level1)
  * @tc.name: BgTaskManagerUnitTest_012
  * @tc.desc: test OnAbilityStateChanged.
  * @tc.type: FUNC
- * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V issueI99HSB
  */
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_012, TestSize.Level1)
 {
     bgContinuousTaskMgr_->isSysReady_.store(false);
-    bgContinuousTaskMgr_->OnAbilityStateChanged(-1, "test");
+    bgContinuousTaskMgr_->OnAbilityStateChanged(-1, "test", -1);
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    bgContinuousTaskMgr_->OnAbilityStateChanged(-1, "test");
+    bgContinuousTaskMgr_->OnAbilityStateChanged(-1, "test", -1);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
@@ -553,10 +557,10 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_012, TestSize.Level1)
     continuousTaskRecord->uid_ = 1;
     continuousTaskRecord->abilityName_ = "test";
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key"] = continuousTaskRecord;
-    bgContinuousTaskMgr_->OnAbilityStateChanged(-1, "test");
-    bgContinuousTaskMgr_->OnAbilityStateChanged(1, "test1");
-    bgContinuousTaskMgr_->OnAbilityStateChanged(-1, "test1");
-    bgContinuousTaskMgr_->OnAbilityStateChanged(1, "test");
+    bgContinuousTaskMgr_->OnAbilityStateChanged(-1, "test", -1);
+    bgContinuousTaskMgr_->OnAbilityStateChanged(1, "test1", -1);
+    bgContinuousTaskMgr_->OnAbilityStateChanged(-1, "test1", -1);
+    bgContinuousTaskMgr_->OnAbilityStateChanged(1, "test", -1);
     EXPECT_TRUE(true);
 }
 

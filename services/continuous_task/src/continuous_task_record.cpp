@@ -126,6 +126,11 @@ std::vector<uint32_t> ContinuousTaskRecord::ToVector(std::string &str)
     return modeTokens;
 }
 
+int32_t ContinuousTaskRecord::GetAbilityId() const
+{
+    return abilityId_;
+}
+
 std::string ContinuousTaskRecord::ParseToJsonStr()
 {
     nlohmann::json root;

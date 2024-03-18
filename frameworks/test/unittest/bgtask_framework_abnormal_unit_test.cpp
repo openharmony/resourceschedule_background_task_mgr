@@ -225,30 +225,34 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_004
  * @tc.name: BackgroundTaskMgrProxyAbnormalTest_005
  * @tc.desc: test BackgroundTaskMgrProxy abnormal.
  * @tc.type: FUNC
- * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
+ * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V issueI99HSB
  */
 HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_005, TestSize.Level1)
 {
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
 
     BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_BGTASK_PARCELABLE_FAILED);
 
     BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     BgTaskFwkAbnormalSetWriteStringFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr), ERR_BGTASK_TRANSACT_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_BGTASK_TRANSACT_FAILED);
 
     BgTaskFwkAbnormalSetWriteStringFlag(true);
     BgTaskFwkAbnormalSetWriteRemoteObjectFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_BGTASK_PARCELABLE_FAILED);
 
     BgTaskFwkAbnormalSetWriteRemoteObjectFlag(true);
+    BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_BGTASK_PARCELABLE_FAILED);
+
+    BgTaskFwkAbnormalSetWriteInt32WithParamFlag(true);
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr), ERR_BGTASK_TRANSACT_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_BGTASK_TRANSACT_FAILED);
 
     BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr), ERR_BGTASK_TRANSACT_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**

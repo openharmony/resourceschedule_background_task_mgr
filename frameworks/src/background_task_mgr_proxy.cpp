@@ -222,7 +222,7 @@ ErrCode BackgroundTaskMgrProxy::UpdateBackgroundRunning(const sptr<ContinuousTas
 }
 
 ErrCode BackgroundTaskMgrProxy::StopBackgroundRunning(const std::string &abilityName,
-    const sptr<IRemoteObject> &abilityToken)
+    const sptr<IRemoteObject> &abilityToken, int32_t abilityId)
 {
     MessageParcel data;
     if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
@@ -237,6 +237,11 @@ ErrCode BackgroundTaskMgrProxy::StopBackgroundRunning(const std::string &ability
 
     if (!data.WriteRemoteObject(abilityToken)) {
         BGTASK_LOGE("StopBackgroundRunning parcel ability token failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteInt32(abilityId)) {
+        BGTASK_LOGE("StopBackgroundRunning parcel abilityId failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 

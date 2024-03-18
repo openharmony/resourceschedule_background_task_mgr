@@ -136,9 +136,9 @@ ErrCode BackgroundTaskMgrService::RequestBackgroundRunningForInner(const sptr<Co
 }
 
 ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abilityName,
-    const sptr<IRemoteObject> &abilityToken)
+    const sptr<IRemoteObject> &abilityToken, int32_t abilityId)
 {
-    return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName);
+    return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName, abilityId);
 }
 
 ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)

@@ -178,16 +178,16 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_004, TestSize.Level1)
  * @tc.name: BgTaskFrameworkUnitTest_005
  * @tc.desc: test RequestStopBackgroundRunning.
  * @tc.type: FUNC
- * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
+ * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V issueI99HSB
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_005, TestSize.Level1)
 {
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStopBackgroundRunning("test", nullptr),
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStopBackgroundRunning("test", nullptr, -1),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStopBackgroundRunning("test", nullptr),
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStopBackgroundRunning("test", nullptr, -1),
         ERR_OK);
 }
 
@@ -208,10 +208,10 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_006, TestSize.Level1)
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SubscribeBackgroundTask(taskSubscriber),
-        ERR_OK);
+        ERR_BGTASK_PARCELABLE_FAILED);
     SleepForFC();
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->UnsubscribeBackgroundTask(taskSubscriber),
-        ERR_OK);
+        ERR_BGTASK_PARCELABLE_FAILED);
     SleepForFC();
 }
 
@@ -566,7 +566,8 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_004, TestSize
     MessageParcel data5;
     data5.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     data5.WriteInt32(-1);
-    EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_APP_CONTINUOUS_TASK_STOP, data5, reply, option), ERR_OK);
+    EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_APP_CONTINUOUS_TASK_STOP, data5, reply, option),
+        ERR_BGTASK_PARCELABLE_FAILED);
 }
 
 /**

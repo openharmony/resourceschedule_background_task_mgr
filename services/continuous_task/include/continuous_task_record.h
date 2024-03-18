@@ -44,6 +44,7 @@ public:
     int32_t GetUserId() const;
     int32_t GetUid() const;
     pid_t GetPid() const;
+    int32_t GetAbilityId() const;
     std::string GetNotificationLabel() const;
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
     std::string ParseToJsonStr();

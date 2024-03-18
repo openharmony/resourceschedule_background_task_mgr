@@ -496,6 +496,10 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
             BGTASK_LOGE("bgModeIds_ is empty");
             return false;
         }
+        if (taskParam->abilityId_ < 0) {
+            BGTASK_LOGE("abilityId_ is invalid");
+            return false;
+        }
     } else {
         if (taskParam->abilityName_.empty()) {
             BGTASK_LOGE("continuous task params invalid!");
@@ -598,7 +602,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         taskParam->abilityName_, callingUid, callingPid, taskParam->bgModeId_, taskParam->isBatchApi_,
-        taskParam->bgModeIds_);
+        taskParam->bgModeIds_, taskParam->abilityId_);
     continuousTaskRecord->wantAgent_ = taskParam->wantAgent_;
     continuousTaskRecord->userId_ = userId;
     continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
@@ -638,7 +642,8 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunning(const sptr<ContinuousTaskPa
     ErrCode result = ERR_OK;
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::UpdateBackgroundRunningInner");
-    std::string taskInfoMapKey = std::to_string(callingUid) + SEPARATOR + taskParam->abilityName_;
+    std::string taskInfoMapKey = std::to_string(callingUid) + SEPARATOR + taskParam->abilityName_ + SEPARATOR +
+        std::to_string(taskParam->abilityId_);
     auto self = shared_from_this();
     handler_->PostSyncTask([self, &taskInfoMapKey, &result, taskParam]() mutable {
         if (!self) {
@@ -666,11 +671,11 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
 
     auto continuousTaskRecord = iter->second;
     auto oldModes = continuousTaskRecord->bgModeIds_;
-    BGTASK_LOGI("continuous task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d",
-        continuousTaskRecord->bgModeId_,
+    BGTASK_LOGI("continuous task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d,"
+        " abilityId %{public}d", continuousTaskRecord->bgModeId_,
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
         continuousTaskRecord->ToString(updateModes).c_str(),
-        continuousTaskRecord->isBatchApi_);
+        continuousTaskRecord->isBatchApi_, continuousTaskRecord->abilityId_);
 
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_, continuousTaskRecord->abilityName_);
     for (auto it =  updateModes.begin(); it != updateModes.end(); it++) {
@@ -694,14 +699,15 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
-        + continuousTaskRecord->abilityName_;
+        + continuousTaskRecord->abilityName_ + SEPARATOR + std::to_string(continuousTaskRecord->abilityId_);
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
-    BGTASK_LOGI("continuous task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d",
-        continuousTaskRecord->bgModeId_, continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
-        continuousTaskRecord->isBatchApi_, continuousTaskRecord->uid_);
+    BGTASK_LOGI("continuous task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d,"
+        " abilityId %{public}d", continuousTaskRecord->bgModeId_,
+        continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
+        continuousTaskRecord->isBatchApi_, continuousTaskRecord->uid_, continuousTaskRecord->abilityId_);
     if (!continuousTaskRecord->isFromWebview_
         && cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
         std::string mainAbilityLabel = GetMainAbilityLabel(continuousTaskRecord->bundleName_,
@@ -786,18 +792,19 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<Continuous
 {
     ErrCode result = ERR_OK;
     int32_t uid = taskParam->uid_;
+    int32_t abilityId = taskParam->abilityId_;
     std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
 
     StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StopBackgroundRunningInner");
-    handler_->PostSyncTask([this, uid, abilityName, &result]() {
-        result = this->StopBackgroundRunningInner(uid, abilityName);
+    handler_->PostSyncTask([this, uid, abilityName, abilityId, &result]() {
+        result = this->StopBackgroundRunningInner(uid, abilityName, abilityId);
         }, AppExecFwk::EventQueue::Priority::HIGH);
     FinishTrace(HITRACE_TAG_OHOS);
 
     return result;
 }
 
-ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityName)
+ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityName, int32_t abilityId)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
@@ -807,22 +814,27 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityNam
         BGTASK_LOGE("abilityName is empty!");
         return ERR_BGTASK_INVALID_PARAM;
     }
+    if (abilityId < 0) {
+        BGTASK_LOGE("abilityId is Invalid!");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
 
     ErrCode result = ERR_OK;
 
     StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StopBackgroundRunningInner");
-    handler_->PostSyncTask([this, callingUid, abilityName, &result]() {
-        result = this->StopBackgroundRunningInner(callingUid, abilityName);
+    handler_->PostSyncTask([this, callingUid, abilityName, abilityId, &result]() {
+        result = this->StopBackgroundRunningInner(callingUid, abilityName, abilityId);
         }, AppExecFwk::EventQueue::Priority::HIGH);
     FinishTrace(HITRACE_TAG_OHOS);
 
     return result;
 }
 
-ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::string &abilityName)
+ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::string &abilityName,
+    int32_t abilityId)
 {
-    std::string mapKey = std::to_string(uid) + SEPARATOR + abilityName;
+    std::string mapKey = std::to_string(uid) + SEPARATOR + abilityName + SEPARATOR + std::to_string(abilityId);
 
     auto iter = continuousTaskInfosMap_.find(mapKey);
     if (iter == continuousTaskInfosMap_.end()) {
@@ -1202,7 +1214,7 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
     subscriberRecipients_.erase(objectProxy);
 }
 
-void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &abilityName)
+void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
@@ -1210,11 +1222,12 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
     }
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
-        if (iter->second->uid_ == uid && (iter->second->abilityName_ == abilityName || iter->second->isFromWebview_)) {
+        if (iter->second->uid_ == uid && ((iter->second->abilityName_ == abilityName &&
+            iter->second->abilityId_ == abilityId) || (iter->second->isFromWebview_))) {
             auto record = iter->second;
             BGTASK_LOGI("OnAbilityStateChanged uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
-                "bgModeId: %{public}d", uid, record->bundleName_.c_str(),
-                record->abilityName_.c_str(), record->bgModeId_);
+                "bgModeId: %{public}d, abilityId: %{public}d", uid, record->bundleName_.c_str(),
+                record->abilityName_.c_str(), record->bgModeId_, record->abilityId_);
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             if (!iter->second->isFromWebview_) {
                 NotificationTools::GetInstance()->CancelNotification(
@@ -1241,8 +1254,8 @@ void BgContinuousTaskMgr::OnProcessDied(int32_t uid, int32_t pid)
         if (iter->second->GetPid() == pid) {
             auto record = iter->second;
             BGTASK_LOGI("OnProcessDied uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
-                "bgModeId: %{public}d", record->uid_, record->bundleName_.c_str(),
-                record->abilityName_.c_str(), record->bgModeId_);
+                "bgModeId: %{public}d, abilityId: %{public}d", record->uid_, record->bundleName_.c_str(),
+                record->abilityName_.c_str(), record->bgModeId_, record->abilityId_);
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             NotificationTools::GetInstance()->CancelNotification(
                 record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
@@ -1285,7 +1298,8 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
             HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_APPLY",
                 HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", continuousTaskInfo->GetUid(),
                 "APP_PID", continuousTaskInfo->GetPid(), "APP_NAME", continuousTaskInfo->GetBundleName(),
-                "ABILITY", continuousTaskInfo->GetAbilityName(), "BGMODE", continuousTaskInfo->GetBgModeId());
+                "ABILITY", continuousTaskInfo->GetAbilityName(), "BGMODE", continuousTaskInfo->GetBgModeId(),
+                "UIABILITY_IDENTITY", continuousTaskInfo->GetAbilityId());
             break;
         case ContinuousTaskEventTriggerType::TASK_UPDATE:
             for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
@@ -1301,7 +1315,8 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
             HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_CANCEL",
                 HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", continuousTaskInfo->GetUid(),
                 "APP_PID", continuousTaskInfo->GetPid(), "APP_NAME", continuousTaskInfo->GetBundleName(),
-                "ABILITY", continuousTaskInfo->GetAbilityName(), "BGMODE", continuousTaskInfo->GetBgModeId());
+                "ABILITY", continuousTaskInfo->GetAbilityName(), "BGMODE", continuousTaskInfo->GetBgModeId(),
+                "UIABILITY_IDENTITY", continuousTaskInfo->GetAbilityId());
             break;
     }
 }

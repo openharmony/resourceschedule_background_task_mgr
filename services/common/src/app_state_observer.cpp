@@ -58,15 +58,18 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     if (abilityStateData.abilityState != static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED)) {
         return;
     }
-    BGTASK_LOGD("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d",
-        abilityStateData.uid, abilityStateData.abilityName.c_str(), abilityStateData.abilityState);
+    BGTASK_LOGD("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d, "
+        "abilityId: %{public}d",
+        abilityStateData.uid, abilityStateData.abilityName.c_str(), abilityStateData.abilityState,
+        abilityStateData.abilityRecordId);
     if (!CheckParamValid()) {
         return;
     }
     int32_t uid = abilityStateData.uid;
+    int32_t abilityId = abilityStateData.abilityRecordId;
     std::string abilityName = abilityStateData.abilityName;
-    auto task = [this, uid, abilityName]() {
-        this->bgContinuousTaskMgr_.lock()->OnAbilityStateChanged(uid, abilityName);
+    auto task = [this, uid, abilityName, abilityId]() {
+        this->bgContinuousTaskMgr_.lock()->OnAbilityStateChanged(uid, abilityName, abilityId);
     };
 
     auto handler = handler_.lock();
