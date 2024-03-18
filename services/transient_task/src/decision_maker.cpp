@@ -25,11 +25,15 @@
 #include "system_ability_definition.h"
 #include "hisysevent.h"
 #include "parameters.h"
+#include "data_storage_helper.h"
 
 using namespace std;
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+namespace {
+    const std::string SUSPEND_MANAGER_CONFIG_FILE = "/etc/efficiency_manager/suspend_manager_config.json";
+}
 DecisionMaker::DecisionMaker(const shared_ptr<TimerManager>& timerManager, const shared_ptr<DeviceInfoManager>& device)
 {
     timerManager_ = timerManager;
@@ -140,10 +144,11 @@ int DecisionMaker::GetAllowRequestTime()
     if (time != 0) {
         return time;
     }
-    time = OHOS::system::GetIntParameter("persist.resourceschedule.enter_doze_time", -1);
-    if (time <= 0) {
+    if (!DelayedSingleton<DataStorageHelper>::GetInstance()->ParseFastSuspendDozeTime(
+        SUSPEND_MANAGER_CONFIG_FILE, time)) {
         time = ALLOW_REQUEST_TIME_BG;
     }
+    BGTASK_LOGI("time = %{public}d", time);
     return time;
 }
 

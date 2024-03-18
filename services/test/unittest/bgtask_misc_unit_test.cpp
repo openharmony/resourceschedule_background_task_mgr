@@ -644,6 +644,25 @@ HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: DataStorageHelper_002
+ * @tc.desc: test ParseFastSuspendDozeTime.
+ * @tc.type: FUNC
+ * @tc.require: issue#I99360
+ */
+HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_002, TestSize.Level1)
+{
+    int time = -1;
+    // 文件路径错误
+    std::string file("");
+    DelayedSingleton<DataStorageHelper>::GetInstance()->ParseFastSuspendDozeTime(file, time);
+    EXPECT_EQ(time, -1);
+    // 文件路径正确
+    file = "/etc/efficiency_manager/suspend_manager_config.json";
+    DelayedSingleton<DataStorageHelper>::GetInstance()->ParseFastSuspendDozeTime(file, time);
+    SUCCEED();
+}
+
+/**
  * @tc.name: DecisionMakerTest_003
  * @tc.desc: test Watchdog class.
  * @tc.type: FUNC

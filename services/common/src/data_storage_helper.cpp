@@ -22,6 +22,7 @@
 
 #include "common_utils.h"
 #include "continuous_task_log.h"
+#include "config_policy_utils.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -31,6 +32,10 @@ static constexpr char TASK_RECORD_FILE_PATH[] = "/data/service/el1/public/backgr
 static const std::string RESOURCE_RECORD_FILE_PATH = "/data/service/el1/public/background_task_mgr/resource_record";
 static const std::string APP_RESOURCE_RECORD = "appResourceRecord";
 static const std::string PROCESS_RESOURCE_RECORD = "processResourceRecord";
+const std::string PARAM = "param";
+const std::string FAST_FROZEN = "fast_frozen";
+const std::string ENABLE = "enable";
+const std::string DOZE_TIME = "doze_time";
 }
 
 DataStorageHelper::DataStorageHelper() {}
@@ -111,6 +116,40 @@ int32_t DataStorageHelper::SaveJsonValueToFile(const std::string &value, const s
     return ERR_OK;
 }
 
+bool DataStorageHelper::ParseFastSuspendDozeTime(const std::string &FilePath, int &time)
+{
+    nlohmann::json jsonObj;
+    std::string absolutePath = GetConfigFileAbsolutePath(FilePath);
+    if (ParseJsonValueFromFile(jsonObj, absolutePath) != ERR_OK) {
+        return false;
+    }
+    if (jsonObj.is_null() || !jsonObj.is_object() || !CommonUtils::CheckJsonValue(jsonObj, {PARAM})) {
+        BGTASK_LOGW("check jsonObj value failed.");
+        return false;
+    }
+    nlohmann::json param = jsonObj[PARAM];
+    if (param.is_null() || !param.is_object() || !CommonUtils::CheckJsonValue(param, {FAST_FROZEN})) {
+        BGTASK_LOGW("check param value failed.");
+        return false;
+    }
+    nlohmann::json fastFrozen = param[FAST_FROZEN];
+    if (fastFrozen.is_null() || !fastFrozen.is_object() ||
+        !CommonUtils::CheckJsonValue(fastFrozen, {ENABLE, DOZE_TIME})) {
+        BGTASK_LOGW("check fastFrozen value failed.");
+        return false;
+    }
+    if (!fastFrozen[ENABLE].is_boolean() || !fastFrozen.at(ENABLE).get<bool>()) {
+        BGTASK_LOGW("fast suspend switch is Disable");
+        return false;
+    }
+    if (!fastFrozen[DOZE_TIME].is_number_integer()) {
+        BGTASK_LOGW("fast suspend num is invalid");
+        return false;
+    }
+    time = fastFrozen.at(DOZE_TIME).get<int>();
+    return true;
+}
+
 int32_t DataStorageHelper::ParseJsonValueFromFile(nlohmann::json &value, const std::string &filePath)
 {
     std::ifstream fin;
@@ -151,6 +190,22 @@ bool DataStorageHelper::CreateNodeFile(const std::string &filePath)
     }
     close(fd);
     return true;
+}
+
+std::string DataStorageHelper::GetConfigFileAbsolutePath(const std::string &relativePath)
+{
+    if (relativePath.empty()) {
+        BGTASK_LOGE("relativePath is empty");
+        return "";
+    }
+    char buf[PATH_MAX];
+    char *tmpPath = GetOneCfgFile(relativePath.c_str(), buf, PATH_MAX);
+    char absolutePath[PATH_MAX] = {0};
+    if (!tmpPath || strlen(tmpPath) > PATH_MAX || !realpath(tmpPath, absolutePath)) {
+        BGTASK_LOGE("get file fail.");
+        return "";
+    }
+    return std::string(absolutePath);
 }
 
 bool DataStorageHelper::ConvertFullPath(const std::string& partialPath, std::string& fullPath)
