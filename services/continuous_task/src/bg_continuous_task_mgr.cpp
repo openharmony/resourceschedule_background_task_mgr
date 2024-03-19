@@ -80,6 +80,7 @@ static constexpr int32_t UNSET_UID = -1;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
+static constexpr uint32_t VOIP_SA_UID = 7022;
 
 #ifndef HAS_OS_ACCOUNT_PART
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
@@ -526,10 +527,12 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
-    if (callingUid != taskParam->uid_) {
+    // webview sdk申请长时任务，上下文在应用。callkit sa 申请长时时，上下文在sa;
+    if (callingUid != VOIP_SA_UID && callingUid != taskParam->uid_) {
         BGTASK_LOGE("continuous task param uid %{public}d is invalid, real %{public}d", taskParam->uid_, callingUid);
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
+    BGTASK_LOGE("continuous task param uid %{public}d, real %{public}d", taskParam->uid_, callingUid);
     if (taskParam->isStart_) {
         return StartBackgroundRunningForInner(taskParam);
     }
