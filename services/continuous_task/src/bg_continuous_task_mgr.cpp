@@ -532,7 +532,7 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
         BGTASK_LOGE("continuous task param uid %{public}d is invalid, real %{public}d", taskParam->uid_, callingUid);
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
-    BGTASK_LOGE("continuous task param uid %{public}d, real %{public}d", taskParam->uid_, callingUid);
+    BGTASK_LOGI("continuous task param uid %{public}d, real %{public}d", taskParam->uid_, callingUid);
     if (taskParam->isStart_) {
         return StartBackgroundRunningForInner(taskParam);
     }
