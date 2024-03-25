@@ -53,9 +53,9 @@
           "hisysevent",
           "hiview",
           "i18n",
-          "relational_store"
-        ],
-        "third_party": [ "icu" ]
+          "relational_store",
+          "icu"
+        ]
       },
       "build": {
         "group_type": {
