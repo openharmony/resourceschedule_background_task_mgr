@@ -16,7 +16,9 @@ import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
 config("bgtaskmgr_innerkits_public_config") {
   include_dirs = [
-    "include"
+    "include",
+    "${bgtaskmgr_frameworks_path}/common/include",
+    "${bgtaskmgr_frameworks_path}/include",
   ]
 }
 
@@ -45,11 +47,6 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "src/transient_task_app_info.cpp",
   ]
 
-  include_dirs = [
-    "${bgtaskmgr_frameworks_path}/common/include",
-    "${bgtaskmgr_frameworks_path}/include"
-  ]
-
   public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
 
   external_deps = [
@@ -62,9 +59,7 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "samgr:samgr_proxy",
   ]
 
-  public_external_deps = [
-    "json:nlohmann_json_static",
-  ]
+  public_external_deps = [ "json:nlohmann_json_static" ]
 
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
