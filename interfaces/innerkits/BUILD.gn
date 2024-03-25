@@ -16,9 +16,7 @@ import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
 config("bgtaskmgr_innerkits_public_config") {
   include_dirs = [
-    "include",
-    "${bgtaskmgr_frameworks_path}/common/include",
-    "${bgtaskmgr_frameworks_path}/include"
+    "include"
   ]
 }
 
@@ -45,6 +43,11 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "src/resource_callback_info.cpp",
     "src/resource_type.cpp",
     "src/transient_task_app_info.cpp",
+  ]
+
+  include_dirs = [
+    "${bgtaskmgr_frameworks_path}/common/include",
+    "${bgtaskmgr_frameworks_path}/include"
   ]
 
   public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
