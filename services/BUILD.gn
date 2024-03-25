@@ -121,7 +121,7 @@ ohos_shared_library("bgtaskmgr_service") {
     cflags_cc += [ "-DSUPPORT_GRAPHICS" ]
     external_deps += [
       "i18n:intl_util",
-      "icu:shared_icuuc"
+      "icu:shared_icuuc",
     ]
   }
 
@@ -178,7 +178,7 @@ ohos_static_library("bgtaskmgr_service_static") {
     cflags_cc += [ "-DSUPPORT_GRAPHICS" ]
     external_deps += [
       "i18n:intl_util",
-      "icu:shared_icuuc"
+      "icu:shared_icuuc",
     ]
   }
 
