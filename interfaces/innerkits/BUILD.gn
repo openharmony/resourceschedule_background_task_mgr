@@ -19,7 +19,6 @@ config("bgtaskmgr_innerkits_public_config") {
     "include",
     "${bgtaskmgr_frameworks_path}/common/include",
     "${bgtaskmgr_frameworks_path}/include",
-    "//third_party/json/single_include",
   ]
 }
 
@@ -58,6 +57,10 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
+  ]
+
+  public_external_deps = [
+    "json:nlohmann_json_static",
   ]
 
   subsystem_name = "resourceschedule"
