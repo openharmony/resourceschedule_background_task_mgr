@@ -234,7 +234,8 @@ ErrCode BackgroundTaskMgrStub::HandleStopBackgroundRunning(MessageParcel &data, 
     }
     std::string abilityName = Str16ToStr8(u16AbilityName);
     sptr<IRemoteObject> abilityToken = data.ReadRemoteObject();
-    ErrCode result = StopBackgroundRunning(abilityName, abilityToken);
+    int32_t abilityId = data.ReadInt32();
+    ErrCode result = StopBackgroundRunning(abilityName, abilityToken, abilityId);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleStopBackgroundRunning write result failed, ErrCode=%{public}d", result);
         FinishTrace(HITRACE_TAG_OHOS);

@@ -36,12 +36,13 @@ NotificationTools::NotificationTools() {}
 NotificationTools::~NotificationTools() {}
 
 std::string CreateNotificationLabel(int32_t uid, const std::string &bundleName,
-    const std::string &abilityName)
+    const std::string &abilityName, int32_t abilityId)
 {
     std::stringstream stream;
     stream.clear();
     stream.str("");
-    stream << NOTIFICATION_PREFIX << SEPARATOR << uid << SEPARATOR << std::hash<std::string>()(abilityName);
+    stream << NOTIFICATION_PREFIX << SEPARATOR << uid << SEPARATOR << std::hash<std::string>()(abilityName)
+        << SEPARATOR << abilityId;
     std::string label = stream.str();
     BGTASK_LOGD("notification label: %{public}s", label.c_str());
     return label;
@@ -62,7 +63,8 @@ ErrCode NotificationTools::PublishNotification(const std::shared_ptr<ContinuousT
     extraInfo->SetParam("abilityName", AAFwk::String::Box(continuousTaskRecord->abilityName_));
 
     std::string notificationLabel = CreateNotificationLabel(continuousTaskRecord->uid_,
-        continuousTaskRecord->bundleName_, continuousTaskRecord->abilityName_);
+        continuousTaskRecord->bundleName_, continuousTaskRecord->abilityName_,
+        continuousTaskRecord->abilityId_);
 
     // set extraInfo to save abilityname Info.
     notificationRequest.SetAdditionalData(extraInfo);

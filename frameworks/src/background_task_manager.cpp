@@ -82,10 +82,11 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTas
         FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_NO_MEMORY;
     }
-    BGTASK_LOGD("%{public}u = %{public}u, %{public}d = %{public}d",
+    BGTASK_LOGD("%{public}u = %{public}u, %{public}d = %{public}d, abilityId = %{public}d",
         static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
         static_cast<uint32_t>(taskParam.bgModeIds_.size()),
-        taskParamPtr->isBatchApi_, taskParam.isBatchApi_);
+        taskParamPtr->isBatchApi_, taskParam.isBatchApi_,
+        taskParamPtr->abilityId_);
     ErrCode ret = backgroundTaskMgrProxy_->StartBackgroundRunning(taskParamPtr);
     FinishTrace(HITRACE_TAG_OHOS);
     return ret;
@@ -107,9 +108,10 @@ ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(const ContinuousTa
         FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_NO_MEMORY;
     }
-    BGTASK_LOGD(" %{public}u = %{public}u, %{public}d = %{public}d",
+    BGTASK_LOGD(" %{public}u = %{public}u, %{public}d = %{public}d, abilityId = %{public}d",
         static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
-        static_cast<uint32_t>(taskParam.bgModeIds_.size()), taskParamPtr->isBatchApi_, taskParam.isBatchApi_);
+        static_cast<uint32_t>(taskParam.bgModeIds_.size()), taskParamPtr->isBatchApi_, taskParam.isBatchApi_,
+        taskParamPtr->abilityId_);
     ErrCode ret = backgroundTaskMgrProxy_->UpdateBackgroundRunning(taskParamPtr);
     FinishTrace(HITRACE_TAG_OHOS);
     return ret;
@@ -133,7 +135,7 @@ ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const Continuous
 }
 
 ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &abilityName,
-    const sptr<IRemoteObject> &abilityToken)
+    const sptr<IRemoteObject> &abilityToken, int32_t abilityId)
 {
     StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestStopBackgroundRunning");
     std::lock_guard<std::mutex> lock(mutex_);
@@ -143,7 +145,7 @@ ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &a
         return ERR_BGTASK_SERVICE_NOT_CONNECTED;
     }
 
-    ErrCode ret = backgroundTaskMgrProxy_->StopBackgroundRunning(abilityName, abilityToken);
+    ErrCode ret = backgroundTaskMgrProxy_->StopBackgroundRunning(abilityName, abilityToken, abilityId);
     FinishTrace(HITRACE_TAG_OHOS);
     return ret;
 }

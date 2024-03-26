@@ -227,7 +227,8 @@ void UpdateBackgroundRunningExecuteCB(napi_env env, void *data)
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode, nullptr, info->name,
         asyncCallbackInfo->abilityContext->GetToken(),
-        GetMainAbilityLabel(info->bundleName), true, asyncCallbackInfo->bgModes);
+        GetMainAbilityLabel(info->bundleName), true, asyncCallbackInfo->bgModes,
+        asyncCallbackInfo->abilityContext->GetAbilityRecordId());
     BGTASK_LOGD("%{public}d, %{public}u", taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam);
 }
@@ -242,7 +243,8 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode, asyncCallbackInfo->wantAgent,
         info->name, asyncCallbackInfo->abilityContext->GetToken(), GetMainAbilityLabel(info->bundleName),
-        asyncCallbackInfo->isBatchApi, asyncCallbackInfo->bgModes);
+        asyncCallbackInfo->isBatchApi, asyncCallbackInfo->bgModes,
+        asyncCallbackInfo->abilityContext->GetAbilityRecordId());
     BGTASK_LOGD("%{public}d, %{public}u", taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
 }
@@ -628,7 +630,8 @@ void StopBackgroundRunningExecuteCB(napi_env env, void *data)
     }
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
-    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStopBackgroundRunning(info->name, token);
+    int32_t abilityId = asyncCallbackInfo->abilityContext->GetAbilityRecordId();
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStopBackgroundRunning(info->name, token, abilityId);
 }
 
 napi_value StopBackgroundRunningAsync(napi_env env, napi_value *argv,

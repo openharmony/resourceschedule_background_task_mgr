@@ -57,15 +57,19 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
     appName_ = Str16ToStr8(u16AppName);
 
     if (!parcel.ReadBool(isBatchApi_)) {
-        BGTASK_LOGE("Failed to read the flag isBatchApi_");
+        BGTASK_LOGE("Failed to read the flag isBatchApi");
         return false;
     }
     if (isBatchApi_) {
         if (!parcel.ReadUInt32Vector(&bgModeIds_)) {
-            BGTASK_LOGE("read parce bgmodes_ error");
+            BGTASK_LOGE("read parce bgmodes error");
             return false;
         }
         BGTASK_LOGD("read parce bgmodes_ size %{public}d", static_cast<uint32_t>(bgModeIds_.size()));
+    }
+    if (!parcel.ReadInt32(abilityId_)) {
+        BGTASK_LOGE("Failed to read the abilityId");
+        return false;
     }
     return true;
 }
@@ -87,6 +91,10 @@ bool ContinuousTaskParamForInner::ReadFromParcel(Parcel &parcel)
         return false;
     }
 
+    if (!parcel.ReadInt32(abilityId_)) {
+        BGTASK_LOGE("Failed to read the abilityId");
+        return false;
+    }
     return true;
 }
 
@@ -146,18 +154,22 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         return false;
     }
     if (!parcel.WriteBool(isBatchApi_)) {
-        BGTASK_LOGE("Failed to write the isBatchApi_");
+        BGTASK_LOGE("Failed to write the isBatchApi");
         return false;
     }
 
     if (isBatchApi_) {
         BGTASK_LOGD("write modes %{public}u", static_cast<uint32_t>(bgModeIds_.size()));
         if (!parcel.WriteUInt32Vector(bgModeIds_)) {
-            BGTASK_LOGE("Failed to write bgModeIds_");
+            BGTASK_LOGE("Failed to write bgModeIds");
             return false;
         }
     }
 
+    if (!parcel.WriteInt32(abilityId_)) {
+        BGTASK_LOGE("Failed to write the abilityId");
+        return false;
+    }
     return true;
 }
 
@@ -178,6 +190,10 @@ bool ContinuousTaskParamForInner::Marshalling(Parcel &parcel) const
         return false;
     }
 
+    if (!parcel.WriteInt32(abilityId_)) {
+        BGTASK_LOGE("Failed to write the abilityId");
+        return false;
+    }
     return true;
 }
 }  // namespace BackgroundTaskMgr

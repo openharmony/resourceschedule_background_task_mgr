@@ -60,7 +60,7 @@ class BgContinuousTaskMgr : public DelayedSingleton<BgContinuousTaskMgr>,
 public:
     ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
-    ErrCode StopBackgroundRunning(const std::string &abilityName);
+    ErrCode StopBackgroundRunning(const std::string &abilityName, int32_t abilityId);
     ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
@@ -69,7 +69,7 @@ public:
     bool StopContinuousTaskByUser(const std::string &mapKey);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
-    void OnAbilityStateChanged(int32_t uid, const std::string &abilityName);
+    void OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId);
     void OnProcessDied(int32_t uid, int32_t pid);
     void OnRemoteSubscriberDied(const wptr<IRemoteObject> &object);
     bool Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
@@ -84,7 +84,7 @@ private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey, std::vector<uint32_t> &updateModes);
     ErrCode StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
-    ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName);
+    ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName, int32_t abilityId);
     ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode AddSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);

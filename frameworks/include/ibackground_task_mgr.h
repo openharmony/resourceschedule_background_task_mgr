@@ -94,9 +94,11 @@ public:
      *
      * @param abilityName Ability name of the requester ability.
      * @param abilityToken Ability token to mark an unique running ability instance.
+     * @param abilityId Ability identity.
      * @return ERR_OK if success, else fail.
      */
-    virtual ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken) = 0;
+    virtual ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken,
+        int32_t abilityId) = 0;
 
     /**
      * @brief Subscribes background task event.

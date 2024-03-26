@@ -29,7 +29,7 @@ static constexpr char LABEL_SPLITER = '_';
 static constexpr char NOTIFICATION_PREFIX[] = "bgmode";
 static constexpr uint32_t LABEL_BGMODE_PREFIX_POS = 0;
 static constexpr uint32_t LABEL_APP_UID_POS = 1;
-static constexpr uint32_t LABEL_SIZE = 3;
+static constexpr uint32_t LABEL_SIZE = 4;
 }
 
 std::shared_ptr<BgContinuousTaskMgr> TaskNotificationSubscriber::continuousTaskMgr_

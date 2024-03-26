@@ -58,7 +58,8 @@ public:
     ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) override;
     ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) override;
     ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam) override;
-    ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken) override;
+    ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken,
+        int32_t abilityId) override;
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) override;

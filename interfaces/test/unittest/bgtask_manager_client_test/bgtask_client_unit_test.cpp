@@ -225,11 +225,11 @@ HWTEST_F(BgTaskClientUnitTest, RequestUpdateBackgroundRunning_001, TestSize.Leve
  * @tc.name: RequestStopBackgroundRunning_001
  * @tc.desc: test RequestStopBackgroundRunning interface.
  * @tc.type: FUNC
- * @tc.require: issueI5IRJK
+ * @tc.require: issueI5IRJK issueI99HSB
  */
 HWTEST_F(BgTaskClientUnitTest, RequestStopBackgroundRunning_001, TestSize.Level1)
 {
-    EXPECT_NE(BackgroundTaskMgrHelper::RequestStopBackgroundRunning("test", nullptr), ERR_OK);
+    EXPECT_NE(BackgroundTaskMgrHelper::RequestStopBackgroundRunning("test", nullptr, -1), ERR_OK);
 }
 
 /**
