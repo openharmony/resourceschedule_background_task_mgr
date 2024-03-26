@@ -645,6 +645,7 @@ HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_003, TestSize.Level1)
     // When & Then
     EXPECT_TRUE(configChangeObserver3->CheckExpired());
 
+    AppExecFwk::Configuration configuration;
     configChangeObserver3->OnConfigurationUpdated(configuration);
     SUCCEED();
 }
