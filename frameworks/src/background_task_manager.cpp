@@ -29,57 +29,52 @@ BackgroundTaskManager::BackgroundTaskManager() {}
 
 BackgroundTaskManager::~BackgroundTaskManager() {}
 
+#define GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN              \
+    if (!GetBackgroundTaskManagerProxy()) {                    \
+        BGTASK_LOGE("GetBackgroundTaskManager Proxy failed."); \
+        return ERR_BGTASK_SERVICE_NOT_CONNECTED;               \
+    }
+
 ErrCode BackgroundTaskManager::CancelSuspendDelay(int32_t requestId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
-    return backgroundTaskMgrProxy_->CancelSuspendDelay(requestId);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->CancelSuspendDelay(requestId);
 }
 
 ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reason,
     const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     sptr<ExpiredCallback::ExpiredCallbackImpl> callbackSptr = callback.GetImpl();
     if (callbackSptr == nullptr) {
         BGTASK_LOGE("callbackSptr is nullptr");
         return ERR_CALLBACK_NULL_OR_TYPE_ERR;
     }
-    return backgroundTaskMgrProxy_->RequestSuspendDelay(reason, callbackSptr, delayInfo);
+    return proxy_->RequestSuspendDelay(reason, callbackSptr, delayInfo);
 }
 
 ErrCode BackgroundTaskManager::GetRemainingDelayTime(int32_t requestId, int32_t &delayTime)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
-    return backgroundTaskMgrProxy_->GetRemainingDelayTime(requestId, delayTime);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->GetRemainingDelayTime(requestId, delayTime);
 }
 
 ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam)
 {
-    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestStartBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestStartBackgroundRunning");
+
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        FinishTrace(HITRACE_TAG_OHOS);
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     sptr<ContinuousTaskParam> taskParamPtr = new (std::nothrow) ContinuousTaskParam(taskParam);
     if (taskParamPtr == nullptr) {
         BGTASK_LOGE("Failed to create continuous task param");
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_NO_MEMORY;
     }
     BGTASK_LOGD("%{public}u = %{public}u, %{public}d = %{public}d, abilityId = %{public}d",
@@ -87,43 +82,32 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTas
         static_cast<uint32_t>(taskParam.bgModeIds_.size()),
         taskParamPtr->isBatchApi_, taskParam.isBatchApi_,
         taskParamPtr->abilityId_);
-    ErrCode ret = backgroundTaskMgrProxy_->StartBackgroundRunning(taskParamPtr);
-    FinishTrace(HITRACE_TAG_OHOS);
-    return ret;
+    return proxy_->StartBackgroundRunning(taskParamPtr);
 }
 
 ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(const ContinuousTaskParam &taskParam)
 {
-    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestUpdateBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestUpdateBackgroundRunning");
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        FinishTrace(HITRACE_TAG_OHOS);
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     sptr<ContinuousTaskParam> taskParamPtr = new (std::nothrow) ContinuousTaskParam(taskParam);
     if (taskParamPtr == nullptr) {
         BGTASK_LOGE("Failed to create continuous task param");
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_NO_MEMORY;
     }
+
     BGTASK_LOGD(" %{public}u = %{public}u, %{public}d = %{public}d, abilityId = %{public}d",
         static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
         static_cast<uint32_t>(taskParam.bgModeIds_.size()), taskParamPtr->isBatchApi_, taskParam.isBatchApi_,
         taskParamPtr->abilityId_);
-    ErrCode ret = backgroundTaskMgrProxy_->UpdateBackgroundRunning(taskParamPtr);
-    FinishTrace(HITRACE_TAG_OHOS);
-    return ret;
+    return proxy_->UpdateBackgroundRunning(taskParamPtr);
 }
 
 ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     sptr<ContinuousTaskParamForInner> taskParamPtr = new (std::nothrow) ContinuousTaskParamForInner(taskParam);
     if (taskParamPtr == nullptr) {
@@ -131,108 +115,86 @@ ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const Continuous
         return ERR_BGTASK_NO_MEMORY;
     }
 
-    return backgroundTaskMgrProxy_->RequestBackgroundRunningForInner(taskParamPtr);
+    return proxy_->RequestBackgroundRunningForInner(taskParamPtr);
 }
 
 ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken, int32_t abilityId)
 {
-    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestStopBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestStopBackgroundRunning");
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        FinishTrace(HITRACE_TAG_OHOS);
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    ErrCode ret = backgroundTaskMgrProxy_->StopBackgroundRunning(abilityName, abilityToken, abilityId);
-    FinishTrace(HITRACE_TAG_OHOS);
-    return ret;
+    return proxy_->StopBackgroundRunning(abilityName, abilityToken, abilityId);
 }
 
 ErrCode BackgroundTaskManager::SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
     sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> subscriberSptr = subscriber.GetImpl();
     if (subscriberSptr == nullptr) {
         BGTASK_LOGE("subscriberSptr is nullptr");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    return backgroundTaskMgrProxy_->SubscribeBackgroundTask(subscriberSptr);
+    return proxy_->SubscribeBackgroundTask(subscriberSptr);
 }
 
 ErrCode BackgroundTaskManager::UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
     sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> subscriberSptr = subscriber.GetImpl();
     if (subscriberSptr == nullptr) {
         BGTASK_LOGE("subscriberSptr is nullptr");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    return backgroundTaskMgrProxy_->UnsubscribeBackgroundTask(subscriberSptr);
+    return proxy_->UnsubscribeBackgroundTask(subscriberSptr);
 }
 
 ErrCode BackgroundTaskManager::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
-    return backgroundTaskMgrProxy_->GetTransientTaskApps(list);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->GetTransientTaskApps(list);
 }
 
 ErrCode BackgroundTaskManager::ApplyEfficiencyResources(const EfficiencyResourceInfo &resourceInfo)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
     sptr<EfficiencyResourceInfo> resourceInfoPtr = new (std::nothrow) EfficiencyResourceInfo(resourceInfo);
     if (resourceInfoPtr == nullptr) {
         BGTASK_LOGE("Failed to create efficiency resource info");
         return ERR_BGTASK_NO_MEMORY;
     }
-    ErrCode ret = backgroundTaskMgrProxy_->ApplyEfficiencyResources(resourceInfoPtr);
-    return ret;
+    return proxy_->ApplyEfficiencyResources(resourceInfoPtr);
 }
 
 ErrCode BackgroundTaskManager::ResetAllEfficiencyResources()
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    ErrCode ret = backgroundTaskMgrProxy_->ResetAllEfficiencyResources();
-    return ret;
+    return proxy_->ResetAllEfficiencyResources();
 }
 
 ErrCode BackgroundTaskManager::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
     std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetEfficiencyResourcesInfos failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return backgroundTaskMgrProxy_->GetEfficiencyResourcesInfos(appList, procList);
+    return proxy_->GetEfficiencyResourcesInfos(appList, procList);
 }
 
 bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
 {
-    if (backgroundTaskMgrProxy_ != nullptr) {
+    if (proxy_ != nullptr) {
         return true;
     }
     sptr<ISystemAbilityManager> systemAbilityManager =
@@ -249,8 +211,8 @@ bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
         return false;
     }
 
-    backgroundTaskMgrProxy_ = iface_cast<BackgroundTaskMgr::IBackgroundTaskMgr>(remoteObject);
-    if ((backgroundTaskMgrProxy_ == nullptr) || (backgroundTaskMgrProxy_->AsObject() == nullptr)) {
+    proxy_ = iface_cast<BackgroundTaskMgr::IBackgroundTaskMgr>(remoteObject);
+    if ((proxy_ == nullptr) || (proxy_->AsObject() == nullptr)) {
         BGTASK_LOGE("GetBackgroundTaskManagerProxy iface_cast remoteObject failed.");
         return false;
     }
@@ -259,37 +221,33 @@ bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
     if (recipient_ == nullptr) {
         return false;
     }
-    backgroundTaskMgrProxy_->AsObject()->AddDeathRecipient(recipient_);
+    proxy_->AsObject()->AddDeathRecipient(recipient_);
     return true;
 }
 
 ErrCode BackgroundTaskManager::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
-    return backgroundTaskMgrProxy_->GetContinuousTaskApps(list);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->GetContinuousTaskApps(list);
 }
 
 ErrCode BackgroundTaskManager::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!GetBackgroundTaskManagerProxy()) {
-        BGTASK_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return ERR_BGTASK_SERVICE_NOT_CONNECTED;
-    }
-    return backgroundTaskMgrProxy_->StopContinuousTask(uid, pid, taskType);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->StopContinuousTask(uid, pid, taskType);
 }
 
 void BackgroundTaskManager::ResetBackgroundTaskManagerProxy()
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if ((backgroundTaskMgrProxy_ != nullptr) && (backgroundTaskMgrProxy_->AsObject() != nullptr)) {
-        backgroundTaskMgrProxy_->AsObject()->RemoveDeathRecipient(recipient_);
+    if ((proxy_ != nullptr) && (proxy_->AsObject() != nullptr)) {
+        proxy_->AsObject()->RemoveDeathRecipient(recipient_);
     }
-    backgroundTaskMgrProxy_ = nullptr;
+    proxy_ = nullptr;
 }
 
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)

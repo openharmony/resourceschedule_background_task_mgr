@@ -109,10 +109,13 @@ public:
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_001, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    // Given
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::shared_ptr<DelaySuspendInfo> delayInfo = std::make_shared<DelaySuspendInfo>();
     auto expiredCallback = std::make_shared<TestExpiredCallback>();
+    
+    // When & Then
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestSuspendDelay(
         u"test", *expiredCallback, delayInfo), ERR_BGTASK_SERVICE_NOT_CONNECTED);
     SystemAbilityManagerClient::GetInstance().action_ = "";
@@ -131,9 +134,12 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_001, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_002, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    // Given
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     int32_t delayTime = -1;
+    
+    // When & Then
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetRemainingDelayTime(-1, delayTime),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
     SystemAbilityManagerClient::GetInstance().action_ = "";
@@ -148,10 +154,12 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_002, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_003, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(-1),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(-1), ERR_OK);
 }
@@ -164,11 +172,13 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_003, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_004, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     ContinuousTaskParam taskParam = ContinuousTaskParam();
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStartBackgroundRunning(taskParam),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStartBackgroundRunning(taskParam),
         ERR_OK);
@@ -182,10 +192,12 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_004, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_005, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStopBackgroundRunning("test", nullptr, -1),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStopBackgroundRunning("test", nullptr, -1),
         ERR_OK);
@@ -199,13 +211,15 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_005, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_006, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     TestBackgroundTaskSubscriber taskSubscriber = TestBackgroundTaskSubscriber();
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SubscribeBackgroundTask(taskSubscriber),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->UnsubscribeBackgroundTask(taskSubscriber),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
+    
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SubscribeBackgroundTask(taskSubscriber),
         ERR_BGTASK_PARCELABLE_FAILED);
@@ -223,11 +237,13 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_006, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_007, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::vector<std::shared_ptr<TransientTaskAppInfo>> list;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetTransientTaskApps(list),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetTransientTaskApps(list), ERR_OK);
 }
@@ -240,11 +256,13 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_007, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_008, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetContinuousTaskApps(list),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetContinuousTaskApps(list), ERR_OK);
 }
@@ -257,11 +275,13 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_008, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_009, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EfficiencyResourceInfo resourceInfo = EfficiencyResourceInfo();
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(
         resourceInfo), ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(
         resourceInfo), ERR_OK);
@@ -275,10 +295,12 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_009, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_0010, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources(),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources(), ERR_OK);
 }
@@ -291,12 +313,14 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_0010, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_011, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::vector<std::shared_ptr<ResourceCallbackInfo>> appList;
     std::vector<std::shared_ptr<ResourceCallbackInfo>> procList;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetEfficiencyResourcesInfos(appList, procList),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetEfficiencyResourcesInfos(appList, procList),
         ERR_OK);
@@ -310,10 +334,12 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_011, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_012, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(1, 1, 1),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(1, 1, 1), ERR_OK);
 }
@@ -326,12 +352,14 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_012, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_013, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskManagerProxy();
-    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_, nullptr);
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_, nullptr);
+
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetBackgroundTaskManagerProxy();
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_, nullptr);
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_, nullptr);
 }
 
 /**
@@ -342,11 +370,13 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_013, TestSize.Level1)
  */
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_014, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->backgroundTaskMgrProxy_ = nullptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     ContinuousTaskParamForInner taskParam = ContinuousTaskParamForInner();
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam),
         ERR_OK);
