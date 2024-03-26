@@ -596,26 +596,57 @@ HWTEST_F(BgTaskMiscUnitTest, WatchdogTest_001, TestSize.Level1)
 
 /**
  * @tc.name: ConfigChangeObserver_001
- * @tc.desc: test Watchdog class.
+ * @tc.desc: test ConfigChangeObserver class.
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
 HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_001, TestSize.Level1)
 {
+    // Given
     sptr<ConfigChangeObserver> configChangeObserver1 = sptr<ConfigChangeObserver>(
         new ConfigChangeObserver(nullptr, nullptr));
-    EXPECT_FALSE(configChangeObserver1->CheckParamValid());
-    AppExecFwk::Configuration configuration;
-    configChangeObserver1->OnConfigurationUpdated(configuration);
+    
+    // When & Then
+    EXPECT_FALSE(configChangeObserver1->CheckExpired());
+}
+
+/**
+ * @tc.name: ConfigChangeObserver_002
+ * @tc.desc: test ConfigChangeObserver class.
+ * @tc.type: FUNC
+ * @tc.require: issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_002, TestSize.Level1)
+{
+    // Given
     auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
     auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
     sptr<ConfigChangeObserver> configChangeObserver2 = sptr<ConfigChangeObserver>(
         new ConfigChangeObserver(handler, nullptr));
-    EXPECT_FALSE(configChangeObserver2->CheckParamValid());
+
+    // When & Then
+    EXPECT_FALSE(configChangeObserver2->CheckExpired());
+}
+
+/**
+ * @tc.name: ConfigChangeObserver_003
+ * @tc.desc: test ConfigChangeObserver class.
+ * @tc.type: FUNC
+ * @tc.require: issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_003, TestSize.Level1)
+{
+    // Given
+    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
+    auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
     sptr<ConfigChangeObserver> configChangeObserver3 = sptr<ConfigChangeObserver>(
         new ConfigChangeObserver(handler, bgContinuousTaskMgr));
-    EXPECT_TRUE(configChangeObserver3->CheckParamValid());
+
+    // When & Then
+    EXPECT_TRUE(configChangeObserver3->CheckExpired());
+
     configChangeObserver3->OnConfigurationUpdated(configuration);
+    SUCCEED();
 }
 
 /**
