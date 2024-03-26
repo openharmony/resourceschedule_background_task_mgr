@@ -180,7 +180,7 @@ private:
 
 private:
     std::mutex mutex_;
-    sptr<BackgroundTaskMgr::IBackgroundTaskMgr> backgroundTaskMgrProxy_;
+    sptr<BackgroundTaskMgr::IBackgroundTaskMgr> proxy_;
     sptr<BgTaskMgrDeathRecipient> recipient_;
 };
 }  // namespace BackgroundTaskMgr
