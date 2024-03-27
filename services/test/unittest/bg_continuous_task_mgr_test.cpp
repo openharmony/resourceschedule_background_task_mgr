@@ -50,9 +50,7 @@ static constexpr uint32_t INVALID_BGMODE_ID = 11;
 static constexpr uint64_t NO_SYSTEM_APP_TOKEN_ID = -100;
 static constexpr int32_t DEFAULT_USERID = 100;
 static constexpr int32_t TEST_NUM_ONE = 1;
-static constexpr uint32_t TEST_NUM_UONE = 1;
 static constexpr int32_t TEST_NUM_TWO = 2;
-static constexpr uint32_t TEST_NUM_UTWO = 2;
 static constexpr int32_t TEST_NUM_THREE = 3;
 static constexpr uint32_t CONFIGURE_ALL_MODES = 0x1FF;
 }
@@ -202,7 +200,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartAndUpdateBackgroundRunning_001, TestSize.
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
         "ability1", nullptr, "Entry", true, {1, 2});
     EXPECT_NE(taskParam5, nullptr);
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam5), (int32_t)ERR_BGTASK_OBJECT_EXISTS);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam5), (int32_t)ERR_BGTASK_OBJECT_NOT_EXIST);
 }
 
 /**
@@ -392,11 +390,11 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_005, TestSize.Level1)
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_006, TestSize.Level1)
 {
     bgContinuousTaskMgr_->isSysReady_.store(false);
-    bgContinuousTaskMgr_->StopContinuousTask(1, 1, 1);
+    bgContinuousTaskMgr_->StopContinuousTask(1, 1, 1, "");
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    bgContinuousTaskMgr_->StopContinuousTask(-1, 1, 1);
+    bgContinuousTaskMgr_->StopContinuousTask(-1, 1, 1, "");
     SleepForFC();
-    bgContinuousTaskMgr_->StopContinuousTask(1, 1, 1);
+    bgContinuousTaskMgr_->StopContinuousTask(1, 1, 1, "");
     SleepForFC();
 
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
@@ -416,7 +414,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_006, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
-    bgContinuousTaskMgr_->StopContinuousTask(-1, 1, 1);
+    bgContinuousTaskMgr_->StopContinuousTask(-1, 1, 1, "");
     SleepForFC();
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
 
@@ -424,7 +422,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_006, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
-    bgContinuousTaskMgr_->StopContinuousTask(1, 1, 1);
+    bgContinuousTaskMgr_->StopContinuousTask(1, 1, 1, "");
     SleepForFC();
     EXPECT_TRUE(true);
 }
@@ -746,34 +744,40 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_034, TestSize.Level1)
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
-    bgContinuousTaskMgr_->HandleStopContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, TEST_NUM_ONE);
+    bgContinuousTaskMgr_->HandleStopContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, TEST_NUM_ONE, "");
     EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
 /**
  * @tc.name: BgTaskManagerUnitTest_035
- * @tc.desc: test RemoveSpecifiedBgTask.
+ * @tc.desc: test HandleStopContinuousTask.
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_035, TestSize.Level1)
 {
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->HandleStopContinuousTask(0, 0, 0, "");
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
+
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
-    continuousTaskRecord1->bgModeId_ = TEST_NUM_UONE;
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
-    continuousTaskRecord1->bgModeId_ = TEST_NUM_UTWO;
+    continuousTaskRecord1->uid_ = 1;
+    continuousTaskRecord1->bgModeIds_ = {1};
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 1);
+
+    bgContinuousTaskMgr_->HandleStopContinuousTask(1, 0, 1, "");
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
-    bgContinuousTaskMgr_->RemoveSpecifiedBgTask(TEST_NUM_UONE);
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 1);
+    bgContinuousTaskMgr_->HandleStopContinuousTask(1, 0, 0xFF, "");
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 
-    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
-    bgContinuousTaskMgr_->RemoveSpecifiedBgTask(TEST_NUM_UONE);
-    EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 1);
+    bgContinuousTaskMgr_->HandleStopContinuousTask(1, 0, 0, "key1");
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
 /**

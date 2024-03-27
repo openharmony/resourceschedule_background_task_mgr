@@ -328,7 +328,7 @@ HWTEST_F(BgTaskClientUnitTest, ResetAllEfficiencyResources_001, TestSize.Level1)
  */
 HWTEST_F(BgTaskClientUnitTest, StopContinuousTask_001, TestSize.Level1)
 {
-    EXPECT_EQ((int32_t)BackgroundTaskMgrHelper::StopContinuousTask(1, 1, 1), (int32_t)ERR_OK);
+    EXPECT_EQ((int32_t)BackgroundTaskMgrHelper::StopContinuousTask(1, 1, 1, ""), (int32_t)ERR_OK);
 }
 
 /**

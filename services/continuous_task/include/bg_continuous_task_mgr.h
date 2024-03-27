@@ -77,7 +77,7 @@ public:
     void InitRequiredResourceInfo();
     void Clear();
     int32_t GetBgTaskUid();
-    void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
+    void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
 
 private:
@@ -107,8 +107,7 @@ private:
     bool RegisterConfigurationObserver();
     bool GetNotificationPrompt();
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
-    void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
-    void RemoveSpecifiedBgTask(uint32_t taskType);
+    void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);
@@ -120,14 +119,14 @@ private:
     bool checkNotificationCondition(const std::set<std::string> &notificationLabels, const std::string &label);
     std::shared_ptr<Global::Resource::ResourceManager> GetBundleResMgr(const AppExecFwk::BundleInfo &bundleInfo);
     std::string GetMainAbilityLabel(const std::string &bundleName, int32_t userId);
-
+    void RemoveContinuousTaskRecordByUidAndMode(int32_t uid, uint32_t mode);
+    void RemoveContinuousTaskRecordByUid(int32_t uid);
 private:
     std::atomic<bool> isSysReady_ {false};
     std::string deviceType_ {""};
     int32_t bgTaskUid_ {-1};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
-    std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMapForBatch_ {};
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};
 #endif

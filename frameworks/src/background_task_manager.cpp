@@ -233,12 +233,12 @@ ErrCode BackgroundTaskManager::GetContinuousTaskApps(std::vector<std::shared_ptr
     return proxy_->GetContinuousTaskApps(list);
 }
 
-ErrCode BackgroundTaskManager::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
+ErrCode BackgroundTaskManager::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return proxy_->StopContinuousTask(uid, pid, taskType);
+    return proxy_->StopContinuousTask(uid, pid, taskType, key);
 }
 
 void BackgroundTaskManager::ResetBackgroundTaskManagerProxy()

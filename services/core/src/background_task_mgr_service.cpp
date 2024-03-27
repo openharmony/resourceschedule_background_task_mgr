@@ -226,13 +226,14 @@ ErrCode BackgroundTaskMgrService::GetEfficiencyResourcesInfos(
     return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->GetEfficiencyResourcesInfos(appList, procList);
 }
 
-ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
+ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType,
+    const std::string &key)
 {
     if (!CheckCallingToken()) {
         BGTASK_LOGW("StopContinuousTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    BgContinuousTaskMgr::GetInstance()->StopContinuousTask(uid, pid, taskType);
+    BgContinuousTaskMgr::GetInstance()->StopContinuousTask(uid, pid, taskType, key);
     return ERR_OK;
 }
 
