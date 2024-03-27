@@ -512,7 +512,6 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
 
 ErrCode BgContinuousTaskMgr::CheckBgmodeTypeForInner(uint32_t requestedBgModeId)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::CheckBgmodeTypeForInner");
     if (requestedBgModeId == INVALID_BGMODE || requestedBgModeId >= BGMODE_NUMS) {
         BGTASK_LOGE("requested background mode is not declared in config file!");
         return ERR_BGTASK_INVALID_BGMODE;
@@ -522,7 +521,6 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeTypeForInner(uint32_t requestedBgModeId)
 
 ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::RequestBackgroundRunningForInner");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
