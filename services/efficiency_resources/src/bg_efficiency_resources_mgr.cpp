@@ -624,7 +624,6 @@ ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dump
 ErrCode BgEfficiencyResourcesMgr::ShellDumpInner(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgEfficiencyResourcesMgr::ShellDumpInner");
     if (dumpOption[1] == DUMP_PARAM_LIST_ALL) {
         DumpAllApplicationInfo(dumpInfo);
     } else if (dumpOption[1] == DUMP_PARAM_RESET_ALL) {
@@ -769,7 +768,6 @@ ErrCode BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfos(std::vector<std::s
 void BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfosInner(const ResourceRecordMap &infoMap,
     std::vector<std::shared_ptr<ResourceCallbackInfo>> &list)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfosInner");
     if (infoMap.empty()) {
         return;
     }
