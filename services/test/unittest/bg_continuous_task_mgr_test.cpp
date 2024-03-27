@@ -114,6 +114,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
     EXPECT_NE(taskParam, nullptr);
     taskParam->appName_ = "Entry";
     taskParam->isNewApi_ = true;
+    taskParam->abilityId_ = 1;
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
@@ -148,6 +149,65 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
     taskParam->abilityName_ = "ability1";
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
+}
+
+/**
+ * @tc.name: StartBackgroundRunning_003
+ * @tc.desc: start background runnging by abilityIds test.
+ * @tc.type: FUNC
+ * @tc.require: issueI99HSB
+ */
+HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    int taskSize = 0;
+
+    // start one task by abilityId is 1
+    sptr<ContinuousTaskParam> taskParam1 = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1, 2, 3}, 1);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam1), (int32_t)ERR_OK);
+    
+    taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
+    EXPECT_EQ(taskSize, 1);
+
+    // start one task by abilityId is 2
+    sptr<ContinuousTaskParam> taskParam2 = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1, 2, 3}, 2);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam2), (int32_t)ERR_OK);
+    
+    taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
+    EXPECT_EQ(taskSize, 2);
+
+    // agent start one task by abilityId is 2
+    sptr<ContinuousTaskParam> taskParam3 = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1, 2, 3}, 2);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam3),
+        (int32_t)ERR_BGTASK_OBJECT_EXISTS);
+    
+    taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
+    EXPECT_EQ(taskSize, 2);
+
+    // stop one task by abilityId is 1
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(taskParam1->abilityName_, 1), (int32_t)ERR_OK);
+
+    taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
+    EXPECT_EQ(taskSize, 1);
+
+    // stop one task by abilityId is 2
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(taskParam2->abilityName_, 2), (int32_t)ERR_OK);
+
+    taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
+    EXPECT_EQ(taskSize, 0);
+
+    // agent stop one task by abilityId is 2
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(taskParam2->abilityName_, 2),
+        (int32_t)ERR_BGTASK_OBJECT_NOT_EXIST);
+
+    taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
+    EXPECT_EQ(taskSize, 0);
 }
 
 /**
@@ -219,6 +279,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     taskParam->abilityName_ = "ability1";
     taskParam->bgModeId_ = 4;
+    taskParam->abilityId_ = 1;
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("", 1), (int32_t)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1", -1), (int32_t)ERR_BGTASK_INVALID_PARAM);
