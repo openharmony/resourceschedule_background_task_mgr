@@ -33,6 +33,7 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "time_provider.h"
 #include "transient_task_log.h"
+#include "hitrace_meter.h"
 
 using namespace std;
 
@@ -157,6 +158,7 @@ ErrCode BgTransientTaskMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::st
 ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
     const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgTransientTaskMgr::RequestSuspendDelay");
     if (!isReady_.load()) {
         BGTASK_LOGW("Transient task manager is not ready.");
         return ERR_BGTASK_SYS_NOT_READY;
@@ -254,6 +256,7 @@ void BgTransientTaskMgr::NotifyTransientTaskSuscriber(const shared_ptr<Transient
 
 ErrCode BgTransientTaskMgr::CancelSuspendDelay(int32_t requestId)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgTransientTaskMgr::CancelSuspendDelay");
     if (!isReady_.load()) {
         BGTASK_LOGE("Transient task manager is not ready.");
         return ERR_BGTASK_SYS_NOT_READY;
@@ -315,6 +318,7 @@ void BgTransientTaskMgr::ForceCancelSuspendDelay(int32_t requestId)
 
 ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &delayTime)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgTransientTaskMgr::GetRemainingDelayTime");
     if (!isReady_.load()) {
         BGTASK_LOGW("Transient task manager is not ready.");
         return ERR_BGTASK_SYS_NOT_READY;
