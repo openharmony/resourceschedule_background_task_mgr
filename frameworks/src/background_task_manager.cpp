@@ -128,7 +128,8 @@ ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &a
     return proxy_->StopBackgroundRunning(abilityName, abilityToken, abilityId);
 }
 
-ErrCode BackgroundTaskManager::SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)
+__attribute__((no_sanitize("cfi"))) ErrCode BackgroundTaskManager::SubscribeBackgroundTask(
+    const BackgroundTaskSubscriber &subscriber)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
