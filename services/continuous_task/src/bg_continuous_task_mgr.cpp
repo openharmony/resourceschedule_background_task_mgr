@@ -860,7 +860,12 @@ void BgContinuousTaskMgr::StopContinuousTask(int32_t uid, int32_t pid, uint32_t 
         BGTASK_LOGW("manager is not ready");
         return;
     }
-    auto task = [this, uid, pid, taskType, key]() { this->HandleStopContinuousTask(uid, pid, taskType, key); };
+    auto self = shared_from_this();
+    auto task = [self, uid, pid, taskType, key]() {
+        if (self) {
+            self->HandleStopContinuousTask(uid, pid, taskType, key);
+        }
+    };
     handler_->PostTask(task);
 }
 
