@@ -35,6 +35,7 @@ CONTINUOUS_TASK_APPLY:
   APP_NAME: {type: STRING, desc: package name}
   ABILITY: {type: STRING, desc: package ability}
   BGMODE: {type: INT32, desc: task background mode}
+  UIABILITY_IDENTITY: {type: INT32, desc: ability identity}
 
 CONTINUOUS_TASK_CANCEL:
   __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: cancel continuous task}
@@ -43,3 +44,5 @@ CONTINUOUS_TASK_CANCEL:
   APP_NAME: {type: STRING, desc: package name}
   ABILITY: {type: STRING, desc: package ability}
   BGMODE: {type: INT32, desc: task background mode}
+  UIABILITY_IDENTITY: {type: INT32, desc: ability identity}
+  STOP_REASON: {type: INT32, desc: stop reason}
