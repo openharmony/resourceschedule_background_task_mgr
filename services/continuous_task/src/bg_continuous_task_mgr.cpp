@@ -576,7 +576,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StartBackgroundRunning");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
@@ -807,7 +806,6 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<Continuous
 
 ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityName, int32_t abilityId)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StopBackgroundRunning");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
