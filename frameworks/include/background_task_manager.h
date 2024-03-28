@@ -158,9 +158,10 @@ public:
      * @param uid app uid.
      * @param pid app pid.
      * @param taskType continuous task type.
+     * @param key continuous task key.
      * @return Returns ERR_OK if success, else failure.
      */
-    ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
+    ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
 
 private:
     bool GetBackgroundTaskManagerProxy();

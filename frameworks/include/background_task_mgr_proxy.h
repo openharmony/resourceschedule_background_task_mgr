@@ -152,9 +152,10 @@ public:
      * @param uid app uid.
      * @param pid app pid.
      * @param taskType continuous task type.
+     * @param key continuous task key.
      * @return Returns ERR_OK if success, else failure.
      */
-    ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType) override;
+    ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key) override;
 
 private:
     ErrCode InnerTransact(uint32_t code, MessageOption &flags, MessageParcel &data, MessageParcel &reply);

@@ -119,7 +119,7 @@ public:
      * @param taskType continuous task type.
      * @return Returns ERR_OK if success, else failure.
      */
-    static ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType);
+    static ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -398,7 +398,7 @@ ErrCode BackgroundTaskMgrProxy::GetContinuousTaskApps(std::vector<std::shared_pt
     return result;
 }
 
-ErrCode BackgroundTaskMgrProxy::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
+ErrCode BackgroundTaskMgrProxy::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key)
 {
     MessageParcel data;
     if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
@@ -417,6 +417,11 @@ ErrCode BackgroundTaskMgrProxy::StopContinuousTask(int32_t uid, int32_t pid, uin
 
     if (!data.WriteUint32(taskType)) {
         BGTASK_LOGE("StopContinuousTask parcel taskType failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+
+    if (!data.WriteString(key)) {
+        BGTASK_LOGE("StopContinuousTask parcel key failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 

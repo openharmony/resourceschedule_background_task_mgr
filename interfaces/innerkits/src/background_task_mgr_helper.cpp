@@ -81,9 +81,9 @@ ErrCode BackgroundTaskMgrHelper::ResetAllEfficiencyResources()
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources();
 }
 
-ErrCode BackgroundTaskMgrHelper::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
+ErrCode BackgroundTaskMgrHelper::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key)
 {
-    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(uid, pid, taskType);
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(uid, pid, taskType, key);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

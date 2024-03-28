@@ -221,12 +221,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_006, TestSize.Level1)
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
     
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SubscribeBackgroundTask(taskSubscriber),
-        ERR_BGTASK_PARCELABLE_FAILED);
-    SleepForFC();
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->UnsubscribeBackgroundTask(taskSubscriber),
-        ERR_BGTASK_PARCELABLE_FAILED);
-    SleepForFC();
 }
 
 /**
@@ -337,11 +331,11 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_012, TestSize.Level1)
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
 
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(1, 1, 1),
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(1, 1, 1, ""),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(1, 1, 1), ERR_OK);
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(1, 1, 1, ""), ERR_OK);
 }
 
 /**

@@ -76,11 +76,11 @@ static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DEFAULT_NOTIFICATION_ID = 0;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
-static constexpr int32_t UNSET_UID = -1;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
+static constexpr uint32_t ALL_MODES = 0xFF;
 
 #ifndef HAS_OS_ACCOUNT_PART
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
@@ -667,7 +667,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     auto iter = continuousTaskInfosMap_.find(taskInfoMapKey);
     if (iter == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("continuous task is not exist: %{public}s, use start befor update", taskInfoMapKey.c_str());
-        return ERR_BGTASK_OBJECT_EXISTS;
+        return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
 
     auto continuousTaskRecord = iter->second;
@@ -854,83 +854,77 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     return result;
 }
 
-void BgContinuousTaskMgr::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
+void BgContinuousTaskMgr::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key)
 {
-    BGTASK_LOGD("StopContinuousTask begin uid: %{public}d, pid: %{public}d, taskType: %{public}d",
-        uid, pid, taskType);
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
     }
-    auto task = [this, uid, pid, taskType]() { this->HandleStopContinuousTask(uid, pid, taskType); };
+    auto self = shared_from_this();
+    auto task = [self, uid, pid, taskType, key]() {
+        if (self) {
+            self->HandleStopContinuousTask(uid, pid, taskType, key);
+        }
+    };
     handler_->PostTask(task);
 }
 
-void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType)
+void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key)
 {
-    // uid == -1 means target type continuoust task required condition is not met, so cancel all this kind of tasks;
-    if (uid == UNSET_UID) {
-        BGTASK_LOGI("SA die, StopContinuousTask begin uid: %{public}d, pid: %{public}d, taskType: %{public}d",
-            uid, pid, taskType);
-        RemoveSpecifiedBgTask(taskType);
+    BGTASK_LOGI("StopContinuousTask taskType: %{public}d, key %{public}s", taskType, key.c_str());
+    if (taskType == BackgroundMode::DATA_TRANSFER) {
+        RemoveContinuousTaskRecordByUidAndMode(uid, taskType);
         return;
     }
+    if (taskType == ALL_MODES) {
+        RemoveContinuousTaskRecordByUid(uid);
+        return;
+    }
+    if (continuousTaskInfosMap_.find(key) == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGW("remove TaskInfo failure, no matched task: %{public}s", key.c_str());
+        return;
+    }
+    NotificationTools::GetInstance()->CancelNotification(continuousTaskInfosMap_[key]->GetNotificationLabel(),
+        DEFAULT_NOTIFICATION_ID);
+    RemoveContinuousTaskRecord(key);
+}
+
+void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUid(int32_t uid)
+{
     auto iter = continuousTaskInfosMap_.begin();
-    int32_t uidNum = 0;
-    bool uidExist = false;
     while (iter != continuousTaskInfosMap_.end()) {
-        int32_t recordUid = iter->second->GetUid();
-        uint32_t bgmodeId = iter->second->GetBgModeId();
-        if (recordUid != uid) {
-            iter++;
+        if (iter->second->GetUid() != uid) {
+            ++iter;
             continue;
         }
-        uidNum++;
-        uidExist = true;
-        if (bgmodeId == taskType) {
-            BGTASK_LOGI("StopContinuousTask by suspend sa, uid: %{public}d, pid: %{public}d, taskType: %{public}d",
-                uid, pid, taskType);
-            OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
-            NotificationTools::GetInstance()->CancelNotification(
-                iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
-            iter = continuousTaskInfosMap_.erase(iter);
-            RefreshTaskRecord();
-            uidNum--;
-        } else {
-            iter++;
-        }
-    }
-    if (uidExist && uidNum == 0) {
-        HandleAppContinuousTaskStop(uid);
+        BGTASK_LOGW("erase key %{public}s", iter->first.c_str());
+        OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+        NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
+            DEFAULT_NOTIFICATION_ID);
+        iter = continuousTaskInfosMap_.erase(iter);
+        RefreshTaskRecord();
     }
 }
 
-void BgContinuousTaskMgr::RemoveSpecifiedBgTask(uint32_t taskType)
+void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, uint32_t mode)
 {
-    std::map<int32_t, int32_t> appTaskNum;
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
-        int32_t uid = iter->second->GetUid();
-        if (appTaskNum.find(uid) != appTaskNum.end()) {
-            appTaskNum[uid]++;
-        } else {
-            appTaskNum[uid] = 1;
+        if (iter->second->GetUid() != uid) {
+            ++iter;
+            continue;
         }
-        if (iter->second->GetBgModeId() == taskType) {
-            OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
-            NotificationTools::GetInstance()->CancelNotification(
-                iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
-            iter = continuousTaskInfosMap_.erase(iter);
-            RefreshTaskRecord();
-            appTaskNum[uid]--;
-        } else {
-            iter++;
+        auto findModeIter = std::find(iter->second->bgModeIds_.begin(), iter->second->bgModeIds_.end(), mode);
+        if (findModeIter == iter->second->bgModeIds_.end()) {
+            ++iter;
+            continue;
         }
-    }
-    for (auto var : appTaskNum) {
-        if (var.second == 0) {
-            HandleAppContinuousTaskStop(var.first);
-        }
+        BGTASK_LOGW("erase key %{public}s", iter->first.c_str());
+        OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+        NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
+            DEFAULT_NOTIFICATION_ID);
+        iter = continuousTaskInfosMap_.erase(iter);
+        RefreshTaskRecord();
     }
 }
 
@@ -1155,11 +1149,11 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
 
 bool BgContinuousTaskMgr::RemoveContinuousTaskRecord(const std::string &mapKey)
 {
-    BGTASK_LOGD("task info: %{public}s", mapKey.c_str());
     if (continuousTaskInfosMap_.find(mapKey) == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("remove TaskInfo failure, no matched task: %{public}s", mapKey.c_str());
         return false;
     }
+    BGTASK_LOGI("erase task info: %{public}s", mapKey.c_str());
     auto record = continuousTaskInfosMap_.at(mapKey);
     OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
     continuousTaskInfosMap_.erase(mapKey);

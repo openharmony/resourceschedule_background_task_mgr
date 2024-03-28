@@ -70,7 +70,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_002
     std::vector<std::shared_ptr<ResourceCallbackInfo>> list4;
     EXPECT_EQ(BackgroundTaskMgrService_->GetEfficiencyResourcesInfos(list3, list4), ERR_BGTASK_PERMISSION_DENIED);
 
-    EXPECT_EQ(BackgroundTaskMgrService_->StopContinuousTask(1, 1, 1), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->StopContinuousTask(1, 1, 1, ""), ERR_BGTASK_PERMISSION_DENIED);
 
     EXPECT_EQ(BackgroundTaskMgrService_->SubscribeBackgroundTask(nullptr), ERR_BGTASK_PERMISSION_DENIED);
     EXPECT_EQ(BackgroundTaskMgrService_->UnsubscribeBackgroundTask(nullptr), ERR_BGTASK_PERMISSION_DENIED);

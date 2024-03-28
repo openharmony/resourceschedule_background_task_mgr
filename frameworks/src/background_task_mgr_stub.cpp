@@ -379,7 +379,8 @@ ErrCode BackgroundTaskMgrStub::HandleStopContinuousTask(MessageParcel& data, Mes
     int32_t uid = data.ReadInt32();
     int32_t pid = data.ReadInt32();
     uint32_t taskType = data.ReadUint32();
-    ErrCode result = StopContinuousTask(uid, pid, taskType);
+    std::string key = data.ReadString();
+    ErrCode result = StopContinuousTask(uid, pid, taskType, key);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleStopContinuousTask write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;

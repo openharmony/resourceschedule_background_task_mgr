@@ -68,7 +68,7 @@ public:
     ErrCode ResetAllEfficiencyResources() override;
     ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList) override;
-    ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType) override;
+    ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);
