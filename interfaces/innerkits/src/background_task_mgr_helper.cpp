@@ -40,7 +40,8 @@ ErrCode BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(const Continuo
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam);
 }
 
-ErrCode BackgroundTaskMgrHelper::SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)
+__attribute__((no_sanitize("cfi"))) ErrCode BackgroundTaskMgrHelper::SubscribeBackgroundTask(
+    const BackgroundTaskSubscriber &subscriber)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SubscribeBackgroundTask(subscriber);
 }

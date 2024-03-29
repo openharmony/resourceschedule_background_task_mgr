@@ -119,7 +119,8 @@ ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &a
     return ret;
 }
 
-ErrCode BackgroundTaskManager::SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)
+__attribute__((no_sanitize("cfi"))) ErrCode BackgroundTaskManager::SubscribeBackgroundTask(
+    const BackgroundTaskSubscriber &subscriber)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!GetBackgroundTaskManagerProxy()) {
