@@ -87,11 +87,13 @@ void ResourceApplicationRecord::ParseToJson(nlohmann::json &root)
 bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
 {
     if (value.empty()) {
+        BGTASK_LOGE("value is empty");
         return false;
     }
     if (!CommonUtils::CheckJsonValue(value, {"uid", "pid", "bundleName", "resourceNumber"}) || 
         !value.at("uid").is_number_integer() || !value.at("pid").is_number_integer() || 
         !value.at("bundleName").is_string() || !value.at("resourceNumber").is_number_integer()) {
+        BGTASK_LOGE("checkJsonValue of value is failed");
         return false;
     }
     this->uid_ = value.at("uid").get<int32_t>();
@@ -102,13 +104,15 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
         const nlohmann::json &resourceVal = value.at("resourceUnitList");
         auto nums = static_cast<int32_t>(resourceVal.size());
         for (int i = 0; i < nums; ++i) {
-            if (resourceVal.at(i).empty() || !resourceVal.at(i).is_object()) {
+            if (resourceVal.at(i).is_null() || !resourceVal.at(i).is_object()) {
+                BGTASK_LOGD("resourceVal.at(%{public}d) is null or is not object", i);
                 continue;
             }
             const nlohmann::json &persistTime = resourceVal.at(i);
             if (!CommonUtils::CheckJsonValue(persistTime, {"resourceIndex", "isPersist", "endTime", "reason"}) || 
                 !persistTime.at("resourceIndex").is_number_integer() || !persistTime.at("isPersist").is_boolean() || 
                 !persistTime.at("endTime").is_number_integer() || !persistTime.at("reason").is_string()) {
+                BGTASK_LOGD("checkJsonValue of persistTime is failed");
                 continue;
             }
             uint32_t resourceIndex = persistTime.at("resourceIndex").get<uint32_t>();
