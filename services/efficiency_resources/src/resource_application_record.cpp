@@ -106,9 +106,9 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
                 continue;
             }
             const nlohmann::json &persistTime = resourceVal.at(i);
-            if (!CommonUtils::CheckJsonValue(persistTime, {"resourceIndex", "isPersist", "endTime", "reason"} || 
+            if (!CommonUtils::CheckJsonValue(persistTime, {"resourceIndex", "isPersist", "endTime", "reason"}) || 
                 !persistTime.at("resourceIndex").is_number_integer() || !persistTime.at("isPersist").is_boolean() || 
-                !persistTime.at("endTime").is_number_integer() || !persistTime.at("reason").is_string())) {
+                !persistTime.at("endTime").is_number_integer() || !persistTime.at("reason").is_string()) {
                 continue;
             }
             uint32_t resourceIndex = persistTime.at("resourceIndex").get<uint32_t>();
