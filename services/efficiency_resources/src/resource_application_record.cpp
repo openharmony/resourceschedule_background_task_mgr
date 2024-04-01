@@ -105,14 +105,14 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
         auto nums = static_cast<int32_t>(resourceVal.size());
         for (int i = 0; i < nums; ++i) {
             if (resourceVal.at(i).is_null() || !resourceVal.at(i).is_object()) {
-                BGTASK_LOGD("resourceVal.at(%{public}d) is null or is not object", i);
+                BGTASK_LOGE("resourceVal.at(%{public}d) is null or is not object", i);
                 continue;
             }
             const nlohmann::json &persistTime = resourceVal.at(i);
             if (!CommonUtils::CheckJsonValue(persistTime, {"resourceIndex", "isPersist", "endTime", "reason"}) || 
                 !persistTime.at("resourceIndex").is_number_integer() || !persistTime.at("isPersist").is_boolean() || 
                 !persistTime.at("endTime").is_number_integer() || !persistTime.at("reason").is_string()) {
-                BGTASK_LOGD("checkJsonValue of persistTime is failed");
+                BGTASK_LOGE("checkJsonValue of persistTime is failed");
                 continue;
             }
             uint32_t resourceIndex = persistTime.at("resourceIndex").get<uint32_t>();
