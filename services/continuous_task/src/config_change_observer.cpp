@@ -21,20 +21,20 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 ConfigChangeObserver::ConfigChangeObserver(const std::shared_ptr<AppExecFwk::EventHandler> handler,
-    const std::shared_ptr<BgContinuousTaskMgr> bgContinuousTaskMgr)
+    const std::shared_ptr<BgContinuousTaskMgr> taskMgr)
 {
     handler_ = handler;
-    bgContinuousTaskMgr_ = bgContinuousTaskMgr;
+    taskMgr_ = taskMgr;
 }
 
-bool ConfigChangeObserver::CheckParamValid()
+bool ConfigChangeObserver::CheckExpired()
 {
     if (handler_.expired()) {
-        BGTASK_LOGE("ConfigChangeObserver handler is null");
+        BGTASK_LOGE("ConfigChangeObserver handler expired");
         return false;
     }
-    if (bgContinuousTaskMgr_.expired()) {
-        BGTASK_LOGE("ConfigChangeObserver bgContinuousTaskMgr is null");
+    if (taskMgr_.expired()) {
+        BGTASK_LOGE("ConfigChangeObserver taskMgr expired");
         return false;
     }
     return true;
@@ -42,11 +42,18 @@ bool ConfigChangeObserver::CheckParamValid()
 
 void ConfigChangeObserver::OnConfigurationUpdated(const AppExecFwk::Configuration &configuration)
 {
-    if (!CheckParamValid()) {
+    if (!CheckExpired()) {
         return;
     }
-    auto task = [this, configuration]() {
-        this->bgContinuousTaskMgr_.lock()->OnConfigurationChanged(configuration);
+
+    auto task = [wp = weak_from_this(), configuration]() {
+        auto sp = wp.lock();
+        if (sp) {
+            auto taskMgr = sp->taskMgr_.lock();
+            if (taskMgr) {
+                taskMgr->OnConfigurationChanged(configuration);
+            }
+        }
     };
 
     auto handler = handler_.lock();
