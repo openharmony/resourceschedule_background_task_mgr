@@ -90,8 +90,8 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
         BGTASK_LOGE("value is empty");
         return false;
     }
-    if (!CommonUtils::CheckJsonValue(value, {"uid", "pid", "bundleName", "resourceNumber"}) || 
-        !value.at("uid").is_number_integer() || !value.at("pid").is_number_integer() || 
+    if (!CommonUtils::CheckJsonValue(value, {"uid", "pid", "bundleName", "resourceNumber"}) ||
+        !value.at("uid").is_number_integer() || !value.at("pid").is_number_integer() ||
         !value.at("bundleName").is_string() || !value.at("resourceNumber").is_number_integer()) {
         BGTASK_LOGE("checkJsonValue of value is failed");
         return false;
@@ -109,8 +109,8 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
                 continue;
             }
             const nlohmann::json &persistTime = resourceVal.at(i);
-            if (!CommonUtils::CheckJsonValue(persistTime, {"resourceIndex", "isPersist", "endTime", "reason"}) || 
-                !persistTime.at("resourceIndex").is_number_integer() || !persistTime.at("isPersist").is_boolean() || 
+            if (!CommonUtils::CheckJsonValue(persistTime, {"resourceIndex", "isPersist", "endTime", "reason"}) ||
+                !persistTime.at("resourceIndex").is_number_integer() || !persistTime.at("isPersist").is_boolean() ||
                 !persistTime.at("endTime").is_number_integer() || !persistTime.at("reason").is_string()) {
                 BGTASK_LOGE("checkJsonValue of persistTime is failed");
                 continue;
