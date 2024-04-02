@@ -159,6 +159,11 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
 {
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     int taskSize = 0;
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
 
     // start one task by abilityId is 1
     sptr<ContinuousTaskParam> taskParam1 = new (std::nothrow) ContinuousTaskParam(true, 0,
@@ -168,6 +173,14 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
     
     taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
     EXPECT_EQ(taskSize, 1);
+
+    int32_t abilityId = -1;
+    std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>>::iterator iter;
+    for (iter = bgContinuousTaskMgr_->continuousTaskInfosMap_.begin();
+        iter != bgContinuousTaskMgr_->continuousTaskInfosMap_.end(); ++iter) {
+        abilityId = iter->second->GetAbilityId();
+    }
+    EXPECT_EQ(abilityId, 1);
 
     // start one task by abilityId is 2
     sptr<ContinuousTaskParam> taskParam2 = new (std::nothrow) ContinuousTaskParam(true, 0,
