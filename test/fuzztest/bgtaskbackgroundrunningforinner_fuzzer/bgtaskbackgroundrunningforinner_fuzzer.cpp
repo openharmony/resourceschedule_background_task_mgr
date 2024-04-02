@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "bgtaskonremoterequest_fuzzer.h"
+#include "bgtaskbackgroundrunningforinner_fuzzer.h"
 #include "securec.h"
 
 #define private public
@@ -24,23 +24,11 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
     const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
     constexpr int32_t U32_AT_SIZE = 4;
-    constexpr int32_t MAX_CODE = 15;
-    constexpr uint8_t TWENTYFOUR = 24;
-    constexpr uint8_t SIXTEEN = 16;
-    constexpr uint8_t EIGHT = 8;
-    constexpr int32_t THREE = 3;
-    constexpr int32_t TWO = 2;
     bool g_isOnstarted = false;
     const std::u16string BACKGROUND_TASK_MGR_STUB_TOKEN = u"ohos.resourceschedule.IBackgroundTaskMgr";
 
-    uint32_t GetU32Data(const char* ptr)
-    {
-        return (ptr[0] << TWENTYFOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
-    }
-
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
-        uint32_t code = GetU32Data(data);
         MessageParcel datas;
         datas.WriteInterfaceToken(BACKGROUND_TASK_MGR_STUB_TOKEN);
         datas.WriteBuffer(data, size);
@@ -50,13 +38,13 @@ namespace BackgroundTaskMgr {
         if (!g_isOnstarted) {
             std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
             runner_ = AppExecFwk::EventRunner::Create(BGTASK_SERVICE_NAME);
-            DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Init(runner_);
             BgContinuousTaskMgr::GetInstance()->Init(runner_);
-            DelayedSingleton<BgTransientTaskMgr>::GetInstance()->Init(runner_);
             g_isOnstarted = true;
         }
+        uint32_t code =
+            static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_BACKGROUND_RUNNING_FOR_INNER);
         DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(
-            code % MAX_CODE, datas, reply, option);
+            code, datas, reply, option);
         return true;
     }
 } // BackgroundTaskMgr
