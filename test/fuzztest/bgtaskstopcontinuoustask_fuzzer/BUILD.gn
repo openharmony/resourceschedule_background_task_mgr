@@ -29,6 +29,8 @@ ohos_fuzztest("BgTaskStopContinuousTaskFuzzTest") {
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
+    "-Dprivate=public",
+    "-Dprotected=public",
   ]
 
   cflags_cc = [
