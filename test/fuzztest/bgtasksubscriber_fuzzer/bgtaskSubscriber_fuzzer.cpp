@@ -17,7 +17,6 @@
 #include "ibackground_task_subscriber.h"
 #include "securec.h"
 
-#define private public
 #include "background_task_subscriber_stub.h"
 #include "background_task_subscriber.h"
 
@@ -83,7 +82,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         return 0;
     }
 
-    char* ch = (char *)malloc(size + 1);
+    char* ch = static_cast<char *>(malloc(size + 1));
     if (ch == nullptr) {
         return 0;
     }
