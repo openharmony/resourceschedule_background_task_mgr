@@ -508,6 +508,7 @@ napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool i
         BGTASK_LOGE("asyncCallbackInfo == nullpter");
         return WrapVoidToJS(env);
     }
+    std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
 
     size_t argc = MAX_UPDATE_BG_RUNNING_PARAMS;
     napi_value argv[MAX_UPDATE_BG_RUNNING_PARAMS] = {nullptr};
@@ -544,6 +545,7 @@ napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool i
         }
         ret = WrapVoidToJS(env);
     }
+    callbackPtr.release();
     return ret;
 }
 
