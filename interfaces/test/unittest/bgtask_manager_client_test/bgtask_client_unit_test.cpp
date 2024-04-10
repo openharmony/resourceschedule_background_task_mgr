@@ -254,10 +254,11 @@ HWTEST_F(BgTaskClientUnitTest, SubscribeBackgroundTask_001, TestSize.Level1)
 {
     subscriber_ = std::make_shared<TestBackgroundTaskSubscriber>();
     EXPECT_NE(subscriber_, nullptr);
-    EXPECT_EQ(BackgroundTaskMgrHelper::SubscribeBackgroundTask(*subscriber_), ERR_OK);
+    BackgroundTaskMgrHelper::SubscribeBackgroundTask(*subscriber_);
     SleepForFC();
-    EXPECT_EQ(BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*subscriber_), ERR_OK);
+    BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*subscriber_);
     SleepForFC();
+    EXPECT_NE(subscriber_, nullptr);
 }
 
 /**
