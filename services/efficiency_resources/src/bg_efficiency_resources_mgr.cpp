@@ -70,7 +70,6 @@ bool BgEfficiencyResourcesMgr::Init(const std::shared_ptr<AppExecFwk::EventRunne
 
 void BgEfficiencyResourcesMgr::InitNecessaryState()
 {
-    RegisterAppStateObserver();
     BGTASK_LOGI("necessary system service has been accessiable!");
     BGTASK_LOGD("app resource record size: %{public}d, process  resource record size:  %{public}d!",
         static_cast<int32_t>(appResourceApplyMap_.size()), static_cast<int32_t>(procResourceApplyMap_.size()));
@@ -126,14 +125,6 @@ void BgEfficiencyResourcesMgr::OnRemoveSystemAbility(int32_t systemAbilityId, co
     if (dependsReady_ != ALL_DEPENDS_READY) {
         BGTASK_LOGI("necessary system service has been unsatisfied");
         isSysReady_.store(false);
-    }
-}
-
-__attribute__((no_sanitize("cfi"))) void BgEfficiencyResourcesMgr::RegisterAppStateObserver()
-{
-    appStateObserver_ = DelayedSingleton<AppStateObserver>::GetInstance();
-    if (appStateObserver_) {
-        appStateObserver_->SetBgEfficiencyResourcesMgr(shared_from_this());
     }
 }
 
