@@ -246,10 +246,18 @@ void DataStorageHelper::ConvertMapToJson(const ResourceRecordMap &appRecord, nlo
 void DataStorageHelper::DivideJsonToMap(nlohmann::json &root,
     ResourceRecordMap &appRecord, ResourceRecordMap &processRecord)
 {
-    nlohmann::json appRecordJson = root.at(APP_RESOURCE_RECORD);
-    nlohmann::json processrecordJson = root.at(PROCESS_RESOURCE_RECORD);
-    ConvertJsonToMap(appRecordJson, appRecord);
-    ConvertJsonToMap(processrecordJson, processRecord);
+    if (root.contains(APP_RESOURCE_RECORD)) {
+        nlohmann::json appRecordJson = root.at(APP_RESOURCE_RECORD);
+        ConvertJsonToMap(appRecordJson, appRecord);
+    } else {
+        BGTASK_LOGE("can not read appRecord, json init fail");
+    }
+    if (root.contains(PROCESS_RESOURCE_RECORD)) {
+        nlohmann::json processrecordJson = root.at(PROCESS_RESOURCE_RECORD);
+        ConvertJsonToMap(processrecordJson, processRecord);
+    } else {
+        BGTASK_LOGE("can not read processRecord, json init fail");
+    }
 }
 
 void DataStorageHelper::ConvertJsonToMap(const nlohmann::json &value, ResourceRecordMap &recordMap)
