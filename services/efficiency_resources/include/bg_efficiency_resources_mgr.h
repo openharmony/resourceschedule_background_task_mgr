@@ -86,7 +86,6 @@ private:
     bool IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &bundleName);
     void EraseRecordIf(ResourceRecordMap &infoMap, const std::function<bool(ResourceRecordPair)> &fun);
     void RecoverDelayedTask(bool isProcess, ResourceRecordMap& infoMap);
-    void RegisterAppStateObserver();
     void HandlePersistenceData();
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit);

@@ -104,6 +104,7 @@ private:
     bool RegisterNotificationSubscriber();
     bool RegisterSysCommEventListener();
     bool RegisterAppStateObserver();
+    void UnregisterAppStateObserver();
     bool RegisterConfigurationObserver();
     bool GetNotificationPrompt();
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
@@ -131,7 +132,7 @@ private:
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};
 #endif
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
-    std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
+    sptr<AppStateObserver> appStateObserver_ {nullptr};
     sptr<AppExecFwk::IConfigurationObserver> configChangeObserver_ {nullptr};
     std::list<sptr<IBackgroundTaskSubscriber>> bgTaskSubscribers_ {};
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> subscriberRecipients_ {};

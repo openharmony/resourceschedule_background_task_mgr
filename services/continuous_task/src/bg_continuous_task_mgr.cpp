@@ -124,9 +124,7 @@ void BgContinuousTaskMgr::Clear()
     if (systemEventListener_ != nullptr) {
         systemEventListener_->Unsubscribe();
     }
-    if (appStateObserver_ != nullptr) {
-        appStateObserver_->Unsubscribe();
-    }
+    UnregisterAppStateObserver();
 }
 
 void BgContinuousTaskMgr::InitNecessaryState()
@@ -293,14 +291,34 @@ bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
 
 __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterAppStateObserver()
 {
-    bool res = true;
-    appStateObserver_ = DelayedSingleton<AppStateObserver>::GetInstance();
-    if (appStateObserver_ != nullptr) {
-        appStateObserver_->SetEventHandler(handler_);
-        appStateObserver_->SetBgContinuousTaskMgr(shared_from_this());
-        res = appStateObserver_->Subscribe();
+    appStateObserver_ = new (std::nothrow) AppStateObserver(); // must be sprt
+    if (!appStateObserver_) {
+        BGTASK_LOGE("appStateObserver_ null");
+        return false;
     }
-    return res;
+    auto res = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance()->
+        RegisterApplicationStateObserver(appStateObserver_);
+    if (res != ERR_OK) {
+        BGTASK_LOGE("RegisterApplicationStateObserver error");
+        return false;
+    }
+    appStateObserver_->SetEventHandler(handler_);
+    return true;
+}
+
+void BgContinuousTaskMgr::UnregisterAppStateObserver()
+{
+    if (!appStateObserver_) {
+        return;
+    }
+    auto res = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance()->
+        UnregisterApplicationStateObserver(appStateObserver_);
+    if (res != ERR_OK) {
+        BGTASK_LOGE("UnregisterApplicationStateObserver error");
+        return;
+    }
+    appStateObserver_ = nullptr;
+    BGTASK_LOGI("UnregisterApplicationStateObserver ok");
 }
 
 __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterConfigurationObserver()

@@ -100,15 +100,10 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
     appStateObserver->OnProcessDiedEfficiencyRes(processData);
     AppExecFwk::AbilityStateData abilityStateData = AppExecFwk::AbilityStateData();
     appStateObserver->OnAbilityStateChanged(abilityStateData);
-    EXPECT_FALSE(appStateObserver->CheckParamValid());
     auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
     appStateObserver->SetEventHandler(handler);
-    EXPECT_FALSE(appStateObserver->CheckParamValid());
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
     appStateObserver->OnAbilityStateChanged(abilityStateData);
-    auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
-    appStateObserver->SetBgContinuousTaskMgr(bgContinuousTaskMgr);
-    EXPECT_TRUE(appStateObserver->CheckParamValid());
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_CREATE);
     appStateObserver->OnAbilityStateChanged(abilityStateData);
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
@@ -122,12 +117,7 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
     appStateObserver->OnAppStopped(appStateData);
     appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END);
     appStateObserver->OnAppStopped(appStateData);
-    appStateObserver->SetBgEfficiencyResourcesMgr(std::make_shared<BgEfficiencyResourcesMgr>());
     appStateObserver->OnAppStopped(appStateData);
-    EXPECT_TRUE(appStateObserver->Subscribe());
-    SleepForFC();
-    EXPECT_TRUE(appStateObserver->Unsubscribe());
-    SleepForFC();
 }
 
 /**
