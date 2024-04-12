@@ -17,7 +17,6 @@
 #include <gtest/gtest.h>
 #include <ctime>
 
-#define private public
 #include "bg_transient_task_mgr.h"
 #include "background_task_subscriber.h"
 

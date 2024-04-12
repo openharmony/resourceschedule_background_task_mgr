@@ -18,9 +18,6 @@
 #include <thread>
 
 #include "gtest/gtest.h"
-
-#define private public
-
 #include "bgtask_common.h"
 #include "background_task_subscriber.h"
 #include "background_task_subscriber_proxy.h"

@@ -19,6 +19,12 @@ module_output_path = "background_task_mgr/unittest"
 
 ohos_unittest("bgtask_unit_test") {
   module_out_path = module_output_path
+
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
+
   cflags_cc = []
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
@@ -80,6 +86,12 @@ ohos_unittest("bgtask_unit_test") {
 
 ohos_unittest("efficiency_mgr_unit_test") {
   module_out_path = module_output_path
+
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
+
   cflags_cc = []
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
