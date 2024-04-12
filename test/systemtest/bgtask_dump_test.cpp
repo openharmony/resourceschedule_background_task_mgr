@@ -15,18 +15,12 @@
 
 #include <gtest/gtest.h>
 
-#define private public
-#define protected public
-
 #include "background_task_manager.h"
 #include "bg_continuous_task_mgr.h"
 #include "bg_transient_task_mgr.h"
 #include "iservice_registry.h"
 #include "singleton.h"
 #include "system_ability_definition.h"
-
-#undef private
-#undef protected
 
 using namespace testing::ext;
 

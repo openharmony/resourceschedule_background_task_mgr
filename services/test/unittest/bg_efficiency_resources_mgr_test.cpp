@@ -18,9 +18,6 @@
 #include <thread>
 
 #include "gtest/gtest.h"
-
-#define private public
-
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_subscriber.h"
 #include "bg_efficiency_resources_mgr.h"

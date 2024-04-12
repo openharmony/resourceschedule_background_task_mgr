@@ -28,7 +28,10 @@ ohos_systemtest("BgtaskDumpTest") {
 
   include_dirs = [ "//third_party/json/single_include" ]
 
-  cflags = []
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
 
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
