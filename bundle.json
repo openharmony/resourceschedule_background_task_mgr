@@ -116,7 +116,8 @@
           "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtasksubscriber_fuzzer:fuzztest",
           "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskunsubscribebackgroundtask_fuzzer:fuzztest",
           "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskupdatebackgroundrunning_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtasksystemeventobserver_fuzzer:fuzztest"
+          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtasksystemeventobserver_fuzzer:fuzztest",
+          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtasksubscriberstubonremote_fuzzer:fuzztest"
         ]
       }
     }

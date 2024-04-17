@@ -58,6 +58,7 @@ public:
         subscriberImpl->HandleOnAppTransientTaskStart(datas);
         subscriberImpl->HandleOnAppTransientTaskEnd(datas);
         subscriberImpl->HandleOnContinuousTaskStart(datas);
+        subscriberImpl->HandleOnContinuousTaskUpdate(datas);
         subscriberImpl->HandleOnContinuousTaskCancel(datas);
         subscriberImpl->HandleOnAppContinuousTaskStop(datas);
         subscriberImpl->HandleOnAppEfficiencyResourcesApply(datas);
