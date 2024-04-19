@@ -101,7 +101,8 @@ void TaskNotificationSubscriber::OnDoNotDisturbDateChange(
 void TaskNotificationSubscriber::OnEnabledNotificationChanged(
     const std::shared_ptr<Notification::EnabledNotificationCallbackData> &callbackData) {}
 
-void TaskNotificationSubscriber::OnBadgeChanged(const std::shared_ptr<Notification::BadgeNumberCallbackData> &badgeData) {}
+void TaskNotificationSubscriber::OnBadgeChanged(
+    const std::shared_ptr<Notification::BadgeNumberCallbackData> &badgeData) {}
 
 void TaskNotificationSubscriber::OnBadgeEnabledChanged(
     const sptr<Notification::EnabledNotificationCallbackData> &callbackData) {}
