@@ -166,7 +166,8 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_021, TestSize.Level1)
 {
     bgTransientTaskMgr_->handler_ = nullptr;
     bgTransientTaskMgr_->HandleTransientTaskSuscriberTask(nullptr, TransientTaskEventType::TASK_START);
-    bgTransientTaskMgr_->handler_ = std::make_shared<AppExecFwk::EventHandler>(AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    bgTransientTaskMgr_->handler_ =
+        std::make_shared<AppExecFwk::EventHandler>(AppExecFwk::EventRunner::Create("tdd_test_handler"));
     bgTransientTaskMgr_->HandleTransientTaskSuscriberTask(nullptr, TransientTaskEventType::TASK_START);
 
     shared_ptr<TransientTaskAppInfo> appInfo = std::make_shared<TransientTaskAppInfo>();
