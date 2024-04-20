@@ -14,73 +14,74 @@
  */
 
 #include "message_parcel.h"
+#include "mock_message_parcel_helper.h"
 
-namespace OHOS {
 namespace {
-bool g_bgTaskFwkAbnormalWriteRemoteObjectFlag = true;
-bool g_bgTaskFwkAbnormalReadRemoteObjectFlag = true;
-bool g_bgTaskFwkAbnormalWriteInterfaceTokenFlag = true;
-bool g_bgTaskFwkAbnormalReadInterfaceTokenFlag = true;
-bool g_bgTaskFwkAbnormalWriteString16Flag = true;
-bool g_bgTaskFwkAbnormalReadInt32WithParamFlag = true;
-bool g_bgTaskFwkAbnormalWriteInt32WithParamFlag = true;
-bool g_bgTaskFwkAbnormalWriteParcelableFlag = true;
-bool g_bgTaskFwkAbnormalWriteStringFlag = true;
-bool g_bgTaskFwkAbnormalWriteUint32Flag = true;
-bool g_bgTaskFwkAbnormalReadInt32Flag = true;
+    bool g_bgTaskFwkAbnormalWriteRemoteObjectFlag = true;
+    bool g_bgTaskFwkAbnormalReadRemoteObjectFlag = true;
+    bool g_bgTaskFwkAbnormalWriteInterfaceTokenFlag = true;
+    bool g_bgTaskFwkAbnormalReadInterfaceTokenFlag = true;
+    bool g_bgTaskFwkAbnormalWriteString16Flag = true;
+    bool g_bgTaskFwkAbnormalReadInt32WithParamFlag = true;
+    bool g_bgTaskFwkAbnormalWriteInt32WithParamFlag = true;
+    bool g_bgTaskFwkAbnormalWriteParcelableFlag = true;
+    bool g_bgTaskFwkAbnormalWriteStringFlag = true;
+    bool g_bgTaskFwkAbnormalWriteUint32Flag = true;
+    bool g_bgTaskFwkAbnormalReadInt32Flag = true;
 }
 
-void BgTaskFwkAbnormalSetWriteRemoteObjectFlag(bool flag)
+namespace OHOS {
+void MessageParcelHelper::BgTaskFwkAbnormalSetWriteRemoteObjectFlag(bool flag)
 {
     g_bgTaskFwkAbnormalWriteRemoteObjectFlag = flag;
 }
 
-void BgTaskFwkAbnormalSetWriteReadRemoteObjectFlag(bool flag)
+void MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadRemoteObjectFlag(bool flag)
 {
     g_bgTaskFwkAbnormalReadRemoteObjectFlag = flag;
 }
 
-void BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(bool flag)
+void MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(bool flag)
 {
     g_bgTaskFwkAbnormalWriteInterfaceTokenFlag = flag;
 }
 
-void BgTaskFwkAbnormalSetReadInterfaceTokenFlag(bool flag)
+void MessageParcelHelper::BgTaskFwkAbnormalSetReadInterfaceTokenFlag(bool flag)
 {
     g_bgTaskFwkAbnormalReadInterfaceTokenFlag = flag;
 }
 
-void BgTaskFwkAbnormalSetWriteString16Flag(bool flag)
+void MessageParcelHelper::BgTaskFwkAbnormalSetWriteString16Flag(bool flag)
 {
     g_bgTaskFwkAbnormalWriteString16Flag = flag;
 }
 
-void BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(bool flag)
+void MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(bool flag)
 {
     g_bgTaskFwkAbnormalReadInt32WithParamFlag = flag;
 }
 
-void BgTaskFwkAbnormalSetWriteInt32WithParamFlag(bool flag)
+void MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(bool flag)
 {
     g_bgTaskFwkAbnormalWriteInt32WithParamFlag = flag;
 }
 
-void BgTaskFwkAbnormalSetWriteParcelableFlag(bool flag)
+void MessageParcelHelper::BgTaskFwkAbnormalSetWriteParcelableFlag(bool flag)
 {
     g_bgTaskFwkAbnormalWriteParcelableFlag = flag;
 }
 
-void BgTaskFwkAbnormalSetWriteStringFlag(bool flag)
+void MessageParcelHelper::BgTaskFwkAbnormalSetWriteStringFlag(bool flag)
 {
     g_bgTaskFwkAbnormalWriteStringFlag = flag;
 }
 
-void BgTaskFwkAbnormalSetWriteUint32Flag(bool flag)
+void MessageParcelHelper::BgTaskFwkAbnormalSetWriteUint32Flag(bool flag)
 {
     g_bgTaskFwkAbnormalWriteUint32Flag = flag;
 }
 
-void BgTaskFwkAbnormalSetReadInt32Flag(bool flag)
+void MessageParcelHelper::BgTaskFwkAbnormalSetReadInt32Flag(bool flag)
 {
     g_bgTaskFwkAbnormalReadInt32Flag = flag;
 }
