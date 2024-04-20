@@ -507,7 +507,8 @@ HWTEST_F(BgTaskMiscUnitTest, PkgDelaySuspendInfoTest_001, TestSize.Level1)
 HWTEST_F(BgTaskMiscUnitTest, PkgDelaySuspendInfoTest_002, TestSize.Level1)
 {
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
-    auto timerManager = std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto timerManager =
+        std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
     auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", 1, timerManager);
     auto delayInfo1 = std::make_shared<DelaySuspendInfoEx>(1, 1);
 
