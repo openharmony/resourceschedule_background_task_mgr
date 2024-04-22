@@ -517,7 +517,6 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
         }
         if (taskParam->abilityId_ < 0) {
             BGTASK_LOGE("abilityId_ is invalid");
-            return false;
         }
     } else {
         if (taskParam->abilityName_.empty()) {
@@ -834,7 +833,6 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityNam
     }
     if (abilityId < 0) {
         BGTASK_LOGE("abilityId is Invalid!");
-        return ERR_BGTASK_INVALID_PARAM;
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
 
