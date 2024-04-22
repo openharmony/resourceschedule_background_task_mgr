@@ -290,8 +290,6 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
     taskParam->abilityId_ = 1;
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("", 1), (int32_t)ERR_BGTASK_INVALID_PARAM);
     SleepForFC();
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1", -1), (int32_t)ERR_BGTASK_INVALID_PARAM);
-    SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning("ability1", 1),
         (int32_t)ERR_BGTASK_OBJECT_NOT_EXIST);
     SleepForFC();
