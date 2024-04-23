@@ -187,6 +187,13 @@ ErrCode BackgroundTaskMgrProxy::StartBackgroundRunning(const sptr<ContinuousTask
         BGTASK_LOGE("StartBackgroundRunning fail: read result failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
+    int32_t notificationId;
+    if (!reply.ReadInt32(notificationId)) {
+        BGTASK_LOGE("StartBackgroundRunning fail: read notificationId failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGI("read notificationId %{public}d", notificationId);
+    taskParam->notificationId_ = notificationId;
     return result;
 }
 

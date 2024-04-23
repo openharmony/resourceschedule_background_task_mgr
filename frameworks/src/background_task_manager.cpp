@@ -65,7 +65,7 @@ ErrCode BackgroundTaskManager::GetRemainingDelayTime(int32_t requestId, int32_t 
     return proxy_->GetRemainingDelayTime(requestId, delayTime);
 }
 
-ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam)
+ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(ContinuousTaskParam &taskParam)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestStartBackgroundRunning");
 
@@ -82,7 +82,9 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(const ContinuousTas
         static_cast<uint32_t>(taskParam.bgModeIds_.size()),
         taskParamPtr->isBatchApi_, taskParam.isBatchApi_,
         taskParamPtr->abilityId_);
-    return proxy_->StartBackgroundRunning(taskParamPtr);
+    ErrCode res = proxy_->StartBackgroundRunning(taskParamPtr);
+    taskParam.notificationId_ = taskParamPtr->notificationId_;
+    return res;
 }
 
 ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(const ContinuousTaskParam &taskParam)
