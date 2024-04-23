@@ -20,14 +20,15 @@
 
 #include "bgtaskmgr_log_wrapper.h"
 #include "datetime_ex.h"
+#include "mock_background_task_mgr_proxy_helper.h"
+
+namespace {
+    int32_t g_innerTransactFlag = 0;
+}
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-namespace {
-int32_t g_innerTransactFlag = 0;
-}
-
-void BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(int32_t flag)
+void BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(int32_t flag)
 {
     g_innerTransactFlag = flag;
 }
