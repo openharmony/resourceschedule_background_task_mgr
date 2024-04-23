@@ -24,12 +24,16 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class NotificationTools : public DelayedSingleton<NotificationTools> {
 public:
+    static void SetNotificationIdIndex(const int32_t id);
     ErrCode PublishNotification(const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
         const std::string &appName, const std::string &prompt, int32_t serviceUid);
     ErrCode CancelNotification(const std::string &label, int32_t id);
     void GetAllActiveNotificationsLabels(std::set<std::string> &notificationLabels);
     void RefreshContinuousNotifications(
         const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos, int32_t serviceUid);
+
+private:
+    static int32_t notificationIdIndex_;
 
     DECLARE_DELAYED_SINGLETON(NotificationTools)
 };

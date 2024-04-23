@@ -23,7 +23,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-ErrCode BackgroundTaskMgrHelper::RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam)
+ErrCode BackgroundTaskMgrHelper::RequestStartBackgroundRunning(ContinuousTaskParam &taskParam)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStartBackgroundRunning(taskParam);
 }

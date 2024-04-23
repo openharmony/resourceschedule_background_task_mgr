@@ -46,6 +46,7 @@ public:
     pid_t GetPid() const;
     int32_t GetAbilityId() const;
     std::string GetNotificationLabel() const;
+    int32_t GetNotificationId() const;
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
     std::string ParseToJsonStr();
     bool ParseFromJson(const nlohmann::json &value);
@@ -63,6 +64,7 @@ private:
     bool isNewApi_ {false};
     bool isFromWebview_ {false};
     std::string notificationLabel_ {""};
+    int32_t notificationId_ {-1};
     std::shared_ptr<WantAgentInfo> wantAgentInfo_ {nullptr};
     std::string appName_ {""};
     uint64_t fullTokenId_ {0};

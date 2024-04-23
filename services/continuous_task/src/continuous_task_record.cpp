@@ -100,6 +100,11 @@ std::string ContinuousTaskRecord::GetNotificationLabel() const
     return notificationLabel_;
 }
 
+int32_t ContinuousTaskRecord::GetNotificationId() const
+{
+    return notificationId_;
+}
+
 std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> ContinuousTaskRecord::GetWantAgent() const
 {
     return wantAgent_;
@@ -143,6 +148,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["isNewApi"] = isNewApi_;
     root["isFromWebview"] = isFromWebview_;
     root["notificationLabel"] = notificationLabel_;
+    root["notificationId"] = notificationId_;
     root["isBatchApi"] = isBatchApi_;
     root["bgModeIds"] = ToString(bgModeIds_);
     if (wantAgentInfo_ != nullptr) {
@@ -185,6 +191,9 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
         info->bundleName_ = infoVal.at("bundleName").get<std::string>();
         info->abilityName_ = infoVal.at("abilityName").get<std::string>();
         this->wantAgentInfo_ = info;
+    }
+    if (value.contains("notificationId") && value["notificationId"].is_number_integer()) {
+        this->notificationId_ = value.at("notificationId").get<int32_t>();
     }
     return true;
 }

@@ -17,10 +17,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-NotificationTools::NotificationTools() {}
-
-NotificationTools::~NotificationTools() {}
-
 ErrCode NotificationTools::PublishNotification(const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
     const std::string &appName, const std::string &prompt, int32_t serviceUid)
 {

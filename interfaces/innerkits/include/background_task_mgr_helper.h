@@ -29,7 +29,7 @@ public:
      * @param taskParam Request params.
      * @return ERR_OK if success, else fail.
      */
-    static ErrCode RequestStartBackgroundRunning(const ContinuousTaskParam &taskParam);
+    static ErrCode RequestStartBackgroundRunning(ContinuousTaskParam &taskParam);
 
     /**
      * @brief Request service to update running background

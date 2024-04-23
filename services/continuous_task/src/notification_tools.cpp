@@ -22,6 +22,12 @@
 #include "continuous_task_log.h"
 #include "string_wrapper.h"
 
+#ifdef BGTASK_MGR_UNIT_TEST
+#define WEAK_FUNC __attribute__((weak))
+#else
+#define WEAK_FUNC
+#endif
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
@@ -31,9 +37,16 @@ constexpr char SEPARATOR[] = "_";
 constexpr int32_t DEFAULT_USERID = -2;
 #endif
 }
+
+int32_t NotificationTools::notificationIdIndex_ = -1;
 NotificationTools::NotificationTools() {}
 
 NotificationTools::~NotificationTools() {}
+
+void NotificationTools::SetNotificationIdIndex(const int32_t id)
+{
+    notificationIdIndex_ = id;
+}
 
 std::string CreateNotificationLabel(int32_t uid, const std::string &bundleName,
     const std::string &abilityName, int32_t abilityId)
@@ -48,7 +61,8 @@ std::string CreateNotificationLabel(int32_t uid, const std::string &bundleName,
     return label;
 }
 
-ErrCode NotificationTools::PublishNotification(const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
+WEAK_FUNC ErrCode NotificationTools::PublishNotification(
+    const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
     const std::string &appName, const std::string &prompt, int32_t serviceUid)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
@@ -86,17 +100,18 @@ ErrCode NotificationTools::PublishNotification(const std::shared_ptr<ContinuousT
 
     // set tapDismissed param to false make notification retained when clicked.
     notificationRequest.SetTapDismissed(false);
-
+    notificationRequest.SetNotificationId(++notificationIdIndex_);
     if (Notification::NotificationHelper::PublishContinuousTaskNotification(notificationRequest) != ERR_OK) {
         BGTASK_LOGE("publish notification error");
         return ERR_BGTASK_NOTIFICATION_ERR;
     }
     continuousTaskRecord->notificationLabel_ = notificationLabel;
+    continuousTaskRecord->notificationId_ = notificationIdIndex_;
 #endif
     return ERR_OK;
 }
 
-ErrCode NotificationTools::CancelNotification(const std::string &label, int32_t id)
+WEAK_FUNC ErrCode NotificationTools::CancelNotification(const std::string &label, int32_t id)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     if (Notification::NotificationHelper::CancelContinuousTaskNotification(label, id) != ERR_OK) {
@@ -105,7 +120,8 @@ ErrCode NotificationTools::CancelNotification(const std::string &label, int32_t 
 #endif
     return ERR_OK;
 }
-void NotificationTools::GetAllActiveNotificationsLabels(std::set<std::string> &notificationLabels)
+
+WEAK_FUNC void NotificationTools::GetAllActiveNotificationsLabels(std::set<std::string> &notificationLabels)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::vector<sptr<Notification::Notification>> notifications;
@@ -120,7 +136,7 @@ void NotificationTools::GetAllActiveNotificationsLabels(std::set<std::string> &n
 #endif
 }
 
-void NotificationTools::RefreshContinuousNotifications(
+WEAK_FUNC void NotificationTools::RefreshContinuousNotifications(
     const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos, int32_t serviceUid)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE

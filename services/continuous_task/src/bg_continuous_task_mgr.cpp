@@ -73,7 +73,6 @@ static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.re
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
-static constexpr int32_t DEFAULT_NOTIFICATION_ID = 0;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
 static constexpr uint32_t INVALID_BGMODE = 0;
@@ -200,12 +199,16 @@ void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::Run
     auto iter = continuousTaskInfosMap_.begin();
     bool pidConditionFlag;
     bool notificationConditionFlag;
-
+    int32_t maxId = -1;
     while (iter != continuousTaskInfosMap_.end()) {
         recordPid = iter->second->GetPid();
         const std::string recordLabel = iter->second->GetNotificationLabel();
         pidConditionFlag = checkPidCondition(allProcesses, recordPid);
         notificationConditionFlag = checkNotificationCondition(allLabels, recordLabel);
+        int32_t notificationId = iter->second->GetNotificationId();
+        if (notificationId > maxId) {
+            maxId = notificationId;
+        }
         if (pidConditionFlag && notificationConditionFlag) {
             BGTASK_LOGI("target continuous task exist");
             iter++;
@@ -220,7 +223,7 @@ void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::Run
 
         if (!pidConditionFlag && notificationConditionFlag) {
             BGTASK_LOGI("pid: %{public}d not exist, label: %{public}s exist", recordPid, recordLabel.c_str());
-            NotificationTools::GetInstance()->CancelNotification(recordLabel, DEFAULT_NOTIFICATION_ID);
+            NotificationTools::GetInstance()->CancelNotification(recordLabel, notificationId);
             iter = continuousTaskInfosMap_.erase(iter);
             continue;
         }
@@ -237,6 +240,7 @@ void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::Run
             continue;
         }
     }
+    NotificationTools::SetNotificationIdIndex(maxId);
 }
 
 bool BgContinuousTaskMgr::checkPidCondition(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
@@ -643,7 +647,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     handler_->PostSyncTask([this, continuousTaskRecord, &result]() mutable {
         result = this->StartBackgroundRunningInner(continuousTaskRecord);
         }, AppExecFwk::EventQueue::Priority::HIGH);
-
+    taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
     return result;
 }
 
@@ -863,7 +867,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     });
     if (!iter->second->isFromWebview_ && it != iter->second->bgModeIds_.end()) {
         result = NotificationTools::GetInstance()->CancelNotification(
-            iter->second->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+            iter->second->GetNotificationLabel(), iter->second->GetNotificationId());
     }
 
     RemoveContinuousTaskRecord(mapKey);
@@ -901,7 +905,7 @@ void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uin
         return;
     }
     NotificationTools::GetInstance()->CancelNotification(continuousTaskInfosMap_[key]->GetNotificationLabel(),
-        DEFAULT_NOTIFICATION_ID);
+        continuousTaskInfosMap_[key]->GetNotificationId());
     RemoveContinuousTaskRecord(key);
 }
 
@@ -916,7 +920,7 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUid(int32_t uid)
         BGTASK_LOGW("erase key %{public}s", iter->first.c_str());
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
         NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
-            DEFAULT_NOTIFICATION_ID);
+            iter->second->GetNotificationId());
         iter = continuousTaskInfosMap_.erase(iter);
         RefreshTaskRecord();
     }
@@ -938,7 +942,7 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, ui
         BGTASK_LOGW("erase key %{public}s", iter->first.c_str());
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
         NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
-            DEFAULT_NOTIFICATION_ID);
+            iter->second->GetNotificationId());
         iter = continuousTaskInfosMap_.erase(iter);
         RefreshTaskRecord();
     }
@@ -1119,6 +1123,7 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
         stream << "\t\tuserId: " << iter->second->GetUserId() << "\n";
         stream << "\t\tpid: " << iter->second->GetPid() << "\n";
         stream << "\t\tnotificationLabel: " << iter->second->GetNotificationLabel() << "\n";
+        stream << "\t\tnotificationId: " << iter->second->GetNotificationId() << "\n";
         if (iter->second->wantAgentInfo_ != nullptr) {
             stream << "\t\twantAgentBundleName: " << iter->second->wantAgentInfo_->bundleName_ << "\n";
             stream << "\t\twantAgentAbilityName: " << iter->second->wantAgentInfo_->abilityName_ << "\n";
@@ -1138,7 +1143,7 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
         std::set<int32_t> uids;
         for (auto item : continuousTaskInfosMap_) {
             NotificationTools::GetInstance()->CancelNotification(item.second->GetNotificationLabel(),
-                DEFAULT_NOTIFICATION_ID);
+                item.second->GetNotificationId());
             OnContinuousTaskChanged(item.second, ContinuousTaskEventTriggerType::TASK_CANCEL);
             uids.insert(item.second->uid_);
         }
@@ -1158,7 +1163,7 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
             return;
         }
         NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
-            DEFAULT_NOTIFICATION_ID);
+            iter->second->GetNotificationId());
         RemoveContinuousTaskRecord(taskKey);
     }
 }
@@ -1240,7 +1245,7 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             if (!iter->second->isFromWebview_) {
                 NotificationTools::GetInstance()->CancelNotification(
-                    record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+                    record->GetNotificationLabel(), record->GetNotificationId());
             }
             iter = continuousTaskInfosMap_.erase(iter);
             HandleAppContinuousTaskStop(record->uid_);
@@ -1267,7 +1272,7 @@ void BgContinuousTaskMgr::OnProcessDied(int32_t uid, int32_t pid)
                 record->abilityName_.c_str(), record->bgModeId_, record->abilityId_);
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             NotificationTools::GetInstance()->CancelNotification(
-                record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+                record->GetNotificationLabel(), record->GetNotificationId());
             iter = continuousTaskInfosMap_.erase(iter);
             HandleAppContinuousTaskStop(record->uid_);
             RefreshTaskRecord();
@@ -1351,7 +1356,7 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
                 auto record = iter->second;
                 OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
                 NotificationTools::GetInstance()->CancelNotification(
-                    record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+                    record->GetNotificationLabel(), record->GetNotificationId());
                 iter = continuousTaskInfosMap_.erase(iter);
                 HandleAppContinuousTaskStop(uid);
                 RefreshTaskRecord();
@@ -1384,7 +1389,7 @@ void BgContinuousTaskMgr::OnAccountsStateChanged(int32_t id)
             auto record = iter->second;
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             NotificationTools::GetInstance()->CancelNotification(
-                record->GetNotificationLabel(), DEFAULT_NOTIFICATION_ID);
+                record->GetNotificationLabel(), record->GetNotificationId());
             iter = continuousTaskInfosMap_.erase(iter);
             HandleAppContinuousTaskStop(record->uid_);
             RefreshTaskRecord();
