@@ -89,6 +89,8 @@ void SystemAbility::OnDump() {}
 
 void SystemAbility::OnStart() {}
 
+int32_t SystemAbility::OnExtension(const std::string& extension, MessageParcel& data, MessageParcel& reply) {}
+
 void SystemAbility::OnStop() {}
 
 void SystemAbility::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) {}
