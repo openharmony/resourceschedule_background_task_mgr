@@ -1,0 +1,66 @@
+# Copyright (c) 2024  Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos/sa_profile/sa_profile.gni")
+import("bgtaskmgr.gni")
+
+group("fwk_group_background_task_mgr_all") {
+  if (background_task_mgr_device_enable) {
+    deps = [ "${bgtaskmgr_interfaces_path}:bgtaskmgr_interfaces" ]
+  }
+}
+
+group("service_group_background_task_mgr_all") {
+  if (background_task_mgr_device_enable) {
+    deps = [
+      "${bgtaskmgr_root_path}/resources:bgtaskmgr_resources",
+      "${bgtaskmgr_root_path}/sa_profile:bgtaskmgr_sa_profile",
+      "${bgtaskmgr_root_path}/sa_profile:bgtaskmgr_service_init",
+      "${bgtaskmgr_root_path}/services:bgtaskmgr_service",
+    ]
+  }
+}
+
+group("test_background_task_mgr_all") {
+  testonly = true
+  if (background_task_mgr_device_enable) {
+    deps = [
+      "${bgtaskmgr_root_path}/frameworks/test/unittest:unittest",
+      "${bgtaskmgr_root_path}/interfaces/test/unittest/bgtask_manager_client_test:bgtask_client_unit_test",
+      "${bgtaskmgr_root_path}/interfaces/test/unittest/continuous_task_jsunittest:js_unittest",
+      "${bgtaskmgr_root_path}/interfaces/test/unittest/efficiency_resources_jsunittest:js_unittest",
+      "${bgtaskmgr_root_path}/interfaces/test/unittest/transient_task_jsunittest:js_unittest",
+      "${bgtaskmgr_root_path}/services/test/unittest:unittest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskapplyefficiencyresources_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskbackgroundrunningforinner_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskcancelsuspenddelay_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskgetcontinuoustaskapps_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskgetefficiencyresourcesinfos_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskgetremainingdelaytime_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskgettransienttaskapps_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskonremoterequest_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskrequestsuspenddelay_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskresetallefficiencyresources_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskstartbackgroundrunning_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskstopbackgroundrunning_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskstopcontinuoustask_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtasksubscribebackgroundtask_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtasksubscriber_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtasksubscriberstubonremote_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtasksystemeventobserver_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskunsubscribebackgroundtask_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskupdatebackgroundrunning_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/systemtest:systemtest",
+    ]
+  }
+}
