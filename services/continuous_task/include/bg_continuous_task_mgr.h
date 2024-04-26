@@ -92,8 +92,7 @@ private:
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
     ErrCode GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
     void HandlePersistenceData();
-    void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
-        const std::set<std::string> &allLabels);
+    void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);

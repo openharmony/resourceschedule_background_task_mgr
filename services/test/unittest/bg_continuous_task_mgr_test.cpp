@@ -768,29 +768,26 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_033, TestSize.Level1)
     std::vector<AppExecFwk::RunningProcessInfo> allProcesses;
     AppExecFwk::RunningProcessInfo processInfo1;
     processInfo1.pid_ = TEST_NUM_ONE;
-    std::set<std::string> allLabels;
-    allLabels.emplace("label1");
-
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
-    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses, allLabels);
+    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
-    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses, allLabels);
+    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
-    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses, allLabels);
+    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
-    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses, allLabels);
+    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 #endif
 }
