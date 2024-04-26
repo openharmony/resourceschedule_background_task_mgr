@@ -19,7 +19,8 @@
       ],
       "features": [
         "background_task_mgr_graphics",
-        "background_task_mgr_jsstack"
+        "background_task_mgr_jsstack",
+        "background_task_mgr_device_enable"
       ],
       "adapted_system_type": [
         "standard"
@@ -61,13 +62,10 @@
         "group_type": {
           "base_group": [],
           "fwk_group": [
-           "//foundation/resourceschedule/background_task_mgr/interfaces:bgtaskmgr_interfaces"
+            "//foundation/resourceschedule/background_task_mgr:fwk_group_background_task_mgr_all"
           ],
           "service_group": [
-           "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_sa_profile",
-           "//foundation/resourceschedule/background_task_mgr/sa_profile:bgtaskmgr_service_init",
-           "//foundation/resourceschedule/background_task_mgr/services:bgtaskmgr_service",
-           "//foundation/resourceschedule/background_task_mgr/resources:bgtaskmgr_resources"
+            "//foundation/resourceschedule/background_task_mgr:service_group_background_task_mgr_all"
           ]
         },
         "inner_kits": [
@@ -92,32 +90,7 @@
           }
         ],
         "test": [
-          "//foundation/resourceschedule/background_task_mgr/frameworks/test/unittest:unittest",
-          "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/bgtask_manager_client_test:bgtask_client_unit_test",
-          "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/continuous_task_jsunittest:js_unittest",
-          "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/efficiency_resources_jsunittest:js_unittest",
-          "//foundation/resourceschedule/background_task_mgr/interfaces/test/unittest/transient_task_jsunittest:js_unittest",
-          "//foundation/resourceschedule/background_task_mgr/services/test/unittest:unittest",
-          "//foundation/resourceschedule/background_task_mgr/test/systemtest:systemtest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskapplyefficiencyresources_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskbackgroundrunningforinner_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskcancelsuspenddelay_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskgetcontinuoustaskapps_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskgetefficiencyresourcesinfos_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskgetremainingdelaytime_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskgettransienttaskapps_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskonremoterequest_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskrequestsuspenddelay_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskresetallefficiencyresources_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskstartbackgroundrunning_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskstopbackgroundrunning_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskstopcontinuoustask_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtasksubscribebackgroundtask_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtasksubscriber_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskunsubscribebackgroundtask_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtaskupdatebackgroundrunning_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtasksystemeventobserver_fuzzer:fuzztest",
-          "//foundation/resourceschedule/background_task_mgr/test/fuzztest/bgtasksubscriberstubonremote_fuzzer:fuzztest"
+          "//foundation/resourceschedule/background_task_mgr:test_background_task_mgr_all"
         ]
       }
     }
