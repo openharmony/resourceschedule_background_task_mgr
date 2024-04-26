@@ -577,7 +577,8 @@ HWTEST_F(BgTaskMiscUnitTest, WatchdogTest_001, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
-    auto timerManager = std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto timerManager =
+        std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
     auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
     auto watchdog = std::make_shared<Watchdog>(bgtaskService, decisionMaker,
         AppExecFwk::EventRunner::Create("tdd_test_handler"));
