@@ -175,9 +175,7 @@ void BgContinuousTaskMgr::HandlePersistenceData()
         return;
     }
     appMgrClient->GetAllRunningProcesses(allAppProcessInfos);
-    std::set<std::string> labels;
-    NotificationTools::GetInstance()->GetAllActiveNotificationsLabels(labels);
-    CheckPersistenceData(allAppProcessInfos, labels);
+    CheckPersistenceData(allAppProcessInfos);
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
 }
 
@@ -192,55 +190,43 @@ bool BgContinuousTaskMgr::CheckProcessUidInfo(const std::vector<AppExecFwk::Runn
     return false;
 }
 
-void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
-    const std::set<std::string> &allLabels)
+void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses)
 {
-    int32_t recordPid;
     auto iter = continuousTaskInfosMap_.begin();
-    bool pidConditionFlag;
-    bool notificationConditionFlag;
+    bool pidIsAlive = false;
     int32_t maxId = -1;
+
     while (iter != continuousTaskInfosMap_.end()) {
-        recordPid = iter->second->GetPid();
-        const std::string recordLabel = iter->second->GetNotificationLabel();
-        pidConditionFlag = checkPidCondition(allProcesses, recordPid);
-        notificationConditionFlag = checkNotificationCondition(allLabels, recordLabel);
+        pidIsAlive = checkPidCondition(allProcesses, iter->second->GetPid());
         int32_t notificationId = iter->second->GetNotificationId();
         if (notificationId > maxId) {
             maxId = notificationId;
         }
-        if (pidConditionFlag && notificationConditionFlag) {
-            BGTASK_LOGI("target continuous task exist");
+        if (pidIsAlive) {
+            if (iter->second->GetNotificationId() == -1) {
+                BGTASK_LOGI("notification id is -1, continue");
+                iter++;
+                continue;
+            }
+            if (cachedBundleInfos_.find(iter->second->GetUid()) == cachedBundleInfos_.end()) {
+                std::string mainAbilityLabel = GetMainAbilityLabel(iter->second->GetBundleName(),
+                    iter->second->GetUserId());
+                SetCachedBundleInfo(iter->second->GetUid(), iter->second->GetUserId(),
+                    iter->second->GetBundleName(), mainAbilityLabel);
+            }
+            SendContinuousTaskNotification(iter->second);
+            BGTASK_LOGI("restore notification id %{public}d", iter->second->GetNotificationId());
             iter++;
-            continue;
-        }
-
-        if (iter->second->IsFromWebview() && CheckProcessUidInfo(allProcesses, iter->second->GetUid())) {
-            BGTASK_LOGI("Webview continuous task exist.");
-            iter++;
-            continue;
-        }
-
-        if (!pidConditionFlag && notificationConditionFlag) {
-            BGTASK_LOGI("pid: %{public}d not exist, label: %{public}s exist", recordPid, recordLabel.c_str());
-            NotificationTools::GetInstance()->CancelNotification(recordLabel, notificationId);
+        } else {
+            BGTASK_LOGI("process %{public}d die, not restore notification id %{public}d", iter->second->GetPid(),
+                iter->second->GetNotificationId());
             iter = continuousTaskInfosMap_.erase(iter);
-            continue;
-        }
-
-        if (pidConditionFlag && !notificationConditionFlag) {
-            BGTASK_LOGI("pid: %{public}d exist, label: %{public}s not exist", recordPid, recordLabel.c_str());
-            iter = continuousTaskInfosMap_.erase(iter);
-            continue;
-        }
-
-        if (!pidConditionFlag && !notificationConditionFlag) {
-            BGTASK_LOGI("pid: %{public}d not exist, label: %{public}s not exist", recordPid, recordLabel.c_str());
-            iter = continuousTaskInfosMap_.erase(iter);
-            continue;
         }
     }
-    NotificationTools::SetNotificationIdIndex(maxId);
+    if (maxId != -1) {
+        BGTASK_LOGI("set maxId %{public}d", maxId);
+        NotificationTools::SetNotificationIdIndex(maxId);
+    }
 }
 
 bool BgContinuousTaskMgr::checkPidCondition(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
@@ -285,8 +271,8 @@ bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
     bool res = true;
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     subscriber_ = std::make_shared<TaskNotificationSubscriber>();
-    if (Notification::NotificationHelper::SubscribeNotification(*subscriber_) != ERR_OK) {
-        BGTASK_LOGE("SubscribeNotification failed!");
+    if (Notification::NotificationHelper::SubscribeNotificationSelf(*subscriber_) != ERR_OK) {
+        BGTASK_LOGE("SubscribeNotificationSelf failed!");
         res = false;
     }
 #endif

@@ -285,7 +285,7 @@ void PromiseCompletedCB(napi_env env, napi_status status, void *data)
     napi_value result {nullptr};
     if (asyncCallbackInfo->errCode == ERR_OK) {
         auto iter = std::find(asyncCallbackInfo->bgModes.begin(), asyncCallbackInfo->bgModes.end(), BG_MODE_ID_BEGIN);
-        if ((asyncCallbackInfo->bgMode == BG_MODE_ID_BEGIN) || (iter != asyncCallbackInfo->bgModes.end())) {
+        if (iter != asyncCallbackInfo->bgModes.end()) {
             napi_value slotType = nullptr;
             napi_value contentType = nullptr;
             napi_value notificationId = nullptr;

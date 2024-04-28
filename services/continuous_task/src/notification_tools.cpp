@@ -33,9 +33,8 @@ namespace BackgroundTaskMgr {
 namespace {
 constexpr char NOTIFICATION_PREFIX[] = "bgmode";
 constexpr char SEPARATOR[] = "_";
-#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
-constexpr int32_t DEFAULT_USERID = -2;
-#endif
+constexpr int PUBLISH_DELAY_TIME = 3;
+constexpr int LIVE_VIEW_CONTENT = 8;
 }
 
 int32_t NotificationTools::notificationIdIndex_ = -1;
@@ -66,12 +65,11 @@ WEAK_FUNC ErrCode NotificationTools::PublishNotification(
     const std::string &appName, const std::string &prompt, int32_t serviceUid)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
-    std::shared_ptr<Notification::NotificationNormalContent> normalContent
-        = std::make_shared<Notification::NotificationNormalContent>();
-    normalContent->SetTitle(appName);
-    normalContent->SetText(prompt);
-
-    Notification::NotificationRequest notificationRequest = Notification::NotificationRequest();
+    std::shared_ptr<Notification::NotificationLocalLiveViewContent> liveContent
+        = std::make_shared<Notification::NotificationLocalLiveViewContent>();
+    liveContent->SetTitle(appName);
+    liveContent->SetText(prompt);
+    liveContent->SetType(LIVE_VIEW_CONTENT);
 
     std::shared_ptr<AAFwk::WantParams> extraInfo = std::make_shared<AAFwk::WantParams>();
     extraInfo->SetParam("abilityName", AAFwk::String::Box(continuousTaskRecord->abilityName_));
@@ -80,33 +78,32 @@ WEAK_FUNC ErrCode NotificationTools::PublishNotification(
         continuousTaskRecord->bundleName_, continuousTaskRecord->abilityName_,
         continuousTaskRecord->abilityId_);
 
-    // set extraInfo to save abilityname Info.
+    Notification::NotificationRequest notificationRequest = Notification::NotificationRequest();
+    notificationRequest.SetContent(std::make_shared<Notification::NotificationContent>(liveContent));
     notificationRequest.SetAdditionalData(extraInfo);
-
-    // set basic notification content
-    notificationRequest.SetContent(std::make_shared<Notification::NotificationContent>(normalContent));
-
-    // set wantagent param for click jump to target ability
     notificationRequest.SetWantAgent(continuousTaskRecord->wantAgent_);
-
-    // set notification label distinguish different notification
-    notificationRequest.SetLabel(notificationLabel);
-
-    // set creator uid as background task manager service uid
     notificationRequest.SetCreatorUid(serviceUid);
-
-    // set creator user id to -2 means to get all user's notification event callback.
-    notificationRequest.SetCreatorUserId(DEFAULT_USERID);
-
-    // set tapDismissed param to false make notification retained when clicked.
-    notificationRequest.SetTapDismissed(false);
-    notificationRequest.SetNotificationId(++notificationIdIndex_);
-    if (Notification::NotificationHelper::PublishContinuousTaskNotification(notificationRequest) != ERR_OK) {
-        BGTASK_LOGE("publish notification error");
+    notificationRequest.SetOwnerUid(continuousTaskRecord->GetUid());
+    notificationRequest.SetInProgress(true);
+    notificationRequest.SetIsAgentNotification(true);
+    notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
+    notificationRequest.SetUpdateByOwnerAllowed(true);
+    notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
+    notificationRequest.SetLabel(notificationLabel);
+    if (continuousTaskRecord->GetNotificationId() == -1) {
+        notificationRequest.SetNotificationId(++notificationIdIndex_);
+    } else {
+        notificationRequest.SetNotificationId(continuousTaskRecord->GetNotificationId());
+    }
+    if (Notification::NotificationHelper::PublishNotification(notificationRequest) != ERR_OK) {
+        BGTASK_LOGE("publish notification error, %{public}s, %{public}d", notificationLabel.c_str(),
+            continuousTaskRecord->notificationId_);
         return ERR_BGTASK_NOTIFICATION_ERR;
     }
     continuousTaskRecord->notificationLabel_ = notificationLabel;
-    continuousTaskRecord->notificationId_ = notificationIdIndex_;
+    if (continuousTaskRecord->GetNotificationId() == -1) {
+        continuousTaskRecord->notificationId_ = notificationIdIndex_;
+    }
 #endif
     return ERR_OK;
 }
@@ -114,7 +111,8 @@ WEAK_FUNC ErrCode NotificationTools::PublishNotification(
 WEAK_FUNC ErrCode NotificationTools::CancelNotification(const std::string &label, int32_t id)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
-    if (Notification::NotificationHelper::CancelContinuousTaskNotification(label, id) != ERR_OK) {
+    if (Notification::NotificationHelper::CancelNotification(label, id) != ERR_OK) {
+        BGTASK_LOGE("CancelNotification error label %{public}s, id %{public}d", label.c_str(), id);
         return ERR_BGTASK_NOTIFICATION_ERR;
     }
 #endif
