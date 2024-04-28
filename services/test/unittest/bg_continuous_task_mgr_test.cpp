@@ -755,40 +755,28 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_033, TestSize.Level1)
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord1->pid_ = TEST_NUM_ONE;
     continuousTaskRecord1->notificationLabel_ = "label1";
+
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord1->pid_ = TEST_NUM_TWO;
     continuousTaskRecord1->notificationLabel_ = "label1";
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord3 = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord1->pid_ = TEST_NUM_ONE;
-    continuousTaskRecord1->notificationLabel_ = "label2";
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord4 = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord1->pid_ = TEST_NUM_TWO;
-    continuousTaskRecord1->notificationLabel_ = "label2";
+    continuousTaskRecord1->notificationId_ = 100;
 
     std::vector<AppExecFwk::RunningProcessInfo> allProcesses;
-    AppExecFwk::RunningProcessInfo processInfo1;
-    processInfo1.pid_ = TEST_NUM_ONE;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
-    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
-    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
-    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key3"] = continuousTaskRecord3;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key4"] = continuousTaskRecord4;
     bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    AppExecFwk::RunningProcessInfo processInfo1;
+    processInfo1.pid_ = TEST_NUM_ONE;
+    AppExecFwk::RunningProcessInfo processInfo2;
+    processInfo2.pid_ = TEST_NUM_TWO;
+    allProcesses.push_back(processInfo1);
+    allProcesses.push_back(processInfo2);
+    bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 2);
 #endif
 }
 
