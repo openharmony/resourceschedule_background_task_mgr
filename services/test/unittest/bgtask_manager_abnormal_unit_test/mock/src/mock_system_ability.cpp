@@ -91,7 +91,6 @@ void SystemAbility::OnStart() {}
 
 int32_t SystemAbility::OnExtension(const std::string& extension, MessageParcel& data, MessageParcel& reply)
 {
-    GTEST_LOG_(INFO) << "aams MOCK SystemAbility OnExtension";
     return 0;
 }
 
