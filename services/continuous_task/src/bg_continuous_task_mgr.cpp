@@ -16,11 +16,8 @@
 #include "bg_continuous_task_mgr.h"
 
 #include <sstream>
-#include <iostream>
-#include <fcntl.h>
 #include <unistd.h>
-#include <cstdlib.h>
-#include <cstdio.h>
+#include <fcntl.h>
 
 #include "app_mgr_client.h"
 #include "bundle_constants.h"
