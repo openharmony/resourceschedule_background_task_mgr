@@ -133,7 +133,7 @@ void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
     std::string path = "/proc/" + std::to_string(pid) + "/reclaim";
     std::string contentStr = "1";
     int fd = open(path.c_str(), O_WRONLY);
-    if(fd < 0){
+    if (fd < 0) {
         close(fd);
         return;
     }
