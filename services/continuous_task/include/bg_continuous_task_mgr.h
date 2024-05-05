@@ -121,6 +121,7 @@ private:
     std::string GetMainAbilityLabel(const std::string &bundleName, int32_t userId);
     void RemoveContinuousTaskRecordByUidAndMode(int32_t uid, uint32_t mode);
     void RemoveContinuousTaskRecordByUid(int32_t uid);
+    void ReclaimProcessMemory(int32_t pid);
 private:
     std::atomic<bool> isSysReady_ {false};
     std::string deviceType_ {""};

@@ -19,8 +19,8 @@
 #include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib.h>
+#include <cstdio.h>
 
 #include "app_mgr_client.h"
 #include "bundle_constants.h"
@@ -119,8 +119,8 @@ bool BgContinuousTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& r
     auto registerTask = [this]() { this->InitNecessaryState(); };
     handler_->PostSyncTask(registerTask);
     auto self = shared_from_this();
-    auto reclaimTask = [self](){
-        if(self){
+    auto reclaimTask = [self]() {
+        if (self) {
             self->ReclaimProcessMemory(getpid());
         }
     };
