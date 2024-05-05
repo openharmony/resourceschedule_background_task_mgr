@@ -135,7 +135,7 @@ void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
         return;
     }
     int res = write(fd, contentStr.c_str(), contentStr.length());
-    if(res == -1){
+    if (res == -1) {
         BGTASK_LOGE("BgContinuousTaskMgr ReclaimProcessMemory write file failed!");
     }
     close(fd);
