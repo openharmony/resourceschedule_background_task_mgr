@@ -131,7 +131,6 @@ void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
     std::string contentStr = "1";
     int fd = open(path.c_str(), O_WRONLY);
     if (fd < 0) {
-        close(fd);
         return;
     }
     write(fd, contentStr.c_str(), contentStr.length());
