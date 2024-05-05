@@ -1285,7 +1285,7 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
         = std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskInfo->GetBgModeId(),
         continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName(),
         continuousTaskInfo->IsFromWebview(), continuousTaskInfo->isBatchApi_, continuousTaskInfo->bgModeIds_,
-        continuousTaskInfo->abilityId_);
+        continuousTaskInfo->abilityId_, continuousTaskInfo->fullTokenId_);
     BGTASK_LOGD("mdoe %{public}d isBatch %{public}d modes size %{public}u",
         continuousTaskCallbackInfo->GetTypeId(), continuousTaskCallbackInfo->IsBatchApi(),
         static_cast<uint32_t>(continuousTaskCallbackInfo->GetTypeIds().size()));
