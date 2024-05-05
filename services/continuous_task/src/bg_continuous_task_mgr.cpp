@@ -131,9 +131,13 @@ void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
     std::string contentStr = "1";
     int fd = open(path.c_str(), O_WRONLY);
     if (fd < 0) {
+        BGTASK_LOGE("BgContinuousTaskMgr ReclaimProcessMemory open file failed!");
         return;
     }
-    write(fd, contentStr.c_str(), contentStr.length());
+    int res = write(fd, contentStr.c_str(), contentStr.length());
+    if(res == -1){
+        BGTASK_LOGE("BgContinuousTaskMgr ReclaimProcessMemory write file failed!");
+    }
     close(fd);
 }
 
