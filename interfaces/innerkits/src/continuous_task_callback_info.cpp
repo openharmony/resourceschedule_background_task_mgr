@@ -103,6 +103,10 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
         BGTASK_LOGE("Failed to write abilityId_");
         return false;
     }
+    if (!parcel.WriteUint64(tokenId_)) {
+        BGTASK_LOGE("Failed to write tokenId_");
+        return false;
+    }
     return true;
 }
 
@@ -145,6 +149,7 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     }
     BGTASK_LOGD("read parce typeIds_ size %{public}u", static_cast<uint32_t>(typeIds_.size()));
     abilityId_ = static_cast<int32_t>(parcel.ReadInt32());
+    tokenId_ = parcel.ReadUint64();
     return true;
 }
 }  // namespace BackgroundTaskMgr

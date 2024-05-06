@@ -28,9 +28,10 @@ public:
     ContinuousTaskCallbackInfo();
     ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid,
         pid_t creatorPid, std::string abilityName, bool isFromWebview = false, bool isBatchApi = false,
-        const std::vector<uint32_t> &typeIds = {}, int32_t abilityId = -1)
+        const std::vector<uint32_t> &typeIds = {}, int32_t abilityId = -1, uint64_t tokenId = 0)
         : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), abilityName_(abilityName),
-          isFromWebview_(isFromWebview), isBatchApi_(isBatchApi), typeIds_(typeIds), abilityId_(abilityId) {}
+          isFromWebview_(isFromWebview), isBatchApi_(isBatchApi), typeIds_(typeIds), abilityId_(abilityId),
+          tokenId_(tokenId) {}
 
     /**
      * @brief Get the id of type.
@@ -110,6 +111,7 @@ private:
     bool isBatchApi_ {false};
     std::vector<uint32_t> typeIds_ {};
     int32_t abilityId_ {-1};
+    uint64_t tokenId_ {0};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
