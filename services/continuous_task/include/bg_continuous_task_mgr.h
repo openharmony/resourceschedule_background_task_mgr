@@ -122,6 +122,7 @@ private:
     void RemoveContinuousTaskRecordByUidAndMode(int32_t uid, uint32_t mode);
     void RemoveContinuousTaskRecordByUid(int32_t uid);
     void ReclaimProcessMemory(int32_t pid);
+    void SetReason(const std::string &mapKey, int32_t reason);
 private:
     std::atomic<bool> isSysReady_ {false};
     std::string deviceType_ {""};
