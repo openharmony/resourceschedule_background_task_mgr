@@ -401,7 +401,7 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
     }
 
     callbackInfo->SetResourceNumber(diffResourceNumber);
-    BGTASK_LOGI("after update end time, callbackInfo resource number is %{public}u,"\
+    BGTASK_LOGD("after update end time, callbackInfo resource number is %{public}u,"\
         " uid: %{public}d, bundle name: %{public}s", callbackInfo->GetResourceNumber(),
         callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str());
     if (resourceInfo->IsProcess()) {
@@ -582,7 +582,7 @@ bool BgEfficiencyResourcesMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std:
 
 ErrCode BgEfficiencyResourcesMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
-    BGTASK_LOGI("add subscriber to efficiency resources succeed");
+    BGTASK_LOGD("add subscriber to efficiency resources succeed");
     handler_->PostSyncTask([this, &subscriber]() {
         subscriberMgr_->AddSubscriber(subscriber);
     });
@@ -591,7 +591,7 @@ ErrCode BgEfficiencyResourcesMgr::AddSubscriber(const sptr<IBackgroundTaskSubscr
 
 ErrCode BgEfficiencyResourcesMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
 {
-    BGTASK_LOGI("remove subscriber to efficiency resources succeed");
+    BGTASK_LOGD("remove subscriber to efficiency resources succeed");
     ErrCode result {};
     handler_->PostSyncTask([this, &result, &subscriber]() {
         result = subscriberMgr_->RemoveSubscriber(subscriber);

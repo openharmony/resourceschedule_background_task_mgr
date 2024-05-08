@@ -95,7 +95,7 @@ napi_value GetAbilityContext(const napi_env &env, const napi_value &value,
 {
     bool stageMode = false;
     napi_status status = OHOS::AbilityRuntime::IsStageContext(env, value, stageMode);
-    BGTASK_LOGI("is stage mode: %{public}s", stageMode ? "true" : "false");
+    BGTASK_LOGD("is stage mode: %{public}s", stageMode ? "true" : "false");
 
     if (status != napi_ok || !stageMode) {
         BGTASK_LOGI("Getting context with FA model");
@@ -111,7 +111,7 @@ napi_value GetAbilityContext(const napi_env &env, const napi_value &value,
         }
         return WrapVoidToJS(env);
     } else {
-        BGTASK_LOGI("Getting context with stage model");
+        BGTASK_LOGD("Getting context with stage model");
         auto context = AbilityRuntime::GetStageModeContext(env, value);
         if (!context) {
             BGTASK_LOGE("get context failed");
