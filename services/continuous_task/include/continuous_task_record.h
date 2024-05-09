@@ -25,6 +25,14 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 extern const char *g_continuousTaskModeName[10];
 
+// stop task reason
+enum : int32_t {
+    USER_CANCEL,
+    REMOVE_NOTIFICATION_CANCEL,
+    FREEZE_CANCEL,
+    SYSTEM_CANCEL,
+};
+
 struct WantAgentInfo {
     std::string bundleName_ {""};
     std::string abilityName_ {""};
@@ -71,6 +79,7 @@ private:
     bool isBatchApi_ {false};
     std::vector<uint32_t> bgModeIds_ {};
     int32_t abilityId_ {-1};
+    int32_t reason_ {0};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;
