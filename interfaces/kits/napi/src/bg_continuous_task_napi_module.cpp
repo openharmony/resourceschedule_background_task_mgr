@@ -41,7 +41,7 @@ static constexpr uint32_t MAX_UPDATE_BG_RUNNING_PARAMS = 2;
 static constexpr uint32_t CALLBACK_RESULT_PARAMS_NUM = 2;
 static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
-static constexpr int32_t LOCATION_CONTENT_TYPE = 8;
+static constexpr int32_t SYSTEM_LIVE_CONTENT_TYPE = 8;
 static constexpr int32_t SLOT_TYPE = 4;
 static std::vector<std::string> g_backgroundModes = {
     "dataTransfer",
@@ -284,14 +284,13 @@ void PromiseCompletedCB(napi_env env, napi_status status, void *data)
     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
     napi_value result {nullptr};
     if (asyncCallbackInfo->errCode == ERR_OK) {
-        auto iter = std::find(asyncCallbackInfo->bgModes.begin(), asyncCallbackInfo->bgModes.end(), BG_MODE_ID_BEGIN);
-        if (iter != asyncCallbackInfo->bgModes.end()) {
+        if (asyncCallbackInfo->bgModes.size() > 0) {
             napi_value slotType = nullptr;
             napi_value contentType = nullptr;
             napi_value notificationId = nullptr;
             napi_create_object(env, &result);
             napi_create_int32(env, SLOT_TYPE, &slotType);
-            napi_create_int32(env, LOCATION_CONTENT_TYPE, &contentType);
+            napi_create_int32(env, SYSTEM_LIVE_CONTENT_TYPE, &contentType);
             napi_create_int32(env, asyncCallbackInfo->notificationId, &notificationId);
             napi_set_named_property(env, result, "slotType", slotType);
             napi_set_named_property(env, result, "contentType", contentType);

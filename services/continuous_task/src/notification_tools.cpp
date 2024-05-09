@@ -33,8 +33,13 @@ namespace BackgroundTaskMgr {
 namespace {
 constexpr char NOTIFICATION_PREFIX[] = "bgmode";
 constexpr char SEPARATOR[] = "_";
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+constexpr int BACKGROUND_MODE_DATA_TANSFER = 1;
+constexpr int BACKGROUND_MODE_AUDIO_RECORDING = 3;
 constexpr int PUBLISH_DELAY_TIME = 3;
-constexpr int LIVE_VIEW_CONTENT = 8;
+constexpr int TYPE_CODE_AUDIO_RECORDING = 7;
+constexpr int TYPE_CODE_DATA_TANSFER = 8;
+#endif
 }
 
 int32_t NotificationTools::notificationIdIndex_ = -1;
@@ -69,7 +74,13 @@ WEAK_FUNC ErrCode NotificationTools::PublishNotification(
         = std::make_shared<Notification::NotificationLocalLiveViewContent>();
     liveContent->SetTitle(appName);
     liveContent->SetText(prompt);
-    liveContent->SetType(LIVE_VIEW_CONTENT);
+    if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
+        BACKGROUND_MODE_DATA_TANSFER) != continuousTaskRecord->bgModeIds_.end()) {
+        liveContent->SetType(TYPE_CODE_DATA_TANSFER);
+    } else if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
+        BACKGROUND_MODE_AUDIO_RECORDING) != continuousTaskRecord->bgModeIds_.end()) {
+        liveContent->SetType(TYPE_CODE_AUDIO_RECORDING);
+    }
 
     std::shared_ptr<AAFwk::WantParams> extraInfo = std::make_shared<AAFwk::WantParams>();
     extraInfo->SetParam("abilityName", AAFwk::String::Box(continuousTaskRecord->abilityName_));
