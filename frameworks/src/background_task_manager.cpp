@@ -165,6 +165,22 @@ ErrCode BackgroundTaskManager::GetTransientTaskApps(std::vector<std::shared_ptr<
     return proxy_->GetTransientTaskApps(list);
 }
 
+ErrCode BackgroundTaskManager::PauseTransientTaskTimeForInner(int32_t uid)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+    
+    return proxy_->PauseTransientTaskTimeForInner(uid);
+}
+
+ErrCode BackgroundTaskManager::StartTransientTaskTimeForInner(int32_t uid)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->StartTransientTaskTimeForInner(uid);
+}
+
 ErrCode BackgroundTaskManager::ApplyEfficiencyResources(const EfficiencyResourceInfo &resourceInfo)
 {
     std::lock_guard<std::mutex> lock(mutex_);

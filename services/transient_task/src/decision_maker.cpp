@@ -208,6 +208,49 @@ ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::sh
     return ERR_OK;
 }
 
+ErrCode DecisionMaker::PauseTransientTaskTimeForInner(int32_t uid, const std::string &name)
+{
+    lock_guard<mutex> lock(lock_);
+    auto key = std::make_shared<KeyInfo>(name, uid);
+    auto itBg = pkgBgDurationMap_.find(key);
+    if (itBg == pkgBgDurationMap_.end()) {
+        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d is foreground applicaion.", name.c_str(), uid);
+        return ERR_BGTASK_FOREGROUND;
+    }
+    auto it = pkgDelaySuspendInfoMap_.find(key);
+    if (it == pkgDelaySuspendInfoMap_.end()) {
+        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d not request transient task.", name.c_str(), uid);
+        return ERR_BGTASK_NOREQUEST_TASK;
+    }
+    auto pkgInfo = it->second;
+    pkgInfo->StopAccountingAll();
+    return ERR_OK;
+}
+
+ErrCode DecisionMaker::StartTransientTaskTimeForInner(int32_t uid, const std::string &name)
+{
+    lock_guard<mutex> lock(lock_);
+    auto key = std::make_shared<KeyInfo>(name, uid);
+    auto itBg = pkgBgDurationMap_.find(key);
+    if (itBg == pkgBgDurationMap_.end()) {
+        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d is foreground applicaion.", name.c_str(), uid);
+        return ERR_BGTASK_FOREGROUND;
+    }
+    auto it = pkgDelaySuspendInfoMap_.find(key);
+    if (it == pkgDelaySuspendInfoMap_.end()) {
+        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d not request transient task.", name.c_str(), uid);
+        return ERR_BGTASK_NOREQUEST_TASK;
+    }
+    auto pkgInfo = it->second;
+    if (CanStartAccountingLocked(pkgInfo)) {
+        pkgInfo->StartAccounting();
+    } else {
+        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d can't can startAccountingLocked.", name.c_str(), uid);
+        return ERR_BGTASK_FOREGROUND;
+    }
+    return ERR_OK;
+}
+
 void DecisionMaker::RemoveRequest(const std::shared_ptr<KeyInfo>& key, const int32_t requestId)
 {
     lock_guard<mutex> lock(lock_);

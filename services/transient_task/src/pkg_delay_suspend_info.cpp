@@ -96,7 +96,8 @@ void PkgDelaySuspendInfo::StartAccounting(const int32_t requestId)
         if (info->GetBaseTime() == 0) {
             info->StartAccounting();
             timerManager_->AddTimer(info->GetRequestId(), info->GetAdvanceCallbackTime());
-            BGTASK_LOGD("StartAccounting %{public}s, requestId: %{public}d", pkg_.c_str(), info->GetRequestId());
+            BGTASK_LOGD("StartAccounting pkgname: %{public}s, requestId: %{public}d, pid: %{public}d",
+                pkg_.c_str(), info->GetRequestId(), info->GetPid());
         }
     }
 }
@@ -109,7 +110,8 @@ void PkgDelaySuspendInfo::StopAccounting(const int32_t requestId)
         }
         info->StopAccounting();
         timerManager_->RemoveTimer(info->GetRequestId());
-        BGTASK_LOGD("StopAccounting %{public}s, requestId: %{public}d", pkg_.c_str(), info->GetRequestId());
+        BGTASK_LOGD("StopAccounting pkgname: %{public}s, requestId: %{public}d, pid: %{public}d",
+            pkg_.c_str(), info->GetRequestId(), info->GetPid());
     }
 }
 
@@ -122,6 +124,8 @@ void PkgDelaySuspendInfo::StopAccountingAll()
         }
         info->StopAccounting();
         timerManager_->RemoveTimer(info->GetRequestId());
+        BGTASK_LOGD("StopAccountingAll pkgname: %{public}s, requestId: %{public}d, pid: %{public}d",
+            pkg_.c_str(), info->GetRequestId(), info->GetPid());
     }
     UpdateQuota();
     isCounting_ = false;

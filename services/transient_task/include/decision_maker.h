@@ -43,6 +43,8 @@ public:
     DecisionMaker(const std::shared_ptr<TimerManager>& timerManager, const std::shared_ptr<DeviceInfoManager>& device);
     ~DecisionMaker() override;
     ErrCode Decide(const std::shared_ptr<KeyInfo>& key, const std::shared_ptr<DelaySuspendInfoEx>& delayInfo);
+    ErrCode PauseTransientTaskTimeForInner(int32_t uid, const std::string &name);
+    ErrCode StartTransientTaskTimeForInner(int32_t uid, const std::string &name);
     void RemoveRequest(const std::shared_ptr<KeyInfo>& key, const int32_t requestId);
     int32_t GetRemainingDelayTime(const std::shared_ptr<KeyInfo>& key, const int32_t requestId);
     void OnInputEvent(const EventInfo& eventInfo) override;

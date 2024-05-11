@@ -56,12 +56,15 @@ private:
     ErrCode HandleSubscribeBackgroundTask(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleUnsubscribeBackgroundTask(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetTransientTaskApps(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandlePauseTransientTaskTimeForInner(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleStartTransientTaskTimeForInner(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetContinuousTaskApps(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleApplyEfficiencyResources(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleResetAllEfficiencyResources(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleGetEfficiencyResourcesInfos(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleStopContinuousTask(MessageParcel& data, MessageParcel& reply);
     void HandleContinuousTask(uint32_t code, MessageParcel& data, MessageParcel& reply);
+    void HandleTransientTask(uint32_t code, MessageParcel& data, MessageParcel& reply);
     ErrCode WriteInfoToParcel(const std::vector<std::shared_ptr<ResourceCallbackInfo>>& infoMap, MessageParcel& reply);
 };
 }  // namespace BackgroundTaskMgr

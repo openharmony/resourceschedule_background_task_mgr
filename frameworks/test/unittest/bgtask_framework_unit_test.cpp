@@ -377,6 +377,42 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_014, TestSize.Level1)
 }
 
 /**
+ * @tc.name: BgTaskFrameworkUnitTest_015
+ * @tc.desc: test PauseTransientTaskTimeForInner.
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_015, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    int32_t uid = -1;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->PauseTransientTaskTimeForInner(uid),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->PauseTransientTaskTimeForInner(uid),
+        ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskFrameworkUnitTest_016
+ * @tc.desc: test StartTransientTaskTimeForInner.
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_016, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    int32_t uid = -1;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StartTransientTaskTimeForInner(uid),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StartTransientTaskTimeForInner(uid),
+        ERR_OK);
+}
+
+/**
  * @tc.name: BackgroundTaskSubscriberProxyTest_001
  * @tc.desc: test BackgroundTaskSubscriberProxy.
  * @tc.type: FUNC

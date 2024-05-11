@@ -117,6 +117,20 @@ public:
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) override;
 
     /**
+     * @brief Pause transient task time by uid for inner ability.
+     * @param uid app uid.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode PauseTransientTaskTimeForInner(int32_t uid) override;
+
+    /**
+     * @brief Start transient task time by uid for inner ability.
+     * @param uid app uid.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode StartTransientTaskTimeForInner(int32_t uid) override;
+
+    /**
      * @brief Get all continuous task running infos.
      * @param list continuous task infos.
      * @return Returns ERR_OK if success, else failure.

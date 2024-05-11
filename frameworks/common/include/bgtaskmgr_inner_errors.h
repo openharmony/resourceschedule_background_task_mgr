@@ -64,6 +64,8 @@ enum : int32_t {
     ERR_BGTASK_NOT_IN_PRESET_TIME,
     ERR_BGTASK_EXCEEDS_THRESHOLD,
     ERR_BGTASK_TIME_INSUFFICIENT,
+    ERR_BGTASK_NOREQUEST_TASK,
+    ERR_BGTASK_FOREGROUND,
     // errcode for Efficiency Resource
     ERR_BGTASK_RESOURCES_EXCEEDS_MAX = 1870000101,
     ERR_BGTASK_RESOURCES_INVALID_PID_OR_UID,
@@ -71,6 +73,7 @@ enum : int32_t {
     ERR_BGTASK_METHOD_CALLED_FAILED,
     ERR_BGTASK_DATA_STORAGE_ERR,
     ERR_BGTASK_SERVICE_INNER_ERROR,
+    ERR_BGTASK_INVALID_PROCESS_NAME,
 };
 
 enum ParamErr: int32_t {
@@ -133,6 +136,9 @@ const inline std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_BGTASK_RESOURCES_EXCEEDS_MAX, "Caller information verification failed when applying for"
         " efficiency resources. The number of resources applied exceeds maximun."},
     {ERR_BGTASK_SERVICE_INNER_ERROR, "Service inner error."},
+    {ERR_BGTASK_NOREQUEST_TASK, "Transient task verification failed. application no request transient task."},
+    {ERR_BGTASK_FOREGROUND, "Transient task verification failed. application is foreground."},
+    {ERR_BGTASK_INVALID_PROCESS_NAME, "Transient task verification failed. caller process name invaild."},
 };
 
 const inline std::map<int32_t, std::string> paramErrCodeMsgMap = {

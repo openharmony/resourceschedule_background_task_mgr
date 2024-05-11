@@ -61,6 +61,16 @@ ErrCode BackgroundTaskMgrHelper::GetTransientTaskApps(std::vector<std::shared_pt
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetTransientTaskApps(list);
 }
 
+ErrCode BackgroundTaskMgrHelper::PauseTransientTaskTimeForInner(int32_t uid)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->PauseTransientTaskTimeForInner(uid);
+}
+
+ErrCode BackgroundTaskMgrHelper::StartTransientTaskTimeForInner(int32_t uid)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->StartTransientTaskTimeForInner(uid);
+}
+
 ErrCode BackgroundTaskMgrHelper::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetContinuousTaskApps(list);

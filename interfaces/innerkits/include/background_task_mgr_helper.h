@@ -80,6 +80,20 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
+    
+    /**
+     * @brief Pause transient task time by uid for inner ability.
+     * @param uid app uid.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode PauseTransientTaskTimeForInner(int32_t uid);
+
+    /**
+     * @brief Start transient task time by uid for inner ability.
+     * @param uid app uid.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode StartTransientTaskTimeForInner(int32_t uid);
 
     /**
      * @brief Get all continuous task running infos.

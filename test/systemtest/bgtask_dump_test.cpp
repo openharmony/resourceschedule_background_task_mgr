@@ -93,5 +93,39 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_002, Function | MediumTest | L
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
     EXPECT_EQ(ret, 0);
 }
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_003
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_003, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-T");
+    options.push_back("PAUSE");
+    options.push_back("-1");
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
+}
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_004
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_004, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-T");
+    options.push_back("START");
+    options.push_back("-1");
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

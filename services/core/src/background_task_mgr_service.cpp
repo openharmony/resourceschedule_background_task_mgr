@@ -150,6 +150,16 @@ ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<std::shared_p
     return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetTransientTaskApps(list);
 }
 
+ErrCode BackgroundTaskMgrService::PauseTransientTaskTimeForInner(int32_t uid)
+{
+    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->PauseTransientTaskTimeForInner(uid);
+}
+
+ErrCode BackgroundTaskMgrService::StartTransientTaskTimeForInner(int32_t uid)
+{
+    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->StartTransientTaskTimeForInner(uid);
+}
+
 ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
 {
     if (!CheckCallingToken()) {
