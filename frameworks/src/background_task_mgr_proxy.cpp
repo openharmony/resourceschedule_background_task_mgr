@@ -366,6 +366,58 @@ ErrCode BackgroundTaskMgrProxy::GetTransientTaskApps(std::vector<std::shared_ptr
     return result;
 }
 
+ErrCode BackgroundTaskMgrProxy::PauseTransientTaskTimeForInner(int32_t uid)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        BGTASK_LOGE("PauseTransientTaskTimeForInner write descriptor failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    if (!data.WriteInt32(uid)) {
+        BGTASK_LOGE("PauseTransientTaskTimeForInner parcel uid failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    ErrCode result = InnerTransact(static_cast<uint32_t>(
+        BackgroundTaskMgrStubInterfaceCode::PAUSE_TRANSIENT_TASK_TIME_FOR_INNER), option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("PauseTransientTaskTimeForInner fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("PauseTransientTaskTimeForInner fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return result;
+}
+
+ErrCode BackgroundTaskMgrProxy::StartTransientTaskTimeForInner(int32_t uid)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        BGTASK_LOGE("StartTransientTaskTimeForInner write descriptor failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    if (!data.WriteInt32(uid)) {
+        BGTASK_LOGE("StartTransientTaskTimeForInner parcel uid failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    ErrCode result = InnerTransact(static_cast<uint32_t>(
+        BackgroundTaskMgrStubInterfaceCode::START_TRANSIENT_TASK_TIME_FOR_INNER), option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("StartTransientTaskTimeForInner fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("StartTransientTaskTimeForInner fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return result;
+}
+
 ErrCode BackgroundTaskMgrProxy::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
 {
     MessageParcel data;

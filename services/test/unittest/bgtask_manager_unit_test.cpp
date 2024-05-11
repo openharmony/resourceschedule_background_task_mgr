@@ -505,5 +505,59 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_042, TestSize.Level1)
         TransientTaskEventType::APP_TASK_END);
     EXPECT_NE((int32_t)bgTransientTaskMgr_->subscriberList_.size(), 0);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_043
+ * @tc.desc: test BgTransientTaskMgr PauseTransientTaskTimeForInner.
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_043, TestSize.Level1)
+{
+    int32_t uid = -1;
+    bgTransientTaskMgr_->isReady_.store(false);
+    EXPECT_EQ(bgTransientTaskMgr_->PauseTransientTaskTimeForInner(uid), ERR_BGTASK_SYS_NOT_READY);
+
+    bgTransientTaskMgr_->isReady_.store(true);
+    EXPECT_EQ(bgTransientTaskMgr_->PauseTransientTaskTimeForInner(uid), ERR_BGTASK_INVALID_PID_OR_UID);
+
+    uid = 1;
+    EXPECT_EQ(bgTransientTaskMgr_->PauseTransientTaskTimeForInner(uid), ERR_BGTASK_SERVICE_INNER_ERROR);
+
+    std::string bundleName = LAUNCHER_BUNDLE_NAME;
+    uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
+    if (uid == -1) {
+        bundleName = SCB_BUNDLE_NAME;
+        uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
+    }
+    EXPECT_NE(bgTransientTaskMgr_->PauseTransientTaskTimeForInner(uid), ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_044
+ * @tc.desc: test BgTransientTaskMgr StartTransientTaskTimeForInner.
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_044, TestSize.Level1)
+{
+    int32_t uid = -1;
+    bgTransientTaskMgr_->isReady_.store(false);
+    EXPECT_EQ(bgTransientTaskMgr_->StartTransientTaskTimeForInner(uid), ERR_BGTASK_SYS_NOT_READY);
+
+    bgTransientTaskMgr_->isReady_.store(true);
+    EXPECT_EQ(bgTransientTaskMgr_->StartTransientTaskTimeForInner(uid), ERR_BGTASK_INVALID_PID_OR_UID);
+
+    uid = 1;
+    EXPECT_EQ(bgTransientTaskMgr_->StartTransientTaskTimeForInner(uid), ERR_BGTASK_SERVICE_INNER_ERROR);
+
+    std::string bundleName = LAUNCHER_BUNDLE_NAME;
+    uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
+    if (uid == -1) {
+        bundleName = SCB_BUNDLE_NAME;
+        uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
+    }
+    EXPECT_NE(bgTransientTaskMgr_->StartTransientTaskTimeForInner(uid), ERR_OK);
+}
 }
 }

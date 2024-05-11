@@ -213,6 +213,7 @@ ohos_unittest("bgtask_manager_unit_test") {
     "bgtask_manager_unit_test.cpp",
     "mock/mock_bundle_manager_helper.cpp",
     "mock/mock_ipc_skeleton.cpp",
+    "mock/mock_transient_task_mgr.cpp",
   ]
 
   deps = [

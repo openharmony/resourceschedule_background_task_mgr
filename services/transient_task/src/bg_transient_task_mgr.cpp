@@ -21,6 +21,7 @@
 #include <system_ability.h>
 #include <system_ability_definition.h>
 
+#include "accesstoken_kit.h"
 #include "bundle_mgr_proxy.h"
 #include "common_event_data.h"
 #include "common_event_manager.h"
@@ -44,11 +45,24 @@ static const std::string ALL_BGTASKMGR_OPTION = "All";
 static const std::string LOW_BATTARY_OPTION = "BATTARY_LOW";
 static const std::string OKAY_BATTARY_OPTION = "BATTARY_OKAY";
 static const std::string CANCEL_DUMP_OPTION = "DUMP_CANCEL";
+static const std::string PAUSE_DUMP_OPTION = "PAUSE";
+static const std::string START_DUMP_OPTION = "START";
 
 constexpr int32_t BG_INVALID_REMAIN_TIME = -1;
 constexpr int32_t WATCHDOG_DELAY_TIME = 6 * MSEC_PER_SEC;
 constexpr int32_t SERVICE_WAIT_TIME = 2000;
+
+const std::set<std::string> SUSPEND_NATIVE_OPERATE_CALLER = {
+    "resource_schedule_service",
+    "hidumper_service",
+};
 }
+
+#ifdef BGTASK_MGR_UNIT_TEST
+#define WEAK_FUNC __attribute__((weak))
+#else
+#define WEAK_FUNC
+#endif
 
 BgTransientTaskMgr::BgTransientTaskMgr() {}
 BgTransientTaskMgr::~BgTransientTaskMgr() {}
@@ -202,6 +216,82 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
         (void)remote->AddDeathRecipient(callbackDeathRecipient_);
     }
 
+    return ERR_OK;
+}
+
+bool WEAK_FUNC BgTransientTaskMgr::CheckProcessName()
+{
+    Security::AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+    Security::AccessToken::NativeTokenInfo callingTokenInfo;
+    Security::AccessToken::AccessTokenKit::GetNativeTokenInfo(tokenId, callingTokenInfo);
+    BGTASK_LOGD("process name: %{public}s called CheckProcessName.", callingTokenInfo.processName.c_str());
+    if (SUSPEND_NATIVE_OPERATE_CALLER.find(callingTokenInfo.processName) == SUSPEND_NATIVE_OPERATE_CALLER.end()) {
+        BGTASK_LOGE("CheckProcessName illegal access to this interface; process name: %{public}s.",
+            callingTokenInfo.processName.c_str());
+        return false;
+    }
+    return true;
+}
+
+ErrCode BgTransientTaskMgr::PauseTransientTaskTimeForInner(int32_t uid)
+{
+    if (!isReady_.load()) {
+        BGTASK_LOGW("Transient task manager is not ready.");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+
+    if (!CheckProcessName()) {
+        return ERR_BGTASK_INVALID_PROCESS_NAME;
+    }
+
+    if (uid < 0) {
+        BGTASK_LOGE("PauseTransientTaskTimeForInner uid is invalid.");
+        return ERR_BGTASK_INVALID_PID_OR_UID;
+    }
+
+    std::string name = "";
+    if (!GetBundleNamesForUid(uid, name)) {
+        BGTASK_LOGE("GetBundleNamesForUid fail, uid : %{public}d.", uid);
+        return ERR_BGTASK_SERVICE_INNER_ERROR;
+    }
+
+    ErrCode ret = decisionMaker_->PauseTransientTaskTimeForInner(uid, name);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d PauseTransientTaskTimeForInner fail.",
+            name.c_str(), uid);
+        return ret;
+    }
+    return ERR_OK;
+}
+
+ErrCode BgTransientTaskMgr::StartTransientTaskTimeForInner(int32_t uid)
+{
+    if (!isReady_.load()) {
+        BGTASK_LOGW("Transient task manager is not ready.");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+
+    if (!CheckProcessName()) {
+        return ERR_BGTASK_INVALID_PROCESS_NAME;
+    }
+
+    if (uid < 0) {
+        BGTASK_LOGE("StartTransientTaskTimeForInner uid is invalid.");
+        return ERR_BGTASK_INVALID_PID_OR_UID;
+    }
+
+    std::string name = "";
+    if (!GetBundleNamesForUid(uid, name)) {
+        BGTASK_LOGE("GetBundleNamesForUid fail, uid : %{public}d.", uid);
+        return ERR_BGTASK_SERVICE_INNER_ERROR;
+    }
+
+    ErrCode ret = decisionMaker_->StartTransientTaskTimeForInner(uid, name);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d StartTransientTaskTimeForInner fail.",
+            name.c_str(), uid);
+        return ret;
+    }
     return ERR_OK;
 }
 
@@ -540,6 +630,12 @@ ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption
     } else if (dumpOption[1] == CANCEL_DUMP_OPTION) {
         deviceInfoManeger_->SetDump(false);
         result = true;
+    } else if (dumpOption[1] == PAUSE_DUMP_OPTION) {
+        DumpTaskTime(dumpOption, true, dumpInfo);
+        result = true;
+    } else if (dumpOption[1] == START_DUMP_OPTION) {
+        DumpTaskTime(dumpOption, false, dumpInfo);
+        result = true;
     } else {
         dumpInfo.push_back("Error transient dump command!\n");
     }
@@ -580,6 +676,28 @@ void BgTransientTaskMgr::SendOkayBatteryEvent(std::vector<std::string> &dumpInfo
         dumpInfo.push_back("Publish COMMON_EVENT_BATTERY_OKAY succeed!\n");
     } else {
         dumpInfo.push_back("Publish COMMON_EVENT_BATTERY_OKAY failed!\n");
+    }
+}
+
+void BgTransientTaskMgr::DumpTaskTime(const std::vector<std::string> &dumpOption, bool pause,
+    std::vector<std::string> &dumpInfo)
+{
+    int32_t uid = std::stoi(dumpOption[2]);
+    ErrCode ret = ERR_OK;
+    if (pause) {
+        ret = PauseTransientTaskTimeForInner(uid);
+        if (ret != ERR_OK) {
+            dumpInfo.push_back("pause transient tasl fail!\n");
+        } else {
+            dumpInfo.push_back("pause transient tasl success!\n");
+        }
+    } else {
+        ret = StartTransientTaskTimeForInner(uid);
+        if (ret != ERR_OK) {
+            dumpInfo.push_back("start transient tasl fail!\n");
+        } else {
+            dumpInfo.push_back("start transient tasl success!\n");
+        }
     }
 }
 

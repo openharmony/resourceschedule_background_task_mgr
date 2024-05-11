@@ -68,8 +68,7 @@ void BackgroundTaskMgrStub::HandleContinuousTask(uint32_t code, MessageParcel& d
     }
 }
 
-ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
-    MessageParcel& data, MessageParcel& reply, MessageOption& option)
+void BackgroundTaskMgrStub::HandleTransientTask(uint32_t code, MessageParcel& data, MessageParcel& reply)
 {
     switch (code) {
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_SUSPEND_DELAY):
@@ -80,6 +79,33 @@ ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
             break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_REMAINING_DELAY_TIME):
             HandleGetRemainingDelayTime(data, reply);
+            break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_TRANSIENT_TASK_APPS):
+            HandleGetTransientTaskApps(data, reply);
+            break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::PAUSE_TRANSIENT_TASK_TIME_FOR_INNER):
+            HandlePauseTransientTaskTimeForInner(data, reply);
+            break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::START_TRANSIENT_TASK_TIME_FOR_INNER):
+            HandleStartTransientTaskTimeForInner(data, reply);
+            break;
+        default:
+            BGTASK_LOGE("code is error");
+    }
+}
+
+ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
+    MessageParcel& data, MessageParcel& reply, MessageOption& option)
+{
+    switch (code) {
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_SUSPEND_DELAY):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::CANCEL_SUSPEND_DELAY):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_REMAINING_DELAY_TIME):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_TRANSIENT_TASK_APPS):
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::PAUSE_TRANSIENT_TASK_TIME_FOR_INNER):
+            [[fallthrough]];
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::START_TRANSIENT_TASK_TIME_FOR_INNER):
+            HandleTransientTask(code, data, reply);
             break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::START_BACKGROUND_RUNNING):
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::UPDATE_BACKGROUND_RUNNING):
@@ -95,9 +121,6 @@ ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
             break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::UNSUBSCRIBE_BACKGROUND_TASK):
             HandleUnsubscribeBackgroundTask(data, reply);
-            break;
-        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_TRANSIENT_TASK_APPS):
-            HandleGetTransientTaskApps(data, reply);
             break;
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::APPLY_EFFICIENCY_RESOURCES):
             HandleApplyEfficiencyResources(data, reply);
@@ -298,6 +321,28 @@ ErrCode BackgroundTaskMgrStub::HandleGetTransientTaskApps(MessageParcel& data, M
         if (!info->Marshalling(reply)) {
             return ERR_BGTASK_PARCELABLE_FAILED;
         }
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandlePauseTransientTaskTimeForInner(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t uid = data.ReadInt32();
+    ErrCode result = PauseTransientTaskTimeForInner(uid);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandlePauseTransientTaskTimeForInner write result failed, ErrCode=%{public}d", result);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleStartTransientTaskTimeForInner(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t uid = data.ReadInt32();
+    ErrCode result = StartTransientTaskTimeForInner(uid);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleStartTransientTaskTimeForInner write result failed, ErrCode=%{public}d", result);
+        return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;
 }

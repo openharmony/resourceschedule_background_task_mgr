@@ -274,6 +274,30 @@ HWTEST_F(BgTaskClientUnitTest, GetTransientTaskApps_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: PauseTransientTaskTimeForInner_001
+ * @tc.desc: test PauseTransientTaskTimeForInner interface.
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgTaskClientUnitTest, PauseTransientTaskTimeForInner_001, TestSize.Level1)
+{
+    int32_t uid = -1;
+    EXPECT_NE(BackgroundTaskMgrHelper::PauseTransientTaskTimeForInner(uid), ERR_OK);
+}
+
+/**
+ * @tc.name: StartTransientTaskTimeForInner_001
+ * @tc.desc: test StartTransientTaskTimeForInner interface.
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgTaskClientUnitTest, StartTransientTaskTimeForInner_001, TestSize.Level1)
+{
+    int32_t uid = -1;
+    EXPECT_NE(BackgroundTaskMgrHelper::StartTransientTaskTimeForInner(uid), ERR_OK);
+}
+
+/**
  * @tc.name: GetContinuousTaskApps_001
  * @tc.desc: test GetContinuousTaskApps interface.
  * @tc.type: FUNC

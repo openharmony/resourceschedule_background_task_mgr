@@ -63,6 +63,8 @@ public:
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
+    ErrCode PauseTransientTaskTimeForInner(int32_t uid);
+    ErrCode StartTransientTaskTimeForInner(int32_t uid);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 
     void ForceCancelSuspendDelay(int32_t requestId);
@@ -78,10 +80,12 @@ private:
     bool GetBundleNamesForUid(int32_t uid, std::string &bundleName);
     bool VerifyCallingInfo(int32_t uid, int32_t pid);
     bool VerifyRequestIdLocked(const std::string& name, int32_t uid, int32_t requestId);
+    bool CheckProcessName();
     ErrCode CancelSuspendDelayLocked(int32_t requestId);
     void NotifyTransientTaskSuscriber(const shared_ptr<TransientTaskAppInfo>& appInfo,
         const TransientTaskEventType type);
     bool DumpAllRequestId(std::vector<std::string> &dumpInfo);
+    void DumpTaskTime(const std::vector<std::string> &dumpOption, bool pause, std::vector<std::string> &dumpInfo);
     void SendLowBatteryEvent(std::vector<std::string> &dumpInfo);
     void SendOkayBatteryEvent(std::vector<std::string> &dumpInfo);
     void InitNecessaryState(const std::shared_ptr<AppExecFwk::EventRunner>& runner);

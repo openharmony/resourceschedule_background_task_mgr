@@ -731,6 +731,70 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_003, TestSize.Level1)
 }
 
 /**
+ * @tc.name: DecisionMakerTest_004
+ * @tc.desc: test PauseTransientTaskTimeForInner.
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_004, TestSize.Level1)
+{
+    auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
+    auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
+    auto timerManager = std::make_shared<TimerManager>(bgtaskService,
+        AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
+
+    decisionMaker->pkgBgDurationMap_.clear();
+    std::string name = "bundleName1";
+    int32_t uid = 1;
+    EXPECT_EQ(decisionMaker->PauseTransientTaskTimeForInner(uid, name), ERR_BGTASK_FOREGROUND);
+
+    auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
+    decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
+    decisionMaker->pkgDelaySuspendInfoMap_.clear();
+    EXPECT_EQ(decisionMaker->PauseTransientTaskTimeForInner(uid, name), ERR_BGTASK_NOREQUEST_TASK);
+    
+    auto keyInfo1 = std::make_shared<KeyInfo>("bundleName1", 1);
+    auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", 1, timerManager);
+    auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1);
+    pkgDelaySuspendInfo->requestList_.push_back(delayInfo);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
+    EXPECT_EQ(decisionMaker->PauseTransientTaskTimeForInner(uid, name), ERR_OK);
+}
+
+/**
+ * @tc.name: DecisionMakerTest_005
+ * @tc.desc: test StartTransientTaskTimeForInner.
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_005, TestSize.Level1)
+{
+    auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
+    auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
+    auto timerManager = std::make_shared<TimerManager>(bgtaskService,
+        AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
+
+    decisionMaker->pkgBgDurationMap_.clear();
+    std::string name = "bundleName1";
+    int32_t uid = 1;
+    EXPECT_EQ(decisionMaker->StartTransientTaskTimeForInner(uid, name), ERR_BGTASK_FOREGROUND);
+
+    auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
+    decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
+    decisionMaker->pkgDelaySuspendInfoMap_.clear();
+    EXPECT_EQ(decisionMaker->StartTransientTaskTimeForInner(uid, name), ERR_BGTASK_NOREQUEST_TASK);
+    
+    auto keyInfo1 = std::make_shared<KeyInfo>("bundleName1", 1);
+    auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", 1, timerManager);
+    auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1);
+    pkgDelaySuspendInfo->requestList_.push_back(delayInfo);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
+    EXPECT_EQ(decisionMaker->StartTransientTaskTimeForInner(uid, name), ERR_OK);
+}
+
+/**
  * @tc.name: DelaySuspendInfoEx_001
  * @tc.desc: test DelaySuspendInfoEx.
  * @tc.type: FUNC

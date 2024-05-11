@@ -35,6 +35,8 @@ namespace BackgroundTaskMgr {
         GET_EFFICIENCY_RESOURCES_INFOS,
         STOP_CONTINUOUS_TASK,
         REQUEST_BACKGROUND_RUNNING_FOR_INNER,
+        PAUSE_TRANSIENT_TASK_TIME_FOR_INNER,
+        START_TRANSIENT_TASK_TIME_FOR_INNER,
     };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
