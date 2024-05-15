@@ -757,9 +757,9 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_033, TestSize.Level1)
     continuousTaskRecord1->notificationLabel_ = "label1";
 
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord1->pid_ = TEST_NUM_TWO;
-    continuousTaskRecord1->notificationLabel_ = "label1";
-    continuousTaskRecord1->notificationId_ = 100;
+    continuousTaskRecord2->pid_ = TEST_NUM_TWO;
+    continuousTaskRecord2->notificationLabel_ = "label1";
+    continuousTaskRecord2->notificationId_ = 100;
 
     std::vector<AppExecFwk::RunningProcessInfo> allProcesses;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
