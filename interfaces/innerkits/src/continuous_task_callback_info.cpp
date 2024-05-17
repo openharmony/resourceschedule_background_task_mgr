@@ -63,6 +63,11 @@ bool ContinuousTaskCallbackInfo::IsFromWebview() const
     return isFromWebview_;
 }
 
+uint64_t ContinuousTaskCallbackInfo::GetTokenId() const
+{
+    return tokenId_;
+}
+
 bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteUint32(typeId_)) {
