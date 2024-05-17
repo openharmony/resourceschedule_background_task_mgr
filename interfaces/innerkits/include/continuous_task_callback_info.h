@@ -90,6 +90,13 @@ public:
     int GetAbilityId() const;
 
     /**
+     * @brief Get the tokenId.
+     *
+     * @return The tokenId.
+     */
+    uint64_t GetTokenId() const;
+
+    /**
      * @brief Marshals a purpose into a parcel.
      *
      * @param parcel Indicates the parcel object for marshalling.
