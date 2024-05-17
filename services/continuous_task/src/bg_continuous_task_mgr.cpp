@@ -1075,7 +1075,7 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
     for (auto record : continuousTaskInfosMap_) {
         auto appInfo = std::make_shared<ContinuousTaskCallbackInfo>(record.second->bgModeId_, record.second->uid_,
             record.second->pid_, record.second->abilityName_, record.second->isFromWebview_, record.second->isBatchApi_,
-            record.second->bgModeIds_, record.second->abilityId_);
+            record.second->bgModeIds_, record.second->abilityId_, record.second->fullTokenId_);
         list.push_back(appInfo);
     }
     return ERR_OK;
