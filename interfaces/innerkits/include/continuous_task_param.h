@@ -55,10 +55,12 @@ struct ContinuousTaskParamForInner : public Parcelable {
     uint32_t bgModeId_ {0};
     bool isStart_ {false};
     int32_t abilityId_ {-1};
+    uint64_t tokenId_ {0};
 
     ContinuousTaskParamForInner() = default;
-    ContinuousTaskParamForInner(int32_t uid, uint32_t bgModeId, bool isStart, int32_t abilityId = -1)
-        : uid_(uid), bgModeId_(bgModeId), isStart_(isStart), abilityId_(abilityId) {}
+    ContinuousTaskParamForInner(int32_t uid, uint32_t bgModeId, bool isStart, int32_t abilityId = -1,
+        uint64_t tokenId)
+        : uid_(uid), bgModeId_(bgModeId), isStart_(isStart), abilityId_(abilityId), tokenId_(tokenId) {}
 
     bool ReadFromParcel(Parcel &parcel);
     bool Marshalling(Parcel &parcel) const override;
