@@ -59,7 +59,7 @@ struct ContinuousTaskParamForInner : public Parcelable {
 
     ContinuousTaskParamForInner() = default;
     ContinuousTaskParamForInner(int32_t uid, uint32_t bgModeId, bool isStart, int32_t abilityId = -1,
-        uint64_t tokenId)
+        uint64_t tokenId = 0)
         : uid_(uid), bgModeId_(bgModeId), isStart_(isStart), abilityId_(abilityId), tokenId_(tokenId) {}
 
     bool ReadFromParcel(Parcel &parcel);
