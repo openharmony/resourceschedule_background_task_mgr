@@ -580,7 +580,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
 {
     ErrCode result = ERR_OK;
     int32_t uid = taskParam->uid_;
-    pid_t callingPid = IPCSkeleton::GetCallingPid(); 
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
     uint64_t fullTokenId = ((uid == VOIP_SA_UID) ? taskParam->tokenId_ : IPCSkeleton::GetCallingFullTokenID());
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
     std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
