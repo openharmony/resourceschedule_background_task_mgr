@@ -208,11 +208,12 @@ void BgContinuousTaskMgr::HandlePersistenceData()
 bool BgContinuousTaskMgr::CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
     int32_t uid)
 {
-    auto findUid = [uid](const auto &target) {
-        return uid == target.uid_;
-    };
-    auto findUidIter = find_if(allProcesses.begin(), allProcesses.end(), findUid);
-    return findUidIter != allProcesses.end();
+    for (const auto &runningProcessInfo : allProcesses) {
+        if (runningProcessInfo.uid_ == uid) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses)
