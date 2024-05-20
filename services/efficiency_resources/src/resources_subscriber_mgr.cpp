@@ -132,7 +132,7 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
     BGTASK_LOGD("efficiency resources on resources changed function succeed");
 }
 
-void ResourcesSubscriberMgr::HiSysEventResources(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
+void ResourcesSubscriberMgr::HiSysEventResources(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
     EfficiencyResourcesEventType type)
 {
     if (callbackInfo == nullptr) {
@@ -141,34 +141,28 @@ void ResourcesSubscriberMgr::HiSysEventResources(const std::shared_ptr<ResourceC
     }
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
-            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_APPLY",
-                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
-                "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
-                "BGMODE", HISYSEVENT_APP_RESOURCE_APPLY,
-                "UIABILITY_IDENTITY", callbackInfo->GetResourceNumber());
+            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_APPLY);
             break;
         case EfficiencyResourcesEventType::RESOURCE_APPLY:
-            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_APPLY",
-                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
-                "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
-                "BGMODE", HISYSEVENT_RESOURCE_APPLY,
-                "UIABILITY_IDENTITY", callbackInfo->GetResourceNumber());
+            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_APPLY);
             break;
         case EfficiencyResourcesEventType::APP_RESOURCE_RESET:
-            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_CANCEL",
-                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
-                "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
-                "BGMODE", HISYSEVENT_APP_RESOURCE_RESET,
-                "UIABILITY_IDENTITY", callbackInfo->GetResourceNumber());
+            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_APPLY);
             break;
         case EfficiencyResourcesEventType::RESOURCE_RESET:
-            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_CANCEL",
-                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
-                "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
-                "BGMODE", HISYSEVENT_RESOURCE_RESET,
-                "UIABILITY_IDENTITY", callbackInfo->GetResourceNumber());
+            HiSysEventSubmit(callbackInfo, HISYSEVENT_RESOURCE_RESET);
             break;
     }
+}
+
+void ResourcesSubscriberMgr::HiSysEventSubmit(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
+    int32_t hiSysEventType)
+{
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_CANCEL",
+        HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
+        "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
+        "BGMODE", hiSysEventType,
+        "UIABILITY_IDENTITY", callbackInfo->GetResourceNumber());
 }
 
 void ResourcesSubscriberMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& remote)
