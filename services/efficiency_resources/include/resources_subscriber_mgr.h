@@ -42,7 +42,7 @@ enum : int32_t {
     HISYSEVENT_APP_RESOURCE_RESET,
     HISYSEVENT_RESOURCE_APPLY,
     HISYSEVENT_RESOURCE_RESET,
-}
+};
 
 class ResourcesSubscriberMgr : public std::enable_shared_from_this<ResourcesSubscriberMgr>  {
     DECLARE_DELAYED_SINGLETON(ResourcesSubscriberMgr);
