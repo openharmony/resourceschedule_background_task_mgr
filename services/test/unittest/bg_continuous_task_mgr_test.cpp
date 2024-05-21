@@ -776,7 +776,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_033, TestSize.Level1)
     allProcesses.push_back(processInfo1);
     allProcesses.push_back(processInfo2);
     bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
-    EXPECT_NE(allProcesses, nullptr);
 #endif
 }
 
