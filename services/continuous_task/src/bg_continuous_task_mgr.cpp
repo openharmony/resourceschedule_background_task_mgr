@@ -219,11 +219,10 @@ bool BgContinuousTaskMgr::CheckProcessUidInfo(const std::vector<AppExecFwk::Runn
 void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses)
 {
     auto iter = continuousTaskInfosMap_.begin();
-    bool pidIsAlive = false;
     int32_t maxId = -1;
 
     while (iter != continuousTaskInfosMap_.end()) {
-        pidIsAlive = checkPidCondition(allProcesses, iter->second->GetPid());
+        bool pidIsAlive = checkPidCondition(allProcesses, iter->second->GetPid());
         int32_t notificationId = iter->second->GetNotificationId();
         if (notificationId > maxId) {
             maxId = notificationId;
