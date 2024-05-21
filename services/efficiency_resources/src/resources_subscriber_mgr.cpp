@@ -15,6 +15,7 @@
 
 #include "resources_subscriber_mgr.h"
 #include "efficiency_resource_log.h"
+#include "hisysevent.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -101,6 +102,7 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
         BGTASK_LOGW("Background Task Subscriber List is empty");
         return;
     }
+    HiSysEventResources(callbackInfo, type);
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
             BGTASK_LOGD("start callback function of app resources application");
@@ -128,6 +130,39 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
             break;
     }
     BGTASK_LOGD("efficiency resources on resources changed function succeed");
+}
+
+void ResourcesSubscriberMgr::HiSysEventResources(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
+    EfficiencyResourcesEventType type)
+{
+    if (callbackInfo == nullptr) {
+        BGTASK_LOGE("ResourceCallbackInfo is null");
+        return;
+    }
+    switch (type) {
+        case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
+            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_APPLY);
+            break;
+        case EfficiencyResourcesEventType::RESOURCE_APPLY:
+            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_APPLY);
+            break;
+        case EfficiencyResourcesEventType::APP_RESOURCE_RESET:
+            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_APPLY);
+            break;
+        case EfficiencyResourcesEventType::RESOURCE_RESET:
+            HiSysEventSubmit(callbackInfo, HISYSEVENT_RESOURCE_RESET);
+            break;
+    }
+}
+
+void ResourcesSubscriberMgr::HiSysEventSubmit(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
+    int32_t hiSysEventType)
+{
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_CANCEL",
+        HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
+        "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
+        "BGMODE", hiSysEventType,
+        "UIABILITY_IDENTITY", callbackInfo->GetResourceNumber());
 }
 
 void ResourcesSubscriberMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& remote)

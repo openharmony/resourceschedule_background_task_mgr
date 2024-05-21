@@ -37,6 +37,13 @@ enum class EfficiencyResourcesEventType: uint32_t {
     RESOURCE_RESET,
 };
 
+enum : int32_t {
+    HISYSEVENT_APP_RESOURCE_APPLY = 10000,
+    HISYSEVENT_APP_RESOURCE_RESET,
+    HISYSEVENT_RESOURCE_APPLY,
+    HISYSEVENT_RESOURCE_RESET,
+};
+
 class ResourcesSubscriberMgr : public std::enable_shared_from_this<ResourcesSubscriberMgr>  {
     DECLARE_DELAYED_SINGLETON(ResourcesSubscriberMgr);
 public:
@@ -45,6 +52,10 @@ public:
     void OnResourceChanged(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
         EfficiencyResourcesEventType type);
     void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
+    void HiSysEventResources(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
+        EfficiencyResourcesEventType type);
+    void HiSysEventSubmit(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
+        int32_t hiSysEventType);
 
 private:
     std::mutex subscriberLock_;
