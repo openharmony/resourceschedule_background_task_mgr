@@ -547,3 +547,4 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_016
     EXPECT_EQ(backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid), ERR_BGTASK_PARCELABLE_FAILED);
 }
 }
+}
