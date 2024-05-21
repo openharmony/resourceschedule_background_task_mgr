@@ -52,12 +52,13 @@ public:
     void OnResourceChanged(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
         EfficiencyResourcesEventType type);
     void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
+
+private:
     void HiSysEventResources(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
         EfficiencyResourcesEventType type);
     void HiSysEventSubmit(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
-        int32_t hiSysEventType);
+        int32_t hiSysEventType, const std::string &taskType);
 
-private:
     std::mutex subscriberLock_;
     std::list<sptr<IBackgroundTaskSubscriber>> subscriberList_ {};
     sptr<ObserverDeathRecipient> deathRecipient_ {nullptr};
