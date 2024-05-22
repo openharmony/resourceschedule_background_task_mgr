@@ -144,7 +144,7 @@ void ResourcesSubscriberMgr::HiSysEventResources(const std::shared_ptr<ResourceC
             HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_APPLY, "CONTINUOUS_TASK_APPLY");
             break;
         case EfficiencyResourcesEventType::RESOURCE_APPLY:
-            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_APPLY, "CONTINUOUS_TASK_APPLY");
+            HiSysEventSubmit(callbackInfo, HISYSEVENT_RESOURCE_APPLY, "CONTINUOUS_TASK_APPLY");
             break;
         case EfficiencyResourcesEventType::APP_RESOURCE_RESET:
             HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_RESET), "CONTINUOUS_TASK_CANCEL");
@@ -158,7 +158,7 @@ void ResourcesSubscriberMgr::HiSysEventResources(const std::shared_ptr<ResourceC
 void ResourcesSubscriberMgr::HiSysEventSubmit(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
     int32_t hiSysEventType, const std::string &taskType)
 {
-    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, taskType,
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, taskType.c_str(),
         HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
         "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
         "BGMODE", hiSysEventType,
