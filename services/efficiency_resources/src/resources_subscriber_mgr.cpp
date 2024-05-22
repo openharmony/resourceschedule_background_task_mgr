@@ -156,9 +156,9 @@ void ResourcesSubscriberMgr::HiSysEventResources(const std::shared_ptr<ResourceC
 }
 
 void ResourcesSubscriberMgr::HiSysEventSubmit(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
-    int32_t hiSysEventType, const std::string &taskType)
+    int32_t hiSysEventType, const std::string &eventType)
 {
-    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, taskType.c_str(),
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, eventType.c_str(),
         HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
         "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
         "BGMODE", hiSysEventType,
