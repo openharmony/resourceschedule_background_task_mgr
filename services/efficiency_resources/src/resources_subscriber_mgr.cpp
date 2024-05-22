@@ -147,7 +147,7 @@ void ResourcesSubscriberMgr::HiSysEventResources(const std::shared_ptr<ResourceC
             HiSysEventSubmit(callbackInfo, HISYSEVENT_RESOURCE_APPLY, "CONTINUOUS_TASK_APPLY");
             break;
         case EfficiencyResourcesEventType::APP_RESOURCE_RESET:
-            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_RESET), "CONTINUOUS_TASK_CANCEL");
+            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_RESET, "CONTINUOUS_TASK_CANCEL");
             break;
         case EfficiencyResourcesEventType::RESOURCE_RESET:
             HiSysEventSubmit(callbackInfo, HISYSEVENT_RESOURCE_RESET, "CONTINUOUS_TASK_CANCEL");
