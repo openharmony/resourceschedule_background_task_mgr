@@ -128,15 +128,15 @@ ContinuousTaskCallbackInfo *ContinuousTaskCallbackInfo::Unmarshalling(Parcel &pa
 
 bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
 {
-    if (parcel.ReadUint32(typeId_)) {
+    if (!parcel.ReadUint32(typeId_)) {
         BGTASK_LOGE("read parce typeId error");
         return false;
     }
-    if (parcel.ReadInt32(creatorUid_)) {
+    if (!parcel.ReadInt32(creatorUid_)) {
         BGTASK_LOGE("read parce creatorUid error");
         return false;
     }
-    if (parcel.ReadInt32(creatorPid_)) {
+    if (!parcel.ReadInt32(creatorPid_)) {
         BGTASK_LOGE("read parce creatorPid error");
         return false;
     }
@@ -161,11 +161,11 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
         return false;
     }
     BGTASK_LOGD("read parce typeIds_ size %{public}u", static_cast<uint32_t>(typeIds_.size()));
-    if (parcel.ReadInt32(abilityId_)) {
+    if (!parcel.ReadInt32(abilityId_)) {
         BGTASK_LOGE("read parce abilityId error");
         return false;
     }
-    if (parcel.ReadUint64(tokenId_)) {
+    if (!parcel.ReadUint64(tokenId_)) {
         BGTASK_LOGE("read parce tokenId error");
         return false;
     }
