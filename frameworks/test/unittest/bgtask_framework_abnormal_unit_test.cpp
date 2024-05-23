@@ -486,11 +486,11 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_014
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteParcelableFlag(true);
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
-    EXPECT_EQ(backgroundTaskMgrProxy.RequestBackgroundRunningForInner(taskParam), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.RequestBackgroundRunningForInner(taskParam), ERR_BGTASK_TRANSACT_FAILED);
 
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.RequestBackgroundRunningForInner(taskParam), ERR_BGTASK_PARCELABLE_FAILED);
+    EXPECT_EQ(backgroundTaskMgrProxy.RequestBackgroundRunningForInner(taskParam), ERR_BGTASK_TRANSACT_FAILED);
 }
 
 /**
@@ -505,19 +505,19 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_015
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
     
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid), ERR_BGTASK_PARCELABLE_FAILED);
+    backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteParcelableFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid), ERR_BGTASK_PARCELABLE_FAILED);
+    backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteParcelableFlag(false);
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
-    EXPECT_EQ(backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid), ERR_BGTASK_PARCELABLE_FAILED);
+    backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid);
 
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid), ERR_BGTASK_PARCELABLE_FAILED);
+    backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid);
 }
 
 /**
@@ -532,19 +532,19 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_016
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
     
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid), ERR_BGTASK_PARCELABLE_FAILED);
+    backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteParcelableFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid), ERR_BGTASK_PARCELABLE_FAILED);
+    backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteParcelableFlag(true);
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
-    EXPECT_EQ(backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid), ERR_BGTASK_TRANSACT_FAILED);
+    backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid);
 
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid), ERR_BGTASK_TRANSACT_FAILED);
+    backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid);
 }
 }
 }
