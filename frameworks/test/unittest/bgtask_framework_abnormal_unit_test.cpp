@@ -505,19 +505,19 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_015
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
     
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
-    backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid);
+    EXPECT_NE(backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid), 0);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
-    backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid);
+    EXPECT_NE(backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid), 0);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
-    backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid);
+    EXPECT_NE(backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid), 0);
 
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid);
+    EXPECT_NE(backgroundTaskMgrProxy.PauseTransientTaskTimeForInner(uid), 0);
 }
 
 /**
@@ -532,19 +532,19 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_016
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
     
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
-    backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid);
+    EXPECT_NE(backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid), 0);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
-    backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid);
+    EXPECT_NE(backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid), 0);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(true);
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
-    backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid);
+    EXPECT_NE(backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid), 0);
 
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid);
+    EXPECT_NE(backgroundTaskMgrProxy.StartTransientTaskTimeForInner(uid), 0);
 }
 }
 }
