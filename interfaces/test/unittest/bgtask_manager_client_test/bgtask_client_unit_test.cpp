@@ -443,6 +443,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetCreatorPid(), 1);
     EXPECT_EQ(info3->GetAbilityName(), "test");
     EXPECT_EQ(info3->IsFromWebview(), false);
+    EXPECT_EQ(info3->GetTokenId(), 0);
 }
 
 /**
