@@ -197,8 +197,8 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
     }
     if (value.find("wantAgentInfo") != value.end()) {
         nlohmann::json infoVal = value["wantAgentInfo"];
-        if (!CommonUtils::CheckJsonValue(infoVal, { "bundleName", "abilityName" }) || !infoVal["bundleName"].is_string()
-            || !infoVal["abilityName"].is_string()) {
+        if (!CommonUtils::CheckJsonValue(infoVal, { "bundleName", "abilityName" })
+            || !infoVal["bundleName"].is_string() || !infoVal["abilityName"].is_string()) {
             return false;
         }
         std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
