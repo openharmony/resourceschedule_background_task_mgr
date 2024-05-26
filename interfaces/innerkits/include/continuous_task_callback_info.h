@@ -87,7 +87,7 @@ public:
      *
      * @return The id of ability.
      */
-    int GetAbilityId() const;
+    int32_t GetAbilityId() const;
 
     /**
      * @brief Get the tokenId.

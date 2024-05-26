@@ -38,7 +38,7 @@ bool ContinuousTaskCallbackInfo::IsBatchApi() const
     return isBatchApi_;
 }
 
-int ContinuousTaskCallbackInfo::GetAbilityId() const
+int32_t ContinuousTaskCallbackInfo::GetAbilityId() const
 {
     return abilityId_;
 }
@@ -128,10 +128,18 @@ ContinuousTaskCallbackInfo *ContinuousTaskCallbackInfo::Unmarshalling(Parcel &pa
 
 bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
 {
-    typeId_ = parcel.ReadUint32();
-
-    creatorUid_ = static_cast<int32_t>(parcel.ReadInt32());
-    creatorPid_ = static_cast<pid_t>(parcel.ReadInt32());
+    if (!parcel.ReadUint32(typeId_)) {
+        BGTASK_LOGE("read parce typeId error");
+        return false;
+    }
+    if (!parcel.ReadInt32(creatorUid_)) {
+        BGTASK_LOGE("read parce creatorUid error");
+        return false;
+    }
+    if (!parcel.ReadInt32(creatorPid_)) {
+        BGTASK_LOGE("read parce creatorPid error");
+        return false;
+    }
 
     if (!parcel.ReadBool(isFromWebview_)) {
         BGTASK_LOGE("Failed to read the flag which indicates from webview");
@@ -153,8 +161,14 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
         return false;
     }
     BGTASK_LOGD("read parce typeIds_ size %{public}u", static_cast<uint32_t>(typeIds_.size()));
-    abilityId_ = static_cast<int32_t>(parcel.ReadInt32());
-    tokenId_ = parcel.ReadUint64();
+    if (!parcel.ReadInt32(abilityId_)) {
+        BGTASK_LOGE("read parce abilityId error");
+        return false;
+    }
+    if (!parcel.ReadUint64(tokenId_)) {
+        BGTASK_LOGE("read parce tokenId error");
+        return false;
+    }
     return true;
 }
 }  // namespace BackgroundTaskMgr
