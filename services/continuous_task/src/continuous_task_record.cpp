@@ -166,7 +166,7 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["userId"].is_number_integer() || !value["uid"].is_number_integer()
         || !value["pid"].is_number_integer() || !value["bgModeId"].is_number_integer()
         || !value["isNewApi"].is_boolean() || !value["isFromWebview"].is_boolean()
-        || !value["notificationLabel"].is_string()
+        || !value["notificationLabel"].is_string();
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
