@@ -55,6 +55,7 @@ constexpr int32_t SERVICE_WAIT_TIME = 2000;
 const std::set<std::string> SUSPEND_NATIVE_OPERATE_CALLER = {
     "resource_schedule_service",
     "hidumper_service",
+    "samgr",
 };
 }
 
@@ -261,6 +262,7 @@ ErrCode BgTransientTaskMgr::PauseTransientTaskTimeForInner(int32_t uid)
             name.c_str(), uid);
         return ret;
     }
+    transientPauseUid_.insert(uid);
     return ERR_OK;
 }
 
@@ -292,6 +294,7 @@ ErrCode BgTransientTaskMgr::StartTransientTaskTimeForInner(int32_t uid)
             name.c_str(), uid);
         return ret;
     }
+    transientPauseUid_.erase(uid);
     return ERR_OK;
 }
 
@@ -754,6 +757,11 @@ void SubscriberDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
         return;
     }
     service->HandleSubscriberDeath(remote);
+}
+
+std::set<int32_t>& BgTransientTaskMgr::GetTransientPauseUid()
+{
+    return transientPauseUid_;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

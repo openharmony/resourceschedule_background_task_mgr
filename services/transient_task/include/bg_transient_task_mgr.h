@@ -73,6 +73,7 @@ public:
     void HandleRequestExpired(const int32_t requestId);
     void HandleTransientTaskSuscriberTask(const shared_ptr<TransientTaskAppInfo>& appInfo,
         const TransientTaskEventType type);
+    std::set<int32_t>& GetTransientPauseUid();
 
 private:
     ErrCode IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
@@ -105,6 +106,7 @@ private:
     std::shared_ptr<DeviceInfoManager> deviceInfoManeger_ {nullptr};
     std::shared_ptr<DecisionMaker> decisionMaker_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
+    std::set<int32_t> transientPauseUid_ {};
 };
 
 class SubscriberDeathRecipient final : public IRemoteObject::DeathRecipient {
