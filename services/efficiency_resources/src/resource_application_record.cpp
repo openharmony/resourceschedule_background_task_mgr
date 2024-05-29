@@ -92,7 +92,8 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
     }
     if (!CommonUtils::CheckJsonValue(value, {"uid", "pid", "bundleName", "resourceNumber"}) ||
         !value.at("uid").is_number_integer() || !value.at("pid").is_number_integer() ||
-        !value.at("bundleName").is_string() || !value.at("resourceNumber").is_number_integer()) {
+        !value.at("bundleName").is_string() || !value.at("resourceNumber").is_number_integer() ||
+        !value.at("resourceUnitList").is_object()) {
         BGTASK_LOGE("checkJsonValue of value is failed");
         return false;
     }

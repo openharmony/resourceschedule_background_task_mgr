@@ -160,10 +160,23 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     return root.dump(CommonUtils::jsonFormat_);
 }
 
+bool CheckContinuousRecod(const nlohmann::json &value)
+{
+    return !value["bundleName"].is_string() || !value["abilityName"].is_string()
+        || !value["userId"].is_number_integer() || !value["uid"].is_number_integer()
+        || !value["pid"].is_number_integer() || !value["bgModeId"].is_number_integer()
+        || !value["isNewApi"].is_boolean() || !value["isFromWebview"].is_boolean()
+        || !value["notificationLabel"].is_string();
+}
+
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
 {
     if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value, { "bundleName",
         "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel" })) {
+        return false;
+    }
+    if (CheckContinuousRecod(value)) {
+        BGTASK_LOGE("continuoustaskrecord parse from json fail");
         return false;
     }
     this->bundleName_ = value.at("bundleName").get<std::string>();
@@ -184,7 +197,8 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
     }
     if (value.find("wantAgentInfo") != value.end()) {
         nlohmann::json infoVal = value["wantAgentInfo"];
-        if (!CommonUtils::CheckJsonValue(infoVal, { "bundleName", "abilityName" })) {
+        if (!CommonUtils::CheckJsonValue(infoVal, { "bundleName", "abilityName" })
+            || !infoVal["bundleName"].is_string() || !infoVal["abilityName"].is_string()) {
             return false;
         }
         std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
