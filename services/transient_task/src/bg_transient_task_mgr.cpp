@@ -55,7 +55,6 @@ constexpr int32_t SERVICE_WAIT_TIME = 2000;
 const std::set<std::string> SUSPEND_NATIVE_OPERATE_CALLER = {
     "resource_schedule_service",
     "hidumper_service",
-    "samgr",
 };
 }
 
