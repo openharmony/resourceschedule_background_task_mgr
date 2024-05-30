@@ -427,8 +427,18 @@ void DecisionMaker::HandleScreenOn()
 void DecisionMaker::HandleScreenOff()
 {
     lock_guard<mutex> lock(lock_);
+    std::set<int32_t> &transientPauseUid = DelayedSingleton<BgTransientTaskMgr>::GetInstance()
+        ->GetTransientPauseUid();
     for (const auto &p : pkgDelaySuspendInfoMap_) {
         auto pkgInfo = p.second;
+        auto findUid = [&pkgInfo](const auto &target) {
+            return pkgInfo->GetUid() == target;
+        };
+        auto findUidIter = find_if(transientPauseUid.begin(), transientPauseUid.end(), findUid);
+        if (findUidIter != transientPauseUid.end()) {
+            BGTASK_LOGD("transient task freeze, not can start.");
+            continue;
+        }
         if (CanStartAccountingLocked(pkgInfo)) {
             pkgInfo->StartAccounting();
         }
