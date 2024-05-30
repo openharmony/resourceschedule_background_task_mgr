@@ -432,8 +432,8 @@ void DecisionMaker::HandleScreenOff()
     for (const auto &p : pkgDelaySuspendInfoMap_) {
         auto pkgInfo = p.second;
         auto findUid = [&pkgInfo](const auto &target) {
-            return pkgInfo->GetUid() = target;
-        }
+            return pkgInfo->GetUid() == target;
+        };
         auto findUidIter = find_if(transientPauseUid.begin(), transientPauseUid.end(), findUid);
         if (findUidIter != transientPauseUid.end()) {
             BGTASK_LOGD("transient task freeze, not can start.");
