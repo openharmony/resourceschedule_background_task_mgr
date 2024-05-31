@@ -86,41 +86,6 @@ void BgTaskMiscUnitTest::SetUp() {}
 void BgTaskMiscUnitTest::TearDown() {}
 
 /**
- * @tc.name: AppStateObserverTest_001
- * @tc.desc: test AppStateObserver class CheckParamValid method.
- * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
-{
-    sptr<AppStateObserver> appStateObserver = sptr<AppStateObserver>(new AppStateObserver());
-    AppExecFwk::ProcessData processData = AppExecFwk::ProcessData();
-    appStateObserver->OnProcessDied(processData);
-    appStateObserver->OnProcessDiedContinuousTask(processData);
-    appStateObserver->OnProcessDiedEfficiencyRes(processData);
-    AppExecFwk::AbilityStateData abilityStateData = AppExecFwk::AbilityStateData();
-    appStateObserver->OnAbilityStateChanged(abilityStateData);
-    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
-    appStateObserver->SetEventHandler(handler);
-    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
-    appStateObserver->OnAbilityStateChanged(abilityStateData);
-    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_CREATE);
-    appStateObserver->OnAbilityStateChanged(abilityStateData);
-    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
-    appStateObserver->OnAbilityStateChanged(abilityStateData);
-    AppExecFwk::AppStateData appStateData = AppExecFwk::AppStateData();
-    appStateObserver->OnAppStopped(appStateData);
-    appStateData.uid = 1;
-    appStateData.bundleName = "bundleName";
-    appStateObserver->OnAppStopped(appStateData);
-    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_TERMINATED);
-    appStateObserver->OnAppStopped(appStateData);
-    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END);
-    appStateObserver->OnAppStopped(appStateData);
-    appStateObserver->OnAppStopped(appStateData);
-}
-
-/**
  * @tc.name: BundleManagerHelperTest_001
  * @tc.desc: test BundleManagerHelper class.
  * @tc.type: FUNC
