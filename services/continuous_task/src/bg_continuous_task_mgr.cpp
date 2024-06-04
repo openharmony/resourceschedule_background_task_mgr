@@ -1266,7 +1266,8 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->uid_ == uid && ((iter->second->abilityName_ == abilityName &&
-            iter->second->abilityId_ == abilityId) || (iter->second->isFromWebview_))) {
+            iter->second->abilityId_ == abilityId) ||
+            (iter->second->isFromWebview_ && iter->second->bgModeId_ != BackgroundMode::VOIP))) {
             auto record = iter->second;
             BGTASK_LOGI("OnAbilityStateChanged uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
                 "bgModeId: %{public}d, abilityId: %{public}d", uid, record->bundleName_.c_str(),
