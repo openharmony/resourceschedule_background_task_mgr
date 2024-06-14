@@ -249,6 +249,12 @@ ErrCode BackgroundTaskMgrStub::HandleUpdateBackgroundRunning(MessageParcel &data
         FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
+    if (!reply.WriteInt32(taskParam->notificationId_)) {
+        BGTASK_LOGE("HandleUpdateBackgroundRunning write notificatinId failed");
+        FinishTrace(HITRACE_TAG_OHOS);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGI("write notificationId %{public}d", taskParam->notificationId_);
     FinishTrace(HITRACE_TAG_OHOS);
     return ERR_OK;
 }
