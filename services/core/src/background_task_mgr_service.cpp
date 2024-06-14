@@ -14,7 +14,7 @@
  */
 
 #include "background_task_mgr_service.h"
-
+#include "bundle_manager_helper.h"
 #include <functional>
 
 #include "ability_manager_client.h"
@@ -34,6 +34,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
+static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
@@ -162,7 +163,7 @@ ErrCode BackgroundTaskMgrService::StartTransientTaskTimeForInner(int32_t uid)
 
 ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
 {
-    if (!CheckCallingToken()) {
+    if (!CheckCallingToken() && !BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
         BGTASK_LOGW("GetContinuousTaskApps not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
