@@ -688,14 +688,14 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunning(const sptr<ContinuousTaskPa
             result = ERR_BGTASK_SERVICE_INNER_ERROR;
             return;
         }
-        result = self->UpdateBackgroundRunningInner(taskInfoMapKey, taskParam->bgModeIds_);
+        result = self->UpdateBackgroundRunningInner(taskInfoMapKey, taskParam);
         }, AppExecFwk::EventQueue::Priority::HIGH);
 
     return result;
 }
 
 ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
-    std::vector<uint32_t> &updateModes)
+    const sptr<ContinuousTaskParam> &taskParam)
 {
     ErrCode ret;
 
@@ -710,24 +710,26 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     BGTASK_LOGI("continuous task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d,"
         " abilityId %{public}d", continuousTaskRecord->bgModeId_,
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
-        continuousTaskRecord->ToString(updateModes).c_str(),
+        continuousTaskRecord->ToString(taskParam->bgModeIds_).c_str(),
         continuousTaskRecord->isBatchApi_, continuousTaskRecord->abilityId_);
 
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_, continuousTaskRecord->abilityName_);
-    for (auto it =  updateModes.begin(); it != updateModes.end(); it++) {
+    for (auto it =  taskParam->bgModeIds_.begin(); it != taskParam->bgModeIds_.end(); it++) {
         ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord->fullTokenId_);
         if (ret != ERR_OK) {
             BGTASK_LOGE("CheckBgmodeType error!");
             return ret;
         }
     }
-    continuousTaskRecord->bgModeIds_ = updateModes;
+    continuousTaskRecord->bgModeIds_ = taskParam->bgModeIds_;
+    continuousTaskRecord->isBatchApi_ = taskParam->isBatchApi_;
     ret = SendContinuousTaskNotification(continuousTaskRecord);
     if (ret != ERR_OK) {
         BGTASK_LOGE("publish error");
         return ret;
     }
     OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_UPDATE);
+    taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
     return RefreshTaskRecord();
 }
 
