@@ -1525,7 +1525,7 @@ void BgContinuousTaskMgr::OnRemoveContinuousTask()
         return;
     }
     auto iter = continuousTaskInfosMap_.begin();
-    while(iter != continuousTaskInfosMap_.end()) {
+    while (iter != continuousTaskInfosMap_.end()) {
         auto record = iter->second;
         if (record->isFromWebview_) {
             auto it = std::find_if(record->bgModeIds_.begin(), record->bgModeId_.end(), [](auto mode) {
@@ -1553,7 +1553,7 @@ void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const s
 {
     BGTASK_LOGI("remove system ability, systemAbilityId: %{public}d", systemAbilityId);
     std::lock_guard<mutex> lock(sysAbilityLock_);
-    switch(systemAbilityId) {
+    switch (systemAbilityId) {
         case SA_ID_VOIP_CALL_MANAGER:
             dependsReady_ = SA_VOIP_CALL_MANAGER_REMOVE;
             break;
