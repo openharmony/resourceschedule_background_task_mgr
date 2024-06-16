@@ -84,7 +84,7 @@ public:
     void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
-    void OnRemoveContinuousTask(); 
+    void OnRemoveContinuousTask();
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
