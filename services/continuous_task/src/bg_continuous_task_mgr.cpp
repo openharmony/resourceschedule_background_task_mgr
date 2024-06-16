@@ -1528,7 +1528,7 @@ void BgContinuousTaskMgr::OnRemoveContinuousTask()
     while (iter != continuousTaskInfosMap_.end()) {
         auto record = iter->second;
         if (record->isFromWebview_) {
-            auto it = std::find_if(record->bgModeIds_.begin(), record->bgModeId_.end(), [](auto mode) {
+            auto it = std::find_if(record->bgModeIds_.begin(), record->bgModeIds_.end(), [](auto mode) {
                 return mode == BackgroundMode::VOIP;
             });
             if (it != record->bgModeIds_.end()) {
