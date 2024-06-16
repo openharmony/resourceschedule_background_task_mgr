@@ -40,6 +40,10 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+namespace {
+    static constexpr uint32_t SA_VOIP_CALL_MANAGER_REMOVE = 1;
+    static constexpr uint32_t SA_ID_VOIP_CALL_MANAGER = 65968;
+}
 class BackgroundTaskMgrService;
 class DataStorageHelper;
 
@@ -79,6 +83,8 @@ public:
     int32_t GetBgTaskUid();
     void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
+    void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
+    void OnRemoveContinuousTask(); 
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
@@ -130,6 +136,9 @@ private:
     int32_t bgTaskUid_ {-1};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
+    uint32_t dependsReady_ = 0;
+    std::mutex sysAbilityLock_;
+
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};
 #endif
