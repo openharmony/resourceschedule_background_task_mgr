@@ -137,7 +137,6 @@ private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
     uint32_t dependsReady_ = 0;
-    std::mutex sysAbilityLock_;
 
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};
