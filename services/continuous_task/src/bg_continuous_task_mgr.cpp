@@ -1552,7 +1552,7 @@ void BgContinuousTaskMgr::OnRemoveContinuousTask()
 void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
     BGTASK_LOGI("remove system ability, systemAbilityId: %{public}d", systemAbilityId);
-    std::lock_guard<mutex> lock(sysAbilityLock_);
+    std::lock_guard<std::mutex> lock(sysAbilityLock_);
     switch (systemAbilityId) {
         case SA_ID_VOIP_CALL_MANAGER:
             dependsReady_ = SA_VOIP_CALL_MANAGER_REMOVE;
