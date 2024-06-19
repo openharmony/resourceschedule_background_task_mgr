@@ -39,7 +39,7 @@ public:
         return iter != bgModeIds.end();
     }
 
-    static bool CheckModeSame(const std::vector<uint32_t> &oldBgModeIds, const std::vector<uint32_t> &newBgModeIds)
+    static bool CheckModesSame(const std::vector<uint32_t> &oldBgModeIds, const std::vector<uint32_t> &newBgModeIds)
     {
         std::set<uint32_t> oldModesSet(oldBgModeIds.begin(), oldBgModeIds.end());
         std::set<uint32_t> oldModesSet(newBgModeIds.begin(), newBgModeIds.end());
