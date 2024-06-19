@@ -16,6 +16,7 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_CONTINUOUS_TASK_COMMON_UTILS_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_CONTINUOUS_TASK_COMMON_UTILS_H
 
+#include <set>
 #include "nlohmann/json.hpp"
 
 namespace OHOS {
@@ -30,6 +31,19 @@ public:
             }
         }
         return true;
+    }
+
+    static bool CheckExistMode(const std::vector<uint32_t> &bgModeIds, uint32_t bgMode)
+    {
+        auto iter = std::find(bgModeIds.begin(), bgModeIds.end(), bgMode);
+        return iter != bgModeIds.end();
+    }
+
+    static bool CheckModeSame(const std::vector<uint32_t> &oldBgModeIds, const std::vector<uint32_t> &newBgModeIds)
+    {
+        std::set<uint32_t> oldModesSet(oldBgModeIds.begin(), oldBgModeIds.end());
+        std::set<uint32_t> oldModesSet(newBgModeIds.begin(), newBgModeIds.end());
+        return oldBgModeIds == newBgModeIds;
     }
 
 public:
