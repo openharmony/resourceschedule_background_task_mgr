@@ -24,6 +24,7 @@
 #include "bundle_manager_helper.h"
 #include "common_event_support.h"
 #include "common_event_manager.h"
+#include "common_utils.h"
 #include "errors.h"
 #include "hitrace_meter.h"
 #include "if_system_ability_manager.h"
@@ -707,11 +708,18 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
 
     auto continuousTaskRecord = iter->second;
     auto oldModes = continuousTaskRecord->bgModeIds_;
+
     BGTASK_LOGI("continuous task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d,"
         " abilityId %{public}d", continuousTaskRecord->bgModeId_,
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
         continuousTaskRecord->ToString(taskParam->bgModeIds_).c_str(),
         continuousTaskRecord->isBatchApi_, continuousTaskRecord->abilityId_);
+    // update continuoustask by same modes.
+    if (CommonUtils::CheckModesSame(oldModes, taskParam->bgModeIds_)) {
+        BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same modes.",
+            continuousTaskRecord->uid_, continuousTaskRecord->bundleName_.c_str(), continuousTaskRecord->abilityId_);
+        return ERR_OK;
+    }
 
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_, continuousTaskRecord->abilityName_);
     for (auto it =  taskParam->bgModeIds_.begin(); it != taskParam->bgModeIds_.end(); it++) {
@@ -723,10 +731,18 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     }
     continuousTaskRecord->bgModeIds_ = taskParam->bgModeIds_;
     continuousTaskRecord->isBatchApi_ = taskParam->isBatchApi_;
-    ret = SendContinuousTaskNotification(continuousTaskRecord);
-    if (ret != ERR_OK) {
-        BGTASK_LOGE("publish error");
-        return ret;
+
+    // old and new task hava mode: DATA_TRANSFER, not update notification
+    if (CommonUtils::CheckExistMode(oldModes, BackgroundMode::DATA_TRANSFER) &&
+        CommonUtils::CheckExistMode(continuousTaskRecord->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+        BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same mode: DATA_TRANSFER",
+            continuousTaskRecord->uid_, continuousTaskRecord->bundleName_.c_str(), continuousTaskRecord->abilityId_);
+    } else {
+        ret = SendContinuousTaskNotification(continuousTaskRecord);
+        if (ret != ERR_OK) {
+            BGTASK_LOGE("publish error");
+            return ret;
+        }
     }
     OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_UPDATE);
     taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
