@@ -709,17 +709,17 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     auto continuousTaskRecord = iter->second;
     auto oldModes = continuousTaskRecord->bgModeIds_;
 
+    BGTASK_LOGI("continuous task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d,"
+        " abilityId %{public}d", continuousTaskRecord->bgModeId_,
+        continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
+        continuousTaskRecord->ToString(taskParam->bgModeIds_).c_str(),
+        continuousTaskRecord->isBatchApi_, continuousTaskRecord->abilityId_);
     // update continuoustask by same modes.
     if (CommonUtils::CheckModesSame(oldModes, taskParam->bgModeIds_)) {
         BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same modes.",
             continuousTaskRecord->uid_, continuousTaskRecord->bundleName_.c_str(), continuousTaskRecord->abilityId_);
         return ERR_OK;
     }
-    BGTASK_LOGI("continuous task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d,"
-        " abilityId %{public}d", continuousTaskRecord->bgModeId_,
-        continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
-        continuousTaskRecord->ToString(taskParam->bgModeIds_).c_str(),
-        continuousTaskRecord->isBatchApi_, continuousTaskRecord->abilityId_);
 
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_, continuousTaskRecord->abilityName_);
     for (auto it =  taskParam->bgModeIds_.begin(); it != taskParam->bgModeIds_.end(); it++) {
