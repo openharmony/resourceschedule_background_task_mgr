@@ -42,7 +42,7 @@ public:
     static bool CheckModesSame(const std::vector<uint32_t> &oldBgModeIds, const std::vector<uint32_t> &newBgModeIds)
     {
         std::set<uint32_t> oldModesSet(oldBgModeIds.begin(), oldBgModeIds.end());
-        std::set<uint32_t> oldModesSet(newBgModeIds.begin(), newBgModeIds.end());
+        std::set<uint32_t> newModesSet(newBgModeIds.begin(), newBgModeIds.end());
         return oldBgModeIds == newBgModeIds;
     }
 
