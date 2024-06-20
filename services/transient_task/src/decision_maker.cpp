@@ -103,6 +103,7 @@ void DecisionMaker::ResetAppMgrProxy()
 
 void DecisionMaker::AppMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
+    lock_guard<mutex> lock(decisionMaker_.lock_);
     decisionMaker_.ResetAppMgrProxy();
     decisionMaker_.GetAppMgrProxy();
 }
