@@ -43,7 +43,7 @@ public:
     {
         std::set<uint32_t> oldModesSet(oldBgModeIds.begin(), oldBgModeIds.end());
         std::set<uint32_t> newModesSet(newBgModeIds.begin(), newBgModeIds.end());
-        return oldBgModeIds == newBgModeIds;
+        return oldModesSet == newModesSet;
     }
 
 public:
