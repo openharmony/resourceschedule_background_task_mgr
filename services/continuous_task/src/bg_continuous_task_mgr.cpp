@@ -732,7 +732,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     continuousTaskRecord->bgModeIds_ = taskParam->bgModeIds_;
     continuousTaskRecord->isBatchApi_ = taskParam->isBatchApi_;
 
-    //
+    // old and new task hava mode: DATA_TRANSFER, not update notification
     if (CommonUtils::CheckExistMode(oldModes, BackgroundMode::DATA_TRANSFER) &&
         CommonUtils::CheckExistMode(continuousTaskRecord->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
         BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same mode: DATA_TRANSFER",
