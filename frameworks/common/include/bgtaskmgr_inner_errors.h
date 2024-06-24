@@ -112,8 +112,8 @@ const inline std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_BGTASK_KEEPING_TASK_VERIFY_ERR,
         "Continuous Task verification failed. TASK_KEEPING background mode only supported in particular device."},
     {ERR_BGTASK_INVALID_BGMODE, "Continuous Task verification failed. The bgMode is invalid."},
-    {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED,
-        "Notification verification failed for a continuous task. The title or text of the notification cannot be empty."},
+    {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED, "Notification verification failed for a continuous task."
+        " The title or text of the notification cannot be empty."},
     {ERR_BGTASK_NOTIFICATION_ERR, "Notification verification failed. Failed to send or cancel the notification."},
     {ERR_BGTASK_CREATE_FILE_ERR, "Continuous task storage failed. Failed to create the storage task file."},
     {ERR_BGTASK_GET_ACTUAL_FILE_ERR, "Task storage failed. Failed to get the actual storage task file."},
