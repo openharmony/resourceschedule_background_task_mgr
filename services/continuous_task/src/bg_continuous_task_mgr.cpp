@@ -1525,14 +1525,16 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         auto record = iter->second;
-        std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
+        if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+            std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
 
-        std::string notificationText {""};
-        uint32_t index = GetBgModeNameIndex(record->bgModeId_, record->isNewApi_);
-        if (index < BGMODE_NUMS) {
-            notificationText = continuousTaskText_.at(index);
+            std::string notificationText {""};
+            uint32_t index = GetBgModeNameIndex(record->bgModeId_, record->isNewApi_);
+            if (index < BGMODE_NUMS) {
+                notificationText = continuousTaskText_.at(index);
+            }
+            newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
         }
-        newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
         iter++;
     }
     NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
