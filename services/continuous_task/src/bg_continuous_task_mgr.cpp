@@ -1510,11 +1510,15 @@ std::string BgContinuousTaskMgr::GetMainAbilityLabel(const std::string &bundleNa
 
 void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration &configuration)
 {
-    BGTASK_LOGI("System language config has changed");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
     }
+    std::string languageChange = configuration.GetItem(AppExecFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    if (languageChange.empty()) {
+        return;
+    }
+    BGTASK_LOGI("System language config has changed");
     GetNotificationPrompt();
     cachedBundleInfos_.clear();
     std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
