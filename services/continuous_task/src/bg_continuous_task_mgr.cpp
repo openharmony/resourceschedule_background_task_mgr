@@ -1520,10 +1520,6 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
 
 void BgContinuousTaskMgr::HandleVoipTaskRemove()
 {
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return;
-    }
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         auto record = iter->second;
@@ -1544,6 +1540,10 @@ void BgContinuousTaskMgr::HandleVoipTaskRemove()
 
 void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
     switch (systemAbilityId) {
         case SA_ID_VOIP_CALL_MANAGER:
             {
