@@ -1518,7 +1518,7 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
     NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
 }
 
-void BgContinuousTaskMgr::OnRemoveContinuousTask()
+void BgContinuousTaskMgr::HandleVoipTaskRemove()
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
@@ -1527,22 +1527,15 @@ void BgContinuousTaskMgr::OnRemoveContinuousTask()
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         auto record = iter->second;
-        if (record->isFromWebview_) {
-            auto it = std::find_if(record->bgModeIds_.begin(), record->bgModeIds_.end(), [](auto mode) {
-                return mode == BackgroundMode::VOIP;
-            });
-            if (it != record->bgModeIds_.end()) {
-                BGTASK_LOGI("OnRemoveContinuousTask uid: %{public}d, bundleName: %{public}s, abilityName: %{public}s,"
-                    " bgModeId: %{public}d, abilityId: %{public}d", record->uid_, record->bundleName_.c_str(),
-                    record->abilityName_.c_str(), BackgroundMode::VOIP, record->abilityId_);
-                record->reason_ = SYSTEM_CANCEL;
-                OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
-                iter = continuousTaskInfosMap_.erase(iter);
-                HandleAppContinuousTaskStop(record->uid_);
-                RefreshTaskRecord();
-            } else {
-                iter++;
-            }
+        if (record->isFromWebview_ && CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::VOIP)) {
+            BGTASK_LOGI("HandleVoipTaskRemove uid: %{public}d, bundleName: %{public}s, abilityName: %{public}s,"
+                " bgModeId: %{public}d, abilityId: %{public}d", record->uid_, record->bundleName_.c_str(),
+                record->abilityName_.c_str(), BackgroundMode::VOIP, record->abilityId_);
+            record->reason_ = SYSTEM_CANCEL;
+            OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            iter = continuousTaskInfosMap_.erase(iter);
+            HandleAppContinuousTaskStop(record->uid_);
+            RefreshTaskRecord();
         } else {
             iter++;
         }
@@ -1551,17 +1544,16 @@ void BgContinuousTaskMgr::OnRemoveContinuousTask()
 
 void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
-    BGTASK_LOGI("remove system ability, systemAbilityId: %{public}d", systemAbilityId);
     switch (systemAbilityId) {
         case SA_ID_VOIP_CALL_MANAGER:
-            dependsReady_ = SA_VOIP_CALL_MANAGER_REMOVE;
+            {
+                BGTASK_LOGI("remove voip system ability, systemAbilityId: %{public}d", systemAbilityId);
+                auto task = [this]() { this->HandleVoipTaskRemove(); };
+                handler_->PostTask(task);
+            }
             break;
         default:
             break;
-    }
-    if (dependsReady_ == SA_VOIP_CALL_MANAGER_REMOVE) {
-        auto task = [this]() { this->OnRemoveContinuousTask(); };
-        handler_->PostSyncTask(task);
     }
 }
 }  // namespace BackgroundTaskMgr
