@@ -1514,7 +1514,7 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
         BGTASK_LOGW("manager is not ready");
         return;
     }
-    std::string languageChange = configuration.GetItem(AppExecFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    std::string languageChange = configuration.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
     if (languageChange.empty()) {
         return;
     }
