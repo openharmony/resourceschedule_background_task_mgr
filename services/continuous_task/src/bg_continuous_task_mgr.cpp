@@ -725,7 +725,8 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     for (auto it =  taskParam->bgModeIds_.begin(); it != taskParam->bgModeIds_.end(); it++) {
         ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord->fullTokenId_);
         if (ret != ERR_OK) {
-            BGTASK_LOGE("CheckBgmodeType error!");
+            BGTASK_LOGE("CheckBgmodeType error, config mode: %{public}u, apply mode: %{public}u.", configuredBgMode,
+                *it);
             return ret;
         }
     }
