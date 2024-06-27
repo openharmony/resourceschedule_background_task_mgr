@@ -14,4 +14,4 @@
     limitations under the License.
 -->
 
-<packageInfo package="com.ohos.backgroundtaskmgr.resources" label="长时任务通知提示资源" feature="应用申请长时任务后，系统会弹出通知，提醒用户有长时任务正在后台运行" author="华为终端有限公司"></packageInfo>
+<packageInfo package="com.ohos.backgroundtaskmgr.resources" label="长时任务通知提示资源" feature="应用申请长时任务后，系统会弹出通知，提醒用户有长时任务正在后台运行" author="OpenHarmony Team"></packageInfo>
