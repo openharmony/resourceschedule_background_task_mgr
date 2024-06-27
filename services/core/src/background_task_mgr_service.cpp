@@ -55,6 +55,7 @@ void BackgroundTaskMgrService::OnStart()
     Init();
     AddSystemAbilityListener(APP_MGR_SERVICE_ID);
     AddSystemAbilityListener(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    AddSystemAbilityListener(SA_ID_VOIP_CALL_MANAGER);
     if (!Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get())) {
         BGTASK_LOGE("Service start failed!");
         return;
@@ -71,6 +72,7 @@ void BackgroundTaskMgrService::OnAddSystemAbility(int32_t systemAbilityId, const
 void BackgroundTaskMgrService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
+    BgContinuousTaskMgr::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
 }
 
 void BackgroundTaskMgrService::Init()

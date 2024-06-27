@@ -1539,5 +1539,44 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
     }
     NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
 }
+
+void BgContinuousTaskMgr::HandleVoipTaskRemove()
+{
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        auto record = iter->second;
+        if (record->isFromWebview_ && CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::VOIP)) {
+            BGTASK_LOGI("HandleVoipTaskRemove uid: %{public}d, bundleName: %{public}s, abilityName: %{public}s,"
+                " bgModeId: %{public}d, abilityId: %{public}d", record->uid_, record->bundleName_.c_str(),
+                record->abilityName_.c_str(), BackgroundMode::VOIP, record->abilityId_);
+            record->reason_ = SYSTEM_CANCEL;
+            OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            iter = continuousTaskInfosMap_.erase(iter);
+            HandleAppContinuousTaskStop(record->uid_);
+            RefreshTaskRecord();
+        } else {
+            iter++;
+        }
+    }
+}
+
+void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+    switch (systemAbilityId) {
+        case SA_ID_VOIP_CALL_MANAGER:
+            {
+                BGTASK_LOGI("remove voip system ability, systemAbilityId: %{public}d", systemAbilityId);
+                auto task = [this]() { this->HandleVoipTaskRemove(); };
+                handler_->PostTask(task);
+            }
+            break;
+        default:
+            break;
+    }
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
