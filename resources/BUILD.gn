@@ -31,7 +31,6 @@ ohos_hap("backgroundtaskresources_hap") {
   certificate_profile = "./BackgroundTaskResources.p7b"
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
-  publicity_file = "publicity.xml"
   if (defined(sign_hap_py_path)) {
     certificate_profile = "${certificate_profile_path}"
     key_alias = "HwBackgroundTaskMgr release"
