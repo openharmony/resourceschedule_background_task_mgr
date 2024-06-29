@@ -74,7 +74,7 @@ public:
     void HandleTransientTaskSuscriberTask(const shared_ptr<TransientTaskAppInfo>& appInfo,
         const TransientTaskEventType type);
     void onRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
-    void HandleTransientTaskReStart();
+    void HandleTransientTaskRestart();
     std::set<int32_t>& GetTransientPauseUid();
 
 private:
