@@ -758,6 +758,40 @@ void SubscriberDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
     service->HandleSubscriberDeath(remote);
 }
 
+void BgTransientTaskMgr::HandleTransientTaskReStart()
+{
+    if (!transientPauseUid_.empty()) {
+        std::set<int32_t>& transientPauseUidSet = transientPauseUid_;
+        for (auto iter = transientPauseUidSet.begin(); iter != transientPauseUidSet.end(); iter++) {
+            int32_t uid = *iter;
+            ErrCode ret = StartTransientTaskTimeForInner(uid);
+            if (ret != ERR_OK) {
+                BGTASK_LOGE("transient task uid: %{public}d, restart fail.", uid);
+            }
+        }
+        transientPauseUid_.clear();
+    }
+}
+
+void BgTransientTaskMgr::onRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    if (!isReady_.load()) {
+        BGTASK_LOGE("Transient task manager is not ready.");
+        return;
+    }
+    switch (systemAbilityId) {
+        case SUSPEND_MANAGER_SYSTEM_ABILITY_ID:
+            {
+                BGTASK_LOGI("remove suspend manager system ability, systemAbilityId: %{public}d", systemAbilityId);
+                auto task = [this]() { this->HandleTransientTaskReStart(); };
+                handler_->PostTask(task);
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 std::set<int32_t>& BgTransientTaskMgr::GetTransientPauseUid()
 {
     return transientPauseUid_;
