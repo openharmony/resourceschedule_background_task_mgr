@@ -777,7 +777,7 @@ void BgTransientTaskMgr::HandleTransientTaskReStart()
     }
 }
 
-void BgTransientTaskMgr::onRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+void BgTransientTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
     if (!isReady_.load()) {
         BGTASK_LOGE("Transient task manager is not ready.");
@@ -787,7 +787,7 @@ void BgTransientTaskMgr::onRemoveSystemAbility(int32_t systemAbilityId, const st
         case SUSPEND_MANAGER_SYSTEM_ABILITY_ID:
             {
                 BGTASK_LOGI("remove suspend manager system ability, systemAbilityId: %{public}d", systemAbilityId);
-                auto task = [this]() { this->HandleTransientTaskRestart(); };
+                auto task = [this]() { this->HandleSuspendManagerDie(); };
                 handler_->PostTask(task);
             }
             break;
