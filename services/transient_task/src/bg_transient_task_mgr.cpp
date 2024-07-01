@@ -758,7 +758,7 @@ void SubscriberDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
     service->HandleSubscriberDeath(remote);
 }
 
-void BgTransientTaskMgr::HandleTransientTaskReStart()
+void BgTransientTaskMgr::HandleSuspendManagerDie()
 {
     if (!transientPauseUid_.empty()) {
         for (auto iter = transientPauseUid_.begin(); iter != transientPauseUid_.end(); iter++) {
