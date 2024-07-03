@@ -261,6 +261,7 @@ ErrCode BgTransientTaskMgr::PauseTransientTaskTimeForInner(int32_t uid)
             name.c_str(), uid);
         return ret;
     }
+    lock_guard<mutex> lock(transientUidLock_);
     transientPauseUid_.insert(uid);
     return ERR_OK;
 }
@@ -293,6 +294,7 @@ ErrCode BgTransientTaskMgr::StartTransientTaskTimeForInner(int32_t uid)
             name.c_str(), uid);
         return ret;
     }
+    lock_guard<mutex> lock(transientUidLock_);
     transientPauseUid_.erase(uid);
     return ERR_OK;
 }
@@ -773,6 +775,7 @@ void BgTransientTaskMgr::HandleSuspendManagerDie()
                 BGTASK_LOGE("transient task uid: %{public}d, restart fail.", uid);
             }
         }
+        lock_guard<mutex> lock(transientUidLock_);
         transientPauseUid_.clear();
     }
 }
