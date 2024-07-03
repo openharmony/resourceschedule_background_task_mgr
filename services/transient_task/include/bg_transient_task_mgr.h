@@ -108,7 +108,7 @@ private:
     std::shared_ptr<DeviceInfoManager> deviceInfoManeger_ {nullptr};
     std::shared_ptr<DecisionMaker> decisionMaker_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
-    // 多线程下，变量需要加锁
+    std::mutex transientUidLock_;
     std::set<int32_t> transientPauseUid_ {};
 };
 
