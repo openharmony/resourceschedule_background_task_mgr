@@ -73,6 +73,8 @@ public:
     void HandleRequestExpired(const int32_t requestId);
     void HandleTransientTaskSuscriberTask(const shared_ptr<TransientTaskAppInfo>& appInfo,
         const TransientTaskEventType type);
+    void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
+    void HandleSuspendManagerDie();
     std::set<int32_t>& GetTransientPauseUid();
 
 private:
@@ -106,6 +108,7 @@ private:
     std::shared_ptr<DeviceInfoManager> deviceInfoManeger_ {nullptr};
     std::shared_ptr<DecisionMaker> decisionMaker_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
+    std::mutex transientUidLock_;
     std::set<int32_t> transientPauseUid_ {};
 };
 

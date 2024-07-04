@@ -261,6 +261,7 @@ ErrCode BgTransientTaskMgr::PauseTransientTaskTimeForInner(int32_t uid)
             name.c_str(), uid);
         return ret;
     }
+    lock_guard<mutex> lock(transientUidLock_);
     transientPauseUid_.insert(uid);
     return ERR_OK;
 }
@@ -293,6 +294,7 @@ ErrCode BgTransientTaskMgr::StartTransientTaskTimeForInner(int32_t uid)
             name.c_str(), uid);
         return ret;
     }
+    lock_guard<mutex> lock(transientUidLock_);
     transientPauseUid_.erase(uid);
     return ERR_OK;
 }
@@ -756,6 +758,45 @@ void SubscriberDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
         return;
     }
     service->HandleSubscriberDeath(remote);
+}
+
+void BgTransientTaskMgr::HandleSuspendManagerDie()
+{
+    if (!transientPauseUid_.empty()) {
+        for (auto iter = transientPauseUid_.begin(); iter != transientPauseUid_.end(); iter++) {
+            int32_t uid = *iter;
+            std::string name = "";
+            if (!GetBundleNamesForUid(uid, name)) {
+                BGTASK_LOGE("GetBundleNamesForUid fail, uid : %{public}d.", uid);
+                continue;
+            }
+            ErrCode ret = decisionMaker_->StartTransientTaskTimeForInner(uid, name);
+            if (ret != ERR_OK) {
+                BGTASK_LOGE("transient task uid: %{public}d, restart fail.", uid);
+            }
+        }
+        lock_guard<mutex> lock(transientUidLock_);
+        transientPauseUid_.clear();
+    }
+}
+
+void BgTransientTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    if (!isReady_.load()) {
+        BGTASK_LOGE("Transient task manager is not ready.");
+        return;
+    }
+    switch (systemAbilityId) {
+        case SUSPEND_MANAGER_SYSTEM_ABILITY_ID:
+            {
+                BGTASK_LOGI("remove suspend manager system ability, systemAbilityId: %{public}d", systemAbilityId);
+                auto task = [this]() { this->HandleSuspendManagerDie(); };
+                handler_->PostTask(task);
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 std::set<int32_t>& BgTransientTaskMgr::GetTransientPauseUid()
