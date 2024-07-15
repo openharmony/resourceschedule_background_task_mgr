@@ -26,6 +26,11 @@ bgtaskmgr_test_path = "${bgtaskmgr_root_path}/test"
 declare_args() {
   background_task_mgr_graphics = true
   background_task_mgr_jsstack = true
+
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.hiviewdfx_hiview)) {
+    background_task_mgr_jsstack = false
+  }
 }
 
 if (!defined(global_parts_info) ||
