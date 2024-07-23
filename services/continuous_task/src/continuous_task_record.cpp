@@ -136,6 +136,11 @@ int32_t ContinuousTaskRecord::GetAbilityId() const
     return abilityId_;
 }
 
+bool ContinuousTaskRecord::IsSystem() const
+{
+    return isSystem_;
+}
+
 std::string ContinuousTaskRecord::ParseToJsonStr()
 {
     nlohmann::json root;
@@ -151,6 +156,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["notificationId"] = notificationId_;
     root["isBatchApi"] = isBatchApi_;
     root["bgModeIds"] = ToString(bgModeIds_);
+    root["isSystem"] = isSystem_;
     if (wantAgentInfo_ != nullptr) {
         nlohmann::json info;
         info["bundleName"] = wantAgentInfo_->bundleName_;
@@ -166,13 +172,14 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["userId"].is_number_integer() || !value["uid"].is_number_integer()
         || !value["pid"].is_number_integer() || !value["bgModeId"].is_number_integer()
         || !value["isNewApi"].is_boolean() || !value["isFromWebview"].is_boolean()
-        || !value["notificationLabel"].is_string();
+        || !value["notificationLabel"].is_string() || !value["isSystem"].is_boolean();
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
 {
     if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value, { "bundleName",
-        "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel" })) {
+        "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel",
+        "isSystem"})) {
         return false;
     }
     if (CheckContinuousRecod(value)) {
@@ -188,6 +195,7 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
     this->isNewApi_ = value.at("isNewApi").get<bool>();
     this->isFromWebview_ = value.at("isFromWebview").get<bool>();
     this->notificationLabel_ = value.at("notificationLabel").get<std::string>();
+    this->isSystem_ = value.at("isSystem").get<bool>();
     if (value.contains("isBatchApi") && value["isBatchApi"].is_boolean()) {
         this->isBatchApi_ = value.at("isBatchApi").get<bool>();
     }

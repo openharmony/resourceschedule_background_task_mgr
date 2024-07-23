@@ -646,6 +646,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
     continuousTaskRecord->appName_ = taskParam->appName_;
     continuousTaskRecord->fullTokenId_ = fullTokenId;
+    continuousTaskRecord->isSystem_ = BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId);
 
     if (taskParam->wantAgent_ != nullptr && taskParam->wantAgent_->GetPendingWant() != nullptr) {
         auto target = taskParam->wantAgent_->GetPendingWant()->GetTarget();
@@ -822,7 +823,8 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
 
     std::string notificationText {""};
     for (auto mode : continuousTaskRecord->bgModeIds_) {
-        if (mode == BackgroundMode::AUDIO_PLAYBACK || mode == BackgroundMode::VOIP) {
+        if (mode == BackgroundMode::AUDIO_PLAYBACK || mode == BackgroundMode::VOIP ||
+            (mode == BackgroundMode::AUDIO_RECORDING && continuousTaskRecord->IsSystem())) {
             continue;
         }
         BGTASK_LOGD("mode %{public}d", mode);

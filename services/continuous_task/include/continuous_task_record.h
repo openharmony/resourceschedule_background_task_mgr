@@ -59,6 +59,7 @@ public:
     std::string ParseToJsonStr();
     bool ParseFromJson(const nlohmann::json &value);
     std::string ToString(std::vector<uint32_t> &bgmodes);
+    bool IsSystem() const;
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
@@ -80,6 +81,7 @@ private:
     std::vector<uint32_t> bgModeIds_ {};
     int32_t abilityId_ {-1};
     int32_t reason_ {0};
+    bool isSystem_ {false};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;
