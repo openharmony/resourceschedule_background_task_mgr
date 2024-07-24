@@ -77,7 +77,7 @@ static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DELAY_TIME = 2000;
-static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 60 * 1000;
+static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
@@ -128,6 +128,7 @@ bool BgContinuousTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& r
 
 void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
 {
+    BGTASK_LOGI("BgContinuousTaskMgr reclaimProcessMemory pid: %{public}d start.", pid);
     std::string path = "/proc/" + std::to_string(pid) + "/reclaim";
     std::string contentStr = "1";
     int fd = open(path.c_str(), O_WRONLY);
@@ -140,6 +141,7 @@ void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
         BGTASK_LOGE("BgContinuousTaskMgr ReclaimProcessMemory write file failed!");
     }
     close(fd);
+    BGTASK_LOGI("BgContinuousTaskMgr reclaimProcessMemory pid: %{public}d end.", pid);
 }
 
 void BgContinuousTaskMgr::Clear()
