@@ -53,6 +53,9 @@ void Watchdog::ProcessEvent(const AppExecFwk::InnerEvent::Pointer& event)
     }
     int32_t requestId = event->GetInnerEventId();
     const shared_ptr<KeyInfo>& info = event->GetSharedObject<KeyInfo>();
+    if (info == nullptr) {
+        return;
+    }
     if (decision_->IsFrontApp(info->GetPkg(), info->GetUid())) {
         auto bgTask = service_.promote();
         if (bgTask == nullptr) {

@@ -483,6 +483,9 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value,
         return nullptr;
     }
     napi_unwrap(env, value, (void **)&wantAgentPtr);
+    if (wantAgentPtr == nullptr) {
+        return nullptr;
+    }
     wantAgent = std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*wantAgentPtr);
 
     return WrapVoidToJS(env);
