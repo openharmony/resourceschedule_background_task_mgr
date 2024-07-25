@@ -95,7 +95,7 @@ void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::Ev
         || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr) {
         isReady_.store(false);
         BGTASK_LOGI("request system service is not ready yet!");
-        auto InitNecessaryStateFunc = std::bind(&BgTransientTaskMgr::InitNecessaryState, this, runner);
+        auto InitNecessaryStateFunc = [this, runner] { this->InitNecessaryState(runner); };
         handler_->PostTask(InitNecessaryStateFunc, SERVICE_WAIT_TIME);
         return;
     }
