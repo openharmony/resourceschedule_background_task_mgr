@@ -19,6 +19,9 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+namespace {
+    const int32_t RESOURCE_TYPE_SHIFTS = 16; // 能效资源类型左移位数
+}
 ResourcesSubscriberMgr::ResourcesSubscriberMgr()
 {
     deathRecipient_ = new (std::nothrow) ObserverDeathRecipient();
@@ -158,11 +161,12 @@ void ResourcesSubscriberMgr::HiSysEventResources(const std::shared_ptr<ResourceC
 void ResourcesSubscriberMgr::HiSysEventSubmit(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
     int32_t hiSysEventType, const std::string &eventType)
 {
+    uint32_t resourceType = callbackInfo->GetResourceNumber() << RESOURCE_TYPE_SHIFTS;
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, eventType.c_str(),
         HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
         "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
-        "BGMODE", hiSysEventType,
-        "UIABILITY_IDENTITY", callbackInfo->GetResourceNumber());
+        "BGMODE", resourceType,
+        "UIABILITY_IDENTITY", hiSysEventType);
 }
 
 void ResourcesSubscriberMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& remote)

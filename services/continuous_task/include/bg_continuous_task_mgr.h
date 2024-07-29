@@ -129,6 +129,11 @@ private:
     void RemoveContinuousTaskRecordByUid(int32_t uid);
     void ReclaimProcessMemory(int32_t pid);
     void SetReason(const std::string &mapKey, int32_t reason);
+    uint32_t GetModeNumByTypeIds(const std::vector<uint32_t> &typeIds);
+    void NotifySubscribers(ContinuousTaskEventTriggerType changeEventType,
+        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void ReportHisysEvent(ContinuousTaskEventTriggerType changeEventType,
+        const std::shared_ptr<ContinuousTaskRecord> &continuousTaskInfo);                                                   
 private:
     std::atomic<bool> isSysReady_ {false};
     std::string deviceType_ {""};
