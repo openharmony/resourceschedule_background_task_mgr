@@ -66,7 +66,7 @@ std::string IPCSkeleton::ResetCallingIdentity()
     return "";
 }
 
-bool IPCSkeleton::SetCallingIdentity(std::string &identity)
+bool IPCSkeleton::SetCallingIdentity(std::string &identity, bool flag)
 {
     return true;
 }
