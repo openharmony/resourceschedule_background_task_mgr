@@ -43,8 +43,8 @@ std::shared_ptr<EventHub> EventHub::RegisterEvent(InputManager& inputManager)
     }
     auto info = std::make_shared<EventFwk::CommonEventSubscribeInfo>(*skill);
     auto hub = std::make_shared<EventHub>(*info, inputManager);
-    const auto result = EventFwk::CommonEventManager::SubscribeCommonEvent(hub);
-    if (result != ERR_OK) {
+    bool result = EventFwk::CommonEventManager::SubscribeCommonEvent(hub);
+    if (!result) {
         BGTASK_LOGW("Failed to subscribe common event");
     }
     return hub;

@@ -14,6 +14,7 @@
  */
 
 #include "bg_continuous_task_mgr.h"
+#include "background_task_mgr_service.h"
 
 #include <sstream>
 #include <unistd.h>
@@ -284,14 +285,12 @@ bool BgContinuousTaskMgr::checkNotificationCondition(const std::set<std::string>
 void BgContinuousTaskMgr::InitRequiredResourceInfo()
 {
     if (!GetNotificationPrompt()) {
-        BGTASK_LOGW("init required resource info failed. will try again");
-        isSysReady_.store(false);
-        auto task = [this]() { this->InitRequiredResourceInfo(); };
-        handler_->PostTask(task, DELAY_TIME);
-        return;
+        BGTASK_LOGW("init required resource info failed");
     }
     HandlePersistenceData();
     isSysReady_.store(true);
+    DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->SetReady(ServiceReadyState::CONTINUOUS_SERVICE_READY);
+    BGTASK_LOGI("SetReady CONTINUOUS_SERVICE_READY");
 }
 
 bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
@@ -814,12 +813,16 @@ uint32_t GetBgModeNameIndex(uint32_t bgModeId, bool isNewApi)
 ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
+    if (continuousTaskText_.empty()) {
+        BGTASK_LOGE("get notification prompt info failed, continuousTaskText_ is empty");
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
     std::string appName {""};
     if (cachedBundleInfos_.find(continuousTaskRecord->uid_) != cachedBundleInfos_.end()) {
         appName = cachedBundleInfos_.at(continuousTaskRecord->uid_).appName_;
     }
     if (appName.empty()) {
-        BGTASK_LOGE("get notification prompt info failed");
+        BGTASK_LOGE("appName is empty");
         return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
     }
 
@@ -831,7 +834,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
         }
         BGTASK_LOGD("mode %{public}d", mode);
         uint32_t index = GetBgModeNameIndex(mode, continuousTaskRecord->isNewApi_);
-        if (index < BGMODE_NUMS) {
+        if (index < continuousTaskText_.size()) {
             notificationText += continuousTaskText_.at(index);
             notificationText += "\n";
         } else {

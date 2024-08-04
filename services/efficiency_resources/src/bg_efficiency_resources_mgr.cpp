@@ -14,6 +14,7 @@
  */
 
 #include "bg_efficiency_resources_mgr.h"
+#include "background_task_mgr_service.h"
 
 #include <set>
 #include <algorithm>
@@ -70,10 +71,16 @@ bool BgEfficiencyResourcesMgr::Init(const std::shared_ptr<AppExecFwk::EventRunne
 
 void BgEfficiencyResourcesMgr::InitNecessaryState()
 {
+    if (isSysReady_.load()) {
+        return;
+    }
     BGTASK_LOGI("necessary system service has been accessiable!");
     BGTASK_LOGD("app resource record size: %{public}d, process  resource record size:  %{public}d!",
         static_cast<int32_t>(appResourceApplyMap_.size()), static_cast<int32_t>(procResourceApplyMap_.size()));
     isSysReady_.store(true);
+    DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->SetReady(
+        ServiceReadyState::EFFICIENCY_RESOURCES_SERVICE_READY);
+    BGTASK_LOGI("SetReady EFFICIENCY_RESOURCES_SERVICE_READY");
 }
 
 void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
