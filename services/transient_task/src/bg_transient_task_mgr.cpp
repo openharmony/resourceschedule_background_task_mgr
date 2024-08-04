@@ -116,6 +116,8 @@ void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::Ev
     inputManager_->RegisterEventListener(deviceInfoManeger_);
     inputManager_->RegisterEventListener(decisionMaker_);
     isReady_.store(true);
+    DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->SetReady(ServiceReadyState::TRANSIENT_SERVICE_READY);
+    BGTASK_LOGI("SetReady TRANSIENT_SERVICE_READY");
 }
 
 bool BgTransientTaskMgr::GetBundleNamesForUid(int32_t uid, std::string &bundleName)

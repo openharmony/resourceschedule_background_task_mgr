@@ -41,6 +41,13 @@ enum class ServiceRunningState {
     STATE_RUNNING
 };
 
+enum ServiceReadyState {
+    TRANSIENT_SERVICE_READY = 1 << 0,
+    CONTINUOUS_SERVICE_READY = 1 << 1,
+    EFFICIENCY_RESOURCES_SERVICE_READY = 1 << 2,
+    ALL_READY = TRANSIENT_SERVICE_READY | CONTINUOUS_SERVICE_READY | EFFICIENCY_RESOURCES_SERVICE_READY
+};
+
 class BackgroundTaskMgrService final : public SystemAbility, public BackgroundTaskMgrStub,
     public std::enable_shared_from_this<BackgroundTaskMgrService> {
     DISALLOW_COPY_AND_MOVE(BackgroundTaskMgrService);
@@ -50,6 +57,7 @@ public:
     BackgroundTaskMgrService(const int32_t systemAbilityId, bool runOnCreate);
     void OnStart() final;
     void OnStop() final;
+    void SetReady(uint32_t flag);
 
     ErrCode RequestSuspendDelay(const std::u16string& reason,
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo) override;
@@ -89,6 +97,8 @@ private:
 private:
     ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
+    std::mutex readyMutex_;
+    uint32_t dependsReady_ {0};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
