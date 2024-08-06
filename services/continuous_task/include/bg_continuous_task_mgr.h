@@ -133,7 +133,7 @@ private:
     void NotifySubscribers(ContinuousTaskEventTriggerType changeEventType,
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void ReportHisysEvent(ContinuousTaskEventTriggerType changeEventType,
-        const std::shared_ptr<ContinuousTaskRecord> &continuousTaskInfo);                                                   
+        const std::shared_ptr<ContinuousTaskRecord> &continuousTaskInfo);
 private:
     std::atomic<bool> isSysReady_ {false};
     std::string deviceType_ {""};
