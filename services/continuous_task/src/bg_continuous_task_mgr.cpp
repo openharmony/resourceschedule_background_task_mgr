@@ -1340,6 +1340,64 @@ void BgContinuousTaskMgr::OnProcessDied(int32_t uid, int32_t pid)
     }
 }
 
+uint32_t BgContinuousTaskMgr::GetModeNumByTypeIds(const std::vector<uint32_t> &typeIds)
+{
+    uint32_t modeNum = 0;
+    for (auto mode : typeIds) {
+        modeNum |= (1 << (mode - 1));
+    }
+    return modeNum;
+}
+
+void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType changeEventType,
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    switch (changeEventType) {
+        case ContinuousTaskEventTriggerType::TASK_START:
+            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+                BGTASK_LOGD("continuous task start callback trigger");
+                (*iter)->OnContinuousTaskStart(continuousTaskCallbackInfo);
+            }
+            break;
+        case ContinuousTaskEventTriggerType::TASK_UPDATE:
+            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+                BGTASK_LOGD("continuous task update callback trigger");
+                (*iter)->OnContinuousTaskUpdate(continuousTaskCallbackInfo);
+            }
+            break;
+        case ContinuousTaskEventTriggerType::TASK_CANCEL:
+            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+                BGTASK_LOGD("continuous task stop callback trigger");
+                (*iter)->OnContinuousTaskStop(continuousTaskCallbackInfo);
+            }
+            break;
+    }
+}
+
+void BgContinuousTaskMgr::ReportHisysEvent(ContinuousTaskEventTriggerType changeEventType,
+    const std::shared_ptr<ContinuousTaskRecord> &continuousTaskInfo)
+{
+    switch (changeEventType) {
+        case ContinuousTaskEventTriggerType::TASK_START:
+        case ContinuousTaskEventTriggerType::TASK_UPDATE:
+            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_APPLY",
+                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", continuousTaskInfo->GetUid(),
+                "APP_PID", continuousTaskInfo->GetPid(), "APP_NAME", continuousTaskInfo->GetBundleName(),
+                "ABILITY", continuousTaskInfo->GetAbilityName(),
+                "BGMODE", GetModeNumByTypeIds(continuousTaskInfo->bgModeIds_),
+                "UIABILITY_IDENTITY", continuousTaskInfo->GetAbilityId());
+            break;
+        case ContinuousTaskEventTriggerType::TASK_CANCEL:
+            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_CANCEL",
+                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", continuousTaskInfo->GetUid(),
+                "APP_PID", continuousTaskInfo->GetPid(), "APP_NAME", continuousTaskInfo->GetBundleName(),
+                "ABILITY", continuousTaskInfo->GetAbilityName(),
+                "BGMODE", GetModeNumByTypeIds(continuousTaskInfo->bgModeIds_),
+                "UIABILITY_IDENTITY", continuousTaskInfo->GetAbilityId(), "STOP_REASON", continuousTaskInfo->reason_);
+            break;
+    }
+}
+
 void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
     ContinuousTaskEventTriggerType changeEventType)
 {
@@ -1358,39 +1416,11 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
         continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName(),
         continuousTaskInfo->IsFromWebview(), continuousTaskInfo->isBatchApi_, continuousTaskInfo->bgModeIds_,
         continuousTaskInfo->abilityId_, continuousTaskInfo->fullTokenId_);
-    BGTASK_LOGD("mdoe %{public}d isBatch %{public}d modes size %{public}u",
+    BGTASK_LOGD("mode %{public}d isBatch %{public}d modes size %{public}u",
         continuousTaskCallbackInfo->GetTypeId(), continuousTaskCallbackInfo->IsBatchApi(),
         static_cast<uint32_t>(continuousTaskCallbackInfo->GetTypeIds().size()));
-    switch (changeEventType) {
-        case ContinuousTaskEventTriggerType::TASK_START:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-                BGTASK_LOGD("continuous task start callback trigger");
-                (*iter)->OnContinuousTaskStart(continuousTaskCallbackInfo);
-            }
-            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_APPLY",
-                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", continuousTaskInfo->GetUid(),
-                "APP_PID", continuousTaskInfo->GetPid(), "APP_NAME", continuousTaskInfo->GetBundleName(),
-                "ABILITY", continuousTaskInfo->GetAbilityName(), "BGMODE", continuousTaskInfo->GetBgModeId(),
-                "UIABILITY_IDENTITY", continuousTaskInfo->GetAbilityId());
-            break;
-        case ContinuousTaskEventTriggerType::TASK_UPDATE:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-                BGTASK_LOGD("continuous task update callback trigger");
-                (*iter)->OnContinuousTaskUpdate(continuousTaskCallbackInfo);
-            }
-            break;
-        case ContinuousTaskEventTriggerType::TASK_CANCEL:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-                BGTASK_LOGD("continuous task stop callback trigger");
-                (*iter)->OnContinuousTaskStop(continuousTaskCallbackInfo);
-            }
-            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_CANCEL",
-                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", continuousTaskInfo->GetUid(),
-                "APP_PID", continuousTaskInfo->GetPid(), "APP_NAME", continuousTaskInfo->GetBundleName(),
-                "ABILITY", continuousTaskInfo->GetAbilityName(), "BGMODE", continuousTaskInfo->GetBgModeId(),
-                "UIABILITY_IDENTITY", continuousTaskInfo->GetAbilityId(), "STOP_REASON", continuousTaskInfo->reason_);
-            break;
-    }
+    NotifySubscribers(changeEventType, continuousTaskCallbackInfo);
+    ReportHisysEvent(changeEventType, continuousTaskInfo);
 }
 
 void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid)
