@@ -1376,13 +1376,6 @@ void BgContinuousTaskMgr::ReportHisysEvent(ContinuousTaskEventTriggerType change
 {
     switch (changeEventType) {
         case ContinuousTaskEventTriggerType::TASK_START:
-            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_APPLY",
-                HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", continuousTaskInfo->GetUid(),
-                "APP_PID", continuousTaskInfo->GetPid(), "APP_NAME", continuousTaskInfo->GetBundleName(),
-                "ABILITY", continuousTaskInfo->GetAbilityName(),
-                "BGMODE", GetModeNumByTypeIds(continuousTaskInfo->bgModeIds_),
-                "UIABILITY_IDENTITY", continuousTaskInfo->GetAbilityId());
-            break;
         case ContinuousTaskEventTriggerType::TASK_UPDATE:
             HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "CONTINUOUS_TASK_APPLY",
                 HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", continuousTaskInfo->GetUid(),
