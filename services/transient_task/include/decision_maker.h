@@ -99,7 +99,7 @@ private:
     bool CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo);
     int GetAllowRequestTime();
     ErrCode CheckQuotaTime(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo, const std::string &name,
-    int32_t uid, const std::shared_ptr<KeyInfo>& key);
+        int32_t uid, const std::shared_ptr<KeyInfo>& key);
 
     const int32_t initRequestId_ = 1;
     int32_t requestId_ {initRequestId_};
