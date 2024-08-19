@@ -109,6 +109,11 @@ public:
         BgTaskClientUnitTest::bgtaskSubscriberRet_ = "interface4";
     }
 
+    void OnTransientTaskErr(const std::shared_ptr<TransientTaskAppInfo>& info) override
+    {
+        BgTaskClientUnitTest::bgtaskSubscriberRet_ = "interface16";
+    }
+
     void OnAppTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override
     {
         BgTaskClientUnitTest::bgtaskSubscriberRet_ = "interface5";
@@ -373,6 +378,8 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
     EXPECT_EQ(bgtaskSubscriberRet_, "interface3");
     subscriberImpl->OnTransientTaskEnd(nullptr);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface4");
+    subscriberImpl->OnTransientTaskErr(nullptr);
+    EXPECT_EQ(bgtaskSubscriberRet_, "interface16");
     subscriberImpl->OnAppTransientTaskStart(nullptr);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface5");
     subscriberImpl->OnAppTransientTaskEnd(nullptr);
@@ -408,6 +415,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_002, TestSize.Level1)
     subscriber.OnDisconnected();
     subscriber.OnTransientTaskStart(nullptr);
     subscriber.OnTransientTaskEnd(nullptr);
+    subscriber.OnTransientTaskErr(nullptr);
     subscriber.OnAppTransientTaskStart(nullptr);
     subscriber.OnAppTransientTaskEnd(nullptr);
     subscriber.OnContinuousTaskStart(nullptr);

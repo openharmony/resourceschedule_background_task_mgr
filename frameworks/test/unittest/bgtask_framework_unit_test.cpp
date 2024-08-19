@@ -47,6 +47,7 @@ constexpr uint32_t ON_CONNECTED = 1;
 constexpr uint32_t ON_DISCONNECTED = 2;
 constexpr uint32_t ON_TRANSIENT_TASK_START = 3;
 constexpr uint32_t ON_TRANSIENT_TASK_END = 4;
+constexpr uint32_t ON_TRANSIENT_TASK_ERR = 14;
 constexpr uint32_t ON_APP_TRANSIENT_TASK_START = 5;
 constexpr uint32_t ON_APP_TRANSIENT_TASK_END = 6;
 constexpr uint32_t ON_CONTINUOUS_TASK_START = 7;
@@ -83,6 +84,7 @@ class TestBackgroundTaskSubscriberStub : public BackgroundTaskSubscriberStub {
     void OnAppTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
     void OnAppTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
     void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
+    void OnTransientTaskErr(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
     void OnContinuousTaskStart(
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override {}
     void OnContinuousTaskUpdate(
@@ -448,6 +450,8 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_002, TestSiz
     subscirberProxy2.OnTransientTaskStart(nullptr);
     subscirberProxy1.OnTransientTaskEnd(nullptr);
     subscirberProxy2.OnTransientTaskEnd(nullptr);
+    subscirberProxy1.OnTransientTaskErr(nullptr);
+    subscirberProxy2.OnTransientTaskErr(nullptr);
     subscirberProxy1.OnAppTransientTaskStart(nullptr);
     subscirberProxy2.OnAppTransientTaskStart(nullptr);
     subscirberProxy1.OnAppTransientTaskEnd(nullptr);
@@ -455,6 +459,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_002, TestSiz
     std::shared_ptr<TransientTaskAppInfo> info = std::make_shared<TransientTaskAppInfo>();
     subscirberProxy2.OnTransientTaskStart(info);
     subscirberProxy2.OnTransientTaskEnd(info);
+    subscirberProxy2.OnTransientTaskErr(info);
     subscirberProxy2.OnAppTransientTaskStart(info);
     subscirberProxy2.OnAppTransientTaskEnd(info);
     EXPECT_NE(subscirberStub, nullptr);
@@ -578,6 +583,14 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_003, TestSize
     data4.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     info->Marshalling(data4);
     EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_END, data4, reply, option), ERR_OK);
+
+    MessageParcel data9;
+    data9.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
+    EXPECT_NE(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_ERR, data9, reply, option), ERR_OK);
+    MessageParcel data10;
+    data10.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
+    info->Marshalling(data10);
+    EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_ERR, data10, reply, option), ERR_OK);
 
     MessageParcel data5;
     data5.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());

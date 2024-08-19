@@ -62,6 +62,13 @@ public:
     virtual void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info);
 
     /**
+     * Called back when a transient task err.
+     *
+     * @param info Transient task app info.
+     **/
+    virtual void OnTransientTaskErr(const std::shared_ptr<TransientTaskAppInfo>& info);
+
+    /**
      * Called back when the app has transient task.
      *
      * @param info App info of transient task.
@@ -179,6 +186,13 @@ private:
          * @param info Transient task app info.
          */
         void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+
+        /**
+         * @brief Called back when a transient task err.
+         *
+         * @param info Transient task app info.
+         */
+        void OnTransientTaskErr(const std::shared_ptr<TransientTaskAppInfo>& info) override;
 
         /**
          * @brief Called back when a continuous task start.

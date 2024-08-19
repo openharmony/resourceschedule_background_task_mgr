@@ -98,6 +98,8 @@ private:
     bool IsAfterOneDay(int64_t lastRequestTime, int64_t currentTime);
     bool CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo);
     int GetAllowRequestTime();
+    ErrCode CheckQuotaTime(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo, const std::string &name,
+    int32_t uid, const std::shared_ptr<KeyInfo>& key)
 
     const int32_t initRequestId_ = 1;
     int32_t requestId_ {initRequestId_};

@@ -54,6 +54,9 @@ public:
         uint32_t code4 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_END);
         subscriberImpl->OnRemoteRequest(code4, datas, reply, option);
 
+        uint32_t code15 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_ERR);
+        subscriberImpl->OnRemoteRequest(code15, datas, reply, option);
+
         uint32_t code5 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_START);
         subscriberImpl->OnRemoteRequest(code5, datas, reply, option);
 
