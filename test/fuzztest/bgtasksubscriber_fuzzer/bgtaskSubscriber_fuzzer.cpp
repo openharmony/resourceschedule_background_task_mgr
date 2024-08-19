@@ -55,6 +55,7 @@ public:
         subscriberImpl->HandleOnDisconnected();
         subscriberImpl->HandleOnTransientTaskStart(datas);
         subscriberImpl->HandleOnTransientTaskEnd(datas);
+        subscriberImpl->HandleOnTransientTaskErr(datas);
         subscriberImpl->HandleOnAppTransientTaskStart(datas);
         subscriberImpl->HandleOnAppTransientTaskEnd(datas);
         subscriberImpl->HandleOnContinuousTaskStart(datas);

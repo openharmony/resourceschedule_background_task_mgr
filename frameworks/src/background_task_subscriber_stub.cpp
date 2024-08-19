@@ -60,17 +60,13 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequestInner(uint32_t code,
         case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_DISCONNECTED): {
             return HandleOnDisconnected();
         }
-        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_START): {
-            return HandleOnTransientTaskStart(data);
-        }
-        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_END): {
-            return HandleOnTransientTaskEnd(data);
-        }
-        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_START): {
-            return HandleOnAppTransientTaskStart(data);
-        }
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_START):
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_END):
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_ERR):
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_START):
+            [[fallthrough]];
         case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_END): {
-            return HandleOnAppTransientTaskEnd(data);
+            return HandleTransientTask(code, data);
         }
         case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_START): {
             return HandleOnContinuousTaskStart(data);
@@ -98,6 +94,28 @@ ErrCode BackgroundTaskSubscriberStub::OnRemoteRequestInner(uint32_t code,
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleTransientTask(uint32_t code, MessageParcel &data)
+{
+    switch (code) {
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_START): {
+            return HandleOnTransientTaskStart(data);
+        }
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_END): {
+            return HandleOnTransientTaskEnd(data);
+        }
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_ERR): {
+            return HandleOnTransientTaskErr(data);
+        }
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_START): {
+            return HandleOnAppTransientTaskStart(data);
+        }
+        case static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_END): {
+            return HandleOnAppTransientTaskEnd(data);
+        }
     }
     return ERR_OK;
 }
@@ -133,6 +151,17 @@ ErrCode BackgroundTaskSubscriberStub::HandleOnTransientTaskEnd(MessageParcel& da
         return ERR_INVALID_DATA;
     }
     OnTransientTaskEnd(info);
+    return ERR_NONE;
+}
+
+ErrCode BackgroundTaskSubscriberStub::HandleOnTransientTaskErr(MessageParcel& data)
+{
+    auto info = TransientTaskAppInfo::Unmarshalling(data);
+    if (info == nullptr) {
+        BGTASK_LOGE("HandleOnTransientTaskErr Read parcel failed.");
+        return ERR_INVALID_DATA;
+    }
+    OnTransientTaskErr(info);
     return ERR_NONE;
 }
 

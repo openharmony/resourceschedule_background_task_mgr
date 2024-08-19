@@ -45,6 +45,7 @@ private:
     ErrCode HandleOnDisconnected();
     ErrCode HandleOnTransientTaskStart(MessageParcel& data);
     ErrCode HandleOnTransientTaskEnd(MessageParcel& data);
+    ErrCode HandleOnTransientTaskErr(MessageParcel& data);
     ErrCode HandleOnAppTransientTaskStart(MessageParcel& data);
     ErrCode HandleOnAppTransientTaskEnd(MessageParcel& data);
     ErrCode HandleOnContinuousTaskStart(MessageParcel &data);
@@ -55,6 +56,7 @@ private:
     ErrCode HandleOnAppEfficiencyResourcesReset(MessageParcel &data);
     ErrCode HandleOnProcEfficiencyResourcesApply(MessageParcel &data);
     ErrCode HandleOnProcEfficiencyResourcesReset(MessageParcel &data);
+    ErrCode HandleTransientTask(uint32_t code, MessageParcel &data);
     ErrCode OnRemoteRequestInner(uint32_t code,
         MessageParcel& data, MessageParcel& reply, MessageOption& option);
 };

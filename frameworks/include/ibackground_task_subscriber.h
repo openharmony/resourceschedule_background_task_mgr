@@ -60,6 +60,13 @@ public:
     virtual void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) = 0;
 
     /**
+     * @brief Called back when a transient task err.
+     *
+     * @param info Transient task app info.
+     */
+    virtual void OnTransientTaskErr(const std::shared_ptr<TransientTaskAppInfo>& info) = 0;
+
+    /**
      * Called back when the app has transient task.
      *
      * @param info App info of transient task.

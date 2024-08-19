@@ -335,6 +335,11 @@ void BgTransientTaskMgr::NotifyTransientTaskSuscriber(const shared_ptr<Transient
                 (*iter)->OnTransientTaskEnd(appInfo);
             }
             break;
+        case TransientTaskEventType::TASK_ERR:
+            for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
+                (*iter)->OnTransientTaskErr(appInfo);
+            }
+            break;
         case TransientTaskEventType::APP_TASK_START:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnAppTransientTaskStart(appInfo);
