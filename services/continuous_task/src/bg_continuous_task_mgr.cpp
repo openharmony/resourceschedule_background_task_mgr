@@ -1285,7 +1285,6 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
 
 void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId)
 {
-    BGTASK_LOGI("Ability Died and delete continuous task by uid, abilityName, abilityId , abilityId: %{public}d", abilityId);
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
@@ -1312,9 +1311,8 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
     }
 }
 
-void BgContinuousTaskMgr::OnAppDied(int32_t uid)
+void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
 {
-    BGTASK_LOGI("App Died and delete continuous task by uid, uid: %{public}d", uid);
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
@@ -1323,7 +1321,7 @@ void BgContinuousTaskMgr::OnAppDied(int32_t uid)
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->uid_ == uid) {
             auto record = iter->second;
-            BGTASK_LOGI("OnAppDied Delete Webview uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
+            BGTASK_LOGI("OnAppStopped uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
                 "bgModeId: %{public}d, abilityId: %{public}d", uid, record->bundleName_.c_str(),
                 record->abilityName_.c_str(), record->bgModeId_, record->abilityId_);
             record->reason_ = SYSTEM_CANCEL;
@@ -1338,15 +1336,6 @@ void BgContinuousTaskMgr::OnAppDied(int32_t uid)
         } else {
             iter++;
         }
-    }
-}
-
-void BgContinuousTaskMgr::OnProcessDied(int32_t uid, int32_t pid)
-{
-    BGTASK_LOGI("process died but do nothing, uid : %{public}d, pid : %{public}d", uid, pid);
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return;
     }
 }
 
