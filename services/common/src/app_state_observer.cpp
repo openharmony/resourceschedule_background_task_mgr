@@ -46,7 +46,11 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     auto task = [uid, abilityName, abilityId]() {
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAbilityStateChanged(uid, abilityName, abilityId);
     };
-    handler_->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
+    if (!handler_) {
+        BGTASK_LOGE("handler_ null.");
+    } else {
+        handler_->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
+    }
 }
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
