@@ -50,7 +50,6 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     } else {
         handler_->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
     }
-    
 }
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
