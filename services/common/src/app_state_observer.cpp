@@ -77,7 +77,11 @@ void AppStateObserver::OnAppStopped(const AppExecFwk::AppStateData &appStateData
     auto task = [uid]() {
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAppStopped(uid);
     };
+    if (!handler_) {
+        BGTASK_LOGE("handler_ null.");
+    } else {
     handler_->PostTask(task, TASK_ON_APP_DIED);
+    }
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveAppRecord(uid, bundleName, false);
 }
 
