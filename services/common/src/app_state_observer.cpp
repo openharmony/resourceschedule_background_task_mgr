@@ -69,7 +69,7 @@ void AppStateObserver::OnAppStopped(const AppExecFwk::AppStateData &appStateData
         return;
     }
     auto uid = appStateData.uid;
-    auto bundleName = appStateData.bundleName; 
+    auto bundleName = appStateData.bundleName;
     auto task = [uid]() {
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAppStopped(uid);
     };

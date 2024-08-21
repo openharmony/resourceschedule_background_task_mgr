@@ -96,7 +96,6 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
     sptr<AppStateObserver> appStateObserver = sptr<AppStateObserver>(new AppStateObserver());
     AppExecFwk::ProcessData processData = AppExecFwk::ProcessData();
     appStateObserver->OnProcessDied(processData);
-    appStateObserver->OnProcessDiedContinuousTask(processData);
     appStateObserver->OnProcessDiedEfficiencyRes(processData);
     AppExecFwk::AbilityStateData abilityStateData = AppExecFwk::AbilityStateData();
     appStateObserver->OnAbilityStateChanged(abilityStateData);
