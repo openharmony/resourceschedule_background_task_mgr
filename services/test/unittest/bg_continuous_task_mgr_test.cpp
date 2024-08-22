@@ -633,23 +633,23 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_012, TestSize.Level1)
 
 /**
  * @tc.name: BgTaskManagerUnitTest_013
- * @tc.desc: test OnProcessDied.
+ * @tc.desc: test OnAppStopped.
  * @tc.type: FUNC
- * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V issueIALCBZ
  */
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_013, TestSize.Level1)
 {
     bgContinuousTaskMgr_->isSysReady_.store(false);
-    bgContinuousTaskMgr_->OnProcessDied(-1, 1);
+    bgContinuousTaskMgr_->OnAppStopped(1);
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    bgContinuousTaskMgr_->OnProcessDied(-1, 1);
+    bgContinuousTaskMgr_->OnAppStopped(1);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord->pid_ = 1;
+    continuousTaskRecord->uid_ = 1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key"] = continuousTaskRecord;
-    bgContinuousTaskMgr_->OnProcessDied(-1, -1);
-    bgContinuousTaskMgr_->OnProcessDied(-1, 1);
+    bgContinuousTaskMgr_->OnAppStopped(-1);
+    bgContinuousTaskMgr_->OnAppStopped(1);
     EXPECT_TRUE(true);
 }
 
