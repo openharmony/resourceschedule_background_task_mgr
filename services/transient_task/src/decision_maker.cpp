@@ -181,11 +181,8 @@ ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::sh
     ResetDayQuotaLocked();
     auto findBgDurationIt = pkgBgDurationMap_.find(key);
     if (findBgDurationIt != pkgBgDurationMap_.end()) {
-        if (TimeProvider::GetCurrentTime() - findBgDurationIt->second > GetAllowRequestTime()) {
-            BGTASK_LOGI("Request not allow after entering background for a valid duration, %{public}s",
-                key->ToString().c_str());
-            return ERR_BGTASK_NOT_IN_PRESET_TIME;
-        }
+        BGTASK_LOGI("Request not allow after entering background, %{public}s", key->ToString().c_str());
+        return ERR_BGTASK_NOT_IN_PRESET_TIME;
     }
     const string &name = key->GetPkg();
     int32_t uid = key->GetUid();
