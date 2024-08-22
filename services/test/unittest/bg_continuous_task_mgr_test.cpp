@@ -635,7 +635,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_012, TestSize.Level1)
  * @tc.name: BgTaskManagerUnitTest_013
  * @tc.desc: test OnAppStopped.
  * @tc.type: FUNC
- * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V issueIALCBZ 
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V issueIALCBZ
  */
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_013, TestSize.Level1)
 {
