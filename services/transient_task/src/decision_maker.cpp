@@ -153,6 +153,23 @@ int DecisionMaker::GetAllowRequestTime()
     return time;
 }
 
+ErrCode DecisionMaker::CheckQuotaTime(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo, const std::string &name,
+    int32_t uid, const std::shared_ptr<KeyInfo>& key)
+{
+    ErrCode ret = pkgInfo->IsAllowRequest();
+    if (ret == ERR_BGTASK_TIME_INSUFFICIENT) {
+        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d no hava quota time.", name.c_str(), uid);
+        auto transientTaskInfo = make_shared<TransientTaskAppInfo>(name, uid, key->GetPid());
+        DelayedSingleton<BgTransientTaskMgr>::GetInstance()
+            ->HandleTransientTaskSuscriberTask(transientTaskInfo, TransientTaskEventType::TASK_ERR);
+    }
+    if (ret != ERR_OK) {
+        BGTASK_LOGI("Request not allow by its info");
+        return ret;
+    }
+    return ERR_OK;
+}
+
 ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::shared_ptr<DelaySuspendInfoEx>& delayInfo)
 {
     lock_guard<mutex> lock(lock_);
@@ -164,27 +181,20 @@ ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::sh
     ResetDayQuotaLocked();
     auto findBgDurationIt = pkgBgDurationMap_.find(key);
     if (findBgDurationIt != pkgBgDurationMap_.end()) {
-        if (TimeProvider::GetCurrentTime() - findBgDurationIt->second > GetAllowRequestTime()) {
-            BGTASK_LOGI("Request not allow after entering background for a valid duration, %{public}s",
-                key->ToString().c_str());
-            return ERR_BGTASK_NOT_IN_PRESET_TIME;
-        }
+        BGTASK_LOGI("Request not allow after entering background, %{public}s", key->ToString().c_str());
+        return ERR_BGTASK_NOT_IN_PRESET_TIME;
     }
-
     const string &name = key->GetPkg();
     int32_t uid = key->GetUid();
     auto findInfoIt = pkgDelaySuspendInfoMap_.find(key);
     if (findInfoIt == pkgDelaySuspendInfoMap_.end()) {
         pkgDelaySuspendInfoMap_[key] = make_shared<PkgDelaySuspendInfo>(name, uid, timerManager_);
     }
-
     auto pkgInfo = pkgDelaySuspendInfoMap_[key];
-    ErrCode ret = pkgInfo->IsAllowRequest();
+    ErrCode ret = CheckQuotaTime(pkgInfo, name, uid, key);
     if (ret != ERR_OK) {
-        BGTASK_LOGI("Request not allow by its info");
         return ret;
     }
-
     if (delayInfo == nullptr) {
         BGTASK_LOGE("Invalid delayInfo");
         return ERR_BGTASK_NO_MEMORY;
