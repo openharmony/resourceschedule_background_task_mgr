@@ -48,6 +48,7 @@ class ExpiredCallbackDeathRecipient;
 enum class TransientTaskEventType: uint32_t {
     TASK_START,
     TASK_END,
+    TASK_ERR,
     APP_TASK_START,
     APP_TASK_END,
 };

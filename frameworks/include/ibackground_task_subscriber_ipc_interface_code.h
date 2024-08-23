@@ -34,6 +34,7 @@ namespace BackgroundTaskMgr {
         ON_APP_EFFICIENCY_RESOURCES_RESET,
         ON_PROC_EFFICIENCY_RESOURCES_APPLY,
         ON_PROC_EFFICIENCY_RESOURCES_RESET,
+        ON_TRANSIENT_TASK_ERR,
     };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

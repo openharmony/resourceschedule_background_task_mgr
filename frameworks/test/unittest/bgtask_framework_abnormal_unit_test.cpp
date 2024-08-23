@@ -69,6 +69,7 @@ class TestBackgroundTaskSubscriberStub : public BackgroundTaskSubscriberStub {
     void OnAppTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
     void OnAppTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
     void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
+    void OnTransientTaskErr(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
     void OnContinuousTaskStart(
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override {}
     void OnContinuousTaskUpdate(

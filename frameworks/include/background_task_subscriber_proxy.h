@@ -54,6 +54,13 @@ public:
     void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
 
     /**
+     * @brief Called back when a transient task err.
+     *
+     * @param info Info of transient tasks.
+     */
+    void OnTransientTaskErr(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+
+    /**
      * Called back when the app has transient task.
      *
      * @param info App info of transient task.
