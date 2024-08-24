@@ -28,6 +28,7 @@ namespace BackgroundTaskMgr {
 namespace {
 const std::string TASK_ON_PROCESS_DIED = "OnProcessDiedTask";
 const std::string TASK_ON_ABILITY_STATE_CHANGED = "OnAbilityStateChangedTask";
+const std::string TASK_ON_APP_DIED = "OnAppDiedTask";
 }
 
 void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData)
@@ -35,7 +36,7 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     if (abilityStateData.abilityState != static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED)) {
         return;
     }
-    BGTASK_LOGD("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d, "
+    BGTASK_LOGI("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d, "
         "abilityId: %{public}d",
         abilityStateData.uid, abilityStateData.abilityName.c_str(), abilityStateData.abilityState,
         abilityStateData.abilityRecordId);
@@ -45,22 +46,17 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     auto task = [uid, abilityName, abilityId]() {
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAbilityStateChanged(uid, abilityName, abilityId);
     };
-    handler_->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
+    if (!handler_) {
+        BGTASK_LOGE("handler_ null.");
+    } else {
+        handler_->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
+    }
 }
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
 {
-    BGTASK_LOGD("process died, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
-    OnProcessDiedContinuousTask(processData);
+    BGTASK_LOGI("process died, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
     OnProcessDiedEfficiencyRes(processData);
-}
-
-void AppStateObserver::OnProcessDiedContinuousTask(const AppExecFwk::ProcessData &processData)
-{
-    auto task = [processData]() {
-        DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnProcessDied(processData.uid, processData.pid);
-    };
-    handler_->PostTask(task, TASK_ON_PROCESS_DIED);
 }
 
 void AppStateObserver::OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData)
@@ -71,12 +67,21 @@ void AppStateObserver::OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData 
 
 void AppStateObserver::OnAppStopped(const AppExecFwk::AppStateData &appStateData)
 {
+    BGTASK_LOGI("app stopped, uid : %{public}d", appStateData.uid);
     if (!ValidateAppStateData(appStateData)) {
         BGTASK_LOGE("%{public}s : validate app state data failed!", __func__);
         return;
     }
     auto uid = appStateData.uid;
     auto bundleName = appStateData.bundleName;
+    auto task = [uid]() {
+        DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAppStopped(uid);
+    };
+    if (!handler_) {
+        BGTASK_LOGE("handler_ null.");
+    } else {
+        handler_->PostTask(task, TASK_ON_APP_DIED);
+    }
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveAppRecord(uid, bundleName, false);
 }
 

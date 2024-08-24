@@ -1291,9 +1291,8 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
     }
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
-        if (iter->second->uid_ == uid && ((iter->second->abilityName_ == abilityName &&
-            iter->second->abilityId_ == abilityId) ||
-            (iter->second->isFromWebview_ && iter->second->bgModeId_ != BackgroundMode::VOIP))) {
+        if (iter->second->uid_ == uid && iter->second->abilityName_ == abilityName &&
+            iter->second->abilityId_ == abilityId) {
             auto record = iter->second;
             BGTASK_LOGI("OnAbilityStateChanged uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
                 "bgModeId: %{public}d, abilityId: %{public}d", uid, record->bundleName_.c_str(),
@@ -1313,24 +1312,25 @@ void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &
     }
 }
 
-void BgContinuousTaskMgr::OnProcessDied(int32_t uid, int32_t pid)
+void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
     }
-
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
-        if (iter->second->GetPid() == pid) {
+        if (iter->second->uid_ == uid) {
             auto record = iter->second;
-            BGTASK_LOGI("OnProcessDied uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
-                "bgModeId: %{public}d, abilityId: %{public}d", record->uid_, record->bundleName_.c_str(),
+            BGTASK_LOGI("OnAppStopped uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
+                "bgModeId: %{public}d, abilityId: %{public}d", uid, record->bundleName_.c_str(),
                 record->abilityName_.c_str(), record->bgModeId_, record->abilityId_);
             record->reason_ = SYSTEM_CANCEL;
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
-            NotificationTools::GetInstance()->CancelNotification(
-                record->GetNotificationLabel(), record->GetNotificationId());
+            if (!iter->second->isFromWebview_) {
+                NotificationTools::GetInstance()->CancelNotification(
+                    record->GetNotificationLabel(), record->GetNotificationId());
+            }
             iter = continuousTaskInfosMap_.erase(iter);
             HandleAppContinuousTaskStop(record->uid_);
             RefreshTaskRecord();

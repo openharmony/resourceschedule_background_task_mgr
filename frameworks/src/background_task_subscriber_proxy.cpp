@@ -132,6 +132,37 @@ void BackgroundTaskSubscriberProxy::OnTransientTaskEnd(const std::shared_ptr<Tra
     }
 }
 
+void BackgroundTaskSubscriberProxy::OnTransientTaskErr(const std::shared_ptr<TransientTaskAppInfo>& info)
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        BGTASK_LOGE("remote is dead.");
+        return;
+    }
+    if (info == nullptr) {
+        BGTASK_LOGE("OnTransientTaskErr TransientTaskAppInfo is null.");
+        return;
+    }
+
+    MessageParcel data;
+    bool res = data.WriteInterfaceToken(BackgroundTaskSubscriberProxy::GetDescriptor());
+    if (!res) {
+        BGTASK_LOGE("OnTransientTaskErr write descriptor failed.");
+        return;
+    }
+    if (!info->Marshalling(data)) {
+        BGTASK_LOGE("OnTransientTaskErr write parcel failed.");
+        return;
+    }
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_ASYNC};
+    int32_t ret = remote->SendRequest(
+        static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_ERR), data, reply, option);
+    if (ret != ERR_NONE) {
+        BGTASK_LOGE("OnTransientTaskErr SendRequest failed, error code: %{public}d", ret);
+    }
+}
+
 void BackgroundTaskSubscriberProxy::OnAppTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info)
 {
     sptr<IRemoteObject> remote = Remote();

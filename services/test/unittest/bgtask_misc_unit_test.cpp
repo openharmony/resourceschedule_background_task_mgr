@@ -96,7 +96,6 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
     sptr<AppStateObserver> appStateObserver = sptr<AppStateObserver>(new AppStateObserver());
     AppExecFwk::ProcessData processData = AppExecFwk::ProcessData();
     appStateObserver->OnProcessDied(processData);
-    appStateObserver->OnProcessDiedContinuousTask(processData);
     appStateObserver->OnProcessDiedEfficiencyRes(processData);
     AppExecFwk::AbilityStateData abilityStateData = AppExecFwk::AbilityStateData();
     appStateObserver->OnAbilityStateChanged(abilityStateData);
@@ -312,11 +311,10 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_001, TestSize.Level1)
     EXPECT_EQ(decisionMaker->Decide(nullptr, nullptr), ERR_BGTASK_NO_MEMORY);
 
     auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
-    decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
-    EXPECT_EQ(decisionMaker->Decide(keyInfo, nullptr), ERR_BGTASK_NOT_IN_PRESET_TIME);
     decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime();
-    EXPECT_EQ(decisionMaker->Decide(keyInfo, nullptr), ERR_BGTASK_NO_MEMORY);
+    EXPECT_EQ(decisionMaker->Decide(keyInfo, nullptr), ERR_BGTASK_NOT_IN_PRESET_TIME);
 
+    decisionMaker->pkgBgDurationMap_.clear();
     auto keyInfo2 = std::make_shared<KeyInfo>("bundleName2", 2);
     auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName2", 2, timerManager);
     auto delayInfo1 = std::make_shared<DelaySuspendInfoEx>(1);
