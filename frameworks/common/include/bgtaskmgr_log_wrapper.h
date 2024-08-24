@@ -31,12 +31,8 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 
-#ifndef FILENAME
-#define FILENAME                (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
-#endif
-
 #ifndef FORMAT_LOG
-#define FORMAT_LOG(fmt, ...) "[%{public}s(%{public}s):%{public}d] " fmt, FILENAME, __FUNCTION__, __LINE__, ##__VA_ARGS__
+#define FORMAT_LOG(fmt, ...) "[%{public}s:%{public}d] " fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__
 #endif
 
 #define BACKGROUND_TASK_PRINT_LOGD(fmt, ...) HILOG_DEBUG(LOG_CORE, fmt, ##__VA_ARGS__)
