@@ -931,7 +931,7 @@ void BgContinuousTaskMgr::StopContinuousTask(int32_t uid, int32_t pid, uint32_t 
 void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key)
 {
     BGTASK_LOGI("StopContinuousTask taskType: %{public}d, key %{public}s", taskType, key.c_str());
-    if (taskType == BackgroundMode::DATA_TRANSFER) {
+    if ((taskType == BackgroundMode::DATA_TRANSFER || taskType == BackgroundMode::AUDIO_PLAYBACK) {
         RemoveContinuousTaskRecordByUidAndMode(uid, taskType);
         return;
     }
