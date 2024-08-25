@@ -769,22 +769,23 @@ void SubscriberDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 
 void BgTransientTaskMgr::HandleSuspendManagerDie()
 {
-    if (!transientPauseUid_.empty()) {
-        for (auto iter = transientPauseUid_.begin(); iter != transientPauseUid_.end(); iter++) {
-            int32_t uid = *iter;
-            std::string name = "";
-            if (!GetBundleNamesForUid(uid, name)) {
-                BGTASK_LOGE("GetBundleNamesForUid fail, uid : %{public}d.", uid);
-                continue;
-            }
-            ErrCode ret = decisionMaker_->StartTransientTaskTimeForInner(uid, name);
-            if (ret != ERR_OK) {
-                BGTASK_LOGE("transient task uid: %{public}d, restart fail.", uid);
-            }
-        }
-        lock_guard<mutex> lock(transientUidLock_);
-        transientPauseUid_.clear();
+    lock_guard<mutex> lock(transientUidLock_);
+    if (transientPauseUid_.empty()) {
+        return;
     }
+    for (auto iter = transientPauseUid_.begin(); iter != transientPauseUid_.end(); iter++) {
+        int32_t uid = *iter;
+        std::string name = "";
+        if (!GetBundleNamesForUid(uid, name)) {
+            BGTASK_LOGE("GetBundleNamesForUid fail, uid : %{public}d.", uid);
+            continue;
+        }
+        ErrCode ret = decisionMaker_->StartTransientTaskTimeForInner(uid, name);
+        if (ret != ERR_OK) {
+            BGTASK_LOGE("transient task uid: %{public}d, restart fail.", uid);
+        }
+    }
+    transientPauseUid_.clear();
 }
 
 void BgTransientTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
