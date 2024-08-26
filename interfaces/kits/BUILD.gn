@@ -168,3 +168,54 @@ ohos_shared_library("cj_background_task_mgr_ffi") {
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
 }
+
+ohos_shared_library("transient_task_ndk") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
+  branch_protector_ret = "pac_ret"
+
+  output_extension = "so"
+  include_dirs = [ "$bgtaskmgr_root_path/interfaces/kits/c/include" ]
+
+  sources =
+      [ "$bgtaskmgr_root_path/interfaces/kits/c/src/transient_task_api.cpp" ]
+
+  cflags = [
+    "-fstack-protector-strong",
+    "-D_FORTIFY_SOURCE=2",
+    "-O2",
+  ]
+
+  cflags_cc = [
+    "-fstack-protector-strong",
+    "-D_FORTIFY_SOURCE=2",
+    "-O2",
+  ]
+
+  deps = [ "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits" ]
+
+  external_deps = [
+    "ability_base:want",
+    "ability_runtime:ability_context_native",
+    "ability_runtime:abilitykit_native",
+    "ability_runtime:napi_base_context",
+    "ability_runtime:wantagent_innerkits",
+    "bundle_framework:appexecfwk_base",
+    "c_utils:utils",
+    "common_event_service:cesfwk_innerkits",
+    "hilog:libhilog",
+    "ipc:ipc_single",
+    "napi:ace_napi",
+    "napi:cj_bind_ffi",
+    "napi:cj_bind_native",
+    "samgr:samgr_proxy",
+  ]
+
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
+  relative_install_dir = "ndk"
+}
