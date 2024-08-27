@@ -317,7 +317,6 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_001, TestSize.Level1)
     decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime();
     EXPECT_EQ(decisionMaker->Decide(keyInfo, nullptr), ERR_BGTASK_NO_MEMORY);
 
-    decisionMaker->pkgBgDurationMap_.clear();
     auto keyInfo2 = std::make_shared<KeyInfo>("bundleName2", 2);
     auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName2", 2, timerManager);
     auto delayInfo1 = std::make_shared<DelaySuspendInfoEx>(1);
