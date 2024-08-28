@@ -169,7 +169,7 @@ ohos_shared_library("cj_background_task_mgr_ffi") {
   part_name = "background_task_mgr"
 }
 
-ohos_shared_library("transient_task_ndk") {
+ohos_shared_library("transient_task") {
   sanitize = {
     cfi = true
     cfi_cross_dso = true
