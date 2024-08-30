@@ -55,7 +55,7 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
 {
-    BGTASK_LOGI("process died, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
+    BGTASK_LOGD("process died, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
     OnProcessDiedEfficiencyRes(processData);
 }
 
@@ -67,7 +67,7 @@ void AppStateObserver::OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData 
 
 void AppStateObserver::OnAppStopped(const AppExecFwk::AppStateData &appStateData)
 {
-    BGTASK_LOGI("app stopped, uid : %{public}d", appStateData.uid);
+    BGTASK_LOGD("app stopped, uid : %{public}d", appStateData.uid);
     if (!ValidateAppStateData(appStateData)) {
         BGTASK_LOGE("%{public}s : validate app state data failed!", __func__);
         return;
