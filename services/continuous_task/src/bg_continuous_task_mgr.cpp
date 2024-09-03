@@ -901,10 +901,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     }
     BGTASK_LOGI("%{public}s stop continuous task", mapKey.c_str());
     ErrCode result = ERR_OK;
-    auto it = std::find_if(iter->second->bgModeIds_.begin(), iter->second->bgModeIds_.end(), [](auto mode) {
-        return (mode != BackgroundMode::VOIP) && (mode != BackgroundMode::AUDIO_PLAYBACK);
-    });
-    if (!iter->second->isFromWebview_ && it != iter->second->bgModeIds_.end()) {
+    if (iter->second->GetNotificationId() != -1) {
         result = NotificationTools::GetInstance()->CancelNotification(
             iter->second->GetNotificationLabel(), iter->second->GetNotificationId());
     }
@@ -1326,7 +1323,7 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
                 record->abilityName_.c_str(), record->bgModeId_, record->abilityId_);
             record->reason_ = SYSTEM_CANCEL;
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
-            if (!iter->second->isFromWebview_) {
+            if (record->GetNotificationId() != -1) {
                 NotificationTools::GetInstance()->CancelNotification(
                     record->GetNotificationLabel(), record->GetNotificationId());
             }
