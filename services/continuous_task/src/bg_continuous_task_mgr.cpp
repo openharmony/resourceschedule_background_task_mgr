@@ -840,6 +840,11 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
         }
     }
     if (notificationText.empty()) {
+        if (continuousTaskRecord->GetNotificationId() != -1) {
+            NotificationTools::GetInstance()->CancelNotification(
+                continuousTaskRecord->GetNotificationLabel(), continuousTaskRecord->GetNotificationId());
+            continuousTaskRecord->notificationId_ = -1;
+        }
         return ERR_OK;
     }
     BGTASK_LOGD("notificationText %{public}s", notificationText.c_str());
@@ -962,6 +967,7 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUid(int32_t uid)
         iter = continuousTaskInfosMap_.erase(iter);
         RefreshTaskRecord();
     }
+    HandleAppContinuousTaskStop(uid);
 }
 
 void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, uint32_t mode)
@@ -985,6 +991,7 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, ui
         iter = continuousTaskInfosMap_.erase(iter);
         RefreshTaskRecord();
     }
+    HandleAppContinuousTaskStop(uid);
 }
 
 ErrCode BgContinuousTaskMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
@@ -1217,7 +1224,6 @@ void BgContinuousTaskMgr::SetReason(const std::string &mapKey, int32_t reason)
         record->reason_ = reason;
     }
 }
-
 
 bool BgContinuousTaskMgr::RemoveContinuousTaskRecord(const std::string &mapKey)
 {
