@@ -39,6 +39,10 @@
         {
             "name": "ohos_bgmode_prompt_default_value",
             "value": "Running continuous task"
+        },
+        {
+            "name": "ohos_app_name",
+            "value": "Continuous task notification prompt resource"
         }
     ]
 }
