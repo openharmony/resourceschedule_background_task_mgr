@@ -10,7 +10,7 @@
         },
         {
             "name": "ohos_bgmode_prompt_audio_recording",
-            "value": "正在运行录音任务"
+            "value": "正在运行录制任务"
         },
         {
             "name": "ohos_bgmode_prompt_location",
