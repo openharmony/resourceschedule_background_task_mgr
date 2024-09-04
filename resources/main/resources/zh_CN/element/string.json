@@ -39,6 +39,10 @@
         {
             "name": "ohos_bgmode_prompt_default_value",
             "value": "正在运行长时间任务"
+        },
+        {
+            "name": "ohos_app_name",
+            "value": "长时任务通知提示资源"
         }
     ]
 }
