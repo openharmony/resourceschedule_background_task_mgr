@@ -21,12 +21,11 @@
 #include "background_task_mgr_helper.h"
 #include "string_ex.h"
 #include "callback.h"
-#include "transient_task_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 std::map<int32_t, std::shared_ptr<Callback>> callbackInstances_;
-std::mutex callbackLock_;
+std::recursive_mutex callbackLock_;
 const int32_t INNER_ERROR_SHIFT = 100;
 
 extern "C" {
@@ -52,11 +51,8 @@ int32_t OH_BackgroundTaskManager_RequestSuspendDelay(const char* reason,
         }
         info->requestId = delaySuspendInfo->GetRequestId();
         info->actualDelayTime = delaySuspendInfo->GetActualDelayTime();
-        
-        {
-            std::lock_guard<std::mutex> lock(callbackLock_);
-            callbackInstances_[delaySuspendInfo->GetRequestId()] = expiredCallback;
-        }
+        std::lock_guard<std::recursive_mutex> lock(callbackLock_);
+        callbackInstances_[delaySuspendInfo->GetRequestId()] = expiredCallback;
         return ERR_TRANSIENT_TASK_OK;
     }
 
@@ -70,7 +66,7 @@ int32_t OH_BackgroundTaskManager_GetRemainingDelayTime(int32_t requestId, int32_
 int32_t OH_BackgroundTaskManager_CancelSuspendDelay(int32_t requestId)
 {
     auto errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(requestId);
-    std::lock_guard<std::mutex> lock(callbackLock_);
+    std::lock_guard<std::recursive_mutex> lock(callbackLock_);
     auto findCallback = callbackInstances_.find(requestId);
     if (findCallback != callbackInstances_.end()) {
         LOGI("CancelSuspendDelay erase");
@@ -91,7 +87,7 @@ Callback::~Callback()
 void Callback::OnExpired()
 {
     LOGI("OnExpired start");
-    std::lock_guard<std::mutex> lock(callbackLock_);
+    std::lock_guard<std::recursive_mutex> lock(callbackLock_);
     auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
         [&](const auto& callbackInstance) { return callbackInstance.second.get() == this; }
     );
@@ -99,10 +95,11 @@ void Callback::OnExpired()
         LOGI("expired callback not found");
         return;
     }
+    auto callback = findCallback->second;
+    callbackInstances_.erase(findCallback);
     LOGI("call native callback");
     findCallback->second->ffiCallback_();
     LOGI("OnExpired end");
-    callbackInstances_.erase(findCallback);
 }
 
 void Callback::SetCallbackInfo(void (*callback)())
