@@ -37,10 +37,6 @@ public:
 private:
     std::function<void()> ffiCallback_;
 };
-
-extern std::map<int32_t, std::shared_ptr<Callback>> callbackInstances_;
-extern std::mutex callbackLock_;
-
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // CALLBACK
