@@ -14,9 +14,9 @@
  */
 
 #include "background_task_mgr_service.h"
+#include "bgtask_config.h"
 #include "bundle_manager_helper.h"
 #include <functional>
-
 #include "ability_manager_client.h"
 #include "accesstoken_kit.h"
 #include "bgtaskmgr_inner_errors.h"
@@ -68,6 +68,9 @@ void BackgroundTaskMgrService::OnStart()
 void BackgroundTaskMgrService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->OnAddSystemAbility(systemAbilityId, deviceId);
+    if (systemAbilityId == APP_MGR_SERVICE_ID) {
+        DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
+    }
 }
 
 void BackgroundTaskMgrService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)

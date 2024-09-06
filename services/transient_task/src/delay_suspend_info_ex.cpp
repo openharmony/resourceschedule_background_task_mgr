@@ -31,6 +31,7 @@ int32_t DelaySuspendInfoEx::GetRemainDelayTime()
 {
     int64_t spendTime = (baseTime_ > 0) ? (spendTime_ + (TimeProvider::GetCurrentTime() - baseTime_)) : spendTime_;
     int32_t remainTime = GetActualDelayTime() - (int32_t)spendTime;
+    BGTASK_LOGD("requestId %{public}d remainTime %{public}d", GetRequestId(), remainTime);
     return (remainTime < 0) ? 0 : remainTime;
 }
 
