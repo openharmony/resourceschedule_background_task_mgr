@@ -69,6 +69,9 @@ public:
     }
 
 private:
+    int32_t GetModifiedTime();
+
+private:
     string pkg_ {""};
     int32_t uid_ {-1};
     int32_t quota_ {INIT_QUOTA};

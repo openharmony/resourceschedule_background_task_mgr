@@ -26,6 +26,7 @@ extern const int32_t ALLOW_REQUEST_TIME_BG;
 extern const int32_t INIT_QUOTA;
 extern const int64_t QUOTA_UPDATE;
 extern const bool SUPPORT_TASK_KEEPING;
+extern const int64_t EXEMPTED_QUOTA;
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TRANSIENT_TASK_INCLUDE_BGTASK_COMMON_H
