@@ -21,6 +21,7 @@
 #include "time_provider.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "errors.h"
+#include "bgtask_common.h"
 
 using namespace std;
 
@@ -131,9 +132,15 @@ void PkgDelaySuspendInfo::StopAccountingAll()
     isCounting_ = false;
 }
 
+int32_t PkgDelaySuspendInfo::GetModifiedTime()
+{
+    int32_t time = static_cast<int32_t>(TimeProvider::GetCurrentTime()) - baseTime_ - EXEMPTED_QUOTA;
+    return (time < 0) ? 0 : time;
+}
+
 void PkgDelaySuspendInfo::UpdateQuota(bool reset)
 {
-    spendTime_ = isCounting_ ? (static_cast<int32_t>(TimeProvider::GetCurrentTime()) - baseTime_) : 0;
+    spendTime_ = isCounting_ ? GetModifiedTime() : 0;
     quota_ -= spendTime_;
     if (quota_ < 0) {
         quota_ = 0;
@@ -142,7 +149,8 @@ void PkgDelaySuspendInfo::UpdateQuota(bool reset)
     if (reset) {
         quota_ = INIT_QUOTA;
     }
-    BGTASK_LOGD("%{public}s Lastest quota: %{public}d", pkg_.c_str(), quota_);
+    BGTASK_LOGD("%{public}s Lastest quota: %{public}d, spendTime: %{public}d, isCounting: %{public}d",
+        pkg_.c_str(), quota_, spendTime_, isCounting_);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
