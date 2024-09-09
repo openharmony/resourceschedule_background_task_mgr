@@ -531,6 +531,27 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, Dump_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: Dump_002
+ * @tc.desc: cover the condition when cpu quota dump is called.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, Dump_002, TestSize.Level1)
+{
+    std::vector<std::string> dumpInfo {};
+    // set and reset function won't ouput dumpInfo
+    bgEfficiencyResourcesMgr_->ShellDump({"-E", "--setquota", "3000", "5000"}, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 0);
+
+    bgEfficiencyResourcesMgr_->ShellDump({"-E", "--resetquota", "0"}, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 0);
+
+    // not apply cpu quota, no dumpInfo
+    bgEfficiencyResourcesMgr_->ShellDump({"-E", "--getquota", "0"}, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
+    SUCCEED();
+}
+
+/**
  * @tc.name: BoundaryCondition_001
  * @tc.desc: cover the boundary condition.
  * @tc.type: FUNC
