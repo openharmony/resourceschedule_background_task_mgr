@@ -14,9 +14,9 @@
  */
 
 #include "background_task_mgr_service.h"
+#include "bgtask_config.h"
 #include "bundle_manager_helper.h"
 #include <functional>
-
 #include "ability_manager_client.h"
 #include "accesstoken_kit.h"
 #include "bgtaskmgr_inner_errors.h"
@@ -71,6 +71,7 @@ void BackgroundTaskMgrService::SetReady(uint32_t flag)
             return;
         }
     }
+    DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
     if (!Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get())) {
         BGTASK_LOGE("Service start failed!");
         return;

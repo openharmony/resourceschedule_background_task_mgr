@@ -14,14 +14,13 @@
  */
 
 #include "pkg_delay_suspend_info.h"
-
-#include <sstream>
-
+#include "bgtask_config.h"
 #include "transient_task_log.h"
 #include "time_provider.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "errors.h"
-#include "bgtask_common.h"
+
+#include <sstream>
 
 using namespace std;
 
@@ -132,12 +131,6 @@ void PkgDelaySuspendInfo::StopAccountingAll()
     isCounting_ = false;
 }
 
-int32_t PkgDelaySuspendInfo::GetModifiedTime()
-{
-    int32_t time = static_cast<int32_t>(TimeProvider::GetCurrentTime()) - baseTime_ - EXEMPTED_QUOTA;
-    return (time < 0) ? 0 : time;
-}
-
 void PkgDelaySuspendInfo::UpdateQuota(bool reset)
 {
     spendTime_ = isCounting_ ? GetModifiedTime() : 0;
@@ -152,5 +145,20 @@ void PkgDelaySuspendInfo::UpdateQuota(bool reset)
     BGTASK_LOGD("%{public}s Lastest quota: %{public}d, spendTime: %{public}d, isCounting: %{public}d",
         pkg_.c_str(), quota_, spendTime_, isCounting_);
 }
+
+int32_t PkgDelaySuspendInfo::GetModifiedTime()
+{
+    bool isExemptedApp = DelayedSingleton<BgtaskConfig>::GetInstance()->
+        IsTransientTaskExemptedQuatoApp(pkg_);
+    int32_t exempted_quota = 0;
+    if (isExemptedApp) {
+        exempted_quota = DelayedSingleton<BgtaskConfig>::GetInstance()->GetTransientTaskExemptedQuato();
+    }
+    BGTASK_LOGD("bundleName: %{public}s exempted: %{public}d exempted_quota: %{public}d",
+        pkg_.c_str(), isExemptedApp, exempted_quota);
+    int32_t time = static_cast<int32_t>(TimeProvider::GetCurrentTime()) - baseTime_ - exempted_quota;
+    return (time < 0) ? 0 : time;
+}
+
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
