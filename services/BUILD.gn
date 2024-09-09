@@ -30,6 +30,7 @@ BgTaskMgrServicecSrc = [
   "${bgtaskmgr_frameworks_path}/src/background_task_subscriber_proxy.cpp",
   "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
   "common/src/app_state_observer.cpp",
+  "common/src/bgtask_config.cpp",
   "common/src/bundle_manager_helper.cpp",
   "common/src/data_storage_helper.cpp",
   "common/src/system_event_observer.cpp",
