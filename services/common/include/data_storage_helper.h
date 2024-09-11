@@ -32,12 +32,12 @@ public:
     ErrCode RefreshResourceRecord(const ResourceRecordMap &appRecord, const ResourceRecordMap &processRecord);
     ErrCode RestoreResourceRecord(ResourceRecordMap &appRecord, ResourceRecordMap &processRecord);
     bool ParseFastSuspendDozeTime(const std::string &FilePath, int &time);
+    std::string GetConfigFileAbsolutePath(const std::string &relativePath);
+    int32_t ParseJsonValueFromFile(nlohmann::json &value, const std::string &filePath);
 
 private:
     int32_t SaveJsonValueToFile(const std::string &value, const std::string &filePath);
-    int32_t ParseJsonValueFromFile(nlohmann::json &value, const std::string &filePath);
     bool CreateNodeFile(const std::string &filePath);
-    std::string GetConfigFileAbsolutePath(const std::string &relativePath);
     bool ConvertFullPath(const std::string &partialPath, std::string &fullPath);
     void ConvertMapToString(const ResourceRecordMap &appRecord,
         const ResourceRecordMap &processRecord, std::string &recordString);
