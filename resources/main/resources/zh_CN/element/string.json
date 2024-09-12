@@ -1,48 +1,75 @@
 {
-    "string": [
+    "string":[
         {
-            "name": "ohos_bgmode_prompt_data_transfer",
-            "value": "正在运行数据传输任务"
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"正在运行数据传输任务",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-            "name": "ohos_bgmode_prompt_audio_playback",
-            "value": "正在运行音频播放任务"
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"正在运行音频播放任务",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-            "name": "ohos_bgmode_prompt_audio_recording",
-            "value": "正在运行录制任务"
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"正在运行录制任务",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-            "name": "ohos_bgmode_prompt_location",
-            "value": "正在运行定位任务"
+            "name":"ohos_bgmode_prompt_location",
+            "value":"正在运行定位任务",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-            "name": "ohos_bgmode_prompt_bluetooth_interaction",
-            "value": "正在运行蓝牙相关任务"
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"正在运行蓝牙相关任务",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-            "name": "ohos_bgmode_prompt_multidevice_connection",
-            "value": "正在运行分布式任务"
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"正在运行分布式任务",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-            "name": "ohos_bgmode_prompt_wifi_interaction",
-            "value": "正在运行WLAN相关任务"
+            "name":"ohos_bgmode_prompt_wifi_interaction",
+            "value":"正在运行 WLAN 相关任务",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-            "name": "ohos_bgmode_prompt_voip",
-            "value": "正在运行通话相关任务"
+            "name":"ohos_bgmode_prompt_voip",
+            "value":"正在运行通话相关任务",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-            "name": "ohos_bgmode_prompt_task_keeping",
-            "value": "正在运行计算任务"
+            "name":"ohos_bgmode_prompt_task_keeping",
+            "value":"正在运行计算任务",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
-            "name": "ohos_bgmode_prompt_default_value",
-            "value": "正在运行长时间任务"
+            "name":"ohos_bgmode_prompt_default_value",
+            "value":"正在运行长时间任务"
         },
         {
-            "name": "ohos_app_name",
-            "value": "长时任务通知提示资源"
+            "name":"ohos_app_name",
+            "value":"长时任务通知提示资源"
         }
     ]
 }
