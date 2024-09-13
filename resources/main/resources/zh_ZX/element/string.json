@@ -1,48 +1,40 @@
 {
-    "string": [
+    "string":[
         {
-            "name": "ohos_bgmode_prompt_data_transfer",
-            "value": "正在运行数据传输任务"
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"[TS_972428]_A recording task is running."
         },
         {
-            "name": "ohos_bgmode_prompt_audio_playback",
-            "value": "正在运行音频播放任务"
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"[TS_972425]_An audio playback task is running."
         },
         {
-            "name": "ohos_bgmode_prompt_audio_recording",
-            "value": "正在运行录制任务"
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"[TS_972427]_A distributed task is running."
         },
         {
-            "name": "ohos_bgmode_prompt_location",
-            "value": "正在运行定位任务"
+            "name":"ohos_bgmode_prompt_voip",
+            "value":"[TS_972422]_A call-related task is running."
         },
         {
-            "name": "ohos_bgmode_prompt_bluetooth_interaction",
-            "value": "正在运行蓝牙相关任务"
+            "name":"ohos_bgmode_prompt_location",
+            "value":"[TS_972420]_A positioning task is running."
         },
         {
-            "name": "ohos_bgmode_prompt_multidevice_connection",
-            "value": "正在运行分布式任务"
+            "name":"ohos_bgmode_prompt_wifi_interaction",
+            "value":"[TS_972424]_A WLAN-related task is running."
         },
         {
-            "name": "ohos_bgmode_prompt_wifi_interaction",
-            "value": "正在运行WLAN相关任务"
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"[TS_972423]_A Bluetooth-related task is running."
         },
         {
-            "name": "ohos_bgmode_prompt_voip",
-            "value": "正在运行通话相关任务"
+            "name":"ohos_bgmode_prompt_task_keeping",
+            "value":"[TS_972421]_A computing task is running."
         },
         {
-            "name": "ohos_bgmode_prompt_task_keeping",
-            "value": "正在运行计算任务"
-        },
-        {
-            "name": "ohos_bgmode_prompt_default_value",
-            "value": "正在运行长时间任务"
-        },
-        {
-            "name": "ohos_app_name",
-            "value": "长时任务通知提示资源"
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"[TS_972426]_A data transfer task is running."
         }
     ]
 }
