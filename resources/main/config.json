@@ -4,8 +4,8 @@
         "singleton": true,
         "vendor": "ohos",
         "version": {
-            "code": 2,
-            "name": "1.0.0.2"
+            "code": 4,
+            "name": "1.0.0.4"
         },
         "apiVersion": {
             "compatible": 3,
