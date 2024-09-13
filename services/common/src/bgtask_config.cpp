@@ -17,13 +17,16 @@
 #include "data_storage_helper.h"
 #include "bgtaskmgr_log_wrapper.h"
 #include "parameters.h"
+#include <dlfcn.h>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-const std::string SUSPEND_MANAGER_CONFIG_FILE = "/etc/efficiency_manager/suspend_manager_config.json";
+const std::string SUSPEND_MANAGER_CONFIG_FILE = "etc/efficiency_manager/suspend_manager_config.json";
 const std::string TRANSIENT_ERR_DELAYED_FROZEN_LIST = "transient_err_delayed_frozen_list";
 const std::string TRANSIENT_EXEMPTED_QUOTA = "transient_exempted_quota";
+const char* EXT_CONFIG_LIB = "libsuspend_manager_service.z.so";
+const int32_t ID = 8;
 }
 
 void BgtaskConfig::Init()
@@ -33,17 +36,40 @@ void BgtaskConfig::Init()
         return;
     }
 
+    if (!LoadGetExtConfigFunc()) {
+        return;
+    }
     LoadConfigFile();
     isInit_ = true;
+}
+
+bool BgtaskConfig::LoadGetExtConfigFunc()
+{
+    auto handle = dlopen(EXT_CONFIG_LIB, RTLD_NOW);
+    if (!handle) {
+        BGTASK_LOGE("not find lib, errno: %{public}d", errno);
+        return false;
+    }
+    getExtConfigFunc_ = reinterpret_cast<GetExtConfigFunc>(dlsym(handle, "GetExtConfig"));
+    if (!getExtConfigFunc_) {
+        BGTASK_LOGE("dlsym getExtConfig func failed!");
+        dlclose(handle);
+        return false;
+    }
+    return true;
 }
 
 void BgtaskConfig::LoadConfigFile()
 {
     nlohmann::json jsonObj;
-    std::string absolutePath = DelayedSingleton<DataStorageHelper>::GetInstance()->
-        GetConfigFileAbsolutePath(SUSPEND_MANAGER_CONFIG_FILE);
-    if (DelayedSingleton<DataStorageHelper>::GetInstance()->ParseJsonValueFromFile(jsonObj, absolutePath) != 0) {
-        BGTASK_LOGE("LoadConfigFile failed");
+    std::string content;
+    if (!getExtConfigFunc_) {
+        return;
+    }
+    getExtConfigFunc_(ID, content);
+    jsonObj = nlohmann::json::parse(content, nullptr, false);
+    if (jsonObj.is_discarded()) {
+        BGTASK_LOGE("failed due to data is discarded");
         return;
     }
 
