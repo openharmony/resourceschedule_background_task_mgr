@@ -45,7 +45,7 @@ void BgtaskConfig::Init()
 
 bool BgtaskConfig::LoadGetExtConfigFunc()
 {
-    auto handle = dlopen(EXT_CONFIG_LIB, RTLD_NOW);
+    handle = dlopen(EXT_CONFIG_LIB, RTLD_NOW);
     if (!handle) {
         BGTASK_LOGE("not find lib, errno: %{public}d", errno);
         return false;
@@ -54,6 +54,7 @@ bool BgtaskConfig::LoadGetExtConfigFunc()
     if (!getExtConfigFunc_) {
         BGTASK_LOGE("dlsym getExtConfig func failed!");
         dlclose(handle);
+        handle = nullptr;
         return false;
     }
     return true;
@@ -67,6 +68,11 @@ void BgtaskConfig::LoadConfigFile()
         return;
     }
     getExtConfigFunc_(ID, content);
+    if (!handle) {
+        dlclose(handle);
+        handle = nullptr;
+        getExtConfigFunc_ = nullptr;
+    }
     jsonObj = nlohmann::json::parse(content, nullptr, false);
     if (jsonObj.is_discarded()) {
         BGTASK_LOGE("failed due to data is discarded");

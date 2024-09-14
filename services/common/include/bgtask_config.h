@@ -43,6 +43,7 @@ private:
     std::set<std::string> transientTaskExemptedQuatoList_ {};
     int32_t transientTaskExemptedQuato_ = 10 * 1000; // 10s
     GetExtConfigFunc getExtConfigFunc_ = nullptr;
+    void *handle = nullptr;
 };
 }
 }
