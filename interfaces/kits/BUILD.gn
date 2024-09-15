@@ -122,13 +122,13 @@ ohos_shared_library("cj_background_task_mgr_ffi") {
     cfi_cross_dso = true
     debug = false
   }
- 
+
   include_dirs = [ "../innerkits/include" ]
- 
+
   if (!defined(defines)) {
     defines = []
   }
- 
+
   if (product_name != "ohos-sdk") {
     deps = [ "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits" ]
     external_deps = [
@@ -153,15 +153,15 @@ ohos_shared_library("cj_background_task_mgr_ffi") {
     sources = [ "cj/background_task_mgr/background_task_mock.cpp" ]
     external_deps = [ "napi:cj_bind_ffi" ]
   }
- 
+
   if (current_os == "ohos") {
     defines += [ "OHOS_PLATFORM" ]
   }
- 
+
   if (current_os == "mingw") {
     defines += [ "WINDOWS_PLATFORM" ]
   }
- 
+
   innerapi_tags = [ "platformsdk" ]
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
