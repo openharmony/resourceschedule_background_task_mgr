@@ -46,10 +46,7 @@ ohos_fuzztest("BgTaskUnsubscribeBackgroundTaskFuzzTest") {
     "bgtaskunsubscribebackgroundtask_fuzzer.cpp",
   ]
 
-  deps = [
-    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
-    "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-  ]
+  deps = [ "${bgtaskmgr_services_path}:bgtaskmgr_service_static" ]
 
   external_deps = [
     "ability_base:base",

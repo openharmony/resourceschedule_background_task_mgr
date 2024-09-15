@@ -46,10 +46,10 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAbilityStateChanged(uid, abilityName, abilityId);
     };
     if (!handler_) {
-        BGTASK_LOGE("handler_ null.");
-    } else {
-        handler_->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
+        BGTASK_LOGE("handler_ null");
+        return;
     }
+    handler_->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
 }
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
@@ -65,10 +65,10 @@ void AppStateObserver::OnProcessDiedContinuousTask(const AppExecFwk::ProcessData
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnProcessDied(processData.uid, processData.pid);
     };
     if (!handler_) {
-        BGTASK_LOGE("handler_ null.");
-    } else {
-        handler_->PostTask(task, TASK_ON_PROCESS_DIED);
+        BGTASK_LOGE("handler_ null");
+        return;
     }
+    handler_->PostTask(task, TASK_ON_PROCESS_DIED);
 }
 
 void AppStateObserver::OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData)

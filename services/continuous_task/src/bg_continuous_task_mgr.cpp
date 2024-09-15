@@ -74,7 +74,6 @@ static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
-static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
@@ -486,9 +485,9 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
         }
     } else {
         uint32_t recordedBgMode = BG_MODE_INDEX_HEAD << (requestedBgModeId - 1);
-        if ((recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION || recordedBgMode == SYSTEM_APP_BGMODE_VOIP)
-            && !BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
-            BGTASK_LOGE("voip and wifiInteraction background mode only support for system app");
+        if (recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION &&
+            !BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+            BGTASK_LOGE("wifiInteraction background mode only support for system app");
             return ERR_BGTASK_NOT_SYSTEM_APP;
         }
         if (recordedBgMode == PC_BGMODE_TASK_KEEPING && !SUPPORT_TASK_KEEPING) {
@@ -566,7 +565,6 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
-    // webview sdk申请长时任务，上下文在应用。callkit sa 申请长时时，上下文在sa;
     if (callingUid != VOIP_SA_UID && callingUid != taskParam->uid_) {
         BGTASK_LOGE("continuous task param uid %{public}d is invalid, real %{public}d", taskParam->uid_, callingUid);
         return ERR_BGTASK_CHECK_TASK_PARAM;
@@ -604,10 +602,11 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     continuousTaskRecord->userId_ = userId;
     continuousTaskRecord->fullTokenId_ = fullTokenId;
 
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StartBackgroundRunningInner");
+    StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StartBackgroundRunningInner");
     handler_->PostSyncTask([this, continuousTaskRecord, &result]() mutable {
         result = this->StartBackgroundRunningInner(continuousTaskRecord);
         }, AppExecFwk::EventQueue::Priority::HIGH);
+    FinishTrace(HITRACE_TAG_OHOS);
 
     return result;
 }
@@ -661,10 +660,12 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
         }
     }
 
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StartBackgroundRunningInner");
+    StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StartBackgroundRunningInner");
     handler_->PostSyncTask([this, continuousTaskRecord, &result]() mutable {
         result = this->StartBackgroundRunningInner(continuousTaskRecord);
         }, AppExecFwk::EventQueue::Priority::HIGH);
+    FinishTrace(HITRACE_TAG_OHOS);
+
     taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
     return result;
 }
@@ -681,8 +682,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunning(const sptr<ContinuousTaskPa
     }
     ErrCode result = ERR_OK;
     int32_t callingUid = IPCSkeleton::GetCallingUid();
-
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::UpdateBackgroundRunningInner");
+    StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::UpdateBackgroundRunningInner");
     std::string taskInfoMapKey = std::to_string(callingUid) + SEPARATOR + taskParam->abilityName_ + SEPARATOR +
         std::to_string(taskParam->abilityId_);
     auto self = shared_from_this();
@@ -694,7 +694,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunning(const sptr<ContinuousTaskPa
         }
         result = self->UpdateBackgroundRunningInner(taskInfoMapKey, taskParam);
         }, AppExecFwk::EventQueue::Priority::HIGH);
-
+    FinishTrace(HITRACE_TAG_OHOS);
     return result;
 }
 
@@ -752,7 +752,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
     return RefreshTaskRecord();
 }
-
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
@@ -825,8 +824,8 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
 
     std::string notificationText {""};
     for (auto mode : continuousTaskRecord->bgModeIds_) {
-        if (mode == BackgroundMode::AUDIO_PLAYBACK || mode == BackgroundMode::VOIP ||
-            (mode == BackgroundMode::AUDIO_RECORDING && continuousTaskRecord->IsSystem())) {
+        if (mode == BackgroundMode::AUDIO_PLAYBACK || ((mode == BackgroundMode::VOIP ||
+            mode == BackgroundMode::AUDIO_RECORDING) && continuousTaskRecord->IsSystem())) {
             continue;
         }
         BGTASK_LOGD("mode %{public}d", mode);
@@ -859,10 +858,11 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<Continuous
     int32_t abilityId = taskParam->abilityId_;
     std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
 
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StopBackgroundRunningInner");
+    StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StopBackgroundRunningInner");
     handler_->PostSyncTask([this, uid, abilityName, abilityId, &result]() {
         result = this->StopBackgroundRunningInner(uid, abilityName, abilityId);
         }, AppExecFwk::EventQueue::Priority::HIGH);
+    FinishTrace(HITRACE_TAG_OHOS);
 
     return result;
 }
@@ -884,10 +884,11 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityNam
 
     ErrCode result = ERR_OK;
 
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StopBackgroundRunningInner");
+    StartTrace(HITRACE_TAG_OHOS, "BgContinuousTaskMgr::StopBackgroundRunningInner");
     handler_->PostSyncTask([this, callingUid, abilityName, abilityId, &result]() {
         result = this->StopBackgroundRunningInner(callingUid, abilityName, abilityId);
         }, AppExecFwk::EventQueue::Priority::HIGH);
+    FinishTrace(HITRACE_TAG_OHOS);
 
     return result;
 }
@@ -904,13 +905,11 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     }
     BGTASK_LOGI("%{public}s stop continuous task", mapKey.c_str());
     ErrCode result = ERR_OK;
-    auto it = std::find_if(iter->second->bgModeIds_.begin(), iter->second->bgModeIds_.end(), [](auto mode) {
-        return (mode != BackgroundMode::VOIP) && (mode != BackgroundMode::AUDIO_PLAYBACK);
-    });
-    if (!iter->second->isFromWebview_ && it != iter->second->bgModeIds_.end()) {
+    if (iter->second->GetNotificationId() != -1) {
         result = NotificationTools::GetInstance()->CancelNotification(
             iter->second->GetNotificationLabel(), iter->second->GetNotificationId());
     }
+
     RemoveContinuousTaskRecord(mapKey);
     return result;
 }

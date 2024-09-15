@@ -23,28 +23,20 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class BgContinuousTaskMgr;
 
-class ConfigChangeObserver : public AppExecFwk::ConfigurationObserverStub,
-                             public std::enable_shared_from_this<ConfigChangeObserver> {
+class ConfigChangeObserver : public AppExecFwk::ConfigurationObserverStub {
 public:
     ConfigChangeObserver() = default;
     ~ConfigChangeObserver() override = default;
-
     ConfigChangeObserver(const std::shared_ptr<AppExecFwk::EventHandler> handler,
-        const std::shared_ptr<BgContinuousTaskMgr> taskMgr);
-    
-    /**
-     * @brief Called when the system configuration is updated.
-     *
-     * @param configuration Indicates the updated configuration information.
-     */
+        const std::shared_ptr<BgContinuousTaskMgr> bgContinuousTaskMgr);
     void OnConfigurationUpdated(const AppExecFwk::Configuration& configuration) override;
 
 private:
-    bool CheckExpired();
+    bool CheckParamValid();
 
 private:
     std::weak_ptr<AppExecFwk::EventHandler> handler_ {};
-    std::weak_ptr<BgContinuousTaskMgr> taskMgr_ {};
+    std::weak_ptr<BgContinuousTaskMgr> bgContinuousTaskMgr_ {};
 };
 }
 }

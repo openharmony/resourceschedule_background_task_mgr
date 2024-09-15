@@ -28,7 +28,7 @@ ErrCode BackgroundTaskMgrHelper::RequestStartBackgroundRunning(ContinuousTaskPar
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStartBackgroundRunning(taskParam);
 }
 
-ErrCode BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(const ContinuousTaskParam &taskParam)
+ErrCode BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(ContinuousTaskParam &taskParam)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestUpdateBackgroundRunning(taskParam);
 }
@@ -45,8 +45,7 @@ ErrCode BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(const Continuo
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam);
 }
 
-__attribute__((no_sanitize("cfi"))) ErrCode BackgroundTaskMgrHelper::SubscribeBackgroundTask(
-    const BackgroundTaskSubscriber &subscriber)
+ErrCode BackgroundTaskMgrHelper::SubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SubscribeBackgroundTask(subscriber);
 }

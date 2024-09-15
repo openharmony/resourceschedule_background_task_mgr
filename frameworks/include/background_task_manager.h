@@ -73,7 +73,7 @@ public:
      * @param taskParam Request params.
      * @return ERR_OK if success, else fail.
      */
-    ErrCode RequestUpdateBackgroundRunning(const ContinuousTaskParam &taskParam);
+    ErrCode RequestUpdateBackgroundRunning(ContinuousTaskParam &taskParam);
 
     /**
      * @brief Request service to keep or stop running background for inner ability.
@@ -195,7 +195,7 @@ private:
 
 private:
     std::mutex mutex_;
-    sptr<BackgroundTaskMgr::IBackgroundTaskMgr> proxy_;
+    sptr<BackgroundTaskMgr::IBackgroundTaskMgr> backgroundTaskMgrProxy_;
     sptr<BgTaskMgrDeathRecipient> recipient_;
 };
 }  // namespace BackgroundTaskMgr
