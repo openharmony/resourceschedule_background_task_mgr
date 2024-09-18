@@ -74,7 +74,6 @@ static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
-static constexpr uint32_t SYSTEM_APP_BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
@@ -486,8 +485,8 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
         }
     } else {
         uint32_t recordedBgMode = BG_MODE_INDEX_HEAD << (requestedBgModeId - 1);
-        if ((recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION || recordedBgMode == SYSTEM_APP_BGMODE_VOIP)
-            && !BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+        if (recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION &&
+            !BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
             BGTASK_LOGE("voip and wifiInteraction background mode only support for system app");
             return ERR_BGTASK_NOT_SYSTEM_APP;
         }
@@ -825,8 +824,8 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
 
     std::string notificationText {""};
     for (auto mode : continuousTaskRecord->bgModeIds_) {
-        if (mode == BackgroundMode::AUDIO_PLAYBACK || mode == BackgroundMode::VOIP ||
-            (mode == BackgroundMode::AUDIO_RECORDING && continuousTaskRecord->IsSystem())) {
+        if (mode == BackgroundMode::AUDIO_PLAYBACK || ((mode == BackgroundMode::VOIP ||
+            mode == BackgroundMode::AUDIO_RECORDING) && continuousTaskRecord->IsSystem())) {
             continue;
         }
         BGTASK_LOGD("mode %{public}d", mode);
@@ -904,10 +903,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     }
     BGTASK_LOGI("%{public}s stop continuous task", mapKey.c_str());
     ErrCode result = ERR_OK;
-    auto it = std::find_if(iter->second->bgModeIds_.begin(), iter->second->bgModeIds_.end(), [](auto mode) {
-        return (mode != BackgroundMode::VOIP) && (mode != BackgroundMode::AUDIO_PLAYBACK);
-    });
-    if (!iter->second->isFromWebview_ && it != iter->second->bgModeIds_.end()) {
+    if (iter->second->GetNotificationId() != -1) {
         result = NotificationTools::GetInstance()->CancelNotification(
             iter->second->GetNotificationLabel(), iter->second->GetNotificationId());
     }

@@ -36,7 +36,9 @@ constexpr char SEPARATOR[] = "_";
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 constexpr int BACKGROUND_MODE_DATA_TANSFER = 1;
 constexpr int BACKGROUND_MODE_AUDIO_RECORDING = 3;
+constexpr int BACKGROUND_MODE_VOIP = 8;
 constexpr int PUBLISH_DELAY_TIME = 3;
+constexpr int TYPE_CODE_VOIP = 0;
 constexpr int TYPE_CODE_AUDIO_RECORDING = 7;
 constexpr int TYPE_CODE_DATA_TANSFER = 8;
 #endif
@@ -80,6 +82,9 @@ WEAK_FUNC ErrCode NotificationTools::PublishNotification(
     } else if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
         BACKGROUND_MODE_AUDIO_RECORDING) != continuousTaskRecord->bgModeIds_.end()) {
         liveContent->SetType(TYPE_CODE_AUDIO_RECORDING);
+    } else if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
+        BACKGROUND_MODE_VOIP) != continuousTaskRecord->bgModeIds_.end()) {
+        liveContent->SetType(TYPE_CODE_VOIP);
     }
 
     std::shared_ptr<AAFwk::WantParams> extraInfo = std::make_shared<AAFwk::WantParams>();
