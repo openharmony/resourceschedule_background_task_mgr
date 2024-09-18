@@ -95,7 +95,10 @@ bool ContinuousTaskParamForInner::ReadFromParcel(Parcel &parcel)
         BGTASK_LOGE("Failed to read the abilityId");
         return false;
     }
-    tokenId_ = parcel.ReadUint64();
+    if (!parcel.ReadUint64(tokenId_)) {
+        BGTASK_LOGE("read parce tokenId error");
+        return false;
+    }
     return true;
 }
 
@@ -195,6 +198,7 @@ bool ContinuousTaskParamForInner::Marshalling(Parcel &parcel) const
         BGTASK_LOGE("Failed to write the abilityId");
         return false;
     }
+
     if (!parcel.WriteUint64(tokenId_)) {
         BGTASK_LOGE("Failed to write tokenId_");
         return false;

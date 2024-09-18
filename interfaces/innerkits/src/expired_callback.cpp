@@ -36,9 +36,8 @@ ExpiredCallback::ExpiredCallbackImpl::ExpiredCallbackImpl(const std::shared_ptr<
 
 void ExpiredCallback::ExpiredCallbackImpl::OnExpired()
 {
-    auto callback = callback_.lock();
-    if (callback != nullptr) {
-        callback->OnExpired();
+    if (!callback_.expired()) {
+        callback_.lock()->OnExpired();
     }
 }
 }  // namespace BackgroundTaskMgr

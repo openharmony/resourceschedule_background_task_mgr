@@ -87,8 +87,7 @@ public:
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
-    ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
-        const sptr<ContinuousTaskParam> &taskParam);
+    ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey, const sptr<ContinuousTaskParam> &taskParam);
     ErrCode StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName, int32_t abilityId);
     ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);

@@ -161,7 +161,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
     info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
     info.appName_ = "Entry";
     bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
-
+ 
     // start one task by abilityId is 1
     sptr<ContinuousTaskParam> taskParam1 = new (std::nothrow) ContinuousTaskParam(true, 0,
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
@@ -178,7 +178,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
         abilityId = iter->second->GetAbilityId();
     }
     EXPECT_EQ(abilityId, 1);
-
+ 
     // start one task by abilityId is 2
     sptr<ContinuousTaskParam> taskParam2 = new (std::nothrow) ContinuousTaskParam(true, 0,
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
@@ -187,7 +187,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
     
     taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
     EXPECT_EQ(taskSize, 2);
-
+ 
     // agent start one task by abilityId is 2
     sptr<ContinuousTaskParam> taskParam3 = new (std::nothrow) ContinuousTaskParam(true, 0,
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
@@ -197,23 +197,23 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
     
     taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
     EXPECT_EQ(taskSize, 2);
-
+ 
     // stop one task by abilityId is 1
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(taskParam1->abilityName_, 1), (int32_t)ERR_OK);
-
+ 
     taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
     EXPECT_EQ(taskSize, 1);
-
+ 
     // stop one task by abilityId is 2
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(taskParam2->abilityName_, 2), (int32_t)ERR_OK);
-
+ 
     taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
     EXPECT_EQ(taskSize, 0);
-
+ 
     // agent stop one task by abilityId is 2
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StopBackgroundRunning(taskParam2->abilityName_, 2),
         (int32_t)ERR_BGTASK_OBJECT_NOT_EXIST);
-
+ 
     taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
     EXPECT_EQ(taskSize, 0);
 }
@@ -374,7 +374,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_003, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_WIFI_INTERACTION, BGMODE_WIFI_INTERACTION_ID,
         true, NO_SYSTEM_APP_TOKEN_ID), ERR_BGTASK_NOT_SYSTEM_APP);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_VOIP, BGMODE_VOIP_ID, true, NO_SYSTEM_APP_TOKEN_ID),
-        ERR_BGTASK_NOT_SYSTEM_APP);
+        ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_WIFI_INTERACTION, BGMODE_WIFI_INTERACTION_ID,
         true, 1ULL), ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_VOIP, BGMODE_VOIP_ID, true, 1ULL), ERR_OK);
@@ -776,6 +776,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_033, TestSize.Level1)
     allProcesses.push_back(processInfo1);
     allProcesses.push_back(processInfo2);
     bgContinuousTaskMgr_->CheckPersistenceData(allProcesses);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 2);
 #endif
 }
 

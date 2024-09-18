@@ -41,14 +41,14 @@ public:
     uint32_t GetTypeId() const;
 
     /**
-     * @brief Get the uid of notification creator.
+     * @brief Get the uid of notification crector.
      *
      * @return The uid of the notification creator.
      */
     int32_t GetCreatorUid() const;
 
     /**
-     * @brief Get the pid of notification creator.
+     * @brief Get the pid of notification crector.
      *
      * @return The pid of the notification creator.
      */
@@ -103,7 +103,6 @@ public:
      * @return True if success, else false.
      */
     bool Marshalling(Parcel &parcel) const override;
-
     static ContinuousTaskCallbackInfo *Unmarshalling(Parcel &parcel);
 
 private:
