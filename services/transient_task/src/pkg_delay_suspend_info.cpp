@@ -29,6 +29,7 @@ namespace BackgroundTaskMgr {
 namespace {
     constexpr int32_t MAX_REQUEST_ID = 3;
     constexpr int32_t MIN_ALLOW_QUOTA_TIME = 10 * MSEC_PER_SEC; // 10s
+    constexpr int32_t WATCHDOG_DELAY_TIME = 6 * MSEC_PER_SEC;
 }
 
 ErrCode PkgDelaySuspendInfo::IsAllowRequest()
@@ -46,14 +47,16 @@ ErrCode PkgDelaySuspendInfo::IsAllowRequest()
 }
 
 void PkgDelaySuspendInfo::AddRequest(const shared_ptr<DelaySuspendInfoEx>& delayInfo,
-    const int32_t delayTime)
+    const int32_t delayTime, const bool needSetTime)
 {
-    if (delayInfo == nullptr) {
-        BGTASK_LOGE("Invalid delayInfo");
-        return;
+    if (needSetTime) {
+        int32_t exempted_quota = DelayedSingleton<BgtaskConfig>::GetInstance()->GetTransientTaskExemptedQuato();
+        BGTASK_LOGD("pkgname: %{public}s, requestId: %{public}d exempted_quota %{public}d", pkg_.c_str(),
+            delayInfo->GetRequestId(), exempted_quota);
+        delayInfo->SetActualDelayTime(exempted_quota + WATCHDOG_DELAY_TIME);
+    } else {
+        delayInfo->SetActualDelayTime((quota_ < delayTime) ? quota_ : delayTime);
     }
-
-    delayInfo->SetActualDelayTime((quota_ < delayTime) ? quota_ : delayTime);
     requestList_.push_back(delayInfo);
 }
 

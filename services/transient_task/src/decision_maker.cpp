@@ -26,6 +26,7 @@
 #include "hisysevent.h"
 #include "parameters.h"
 #include "data_storage_helper.h"
+#include "bgtask_config.h"
 
 using namespace std;
 
@@ -154,17 +155,22 @@ int DecisionMaker::GetAllowRequestTime()
 }
 
 ErrCode DecisionMaker::CheckQuotaTime(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo, const std::string &name,
-    int32_t uid, const std::shared_ptr<KeyInfo>& key)
+    int32_t uid, const std::shared_ptr<KeyInfo>& key, bool &needSetTime)
 {
     ErrCode ret = pkgInfo->IsAllowRequest();
     if (ret == ERR_BGTASK_TIME_INSUFFICIENT) {
-        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d no hava quota time.", name.c_str(), uid);
-        auto transientTaskInfo = make_shared<TransientTaskAppInfo>(name, uid, key->GetPid());
-        DelayedSingleton<BgTransientTaskMgr>::GetInstance()
-            ->HandleTransientTaskSuscriberTask(transientTaskInfo, TransientTaskEventType::TASK_ERR);
+        bool isExemptedApp = DelayedSingleton<BgtaskConfig>::GetInstance()->
+            IsTransientTaskExemptedQuatoApp(name);
+        BGTASK_LOGI("pkgname %{public}s has no quota time, isExemptedApp %{public}d", name.c_str(), isExemptedApp);
+        if (isExemptedApp) {
+            needSetTime = true;
+            return ERR_OK;
+        } else {
+            return ERR_BGTASK_TIME_INSUFFICIENT;
+        }
     }
     if (ret != ERR_OK) {
-        BGTASK_LOGI("Request not allow by its info");
+        BGTASK_LOGE("Request not allow by its info");
         return ret;
     }
     return ERR_OK;
@@ -173,8 +179,8 @@ ErrCode DecisionMaker::CheckQuotaTime(const std::shared_ptr<PkgDelaySuspendInfo>
 ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::shared_ptr<DelaySuspendInfoEx>& delayInfo)
 {
     lock_guard<mutex> lock(lock_);
-    if (key == nullptr) {
-        BGTASK_LOGE("Invalid key");
+    if (key == nullptr || delayInfo == nullptr) {
+        BGTASK_LOGE("Invalid key or delayInfo");
         return ERR_BGTASK_NO_MEMORY;
     }
 
@@ -194,16 +200,13 @@ ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::sh
         pkgDelaySuspendInfoMap_[key] = make_shared<PkgDelaySuspendInfo>(name, uid, timerManager_);
     }
     auto pkgInfo = pkgDelaySuspendInfoMap_[key];
-    ErrCode ret = CheckQuotaTime(pkgInfo, name, uid, key);
+    bool needSetTime = false;
+    ErrCode ret = CheckQuotaTime(pkgInfo, name, uid, key, needSetTime);
     if (ret != ERR_OK) {
         return ret;
     }
-    if (delayInfo == nullptr) {
-        BGTASK_LOGE("Invalid delayInfo");
-        return ERR_BGTASK_NO_MEMORY;
-    }
     delayInfo->SetRequestId(NewDelaySuspendRequestId());
-    pkgInfo->AddRequest(delayInfo, GetDelayTime());
+    pkgInfo->AddRequest(delayInfo, GetDelayTime(), needSetTime);
     auto appInfo = make_shared<TransientTaskAppInfo>(name, uid, key->GetPid());
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()
         ->HandleTransientTaskSuscriberTask(appInfo, TransientTaskEventType::TASK_START);

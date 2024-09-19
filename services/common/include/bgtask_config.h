@@ -23,9 +23,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-namespace {
-using GetExtConfigFunc = int32_t (*)(int32_t, std::string&);
-}
 class BgtaskConfig : public DelayedSingleton<BgtaskConfig> {
 public:
     void Init();
@@ -36,14 +33,11 @@ private:
     void LoadConfigFile();
     void ParseTransientTaskExemptedQuatoList(const nlohmann::json &jsonObj);
     void ParseTransientTaskExemptedQuato(const nlohmann::json &jsonObj);
-    bool LoadGetExtConfigFunc();
 
 private:
     bool isInit_ = false;
     std::set<std::string> transientTaskExemptedQuatoList_ {};
     int32_t transientTaskExemptedQuato_ = 10 * 1000; // 10s
-    GetExtConfigFunc getExtConfigFunc_ = nullptr;
-    void *handle = nullptr;
 };
 }
 }
