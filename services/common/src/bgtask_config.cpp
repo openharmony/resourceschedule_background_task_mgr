@@ -46,7 +46,6 @@ void BgtaskConfig::LoadConfigFile()
         BGTASK_LOGE("LoadConfigFile failed");
         return;
     }
-
     ParseTransientTaskExemptedQuatoList(jsonObj);
     ParseTransientTaskExemptedQuato(jsonObj);
 }

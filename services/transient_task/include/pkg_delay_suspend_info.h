@@ -35,7 +35,8 @@ public:
         : pkg_(pkg), uid_(uid), timerManager_(timerManager) {}
     ~PkgDelaySuspendInfo() = default;
     ErrCode IsAllowRequest();
-    void AddRequest(const shared_ptr<DelaySuspendInfoEx>& delayInfo, const int32_t delayTime);
+    void AddRequest(const shared_ptr<DelaySuspendInfoEx>& delayInfo, const int32_t delayTime,
+        const bool needSetTime = false);
     void RemoveRequest(const int32_t requestId);
     int32_t GetRemainDelayTime(const int32_t requestId);
     void StartAccounting(const int32_t requestId = -1);
