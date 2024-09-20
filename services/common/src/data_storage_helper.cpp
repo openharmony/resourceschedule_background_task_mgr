@@ -265,7 +265,7 @@ void DataStorageHelper::ConvertJsonToMap(const nlohmann::json &value, ResourceRe
     for (auto iter = value.begin(); iter != value.end(); iter++) {
         std::shared_ptr<ResourceApplicationRecord> recordPtr = std::make_shared<ResourceApplicationRecord>();
         recordPtr->ParseFromJson(iter.value());
-        recordMap.emplace(static_cast<uint32_t>(std::stoi(iter.key())), recordPtr);
+        recordMap.emplace(static_cast<uint32_t>(std::atoi(iter.key().c_str())), recordPtr);
     }
 }
 }  // namespace BackgroundTaskMgr
