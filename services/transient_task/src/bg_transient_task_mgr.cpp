@@ -47,6 +47,7 @@ static const std::string OKAY_BATTARY_OPTION = "BATTARY_OKAY";
 static const std::string CANCEL_DUMP_OPTION = "DUMP_CANCEL";
 static const std::string PAUSE_DUMP_OPTION = "PAUSE";
 static const std::string START_DUMP_OPTION = "START";
+static const int32_t DUMP_PARAM_INDEX_TWO = 2;
 
 constexpr int32_t BG_INVALID_REMAIN_TIME = -1;
 constexpr int32_t WATCHDOG_DELAY_TIME = 6 * MSEC_PER_SEC;
@@ -691,7 +692,7 @@ void BgTransientTaskMgr::SendOkayBatteryEvent(std::vector<std::string> &dumpInfo
 void BgTransientTaskMgr::DumpTaskTime(const std::vector<std::string> &dumpOption, bool pause,
     std::vector<std::string> &dumpInfo)
 {
-    int32_t uid = std::stoi(dumpOption[2]);
+    int32_t uid = std::atoi(dumpOption[DUMP_PARAM_INDEX_TWO].c_str());
     ErrCode ret = ERR_OK;
     if (pause) {
         ret = PauseTransientTaskTimeForInner(uid);
