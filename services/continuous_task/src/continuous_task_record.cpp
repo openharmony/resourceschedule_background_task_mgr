@@ -126,7 +126,7 @@ std::vector<uint32_t> ContinuousTaskRecord::ToVector(std::string &str)
     std::vector<uint32_t> modeTokens;
     OHOS::SplitStr(str, ",", stringTokens);
     for (auto mode : stringTokens) {
-        modeTokens.push_back(std::stoi(mode));
+        modeTokens.push_back(std::atoi(mode.c_str()));
     }
     return modeTokens;
 }
