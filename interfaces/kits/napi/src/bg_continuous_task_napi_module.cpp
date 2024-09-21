@@ -232,7 +232,8 @@ void UpdateBackgroundRunningExecuteCB(napi_env env, void *data)
         asyncCallbackInfo->abilityContext->GetToken(),
         GetMainAbilityLabel(info->bundleName), true, asyncCallbackInfo->bgModes,
         asyncCallbackInfo->abilityContext->GetAbilityRecordId());
-    BGTASK_LOGD("%{public}d, %{public}u", taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
+    BGTASK_LOGI("RequestUpdateBackgroundRunning isBatch: %{public}d, bgModeSize: %{public}u",
+        taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam);
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
     BGTASK_LOGI("notification %{public}d", taskParam.notificationId_);
@@ -250,7 +251,8 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         info->name, asyncCallbackInfo->abilityContext->GetToken(), GetMainAbilityLabel(info->bundleName),
         asyncCallbackInfo->isBatchApi, asyncCallbackInfo->bgModes,
         asyncCallbackInfo->abilityContext->GetAbilityRecordId());
-    BGTASK_LOGD("%{public}d, %{public}u", taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
+    BGTASK_LOGI("RequestStartBackgroundRunning isBatch: %{public}d, bgModeSize: %{public}u",
+        taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
     BGTASK_LOGI("notification %{public}d", taskParam.notificationId_);

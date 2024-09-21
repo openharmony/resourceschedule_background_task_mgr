@@ -218,6 +218,7 @@ ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data,
         FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
+    BGTASK_LOGI("HandleStartBackgroundRunning start");
     ErrCode result = StartBackgroundRunning(taskParam);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleStartBackgroundRunning write result failed, ErrCode=%{public}d", result);
@@ -243,6 +244,7 @@ ErrCode BackgroundTaskMgrStub::HandleUpdateBackgroundRunning(MessageParcel &data
         FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
+    BGTASK_LOGI("HandleUpdateBackgroundRunning start");
     ErrCode result = UpdateBackgroundRunning(taskParam);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleUpdateBackgroundRunning write result failed, ErrCode=%{public}d", result);
