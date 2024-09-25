@@ -622,6 +622,24 @@ ErrCode BgTransientTaskMgr::GetTransientTaskApps(std::vector<std::shared_ptr<Tra
     return ERR_OK;
 }
 
+ErrCode BgTransientTaskMgr::SetBgTaskConfig(const std::string &configData, int32_t sourceType)
+{
+    if (!isReady_.load()) {
+        BGTASK_LOGE("Transient task manager is not ready.");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    if (!CheckProcessName()) {
+        return ERR_BGTASK_INVALID_PROCESS_NAME;
+    }
+    BGTASK_LOGI("SetBgTaskConfig configData: %{public}s, sourceType: %{public}d.", configData.c_str(), sourceType);
+    bool addResult = DelayedSingleton<BgtaskConfig>::GetInstance()->AddExemptedQuatoData(configData, sourceType);
+    if (!addResult) {
+        BGTASK_LOGE("AddExemptedQuatoData fail.");
+        return ERR_PARAM_NUMBER_ERR;
+    }
+    return ERR_OK;
+}
+
 ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     if (!isReady_.load()) {

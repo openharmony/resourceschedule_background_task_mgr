@@ -134,6 +134,14 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
+
+    /**
+     * @brief Set background task config.
+     * @param configData config param.
+     * @param sourceType data source.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -24,6 +24,7 @@
 #include "bg_transient_task_mgr.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_mgr_interface.h"
+#include "config_data_source_type.h"
 #include "expired_callback_proxy.h"
 #include "expired_callback_stub.h"
 #include "if_system_ability_manager.h"
@@ -38,6 +39,8 @@ namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t SLEEP_TIME = 500;
 static constexpr int32_t DEFAULT_USERID = 100;
+static constexpr int32_t JSON_FORMAT_DUMP = 4;
+static constexpr char TRANSIENT_ERR_DELAYED_FROZEN_LIST[] = "transient_err_delayed_frozen_list";
 static constexpr char LAUNCHER_BUNDLE_NAME[] = "com.ohos.launcher";
 static constexpr char SCB_BUNDLE_NAME[] = "com.ohos.sceneboard";
 }
@@ -558,6 +561,30 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_044, TestSize.Level1)
         uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
     }
     EXPECT_NE(bgTransientTaskMgr_->StartTransientTaskTimeForInner(uid), ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_045
+ * @tc.desc: test BgTransientTaskMgr SendCloudConfig.
+ * @tc.type: FUNC
+ * @tc.require: issueI936BL
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_045, TestSize.Level1)
+{
+    bgTransientTaskMgr_->isReady_.store(false);
+    EXPECT_EQ(bgTransientTaskMgr_->SetBgTaskConfig("", ConfigDataSourceType::CONFIG_CLOUD), ERR_BGTASK_SYS_NOT_READY);
+
+    bgTransientTaskMgr_->isReady_.store(true);
+    EXPECT_EQ(bgTransientTaskMgr_->SetBgTaskConfig("", ConfigDataSourceType::CONFIG_CLOUD), ERR_PARAM_NUMBER_ERR);
+
+    auto appInfo = nlohmann::json::array();
+    appInfo.push_back("com.myapplication.demo1");
+    appInfo.push_back("com.myapplication.demo2");
+    nlohmann::json appParam;
+    appParam[TRANSIENT_ERR_DELAYED_FROZEN_LIST] = appInfo;
+    const std::string strParam = appParam.dump(JSON_FORMAT_DUMP);
+    EXPECT_EQ(bgTransientTaskMgr_->SetBgTaskConfig(strParam, ConfigDataSourceType::CONFIG_CLOUD), ERR_OK);
+    EXPECT_EQ(bgTransientTaskMgr_->SetBgTaskConfig(strParam, ConfigDataSourceType::CONFIG_SUSPEND_MANAGER), ERR_OK);
 }
 }
 }
