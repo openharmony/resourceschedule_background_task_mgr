@@ -28,6 +28,7 @@
 #include <system_ability.h>
 
 #include "background_task_mgr_stub.h"
+#include "bgtask_config.h"
 #include "decision_maker.h"
 #include "delay_suspend_info.h"
 #include "device_info_manager.h"
@@ -66,6 +67,7 @@ public:
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
     ErrCode PauseTransientTaskTimeForInner(int32_t uid);
     ErrCode StartTransientTaskTimeForInner(int32_t uid);
+    ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 
     void ForceCancelSuspendDelay(int32_t requestId);

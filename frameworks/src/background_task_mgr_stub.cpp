@@ -131,6 +131,9 @@ ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
         case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::GET_EFFICIENCY_RESOURCES_INFOS):
             HandleGetEfficiencyResourcesInfos(data, reply);
             break;
+        case static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::SET_BGTASK_CONFIG):
+            HandleSetBgTaskConfig(data, reply);
+            break;
         default:
             BGTASK_LOGE("BackgroundTaskMgrStub: code is not match");
             return IRemoteStub::OnRemoteRequest(code, data, reply, option);
@@ -442,6 +445,26 @@ ErrCode BackgroundTaskMgrStub::HandleStopContinuousTask(MessageParcel& data, Mes
     ErrCode result = StopContinuousTask(uid, pid, taskType, key);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleStopContinuousTask write result failed, ErrCode=%{public}d", result);
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrStub::HandleSetBgTaskConfig(MessageParcel& data, MessageParcel& reply)
+{
+    std::string configData;
+    if (!data.ReadString(configData)) {
+        BGTASK_LOGE("read parce configData error");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    int32_t sourceType;
+    if (!data.ReadInt32(sourceType)) {
+        BGTASK_LOGE("read parce sourceType error");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    ErrCode result = SetBgTaskConfig(configData, sourceType);
+    if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleSetBgTaskConfig write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;

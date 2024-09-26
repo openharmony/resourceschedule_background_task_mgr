@@ -65,6 +65,7 @@ private:
     ErrCode HandleStopContinuousTask(MessageParcel& data, MessageParcel& reply);
     void HandleContinuousTask(uint32_t code, MessageParcel& data, MessageParcel& reply);
     void HandleTransientTask(uint32_t code, MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleSetBgTaskConfig(MessageParcel& data, MessageParcel& reply);
     ErrCode WriteInfoToParcel(const std::vector<std::shared_ptr<ResourceCallbackInfo>>& infoMap, MessageParcel& reply);
 };
 }  // namespace BackgroundTaskMgr

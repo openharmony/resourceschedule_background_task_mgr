@@ -18,6 +18,7 @@
 #include <string>
 #include <set>
 
+#include "config_data_source_type.h"
 #include "singleton.h"
 #include "nlohmann/json.hpp"
 
@@ -28,6 +29,7 @@ public:
     void Init();
     bool IsTransientTaskExemptedQuatoApp(const std::string &bundleName) const;
     int32_t GetTransientTaskExemptedQuato() const;
+    bool AddExemptedQuatoData(const std::string &configData, int32_t sourceType);
 
 private:
     void LoadConfigFile();
@@ -37,6 +39,7 @@ private:
 private:
     bool isInit_ = false;
     std::set<std::string> transientTaskExemptedQuatoList_ {};
+    std::set<std::string> transientTaskCloudExemptedQuatoList_ {};
     int32_t transientTaskExemptedQuato_ = 10 * 1000; // 10s
 };
 }

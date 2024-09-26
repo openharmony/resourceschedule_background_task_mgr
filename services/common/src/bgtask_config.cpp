@@ -71,6 +71,30 @@ void BgtaskConfig::ParseTransientTaskExemptedQuatoList(const nlohmann::json &jso
     }
 }
 
+bool BgtaskConfig::AddExemptedQuatoData(const std::string &configData, int32_t sourceType)
+{
+    const nlohmann::json &jsonObj = nlohmann::json::parse(configData, nullptr, false);
+    if (jsonObj.is_null() || jsonObj.empty()) {
+        BGTASK_LOGE("jsonObj null");
+        return false;
+    }
+    nlohmann::json appArray;
+    if (!jsonObj.contains(TRANSIENT_ERR_DELAYED_FROZEN_LIST) ||
+        !jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST].is_array()) {
+        BGTASK_LOGE("no key %{public}s", TRANSIENT_ERR_DELAYED_FROZEN_LIST.c_str());
+        return false;
+    }
+    appArray = jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
+    for (const auto &app : appArray) {
+        if (sourceType == ConfigDataSourceType::CONFIG_CLOUD) {
+            transientTaskCloudExemptedQuatoList_.insert(app);
+        } else if (sourceType == ConfigDataSourceType::CONFIG_SUSPEND_MANAGER) {
+            transientTaskExemptedQuatoList_.insert(app);
+        }
+    }
+    return true;
+}
+
 void BgtaskConfig::ParseTransientTaskExemptedQuato(const nlohmann::json &jsonObj)
 {
     if (jsonObj.is_null() || jsonObj.empty()) {
@@ -87,6 +111,9 @@ void BgtaskConfig::ParseTransientTaskExemptedQuato(const nlohmann::json &jsonObj
 
 bool BgtaskConfig::IsTransientTaskExemptedQuatoApp(const std::string &bundleName) const
 {
+    if (transientTaskCloudExemptedQuatoList_.size() > 0) {
+        return transientTaskCloudExemptedQuatoList_.count(bundleName) > 0;
+    }
     return transientTaskExemptedQuatoList_.count(bundleName) > 0;
 }
 
