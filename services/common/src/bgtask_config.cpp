@@ -85,10 +85,14 @@ bool BgtaskConfig::AddExemptedQuatoData(const std::string &configData, int32_t s
         return false;
     }
     appArray = jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
-    for (const auto &app : appArray) {
-        if (sourceType == ConfigDataSourceType::CONFIG_CLOUD) {
+    if (sourceType == ConfigDataSourceType::CONFIG_CLOUD) {
+        transientTaskCloudExemptedQuatoList_.clear();
+        for (const auto &app : appArray) {
             transientTaskCloudExemptedQuatoList_.insert(app);
-        } else if (sourceType == ConfigDataSourceType::CONFIG_SUSPEND_MANAGER) {
+        }
+    } else if (sourceType == ConfigDataSourceType::CONFIG_SUSPEND_MANAGER) {
+        transientTaskExemptedQuatoList_.clear();
+        for (const auto &app : appArray) {
             transientTaskExemptedQuatoList_.insert(app);
         }
     }
