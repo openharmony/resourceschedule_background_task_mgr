@@ -727,5 +727,22 @@ HWTEST_F(BgTaskFrameworkUnitTest, ExpiredCallbackStubTest_001, TestSize.Level1)
     data3.WriteInterfaceToken(TestExpiredCallbackStub::GetDescriptor());
     EXPECT_EQ(expiredCallbackStub.OnRemoteRequest(FIRST_CALL_TRANSACTION, data3, reply, option), ERR_OK);
 }
+
+/**
+ * @tc.name: SetBgTaskConfig_001
+ * @tc.desc: test SetBgTaskConfig
+ * @tc.type: FUNC
+ * @tc.require: issueIAULHW
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, SetBgTaskConfig_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBgTaskConfig("", 1),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBgTaskConfig("", 1),
+        ERR_OK);
+}
 }
 }

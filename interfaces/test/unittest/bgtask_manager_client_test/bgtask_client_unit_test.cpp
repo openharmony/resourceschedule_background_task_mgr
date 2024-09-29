@@ -629,5 +629,17 @@ HWTEST_F(BgTaskClientUnitTest, TransientTaskAppInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetUid(), 1);
     EXPECT_EQ(info3->GetPid(), 1);
 }
+
+/**
+ * @tc.name: SetBgTaskConfig_001
+ * @tc.desc: test SetBgTaskConfig interface.
+ * @tc.type: FUNC
+ * @tc.require: issueIAULHW
+ */
+HWTEST_F(BgTaskClientUnitTest, SetBgTaskConfig_001, TestSize.Level1)
+{
+    const std::string configData = "";
+    EXPECT_NE(BackgroundTaskMgrHelper::SetBgTaskConfig(configData, 1), ERR_OK);
+}
 }
 }
