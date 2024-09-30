@@ -64,7 +64,6 @@ bool BgEfficiencyResourcesMgr::Init(const std::shared_ptr<AppExecFwk::EventRunne
         BGTASK_LOGE("efficiency resources mgr handler create failed!");
         return false;
     }
-    HandlePersistenceData();
     BGTASK_LOGI("efficiency resources mgr finish Init");
     return true;
 }
@@ -74,7 +73,7 @@ void BgEfficiencyResourcesMgr::InitNecessaryState()
     if (isSysReady_.load()) {
         return;
     }
-    BGTASK_LOGI("necessary system service has been accessiable!");
+    HandlePersistenceData();
     BGTASK_LOGD("app resource record size: %{public}d, process  resource record size:  %{public}d!",
         static_cast<int32_t>(appResourceApplyMap_.size()), static_cast<int32_t>(procResourceApplyMap_.size()));
     isSysReady_.store(true);
@@ -165,7 +164,7 @@ void BgEfficiencyResourcesMgr::EraseRecordIf(ResourceRecordMap &infoMap,
 {
     for (auto iter = infoMap.begin(); iter != infoMap.end();) {
         if (fun(*iter)) {
-            infoMap.erase(iter++);
+            iter = infoMap.erase(iter);
         } else {
             iter++;
         }

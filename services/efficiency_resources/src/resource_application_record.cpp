@@ -100,7 +100,7 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
     this->pid_ = value.at("pid").get<int32_t>();
     this->bundleName_ = value.at("bundleName").get<std::string>();
     this->resourceNumber_ = value.at("resourceNumber").get<uint32_t>();
-    if (value.count("resourceUnitList") > 0 && value.at("resourceUnitList").is_object()) {
+    if (value.count("resourceUnitList") > 0 && value.at("resourceUnitList").is_array()) {
         const nlohmann::json &resourceVal = value.at("resourceUnitList");
         auto nums = static_cast<int32_t>(resourceVal.size());
         for (int i = 0; i < nums; ++i) {
@@ -122,6 +122,8 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
             this->resourceUnitList_.emplace_back(PersistTime {resourceIndex, isPersist_, endTime_,
                 reason_});
         }
+    } else {
+        BGTASK_LOGE("resourceUnitList error");
     }
     return true;
 }
