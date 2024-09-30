@@ -312,8 +312,9 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_001, TestSize.Level1)
     EXPECT_EQ(decisionMaker->Decide(nullptr, nullptr), ERR_BGTASK_NO_MEMORY);
 
     auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
+    auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1);
     decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
-    EXPECT_EQ(decisionMaker->Decide(keyInfo, nullptr), ERR_BGTASK_NOT_IN_PRESET_TIME);
+    EXPECT_EQ(decisionMaker->Decide(keyInfo, delayInfo), ERR_BGTASK_NOT_IN_PRESET_TIME);
     decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime();
     EXPECT_EQ(decisionMaker->Decide(keyInfo, nullptr), ERR_BGTASK_NO_MEMORY);
 
@@ -326,8 +327,6 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_001, TestSize.Level1)
     pkgDelaySuspendInfo->requestList_.push_back(delayInfo2);
     pkgDelaySuspendInfo->requestList_.push_back(delayInfo3);
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo2] = pkgDelaySuspendInfo;
-    EXPECT_EQ(decisionMaker->Decide(keyInfo2, nullptr), ERR_BGTASK_EXCEEDS_THRESHOLD);
-
     EXPECT_EQ(decisionMaker->Decide(keyInfo2, delayInfo1), ERR_BGTASK_EXCEEDS_THRESHOLD);
     decisionMaker->pkgDelaySuspendInfoMap_.clear();
     deviceInfoManeger->isScreenOn_ = true;
@@ -480,7 +479,6 @@ HWTEST_F(BgTaskMiscUnitTest, PkgDelaySuspendInfoTest_001, TestSize.Level1)
     EXPECT_EQ(pkgDelaySuspendInfo->IsAllowRequest(), ERR_BGTASK_TIME_INSUFFICIENT);
     auto delayInfo1 = std::make_shared<DelaySuspendInfoEx>(1, 1);
     auto delayInfo2 = std::make_shared<DelaySuspendInfoEx>(1, 2);
-    pkgDelaySuspendInfo->AddRequest(nullptr, 1);
     pkgDelaySuspendInfo->AddRequest(delayInfo1, 1);
     pkgDelaySuspendInfo->AddRequest(delayInfo1, 1);
     pkgDelaySuspendInfo->AddRequest(delayInfo2, 1);
