@@ -37,6 +37,7 @@ namespace {
 }
 DecisionMaker::DecisionMaker(const shared_ptr<TimerManager>& timerManager, const shared_ptr<DeviceInfoManager>& device)
 {
+    lock_guard<mutex> lock(lock_);
     timerManager_ = timerManager;
     deviceInfoManager_ = device;
 
@@ -48,11 +49,13 @@ DecisionMaker::DecisionMaker(const shared_ptr<TimerManager>& timerManager, const
 
 DecisionMaker::~DecisionMaker()
 {
-    if (!GetAppMgrProxy()) {
-        BGTASK_LOGE("GetAppMgrProxy failed");
-        return;
+    lock_guard<mutex> lock(lock_);
+    if (appMgrProxy_ && observer_) {
+        appMgrProxy_->UnregisterApplicationStateObserver(iface_cast<AppExecFwk::IApplicationStateObserver>(observer_));
     }
-    appMgrProxy_->UnregisterApplicationStateObserver(iface_cast<AppExecFwk::IApplicationStateObserver>(observer_));
+    appMgrProxy_ = nullptr;
+    observer_ = nullptr;
+    recipient_ = nullptr;
 }
 
 bool DecisionMaker::GetAppMgrProxy()
@@ -331,6 +334,7 @@ int32_t DecisionMaker::GetQuota(const std::shared_ptr<KeyInfo>& key)
 
 bool DecisionMaker::IsFrontApp(const string& pkgName, int32_t uid)
 {
+    lock_guard<mutex> lock(lock_);
     if (!GetAppMgrProxy()) {
         BGTASK_LOGE("GetAppMgrProxy failed");
         return false;
