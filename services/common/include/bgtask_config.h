@@ -35,6 +35,7 @@ private:
     void LoadConfigFile();
     void ParseTransientTaskExemptedQuatoList(const nlohmann::json &jsonObj);
     void ParseTransientTaskExemptedQuato(const nlohmann::json &jsonObj);
+    bool SetCloudConfigParam(const nlohmann::json &jsonObj);
 
 private:
     bool isInit_ = false;
