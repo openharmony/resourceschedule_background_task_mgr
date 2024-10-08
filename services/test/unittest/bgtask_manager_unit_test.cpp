@@ -40,7 +40,12 @@ namespace {
 static constexpr int32_t SLEEP_TIME = 500;
 static constexpr int32_t DEFAULT_USERID = 100;
 static constexpr int32_t JSON_FORMAT_DUMP = 4;
+static constexpr int32_t TRANSIENT_EXEMPTED_QUOTA_TIME = 10000;
 static constexpr char TRANSIENT_ERR_DELAYED_FROZEN_LIST[] = "transient_err_delayed_frozen_list";
+static constexpr char TRANSIENT_ERR_DELAYED_FROZEN_TIME[] = "transient_err_delayed_frozen_time";
+static constexpr char TRANSIENT_EXEMPTED_QUOTA[] = "transient_exempted_quota";
+static constexpr char CONFIG_JSON_INDEX_TOP[] = "params";
+static constexpr char CONFIG_JSON_INDEX_SUSPEND_SECOND[] = "param";
 static constexpr char LAUNCHER_BUNDLE_NAME[] = "com.ohos.launcher";
 static constexpr char SCB_BUNDLE_NAME[] = "com.ohos.sceneboard";
 }
@@ -582,9 +587,19 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_045, TestSize.Level1)
     appInfo.push_back("com.myapplication.demo2");
     nlohmann::json appParam;
     appParam[TRANSIENT_ERR_DELAYED_FROZEN_LIST] = appInfo;
+    appParam[TRANSIENT_ERR_DELAYED_FROZEN_TIME] = TRANSIENT_EXEMPTED_QUOTA_TIME;
     const std::string strParam = appParam.dump(JSON_FORMAT_DUMP);
-    EXPECT_EQ(bgTransientTaskMgr_->SetBgTaskConfig(strParam, ConfigDataSourceType::CONFIG_CLOUD), ERR_OK);
     EXPECT_EQ(bgTransientTaskMgr_->SetBgTaskConfig(strParam, ConfigDataSourceType::CONFIG_SUSPEND_MANAGER), ERR_OK);
+
+    nlohmann::json param;
+    param[TRANSIENT_EXEMPTED_QUOTA] = TRANSIENT_EXEMPTED_QUOTA_TIME;
+    nlohmann::json params;
+    params[TRANSIENT_ERR_DELAYED_FROZEN_LIST] = appInfo;
+    params[CONFIG_JSON_INDEX_SUSPEND_SECOND] = param;
+    nlohmann::json cloudConfig;
+    cloudConfig[CONFIG_JSON_INDEX_TOP] = params;
+    const std::string cloudConfigStr = cloudConfig.dump(JSON_FORMAT_DUMP);
+    EXPECT_EQ(bgTransientTaskMgr_->SetBgTaskConfig(cloudConfigStr, ConfigDataSourceType::CONFIG_CLOUD), ERR_OK);
 }
 }
 }

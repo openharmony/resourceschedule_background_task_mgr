@@ -22,8 +22,11 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 const std::string SUSPEND_MANAGER_CONFIG_FILE = "etc/efficiency_manager/suspend_manager_config.json";
+const std::string CONFIG_JSON_INDEX_TOP = "params";
+const std::string CONFIG_JSON_INDEX_SUSPEND_SECOND = "param";
 const std::string TRANSIENT_ERR_DELAYED_FROZEN_LIST = "transient_err_delayed_frozen_list";
 const std::string TRANSIENT_EXEMPTED_QUOTA = "transient_exempted_quota";
+const std::string TRANSIENT_ERR_DELAYED_FROZEN_TIME = "transient_err_delayed_frozen_time";
 }
 
 void BgtaskConfig::Init()
@@ -82,24 +85,71 @@ bool BgtaskConfig::AddExemptedQuatoData(const std::string &configData, int32_t s
         BGTASK_LOGE("jsonObj null");
         return false;
     }
-    nlohmann::json appArray;
-    if (!jsonObj.contains(TRANSIENT_ERR_DELAYED_FROZEN_LIST) ||
-        !jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST].is_array()) {
-        BGTASK_LOGE("no key %{public}s", TRANSIENT_ERR_DELAYED_FROZEN_LIST.c_str());
+    if (sourceType == ConfigDataSourceType::CONFIG_CLOUD && !SetCloudConfigParam(jsonObj)) {
         return false;
-    }
-    appArray = jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
-    if (sourceType == ConfigDataSourceType::CONFIG_CLOUD) {
-        transientTaskCloudExemptedQuatoList_.clear();
-        for (const auto &app : appArray) {
-            transientTaskCloudExemptedQuatoList_.insert(app);
-        }
     } else if (sourceType == ConfigDataSourceType::CONFIG_SUSPEND_MANAGER) {
+        nlohmann::json appArray;
+        if (!jsonObj.contains(TRANSIENT_ERR_DELAYED_FROZEN_LIST) ||
+            !jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST].is_array()) {
+            BGTASK_LOGE("no key %{public}s", TRANSIENT_ERR_DELAYED_FROZEN_LIST.c_str());
+            return false;
+        }
+        appArray = jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
         transientTaskExemptedQuatoList_.clear();
         for (const auto &app : appArray) {
             transientTaskExemptedQuatoList_.insert(app);
         }
+        for (const auto &appName : transientTaskExemptedQuatoList_) {
+            BGTASK_LOGI("transientTaskExemptedQuatoList appName: %{public}s", appName.c_str());
+        }
+
+        if (!jsonObj.contains(TRANSIENT_ERR_DELAYED_FROZEN_TIME) ||
+            !jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_TIME].is_number_integer()) {
+            BGTASK_LOGE("no key %{public}s", TRANSIENT_ERR_DELAYED_FROZEN_TIME.c_str());
+            return false;
+        }
+        transientTaskExemptedQuato_ = jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_TIME].get<int>();
+        BGTASK_LOGI("suspend config transientTaskExemptedQuato: %{public}d", transientTaskExemptedQuato_);
     }
+    return true;
+}
+
+bool BgtaskConfig::SetCloudConfigParam(const nlohmann::json &jsonObj)
+{
+    if (!jsonObj.contains(CONFIG_JSON_INDEX_TOP) || !jsonObj[CONFIG_JSON_INDEX_TOP].is_object()) {
+        BGTASK_LOGE("no key %{public}s", CONFIG_JSON_INDEX_TOP.c_str());
+        return false;
+    }
+    nlohmann::json params = jsonObj[CONFIG_JSON_INDEX_TOP];
+
+    if (!params.contains(TRANSIENT_ERR_DELAYED_FROZEN_LIST) ||
+        !params[TRANSIENT_ERR_DELAYED_FROZEN_LIST].is_array()) {
+        BGTASK_LOGE("no key %{public}s", TRANSIENT_ERR_DELAYED_FROZEN_LIST.c_str());
+        return false;
+    }
+    nlohmann::json appArray = jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
+    transientTaskCloudExemptedQuatoList_.clear();
+    for (const auto &app : appArray) {
+        transientTaskCloudExemptedQuatoList_.insert(app);
+    }
+    for (const auto &appName : transientTaskCloudExemptedQuatoList_) {
+        BGTASK_LOGI("transientTaskCloudExemptedQuatoList appName: %{public}s", appName.c_str());
+    }
+
+    if (!params.contains(CONFIG_JSON_INDEX_SUSPEND_SECOND) ||
+        !params[CONFIG_JSON_INDEX_SUSPEND_SECOND].is_object()) {
+        BGTASK_LOGE("no key %{public}s", CONFIG_JSON_INDEX_SUSPEND_SECOND.c_str());
+        return false;
+    }
+    nlohmann::json param = jsonObj[CONFIG_JSON_INDEX_SUSPEND_SECOND];
+
+    if (!param.contains(TRANSIENT_EXEMPTED_QUOTA) ||
+        !param[TRANSIENT_EXEMPTED_QUOTA].is_number_integer()) {
+        BGTASK_LOGE("no key %{public}s", TRANSIENT_EXEMPTED_QUOTA.c_str());
+        return false;
+    }
+    transientTaskExemptedQuato_ = param[TRANSIENT_EXEMPTED_QUOTA].get<int>();
+    BGTASK_LOGI("cloud config transientTaskExemptedQuato: %{public}d", transientTaskExemptedQuato_);
     return true;
 }
 
