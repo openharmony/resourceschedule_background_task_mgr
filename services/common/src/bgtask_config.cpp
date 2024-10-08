@@ -74,6 +74,10 @@ void BgtaskConfig::ParseTransientTaskExemptedQuatoList(const nlohmann::json &jso
 bool BgtaskConfig::AddExemptedQuatoData(const std::string &configData, int32_t sourceType)
 {
     const nlohmann::json &jsonObj = nlohmann::json::parse(configData, nullptr, false);
+    if (jsonObj.is_discarded()) {
+        BGTASK_LOGE("jsonObj parse fail");
+        return false;
+    }
     if (jsonObj.is_null() || jsonObj.empty()) {
         BGTASK_LOGE("jsonObj null");
         return false;
