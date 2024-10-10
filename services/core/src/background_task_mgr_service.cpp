@@ -57,6 +57,20 @@ void BackgroundTaskMgrService::OnStart()
     AddSystemAbilityListener(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
     AddSystemAbilityListener(SA_ID_VOIP_CALL_MANAGER);
     AddSystemAbilityListener(SUSPEND_MANAGER_SYSTEM_ABILITY_ID);
+}
+
+void BackgroundTaskMgrService::SetReady(uint32_t flag)
+{
+    {
+        std::lock_guard<std::mutex> lock(readyMutex_);
+        if (dependsReady_ == ServiceReadyState::ALL_READY) {
+            return;
+        }
+        dependsReady_ |= flag;
+        if (dependsReady_ != ServiceReadyState::ALL_READY) {
+            return;
+        }
+    }
     if (!Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get())) {
         BGTASK_LOGE("Service start failed!");
         return;
