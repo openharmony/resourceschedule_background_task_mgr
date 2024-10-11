@@ -17,5 +17,6 @@ group("bgtaskmgr_interfaces") {
     "kits:backgroundtaskmanager",
     "kits:backgroundtaskmanager_napi",
     "kits:cj_background_task_mgr_ffi",
+    "kits:transient_task_ndk",
   ]
 }

@@ -42,7 +42,6 @@
 #include "singleton.h"
 #include "transient_task_app_info.h"
 
-
 using namespace testing::ext;
 
 namespace OHOS {
