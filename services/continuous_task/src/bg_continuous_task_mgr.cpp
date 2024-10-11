@@ -1524,21 +1524,18 @@ std::string BgContinuousTaskMgr::GetMainAbilityLabel(const std::string &bundleNa
         return "";
     }
 
-    AAFwk::Want want;
-    want.SetAction("action.system.home");
-    want.AddEntity("entity.system.home");
-    want.SetElementName("", bundleName, "", "");
-    AppExecFwk::AbilityInfo abilityInfo;
-    if (!BundleManagerHelper::GetInstance()->QueryAbilityInfo(want,
-        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, abilityInfo)) {
-        BGTASK_LOGE("Get %{public}s main ability info failed", bundleName.c_str());
+    AppExecFwk::ApplicationInfo applicationInfo;
+    if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
+        AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, userId, applicationInfo)) {
+        BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
         return "";
     }
+
     std::string mainAbilityLabel {""};
-    resourceManager->GetStringById(static_cast<uint32_t>(abilityInfo.labelId), mainAbilityLabel);
+    resourceManager->GetStringById(static_cast<uint32_t>(applicationInfo.labelId), mainAbilityLabel);
     BGTASK_LOGI("Get main ability label: %{public}s by labelId: %{public}d", mainAbilityLabel.c_str(),
-        abilityInfo.labelId);
-    mainAbilityLabel = mainAbilityLabel.empty() ? abilityInfo.label : mainAbilityLabel;
+        applicationInfo.labelId);
+    mainAbilityLabel = mainAbilityLabel.empty() ? applicationInfo.label : mainAbilityLabel;
     return mainAbilityLabel;
 }
 
