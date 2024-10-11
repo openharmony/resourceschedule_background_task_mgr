@@ -1524,16 +1524,6 @@ std::string BgContinuousTaskMgr::GetMainAbilityLabel(const std::string &bundleNa
         return "";
     }
 
-    AAFwk::Want want;
-    want.SetAction("action.system.home");
-    want.AddEntity("entity.system.home");
-    want.SetElementName("", bundleName, "", "");
-    AppExecFwk::AbilityInfo abilityInfo;
-    if (!BundleManagerHelper::GetInstance()->QueryAbilityInfo(want,
-        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, abilityInfo)) {
-        BGTASK_LOGE("Get %{public}s main ability info failed", bundleName.c_str());
-        return "";
-    }
     std::string mainAbilityLabel {""};
     resourceManager->GetStringById(static_cast<uint32_t>(abilityInfo.labelId), mainAbilityLabel);
     BGTASK_LOGI("Get main ability label: %{public}s by labelId: %{public}d", mainAbilityLabel.c_str(),
