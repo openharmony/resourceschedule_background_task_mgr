@@ -1524,11 +1524,18 @@ std::string BgContinuousTaskMgr::GetMainAbilityLabel(const std::string &bundleNa
         return "";
     }
 
+    AppExecFwk::ApplicationInfo applicationInfo;
+    if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
+        AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, userId, applicationInfo)) {
+        BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
+        return "";
+    }
+
     std::string mainAbilityLabel {""};
-    resourceManager->GetStringById(static_cast<uint32_t>(abilityInfo.labelId), mainAbilityLabel);
+    resourceManager->GetStringById(static_cast<uint32_t>(applicationInfo.labelId), mainAbilityLabel);
     BGTASK_LOGI("Get main ability label: %{public}s by labelId: %{public}d", mainAbilityLabel.c_str(),
-        abilityInfo.labelId);
-    mainAbilityLabel = mainAbilityLabel.empty() ? abilityInfo.label : mainAbilityLabel;
+        applicationInfo.labelId);
+    mainAbilityLabel = mainAbilityLabel.empty() ? applicationInfo.label : mainAbilityLabel;
     return mainAbilityLabel;
 }
 
