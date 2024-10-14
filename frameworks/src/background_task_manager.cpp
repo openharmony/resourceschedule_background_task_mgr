@@ -103,7 +103,7 @@ ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(ContinuousTaskPara
         static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
         static_cast<uint32_t>(taskParam.bgModeIds_.size()), taskParamPtr->isBatchApi_, taskParam.isBatchApi_,
         taskParamPtr->abilityId_);
-    Errcode ret = proxy_->UpdateBackgroundRunning(taskParamPtr);
+    ErrCode ret = proxy_->UpdateBackgroundRunning(taskParamPtr);
     taskParam.notificationId_ = taskParamPtr->notificationId_;
     return ret;
 }
