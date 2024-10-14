@@ -31,7 +31,6 @@ public:
 private:
     bool Connect();
     inline bool ValidateAppStateData(const AppExecFwk::AppStateData &appStateData);
-    void OnProcessDiedContinuousTask(const AppExecFwk::ProcessData &processData);
     void OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData);
     bool CheckParamValid();
 

@@ -73,7 +73,7 @@ public:
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
     void OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId);
-    void OnProcessDied(int32_t uid, int32_t pid);
+    void OnAppStopped(int32_t uid);
     void OnRemoteSubscriberDied(const wptr<IRemoteObject> &object);
     bool Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
     void InitNecessaryState();
@@ -117,7 +117,8 @@ private:
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);
-    ErrCode CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, uint64_t fullTokenId);
+    ErrCode CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi,
+        uint64_t fullTokenId);
     ErrCode CheckBgmodeTypeForInner(uint32_t requestedBgModeId);
     int32_t RefreshTaskRecord();
     void HandleAppContinuousTaskStop(int32_t uid);

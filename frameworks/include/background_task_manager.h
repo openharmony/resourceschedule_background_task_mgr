@@ -73,7 +73,7 @@ public:
      * @param taskParam Request params.
      * @return ERR_OK if success, else fail.
      */
-    ErrCode RequestUpdateBackgroundRunning(const ContinuousTaskParam &taskParam);
+    ErrCode RequestUpdateBackgroundRunning(ContinuousTaskParam &taskParam);
 
     /**
      * @brief Request service to keep or stop running background for inner ability.
