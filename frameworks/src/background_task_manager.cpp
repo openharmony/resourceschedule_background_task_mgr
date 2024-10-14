@@ -87,7 +87,7 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(ContinuousTaskParam
     return res;
 }
 
-ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(const ContinuousTaskParam &taskParam)
+ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(ContinuousTaskParam &taskParam)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestUpdateBackgroundRunning");
     std::lock_guard<std::mutex> lock(mutex_);
@@ -103,7 +103,9 @@ ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(const ContinuousTa
         static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
         static_cast<uint32_t>(taskParam.bgModeIds_.size()), taskParamPtr->isBatchApi_, taskParam.isBatchApi_,
         taskParamPtr->abilityId_);
-    return proxy_->UpdateBackgroundRunning(taskParamPtr);
+    ErrCode ret = proxy_->UpdateBackgroundRunning(taskParamPtr);
+    taskParam.notificationId_ = taskParamPtr->notificationId_;
+    return ret;
 }
 
 ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)

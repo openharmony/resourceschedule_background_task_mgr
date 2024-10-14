@@ -103,7 +103,6 @@ public:
      * @return True if success, else false.
      */
     bool Marshalling(Parcel &parcel) const override;
-
     static ContinuousTaskCallbackInfo *Unmarshalling(Parcel &parcel);
 
 private:

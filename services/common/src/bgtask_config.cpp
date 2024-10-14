@@ -22,7 +22,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 const std::string SUSPEND_MANAGER_CONFIG_FILE = "/etc/efficiency_manager/suspend_manager_config.json";
-const std::string TRANSIENT_ERR_DELAYED_FROZEN_LIST = "ttransient_err_delayed_frozen_list";
+const std::string TRANSIENT_ERR_DELAYED_FROZEN_LIST = "transient_err_delayed_frozen_list";
 const std::string TRANSIENT_EXEMPTED_QUOTA = "transient_exempted_quota";
 }
 
@@ -57,7 +57,8 @@ void BgtaskConfig::ParseTransientTaskExemptedQuatoList(const nlohmann::json &jso
         BGTASK_LOGE("jsonObj null");
         return;
     }
-    if (!jsonObj.contains(TRANSIENT_ERR_DELAYED_FROZEN_LIST) || !jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST].is_array()) {
+    if (!jsonObj.contains(TRANSIENT_ERR_DELAYED_FROZEN_LIST) ||
+        !jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST].is_array()) {
         BGTASK_LOGE("no key %{public}s", TRANSIENT_ERR_DELAYED_FROZEN_LIST.c_str());
         return;
     }
