@@ -51,6 +51,7 @@ group("test_background_task_mgr_all") {
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskonremoterequest_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskrequestsuspenddelay_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskresetallefficiencyresources_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtasksetbgtaskconfig_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskstartbackgroundrunning_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskstopbackgroundrunning_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskstopcontinuoustask_fuzzer:fuzztest",
@@ -60,7 +61,6 @@ group("test_background_task_mgr_all") {
       "${bgtaskmgr_root_path}/test/fuzztest/bgtasksystemeventobserver_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskunsubscribebackgroundtask_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskupdatebackgroundrunning_fuzzer:fuzztest",
-      "${bgtaskmgr_root_path}/test/fuzztest/bgtasksetbgtaskconfig_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/systemtest:systemtest",
     ]
   }
