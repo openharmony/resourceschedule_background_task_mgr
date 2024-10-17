@@ -123,6 +123,11 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_001, TestSize.Level1)
     taskParam->bgModeId_ = 1;
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_INVALID_BGMODE);
     taskParam->bgModeId_ = 4;
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
 }
 
@@ -143,6 +148,11 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_002, TestSize.Level1)
     taskParam->abilityName_ = "";
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
     taskParam->abilityName_ = "ability1";
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
 }
 
