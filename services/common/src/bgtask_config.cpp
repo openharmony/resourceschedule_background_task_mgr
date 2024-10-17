@@ -66,6 +66,7 @@ void BgtaskConfig::ParseTransientTaskExemptedQuatoList(const nlohmann::json &jso
         return;
     }
     appArray = jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
+    std::lock_guard<std::mutex> lock(configMutex_);
     for (const auto &app : appArray) {
         transientTaskExemptedQuatoList_.insert(app);
     }
@@ -95,6 +96,7 @@ bool BgtaskConfig::AddExemptedQuatoData(const std::string &configData, int32_t s
             return false;
         }
         appArray = jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
+        std::lock_guard<std::mutex> lock(configMutex_);
         transientTaskExemptedQuatoList_.clear();
         for (const auto &app : appArray) {
             transientTaskExemptedQuatoList_.insert(app);
@@ -128,6 +130,7 @@ bool BgtaskConfig::SetCloudConfigParam(const nlohmann::json &jsonObj)
         return false;
     }
     nlohmann::json appArray = params[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
+    std::lock_guard<std::mutex> lock(configMutex_);
     transientTaskCloudExemptedQuatoList_.clear();
     for (const auto &app : appArray) {
         transientTaskCloudExemptedQuatoList_.insert(app);
@@ -163,12 +166,14 @@ void BgtaskConfig::ParseTransientTaskExemptedQuato(const nlohmann::json &jsonObj
         BGTASK_LOGE("no key %{public}s", TRANSIENT_EXEMPTED_QUOTA.c_str());
         return;
     }
+    std::lock_guard<std::mutex> lock(configMutex_);
     transientTaskExemptedQuato_ = jsonObj[TRANSIENT_EXEMPTED_QUOTA].get<int32_t>();
     BGTASK_LOGI("transientTaskExemptedQuato_ %{public}d", transientTaskExemptedQuato_);
 }
 
 bool BgtaskConfig::IsTransientTaskExemptedQuatoApp(const std::string &bundleName) const
 {
+    std::lock_guard<std::mutex> lock(configMutex_);
     if (transientTaskCloudExemptedQuatoList_.size() > 0) {
         return transientTaskCloudExemptedQuatoList_.count(bundleName) > 0;
     }
@@ -177,6 +182,7 @@ bool BgtaskConfig::IsTransientTaskExemptedQuatoApp(const std::string &bundleName
 
 int32_t BgtaskConfig::GetTransientTaskExemptedQuato() const
 {
+    std::lock_guard<std::mutex> lock(configMutex_);
     return transientTaskExemptedQuato_;
 }
 }
