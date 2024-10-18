@@ -171,7 +171,7 @@ void BgtaskConfig::ParseTransientTaskExemptedQuato(const nlohmann::json &jsonObj
     BGTASK_LOGI("transientTaskExemptedQuato_ %{public}d", transientTaskExemptedQuato_);
 }
 
-bool BgtaskConfig::IsTransientTaskExemptedQuatoApp(const std::string &bundleName) const
+bool BgtaskConfig::IsTransientTaskExemptedQuatoApp(const std::string &bundleName)
 {
     std::lock_guard<std::mutex> lock(configMutex_);
     if (transientTaskCloudExemptedQuatoList_.size() > 0) {
@@ -180,7 +180,7 @@ bool BgtaskConfig::IsTransientTaskExemptedQuatoApp(const std::string &bundleName
     return transientTaskExemptedQuatoList_.count(bundleName) > 0;
 }
 
-int32_t BgtaskConfig::GetTransientTaskExemptedQuato() const
+int32_t BgtaskConfig::GetTransientTaskExemptedQuato()
 {
     std::lock_guard<std::mutex> lock(configMutex_);
     return transientTaskExemptedQuato_;
