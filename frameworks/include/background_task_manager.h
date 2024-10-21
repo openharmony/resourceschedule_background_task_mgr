@@ -177,6 +177,14 @@ public:
      */
     ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
 
+    /**
+     * @brief Set background task config.
+     * @param configData config param.
+     * @param sourceType data source.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType);
+
 private:
     bool GetBackgroundTaskManagerProxy();
 

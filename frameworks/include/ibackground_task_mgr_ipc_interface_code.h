@@ -37,6 +37,7 @@ namespace BackgroundTaskMgr {
         REQUEST_BACKGROUND_RUNNING_FOR_INNER,
         PAUSE_TRANSIENT_TASK_TIME_FOR_INNER,
         START_TRANSIENT_TASK_TIME_FOR_INNER,
+        SET_BGTASK_CONFIG,
     };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

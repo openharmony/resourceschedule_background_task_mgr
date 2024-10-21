@@ -23,6 +23,7 @@
 #include <nocopyable.h>
 
 #include "bgtaskmgr_inner_errors.h"
+#include "config_data_source_type.h"
 #include "continuous_task_param.h"
 #include "delay_suspend_info.h"
 #include "iexpired_callback.h"
@@ -177,6 +178,14 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     virtual ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key) = 0;
+
+    /**
+     * @brief Set background task config.
+     * @param configData config param.
+     * @param sourceType data source.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    virtual ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType) = 0;
 
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.resourceschedule.IBackgroundTaskMgr");
