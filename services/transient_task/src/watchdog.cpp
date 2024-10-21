@@ -83,18 +83,12 @@ bool Watchdog::KillApplicationByUid(const std::string &bundleName, const int32_t
             BGTASK_LOGE("failed to get appMgrClient");
             return false;
         }
-        int32_t result = static_cast<int32_t>(appMgrClient_->ConnectAppMgrService());
-        if (result != ERR_OK) {
-            BGTASK_LOGE("failed to ConnectAppMgrService");
-            return false;
-        }
     }
     int32_t ret = (int32_t)appMgrClient_->KillApplicationByUid(bundleName, uid);
     if (ret != ERR_OK) {
         BGTASK_LOGE("Fail to kill application by uid.");
         return false;
     }
-
     return true;
 }
 }  // namespace BackgroundTaskMgr
