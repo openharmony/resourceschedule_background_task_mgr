@@ -271,6 +271,14 @@ void BackgroundTaskManager::ResetBackgroundTaskManagerProxy()
     proxy_ = nullptr;
 }
 
+ErrCode BackgroundTaskManager::SetBgTaskConfig(const std::string &configData, int32_t sourceType)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->SetBgTaskConfig(configData, sourceType);
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 

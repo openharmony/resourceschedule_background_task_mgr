@@ -633,5 +633,35 @@ ErrCode BackgroundTaskMgrProxy::GetEfficiencyResourcesInfos(std::vector<std::sha
 
     return result;
 }
+
+ErrCode BackgroundTaskMgrProxy::SetBgTaskConfig(const std::string &configData, int32_t sourceType)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = {MessageOption::TF_SYNC};
+    if (!data.WriteInterfaceToken(BackgroundTaskMgrProxy::GetDescriptor())) {
+        BGTASK_LOGE("SetBgTaskConfig write descriptor failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    if (!data.WriteString(configData)) {
+        BGTASK_LOGE("SetBgTaskConfig write configData failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    if (!data.WriteInt32(sourceType)) {
+        BGTASK_LOGE("SetBgTaskConfig write sourceType failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    ErrCode result = InnerTransact(static_cast<uint32_t>(
+        BackgroundTaskMgrStubInterfaceCode::SET_BGTASK_CONFIG), option, data, reply);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("SetBgTaskConfig fail: transact ErrCode=%{public}d", result);
+        return ERR_BGTASK_TRANSACT_FAILED;
+    }
+    if (!reply.ReadInt32(result)) {
+        BGTASK_LOGE("SetBgTaskConfig fail: read result failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    return result;
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

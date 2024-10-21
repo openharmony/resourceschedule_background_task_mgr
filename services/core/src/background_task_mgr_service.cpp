@@ -269,6 +269,15 @@ ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, u
     return ERR_OK;
 }
 
+ErrCode BackgroundTaskMgrService::SetBgTaskConfig(const std::string &configData, int32_t sourceType)
+{
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("SetBgTaskConfig not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SetBgTaskConfig(configData, sourceType);
+}
+
 bool BackgroundTaskMgrService::AllowDump()
 {
     if (ENG_MODE == 0) {

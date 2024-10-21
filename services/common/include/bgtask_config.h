@@ -17,7 +17,9 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_COMMON_BGTASK_CONFIG_H
 #include <string>
 #include <set>
+#include <mutex>
 
+#include "config_data_source_type.h"
 #include "singleton.h"
 #include "nlohmann/json.hpp"
 
@@ -26,18 +28,22 @@ namespace BackgroundTaskMgr {
 class BgtaskConfig : public DelayedSingleton<BgtaskConfig> {
 public:
     void Init();
-    bool IsTransientTaskExemptedQuatoApp(const std::string &bundleName) const;
-    int32_t GetTransientTaskExemptedQuato() const;
+    bool IsTransientTaskExemptedQuatoApp(const std::string &bundleName);
+    int32_t GetTransientTaskExemptedQuato();
+    bool AddExemptedQuatoData(const std::string &configData, int32_t sourceType);
 
 private:
     void LoadConfigFile();
     void ParseTransientTaskExemptedQuatoList(const nlohmann::json &jsonObj);
     void ParseTransientTaskExemptedQuato(const nlohmann::json &jsonObj);
+    bool SetCloudConfigParam(const nlohmann::json &jsonObj);
 
 private:
     bool isInit_ = false;
     std::set<std::string> transientTaskExemptedQuatoList_ {};
+    std::set<std::string> transientTaskCloudExemptedQuatoList_ {};
     int32_t transientTaskExemptedQuato_ = 10 * 1000; // 10s
+    std::mutex configMutex_;
 };
 }
 }
