@@ -140,15 +140,18 @@ void BgEfficiencyResourcesMgr::HandlePersistenceData()
 
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
-        if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
-            BGTASK_LOGW("ResourceRecordStorage connect to app mgr service failed");
+        if (!appMgrClient_) {
+            BGTASK_LOGE("ResourceRecordStorage connect to app mgr service failed");
             DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
                 appResourceApplyMap_, procResourceApplyMap_);
             return;
         }
     }
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
-    appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
+    if (appMgrClient_->GetAllRunningProcesses(allAppProcessInfos) != ERR_OK) {
+        BGTASK_LOGE("get all running processes failed");
+        return;
+    }
     BGTASK_LOGI("start to recovery delayed task of apps and processes");
     DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreResourceRecord(
         appResourceApplyMap_, procResourceApplyMap_);
@@ -247,23 +250,6 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
     return ERR_OK;
 }
 
-bool BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
-{
-    BGTASK_LOGD("start check app alive or not");
-    if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
-        BGTASK_LOGE("ResourceRecordStorage connect to app mgr service failed");
-        return true;
-    }
-    std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos {};
-    appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
-    for (const auto &info : allAppProcessInfos) {
-        if (info.uid_ == uid) {
-            return true;
-        }
-    }
-    return false;
-}
-
 void BgEfficiencyResourcesMgr::Clear()
 {
 }
@@ -284,14 +270,17 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
 
 bool BgEfficiencyResourcesMgr::IsServiceExtensionType(const pid_t pid)
 {
-    if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+    if (!appMgrClient_) {
         BGTASK_LOGE("ApplyEfficiencyResources connect to app mgr service failed");
         return false;
     }
 
     int32_t proId = static_cast<int32_t>(pid);
     std::vector<AppExecFwk::RunningProcessInfo> allRunningProcessInfos;
-    appMgrClient_->GetAllRunningProcesses(allRunningProcessInfos);
+    if (appMgrClient_->GetAllRunningProcesses(allRunningProcessInfos) != ERR_OK) {
+        BGTASK_LOGE("get all running processes failed");
+        return false;
+    }
     for (const auto &info : allRunningProcessInfos) {
         if (info.pid_ == proId && info.extensionType_ == OHOS::AppExecFwk::ExtensionAbilityType::SERVICE) {
             return true;
