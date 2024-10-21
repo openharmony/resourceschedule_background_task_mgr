@@ -144,7 +144,7 @@ bool BgtaskConfig::SetCloudConfigParam(const nlohmann::json &jsonObj)
         BGTASK_LOGE("no key %{public}s", CONFIG_JSON_INDEX_SUSPEND_SECOND.c_str());
         return false;
     }
-    nlohmann::json param = jsoparamsnObj[CONFIG_JSON_INDEX_SUSPEND_SECOND];
+    nlohmann::json param = params[CONFIG_JSON_INDEX_SUSPEND_SECOND];
 
     if (!param.contains(TRANSIENT_EXEMPTED_QUOTA) ||
         !param[TRANSIENT_EXEMPTED_QUOTA].is_number_integer()) {
