@@ -29,10 +29,8 @@ public:
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
 
 private:
-    bool Connect();
     inline bool ValidateAppStateData(const AppExecFwk::AppStateData &appStateData);
     void OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData);
-    bool CheckParamValid();
 
 private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {};

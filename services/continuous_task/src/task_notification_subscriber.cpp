@@ -76,7 +76,8 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         BGTASK_LOGE("notification extraInfo is null");
         return;
     }
-    BGTASK_LOGI("stop continuous task by user, the label is : %{public}s", notificationLabel.c_str());
+    BGTASK_LOGI("stop continuous task by user, the label is : %{public}s, the reason is %{public}d",
+        notificationLabel.c_str(), deleteReason);
 
     std::string abilityName = AAFwk::String::Unbox(AAFwk::IString::Query(extraInfo->GetParam("abilityName")));
     std::string taskInfoMapKey = labelSplits[LABEL_APP_UID_POS] + LABEL_SPLITER + abilityName +
