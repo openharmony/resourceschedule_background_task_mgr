@@ -75,6 +75,7 @@ void BackgroundTaskMgrService::SetReady(uint32_t flag)
         BGTASK_LOGE("Service start failed!");
         return;
     }
+    DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
     state_ = ServiceRunningState::STATE_RUNNING;
     BGTASK_LOGI("background task manager service start succeed!");
 }
@@ -82,9 +83,6 @@ void BackgroundTaskMgrService::SetReady(uint32_t flag)
 void BackgroundTaskMgrService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->OnAddSystemAbility(systemAbilityId, deviceId);
-    if (systemAbilityId == APP_MGR_SERVICE_ID) {
-        DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
-    }
 }
 
 void BackgroundTaskMgrService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
