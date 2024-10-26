@@ -10,7 +10,8 @@
         "apiVersion": {
             "compatible": 3,
             "target": 3
-        }
+        },
+        "label": "$string:ohos_app_name"
     },
     "deviceConfig": {
         "default": {

@@ -38,10 +38,10 @@ enum class EfficiencyResourcesEventType: uint32_t {
 };
 
 enum : int32_t {
-    HISYSEVENT_APP_RESOURCE_APPLY = 10000,
-    HISYSEVENT_APP_RESOURCE_RESET,
-    HISYSEVENT_RESOURCE_APPLY,
-    HISYSEVENT_RESOURCE_RESET,
+    HISYSEVENT_APP_RESOURCE_APPLY = -1,
+    HISYSEVENT_APP_RESOURCE_RESET = -2,
+    HISYSEVENT_RESOURCE_APPLY = -3,
+    HISYSEVENT_RESOURCE_RESET = -4,
 };
 
 class ResourcesSubscriberMgr : public std::enable_shared_from_this<ResourcesSubscriberMgr>  {
