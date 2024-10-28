@@ -20,6 +20,7 @@
 #include "system_ability_definition.h"
 
 #include "bg_continuous_task_mgr.h"
+#include "bg_transient_task_mgr.h"
 #include "continuous_task_log.h"
 #include "bg_efficiency_resources_mgr.h"
 
