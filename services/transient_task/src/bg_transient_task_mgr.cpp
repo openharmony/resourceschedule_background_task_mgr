@@ -709,6 +709,31 @@ void BgTransientTaskMgr::SendOkayBatteryEvent(std::vector<std::string> &dumpInfo
     }
 }
 
+void BgTransientTaskMgr::OnAppCacheStateChanged(int32_t uid, int32_t pid, const std::string &bundleName)
+{
+    if (!isReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+    if (!VerifyCallingInfo(uid, pid)) {
+        BGTASK_LOGE("pid or uid is invalid.");
+        return;
+    }
+    auto keyInfo = make_shared<KeyInfo>(bundleName, uid, pid);
+
+    vector<shared_ptr<DelaySuspendInfoEx>> requestList = decisionMaker_->GetRequestListByKey(keyInfo);
+    if (requestList.empty()) {
+        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d not request transient task.",
+            bundleName.c_str(), uid);
+        return;
+    }
+    for (auto &info : requestList) {
+        BGTASK_LOGI("OnAppCacheStateChanged cancel task, bundlename: %{public}s, uid: %{public}d, pid: %{public}d,"
+            " requestId: %{public}d.", bundleName.c_str(), uid, pid, info->GetRequestId());
+        CancelSuspendDelayLocked(info->GetRequestId());
+    }
+}
+
 void BgTransientTaskMgr::DumpTaskTime(const std::vector<std::string> &dumpOption, bool pause,
     std::vector<std::string> &dumpInfo)
 {
