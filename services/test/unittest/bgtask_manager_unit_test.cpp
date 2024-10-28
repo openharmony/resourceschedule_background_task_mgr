@@ -601,5 +601,28 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_045, TestSize.Level1)
     const std::string cloudConfigStr = cloudConfig.dump(JSON_FORMAT_DUMP);
     EXPECT_EQ(bgTransientTaskMgr_->SetBgTaskConfig(cloudConfigStr, ConfigDataSourceType::CONFIG_CLOUD), ERR_OK);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_046
+ * @tc.desc: test BgTransientTaskMgr OnAppCacheStateChanged.
+ * @tc.type: FUNC
+ * @tc.require: issueIB08SV
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_046, TestSize.Level1)
+{
+    int32_t uid = 1;
+    int32_t pid = 1;
+    std::string bundleName = "bundleName";
+    bgTransientTaskMgr_->isReady_.store(false);
+    bgTransientTaskMgr_->OnAppCacheStateChanged(uid, pid, bundleName);
+
+    bgTransientTaskMgr_->isReady_.store(true);
+    uid = -1;
+    bgTransientTaskMgr_->OnAppCacheStateChanged(uid, pid, bundleName);
+
+    uid = 1;
+    bgTransientTaskMgr_->OnAppCacheStateChanged(uid, pid, bundleName);
+    EXPECT_NE(bgTransientTaskMgr_->CancelSuspendDelay(-1), ERR_OK);
+}
 }
 }
