@@ -720,17 +720,16 @@ void BgTransientTaskMgr::OnAppCacheStateChanged(int32_t uid, int32_t pid, const 
         return;
     }
     auto keyInfo = make_shared<KeyInfo>(bundleName, uid, pid);
-
-    vector<shared_ptr<DelaySuspendInfoEx>> requestList = decisionMaker_->GetRequestListByKey(keyInfo);
-    if (requestList.empty()) {
+    vector<int32_t> requestIdList = decisionMaker_->GetRequestIdListByKey(keyInfo);
+    if (requestIdList.empty()) {
         BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d not request transient task.",
             bundleName.c_str(), uid);
         return;
     }
-    for (auto &info : requestList) {
+    for (auto &requestId : requestIdList) {
         BGTASK_LOGI("OnAppCacheStateChanged cancel task, bundlename: %{public}s, uid: %{public}d, pid: %{public}d,"
-            " requestId: %{public}d.", bundleName.c_str(), uid, pid, info->GetRequestId());
-        CancelSuspendDelayLocked(info->GetRequestId());
+            " requestId: %{public}d.", bundleName.c_str(), uid, pid, requestId);
+        CancelSuspendDelayLocked(requestId);
     }
 }
 
