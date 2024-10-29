@@ -58,7 +58,6 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
 void AppStateObserver::OnAppCacheStateChanged(const AppExecFwk::AppStateData &appStateData)
 {
     if (appStateData.state != static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_CACHED)) {
-        BGTASK_LOGE("state is invalid");
         return;
     }
     if (!handler_) {
