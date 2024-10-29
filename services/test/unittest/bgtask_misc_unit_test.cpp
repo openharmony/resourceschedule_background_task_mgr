@@ -816,22 +816,22 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_006, TestSize.Level1)
         AppExecFwk::EventRunner::Create("tdd_test_handler"));
     auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
 
-    vector<shared_ptr<DelaySuspendInfoEx>> requestList;
-    requestList = decisionMaker->GetRequestListByKey(nullptr);
-    EXPECT_TRUE(requestList.empty());
+    vector<int32_t> requestIdList;
+    requestIdList = decisionMaker->GetRequestIdListByKey(nullptr);
+    EXPECT_TRUE(requestIdList.empty());
 
     auto keyInfo = std::make_shared<KeyInfo>("bundleName", 1, 1);
     decisionMaker->pkgDelaySuspendInfoMap_.clear();
-    requestList = decisionMaker->GetRequestListByKey(keyInfo);
-    EXPECT_TRUE(requestList.empty());
+    requestIdList = decisionMaker->GetRequestIdListByKey(keyInfo);
+    EXPECT_TRUE(requestIdList.empty());
 
     decisionMaker->pkgDelaySuspendInfoMap_.clear();
     auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName", 1, timerManager);
     auto delayInfo1 = std::make_shared<DelaySuspendInfoEx>(1);
     pkgDelaySuspendInfo->requestList_.push_back(delayInfo1);
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo] = pkgDelaySuspendInfo;
-    requestList = decisionMaker->GetRequestListByKey(keyInfo);
-    EXPECT_FALSE(requestList.empty());
+    requestIdList = decisionMaker->GetRequestIdListByKey(keyInfo);
+    EXPECT_FALSE(requestIdList.empty());
 }
 
 /**
