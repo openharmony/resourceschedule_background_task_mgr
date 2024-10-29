@@ -89,7 +89,7 @@ void BgTaskMiscUnitTest::TearDown() {}
  * @tc.name: AppStateObserverTest_001
  * @tc.desc: test AppStateObserver class CheckParamValid method.
  * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V
+ * @tc.require: issueI4QT3W issueI4QU0V issueIB08SV
  */
 HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
 {
@@ -99,8 +99,19 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
     appStateObserver->OnProcessDiedEfficiencyRes(processData);
     AppExecFwk::AbilityStateData abilityStateData = AppExecFwk::AbilityStateData();
     appStateObserver->OnAbilityStateChanged(abilityStateData);
+    AppExecFwk::AppStateData appStateDataCache = AppExecFwk::AppStateData();
+    // state is invalid
+    appStateDataCache.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_SET_COLD_START);
+    appStateObserver->OnAppCacheStateChanged(appStateDataCache);
+    // handle is null
+    appStateDataCache.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_CACHED);
+    appStateObserver->OnAppCacheStateChanged(appStateDataCache);
     auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
     appStateObserver->SetEventHandler(handler);
+    appStateDataCache.uid = 1;
+    appStateDataCache.pid = 1;
+    appStateDataCache.bundleName = "bundleName";
+    appStateObserver->OnAppCacheStateChanged(appStateDataCache);
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
     appStateObserver->OnAbilityStateChanged(abilityStateData);
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_CREATE);
@@ -789,6 +800,38 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_005, TestSize.Level1)
     pkgDelaySuspendInfo->requestList_.push_back(delayInfo);
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
     EXPECT_EQ(decisionMaker->StartTransientTaskTimeForInner(uid, name), ERR_OK);
+}
+
+/**
+ * @tc.name: DecisionMakerTest_006
+ * @tc.desc: test GetRequestListByKey.
+ * @tc.type: FUNC
+ * @tc.require: issueIB08SV
+ */
+HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_006, TestSize.Level1)
+{
+    auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
+    auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
+    auto timerManager = std::make_shared<TimerManager>(bgtaskService,
+        AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
+
+    vector<int32_t> requestIdList;
+    requestIdList = decisionMaker->GetRequestIdListByKey(nullptr);
+    EXPECT_TRUE(requestIdList.empty());
+
+    auto keyInfo = std::make_shared<KeyInfo>("bundleName", 1, 1);
+    decisionMaker->pkgDelaySuspendInfoMap_.clear();
+    requestIdList = decisionMaker->GetRequestIdListByKey(keyInfo);
+    EXPECT_TRUE(requestIdList.empty());
+
+    decisionMaker->pkgDelaySuspendInfoMap_.clear();
+    auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName", 1, timerManager);
+    auto delayInfo1 = std::make_shared<DelaySuspendInfoEx>(1);
+    pkgDelaySuspendInfo->requestList_.push_back(delayInfo1);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo] = pkgDelaySuspendInfo;
+    requestIdList = decisionMaker->GetRequestIdListByKey(keyInfo);
+    EXPECT_FALSE(requestIdList.empty());
 }
 
 /**

@@ -315,6 +315,27 @@ int32_t DecisionMaker::GetRemainingDelayTime(const std::shared_ptr<KeyInfo>& key
     return -1;
 }
 
+vector<int32_t> DecisionMaker::GetRequestIdListByKey(const std::shared_ptr<KeyInfo>& key)
+{
+    lock_guard<mutex> lock(lock_);
+    vector<int32_t> requestIdList;
+    if (key == nullptr) {
+        BGTASK_LOGE("GetRequestListByKey, key is null.");
+        return requestIdList;
+    }
+    auto it = pkgDelaySuspendInfoMap_.find(key);
+    if (it != pkgDelaySuspendInfoMap_.end()) {
+        auto pkgInfo = it->second;
+        for (const auto &task : pkgInfo->GetRequestList()) {
+            requestIdList.emplace_back(task->GetRequestId());
+        }
+    } else {
+        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d not request transient task.",
+            key->GetPkg().c_str(), key->GetUid());
+    }
+    return requestIdList;
+}
+
 int32_t DecisionMaker::GetQuota(const std::shared_ptr<KeyInfo>& key)
 {
     lock_guard<mutex> lock(lock_);

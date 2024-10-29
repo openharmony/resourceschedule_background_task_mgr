@@ -20,6 +20,7 @@
 #include "system_ability_definition.h"
 
 #include "bg_continuous_task_mgr.h"
+#include "bg_transient_task_mgr.h"
 #include "continuous_task_log.h"
 #include "bg_efficiency_resources_mgr.h"
 
@@ -28,6 +29,7 @@ namespace BackgroundTaskMgr {
 namespace {
 const std::string TASK_ON_PROCESS_DIED = "OnProcessDiedTask";
 const std::string TASK_ON_ABILITY_STATE_CHANGED = "OnAbilityStateChangedTask";
+const std::string TASK_ON_APP_CACHE_STATE_CHANGED = "OnAppCacheStateChangedTask";
 const std::string TASK_ON_APP_DIED = "OnAppDiedTask";
 }
 
@@ -51,6 +53,26 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
         return;
     }
     handler_->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
+}
+
+void AppStateObserver::OnAppCacheStateChanged(const AppExecFwk::AppStateData &appStateData)
+{
+    if (appStateData.state != static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_CACHED)) {
+        return;
+    }
+    if (!handler_) {
+        BGTASK_LOGE("handler_ null");
+        return;
+    }
+    BGTASK_LOGI("app cache, name : %{public}s,  uid : %{public}d, pid : %{public}d, state : %{public}d,",
+        appStateData.bundleName.c_str(), appStateData.uid, appStateData.pid, appStateData.state);
+    int32_t uid = appStateData.uid;
+    int32_t pid = appStateData.pid;
+    std::string bundleName = appStateData.bundleName;
+    auto task = [uid, pid, bundleName]() {
+        DelayedSingleton<BgTransientTaskMgr>::GetInstance()->OnAppCacheStateChanged(uid, pid, bundleName);
+    };
+    handler_->PostTask(task, TASK_ON_APP_CACHE_STATE_CHANGED);
 }
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)

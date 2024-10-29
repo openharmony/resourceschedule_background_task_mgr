@@ -23,6 +23,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class AppStateObserver : public AppExecFwk::ApplicationStateObserverStub {
 public:
+    void OnAppCacheStateChanged(const AppExecFwk::AppStateData &appStateData) override;
     void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override;
     void OnProcessDied(const AppExecFwk::ProcessData &processData) override;
     void OnAppStopped(const AppExecFwk::AppStateData &appStateData) override;

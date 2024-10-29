@@ -69,6 +69,11 @@ public:
         return quota_;
     }
 
+    inline vector<shared_ptr<DelaySuspendInfoEx>> GetRequestList() const
+    {
+        return requestList_;
+    }
+
 private:
     int32_t GetModifiedTime();
 

@@ -51,6 +51,7 @@ public:
     int32_t GetQuota(const std::shared_ptr<KeyInfo>& key);
     bool IsFrontApp(const string& pkgName, int32_t uid);
     void ResetAppMgrProxy();
+    vector<int32_t> GetRequestIdListByKey(const std::shared_ptr<KeyInfo>& key);
 
 private:
     class ApplicationStateObserver : public AppExecFwk::ApplicationStateObserverStub {
