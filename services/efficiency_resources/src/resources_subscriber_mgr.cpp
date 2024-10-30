@@ -165,7 +165,6 @@ void ResourcesSubscriberMgr::HiSysEventSubmit(const std::shared_ptr<ResourceCall
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, eventType.c_str(),
         HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
         "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
-        "BGMODE", hiSysEventType,
         "BGMODE", resourceType,
         "UIABILITY_IDENTITY", hiSysEventType);
 }
