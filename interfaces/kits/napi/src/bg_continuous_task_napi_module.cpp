@@ -559,8 +559,8 @@ napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool i
     }
 
     napi_value ret {nullptr};
-    callbackPtr.release();
     ret = UpdateBackgroundRunningPromise(env, asyncCallbackInfo, isThrow);
+    callbackPtr.release();
     if (ret == nullptr) {
         BGTASK_LOGE("ret is nullpter");
         if (asyncCallbackInfo != nullptr) {
