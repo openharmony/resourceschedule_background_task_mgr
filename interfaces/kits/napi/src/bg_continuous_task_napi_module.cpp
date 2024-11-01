@@ -560,6 +560,7 @@ napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool i
 
     napi_value ret {nullptr};
     ret = UpdateBackgroundRunningPromise(env, asyncCallbackInfo, isThrow);
+    callbackPtr.release();
     if (ret == nullptr) {
         BGTASK_LOGE("ret is nullpter");
         if (asyncCallbackInfo != nullptr) {
@@ -568,7 +569,6 @@ napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool i
         }
         ret = WrapVoidToJS(env);
     }
-    callbackPtr.release();
     return ret;
 }
 
@@ -603,7 +603,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool is
     } else {
         ret = StartBackgroundRunningPromise(env, asyncCallbackInfo, isThrow);
     }
-
+    callbackPtr.release();
     if (ret == nullptr) {
         BGTASK_LOGE("ret is nullpter");
         if (asyncCallbackInfo != nullptr) {
@@ -612,7 +612,6 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool is
         }
         ret = WrapVoidToJS(env);
     }
-    callbackPtr.release();
     return ret;
 }
 
@@ -755,7 +754,7 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info, bool isT
     } else {
         ret = StopBackgroundRunningPromise(env, asyncCallbackInfo, isThrow);
     }
-
+    callbackPtr.release();
     if (ret == nullptr) {
         BGTASK_LOGE("ret is nullpter");
         if (asyncCallbackInfo != nullptr) {
@@ -764,7 +763,6 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info, bool isT
         }
         ret = WrapVoidToJS(env);
     }
-    callbackPtr.release();
     return ret;
 }
 
