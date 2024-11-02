@@ -71,11 +71,11 @@ void BackgroundTaskMgrService::SetReady(uint32_t flag)
             return;
         }
     }
+    DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
     if (!Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get())) {
         BGTASK_LOGE("Service start failed!");
         return;
     }
-    DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
     state_ = ServiceRunningState::STATE_RUNNING;
     BGTASK_LOGI("background task manager service start succeed!");
 }
