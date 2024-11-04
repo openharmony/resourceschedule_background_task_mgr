@@ -44,6 +44,7 @@ group("test_background_task_mgr_all") {
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskapplyefficiencyresources_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskbackgroundrunningforinner_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskcancelsuspenddelay_fuzzer:fuzztest",
+      "${bgtaskmgr_root_path}/test/fuzztest/bgtaskcontinuoustaskrecord_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskgetcontinuoustaskapps_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskgetefficiencyresourcesinfos_fuzzer:fuzztest",
       "${bgtaskmgr_root_path}/test/fuzztest/bgtaskgetremainingdelaytime_fuzzer:fuzztest",
