@@ -16,33 +16,64 @@
 #include "bgtaskcontinuoustaskrecord_fuzzer.h"
 #include "securec.h"
 
-#include "background_task_mgr_service.h"
-#include "ibackground_task_mgr_ipc_interface_code.h"
+#include "continuous_task_record.h"
+#include "common_utils.h"
+#include "iremote_object.h"
+#include "background_mode.h"
+#include "continuous_task_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-    const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
     constexpr int32_t U32_AT_SIZE = 4;
-    bool g_isOnstarted = false;
-    const std::u16string BACKGROUND_TASK_MGR_STUB_TOKEN = u"ohos.resourceschedule.IBackgroundTaskMgr";
 
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
-        MessageParcel datas;
-        datas.WriteInterfaceToken(BACKGROUND_TASK_MGR_STUB_TOKEN);
-        datas.WriteBuffer(data, size);
-        datas.RewindRead(0);
-        MessageParcel reply;
-        MessageOption option;
-        if (!g_isOnstarted) {
-            std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
-            runner_ = AppExecFwk::EventRunner::Create(BGTASK_SERVICE_NAME);
-            DelayedSingleton<BgTransientTaskMgr>::GetInstance()->Init(runner_);
-            g_isOnstarted = true;
-        }
-        uint32_t code = static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::CANCEL_SUSPEND_DELAY);
-        DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(
-            code, datas, reply, option);
+        auto continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+        continuousTaskRecord->bundleName_ = "bundleName";
+        continuousTaskRecord->bundleName_ = "abilityName";
+        continuousTaskRecord->uid_ = 1;
+        continuousTaskRecord->pid_ = 1;
+        continuousTaskRecord->bgModeId_ = 1;
+        continuousTaskRecord->isBatchApi_ = true;
+        continuousTaskRecord->bgModeIds_ = {1};
+        continuousTaskRecord->abilityId_ = 1;
+        continuousTaskRecord->GetBundleName();
+        continuousTaskRecord->GetAbilityName();
+        continuousTaskRecord->IsNewApi();
+        continuousTaskRecord->IsFromWebview();
+        continuousTaskRecord->GetBgModeId();
+        continuousTaskRecord->GetUserId();
+        continuousTaskRecord->GetUid();
+        continuousTaskRecord->GetPid();
+        continuousTaskRecord->GetNotificationLabel();
+        continuousTaskRecord->GetNotificationId();
+        continuousTaskRecord->GetWantAgent();
+        std::vector<uint32_t> bgmodes = {1, 2};
+        continuousTaskRecord->ToString(bgmodes);
+        std::string modeStr = "1";
+        continuousTaskRecord->ToVector(modeStr);
+        continuousTaskRecord->GetAbilityId();
+        continuousTaskRecord->IsSystem();
+        continuousTaskRecord->ParseToJsonStr();
+        nlohmann::json json;
+        json["bundleName"] = "bundleName";
+        json["abilityName"] = "abilityName";
+        json["userId"] = 1;
+        json["uid"] = 1;
+        json["pid"] = 1;
+        json["bgModeId"] = 1;
+        json["isNewApi"] = false;
+        json["isFromWebview"] = false;
+        json["notificationLabel"] = "notificationLabel";
+        json["isSystem"] = false;
+        json["isBatchApi"] = false;
+        json["bgModeIds"] = "1";
+        nlohmann::json info;
+        info["bundleName"] = "wantAgentBundleName";
+        info["abilityName"] = "wantAgentAbilityName";
+        info["wantAgentInfo"] = info;
+        json["notificationId"] = 1;
+        continuousTaskRecord->ParseFromJson(json);
         return true;
     }
 } // BackgroundTaskMgr
