@@ -16,7 +16,7 @@
 #ifndef TEST_FUZZTEST_BGTASKCONTINUOUSTASKRECORD_FUZZER_H
 #define TEST_FUZZTEST_BGTASKCONTINUOUSTASKRECORD_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "bgtaskcancelsuspenddelay_fuzzer"
+#define FUZZ_PROJECT_NAME "bgtaskcontinuoustaskrecord_fuzzer"
 
 #include "fuzztest_helper.h"
 
