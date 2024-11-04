@@ -472,7 +472,7 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
                 std::to_string(std::hash<std::string>()(abilityInfo.name)).c_str(), abilityInfo.backgroundModes);
         } else {
             BGTASK_LOGE("cachedBundleInfo mode push fail, abilityName: %{public}s, Background Mode: %{public}u",
-            abilityInfo.name.c_str(), abilityInfo.backgroundModes);
+                abilityInfo.name.c_str(), abilityInfo.backgroundModes);
         }
     }
     if (cachedBundleInfo.abilityBgMode_.empty()) {
@@ -667,8 +667,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
             info->bundleName_ = want->GetOperation().GetBundleName();
             info->abilityName_ = want->GetOperation().GetAbilityName();
             continuousTaskRecord->wantAgentInfo_ = info;
-            BGTASK_LOGW("continuoustask want bundleName: %{public}s, abilityName: %{public}s",
-                want->GetOperation().GetBundleName().c_str(), want->GetOperation().GetAbilityName().c_str());
         }
     }
 
