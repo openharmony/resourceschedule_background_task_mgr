@@ -454,7 +454,6 @@ bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId,
     CachedBundleInfo cachedBundleInfo = CachedBundleInfo();
     cachedBundleInfo.appName_ = appName;
     if (AddAbilityBgModeInfos(bundleInfo, cachedBundleInfo)) {
-        BGTASK_LOGI("cachedBundleInfo add uid: %{public}d", uid);
         cachedBundleInfos_.emplace(uid, cachedBundleInfo);
         return true;
     }
@@ -467,12 +466,9 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
     for (auto abilityInfo : bundleInfo.abilityInfos) {
         if (abilityInfo.backgroundModes != INVALID_BGMODE) {
             cachedBundleInfo.abilityBgMode_.emplace(abilityInfo.name, abilityInfo.backgroundModes);
-            BGTASK_LOGI("cachedBundleInfo mode push, abilityName: %{public}s, abilityNameHash: %{public}s, "
-                "Background Mode: %{public}u.", abilityInfo.name.c_str(),
-                std::to_string(std::hash<std::string>()(abilityInfo.name)).c_str(), abilityInfo.backgroundModes);
-        } else {
-            BGTASK_LOGE("cachedBundleInfo mode push fail, abilityName: %{public}s, Background Mode: %{public}u",
-                abilityInfo.name.c_str(), abilityInfo.backgroundModes);
+            BGTASK_LOGI("abilityName: %{public}s, abilityNameHash: %{public}s, Background Mode: %{public}u.",
+                abilityInfo.name.c_str(), std::to_string(std::hash<std::string>()(abilityInfo.name)).c_str(),
+                abilityInfo.backgroundModes);
         }
     }
     if (cachedBundleInfo.abilityBgMode_.empty()) {
@@ -505,7 +501,8 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
         }
         if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode &
             (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
-            BGTASK_LOGE("requested background mode is not declared in config file!");
+            BGTASK_LOGE("requested background mode is not declared in config file, configuredBgMode: %{public}d",
+                configuredBgMode);
             return ERR_BGTASK_INVALID_BGMODE;
         }
     }
@@ -520,8 +517,6 @@ uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, const std::stri
             cachedBundleInfo.abilityBgMode_.end()) {
             return cachedBundleInfo.abilityBgMode_.at(abilityName);
         }
-    } else {
-        BGTASK_LOGW("cachedBundleInfos not have uid: %{public}d, abilityName: %{public}s", uid, abilityName.c_str());
     }
     return INVALID_BGMODE;
 }
