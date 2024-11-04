@@ -631,7 +631,7 @@ ErrCode BgTransientTaskMgr::SetBgTaskConfig(const std::string &configData, int32
     if (!CheckProcessName()) {
         return ERR_BGTASK_INVALID_PROCESS_NAME;
     }
-    BGTASK_LOGI("SetBgTaskConfig configData: %{public}s, sourceType: %{public}d.", configData.c_str(), sourceType);
+    BGTASK_LOGD("SetBgTaskConfig configData: %{public}s, sourceType: %{public}d.", configData.c_str(), sourceType);
     bool addResult = DelayedSingleton<BgtaskConfig>::GetInstance()->AddExemptedQuatoData(configData, sourceType);
     if (!addResult) {
         BGTASK_LOGE("AddExemptedQuatoData fail.");
