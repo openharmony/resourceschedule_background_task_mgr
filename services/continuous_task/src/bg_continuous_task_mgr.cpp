@@ -496,7 +496,8 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
         }
         if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode &
             (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
-            BGTASK_LOGE("requested background mode is not declared in config file!");
+            BGTASK_LOGE("requested background mode is not declared in config file, configuredBgMode: %{public}d",
+                configuredBgMode);
             return ERR_BGTASK_INVALID_BGMODE;
         }
     }
