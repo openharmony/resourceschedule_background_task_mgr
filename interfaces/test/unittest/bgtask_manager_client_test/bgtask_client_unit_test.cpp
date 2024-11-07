@@ -47,6 +47,8 @@ constexpr int32_t MULTI_DEVICE_CONNECTION_ID = 6;
 constexpr int32_t WIFI_INTERACTION_ID = 7;
 constexpr int32_t VOIP_ID = 8;
 constexpr int32_t TASK_KEEPING_ID = 9;
+constexpr int32_t WORKOUT = 10;
+constexpr int32_t END = 11;
 constexpr int32_t SLEEP_TIME = 500;
 constexpr uint32_t CPU_TYPE = 1;
 constexpr uint32_t COMMON_EVENT_TYPE = 2;
@@ -200,6 +202,8 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundMode_001, TestSize.Level1)
     EXPECT_EQ(WIFI_INTERACTION_ID, (int32_t)BackgroundMode::WIFI_INTERACTION);
     EXPECT_EQ(VOIP_ID, (int32_t)BackgroundMode::VOIP);
     EXPECT_EQ(TASK_KEEPING_ID, (int32_t)BackgroundMode::TASK_KEEPING);
+    EXPECT_EQ(WORKOUT, (int32_t)BackgroundMode::WORKOUT);
+    EXPECT_EQ(END, (int32_t)BackgroundMode::END);
 }
 
 /**

@@ -969,6 +969,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_044, TestSize.Level1)
 {
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeTypeForInner(0), ERR_BGTASK_INVALID_BGMODE);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeTypeForInner(1), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeTypeForInner(10), ERR_OK);
 }
 
 /**
