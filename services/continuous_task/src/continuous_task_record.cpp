@@ -32,6 +32,7 @@ const char *g_continuousTaskModeName[10] = {
     "wifiInteraction",
     "voip",
     "taskKeeping",
+    "workout",
     "default",
 };
 
