@@ -83,6 +83,7 @@ static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
+static constexpr uint32_t HEALTHSPORT_SA_UID = 7259;
 static constexpr uint32_t ALL_MODES = 0xFF;
 
 #ifndef HAS_OS_ACCOUNT_PART
@@ -551,7 +552,7 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
 
 ErrCode BgContinuousTaskMgr::CheckBgmodeTypeForInner(uint32_t requestedBgModeId)
 {
-    if (requestedBgModeId == INVALID_BGMODE || requestedBgModeId >= BGMODE_NUMS) {
+    if (requestedBgModeId == INVALID_BGMODE || requestedBgModeId > BGMODE_NUMS) {
         BGTASK_LOGE("requested background mode is not declared in config file!");
         return ERR_BGTASK_INVALID_BGMODE;
     }
@@ -571,7 +572,7 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     // webview sdk申请长时任务，上下文在应用。callkit sa 申请长时时，上下文在sa;
-    if (callingUid != VOIP_SA_UID && callingUid != taskParam->uid_) {
+    if (callingUid != VOIP_SA_UID && callingUid != HEALTHSPORT_SA_UID && callingUid != taskParam->uid_) {
         BGTASK_LOGE("continuous task param uid %{public}d is invalid, real %{public}d", taskParam->uid_, callingUid);
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }

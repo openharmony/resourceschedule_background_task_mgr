@@ -31,6 +31,8 @@ public:
         WIFI_INTERACTION,
         VOIP,
         TASK_KEEPING,
+        WORKOUT,
+        END,
     };
 };
 }  // namespace BackgroundTaskMgr
