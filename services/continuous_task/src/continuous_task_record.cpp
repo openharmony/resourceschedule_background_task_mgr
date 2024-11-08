@@ -22,7 +22,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const char *g_continuousTaskModeName[10] = {
+const char *g_continuousTaskModeName[11] = {
     "dataTransfer",
     "audioPlayback",
     "audioRecording",
