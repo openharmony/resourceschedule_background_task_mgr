@@ -1579,15 +1579,15 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
     NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
 }
 
-void BgContinuousTaskMgr::HandleVoipTaskRemove()
+void BgContinuousTaskMgr::HandleRemoveTaskByMode(uint32_t mode)
 {
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         auto record = iter->second;
-        if (record->isFromWebview_ && CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::VOIP)) {
+        if (record->isFromWebview_ && CommonUtils::CheckExistMode(record->bgModeIds_, mode)) {
             BGTASK_LOGI("HandleVoipTaskRemove uid: %{public}d, bundleName: %{public}s, abilityName: %{public}s,"
                 " bgModeId: %{public}d, abilityId: %{public}d", record->uid_, record->bundleName_.c_str(),
-                record->abilityName_.c_str(), BackgroundMode::VOIP, record->abilityId_);
+                record->abilityName_.c_str(), mode, record->abilityId_);
             record->reason_ = SYSTEM_CANCEL;
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             iter = continuousTaskInfosMap_.erase(iter);
@@ -1609,7 +1609,14 @@ void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const s
         case SA_ID_VOIP_CALL_MANAGER:
             {
                 BGTASK_LOGI("remove voip system ability, systemAbilityId: %{public}d", systemAbilityId);
-                auto task = [this]() { this->HandleVoipTaskRemove(); };
+                auto task = [this]() { this->HandleRemoveTaskByMode(BackgroundMode::VOIP); };
+                handler_->PostTask(task);
+            }
+            break;
+        case SA_ID_VOIP_HEALTH_SPORT:
+            {
+                BGTASK_LOGI("remove healthsport system ability, systemAbilityId: %{public}d", systemAbilityId);
+                auto task = [this]() { this->HandleRemoveTaskByMode(BackgroundMode::WORKOUT); };
                 handler_->PostTask(task);
             }
             break;
