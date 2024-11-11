@@ -1613,7 +1613,7 @@ void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const s
                 handler_->PostTask(task);
             }
             break;
-        case SA_ID_VOIP_HEALTH_SPORT:
+        case SA_ID_HEALTH_SPORT:
             {
                 BGTASK_LOGI("remove healthsport system ability, systemAbilityId: %{public}d", systemAbilityId);
                 auto task = [this]() { this->HandleRemoveTaskByMode(BackgroundMode::WORKOUT); };
