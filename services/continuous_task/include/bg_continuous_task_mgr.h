@@ -42,6 +42,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
     static constexpr uint32_t SA_ID_VOIP_CALL_MANAGER = 65968;
+    static constexpr uint32_t SA_ID_HEALTH_SPORT = 9527;
 }
 class BackgroundTaskMgrService;
 class DataStorageHelper;
@@ -83,7 +84,7 @@ public:
     void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
-    void HandleVoipTaskRemove();
+    void HandleRemoveTaskByMode(uint32_t mode);
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
