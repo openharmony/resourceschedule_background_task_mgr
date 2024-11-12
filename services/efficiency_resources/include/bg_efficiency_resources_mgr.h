@@ -99,6 +99,13 @@ private:
     void SendResourceApplyTask(int32_t uid, int32_t pid, const std::string &bundleName,
         const sptr<EfficiencyResourceInfo> &resourceInfo);
     bool IsServiceExtensionType(const pid_t pid);
+    void LoadResourceQuotaMgrLib();
+    bool CheckOrUpdateCpuApplyQuota(int32_t uid, const std::string &bundleName,
+        const sptr<EfficiencyResourceInfo> &resourceInfo);
+    void UpdateQuotaIfCpuReset(EfficiencyResourcesEventType type, int32_t uid, uint32_t resourceNumber);
+    void DumpSetCpuQuota(const std::vector<std::string> &dumpOption);
+    void DumpResetCpuQuotaUsage(const std::vector<std::string> &dumpOption);
+    void DumpGetCpuQuota(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 
 private:
     std::atomic<bool> isSysReady_ {false};
@@ -110,6 +117,7 @@ private:
     std::shared_ptr<ResourcesSubscriberMgr> subscriberMgr_ {nullptr};
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_ {nullptr};
     uint32_t dependsReady_ = 0;
+    void *resourceQuotaMgrHandle_ {nullptr};
 
     DECLARE_DELAYED_SINGLETON(BgEfficiencyResourcesMgr);
 };

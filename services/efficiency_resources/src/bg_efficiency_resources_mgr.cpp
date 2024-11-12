@@ -19,6 +19,7 @@
 #include <set>
 #include <algorithm>
 #include <vector>
+#include <dlfcn.h>
 
 #include "event_runner.h"
 #include "system_ability_definition.h"
@@ -40,6 +41,9 @@ namespace {
     const std::string DUMP_PARAM_RESET_ALL = "--reset_all";
     const std::string DUMP_PARAM_RESET_APP = "--resetapp";
     const std::string DUMP_PARAM_RESET_PROC = "--resetproc";
+    const std::string DUMP_PARAM_SET_CPU_QUOTA = "--setquota";
+    const std::string DUMP_PARAM_RESET_CPU_QUOTA = "--resetquota";
+    const std::string DUMP_PARAM_GET_CPU_QUOTA = "--getquota";
     const int32_t MAX_DUMP_PARAM_NUMS = 4;
     const uint32_t APP_MGR_READY = 1;
     const uint32_t BUNDLE_MGR_READY = 2;
@@ -47,10 +51,21 @@ namespace {
     const uint32_t FREEZE_ALL_RESOURCES = 0;
     const uint32_t MAX_RESOURCES_TYPE_NUM = ResourceTypeName.size();
     const uint32_t MAX_RESOURCE_MASK = (1 << ResourceTypeName.size()) - 1;
+    const char *RESOURCE_QUOTA_MANAGER_LIB = "libresource_quota_manager.z.so";
 }
 BgEfficiencyResourcesMgr::BgEfficiencyResourcesMgr() {}
 
 BgEfficiencyResourcesMgr::~BgEfficiencyResourcesMgr() {}
+
+void BgEfficiencyResourcesMgr::LoadResourceQuotaMgrLib()
+{
+    resourceQuotaMgrHandle_ = dlopen(RESOURCE_QUOTA_MANAGER_LIB, RTLD_NOW);
+    if (!resourceQuotaMgrHandle_) {
+        BGTASK_LOGE("Not find resource_quota_manager lib.");
+    }
+
+    BGTASK_LOGI("Load resource_quota_manager lib success.");
+}
 
 bool BgEfficiencyResourcesMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
@@ -65,6 +80,8 @@ bool BgEfficiencyResourcesMgr::Init(const std::shared_ptr<AppExecFwk::EventRunne
         return false;
     }
     BGTASK_LOGI("efficiency resources mgr finish Init");
+
+    LoadResourceQuotaMgrLib();
     return true;
 }
 
@@ -289,6 +306,37 @@ bool BgEfficiencyResourcesMgr::IsServiceExtensionType(const pid_t pid)
     return false;
 }
 
+bool BgEfficiencyResourcesMgr::CheckOrUpdateCpuApplyQuota(int32_t uid, const std::string &bundleName,
+    const sptr<EfficiencyResourceInfo> &resourceInfo)
+{
+    if (resourceInfo->IsProcess()) {
+        BGTASK_LOGD("Not app resource, return.");
+        return true;
+    }
+
+    if ((resourceInfo->GetResourceNumber() & ResourceType::CPU) == 0) {
+        BGTASK_LOGD("App resource but not include CPU type, return.");
+        return true;
+    }
+
+    if (resourceInfo->IsApply() && resourceInfo->IsPersist()) {
+        BGTASK_LOGD("Apply but persist, return.");
+        return true;
+    }
+
+    BGTASK_LOGD("CheckOrUpdateCpuApplyQuota start, uid: %{public}d.", uid);
+
+    using HandleQuotaFunc = bool (*)(int32_t, const std::string &, const sptr<EfficiencyResourceInfo> &);
+    auto handleQuotaFunc = reinterpret_cast<HandleQuotaFunc>(
+        dlsym(resourceQuotaMgrHandle_, "HandleCpuApplyQuotaProcess"));
+    if (!handleQuotaFunc) {
+        BGTASK_LOGE("Get handleQuotaFunc failed.");
+        return true;
+    }
+
+    return handleQuotaFunc(uid, bundleName, resourceInfo);
+}
+
 ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
@@ -324,6 +372,12 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         BGTASK_LOGE("apply efficiency resources failed, no permitted resource type");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
+
+    if (!CheckOrUpdateCpuApplyQuota(uid, bundleName, resourceInfo)) {
+        BGTASK_LOGE("apply efficiency resources failed, check cpu apply quota failed!");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+
     ApplyResourceForPkgAndProc(uid, pid, bundleName, resourceInfo);
     return ERR_OK;
 }
@@ -452,6 +506,31 @@ __attribute__((no_sanitize("cfi"))) void BgEfficiencyResourcesMgr::UpdateResourc
     handler_->PostTask(task, resourceInfo->GetTimeOut());
 }
 
+void BgEfficiencyResourcesMgr::UpdateQuotaIfCpuReset(
+    EfficiencyResourcesEventType type, int32_t uid, uint32_t resourceNumber)
+{
+    if (type != EfficiencyResourcesEventType::APP_RESOURCE_RESET) {
+        BGTASK_LOGD("Not app resource reset, return.");
+        return;
+    }
+
+    if ((resourceNumber & ResourceType::CPU) == 0) {
+        BGTASK_LOGD("Not CPU resource reset, return.");
+        return;
+    }
+
+    using UpdateQuotaFunc = void (*)(int32_t);
+    auto updateQuotaFunc = reinterpret_cast<UpdateQuotaFunc>(
+        dlsym(resourceQuotaMgrHandle_, "UpdateCpuApplyQuotaProcess"));
+    if (!updateQuotaFunc) {
+        BGTASK_LOGE("Get updateQuotaFunc failed.");
+        return;
+    }
+
+    updateQuotaFunc(uid);
+    BGTASK_LOGI("Time's out, update cpu resource quota, uid: %{public}d.", uid);
+}
+
 void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProcess)
 {
     BGTASK_LOGD("ResetTimeOutResource reset efficiency rsources, mapkey: %{public}d",
@@ -486,6 +565,10 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
     RemoveListRecord(resourceRecord->resourceUnitList_, eraseBit);
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(resourceRecord->uid_, resourceRecord->pid_, eraseBit,
         resourceRecord->bundleName_);
+    
+    // update quota after time reset if CPU resource apply
+    UpdateQuotaIfCpuReset(type, callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
+
     BGTASK_LOGI("after reset time out resources, callbackInfo resource number is %{public}u,"\
         " uid: %{public}d, bundle name: %{public}s", callbackInfo->GetResourceNumber(),
         callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str());
@@ -610,18 +693,96 @@ ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dump
 ErrCode BgEfficiencyResourcesMgr::ShellDumpInner(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
-    if (dumpOption[1] == DUMP_PARAM_LIST_ALL) {
-        DumpAllApplicationInfo(dumpInfo);
-    } else if (dumpOption[1] == DUMP_PARAM_RESET_ALL) {
-        DumpResetAllResource(dumpInfo);
-    } else if (dumpOption[1] == DUMP_PARAM_RESET_APP) {
-        DumpResetResource(dumpOption, true, false);
-    } else if (dumpOption[1] == DUMP_PARAM_RESET_PROC) {
-        DumpResetResource(dumpOption, false, false);
+    const std::unordered_map<std::string, std::function<void()>> dumpProcMap = {
+        { DUMP_PARAM_LIST_ALL, [&] { DumpAllApplicationInfo(dumpInfo); }},
+        { DUMP_PARAM_RESET_ALL, [&] { DumpResetAllResource(dumpInfo); }},
+        { DUMP_PARAM_RESET_APP, [&] { DumpResetResource(dumpOption, true, false); }},
+        { DUMP_PARAM_RESET_PROC, [&] { DumpResetResource(dumpOption, false, false); }},
+        { DUMP_PARAM_SET_CPU_QUOTA, [&] { DumpSetCpuQuota(dumpOption); }},
+        { DUMP_PARAM_RESET_CPU_QUOTA, [&] { DumpResetCpuQuotaUsage(dumpOption); }},
+        { DUMP_PARAM_GET_CPU_QUOTA, [&] { DumpGetCpuQuota(dumpOption, dumpInfo); }}
+    };
+
+    auto iter = dumpProcMap.find(dumpOption[1]);
+    if (iter != dumpProcMap.end()) {
+        iter->second();
     }
+
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
         appResourceApplyMap_, procResourceApplyMap_);
     return ERR_OK;
+}
+
+void BgEfficiencyResourcesMgr::DumpGetCpuQuota(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
+{
+    using GetQuotaFunc = void (*)(int32_t, std::vector<std::string> &);
+    auto getQuotaFunc = reinterpret_cast<GetQuotaFunc>(
+        dlsym(resourceQuotaMgrHandle_, "GetCpuApplyQuotaProcess"));
+    if (!getQuotaFunc) {
+        BGTASK_LOGE("Get getQuotaFunc failed.");
+        return;
+    }
+
+    constexpr uint16_t VALID_PARAM_NUM = 3;
+    if (dumpOption.size() != VALID_PARAM_NUM) {
+        BGTASK_LOGW("Invalid dump param number, must have 1 param for uid, "
+            "get all info when uid is 0.");
+        return;
+    }
+
+    int32_t uid = std::atoi(dumpOption[2].c_str());
+    getQuotaFunc(uid, dumpInfo);
+}
+
+void BgEfficiencyResourcesMgr::DumpSetCpuQuota(const std::vector<std::string> &dumpOption)
+{
+    using SetQuotaFunc = void (*)(int32_t, uint32_t, uint32_t);
+    auto setQuotaFunc = reinterpret_cast<SetQuotaFunc>(
+        dlsym(resourceQuotaMgrHandle_, "SetCpuApplyQuotaProcess"));
+    if (!setQuotaFunc) {
+        BGTASK_LOGE("Get setQuotaFunc failed.");
+        return;
+    }
+
+    constexpr uint16_t VALID_PARAM_NUM = 5;
+    if (dumpOption.size() != VALID_PARAM_NUM) {
+        BGTASK_LOGW("Invalid dump param number, "
+            "must have 3 param for { uid, m, quotaPerDay }, "
+            "set default quota when uid is 0.");
+        return;
+    }
+
+    int32_t uid = std::atoi(dumpOption[2].c_str());
+    uint32_t quotaPerRequest = std::atoi(dumpOption[3].c_str());
+    uint32_t quotaPerDay = std::atoi(dumpOption[4].c_str());
+
+    setQuotaFunc(uid, quotaPerRequest, quotaPerDay);
+    BGTASK_LOGI("Set cpu apply quota, "
+        "uid: %{public}d, : %{public}u, quotaPerDay: %{public}u.",
+        uid, quotaPerRequest, quotaPerDay);
+}
+
+void BgEfficiencyResourcesMgr::DumpResetCpuQuotaUsage(const std::vector<std::string> &dumpOption)
+{
+    using ResetQuotaFunc = void (*)(int32_t);
+    auto resetQuotaFunc = reinterpret_cast<ResetQuotaFunc>(
+        dlsym(resourceQuotaMgrHandle_, "ResetCpuApplyQuotaUsageProcess"));
+    if (!resetQuotaFunc) {
+        BGTASK_LOGE("Get resetQuotaFunc failed.");
+        return;
+    }
+
+    constexpr uint16_t VALID_PARAM_NUM = 3;
+    if (dumpOption.size() != VALID_PARAM_NUM) {
+        BGTASK_LOGW("Invalid dump param number, must have 1 param for uid, "
+            "reset all when uid is 0.");
+        return;
+    }
+
+    int32_t uid = std::atoi(dumpOption[2].c_str());
+    resetQuotaFunc(uid);
+    BGTASK_LOGI("Reset cpu apply quota, uid: %{public}d.", uid);
 }
 
 void BgEfficiencyResourcesMgr::DumpAllApplicationInfo(std::vector<std::string> &dumpInfo)
