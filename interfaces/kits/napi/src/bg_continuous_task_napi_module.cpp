@@ -17,6 +17,7 @@
 
 #include "ability.h"
 #include "bundle_mgr_interface.h"
+#include "hitrace_meter.h"
 #include "iservice_registry.h"
 #include "napi_base_context.h"
 #include "system_ability_definition.h"
@@ -215,6 +216,7 @@ bool StartBackgroundRunningCheckParam(napi_env env, AsyncCallbackInfo *asyncCall
         return false;
     }
     if (!CheckBackgroundMode(env, asyncCallbackInfo, isThrow)) {
+        BGTASK_LOGE("check background mode failed.");
         return false;
     }
     return true;
@@ -222,6 +224,8 @@ bool StartBackgroundRunningCheckParam(napi_env env, AsyncCallbackInfo *asyncCall
 
 void UpdateBackgroundRunningExecuteCB(napi_env env, void *data)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::UpdateBackgroundRunningExecuteCB");
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr || asyncCallbackInfo->errCode != ERR_OK) {
         BGTASK_LOGE("input params error");
@@ -239,6 +243,8 @@ void UpdateBackgroundRunningExecuteCB(napi_env env, void *data)
 
 void StartBackgroundRunningExecuteCB(napi_env env, void *data)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::StartBackgroundRunningExecuteCB");
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr || asyncCallbackInfo->errCode != ERR_OK) {
         BGTASK_LOGE("input params error");
@@ -258,6 +264,8 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
 
 void CallbackCompletedCB(napi_env env, napi_status status, void *data)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::CallbackCompletedCB");
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
     napi_value callback {nullptr};
@@ -282,6 +290,8 @@ void CallbackCompletedCB(napi_env env, napi_status status, void *data)
 
 void PromiseCompletedCB(napi_env env, napi_status status, void *data)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::PromiseCompletedCB");
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
     napi_value result {nullptr};
@@ -333,10 +343,12 @@ napi_value StartBackgroundRunningAsync(napi_env env, napi_value *argv,
     NAPI_CALL(env, napi_typeof(env, argv[argCallback], &valuetype));
     if (valuetype != napi_function) {
         Common::HandleParamErr(env, ERR_CALLBACK_NULL_OR_TYPE_ERR, isThrow);
+        BGTASK_LOGE("valuetype is no napi_function.");
         return nullptr;
     }
     NAPI_CALL(env, napi_create_reference(env, argv[argCallback], 1, &asyncCallbackInfo->callback));
     if (!StartBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
+        BGTASK_LOGE("start bgytask check param fail.");
         return nullptr;
     }
 
@@ -391,6 +403,7 @@ napi_value StartBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncC
     NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
     asyncCallbackInfo->deferred = deferred;
     if (!StartBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
+        BGTASK_LOGE("start bgytask check param fail.");
         return nullptr;
     }
     NAPI_CALL(env, napi_create_async_work(env,
@@ -525,6 +538,8 @@ bool StartBackgroundRunningCheckParamBeforeSubmit(napi_env env, napi_value *argv
 
 napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool isThrow)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::UpdateBackgroundRunning");
     ReportXPowerJsStackSysEventByType(env, "CONTINUOUS_TASK_UPDATE");
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
@@ -574,6 +589,8 @@ napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool i
 
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool isThrow)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::StartBackgroundRunning");
     ReportXPowerJsStackSysEventByType(env, "CONTINUOUS_TASK_APPLY");
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
@@ -593,6 +610,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool is
 
     if (!StartBackgroundRunningCheckParamBeforeSubmit(env, argv, MAX_START_BG_RUNNING_PARAMS, isThrow,
         asyncCallbackInfo)) {
+        BGTASK_LOGE("failed to check parameters before start bgtask running.");
         return WrapVoidToJS(env);
     }
 
@@ -647,6 +665,8 @@ bool StopBackgroundRunningCheckParam(napi_env env, AsyncCallbackInfo *asyncCallb
 
 void StopBackgroundRunningExecuteCB(napi_env env, void *data)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::StopBackgroundRunningExecuteCB");
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo == nullptr || asyncCallbackInfo->errCode != ERR_OK) {
         BGTASK_LOGE("input param error");
@@ -722,6 +742,8 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
 
 napi_value StopBackgroundRunning(napi_env env, napi_callback_info info, bool isThrow)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::StopBackgroundRunning");
     ReportXPowerJsStackSysEventByType(env, "CONTINUOUS_TASK_CANCEL");
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
