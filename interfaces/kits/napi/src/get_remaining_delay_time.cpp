@@ -76,8 +76,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
 
 napi_value GetRemainingDelayTime(napi_env env, napi_callback_info info, bool isThrow)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
-        "BackgroundTaskManager::TransientTask::Napi::GetRemainingDelayTime");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskManager::TransientTask::Napi::GetRemainingDelayTime");
 
     GetRemainingDelayTimeParamsInfo params;
     if (ParseParameters(env, info, params, isThrow) == nullptr) {
