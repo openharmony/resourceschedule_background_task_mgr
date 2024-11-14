@@ -82,6 +82,7 @@ private:
     int32_t abilityId_ {-1};
     int32_t reason_ {0};
     bool isSystem_ {false};
+    int32_t continuousTaskId_ {-1};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

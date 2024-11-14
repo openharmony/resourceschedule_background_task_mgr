@@ -59,6 +59,15 @@ struct CachedBundleInfo {
     std::string appName_ {""};
 };
 
+struct SubscriberInfo {
+    SubscriberInfo(sptr<IBackgroundTaskSubscriber> subscriber, int uid, int pid, bool isHap) :
+        subscriber_(subscriber), uid_(uid), pid_(pid), isHap_(isHap) {};
+    sptr<IBackgroundTaskSubscriber> subscriber_;
+    int uid_;
+    int pid_;
+    bool isHap_ {false};
+};
+
 class BgContinuousTaskMgr : public DelayedSingleton<BgContinuousTaskMgr>,
                             public std::enable_shared_from_this<BgContinuousTaskMgr> {
 public:
@@ -66,7 +75,7 @@ public:
     ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode StopBackgroundRunning(const std::string &abilityName, int32_t abilityId);
     ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
-    ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
+    ErrCode AddSubscriber(const std::shared_ptr<SubscriberInfo> subscriberInfo);
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
@@ -93,7 +102,7 @@ private:
     ErrCode StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName, int32_t abilityId);
     ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
-    ErrCode AddSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);
+    ErrCode AddSubscriberInner(const std::shared_ptr<SubscriberInfo> subscriberInfo);
     ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDumpInner(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
@@ -135,6 +144,8 @@ private:
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void ReportHisysEvent(ContinuousTaskEventTriggerType changeEventType,
         const std::shared_ptr<ContinuousTaskRecord> &continuousTaskInfo);
+    bool CanNotifyHap(const std::shared_ptr<SubscriberInfo> subscriberInfo,
+        const std::shared_ptr<ContinuousTaskCallbackInfo> &callbackInfo);
 private:
     std::atomic<bool> isSysReady_ {false};
     std::string deviceType_ {""};
@@ -148,10 +159,11 @@ private:
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
     sptr<AppStateObserver> appStateObserver_ {nullptr};
     sptr<AppExecFwk::IConfigurationObserver> configChangeObserver_ {nullptr};
-    std::list<sptr<IBackgroundTaskSubscriber>> bgTaskSubscribers_ {};
-    std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> subscriberRecipients_ {};
+    std::list<std::shared_ptr<SubscriberInfo>> bgTaskSubscribers_ {};
+    sptr<RemoteDeathRecipient> susriberDeathRecipient_ {nullptr};
     std::unordered_map<int32_t, CachedBundleInfo> cachedBundleInfos_ {};
     std::vector<std::string> continuousTaskText_ {};
+    int32_t continuousTaskIdIndex_ = 0;
 
     DECLARE_DELAYED_SINGLETON(BgContinuousTaskMgr);
 };

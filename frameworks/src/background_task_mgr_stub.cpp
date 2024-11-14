@@ -193,83 +193,76 @@ ErrCode BackgroundTaskMgrStub::HandleGetRemainingDelayTime(MessageParcel& data, 
 
 ErrCode BackgroundTaskMgrStub::HandleBackgroundRunningForInner(MessageParcel &data, MessageParcel &reply)
 {
-    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleBackgroundRunningForInner");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleBackgroundRunningForInner");
     sptr<ContinuousTaskParamForInner> taskParam = data.ReadParcelable<ContinuousTaskParamForInner>();
     if (taskParam == nullptr) {
         BGTASK_LOGE("ContinuousTaskParamForInner ReadParcelable failed");
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
     ErrCode result = RequestBackgroundRunningForInner(taskParam);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleBackgroundRunningForInner write result failed, ErrCode=%{public}d", result);
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
 
-    FinishTrace(HITRACE_TAG_OHOS);
     return ERR_OK;
 }
 
 ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data, MessageParcel &reply)
 {
-    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleStartBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleStartBackgroundRunning");
     sptr<ContinuousTaskParam> taskParam = data.ReadParcelable<ContinuousTaskParam>();
     if (taskParam == nullptr) {
         BGTASK_LOGE("ContinuousTaskParam ReadParcelable failed");
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     BGTASK_LOGI("HandleStartBackgroundRunning start");
     ErrCode result = StartBackgroundRunning(taskParam);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleStartBackgroundRunning write result failed, ErrCode=%{public}d", result);
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     if (!reply.WriteInt32(taskParam->notificationId_)) {
         BGTASK_LOGE("HandleStartBackgroundRunning write notificatinId failed");
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    BGTASK_LOGI("write notificationId %{public}d", taskParam->notificationId_);
-    FinishTrace(HITRACE_TAG_OHOS);
+    if (!reply.WriteInt32(taskParam->continuousTaskId_)) {
+        BGTASK_LOGE("HandleStartBackgroundRunning write continuousTaskId failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGI("BackgroundTaskMgrStub write notificationId %{public}d, continuousTaskId %{public}d",
+        taskParam->notificationId_, taskParam->continuousTaskId_);
     return ERR_OK;
 }
 
 ErrCode BackgroundTaskMgrStub::HandleUpdateBackgroundRunning(MessageParcel &data, MessageParcel &reply)
 {
-    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleUpdateBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleUpdateBackgroundRunning");
     sptr<ContinuousTaskParam> taskParam = data.ReadParcelable<ContinuousTaskParam>();
     if (taskParam == nullptr) {
         BGTASK_LOGE("ContinuousTaskParam ReadParcelable failed");
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     BGTASK_LOGI("HandleUpdateBackgroundRunning start");
     ErrCode result = UpdateBackgroundRunning(taskParam);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleUpdateBackgroundRunning write result failed, ErrCode=%{public}d", result);
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     if (!reply.WriteInt32(taskParam->notificationId_)) {
         BGTASK_LOGE("HandleUpdateBackgroundRunning write notificatinId failed");
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     BGTASK_LOGI("write notificationId %{public}d", taskParam->notificationId_);
-    FinishTrace(HITRACE_TAG_OHOS);
     return ERR_OK;
 }
 
 ErrCode BackgroundTaskMgrStub::HandleStopBackgroundRunning(MessageParcel &data, MessageParcel &reply)
 {
-    StartTrace(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleStopBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleStopBackgroundRunning");
     std::u16string u16AbilityName;
     if (!data.ReadString16(u16AbilityName)) {
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     std::string abilityName = Str16ToStr8(u16AbilityName);
@@ -278,10 +271,8 @@ ErrCode BackgroundTaskMgrStub::HandleStopBackgroundRunning(MessageParcel &data, 
     ErrCode result = StopBackgroundRunning(abilityName, abilityToken, abilityId);
     if (!reply.WriteInt32(result)) {
         BGTASK_LOGE("HandleStopBackgroundRunning write result failed, ErrCode=%{public}d", result);
-        FinishTrace(HITRACE_TAG_OHOS);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    FinishTrace(HITRACE_TAG_OHOS);
     return ERR_OK;
 }
 

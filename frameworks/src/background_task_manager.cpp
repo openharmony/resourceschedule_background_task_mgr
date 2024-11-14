@@ -84,6 +84,7 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(ContinuousTaskParam
         taskParamPtr->abilityId_);
     ErrCode res = proxy_->StartBackgroundRunning(taskParamPtr);
     taskParam.notificationId_ = taskParamPtr->notificationId_;
+    taskParam.continuousTaskId_ = taskParamPtr->continuousTaskId_;
     return res;
 }
 

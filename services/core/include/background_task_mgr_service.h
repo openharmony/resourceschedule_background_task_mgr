@@ -92,6 +92,7 @@ private:
     void DumpUsage(std::string &result);
     bool AllowDump();
     bool CheckCallingToken();
+    bool CheckHapCalling(bool &isHap);
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
 

@@ -227,14 +227,19 @@ bool BgContinuousTaskMgr::CheckProcessUidInfo(const std::vector<AppExecFwk::Runn
 void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses)
 {
     auto iter = continuousTaskInfosMap_.begin();
-    int32_t maxId = -1;
+    int32_t maxNotificationId = -1;
+    int32_t maxContinuousTaskId = -1;
 
     while (iter != continuousTaskInfosMap_.end()) {
         bool pidIsAlive = checkPidCondition(allProcesses, iter->second->GetPid());
         int32_t notificationId = iter->second->GetNotificationId();
-        if (notificationId > maxId) {
-            maxId = notificationId;
+        if (notificationId > maxNotificationId) {
+            maxNotificationId = notificationId;
         }
+        if (iter->second->continuousTaskId_ > maxContinuousTaskId) {
+            maxContinuousTaskId = iter->second->continuousTaskId_;
+        }
+
         if (pidIsAlive) {
             if (iter->second->GetNotificationId() == -1) {
                 BGTASK_LOGI("notification id is -1, continue");
@@ -256,9 +261,13 @@ void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::Run
             iter = continuousTaskInfosMap_.erase(iter);
         }
     }
-    if (maxId != -1) {
-        BGTASK_LOGI("set maxId %{public}d", maxId);
-        NotificationTools::SetNotificationIdIndex(maxId);
+    if (maxNotificationId != -1) {
+        BGTASK_LOGI("set maxNotificationId %{public}d", maxNotificationId);
+        NotificationTools::SetNotificationIdIndex(maxNotificationId);
+    }
+    if (maxContinuousTaskId != -1) {
+        BGTASK_LOGI("set maxContinuousTaskId %{public}d", maxContinuousTaskId);
+        continuousTaskIdIndex_ = maxContinuousTaskId;
     }
 }
 
@@ -670,7 +679,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     handler_->PostSyncTask([this, continuousTaskRecord, &result]() mutable {
         result = this->StartBackgroundRunningInner(continuousTaskRecord);
         }, AppExecFwk::EventQueue::Priority::HIGH);
+
     taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
+    taskParam->continuousTaskId_ = continuousTaskRecord->continuousTaskId_;
     return result;
 }
 
@@ -699,7 +710,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunning(const sptr<ContinuousTaskPa
         }
         result = self->UpdateBackgroundRunningInner(taskInfoMapKey, taskParam);
         }, AppExecFwk::EventQueue::Priority::HIGH);
-
     return result;
 }
 
@@ -758,7 +768,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     return RefreshTaskRecord();
 }
 
-
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
@@ -802,6 +811,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
             return ret;
         }
     }
+    continuousTaskRecord->continuousTaskId_ = ++continuousTaskIdIndex_;
     continuousTaskInfosMap_.emplace(taskInfoMapKey, continuousTaskRecord);
     OnContinuousTaskChanged(continuousTaskRecord, ContinuousTaskEventTriggerType::TASK_START);
     return RefreshTaskRecord();
@@ -849,6 +859,11 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
         }
     }
     if (notificationText.empty()) {
+        if (continuousTaskRecord->GetNotificationId() != -1) {
+            NotificationTools::GetInstance()->CancelNotification(
+                continuousTaskRecord->GetNotificationLabel(), continuousTaskRecord->GetNotificationId());
+            continuousTaskRecord->notificationId_ = -1;
+        }
         return ERR_OK;
     }
     BGTASK_LOGD("notificationText %{public}s", notificationText.c_str());
@@ -912,7 +927,6 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
         result = NotificationTools::GetInstance()->CancelNotification(
             iter->second->GetNotificationLabel(), iter->second->GetNotificationId());
     }
-
     RemoveContinuousTaskRecord(mapKey);
     return result;
 }
@@ -994,24 +1008,26 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, ui
     }
 }
 
-ErrCode BgContinuousTaskMgr::AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
+ErrCode BgContinuousTaskMgr::AddSubscriber(const std::shared_ptr<SubscriberInfo> subscriberInfo)
 {
-    if (subscriber == nullptr) {
+    if (subscriberInfo == nullptr || subscriberInfo->subscriber_ == nullptr ||
+        subscriberInfo->subscriber_->AsObject() == nullptr) {
         BGTASK_LOGE("subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;
     }
 
     handler_->PostSyncTask([=]() {
-        AddSubscriberInner(subscriber);
+        AddSubscriberInner(subscriberInfo);
     });
     return ERR_OK;
 }
 
-ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber)
+ErrCode BgContinuousTaskMgr::AddSubscriberInner(const std::shared_ptr<SubscriberInfo> subscriberInfo)
 {
-    auto remoteObj = subscriber->AsObject();
+    BGTASK_LOGD("BgContinuousTaskMgr enter");
+    auto remoteObj = subscriberInfo->subscriber_->AsObject();
     auto findSuscriber = [&remoteObj](const auto& target) {
-        return remoteObj == target->AsObject();
+        return remoteObj == target->subscriber_->AsObject();
     };
 
     auto subscriberIter = find_if(bgTaskSubscribers_.begin(), bgTaskSubscribers_.end(), findSuscriber);
@@ -1019,26 +1035,16 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const sptr<IBackgroundTaskSubscr
         BGTASK_LOGW("target subscriber already exist");
         return ERR_BGTASK_OBJECT_EXISTS;
     }
+    bgTaskSubscribers_.emplace_back(subscriberInfo);
 
-    bgTaskSubscribers_.emplace_back(subscriber);
-
-    if (subscriber->AsObject() == nullptr) {
-        BGTASK_LOGW("subscriber is nullptr.");
-        return ERR_BGTASK_INVALID_PARAM;
+    if (!susriberDeathRecipient_) {
+        susriberDeathRecipient_ = new (std::nothrow) RemoteDeathRecipient(
+            [this](const wptr<IRemoteObject> &remote) { this->OnRemoteSubscriberDied(remote); });
     }
-    if (subscriberRecipients_.find(subscriber->AsObject()) != subscriberRecipients_.end()) {
-        BGTASK_LOGW("bgtask subscriber object not exist.");
-        return ERR_BGTASK_OBJECT_EXISTS;
+    if (susriberDeathRecipient_) {
+        remoteObj->AddDeathRecipient(susriberDeathRecipient_);
     }
-    sptr<RemoteDeathRecipient> deathRecipient = new (std::nothrow) RemoteDeathRecipient(
-        [this](const wptr<IRemoteObject> &remote) { this->OnRemoteSubscriberDied(remote); });
-    if (!deathRecipient) {
-        BGTASK_LOGE("create death recipient failed");
-        return ERR_BGTASK_INVALID_PARAM;
-    }
-    subscriber->AsObject()->AddDeathRecipient(deathRecipient);
-    subscriberRecipients_.emplace(subscriber->AsObject(), deathRecipient);
-    BGTASK_LOGI("Add continuous task subscriber succeed");
+    BGTASK_LOGI("continuous subscribers size %{public}d", static_cast<int32_t>(bgTaskSubscribers_.size()));
     return ERR_OK;
 }
 
@@ -1062,8 +1068,8 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
         BGTASK_LOGE("Subscriber' object is null.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    auto findSubscriber = [&remote](const auto &targetSubscriber) {
-        return remote == targetSubscriber->AsObject();
+    auto findSubscriber = [&remote](const auto &info) {
+        return remote == info->subscriber_->AsObject();
     };
 
     auto subscriberIter = find_if(bgTaskSubscribers_.begin(), bgTaskSubscribers_.end(), findSubscriber);
@@ -1071,11 +1077,8 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
         BGTASK_LOGE("subscriber to remove is not exists.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-
-    auto iter = subscriberRecipients_.find(remote);
-    if (iter != subscriberRecipients_.end()) {
-        iter->first->RemoveDeathRecipient(iter->second);
-        subscriberRecipients_.erase(iter);
+    if (susriberDeathRecipient_) {
+        remote->RemoveDeathRecipient(susriberDeathRecipient_);
     }
     bgTaskSubscribers_.erase(subscriberIter);
     BGTASK_LOGI("Remove continuous task subscriber succeed");
@@ -1170,6 +1173,7 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
         stream << "\t\tpid: " << iter->second->GetPid() << "\n";
         stream << "\t\tnotificationLabel: " << iter->second->GetNotificationLabel() << "\n";
         stream << "\t\tnotificationId: " << iter->second->GetNotificationId() << "\n";
+        stream << "\t\tcontinuousTaskId: " << iter->second->continuousTaskId_ << "\n";
         if (iter->second->wantAgentInfo_ != nullptr) {
             stream << "\t\twantAgentBundleName: " << iter->second->wantAgentInfo_->bundleName_ << "\n";
             stream << "\t\twantAgentAbilityName: " << iter->second->wantAgentInfo_->abilityName_ << "\n";
@@ -1225,7 +1229,6 @@ void BgContinuousTaskMgr::SetReason(const std::string &mapKey, int32_t reason)
     }
 }
 
-
 bool BgContinuousTaskMgr::RemoveContinuousTaskRecord(const std::string &mapKey)
 {
     if (continuousTaskInfosMap_.find(mapKey) == continuousTaskInfosMap_.end()) {
@@ -1265,7 +1268,6 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDied(const wptr<IRemoteObject> &obje
         BGTASK_LOGE("remote object is null.");
         return;
     }
-
     handler_->PostSyncTask([this, &object]() { this->OnRemoteSubscriberDiedInner(object); });
 }
 
@@ -1278,13 +1280,14 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
     }
     auto iter = bgTaskSubscribers_.begin();
     while (iter != bgTaskSubscribers_.end()) {
-        if ((*iter)->AsObject() == objectProxy) {
+        if ((*iter)->subscriber_->AsObject() == objectProxy) {
+            BGTASK_LOGI("OnRemoteSubscriberDiedInner erase it");
             iter = bgTaskSubscribers_.erase(iter);
         } else {
             iter++;
         }
     }
-    subscriberRecipients_.erase(objectProxy);
+    BGTASK_LOGI("continuous subscriber die, list size is %{public}d", static_cast<int>(bgTaskSubscribers_.size()));
 }
 
 void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId)
@@ -1353,6 +1356,17 @@ uint32_t BgContinuousTaskMgr::GetModeNumByTypeIds(const std::vector<uint32_t> &t
     return modeNum;
 }
 
+bool BgContinuousTaskMgr::CanNotifyHap(const std::shared_ptr<SubscriberInfo> subscriberInfo,
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &callbackInfo)
+{
+    if (subscriberInfo->isHap_ && subscriberInfo->uid_ == callbackInfo->GetCreatorUid() &&
+        (callbackInfo->GetCancelReason() == REMOVE_NOTIFICATION_CANCEL ||
+        callbackInfo->GetCancelReason() == FREEZE_CANCEL)) {
+        return true;
+    }
+    return false;
+}
+
 void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType changeEventType,
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
@@ -1360,19 +1374,30 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
         case ContinuousTaskEventTriggerType::TASK_START:
             for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task start callback trigger");
-                (*iter)->OnContinuousTaskStart(continuousTaskCallbackInfo);
+                if (!(*iter)->isHap_) {
+                    (*iter)->subscriber_->OnContinuousTaskStart(continuousTaskCallbackInfo);
+                }
             }
             break;
         case ContinuousTaskEventTriggerType::TASK_UPDATE:
             for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task update callback trigger");
-                (*iter)->OnContinuousTaskUpdate(continuousTaskCallbackInfo);
+                if (!(*iter)->isHap_) {
+                    (*iter)->subscriber_->OnContinuousTaskUpdate(continuousTaskCallbackInfo);
+                }
             }
             break;
         case ContinuousTaskEventTriggerType::TASK_CANCEL:
             for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task stop callback trigger");
-                (*iter)->OnContinuousTaskStop(continuousTaskCallbackInfo);
+                if (!(*iter)->isHap_) {
+                    // notify all sa
+                    (*iter)->subscriber_->OnContinuousTaskStop(continuousTaskCallbackInfo);
+                } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo)) {
+                    // notify self hap
+                    BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify cancel", (*iter)->uid_);
+                    (*iter)->subscriber_->OnContinuousTaskStop(continuousTaskCallbackInfo);
+                }
             }
             break;
     }
@@ -1423,6 +1448,8 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
     BGTASK_LOGD("mode %{public}d isBatch %{public}d modes size %{public}u",
         continuousTaskCallbackInfo->GetTypeId(), continuousTaskCallbackInfo->IsBatchApi(),
         static_cast<uint32_t>(continuousTaskCallbackInfo->GetTypeIds().size()));
+    continuousTaskCallbackInfo->SetContinuousTaskId(continuousTaskInfo->continuousTaskId_);
+    continuousTaskCallbackInfo->SetCancelReason(continuousTaskInfo->reason_);
     NotifySubscribers(changeEventType, continuousTaskCallbackInfo);
     ReportHisysEvent(changeEventType, continuousTaskInfo);
 }
@@ -1504,7 +1531,9 @@ void BgContinuousTaskMgr::HandleAppContinuousTaskStop(int32_t uid)
     }
     BGTASK_LOGI("All continuous task has stopped of uid: %{public}d, so notify related subsystem", uid);
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); iter++) {
-        (*iter)->OnAppContinuousTaskStop(uid);
+        if (!(*iter)->isHap_) {
+            (*iter)->subscriber_->OnAppContinuousTaskStop(uid);
+        }
     }
 }
 
