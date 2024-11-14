@@ -282,6 +282,7 @@ ErrCode BackgroundTaskMgrStub::HandleStopBackgroundRunning(MessageParcel &data, 
     int32_t abilityId = data.ReadInt32();
     ErrCode result = StopBackgroundRunning(abilityName, abilityToken, abilityId);
     if (!reply.WriteInt32(result)) {
+        BGTASK_LOGE("HandleStopBackgroundRunning write result failed, ErrCode=%{public}d", result);
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     return ERR_OK;
