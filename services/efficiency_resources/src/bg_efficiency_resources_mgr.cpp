@@ -340,7 +340,9 @@ bool BgEfficiencyResourcesMgr::CheckOrUpdateCpuApplyQuota(int32_t uid, const std
 ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgEfficiencyResourcesMgr::ApplyEfficiencyResources");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Service::ApplyEfficiencyResources");
+
     BGTASK_LOGD("start bgtaskefficiency");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("Efficiency resources manager is not ready");
@@ -580,7 +582,9 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
 
 ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgEfficiencyResourcesMgr::ResetAllEfficiencyResources");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Service::ResetAllEfficiencyResources");
+
     BGTASK_LOGD("start to reset all efficiency resources");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("efficiency resources manager is not ready");
@@ -632,7 +636,9 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
 void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
     const std::shared_ptr<ResourceCallbackInfo> &callbackInfo, bool isProcess)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Service::ResetEfficiencyResourcesInner");
+
     BGTASK_LOGD("reset efficiency resources inner,  uid:%{public}d, pid %{public}d,"\
         " resource number: %{public}u, isProcess: %{public}d", callbackInfo->GetUid(),
         callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), isProcess);

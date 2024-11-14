@@ -143,6 +143,9 @@ ErrCode BackgroundTaskMgrStub::HandleOnRemoteResquestFunc(uint32_t code,
 
 ErrCode BackgroundTaskMgrStub::HandleRequestSuspendDelay(MessageParcel& data, MessageParcel& reply)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::TransientTask::Stub::HandleRequestSuspendDelay");
+
     std::u16string reason = data.ReadString16();
     sptr<IRemoteObject> callback = data.ReadRemoteObject();
     if (callback == nullptr) {
@@ -166,6 +169,9 @@ ErrCode BackgroundTaskMgrStub::HandleRequestSuspendDelay(MessageParcel& data, Me
 
 ErrCode BackgroundTaskMgrStub::HandleCancelSuspendDelay(MessageParcel& data, MessageParcel& reply)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::TransientTask::Stub::HandleCancelSuspendDelay");
+
     int32_t id = data.ReadInt32();
     ErrCode result = CancelSuspendDelay(id);
     if (!reply.WriteInt32(result)) {
@@ -177,6 +183,9 @@ ErrCode BackgroundTaskMgrStub::HandleCancelSuspendDelay(MessageParcel& data, Mes
 
 ErrCode BackgroundTaskMgrStub::HandleGetRemainingDelayTime(MessageParcel& data, MessageParcel& reply)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::TransientTask::Stub::HandleGetRemainingDelayTime");
+
     int32_t id = data.ReadInt32();
     int32_t time = 0;
     ErrCode result =  GetRemainingDelayTime(id, time);
@@ -193,7 +202,9 @@ ErrCode BackgroundTaskMgrStub::HandleGetRemainingDelayTime(MessageParcel& data, 
 
 ErrCode BackgroundTaskMgrStub::HandleBackgroundRunningForInner(MessageParcel &data, MessageParcel &reply)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleBackgroundRunningForInner");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Stub::HandleBackgroundRunningForInner");
+
     sptr<ContinuousTaskParamForInner> taskParam = data.ReadParcelable<ContinuousTaskParamForInner>();
     if (taskParam == nullptr) {
         BGTASK_LOGE("ContinuousTaskParamForInner ReadParcelable failed");
@@ -211,7 +222,9 @@ ErrCode BackgroundTaskMgrStub::HandleBackgroundRunningForInner(MessageParcel &da
 
 ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data, MessageParcel &reply)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleStartBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Stub::HandleStartBackgroundRunning");
+
     sptr<ContinuousTaskParam> taskParam = data.ReadParcelable<ContinuousTaskParam>();
     if (taskParam == nullptr) {
         BGTASK_LOGE("ContinuousTaskParam ReadParcelable failed");
@@ -238,7 +251,9 @@ ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data,
 
 ErrCode BackgroundTaskMgrStub::HandleUpdateBackgroundRunning(MessageParcel &data, MessageParcel &reply)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleUpdateBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Stub::HandleUpdateBackgroundRunning");
+
     sptr<ContinuousTaskParam> taskParam = data.ReadParcelable<ContinuousTaskParam>();
     if (taskParam == nullptr) {
         BGTASK_LOGE("ContinuousTaskParam ReadParcelable failed");
@@ -260,7 +275,9 @@ ErrCode BackgroundTaskMgrStub::HandleUpdateBackgroundRunning(MessageParcel &data
 
 ErrCode BackgroundTaskMgrStub::HandleStopBackgroundRunning(MessageParcel &data, MessageParcel &reply)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskMgrStub::HandleStopBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Stub::HandleStopBackgroundRunning");
+
     std::u16string u16AbilityName;
     if (!data.ReadString16(u16AbilityName)) {
         return ERR_BGTASK_PARCELABLE_FAILED;
@@ -370,6 +387,9 @@ ErrCode BackgroundTaskMgrStub::HandleGetContinuousTaskApps(MessageParcel& data, 
 
 ErrCode BackgroundTaskMgrStub::HandleApplyEfficiencyResources(MessageParcel& data, MessageParcel& reply)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Stub::HandleApplyEfficiencyResources");
+
     BGTASK_LOGD("start receive data in apply res function from bgtask proxy");
     sptr<EfficiencyResourceInfo> resourceInfoPtr = data.ReadParcelable<EfficiencyResourceInfo>();
     if (resourceInfoPtr == nullptr) {
@@ -386,6 +406,9 @@ ErrCode BackgroundTaskMgrStub::HandleApplyEfficiencyResources(MessageParcel& dat
 
 ErrCode BackgroundTaskMgrStub::HandleResetAllEfficiencyResources(MessageParcel& data, MessageParcel& reply)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Stub::HandleResetAllEfficiencyResources");
+
     BGTASK_LOGD("start receive data in reset all res function from bgtask proxy");
     ErrCode result = ResetAllEfficiencyResources();
     if (!reply.WriteInt32(result)) {
