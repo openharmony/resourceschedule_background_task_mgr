@@ -71,7 +71,7 @@ struct AsyncCallbackInfo : public AsyncWorkData {
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent {nullptr};
     std::vector<uint32_t> bgModes {};
     bool isBatchApi {false};
-	int32_t notificationId {-1}; // out
+    int32_t notificationId {-1}; // out
     int32_t continuousTaskId {-1}; // out
 };
 
