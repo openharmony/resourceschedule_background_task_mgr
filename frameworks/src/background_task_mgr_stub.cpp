@@ -240,7 +240,12 @@ ErrCode BackgroundTaskMgrStub::HandleStartBackgroundRunning(MessageParcel &data,
         BGTASK_LOGE("HandleStartBackgroundRunning write notificatinId failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    BGTASK_LOGI("write notificationId %{public}d", taskParam->notificationId_);
+    if (!reply.WriteInt32(taskParam->continuousTaskId_)) {
+        BGTASK_LOGE("HandleStartBackgroundRunning write continuousTaskId failed");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGI("BackgroundTaskMgrStub write notificationId %{public}d, continuousTaskId %{public}d",
+        taskParam->notificationId_, taskParam->continuousTaskId_);
     return ERR_OK;
 }
 

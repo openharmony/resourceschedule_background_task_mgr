@@ -97,13 +97,40 @@ public:
     uint64_t GetTokenId() const;
 
     /**
+     * @brief Get the continuous task id.
+     *
+     * @return The id.
+     */
+    int32_t GetContinuousTaskId() const;
+
+    /**
+     * @brief Get the cancel reason.
+     *
+     * @return The reason.
+     */
+    void SetContinuousTaskId(const int32_t id);
+
+    /**
+     * @brief Set the cancel reasion.
+     *
+     * @param reason The the cancel reasion.
+     */
+    int32_t GetCancelReason() const;
+
+    /**
+     * @brief Set the continuous task id.
+     *
+     * @param id The continuous task id.
+     */
+    void SetCancelReason(const int32_t reason);
+
+    /**
      * @brief Marshals a purpose into a parcel.
      *
      * @param parcel Indicates the parcel object for marshalling.
      * @return True if success, else false.
      */
     bool Marshalling(Parcel &parcel) const override;
-
     static ContinuousTaskCallbackInfo *Unmarshalling(Parcel &parcel);
 
 private:
@@ -119,6 +146,8 @@ private:
     std::vector<uint32_t> typeIds_ {};
     int32_t abilityId_ {-1};
     uint64_t tokenId_ {0};
+    int32_t continuousTaskId_ {-1};
+    int32_t cancelReason_ {-1};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

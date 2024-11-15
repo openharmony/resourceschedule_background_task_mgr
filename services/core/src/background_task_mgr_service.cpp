@@ -119,6 +119,17 @@ bool BackgroundTaskMgrService::CheckCallingToken()
     return false;
 }
 
+bool BackgroundTaskMgrService::CheckHapCalling(bool &isHap)
+{
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
+    auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (tokenFlag == Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        isHap = true;
+        return BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION);
+    }
+    return false;
+}
+
 ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::u16string& reason,
     const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
@@ -182,8 +193,11 @@ ErrCode BackgroundTaskMgrService::StartTransientTaskTimeForInner(int32_t uid)
 
 ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
 {
-    if (!CheckCallingToken() && !BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
-        BGTASK_LOGW("GetContinuousTaskApps not allowed");
+    bool isHap = false;
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    pid_t callingUid = IPCSkeleton::GetCallingUid();
+    if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
+        BGTASK_LOGW("uid %{public}d pid %{public}d GetContinuousTaskApps not allowed", callingUid, callingPid);
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     return BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(list);
@@ -191,14 +205,20 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    if (!CheckCallingToken()) {
+    bool isHap = false;
+    if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
         BGTASK_LOGW("SubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    pid_t callingUid = IPCSkeleton::GetCallingUid();
+    BGTASK_LOGI("uid %{public}d pid %{public}d isHap %{public}d subscribe", callingUid, callingPid, isHap);
+    auto subscriberInfo = std::make_shared<SubscriberInfo>(subscriber, callingUid, callingPid, isHap);
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
         && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
-        && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriber) == ERR_OK) {
-        BGTASK_LOGD("all bgtask subscribe success");
+        && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriberInfo) == ERR_OK) {
+        pid_t callingPid = IPCSkeleton::GetCallingPid();
+        BGTASK_LOGI("subscribe success for pid %{public}d", callingPid);
         return ERR_OK;
     } else {
         BGTASK_LOGW("subscribe background task failed");
@@ -208,7 +228,8 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
-    if (!CheckCallingToken()) {
+    bool isHap = false;
+    if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
         BGTASK_LOGW("UnsubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
