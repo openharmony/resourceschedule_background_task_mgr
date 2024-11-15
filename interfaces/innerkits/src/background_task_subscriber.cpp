@@ -148,6 +148,7 @@ void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskSto
 }
 
 void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppContinuousTaskStop(int32_t uid)
+    __attribute__((no_sanitize("cfi")))
 {
     subscriber_.OnAppContinuousTaskStop(uid);
 }
