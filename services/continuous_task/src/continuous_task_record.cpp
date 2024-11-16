@@ -165,6 +165,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
         root["wantAgentInfo"] = info;
     }
     root["continuousTaskId"] = continuousTaskId_;
+    root["abilityId"] = abilityId_;
     return root.dump(CommonUtils::jsonFormat_);
 }
 
@@ -175,14 +176,15 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["pid"].is_number_integer() || !value["bgModeId"].is_number_integer()
         || !value["isNewApi"].is_boolean() || !value["isFromWebview"].is_boolean()
         || !value["notificationLabel"].is_string() || !value["isSystem"].is_boolean()
-        || !value["continuousTaskId"].is_number_integer();
+        || !value["continuousTaskId"].is_number_integer()
+        || !value["abilityId"].is_number_integer();
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
 {
     if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value, { "bundleName",
         "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel",
-        "isSystem", "continuousTaskId"})) {
+        "isSystem", "continuousTaskId", "abilityId"})) {
         BGTASK_LOGE("continuoustaskrecord no key");
         return false;
     }
@@ -201,6 +203,7 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
     this->notificationLabel_ = value.at("notificationLabel").get<std::string>();
     this->isSystem_ = value.at("isSystem").get<bool>();
     this->continuousTaskId_ = value.at("continuousTaskId").get<int32_t>();
+    this->abilityId_ = value.at("abilityId").get<int32_t>();
     if (value.contains("isBatchApi") && value["isBatchApi"].is_boolean()) {
         this->isBatchApi_ = value.at("isBatchApi").get<bool>();
     }
