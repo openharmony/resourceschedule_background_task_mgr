@@ -56,6 +56,7 @@ void BackgroundTaskMgrService::OnStart()
     AddSystemAbilityListener(APP_MGR_SERVICE_ID);
     AddSystemAbilityListener(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
     AddSystemAbilityListener(SA_ID_VOIP_CALL_MANAGER);
+    AddSystemAbilityListener(SA_ID_HEALTH_SPORT);
     AddSystemAbilityListener(SUSPEND_MANAGER_SYSTEM_ABILITY_ID);
 }
 
