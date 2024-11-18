@@ -766,8 +766,8 @@ void BgEfficiencyResourcesMgr::DumpSetCpuQuota(const std::vector<std::string> &d
     }
 
     int32_t uid = std::atoi(dumpOption[2].c_str());
-    uint32_t quotaPerRequest = std::atoi(dumpOption[3].c_str());
-    uint32_t quotaPerDay = std::atoi(dumpOption[4].c_str());
+    uint32_t quotaPerRequest = static_cast<uint32_t>(std::atoi(dumpOption[3].c_str()));
+    uint32_t quotaPerDay = static_cast<uint32_t>(std::atoi(dumpOption[4].c_str()));
 
     setQuotaFunc(uid, quotaPerRequest, quotaPerDay);
     BGTASK_LOGI("Set cpu apply quota, "
