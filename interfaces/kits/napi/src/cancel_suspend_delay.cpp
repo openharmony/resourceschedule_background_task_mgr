@@ -21,6 +21,7 @@
 #endif
 
 #include "background_task_manager.h"
+#include "hitrace_meter.h"
 #include "request_suspend_delay.h"
 #include "transient_task_log.h"
 
@@ -54,6 +55,9 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info, 
 
 napi_value CancelSuspendDelay(napi_env env, napi_callback_info info, bool isThrow)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::TransientTask::Napi::CancelSuspendDelay");
+
 #ifdef SUPPORT_JSSTACK
     HiviewDFX::ReportXPowerJsStackSysEvent(env, "TRANSIENT_TASK_CANCEL");
 #endif

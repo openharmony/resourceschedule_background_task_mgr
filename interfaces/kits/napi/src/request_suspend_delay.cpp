@@ -23,6 +23,7 @@
 #endif
 
 #include "background_task_manager.h"
+#include "hitrace_meter.h"
 #include "transient_task_log.h"
 
 namespace OHOS {
@@ -240,6 +241,9 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
 
 napi_value RequestSuspendDelay(napi_env env, napi_callback_info info, bool isThrow)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::TransientTask::Napi::RequestSuspendDelay");
+
 #ifdef SUPPORT_JSSTACK
     HiviewDFX::ReportXPowerJsStackSysEvent(env, "TRANSIENT_TASK_APPLY");
 #endif

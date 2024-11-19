@@ -37,6 +37,9 @@ BackgroundTaskManager::~BackgroundTaskManager() {}
 
 ErrCode BackgroundTaskManager::CancelSuspendDelay(int32_t requestId)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::TransientTask::Mgr::CancelSuspendDelay");
+
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
@@ -46,6 +49,9 @@ ErrCode BackgroundTaskManager::CancelSuspendDelay(int32_t requestId)
 ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reason,
     const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::TransientTask::Mgr::RequestSuspendDelay");
+
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
@@ -59,6 +65,9 @@ ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reason,
 
 ErrCode BackgroundTaskManager::GetRemainingDelayTime(int32_t requestId, int32_t &delayTime)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::TransientTask::Mgr::GetRemainingDelayTime");
+
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
@@ -67,7 +76,8 @@ ErrCode BackgroundTaskManager::GetRemainingDelayTime(int32_t requestId, int32_t 
 
 ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(ContinuousTaskParam &taskParam)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestStartBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Mgr::RequestStartBackgroundRunning");
 
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
@@ -89,7 +99,9 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(ContinuousTaskParam
 
 ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(ContinuousTaskParam &taskParam)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestUpdateBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Mgr::RequestUpdateBackgroundRunning");
+
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
@@ -110,6 +122,9 @@ ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(ContinuousTaskPara
 
 ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Mgr::RequestBackgroundRunningForInner");
+
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
@@ -125,7 +140,9 @@ ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const Continuous
 ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken, int32_t abilityId)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS, "BackgroundTaskManager::RequestStopBackgroundRunning");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Mgr::RequestStopBackgroundRunning");
+
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
@@ -185,6 +202,9 @@ ErrCode BackgroundTaskManager::StartTransientTaskTimeForInner(int32_t uid)
 
 ErrCode BackgroundTaskManager::ApplyEfficiencyResources(const EfficiencyResourceInfo &resourceInfo)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Mgr::ApplyEfficiencyResources");
+
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
@@ -198,6 +218,9 @@ ErrCode BackgroundTaskManager::ApplyEfficiencyResources(const EfficiencyResource
 
 ErrCode BackgroundTaskManager::ResetAllEfficiencyResources()
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Mgr::ResetAllEfficiencyResources");
+
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 

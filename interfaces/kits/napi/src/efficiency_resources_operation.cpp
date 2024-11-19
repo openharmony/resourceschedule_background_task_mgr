@@ -21,6 +21,7 @@
 #include "background_task_manager.h"
 #include "efficiency_resource_info.h"
 #include "efficiency_resource_log.h"
+#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -149,6 +150,8 @@ bool CheckValidInfo(napi_env env, const EfficiencyResourceInfo &params, bool isT
 
 napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Napi::ApplyEfficiencyResources");
     EfficiencyResourceInfo params;
     if (ParseParameters(env, info, params, true) == nullptr || !CheckValidInfo(env, params, true)) {
         return Common::NapiGetNull(env);
@@ -160,6 +163,8 @@ napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info)
 
 napi_value ResetAllEfficiencyResources(napi_env env, napi_callback_info info)
 {
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Napi::ResetAllEfficiencyResources");
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources();
     Common::HandleErrCode(env, errCode, true);
     return Common::NapiGetNull(env);
