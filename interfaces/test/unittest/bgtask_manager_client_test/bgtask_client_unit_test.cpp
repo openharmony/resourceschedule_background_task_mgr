@@ -445,7 +445,8 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     sptr<ContinuousTaskCallbackInfo> info1 = sptr<ContinuousTaskCallbackInfo>(new ContinuousTaskCallbackInfo());
     sptr<ContinuousTaskCallbackInfo> info2 = sptr<ContinuousTaskCallbackInfo>(
         new ContinuousTaskCallbackInfo(1, 1, 1, "test"));
-
+    info2->SetContinuousTaskId(1);
+    info2->SetCancelReason(1);
     Parcel parcel = Parcel();
     info2->Marshalling(parcel);
     sptr<ContinuousTaskCallbackInfo> info3 = sptr<ContinuousTaskCallbackInfo>(
@@ -456,6 +457,8 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetAbilityName(), "test");
     EXPECT_EQ(info3->IsFromWebview(), false);
     EXPECT_EQ(info3->GetTokenId(), 0);
+    EXPECT_EQ(info3->GetContinuousTaskId(), 1);
+    EXPECT_EQ(info3->GetCancelReason(), 1);
 }
 
 /**
