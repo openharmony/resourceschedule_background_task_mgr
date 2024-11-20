@@ -208,7 +208,6 @@ void BgContinuousTaskMgr::HandlePersistenceData()
         BGTASK_LOGE("get all running process failed");
         return;
     }
-    appMgrClient->GetAllRunningProcesses(allAppProcessInfos);
     CheckPersistenceData(allAppProcessInfos);
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
 }
