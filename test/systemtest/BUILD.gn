@@ -40,7 +40,6 @@ ohos_systemtest("BgtaskDumpTest") {
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
@@ -55,6 +54,7 @@ ohos_systemtest("BgtaskDumpTest") {
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "init:libbegetutil",
