@@ -27,9 +27,20 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
     constexpr int32_t U32_AT_SIZE = 4;
+    constexpr uint8_t TWENTYFOUR = 24;
+    constexpr uint8_t SIXTEEN = 16;
+    constexpr uint8_t EIGHT = 8;
+    constexpr int32_t THREE = 3;
+    constexpr int32_t TWO = 2;
+
+    uint32_t GetU32Data(const char* ptr)
+    {
+        return (ptr[0] << TWENTYFOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
+    }
 
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
+        GetU32Data(data);
         EventFwk::MatchingSkills matchingSkills;
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED);
         EventFwk::CommonEventSubscribeInfo commonEventSubscribeInfo(matchingSkills);
