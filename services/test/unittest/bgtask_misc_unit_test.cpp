@@ -590,8 +590,8 @@ HWTEST_F(BgTaskMiscUnitTest, WatchdogTest_001, TestSize.Level1)
     auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
     auto watchdog = std::make_shared<Watchdog>(bgtaskService, decisionMaker,
         AppExecFwk::EventRunner::Create("tdd_test_handler"));
-    EXPECT_TRUE(watchdog->KillApplicationByUid("bundleName", 1));
-    EXPECT_TRUE(watchdog->KillApplicationByUid("bundleName", 1));
+    EXPECT_TRUE(watchdog->KillApplicationByUid("bundleName", 1, 1));
+    EXPECT_TRUE(watchdog->KillApplicationByUid("bundleName", 1, 1));
 }
 
 /**

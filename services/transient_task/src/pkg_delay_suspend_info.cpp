@@ -28,7 +28,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
     constexpr int32_t MAX_REQUEST_ID = 3;
-    constexpr int32_t MIN_ALLOW_QUOTA_TIME = 10 * MSEC_PER_SEC; // 10s
+    constexpr int32_t MIN_ALLOW_QUOTA_TIME = 16 * MSEC_PER_SEC; // 16s
     constexpr int32_t WATCHDOG_DELAY_TIME = 6 * MSEC_PER_SEC;
 }
 
