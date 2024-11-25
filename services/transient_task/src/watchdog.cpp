@@ -19,6 +19,7 @@
 #include "system_ability_definition.h"
 
 #include "background_task_mgr_service.h"
+#include "hisysevent.h"
 #include "transient_task_log.h"
 
 using namespace std;
@@ -67,16 +68,16 @@ void Watchdog::ProcessEvent(const AppExecFwk::InnerEvent::Pointer& event)
     } else {
         BGTASK_LOGI("handle application background, kill it, requestId: %{public}d", requestId);
         // do kill
-        if (!KillApplicationByUid(info->GetPkg(), info->GetUid())) {
+        if (!KillApplicationByUid(info->GetPkg(), info->GetUid(), info->GetPid())) {
             BGTASK_LOGE("fail to kill running application");
         }
     }
 }
 
-bool Watchdog::KillApplicationByUid(const std::string &bundleName, const int32_t uid)
+bool Watchdog::KillApplicationByUid(const std::string &bundleName, const int32_t uid, const int32_t pid)
 {
-    BGTASK_LOGI("kill running application, app name is %{public}s, uid is %{public}d",
-        bundleName.c_str(), uid);
+    BGTASK_LOGW("kill running application, app name is %{public}s, uid is %{public}d, pid is %{public}d",
+        bundleName.c_str(), uid, pid);
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
         if (appMgrClient_ == nullptr) {
@@ -94,7 +95,12 @@ bool Watchdog::KillApplicationByUid(const std::string &bundleName, const int32_t
         BGTASK_LOGE("Fail to kill application by uid.");
         return false;
     }
-
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::FRAMEWORK,
+        "PROCESS_KILL", HiviewDFX::HiSysEvent::EventType::FAULT,
+        "PID", pid,
+        "PROCESS_NAME", bundleName,
+        "MSG", "TRANSIENT_TASK_TIMEOUT",
+        "FOREGROUND", false);
     return true;
 }
 }  // namespace BackgroundTaskMgr
