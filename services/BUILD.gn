@@ -155,6 +155,7 @@ ohos_static_library("bgtaskmgr_service_static") {
     "config_policy:configpolicy_util",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
+    "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "image_framework:image_native",
     "init:libbegetutil",
