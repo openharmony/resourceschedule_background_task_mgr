@@ -814,8 +814,8 @@ bool CheckOnParam(napi_env env, uint32_t argc, napi_value argv[], int size)
         BGTASK_LOGE("type must be string");
         return false;
     }
-    if (type != "onContinuousTaskCancel") {
-        BGTASK_LOGE("type must be onContinuousTaskCancel");
+    if (type != "continuousTaskCancel") {
+        BGTASK_LOGE("type must be continuousTaskCancel");
         return false;
     }
     // arg[1] : callback
@@ -869,8 +869,8 @@ bool CheckOffParam(napi_env env, uint32_t argc, napi_value argv[], int size)
         BGTASK_LOGE("type must be string");
         return false;
     }
-    if (type != "onContinuousTaskCancel") {
-        BGTASK_LOGE("type must be onContinuousTaskCancel");
+    if (type != "continuousTaskCancel") {
+        BGTASK_LOGE("type must be continuousTaskCancel");
         return false;
     }
     // arg[1] : callback
