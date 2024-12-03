@@ -57,21 +57,13 @@ void Watchdog::ProcessEvent(const AppExecFwk::InnerEvent::Pointer& event)
     if (info == nullptr) {
         return;
     }
-    if (decision_->IsFrontApp(info->GetPkg(), info->GetUid())) {
-        auto bgTask = service_.promote();
-        if (bgTask == nullptr) {
-            BGTASK_LOGE("fail to get bgTask service.");
-            return;
-        }
-        BGTASK_LOGI("handle watchdog, force cancel requestId: %{public}d", requestId);
-        bgTask->ForceCancelSuspendDelay(requestId);
-    } else {
-        BGTASK_LOGI("handle application background, kill it, requestId: %{public}d", requestId);
-        // do kill
-        if (!KillApplicationByUid(info->GetPkg(), info->GetUid(), info->GetPid())) {
-            BGTASK_LOGE("fail to kill running application");
-        }
+    auto bgTask = service_.promote();
+    if (bgTask == nullptr) {
+        BGTASK_LOGE("fail to get bgTask service.");
+        return;
     }
+    BGTASK_LOGI("handle watchdog, force cancel requestId: %{public}d", requestId);
+    bgTask->ForceCancelSuspendDelay(requestId);
 }
 
 bool Watchdog::KillApplicationByUid(const std::string &bundleName, const int32_t uid, const int32_t pid)
