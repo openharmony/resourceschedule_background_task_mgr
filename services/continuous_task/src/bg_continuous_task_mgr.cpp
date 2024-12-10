@@ -189,8 +189,6 @@ void BgContinuousTaskMgr::InitNecessaryState()
         BGTASK_LOGE("RegisterConfigurationObserver failed");
         return;
     }
-    deviceType_ = OHOS::system::GetParameter("const.build.characteristics", "");
-    BGTASK_LOGI("current device type is: %{public}s", deviceType_.c_str());
     InitRequiredResourceInfo();
 }
 
