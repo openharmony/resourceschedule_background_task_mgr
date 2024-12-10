@@ -129,7 +129,7 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     READ_PARCEL_WITH_RET(parcel, Int32, abilityId_, false);
     READ_PARCEL_WITH_RET(parcel, Uint64, tokenId_, false);
     READ_PARCEL_WITH_RET(parcel, Int32, continuousTaskId_, false);
-    READ_PARCEL_WITH_RET(parcel, Int32, cancelReason_, false);	
+    READ_PARCEL_WITH_RET(parcel, Int32, cancelReason_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr

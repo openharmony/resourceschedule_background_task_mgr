@@ -60,8 +60,8 @@ struct CachedBundleInfo {
 };
 
 struct SubscriberInfo {
-    SubscriberInfo(sptr<IBackgroundTaskSubscriber> subscriber, int uid, int pid, bool isHap) :
-        subscriber_(subscriber), uid_(uid), pid_(pid), isHap_(isHap) {};
+    SubscriberInfo(sptr<IBackgroundTaskSubscriber> subscriber, int uid, int pid, bool isHap)
+        : subscriber_(subscriber), uid_(uid), pid_(pid), isHap_(isHap) {};
     sptr<IBackgroundTaskSubscriber> subscriber_;
     int uid_;
     int pid_;
