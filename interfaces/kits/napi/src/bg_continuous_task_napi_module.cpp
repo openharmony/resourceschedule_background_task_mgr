@@ -247,6 +247,10 @@ void UpdateBackgroundRunningExecuteCB(napi_env env, void *data)
     BGTASK_LOGI("RequestUpdateBackgroundRunning isBatch: %{public}d, bgModeSize: %{public}u",
         taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam);
+    asyncCallbackInfo->notificationId = taskParam.notificationId_;
+    asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
+    BGTASK_LOGI("notification %{public}d, continuousTaskId %{public}d", taskParam.notificationId_,
+        taskParam.continuousTaskId_);
 }
 
 void StartBackgroundRunningExecuteCB(napi_env env, void *data)
