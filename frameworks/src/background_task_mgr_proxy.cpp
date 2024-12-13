@@ -237,8 +237,14 @@ ErrCode BackgroundTaskMgrProxy::UpdateBackgroundRunning(const sptr<ContinuousTas
         BGTASK_LOGE("UpdateBackgroundRunning fail: read notificationId failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    BGTASK_LOGI("read notificationId %{public}d", notificationId);
+    int32_t continuousTaskId = -1;
+    if (!reply.ReadInt32(continuousTaskId)) {
+        BGTASK_LOGE("UpdateBackgroundRunning fail: read continuousTaskId failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGI("read notificationId %{public}d, continuousTaskId: %{public}d", notificationId, continuousTaskId);
     taskParam->notificationId_ = notificationId;
+    taskParam->continuousTaskId_ = continuousTaskId;
     return result;
 }
 

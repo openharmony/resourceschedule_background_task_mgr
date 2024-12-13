@@ -57,6 +57,7 @@ namespace BackgroundTaskMgr {
         continuousTaskRecord->GetPid();
         continuousTaskRecord->GetNotificationLabel();
         continuousTaskRecord->GetNotificationId();
+        continuousTaskRecord->GetContinuousTaskId();
         continuousTaskRecord->GetWantAgent();
         uint32_t modeData = GetU32Data(data);
         std::vector<uint32_t> bgmodes = {1, 2, modeData};
