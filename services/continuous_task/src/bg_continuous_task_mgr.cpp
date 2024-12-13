@@ -767,6 +767,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     }
     OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_UPDATE);
     taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
+    taskParam->continuousTaskId_ = continuousTaskRecord->GetContinuousTaskId();
     return RefreshTaskRecord();
 }
 
