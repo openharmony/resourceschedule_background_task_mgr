@@ -106,6 +106,11 @@ int32_t ContinuousTaskRecord::GetNotificationId() const
     return notificationId_;
 }
 
+int32_t ContinuousTaskRecord::GetContinuousTaskId() const
+{
+    return continuousTaskId_;
+}
+
 std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> ContinuousTaskRecord::GetWantAgent() const
 {
     return wantAgent_;

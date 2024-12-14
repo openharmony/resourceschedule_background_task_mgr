@@ -55,6 +55,7 @@ public:
     int32_t GetAbilityId() const;
     std::string GetNotificationLabel() const;
     int32_t GetNotificationId() const;
+    int32_t GetContinuousTaskId() const;
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
     std::string ParseToJsonStr();
     bool ParseFromJson(const nlohmann::json &value);
