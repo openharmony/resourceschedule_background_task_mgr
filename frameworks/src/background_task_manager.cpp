@@ -116,7 +116,10 @@ ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(const ContinuousTa
         static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
         static_cast<uint32_t>(taskParam.bgModeIds_.size()), taskParamPtr->isBatchApi_, taskParam.isBatchApi_,
         taskParamPtr->abilityId_);
-    return proxy_->UpdateBackgroundRunning(taskParamPtr);
+    ErrCode ret = proxy_->UpdateBackgroundRunning(taskParamPtr);
+    taskParam.notificationId_ = taskParamPtr->notificationId_;
+    taskParam.continuousTaskId_ = taskParamPtr->continuousTaskId_;
+    return ret;
 }
 
 ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)
