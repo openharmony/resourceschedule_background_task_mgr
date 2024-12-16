@@ -28,7 +28,7 @@ ErrCode BackgroundTaskMgrHelper::RequestStartBackgroundRunning(ContinuousTaskPar
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestStartBackgroundRunning(taskParam);
 }
 
-ErrCode BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(const ContinuousTaskParam &taskParam)
+ErrCode BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(ContinuousTaskParam &taskParam)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestUpdateBackgroundRunning(taskParam);
 }
