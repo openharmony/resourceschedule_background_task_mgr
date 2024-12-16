@@ -98,7 +98,7 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(ContinuousTaskParam
     return res;
 }
 
-ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(const ContinuousTaskParam &taskParam)
+ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(ContinuousTaskParam &taskParam)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Mgr::RequestUpdateBackgroundRunning");
