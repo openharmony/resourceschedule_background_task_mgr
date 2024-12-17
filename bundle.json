@@ -39,7 +39,6 @@
           "common_event_service",
           "config_policy",
           "eventhandler",
-          "googletest",
           "hitrace",
           "hilog",
           "image_framework",
