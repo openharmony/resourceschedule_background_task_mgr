@@ -363,13 +363,13 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, Marshalling_001, TestSize.Level1)
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>();
     MessageParcel data;
     EXPECT_TRUE(callbackInfo->Marshalling(data));
-    std::shared_ptr<ResourceCallbackInfo> callbackInfoPtr (ResourceCallbackInfo::Unmarshalling(data));
+    std::shared_ptr<ResourceCallbackInfo> callbackInfoPtr(ResourceCallbackInfo::Unmarshalling(data));
     EXPECT_TRUE(callbackInfoPtr != nullptr);
     auto resourceInfo = std::make_shared<EfficiencyResourceInfo>(1, true,
         0, "apply", true, false);
     MessageParcel out;
     EXPECT_TRUE(resourceInfo->Marshalling(out));
-    std::shared_ptr<EfficiencyResourceInfo> resourceInfoPtr (EfficiencyResourceInfo::Unmarshalling(out));
+    std::shared_ptr<EfficiencyResourceInfo> resourceInfoPtr(EfficiencyResourceInfo::Unmarshalling(out));
     EXPECT_TRUE(resourceInfoPtr != nullptr);
 }
 
