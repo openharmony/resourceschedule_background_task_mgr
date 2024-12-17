@@ -218,7 +218,6 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
     if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
         && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
         && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriberInfo) == ERR_OK) {
-        pid_t callingPid = IPCSkeleton::GetCallingPid();
         BGTASK_LOGI("subscribe success for pid %{public}d", callingPid);
         return ERR_OK;
     } else {
