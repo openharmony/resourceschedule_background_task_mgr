@@ -1,0 +1,67 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"အသံဖမ်းခြင်းအလုပ်ကို လုပ်ဆောင်နေပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"အသံပြန်ဖွင့်မှုအလုပ်ကို လုပ်ဆောင်နေပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"ဖြန့်ဝေမှုအလုပ်ကို လုပ်ဆောင်နေပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_voip",
+            "value":"ခေါ်ဆိုမှုဆက်စပ် အလုပ်ကို လုပ်ဆောင်နေပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"တည်နေရာရှာဖွေသတ်မှတ်ခြင်း အလုပ်ကို လုပ်ဆောင်နေပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_wifi_interaction",
+            "value":"WLAN ဆက်စပ်အလုပ်ကို လုပ်ဆောင်နေပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"ဘလူးတုသ် ဆက်စပ်အလုပ်ကို လုပ်ဆောင်နေပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_task_keeping",
+            "value":"တွက်ချက်ခြင်းအလုပ်ကို လုပ်ဆောင်နေပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"ဒေတာလွှဲပြောင်းမှု အလုပ်ကို လုပ်ဆောင်နေပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}
