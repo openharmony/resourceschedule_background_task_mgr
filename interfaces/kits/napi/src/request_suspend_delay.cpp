@@ -50,18 +50,23 @@ CallbackInstance::~CallbackInstance()
 
 void CallbackInstance::DeleteNapiRef()
 {
-    if (expiredCallbackInfo_.env == nullptr || expiredCallbackInfo_.ref == nullptr) {
+    CallbackReceiveDataWorker *dataWorker = new (std::nothrow) CallbackReceiveDataWorker();
+    if (dataWorker == nullptr) {
+        BGTASK_LOGE("DeleteNapiRef new dataWorker failed");
         return;
     }
 
-    auto task = [this]() {
-        napi_env env = expiredCallbackInfo_.env;
-        napi_ref ref = expiredCallbackInfo_.ref;
-        napi_delete_reference(env, ref);
-        expiredCallbackInfo_.ref = nullptr;
+    dataWorker->env = expiredCallbackInfo_.env;
+    dataWorker->ref = expiredCallbackInfo_.ref;
+
+    auto task = [dataWorker]() {
+        napi_delete_reference(dataWorker->env, dataWorker->ref);
+        delete dataWorker;
     };
     if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high)) {
         BGTASK_LOGE("DeleteNapiRef: Failed to SendEvent");
+        delete dataWorker;
+        dataWorker = nullptr;
     }
 }
 
@@ -82,20 +87,33 @@ __attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpired()
         return;
     }
 
-    auto task = [this, &findCallback]() {
-        napi_env env = expiredCallbackInfo_.env;
-        napi_ref ref = expiredCallbackInfo_.ref;
-
-        BGTASK_LOGD("OnExpired start");
-        Common::SetCallback(env, ref, Common::NapiGetNull(env));
-
-        std::lock_guard<std::mutex> lock(callbackLock_);
+    CallbackReceiveDataWorker *dataWorker = new (std::nothrow) CallbackReceiveDataWorker();
+    if (dataWorker == nullptr) {
+        BGTASK_LOGE("OnExpired new dataWorker failed");
         callbackInstances_.erase(findCallback);
-        napi_delete_reference(env, ref);
-        expiredCallbackInfo_.ref = nullptr;
+        return;
+    }
+
+    dataWorker->env = expiredCallbackInfo_.env;
+    dataWorker->ref = expiredCallbackInfo_.ref;
+    dataWorker->callback = shared_from_this();
+
+    auto task = [dataWorker]() {
+        BGTASK_LOGD("OnExpired start");
+        Common::SetCallback(dataWorker->env, dataWorker->ref, Common::NapiGetNull(dataWorker->env));
+        std::lock_guard<std::mutex> lock(callbackLock_);
+        auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
+            [&](const auto& callbackInstance) { return callbackInstance.second == dataWorker->callback; }
+        );
+        if (findCallback != callbackInstances_.end()) {
+            callbackInstances_.erase(findCallback);
+        }
+        delete dataWorker;
     };
     if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high)) {
         BGTASK_LOGE("OnExpired: Failed to SendEvent");
+        delete dataWorker;
+        dataWorker = nullptr;
         callbackInstances_.erase(findCallback);
     }
 }
