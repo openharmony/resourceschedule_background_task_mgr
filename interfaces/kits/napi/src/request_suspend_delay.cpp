@@ -60,7 +60,6 @@ void CallbackInstance::DeleteNapiRef()
         napi_delete_reference(env, ref);
         expiredCallbackInfo_.ref = nullptr;
     };
-
     if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high)) {
         BGTASK_LOGE("DeleteNapiRef: Failed to SendEvent");
     }
@@ -92,11 +91,9 @@ __attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpired()
 
         std::lock_guard<std::mutex> lock(callbackLock_);
         callbackInstances_.erase(findCallback);
-
         napi_delete_reference(env, ref);
         expiredCallbackInfo_.ref = nullptr;
     };
-
     if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high)) {
         BGTASK_LOGE("OnExpired: Failed to SendEvent");
         callbackInstances_.erase(findCallback);
