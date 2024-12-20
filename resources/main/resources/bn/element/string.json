@@ -1,0 +1,67 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"একটি রেকর্ডিং টাস্ক চলমান রয়েছে।",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"একটি অডিও প্লেব্যাক টাস্ক চলমান রয়েছে।",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"একটি ডিস্ট্রিবিউটেড টাস্ক চলমান রয়েছে।",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_voip",
+            "value":"একটি কল সংশ্লিষ্ট টাস্ক চলমান রয়েছে।",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"একটি পজিশনিং টাস্ক চলমান রয়েছে।",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_wifi_interaction",
+            "value":"একটি WLAN সংশ্লিষ্ট টাস্ক চলমান রয়েছে।",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"একটি ব্লুটুথ সংশ্লিষ্ট টাস্ক চলমান রয়েছে।",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_task_keeping",
+            "value":"একটি কম্পিউটিং টাস্ক চলমান রয়েছে।",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"একটি ডেটা স্থানান্তর টাস্ক চলমান রয়েছে।",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}
