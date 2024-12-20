@@ -41,7 +41,6 @@
           "eventhandler",
           "hitrace",
           "hilog",
-          "image_framework",
           "ipc",
           "init",
           "napi",
