@@ -48,85 +48,26 @@ CallbackInstance::~CallbackInstance()
     DeleteNapiRef();
 }
 
-void UvQueueWorkDeleteRef(uv_work_t *work, int32_t status)
-{
-    if (work == nullptr) {
-        return;
-    }
-    CallbackReceiveDataWorker *dataWorkerData = static_cast<CallbackReceiveDataWorker *>(work->data);
-    if (dataWorkerData == nullptr) {
-        delete work;
-        work = nullptr;
-        return;
-    }
-    napi_delete_reference(dataWorkerData->env, dataWorkerData->ref);
-    delete dataWorkerData;
-    dataWorkerData = nullptr;
-    delete work;
-}
-
 void CallbackInstance::DeleteNapiRef()
 {
-    uv_loop_s *loop = nullptr;
-    napi_get_uv_event_loop(expiredCallbackInfo_.env, &loop);
-    if (loop == nullptr) {
-        return;
-    }
     CallbackReceiveDataWorker *dataWorker = new (std::nothrow) CallbackReceiveDataWorker();
     if (dataWorker == nullptr) {
+        BGTASK_LOGE("DeleteNapiRef new dataWorker failed");
         return;
     }
 
     dataWorker->env = expiredCallbackInfo_.env;
     dataWorker->ref = expiredCallbackInfo_.ref;
-    uv_work_t *work = new (std::nothrow) uv_work_t;
-    if (work == nullptr) {
-        BGTASK_LOGE("DeleteNapiRef new work failed");
+
+    auto task = [dataWorker]() {
+        napi_delete_reference(dataWorker->env, dataWorker->ref);
+        delete dataWorker;
+    };
+    if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high)) {
+        BGTASK_LOGE("DeleteNapiRef: Failed to SendEvent");
         delete dataWorker;
         dataWorker = nullptr;
-        return;
     }
-    work->data = static_cast<void *>(dataWorker);
-
-    int32_t ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkDeleteRef);
-    if (ret != 0) {
-        delete dataWorker;
-        dataWorker = nullptr;
-        delete work;
-        work = nullptr;
-    }
-}
-
-void UvQueueWorkOnExpired(uv_work_t *work, int32_t status)
-{
-    BGTASK_LOGD("OnExpired uv_work_t start");
-
-    if (work == nullptr) {
-        BGTASK_LOGE("UvQueueWorkOnExpired work is null");
-        return;
-    }
-
-    CallbackReceiveDataWorker *dataWorkerData = static_cast<CallbackReceiveDataWorker *>(work->data);
-    if (dataWorkerData == nullptr) {
-        BGTASK_LOGE("UvQueueWorkOnExpired dataWorkerData is null");
-        delete work;
-        work = nullptr;
-        return;
-    }
-
-    Common::SetCallback(dataWorkerData->env, dataWorkerData->ref, Common::NapiGetNull(dataWorkerData->env));
-
-    std::lock_guard<std::mutex> lock(callbackLock_);
-    auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
-        [&](const auto& callbackInstance) { return callbackInstance.second == dataWorkerData->callback; }
-    );
-    if (findCallback != callbackInstances_.end()) {
-        callbackInstances_.erase(findCallback);
-    }
-
-    delete dataWorkerData;
-    dataWorkerData = nullptr;
-    delete work;
 }
 
 __attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpired()
@@ -146,17 +87,9 @@ __attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpired()
         return;
     }
 
-    uv_loop_s *loop = nullptr;
-    napi_get_uv_event_loop(expiredCallbackInfo_.env, &loop);
-    if (loop == nullptr) {
-        BGTASK_LOGE("loop instance is nullptr");
-        callbackInstances_.erase(findCallback);
-        return;
-    }
-
     CallbackReceiveDataWorker *dataWorker = new (std::nothrow) CallbackReceiveDataWorker();
     if (dataWorker == nullptr) {
-        BGTASK_LOGE("new dataWorker failed");
+        BGTASK_LOGE("OnExpired new dataWorker failed");
         callbackInstances_.erase(findCallback);
         return;
     }
@@ -165,23 +98,22 @@ __attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpired()
     dataWorker->ref = expiredCallbackInfo_.ref;
     dataWorker->callback = shared_from_this();
 
-    uv_work_t *work = new (std::nothrow) uv_work_t;
-    if (work == nullptr) {
-        BGTASK_LOGW("OnExpired new work failed");
+    auto task = [dataWorker]() {
+        BGTASK_LOGD("OnExpired start");
+        Common::SetCallback(dataWorker->env, dataWorker->ref, Common::NapiGetNull(dataWorker->env));
+        std::lock_guard<std::mutex> lock(callbackLock_);
+        auto findCallback = std::find_if(callbackInstances_.begin(), callbackInstances_.end(),
+            [&](const auto& callbackInstance) { return callbackInstance.second == dataWorker->callback; }
+        );
+        if (findCallback != callbackInstances_.end()) {
+            callbackInstances_.erase(findCallback);
+        }
+        delete dataWorker;
+    };
+    if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high)) {
+        BGTASK_LOGE("OnExpired: Failed to SendEvent");
         delete dataWorker;
         dataWorker = nullptr;
-        callbackInstances_.erase(findCallback);
-        return;
-    }
-
-    work->data = static_cast<void *>(dataWorker);
-
-    int32_t ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnExpired);
-    if (ret != 0) {
-        delete dataWorker;
-        dataWorker = nullptr;
-        delete work;
-        work = nullptr;
         callbackInstances_.erase(findCallback);
     }
 }
