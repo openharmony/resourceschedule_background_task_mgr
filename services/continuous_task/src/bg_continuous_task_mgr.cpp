@@ -525,6 +525,7 @@ uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, const std::stri
             return cachedBundleInfo.abilityBgMode_.at(abilityName);
         }
     }
+    BGTASK_LOGI("get background mode info, uid: %{public}d, abilityName: %{public}s", uid, abilityName.c_str());
     return INVALID_BGMODE;
 }
 
@@ -594,12 +595,19 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     ErrCode result = ERR_OK;
     int32_t uid = taskParam->uid_;
     pid_t callingPid = IPCSkeleton::GetCallingPid();
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
     if (IPCSkeleton::GetCallingUid() == VOIP_SA_UID) {
         fullTokenId = taskParam->tokenId_;
     }
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
     std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
+    if (callingUid == VOIP_SA_UID) {
+        fullTokenId = taskParam->tokenId_;
+        abilityName = "CallKit" + std::to_string(taskParam->bgModeId_);
+    } else if (callingUid == HEALTHSPORT_SA_UID) {
+        abilityName = "HealthKit" + std::to_string(taskParam->bgModeId_);
+    }
     int32_t userId = -1;
 
 #ifdef HAS_OS_ACCOUNT_PART
