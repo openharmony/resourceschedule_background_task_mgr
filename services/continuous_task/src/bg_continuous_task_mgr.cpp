@@ -597,9 +597,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
-    if (IPCSkeleton::GetCallingUid() == VOIP_SA_UID) {
-        fullTokenId = taskParam->tokenId_;
-    }
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
     std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
     if (callingUid == VOIP_SA_UID) {
