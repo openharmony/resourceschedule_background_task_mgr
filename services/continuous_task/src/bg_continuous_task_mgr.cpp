@@ -36,7 +36,6 @@
 #include "os_account_manager.h"
 #endif // HAS_OS_ACCOUNT_PART
 #include "notification_tools.h"
-#include "parameters.h"
 #include "running_process_info.h"
 #include "string_wrapper.h"
 #include "system_ability_definition.h"

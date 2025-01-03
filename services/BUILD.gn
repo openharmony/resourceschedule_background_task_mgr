@@ -101,8 +101,6 @@ ohos_shared_library("bgtaskmgr_service") {
     "init:libbegetutil",
     "ipc:ipc_single",
     "jsoncpp:jsoncpp",
-    "relational_store:native_rdb",
-    "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]

@@ -16,7 +16,6 @@
 #include "bgtask_config.h"
 #include "data_storage_helper.h"
 #include "bgtaskmgr_log_wrapper.h"
-#include "parameters.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {

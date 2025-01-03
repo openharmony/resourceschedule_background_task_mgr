@@ -24,7 +24,6 @@
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 #include "hisysevent.h"
-#include "parameters.h"
 #include "data_storage_helper.h"
 #include "bgtask_config.h"
 
