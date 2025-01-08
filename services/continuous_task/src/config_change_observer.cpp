@@ -45,21 +45,14 @@ void ConfigChangeObserver::OnConfigurationUpdated(const AppExecFwk::Configuratio
     if (!CheckExpired()) {
         return;
     }
-
-    auto task = [wp = weak_from_this(), configuration]() {
-        auto sp = wp.lock();
-        if (sp) {
-            auto taskMgr = sp->taskMgr_.lock();
-            if (taskMgr) {
-                taskMgr->OnConfigurationChanged(configuration);
-            }
-        }
-    };
-
     auto handler = handler_.lock();
     if (handler == nullptr) {
+        BGTASK_LOGE("handler is null");
         return;
     }
+    auto task = [this, configuration]() {
+        this->taskMgr_.lock()->OnConfigurationChanged(configuration);
+    };
     handler->PostTask(task);
 }
 }
