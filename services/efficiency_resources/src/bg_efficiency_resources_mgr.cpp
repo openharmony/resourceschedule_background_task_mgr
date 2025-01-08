@@ -324,6 +324,11 @@ bool BgEfficiencyResourcesMgr::CheckOrUpdateCpuApplyQuota(int32_t uid, const std
         return true;
     }
 
+    if (resourceQuotaMgrHandle_ == nullptr) {
+        BGTASK_LOGD("ResourceQuotaMgrHandle_ is nullptr.");
+        return true;
+    }
+
     BGTASK_LOGD("CheckOrUpdateCpuApplyQuota start, uid: %{public}d.", uid);
 
     using HandleQuotaFunc = bool (*)(int32_t, const std::string &, const sptr<EfficiencyResourceInfo> &);
@@ -518,6 +523,11 @@ void BgEfficiencyResourcesMgr::UpdateQuotaIfCpuReset(
 
     if ((resourceNumber & ResourceType::CPU) == 0) {
         BGTASK_LOGD("Not CPU resource reset, return.");
+        return;
+    }
+
+    if (resourceQuotaMgrHandle_ == nullptr) {
+        BGTASK_LOGD("ResourceQuotaMgrHandle_ is nullptr.");
         return;
     }
 
@@ -722,6 +732,11 @@ ErrCode BgEfficiencyResourcesMgr::ShellDumpInner(const std::vector<std::string> 
 void BgEfficiencyResourcesMgr::DumpGetCpuQuota(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
+    if (resourceQuotaMgrHandle_ == nullptr) {
+        BGTASK_LOGD("ResourceQuotaMgrHandle_ is nullptr.");
+        return;
+    }
+
     using GetQuotaFunc = void (*)(int32_t, std::vector<std::string> &);
     auto getQuotaFunc = reinterpret_cast<GetQuotaFunc>(
         dlsym(resourceQuotaMgrHandle_, "GetCpuApplyQuotaProcess"));
@@ -743,6 +758,11 @@ void BgEfficiencyResourcesMgr::DumpGetCpuQuota(const std::vector<std::string> &d
 
 void BgEfficiencyResourcesMgr::DumpSetCpuQuota(const std::vector<std::string> &dumpOption)
 {
+    if (resourceQuotaMgrHandle_ == nullptr) {
+        BGTASK_LOGD("ResourceQuotaMgrHandle_ is nullptr.");
+        return;
+    }
+
     using SetQuotaFunc = void (*)(int32_t, uint32_t, uint32_t);
     auto setQuotaFunc = reinterpret_cast<SetQuotaFunc>(
         dlsym(resourceQuotaMgrHandle_, "SetCpuApplyQuotaProcess"));
@@ -771,6 +791,11 @@ void BgEfficiencyResourcesMgr::DumpSetCpuQuota(const std::vector<std::string> &d
 
 void BgEfficiencyResourcesMgr::DumpResetCpuQuotaUsage(const std::vector<std::string> &dumpOption)
 {
+    if (resourceQuotaMgrHandle_ == nullptr) {
+        BGTASK_LOGD("ResourceQuotaMgrHandle_ is nullptr.");
+        return;
+    }
+
     using ResetQuotaFunc = void (*)(int32_t);
     auto resetQuotaFunc = reinterpret_cast<ResetQuotaFunc>(
         dlsym(resourceQuotaMgrHandle_, "ResetCpuApplyQuotaUsageProcess"));
