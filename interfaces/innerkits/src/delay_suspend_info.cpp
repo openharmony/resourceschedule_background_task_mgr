@@ -28,10 +28,15 @@ bool DelaySuspendInfo::Marshalling(Parcel& out) const
     return true;
 }
 
-std::shared_ptr<DelaySuspendInfo> DelaySuspendInfo::Unmarshalling(Parcel &in)
+DelaySuspendInfo* DelaySuspendInfo::Unmarshalling(Parcel &in)
 {
-    auto info = std::make_shared<DelaySuspendInfo>();
-    return info->ReadFromParcel(in) ? info : nullptr;
+    DelaySuspendInfo* info = new (std::nothrow) DelaySuspendInfo();
+    if (info && !info->ReadFromParcel(in)) {
+        BGTASK_LOGE("read from parcel failed");
+        delete info;
+        info = nullptr;
+    }
+    return info;
 }
 
 bool DelaySuspendInfo::ReadFromParcel(Parcel& in)

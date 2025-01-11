@@ -23,7 +23,11 @@ ohos_fuzztest("BgTaskSubscribeBackgroundTaskFuzzTest") {
   fuzz_config_file =
       "${bgtaskmgr_test_path}/fuzztest/bgtasksubscribebackgroundtask_fuzzer"
 
-  include_dirs = [ "../common" ]
+  include_dirs = [ 
+    "../common",
+    "${target_gen_dir}",
+  ]
+  
   cflags = [
     "-g",
     "-O0",
@@ -49,6 +53,8 @@ ohos_fuzztest("BgTaskSubscribeBackgroundTaskFuzzTest") {
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [

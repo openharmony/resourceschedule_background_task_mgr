@@ -28,13 +28,21 @@ ohos_unittest("bgtask_framework_unit_test") {
     "mock/include",
   ]
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   sources = [
-    "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
     "bgtask_framework_unit_test.cpp",
     "mock/src/mock_service_registry.cpp",
   ]
 
-  deps = [ "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits" ]
+  deps = [ 
+    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
+    "${bgtaskmgr_interfaces_path}/innerkits:expired_callback_proxy",
+  ]
 
   external_deps = [
     "ability_base:want",
@@ -57,19 +65,28 @@ ohos_unittest("bgtask_framework_abnormal_unit_test") {
     "-Dprivate=public",
     "-Dprotected=public",
   ]
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   include_dirs = [
     "${bgtaskmgr_interfaces_path}/innerkits/include",
     "mock/include",
   ]
 
   sources = [
-    "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
     "bgtask_framework_abnormal_unit_test.cpp",
     "mock/parcel_abnormal/src/mock_message_parcel.cpp",
     "mock/src/mock_background_task_mgr_proxy.cpp",
   ]
 
-  deps = [ "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits" ]
+  deps = [ 
+    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
+    "${bgtaskmgr_interfaces_path}/innerkits:expired_callback_proxy",
+  ]
 
   external_deps = [
     "ability_base:want",

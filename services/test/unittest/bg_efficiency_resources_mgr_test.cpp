@@ -302,7 +302,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SubscribeEfficiencyResources_001, TestSiz
         subscriber->GetImpl()), (int32_t)ERR_OK);
 
     auto subscriberImpl = subscriber->GetImpl();
-    auto resourceInfo = std::make_shared<ResourceCallbackInfo>(0, 0, 1, "");
+    ResourceCallbackInfo resourceInfo(0, 0, 1, "");
     subscriberImpl->OnAppEfficiencyResourcesApply(resourceInfo);
     subscriberImpl->OnAppEfficiencyResourcesReset(resourceInfo);
     subscriberImpl->OnProcEfficiencyResourcesApply(resourceInfo);
@@ -346,10 +346,10 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, EfficiencyResourcesCallback_001, TestSize
 
     auto subscriberImpl = subscriber->GetImpl();
     EXPECT_NE(subscriberImpl, nullptr);
-    subscriberImpl->OnAppEfficiencyResourcesApply(resourceInfo);
-    subscriberImpl->OnAppEfficiencyResourcesReset(resourceInfo);
-    subscriberImpl->OnProcEfficiencyResourcesApply(resourceInfo);
-    subscriberImpl->OnProcEfficiencyResourcesReset(resourceInfo);
+    subscriberImpl->OnAppEfficiencyResourcesApply(*resourceInfo);
+    subscriberImpl->OnAppEfficiencyResourcesReset(*resourceInfo);
+    subscriberImpl->OnProcEfficiencyResourcesApply(*resourceInfo);
+    subscriberImpl->OnProcEfficiencyResourcesReset(*resourceInfo);
 }
 
 /**
@@ -402,9 +402,11 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SystemAbility_001, TestSize.Level1)
     bgEfficiencyResourcesMgr_->OnAddSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, "");
 
     bgEfficiencyResourcesMgr_->isSysReady_.store(true);
+    bgEfficiencyResourcesMgr_->CheckAliveApp(0);
     bgEfficiencyResourcesMgr_->Clear();
     bgEfficiencyResourcesMgr_->appStateObserver_ = nullptr;
     bgEfficiencyResourcesMgr_->Clear();
+    bgEfficiencyResourcesMgr_->CheckAliveApp(0);
     EXPECT_TRUE(true);
 }
 

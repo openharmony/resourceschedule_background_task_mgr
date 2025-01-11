@@ -78,29 +78,29 @@ public:
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {};
 
 class TestBackgroundTaskSubscriberStub : public BackgroundTaskSubscriberStub {
-    void OnConnected() override {}
-    void OnDisconnected() override {}
-    void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
-    void OnAppTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
-    void OnAppTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
-    void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
-    void OnTransientTaskErr(const std::shared_ptr<TransientTaskAppInfo>& info) override {}
-    void OnContinuousTaskStart(
-        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override {}
-    void OnContinuousTaskUpdate(
-        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override {}
-    void OnContinuousTaskStop(
-        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override {}
-    void OnAppContinuousTaskStop(int32_t uid) override {}
-    void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
-    void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
-    void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
-    void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override {}
+    ErrCode OnConnected() override {return ERR_OK;}
+    ErrCode OnDisconnected() override {return ERR_OK;}
+    ErrCode OnTransientTaskStart(const TransientTaskAppInfo& info) override {return ERR_OK;}
+    ErrCode OnAppTransientTaskStart(const TransientTaskAppInfo& info) override {return ERR_OK;}
+    ErrCode OnAppTransientTaskEnd(const TransientTaskAppInfo& info) override {return ERR_OK;}
+    ErrCode OnTransientTaskEnd(const TransientTaskAppInfo& info) override {return ERR_OK;}
+    ErrCode OnTransientTaskErr(const TransientTaskAppInfo& info) override {return ERR_OK;}
+    ErrCode OnContinuousTaskStart(
+        const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
+    ErrCode OnContinuousTaskUpdate(
+        const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
+    ErrCode OnContinuousTaskStop(
+        const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
+    ErrCode OnAppContinuousTaskStop(int32_t uid) override {return ERR_OK;}
+    ErrCode OnAppEfficiencyResourcesApply(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
+    ErrCode OnAppEfficiencyResourcesReset(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
+    ErrCode OnProcEfficiencyResourcesApply(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
+    ErrCode OnProcEfficiencyResourcesReset(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
 };
 
 class TestExpiredCallbackStub : public ExpiredCallbackStub {
 public:
-    void OnExpired() override {}
+    ErrCode OnExpired() override {return ERR_OK;}
 };
 
 /**
@@ -419,22 +419,12 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_002, TestSiz
         = sptr<TestBackgroundTaskSubscriberStub>(new TestBackgroundTaskSubscriberStub());
     BackgroundTaskSubscriberProxy subscirberProxy1 = BackgroundTaskSubscriberProxy(nullptr);
     BackgroundTaskSubscriberProxy subscirberProxy2 = BackgroundTaskSubscriberProxy(subscirberStub->AsObject());
-    subscirberProxy1.OnTransientTaskStart(nullptr);
-    subscirberProxy2.OnTransientTaskStart(nullptr);
-    subscirberProxy1.OnTransientTaskEnd(nullptr);
-    subscirberProxy2.OnTransientTaskEnd(nullptr);
-    subscirberProxy1.OnTransientTaskErr(nullptr);
-    subscirberProxy2.OnTransientTaskErr(nullptr);
-    subscirberProxy1.OnAppTransientTaskStart(nullptr);
-    subscirberProxy2.OnAppTransientTaskStart(nullptr);
-    subscirberProxy1.OnAppTransientTaskEnd(nullptr);
-    subscirberProxy2.OnAppTransientTaskEnd(nullptr);
     std::shared_ptr<TransientTaskAppInfo> info = std::make_shared<TransientTaskAppInfo>();
-    subscirberProxy2.OnTransientTaskStart(info);
-    subscirberProxy2.OnTransientTaskEnd(info);
-    subscirberProxy2.OnTransientTaskErr(info);
-    subscirberProxy2.OnAppTransientTaskStart(info);
-    subscirberProxy2.OnAppTransientTaskEnd(info);
+    subscirberProxy2.OnTransientTaskStart(*info);
+    subscirberProxy2.OnTransientTaskEnd(*info);
+    subscirberProxy2.OnTransientTaskErr(*info);
+    subscirberProxy2.OnAppTransientTaskStart(*info);
+    subscirberProxy2.OnAppTransientTaskEnd(*info);
     EXPECT_NE(subscirberStub, nullptr);
 }
 
@@ -450,15 +440,11 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_003, TestSiz
         = sptr<TestBackgroundTaskSubscriberStub>(new TestBackgroundTaskSubscriberStub());
     BackgroundTaskSubscriberProxy subscirberProxy1 = BackgroundTaskSubscriberProxy(nullptr);
     BackgroundTaskSubscriberProxy subscirberProxy2 = BackgroundTaskSubscriberProxy(subscirberStub->AsObject());
-    subscirberProxy1.OnContinuousTaskStart(nullptr);
-    subscirberProxy2.OnContinuousTaskStart(nullptr);
-    subscirberProxy1.OnContinuousTaskStop(nullptr);
-    subscirberProxy2.OnContinuousTaskStop(nullptr);
     subscirberProxy1.OnAppContinuousTaskStop(-1);
     subscirberProxy2.OnAppContinuousTaskStop(-1);
     std::shared_ptr<ContinuousTaskCallbackInfo> info = std::make_shared<ContinuousTaskCallbackInfo>();
-    subscirberProxy2.OnContinuousTaskStart(info);
-    subscirberProxy2.OnContinuousTaskStop(info);
+    subscirberProxy2.OnContinuousTaskStart(*info);
+    subscirberProxy2.OnContinuousTaskStop(*info);
     EXPECT_NE(subscirberStub, nullptr);
 }
 
@@ -474,19 +460,11 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_004, TestSiz
         = sptr<TestBackgroundTaskSubscriberStub>(new TestBackgroundTaskSubscriberStub());
     BackgroundTaskSubscriberProxy subscirberProxy1 = BackgroundTaskSubscriberProxy(nullptr);
     BackgroundTaskSubscriberProxy subscirberProxy2 = BackgroundTaskSubscriberProxy(subscirberStub->AsObject());
-    subscirberProxy1.OnAppEfficiencyResourcesApply(nullptr);
-    subscirberProxy2.OnAppEfficiencyResourcesApply(nullptr);
-    subscirberProxy1.OnAppEfficiencyResourcesReset(nullptr);
-    subscirberProxy2.OnAppEfficiencyResourcesReset(nullptr);
-    subscirberProxy1.OnProcEfficiencyResourcesApply(nullptr);
-    subscirberProxy2.OnProcEfficiencyResourcesApply(nullptr);
-    subscirberProxy1.OnProcEfficiencyResourcesReset(nullptr);
-    subscirberProxy2.OnProcEfficiencyResourcesReset(nullptr);
     std::shared_ptr<ResourceCallbackInfo> info = std::make_shared<ResourceCallbackInfo>();
-    subscirberProxy2.OnAppEfficiencyResourcesApply(info);
-    subscirberProxy2.OnAppEfficiencyResourcesReset(info);
-    subscirberProxy2.OnProcEfficiencyResourcesApply(info);
-    subscirberProxy2.OnProcEfficiencyResourcesReset(info);
+    subscirberProxy2.OnAppEfficiencyResourcesApply(*info);
+    subscirberProxy2.OnAppEfficiencyResourcesReset(*info);
+    subscirberProxy2.OnProcEfficiencyResourcesApply(*info);
+    subscirberProxy2.OnProcEfficiencyResourcesReset(*info);
     EXPECT_NE(subscirberStub, nullptr);
 }
 
@@ -546,7 +524,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_003, TestSize
     EXPECT_NE(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_START, data1, reply, option), ERR_OK);
     MessageParcel data2;
     data2.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
-    info->Marshalling(data2);
+    data2.WriteParcelable(info.get());
     EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_START, data2, reply, option), ERR_OK);
 
     MessageParcel data3;
@@ -554,7 +532,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_003, TestSize
     EXPECT_NE(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_END, data3, reply, option), ERR_OK);
     MessageParcel data4;
     data4.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
-    info->Marshalling(data4);
+    data4.WriteParcelable(info.get());
     EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_END, data4, reply, option), ERR_OK);
 
     MessageParcel data9;
@@ -562,7 +540,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_003, TestSize
     EXPECT_NE(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_ERR, data9, reply, option), ERR_OK);
     MessageParcel data10;
     data10.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
-    info->Marshalling(data10);
+    data10.WriteParcelable(info.get());
     EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_ERR, data10, reply, option), ERR_OK);
 
     MessageParcel data5;
@@ -570,7 +548,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_003, TestSize
     EXPECT_NE(subscirberStub.OnRemoteRequest(ON_APP_TRANSIENT_TASK_START, data5, reply, option), ERR_OK);
     MessageParcel data6;
     data6.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
-    info->Marshalling(data6);
+    data6.WriteParcelable(info.get());
     EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_APP_TRANSIENT_TASK_START, data6, reply, option), ERR_OK);
 
     MessageParcel data7;
@@ -578,7 +556,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_003, TestSize
     EXPECT_NE(subscirberStub.OnRemoteRequest(ON_APP_TRANSIENT_TASK_END, data7, reply, option), ERR_OK);
     MessageParcel data8;
     data8.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
-    info->Marshalling(data8);
+    data8.WriteParcelable(info.get());
     EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_APP_TRANSIENT_TASK_END, data8, reply, option), ERR_OK);
 }
 
@@ -614,7 +592,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_004, TestSize
     data5.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     data5.WriteInt32(-1);
     EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_APP_CONTINUOUS_TASK_STOP, data5, reply, option),
-        ERR_BGTASK_PARCELABLE_FAILED);
+        ERR_INVALID_DATA);
 }
 
 /**

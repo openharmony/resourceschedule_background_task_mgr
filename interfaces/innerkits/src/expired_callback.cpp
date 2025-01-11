@@ -14,6 +14,7 @@
  */
 
 #include "expired_callback.h"
+#include "bgtaskmgr_inner_errors.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -34,12 +35,14 @@ const sptr<ExpiredCallback::ExpiredCallbackImpl> ExpiredCallback::GetImpl() cons
 ExpiredCallback::ExpiredCallbackImpl::ExpiredCallbackImpl(const std::shared_ptr<ExpiredCallback> &callback)
     : callback_(callback) {}
 
-void ExpiredCallback::ExpiredCallbackImpl::OnExpired()
+ErrCode ExpiredCallback::ExpiredCallbackImpl::OnExpired()
 {
     auto callback = callback_.lock();
     if (callback != nullptr) {
         callback->OnExpired();
+        return ERR_OK;
     }
+    return ERR_BGTASK_CALLBACK_NOT_EXIST;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

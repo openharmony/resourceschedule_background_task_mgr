@@ -54,7 +54,7 @@ private:
         /**
          * @brief Notify the delayed transition to the suspended state times out.
          */
-        void OnExpired() override;
+        ErrCode OnExpired() override;
 
     public:
         std::weak_ptr<ExpiredCallback> callback_;

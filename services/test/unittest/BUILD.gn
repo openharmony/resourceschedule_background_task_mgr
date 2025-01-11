@@ -25,6 +25,12 @@ ohos_unittest("bgtask_unit_test") {
     "-Dprotected=public",
   ]
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   cflags_cc = []
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
@@ -47,6 +53,8 @@ ohos_unittest("bgtask_unit_test") {
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [
@@ -92,6 +100,12 @@ ohos_unittest("efficiency_mgr_unit_test") {
     "-Dprotected=public",
   ]
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   cflags_cc = []
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
@@ -109,6 +123,8 @@ ohos_unittest("efficiency_mgr_unit_test") {
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [
@@ -162,6 +178,8 @@ ohos_unittest("mock_efficiency_mgr_unit_test") {
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [
@@ -201,12 +219,20 @@ ohos_unittest("bgtask_manager_unit_test") {
     "-Dprivate=public",
     "-Dprotected=public",
   ]
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_services_path}/test/unittest/mock/include",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
     "//third_party/icu/icu4c/source/i18n",
+    "${target_gen_dir}"
   ]
 
   sources = [
@@ -219,6 +245,8 @@ ohos_unittest("bgtask_manager_unit_test") {
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [
@@ -264,6 +292,13 @@ ohos_unittest("bgtask_misc_unit_test") {
     "-Dprivate=public",
     "-Dprotected=public",
   ]
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
@@ -276,6 +311,8 @@ ohos_unittest("bgtask_misc_unit_test") {
   deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [

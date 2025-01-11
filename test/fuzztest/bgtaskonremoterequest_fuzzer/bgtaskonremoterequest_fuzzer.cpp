@@ -17,7 +17,6 @@
 #include "securec.h"
 
 #include "background_task_mgr_service.h"
-#include "ibackground_task_mgr_ipc_interface_code.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {

@@ -17,7 +17,6 @@
 #include "securec.h"
 
 #include "background_task_mgr_service.h"
-#include "ibackground_task_mgr_ipc_interface_code.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -41,7 +40,7 @@ namespace BackgroundTaskMgr {
             g_isOnstarted = true;
         }
         uint32_t code =
-            static_cast<uint32_t>(BackgroundTaskMgrStubInterfaceCode::REQUEST_BACKGROUND_RUNNING_FOR_INNER);
+            static_cast<uint32_t>(IBackgroundTaskMgrIpcCode::COMMAND_REQUEST_BACKGROUND_RUNNING_FOR_INNER);
         DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->OnRemoteRequest(
             code, datas, reply, option);
         return true;

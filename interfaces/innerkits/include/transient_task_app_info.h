@@ -19,7 +19,6 @@
 #include <cstdint>
 #include <memory>
 #include <string>
-
 #include <message_parcel.h>
 
 namespace OHOS {
@@ -27,7 +26,7 @@ namespace BackgroundTaskMgr {
 constexpr int32_t INVAILD_PID = -1;
 constexpr int32_t INVAILD_UID = -1;
 
-class TransientTaskAppInfo final {
+class TransientTaskAppInfo final : public Parcelable {
 public:
     TransientTaskAppInfo(std::string packageName, int32_t uid, int32_t pid = -1)
         : packageName_(packageName), uid_(uid), pid_(pid) {}
@@ -40,7 +39,7 @@ public:
      * @param parcel Indicates the parcel object for marshalling.
      * @return True if success, else false.
      */
-    bool Marshalling(MessageParcel& out) const;
+    bool Marshalling(Parcel& out) const override;
 
     /**
      * @brief Unmarshals a purpose from a Parcel.
@@ -48,7 +47,7 @@ public:
      * @param parcel Indicates the MessageParcel object for unmarshalling.
      * @return App info of transient task.
      */
-    static std::shared_ptr<TransientTaskAppInfo> Unmarshalling(MessageParcel& in);
+    static TransientTaskAppInfo* Unmarshalling(Parcel& in);
 
     /**
      * @brief Get the package name.
@@ -81,7 +80,7 @@ public:
     }
 
 private:
-    bool ReadFromParcel(MessageParcel& in);
+    bool ReadFromParcel(Parcel& in);
 
     std::string packageName_;
     int32_t uid_;
