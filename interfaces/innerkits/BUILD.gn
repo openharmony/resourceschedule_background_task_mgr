@@ -11,9 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build/config/components/idl_tool/idl.gni")
 import("//build/ohos.gni")
 import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
-import("//build/config/components/idl_tool/idl.gni")
 
 idl_gen_interface("background_task_mgr_interface") {
   src_idl = rebase_path("IBackgroundTaskMgr.idl")
@@ -71,13 +71,27 @@ ohos_shared_library("bgtaskmgr_innerkits") {
   ]
 
   output_values = get_target_outputs(":background_task_mgr_interface")
-  sources += filter_include(output_values, [ "*_proxy.cpp", "*_stub.cpp" ])
+  sources += filter_include(output_values,
+                            [
+                              "*_proxy.cpp",
+                              "*_stub.cpp",
+                            ])
 
-  subscriber_output_values = get_target_outputs(":background_task_subscriber_interface")
-  sources += filter_include(subscriber_output_values, [ "*_proxy.cpp", "*_stub.cpp" ])
+  subscriber_output_values =
+      get_target_outputs(":background_task_subscriber_interface")
+  sources += filter_include(subscriber_output_values,
+                            [
+                              "*_proxy.cpp",
+                              "*_stub.cpp",
+                            ])
 
-  expired_callback_output_values = get_target_outputs(":expired_callback_interface")
-  sources += filter_include(expired_callback_output_values, [ "*_proxy.cpp", "*_stub.cpp" ])
+  expired_callback_output_values =
+      get_target_outputs(":expired_callback_interface")
+  sources += filter_include(expired_callback_output_values,
+                            [
+                              "*_proxy.cpp",
+                              "*_stub.cpp",
+                            ])
 
   public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
 
@@ -87,8 +101,8 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "common_event_service:cesfwk_innerkits",
     "hilog:libhilog",
     "hitrace:hitrace_meter",
-    "ipc:ipc_single",
     "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 
@@ -116,8 +130,8 @@ ohos_source_set("background_task_mgr_stub") {
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_single",
     "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 }
@@ -138,8 +152,8 @@ ohos_source_set("background_task_mgr_proxy") {
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_single",
     "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 }
@@ -160,8 +174,8 @@ ohos_source_set("background_task_subscriber_stub") {
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_single",
     "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 }
@@ -182,8 +196,8 @@ ohos_source_set("background_task_subscriber_proxy") {
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_single",
     "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 }
@@ -204,8 +218,8 @@ ohos_source_set("expired_callback_stub") {
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_single",
     "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 }
@@ -226,8 +240,8 @@ ohos_source_set("expired_callback_proxy") {
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_single",
     "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 }

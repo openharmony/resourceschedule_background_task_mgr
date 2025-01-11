@@ -75,10 +75,10 @@ ohos_shared_library("bgtaskmgr_service") {
 
   public_configs = [ ":bgtaskmgr_service_public_config" ]
 
-  deps = [ 
-    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
+  deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
     "${bgtaskmgr_interfaces_path}/innerkits:background_task_subscriber_proxy",
+    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_interfaces_path}/innerkits:expired_callback_proxy",
   ]
 

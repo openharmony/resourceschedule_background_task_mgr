@@ -51,10 +51,10 @@ ohos_unittest("bgtask_unit_test") {
   ]
 
   deps = [
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
-    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [
@@ -121,10 +121,10 @@ ohos_unittest("efficiency_mgr_unit_test") {
   ]
 
   deps = [
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
-    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [
@@ -176,10 +176,10 @@ ohos_unittest("mock_efficiency_mgr_unit_test") {
   ]
 
   deps = [
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
-    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [
@@ -232,7 +232,7 @@ ohos_unittest("bgtask_manager_unit_test") {
     "${bgtaskmgr_services_path}/test/unittest/mock/include",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
     "//third_party/icu/icu4c/source/i18n",
-    "${target_gen_dir}"
+    "${target_gen_dir}",
   ]
 
   sources = [
@@ -243,10 +243,10 @@ ohos_unittest("bgtask_manager_unit_test") {
   ]
 
   deps = [
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
-    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [
@@ -309,10 +309,10 @@ ohos_unittest("bgtask_misc_unit_test") {
   sources = [ "bgtask_misc_unit_test.cpp" ]
 
   deps = [
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_services_path}:bgtaskmgr_service_static",
-    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
-    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_proxy",
   ]
 
   external_deps = [
