@@ -53,7 +53,6 @@ constexpr uint32_t ON_APP_TRANSIENT_TASK_END = 6;
 constexpr uint32_t ON_CONTINUOUS_TASK_START = 7;
 constexpr uint32_t ON_CONTINUOUS_TASK_STOP = 8;
 constexpr uint32_t ON_APP_CONTINUOUS_TASK_STOP = 9;
-constexpr uint32_t ON_APP_EFFICIENCY_RESOURCES_APPLY = 10;
 constexpr uint32_t ON_APP_EFFICIENCY_RESOURCES_RESET = 11;
 constexpr uint32_t ON_PROC_EFFICIENCY_RESOURCES_APPLY = 12;
 constexpr uint32_t ON_PROC_EFFICIENCY_RESOURCES_RESET = 13;
@@ -609,11 +608,13 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_005, TestSize
     std::shared_ptr<ResourceCallbackInfo> info = std::make_shared<ResourceCallbackInfo>();
     MessageParcel data1;
     data1.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
-    EXPECT_NE(subscirberStub.OnRemoteRequest(ON_APP_EFFICIENCY_RESOURCES_APPLY, data1, reply, option), ERR_OK);
+    EXPECT_NE(subscirberStub.OnRemoteRequest(static_cast<uint32_t>(OHOS::BackgroundTaskMgr::
+        IBackgroundTaskSubscriberIpcCode::COMMAND_ON_APP_EFFICIENCY_RESOURCES_APPLY), data1, reply, option), ERR_OK);
     MessageParcel data2;
     data2.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     data2.WriteParcelable(info.get());
-    EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_APP_EFFICIENCY_RESOURCES_APPLY, data2, reply, option), ERR_OK);
+    EXPECT_EQ(subscirberStub.OnRemoteRequest(static_cast<uint32_t>(OHOS::BackgroundTaskMgr::
+        IBackgroundTaskSubscriberIpcCode::COMMAND_ON_APP_EFFICIENCY_RESOURCES_APPLY), data2, reply, option), ERR_OK);
 
     MessageParcel data3;
     data3.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());

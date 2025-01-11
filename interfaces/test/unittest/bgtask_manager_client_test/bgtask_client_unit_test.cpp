@@ -377,8 +377,8 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
     auto subscriber = TestBackgroundTaskSubscriber();
     auto subscriberImpl = std::make_shared<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl>(subscriber);
     OHOS::BackgroundTaskMgr::TransientTaskAppInfo taskInfo;
-    OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo continuousInfo;
-    OHOS::BackgroundTaskMgr::ResourcesCallbackInfo resourceInfo;
+    OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo continousInfo;
+    OHOS::BackgroundTaskMgr::ResourceCallbackInfo resourceInfo;
     subscriberImpl->OnConnected();
     subscriberImpl->OnDisconnected();
     subscriberImpl->OnTransientTaskStart(taskInfo);
@@ -391,9 +391,9 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
     EXPECT_EQ(bgtaskSubscriberRet_, "interface5");
     subscriberImpl->OnAppTransientTaskEnd(taskInfo);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface6");
-    subscriberImpl->OnContinuousTaskStart(continuousInfo);
+    subscriberImpl->OnContinuousTaskStart(continousInfo);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface7");
-    subscriberImpl->OnContinuousTaskStop(continuousInfo);
+    subscriberImpl->OnContinuousTaskStop(continousInfo);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface8");
     subscriberImpl->OnAppContinuousTaskStop(1);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface9");
@@ -405,7 +405,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
     EXPECT_EQ(bgtaskSubscriberRet_, "interface13");
     subscriberImpl->OnProcEfficiencyResourcesReset(resourceInfo);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface14");
-    subscriberImpl->OnContinuousTaskUpdate(continuousInfo);
+    subscriberImpl->OnContinuousTaskUpdate(continousInfo);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface15");
 }
 

@@ -63,9 +63,9 @@ public:
         const sptr<IExpiredCallback>& callback, DelaySuspendInfo &delayInfo) override;
     ErrCode CancelSuspendDelay(int32_t requestId) override;
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime) override;
-    ErrCode StartBackgroundRunning(const ContinuousTaskParam &taskParam, int32_t& notificationId, 
+    ErrCode StartBackgroundRunning(const ContinuousTaskParam &taskParam, int32_t& notificationId,
         int32_t& continuousTaskId) override;
-    ErrCode UpdateBackgroundRunning(const ContinuousTaskParam &taskParam, int32_t& notificationId, 
+    ErrCode UpdateBackgroundRunning(const ContinuousTaskParam &taskParam, int32_t& notificationId,
         int32_t& continuousTaskId) override;
     ErrCode RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam) override;
     ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken,

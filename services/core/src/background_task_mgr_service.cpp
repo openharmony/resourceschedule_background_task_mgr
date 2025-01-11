@@ -136,7 +136,8 @@ ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::string& reason,
 {
     std::u16string reasonu16 = Str8ToStr16(reason);
     std::shared_ptr<DelaySuspendInfo> delayInfoPtr = std::make_shared<DelaySuspendInfo>(delayInfo);
-    ErrCode result = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RequestSuspendDelay(reasonu16, callback, delayInfoPtr);
+    ErrCode result = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RequestSuspendDelay(
+        reasonu16, callback, delayInfoPtr);
     if (result == ERR_OK) {
         delayInfo = *delayInfoPtr;
     }
@@ -158,7 +159,7 @@ void BackgroundTaskMgrService::ForceCancelSuspendDelay(int32_t requestId)
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ForceCancelSuspendDelay(requestId);
 }
 
-ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const ContinuousTaskParam &taskParam, 
+ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const ContinuousTaskParam &taskParam,
     int32_t& notificationId, int32_t& continuousTaskId)
 {
     auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));

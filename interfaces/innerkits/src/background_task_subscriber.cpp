@@ -150,7 +150,7 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppTransientTa
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStart(
     const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo)
 {
-    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo = 
+    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
         std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
     subscriber_.OnContinuousTaskStart(sharedInfo);
     return ERR_OK;
@@ -159,7 +159,7 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTask
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskUpdate(
     const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo)
 {
-    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo = 
+    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
         std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
     subscriber_.OnContinuousTaskUpdate(sharedInfo);
     return ERR_OK;
@@ -168,7 +168,7 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTask
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStop(
     const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo)
 {
-    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo = 
+    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
         std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
     subscriber_.OnContinuousTaskStop(sharedInfo);
     return ERR_OK;

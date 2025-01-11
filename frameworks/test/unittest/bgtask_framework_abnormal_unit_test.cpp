@@ -42,7 +42,6 @@
 #include "singleton.h"
 #include "transient_task_app_info.h"
 
-
 using namespace testing::ext;
 
 namespace OHOS {
@@ -196,7 +195,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_004
     EXPECT_EQ(backgroundTaskMgrProxy.StartBackgroundRunning(
         *new ContinuousTaskParam(), notificationId, continuousTaskId), ERR_INVALID_DATA);
 
-    sptr<ContinuousTaskParam> taskParam = sptr<ContinuousTaskParam>(new ContinuousTaskParam());
+    sptr<ContinuousTaskParam> taskParam(new ContinuousTaskParam());
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
     EXPECT_EQ(backgroundTaskMgrProxy.StartBackgroundRunning(

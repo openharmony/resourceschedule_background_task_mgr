@@ -164,49 +164,6 @@ HWTEST_F(BgTaskMiscUnitTest, BundleManagerHelperTest_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: SystemEventObserverTest_001
- * @tc.desc: test SystemEventObserver class.
- * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V
- */
-// HWTEST_F(BgTaskMiscUnitTest, SystemEventObserver_001, TestSize.Level1)
-// {
-//     EventFwk::MatchingSkills matchingSkills;
-//     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED);
-//     EventFwk::CommonEventSubscribeInfo commonEventSubscribeInfo(matchingSkills);
-//     auto systemEventListener = std::make_shared<SystemEventObserver>(commonEventSubscribeInfo);
-//     EXPECT_TRUE(systemEventListener->Subscribe());
-//     EXPECT_TRUE(systemEventListener->Unsubscribe());
-
-//     EventFwk::CommonEventData eventData = EventFwk::CommonEventData();
-//     systemEventListener->OnReceiveEvent(eventData);
-
-//     auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
-//     systemEventListener->SetEventHandler(handler);
-//     systemEventListener->OnReceiveEventContinuousTask(eventData);
-//     auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
-//     systemEventListener->SetBgContinuousTaskMgr(bgContinuousTaskMgr);
-//     systemEventListener->OnReceiveEventContinuousTask(eventData);
-//     AAFwk::Want want = AAFwk::Want();
-//     want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
-//     eventData.SetWant(want);
-//     systemEventListener->OnReceiveEventContinuousTask(eventData);
-//     want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_USER_ADDED);
-//     eventData.SetWant(want);
-//     systemEventListener->OnReceiveEventContinuousTask(eventData);
-//     want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED);
-//     eventData.SetWant(want);
-//     systemEventListener->OnReceiveEventContinuousTask(eventData);
-
-//     EventFwk::CommonEventData eventData2 = EventFwk::CommonEventData();
-//     AAFwk::Want want2 = AAFwk::Want();
-//     want2.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
-//     eventData2.SetWant(want2);
-//     systemEventListener->OnReceiveEventEfficiencyRes(eventData2);
-//     EXPECT_TRUE(true);
-// }
-
-/**
  * @tc.name: ContinuousTaskRecordTest_001
  * @tc.desc: test ContinuousTaskRecord class.
  * @tc.type: FUNC
@@ -445,30 +402,6 @@ HWTEST_F(BgTaskMiscUnitTest, DeviceInfoManagerTest_001, TestSize.Level1)
     deviceInfoManeger->OnInputEvent(eventInfo);
     EXPECT_TRUE(true);
 }
-
-/**
- * @tc.name: InputManagerTest_001
- * @tc.desc: test InputManager class.
- * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V
- */
-// HWTEST_F(BgTaskMiscUnitTest, InputManagerTest_001, TestSize.Level1)
-// {
-//     auto inputManager = std::make_shared<InputManager>(AppExecFwk::EventRunner::Create("tdd_test_handler"));
-//     auto deviceInfoManeger1 = std::make_shared<DeviceInfoManager>();
-//     inputManager->RegisterEventListener(nullptr);
-//     inputManager->RegisterEventListener(deviceInfoManeger1);
-//     auto eventInfo = std::make_shared<EventInfo>();
-//     inputManager->SendEventInfo(nullptr);
-//     inputManager->SendEventInfo(eventInfo);
-//     auto deviceInfoManeger2 = std::make_shared<DeviceInfoManager>();
-//     inputManager->UnRegisterEventListener(nullptr);
-//     inputManager->UnRegisterEventListener(deviceInfoManeger2);
-//     EXPECT_EQ(inputManager->listenerList_.size(), 1);
-//     inputManager->UnRegisterEventListener(deviceInfoManeger1);
-//     EXPECT_EQ(inputManager->listenerList_.size(), 0);
-//     EXPECT_TRUE(true);
-// }
 
 /**
  * @tc.name: PkgDelaySuspendInfoTest_001

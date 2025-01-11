@@ -25,11 +25,11 @@ sequenceable transient_task_app_info..OHOS.BackgroundTaskMgr.TransientTaskAppInf
 interface OHOS.BackgroundTaskMgr.IBackgroundTaskSubscriber;
 interface OHOS.BackgroundTaskMgr.IExpiredCallback;
 interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
-    void RequestSuspendDelay([in] String reason, [in] IExpiredCallback expiredcallback, [out] DelaySuspendInfo delayInfo);
+    void RequestSuspendDelay([in] String reason, [in] IExpiredCallback expiredCallback, [out] DelaySuspendInfo delayInfo);
     void CancelSuspendDelay([in] int requestId);
     void GetRemainingDelayTime([in] int requestId, [out] int delayTime);
-    void StartBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int ContinuousTaskId);
-    void UpdateBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int ContinuousTaskId);
+    void StartBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int continuousTaskId);
+    void UpdateBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int continuousTaskId);
     void StopBackgroundRunning([in] String abilityName, [in] IRemoteObject abilityToken, [in] int abilityId);
     void SubscribeBackgroundTask([in] IBackgroundTaskSubscriber subscriber);
     void UnsubscribeBackgroundTask([in] IBackgroundTaskSubscriber subscriber);
@@ -39,8 +39,8 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void ResetAllEfficiencyResources();
     void GetEfficiencyResourcesInfos([out] ResourceCallbackInfo[] appList, [out] ResourceCallbackInfo[] procList);
     void StopContinuousTask([in] int uid, [in] int pid, [in] unsigned int taskType, [in] String key);
-    void RequestBackgroundRunningForInner([in] ContinuousTaskParamForInner taskParam);      
+    void RequestBackgroundRunningForInner([in] ContinuousTaskParamForInner taskParam);
     void PauseTransientTaskTimeForInner([in] int uid);
-    void StartTransientTaskTimeForInner([in] int uid);   
+    void StartTransientTaskTimeForInner([in] int uid);
     void SetBgTaskConfig([in] String configData, [in] int sourceType);
 }

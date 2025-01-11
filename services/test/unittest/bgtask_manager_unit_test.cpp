@@ -492,29 +492,6 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_041, TestSize.Level1)
 }
 
 /**
- * @tc.name: BgTaskManagerUnitTest_042
- * @tc.desc: test BgTransientTaskMgr NotifyTransientTaskSuscriber.
- * @tc.type: FUNC
- * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
- */
-// HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_042, TestSize.Level1)
-// {
-//     auto taskInfo = std::make_shared<TransientTaskAppInfo>();
-//     TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
-//     bgTransientTaskMgr_->subscriberList_.emplace_back(subscriber1.GetImpl());
-
-//     bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo,
-//         TransientTaskEventType::TASK_START);
-//     bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo,
-//         TransientTaskEventType::TASK_END);
-//     bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo,
-//         TransientTaskEventType::APP_TASK_START);
-//     bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo,
-//         TransientTaskEventType::APP_TASK_END);
-//     EXPECT_NE((int32_t)bgTransientTaskMgr_->subscriberList_.size(), 0);
-// }
-
-/**
  * @tc.name: BgTaskManagerUnitTest_043
  * @tc.desc: test BgTransientTaskMgr PauseTransientTaskTimeForInner.
  * @tc.type: FUNC
