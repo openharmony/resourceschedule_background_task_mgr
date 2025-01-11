@@ -39,7 +39,7 @@ ohos_unittest("bgtask_framework_unit_test") {
     "mock/src/mock_service_registry.cpp",
   ]
 
-  deps = [ 
+  deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_interfaces_path}/innerkits:expired_callback_proxy",
   ]
@@ -82,7 +82,7 @@ ohos_unittest("bgtask_framework_abnormal_unit_test") {
     "mock/src/mock_background_task_mgr_proxy.cpp",
   ]
 
-  deps = [ 
+  deps = [
     "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
     "${bgtaskmgr_interfaces_path}/innerkits:expired_callback_proxy",
   ]
