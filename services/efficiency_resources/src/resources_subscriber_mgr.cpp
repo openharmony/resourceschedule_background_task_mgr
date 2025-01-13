@@ -106,29 +106,30 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
         return;
     }
     HiSysEventResources(callbackInfo, type);
+    const ResourceCallbackInfo& callbackInfoRef = *callbackInfo;
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
             BGTASK_LOGD("start callback function of app resources application");
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                (*iter)->OnAppEfficiencyResourcesApply(callbackInfo);
+                (*iter)->OnAppEfficiencyResourcesApply(callbackInfoRef);
             }
             break;
         case EfficiencyResourcesEventType::RESOURCE_APPLY:
             BGTASK_LOGD("start callback function of proc resources application");
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                (*iter)->OnProcEfficiencyResourcesApply(callbackInfo);
+                (*iter)->OnProcEfficiencyResourcesApply(callbackInfoRef);
             }
             break;
         case EfficiencyResourcesEventType::APP_RESOURCE_RESET:
             BGTASK_LOGD("start callback function of app resources reset");
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                (*iter)->OnAppEfficiencyResourcesReset(callbackInfo);
+                (*iter)->OnAppEfficiencyResourcesReset(callbackInfoRef);
             }
             break;
         case EfficiencyResourcesEventType::RESOURCE_RESET:
             BGTASK_LOGD("start callback function of proc resources reset");
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
-                (*iter)->OnProcEfficiencyResourcesReset(callbackInfo);
+                (*iter)->OnProcEfficiencyResourcesReset(callbackInfoRef);
             }
             break;
     }

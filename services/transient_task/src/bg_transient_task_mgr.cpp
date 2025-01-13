@@ -327,30 +327,31 @@ void BgTransientTaskMgr::NotifyTransientTaskSuscriber(const shared_ptr<Transient
         BGTASK_LOGI("Transient Task Subscriber List is empty");
         return;
     }
+    const TransientTaskAppInfo& appInfoRef = *appInfo;
     switch (type) {
         case TransientTaskEventType::TASK_START:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
-                (*iter)->OnTransientTaskStart(appInfo);
+                (*iter)->OnTransientTaskStart(appInfoRef);
             }
             break;
         case TransientTaskEventType::TASK_END:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
-                (*iter)->OnTransientTaskEnd(appInfo);
+                (*iter)->OnTransientTaskEnd(appInfoRef);
             }
             break;
         case TransientTaskEventType::TASK_ERR:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
-                (*iter)->OnTransientTaskErr(appInfo);
+                (*iter)->OnTransientTaskErr(appInfoRef);
             }
             break;
         case TransientTaskEventType::APP_TASK_START:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
-                (*iter)->OnAppTransientTaskStart(appInfo);
+                (*iter)->OnAppTransientTaskStart(appInfoRef);
             }
             break;
         case TransientTaskEventType::APP_TASK_END:
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
-                (*iter)->OnAppTransientTaskEnd(appInfo);
+                (*iter)->OnAppTransientTaskEnd(appInfoRef);
             }
             break;
         default:

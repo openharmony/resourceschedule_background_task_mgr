@@ -131,10 +131,17 @@ bool BackgroundTaskMgrService::CheckHapCalling(bool &isHap)
     return false;
 }
 
-ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::u16string& reason,
-    const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
+ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::string& reason,
+    const sptr<IExpiredCallback>& callback, DelaySuspendInfo &delayInfo)
 {
-    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RequestSuspendDelay(reason, callback, delayInfo);
+    std::u16string reasonu16 = Str8ToStr16(reason);
+    std::shared_ptr<DelaySuspendInfo> delayInfoPtr = std::make_shared<DelaySuspendInfo>(delayInfo);
+    ErrCode result = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RequestSuspendDelay(
+        reasonu16, callback, delayInfoPtr);
+    if (result == ERR_OK) {
+        delayInfo = *delayInfoPtr;
+    }
+    return result;
 }
 
 ErrCode BackgroundTaskMgrService::CancelSuspendDelay(int32_t requestId)
@@ -152,19 +159,24 @@ void BackgroundTaskMgrService::ForceCancelSuspendDelay(int32_t requestId)
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ForceCancelSuspendDelay(requestId);
 }
 
-ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
+ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const ContinuousTaskParam &taskParam,
+    int32_t& notificationId, int32_t& continuousTaskId)
 {
-    return BgContinuousTaskMgr::GetInstance()->StartBackgroundRunning(taskParam);
+    auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
+    return BgContinuousTaskMgr::GetInstance()->StartBackgroundRunning(paramPtr);
 }
 
-ErrCode BackgroundTaskMgrService::UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
+ErrCode BackgroundTaskMgrService::UpdateBackgroundRunning(const ContinuousTaskParam &taskParam,
+    int32_t& notificationId, int32_t& continuousTaskId)
 {
-    return BgContinuousTaskMgr::GetInstance()->UpdateBackgroundRunning(taskParam);
+    auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
+    return BgContinuousTaskMgr::GetInstance()->UpdateBackgroundRunning(paramPtr);
 }
 
-ErrCode BackgroundTaskMgrService::RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
+ErrCode BackgroundTaskMgrService::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)
 {
-    return BgContinuousTaskMgr::GetInstance()->RequestBackgroundRunningForInner(taskParam);
+    auto paramPtr = sptr<ContinuousTaskParamForInner>(new ContinuousTaskParamForInner(taskParam));
+    return BgContinuousTaskMgr::GetInstance()->RequestBackgroundRunningForInner(paramPtr);
 }
 
 ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abilityName,
@@ -173,13 +185,23 @@ ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abili
     return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName, abilityId);
 }
 
-ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
+ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<TransientTaskAppInfo> &list)
 {
     if (!CheckCallingToken()) {
         BGTASK_LOGW("GetTransientTaskApps not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetTransientTaskApps(list);
+    std::vector<std::shared_ptr<TransientTaskAppInfo>> resultList;
+    ErrCode result = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetTransientTaskApps(resultList);
+    if (result == ERR_OK) {
+        for (const auto& ptr : resultList) {
+            if (ptr != nullptr) {
+                list.push_back(*ptr);
+            }
+        }
+    }
+
+    return result;
 }
 
 ErrCode BackgroundTaskMgrService::PauseTransientTaskTimeForInner(int32_t uid)
@@ -192,7 +214,7 @@ ErrCode BackgroundTaskMgrService::StartTransientTaskTimeForInner(int32_t uid)
     return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->StartTransientTaskTimeForInner(uid);
 }
 
-ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list)
 {
     bool isHap = false;
     pid_t callingPid = IPCSkeleton::GetCallingPid();
@@ -201,7 +223,17 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<std::shared_
         BGTASK_LOGW("uid %{public}d pid %{public}d GetContinuousTaskApps not allowed", callingUid, callingPid);
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    return BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(list);
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> resultList;
+    ErrCode result = BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(resultList);
+    if (result == ERR_OK) {
+        for (const auto& ptr : resultList) {
+            if (ptr != nullptr) {
+                list.push_back(*ptr);
+            }
+        }
+    }
+
+    return result;
 }
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
@@ -256,9 +288,10 @@ void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& 
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->HandleSubscriberDeath(remote);
 }
 
-ErrCode BackgroundTaskMgrService::ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo)
+ErrCode BackgroundTaskMgrService::ApplyEfficiencyResources(const EfficiencyResourceInfo &resourceInfo)
 {
-    return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->ApplyEfficiencyResources(resourceInfo);
+    auto resourcePtr = sptr<EfficiencyResourceInfo>(new EfficiencyResourceInfo(resourceInfo));
+    return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->ApplyEfficiencyResources(resourcePtr);
 }
 
 ErrCode BackgroundTaskMgrService::ResetAllEfficiencyResources()
@@ -267,14 +300,30 @@ ErrCode BackgroundTaskMgrService::ResetAllEfficiencyResources()
 }
 
 ErrCode BackgroundTaskMgrService::GetEfficiencyResourcesInfos(
-    std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
-    std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList)
+    std::vector<ResourceCallbackInfo> &appList,
+    std::vector<ResourceCallbackInfo> &procList)
 {
     if (!CheckCallingToken()) {
         BGTASK_LOGW("GetEfficiencyResourcesInfos not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->GetEfficiencyResourcesInfos(appList, procList);
+    std::vector<std::shared_ptr<ResourceCallbackInfo>> resultAppList;
+    std::vector<std::shared_ptr<ResourceCallbackInfo>> resultProcList;
+    ErrCode result = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->
+        GetEfficiencyResourcesInfos(resultAppList, resultProcList);
+    if (result == ERR_OK) {
+        for (const auto& ptr : resultAppList) {
+            if (ptr != nullptr) {
+                appList.push_back(*ptr);
+            }
+        }
+        for (const auto& ptr : resultProcList) {
+            if (ptr != nullptr) {
+                procList.push_back(*ptr);
+            }
+        }
+    }
+    return result;
 }
 
 ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType,

@@ -59,25 +59,27 @@ public:
     void OnStop() final;
     void SetReady(uint32_t flag);
 
-    ErrCode RequestSuspendDelay(const std::u16string& reason,
-        const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo) override;
+    ErrCode RequestSuspendDelay(const std::string& reason,
+        const sptr<IExpiredCallback>& callback, DelaySuspendInfo &delayInfo) override;
     ErrCode CancelSuspendDelay(int32_t requestId) override;
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime) override;
-    ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) override;
-    ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam) override;
-    ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam) override;
+    ErrCode StartBackgroundRunning(const ContinuousTaskParam &taskParam, int32_t& notificationId,
+        int32_t& continuousTaskId) override;
+    ErrCode UpdateBackgroundRunning(const ContinuousTaskParam &taskParam, int32_t& notificationId,
+        int32_t& continuousTaskId) override;
+    ErrCode RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam) override;
     ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken,
         int32_t abilityId) override;
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
-    ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list) override;
+    ErrCode GetTransientTaskApps(std::vector<TransientTaskAppInfo> &list) override;
     ErrCode PauseTransientTaskTimeForInner(int32_t uid) override;
     ErrCode StartTransientTaskTimeForInner(int32_t uid) override;
-    ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list) override;
-    ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo) override;
+    ErrCode GetContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list) override;
+    ErrCode ApplyEfficiencyResources(const EfficiencyResourceInfo &resourceInfo) override;
     ErrCode ResetAllEfficiencyResources() override;
-    ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
-        std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList) override;
+    ErrCode GetEfficiencyResourcesInfos(std::vector<ResourceCallbackInfo> &appList,
+        std::vector<ResourceCallbackInfo> &procList) override;
     ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key) override;
     ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;

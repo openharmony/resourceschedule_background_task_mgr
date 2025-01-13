@@ -11,12 +11,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build/config/components/idl_tool/idl.gni")
 import("//build/ohos.gni")
 import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
+
+idl_gen_interface("background_task_mgr_interface") {
+  src_idl = rebase_path("IBackgroundTaskMgr.idl")
+  log_domainid = "0xD001711"
+  log_tag = "IBackgroundTaskMgr"
+}
+
+idl_gen_interface("background_task_subscriber_interface") {
+  src_idl = rebase_path("IBackgroundTaskSubscriber.idl")
+  log_domainid = "0xD001711"
+  log_tag = "IBackgroundTaskSubscriber"
+}
+
+idl_gen_interface("expired_callback_interface") {
+  src_idl = rebase_path("IExpiredCallback.idl")
+  log_domainid = "0xD001711"
+  log_tag = "IExpiredCallback"
+}
 
 config("bgtaskmgr_innerkits_public_config") {
   include_dirs = [
     "include",
+    "${target_gen_dir}",
     "${bgtaskmgr_frameworks_path}/common/include",
     "${bgtaskmgr_frameworks_path}/include",
   ]
@@ -29,12 +49,15 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     cfi_cross_dso = true
     debug = false
   }
+
+  deps = [
+    ":background_task_mgr_interface",
+    ":background_task_subscriber_interface",
+    ":expired_callback_interface",
+  ]
+
   sources = [
     "${bgtaskmgr_frameworks_path}/src/background_task_manager.cpp",
-    "${bgtaskmgr_frameworks_path}/src/background_task_mgr_proxy.cpp",
-    "${bgtaskmgr_frameworks_path}/src/background_task_subscriber_proxy.cpp",
-    "${bgtaskmgr_frameworks_path}/src/background_task_subscriber_stub.cpp",
-    "${bgtaskmgr_frameworks_path}/src/expired_callback_stub.cpp",
     "src/background_task_mgr_helper.cpp",
     "src/background_task_subscriber.cpp",
     "src/continuous_task_callback_info.cpp",
@@ -47,6 +70,29 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "src/transient_task_app_info.cpp",
   ]
 
+  output_values = get_target_outputs(":background_task_mgr_interface")
+  sources += filter_include(output_values,
+                            [
+                              "*_proxy.cpp",
+                              "*_stub.cpp",
+                            ])
+
+  subscriber_output_values =
+      get_target_outputs(":background_task_subscriber_interface")
+  sources += filter_include(subscriber_output_values,
+                            [
+                              "*_proxy.cpp",
+                              "*_stub.cpp",
+                            ])
+
+  expired_callback_output_values =
+      get_target_outputs(":expired_callback_interface")
+  sources += filter_include(expired_callback_output_values,
+                            [
+                              "*_proxy.cpp",
+                              "*_stub.cpp",
+                            ])
+
   public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
 
   external_deps = [
@@ -55,6 +101,7 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "common_event_service:cesfwk_innerkits",
     "hilog:libhilog",
     "hitrace:hitrace_meter",
+    "ipc:ipc_core",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
@@ -65,4 +112,136 @@ ohos_shared_library("bgtaskmgr_innerkits") {
   part_name = "background_task_mgr"
   innerapi_tags = [ "platformsdk" ]
   version_script = "libbgtaskmgr_innerkits.versionscript"
+}
+
+ohos_source_set("background_task_mgr_stub") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  output_values = get_target_outputs(":background_task_mgr_interface")
+  sources = filter_include(output_values, [ "*_stub.cpp" ])
+  public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
+  deps = [ ":background_task_mgr_interface" ]
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
+  external_deps = [
+    "ability_runtime:wantagent_innerkits",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+}
+
+ohos_source_set("background_task_mgr_proxy") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  output_values = get_target_outputs(":background_task_mgr_interface")
+  sources = filter_include(output_values, [ "*_proxy.cpp" ])
+  public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
+  deps = [ ":background_task_mgr_interface" ]
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
+  external_deps = [
+    "ability_runtime:wantagent_innerkits",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+}
+
+ohos_source_set("background_task_subscriber_stub") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  output_values = get_target_outputs(":background_task_subscriber_interface")
+  sources = filter_include(output_values, [ "*_stub.cpp" ])
+  public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
+  deps = [ ":background_task_subscriber_interface" ]
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
+  external_deps = [
+    "ability_runtime:wantagent_innerkits",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+}
+
+ohos_source_set("background_task_subscriber_proxy") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  output_values = get_target_outputs(":background_task_subscriber_interface")
+  sources = filter_include(output_values, [ "*_proxy.cpp" ])
+  public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
+  deps = [ ":background_task_subscriber_interface" ]
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
+  external_deps = [
+    "ability_runtime:wantagent_innerkits",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+}
+
+ohos_source_set("expired_callback_stub") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  output_values = get_target_outputs(":expired_callback_interface")
+  sources = filter_include(output_values, [ "*_stub.cpp" ])
+  public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
+  deps = [ ":expired_callback_interface" ]
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
+  external_deps = [
+    "ability_runtime:wantagent_innerkits",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+}
+
+ohos_source_set("expired_callback_proxy") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  output_values = get_target_outputs(":expired_callback_interface")
+  sources = filter_include(output_values, [ "*_proxy.cpp" ])
+  public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
+  deps = [ ":expired_callback_interface" ]
+  subsystem_name = "resourceschedule"
+  part_name = "background_task_mgr"
+  external_deps = [
+    "ability_runtime:wantagent_innerkits",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
 }

@@ -26,9 +26,6 @@ config("bgtaskmgr_service_public_config") {
 }
 
 BgTaskMgrServicecSrc = [
-  "${bgtaskmgr_frameworks_path}/src/background_task_mgr_stub.cpp",
-  "${bgtaskmgr_frameworks_path}/src/background_task_subscriber_proxy.cpp",
-  "${bgtaskmgr_frameworks_path}/src/expired_callback_proxy.cpp",
   "common/src/app_state_observer.cpp",
   "common/src/bgtask_config.cpp",
   "common/src/bundle_manager_helper.cpp",
@@ -78,7 +75,12 @@ ohos_shared_library("bgtaskmgr_service") {
 
   public_configs = [ ":bgtaskmgr_service_public_config" ]
 
-  deps = [ "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits" ]
+  deps = [
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_mgr_stub",
+    "${bgtaskmgr_interfaces_path}/innerkits:background_task_subscriber_proxy",
+    "${bgtaskmgr_interfaces_path}/innerkits:bgtaskmgr_innerkits",
+    "${bgtaskmgr_interfaces_path}/innerkits:expired_callback_proxy",
+  ]
 
   external_deps = [
     "ability_base:base",

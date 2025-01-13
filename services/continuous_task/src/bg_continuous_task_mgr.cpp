@@ -36,6 +36,7 @@
 #include "os_account_manager.h"
 #endif // HAS_OS_ACCOUNT_PART
 #include "notification_tools.h"
+#include "parameters.h"
 #include "running_process_info.h"
 #include "string_wrapper.h"
 #include "system_ability_definition.h"
@@ -1377,12 +1378,17 @@ bool BgContinuousTaskMgr::CanNotifyHap(const std::shared_ptr<SubscriberInfo> sub
 void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType changeEventType,
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGD("continuousTaskCallbackInfo is null");
+        return;
+    }
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     switch (changeEventType) {
         case ContinuousTaskEventTriggerType::TASK_START:
             for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task start callback trigger");
                 if (!(*iter)->isHap_) {
-                    (*iter)->subscriber_->OnContinuousTaskStart(continuousTaskCallbackInfo);
+                    (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
                 }
             }
             break;
@@ -1390,7 +1396,7 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
             for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task update callback trigger");
                 if (!(*iter)->isHap_) {
-                    (*iter)->subscriber_->OnContinuousTaskUpdate(continuousTaskCallbackInfo);
+                    (*iter)->subscriber_->OnContinuousTaskUpdate(taskCallbackInfoRef);
                 }
             }
             break;
@@ -1399,11 +1405,11 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
                 BGTASK_LOGD("continuous task stop callback trigger");
                 if (!(*iter)->isHap_) {
                     // notify all sa
-                    (*iter)->subscriber_->OnContinuousTaskStop(continuousTaskCallbackInfo);
+                    (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
                 } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo)) {
                     // notify self hap
                     BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify cancel", (*iter)->uid_);
-                    (*iter)->subscriber_->OnContinuousTaskStop(continuousTaskCallbackInfo);
+                    (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
                 }
             }
             break;

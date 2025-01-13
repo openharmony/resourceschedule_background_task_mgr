@@ -152,105 +152,102 @@ private:
         /**
          * @brief Called back when the subscriber is connected to Background Task Manager Service.
          */
-        void OnConnected() override;
+        ErrCode OnConnected() override;
 
         /**
          * @brief Called back when the subscriber is disconnected from Background Task Manager Service.
          */
-        void OnDisconnected() override;
+        ErrCode OnDisconnected() override;
 
         /**
          * @brief Called back when a transient task start.
          *
          * @param info Transient task app info.
          */
-        void OnTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+        ErrCode OnTransientTaskStart(const TransientTaskAppInfo& info) override;
 
         /**
          * Called back when the app has transient task.
          *
          * @param info App info of transient task.
          **/
-        void OnAppTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+        ErrCode OnAppTransientTaskStart(const TransientTaskAppInfo& info) override;
 
         /**
          * Called back when the app does not have transient task.
          *
          * @param info App info transient task .
          **/
-        void OnAppTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+        ErrCode OnAppTransientTaskEnd(const TransientTaskAppInfo& info) override;
 
         /**
          * @brief Called back when a transient task end.
          *
          * @param info Transient task app info.
          */
-        void OnTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+        ErrCode OnTransientTaskEnd(const TransientTaskAppInfo& info) override;
 
         /**
          * @brief Called back when a transient task err.
          *
          * @param info Transient task app info.
          */
-        void OnTransientTaskErr(const std::shared_ptr<TransientTaskAppInfo>& info) override;
+        ErrCode OnTransientTaskErr(const TransientTaskAppInfo& info) override;
 
         /**
          * @brief Called back when a continuous task start.
          *
          * @param continuousTaskCallbackInfo Continuous task app info.
          */
-        void OnContinuousTaskStart(
-            const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+        ErrCode OnContinuousTaskStart(const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override;
         /**
          * @brief Called back when a continuous task update.
          *
          * @param continuousTaskCallbackInfo Continuous task app info.
          */
-        void OnContinuousTaskUpdate(
-            const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+        ErrCode OnContinuousTaskUpdate(const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override;
 
         /**
          * @brief Called back when a continuous task stop.
          *
          * @param continuousTaskCallbackInfo Continuous task app info.
          */
-        void OnContinuousTaskStop(
-            const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+        ErrCode OnContinuousTaskStop(const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override;
         
         /**
          * Called back when the app does not have continuous task.
          *
          * @param uid App uid.
          */
-        void OnAppContinuousTaskStop(int32_t uid) override;
+        ErrCode OnAppContinuousTaskStop(int32_t uid) override;
 
         /**
          * @brief Apply or unapply efficiency resources of App.
          *
          * @param resourceInfo Request params.
          */
-        void OnAppEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+        ErrCode OnAppEfficiencyResourcesApply(const ResourceCallbackInfo &resourceInfo) override;
 
         /**
          * @brief Called back when the efficiency resources of App reset.
          *
          * @param resourceInfo Request params.
          */
-        void OnAppEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+        ErrCode OnAppEfficiencyResourcesReset(const ResourceCallbackInfo &resourceInfo) override;
 
         /**
          * @brief Apply or unapply efficiency resources of process.
          *
          * @param resourceInfo Request params.
          */
-        void OnProcEfficiencyResourcesApply(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+        ErrCode OnProcEfficiencyResourcesApply(const ResourceCallbackInfo &resourceInfo) override;
 
         /**
          * @brief Called back when the efficiency resources of process reset.
          *
          * @param resourceInfo Request params.
          */
-        void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) override;
+        ErrCode OnProcEfficiencyResourcesReset(const ResourceCallbackInfo &resourceInfo) override;
 
     public:
         BackgroundTaskSubscriber &subscriber_;

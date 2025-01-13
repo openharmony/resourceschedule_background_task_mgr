@@ -19,7 +19,6 @@
 
 #include "background_task_subscriber_stub.h"
 #include "background_task_subscriber.h"
-#include "ibackground_task_subscriber_ipc_interface_code.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -42,53 +41,53 @@ public:
         auto subscriber = TestBackgroundTaskSubscriber();
         auto subscriberImpl = std::make_shared<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl>(subscriber);
         
-        uint32_t code1 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONNECTED);
+        uint32_t code1 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_CONNECTED);
         subscriberImpl->OnRemoteRequest(code1, datas, reply, option);
 
-        uint32_t code2 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_DISCONNECTED);
+        uint32_t code2 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_DISCONNECTED);
         subscriberImpl->OnRemoteRequest(code2, datas, reply, option);
 
-        uint32_t code3 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_START);
+        uint32_t code3 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_TRANSIENT_TASK_START);
         subscriberImpl->OnRemoteRequest(code3, datas, reply, option);
 
-        uint32_t code4 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_END);
+        uint32_t code4 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_TRANSIENT_TASK_END);
         subscriberImpl->OnRemoteRequest(code4, datas, reply, option);
 
-        uint32_t code15 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_TRANSIENT_TASK_ERR);
+        uint32_t code15 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_TRANSIENT_TASK_ERR);
         subscriberImpl->OnRemoteRequest(code15, datas, reply, option);
 
-        uint32_t code5 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_START);
+        uint32_t code5 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_APP_TRANSIENT_TASK_START);
         subscriberImpl->OnRemoteRequest(code5, datas, reply, option);
 
-        uint32_t code6 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_TRANSIENT_TASK_END);
+        uint32_t code6 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_APP_TRANSIENT_TASK_END);
         subscriberImpl->OnRemoteRequest(code6, datas, reply, option);
 
-        uint32_t code7 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_START);
+        uint32_t code7 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_CONTINUOUS_TASK_START);
         subscriberImpl->OnRemoteRequest(code7, datas, reply, option);
 
-        uint32_t code8 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_UPDATE);
+        uint32_t code8 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_CONTINUOUS_TASK_UPDATE);
         subscriberImpl->OnRemoteRequest(code8, datas, reply, option);
 
-        uint32_t code9 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_CONTINUOUS_TASK_STOP);
+        uint32_t code9 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_CONTINUOUS_TASK_STOP);
         subscriberImpl->OnRemoteRequest(code9, datas, reply, option);
 
-        uint32_t code10 = static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_CONTINUOUS_TASK_STOP);
+        uint32_t code10 = static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_APP_CONTINUOUS_TASK_STOP);
         subscriberImpl->OnRemoteRequest(code10, datas, reply, option);
 
         uint32_t code11 =
-            static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_EFFICIENCY_RESOURCES_APPLY);
+            static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_APP_EFFICIENCY_RESOURCES_APPLY);
         subscriberImpl->OnRemoteRequest(code11, datas, reply, option);
 
         uint32_t code12 =
-            static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_APP_EFFICIENCY_RESOURCES_RESET);
+            static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_APP_EFFICIENCY_RESOURCES_RESET);
         subscriberImpl->OnRemoteRequest(code12, datas, reply, option);
 
         uint32_t code13 =
-            static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_PROC_EFFICIENCY_RESOURCES_APPLY);
+            static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_PROC_EFFICIENCY_RESOURCES_APPLY);
         subscriberImpl->OnRemoteRequest(code13, datas, reply, option);
 
         uint32_t code14 =
-            static_cast<uint32_t>(IBackgroundTaskSubscriberInterfaceCode::ON_PROC_EFFICIENCY_RESOURCES_RESET);
+            static_cast<uint32_t>(IBackgroundTaskSubscriberIpcCode::COMMAND_ON_PROC_EFFICIENCY_RESOURCES_RESET);
         subscriberImpl->OnRemoteRequest(code14, datas, reply, option);
         return true;
     }

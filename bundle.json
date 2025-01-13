@@ -41,6 +41,7 @@
           "eventhandler",
           "hitrace",
           "hilog",
+          "idl_tool",
           "ipc",
           "init",
           "napi",

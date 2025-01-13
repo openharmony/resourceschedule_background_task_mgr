@@ -51,21 +51,6 @@ public:
         MessageOption option;
         auto subscriber = TestBackgroundTaskSubscriber();
         auto subscriberImpl = std::make_shared<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl>(subscriber);
-        subscriberImpl->HandleOnConnected();
-        subscriberImpl->HandleOnDisconnected();
-        subscriberImpl->HandleOnTransientTaskStart(datas);
-        subscriberImpl->HandleOnTransientTaskEnd(datas);
-        subscriberImpl->HandleOnTransientTaskErr(datas);
-        subscriberImpl->HandleOnAppTransientTaskStart(datas);
-        subscriberImpl->HandleOnAppTransientTaskEnd(datas);
-        subscriberImpl->HandleOnContinuousTaskStart(datas);
-        subscriberImpl->HandleOnContinuousTaskUpdate(datas);
-        subscriberImpl->HandleOnContinuousTaskCancel(datas);
-        subscriberImpl->HandleOnAppContinuousTaskStop(datas);
-        subscriberImpl->HandleOnAppEfficiencyResourcesApply(datas);
-        subscriberImpl->HandleOnAppEfficiencyResourcesReset(datas);
-        subscriberImpl->HandleOnProcEfficiencyResourcesApply(datas);
-        subscriberImpl->HandleOnProcEfficiencyResourcesReset(datas);
         subscriberImpl->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
         return true;
     }

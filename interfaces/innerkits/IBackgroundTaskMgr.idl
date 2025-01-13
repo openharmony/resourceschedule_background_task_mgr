@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+sequenceable continuous_task_callback_info..OHOS.BackgroundTaskMgr.ContinuousTaskCallbackInfo;
+sequenceable continuous_task_param..OHOS.BackgroundTaskMgr.ContinuousTaskParam;
+sequenceable continuous_task_param..OHOS.BackgroundTaskMgr.ContinuousTaskParamForInner;
+sequenceable delay_suspend_info..OHOS.BackgroundTaskMgr.DelaySuspendInfo;
+sequenceable efficiency_resource_info..OHOS.BackgroundTaskMgr.EfficiencyResourceInfo;
+sequenceable resource_callback_info..OHOS.BackgroundTaskMgr.ResourceCallbackInfo;
+sequenceable OHOS.IRemoteObject;
+sequenceable transient_task_app_info..OHOS.BackgroundTaskMgr.TransientTaskAppInfo;
+
+interface OHOS.BackgroundTaskMgr.IBackgroundTaskSubscriber;
+interface OHOS.BackgroundTaskMgr.IExpiredCallback;
+interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
+    void RequestSuspendDelay([in] String reason, [in] IExpiredCallback expiredCallback, [out] DelaySuspendInfo delayInfo);
+    void CancelSuspendDelay([in] int requestId);
+    void GetRemainingDelayTime([in] int requestId, [out] int delayTime);
+    void StartBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int continuousTaskId);
+    void UpdateBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int continuousTaskId);
+    void StopBackgroundRunning([in] String abilityName, [in] IRemoteObject abilityToken, [in] int abilityId);
+    void SubscribeBackgroundTask([in] IBackgroundTaskSubscriber subscriber);
+    void UnsubscribeBackgroundTask([in] IBackgroundTaskSubscriber subscriber);
+    void GetTransientTaskApps([out] TransientTaskAppInfo[] list);
+    void GetContinuousTaskApps([out] ContinuousTaskCallbackInfo[] list);
+    void ApplyEfficiencyResources([in] EfficiencyResourceInfo resourceInfo);
+    void ResetAllEfficiencyResources();
+    void GetEfficiencyResourcesInfos([out] ResourceCallbackInfo[] appList, [out] ResourceCallbackInfo[] procList);
+    void StopContinuousTask([in] int uid, [in] int pid, [in] unsigned int taskType, [in] String key);
+    void RequestBackgroundRunningForInner([in] ContinuousTaskParamForInner taskParam);
+    void PauseTransientTaskTimeForInner([in] int uid);
+    void StartTransientTaskTimeForInner([in] int uid);
+    void SetBgTaskConfig([in] String configData, [in] int sourceType);
+}

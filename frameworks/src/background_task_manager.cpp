@@ -46,7 +46,7 @@ ErrCode BackgroundTaskManager::CancelSuspendDelay(int32_t requestId)
     return proxy_->CancelSuspendDelay(requestId);
 }
 
-ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reason,
+ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reasonu16,
     const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
@@ -60,7 +60,12 @@ ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reason,
         BGTASK_LOGE("callbackSptr is nullptr");
         return ERR_CALLBACK_NULL_OR_TYPE_ERR;
     }
-    return proxy_->RequestSuspendDelay(reason, callbackSptr, delayInfo);
+    if (!delayInfo) {
+        BGTASK_LOGE("delayInfo is nullptr");
+        return ERR_CALLBACK_NULL_OR_TYPE_ERR;
+    }
+    std::string reason = Str16ToStr8(reasonu16);
+    return proxy_->RequestSuspendDelay(reason, callbackSptr, *delayInfo.get());
 }
 
 ErrCode BackgroundTaskManager::GetRemainingDelayTime(int32_t requestId, int32_t &delayTime)
@@ -83,7 +88,7 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(ContinuousTaskParam
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     sptr<ContinuousTaskParam> taskParamPtr = new (std::nothrow) ContinuousTaskParam(taskParam);
-    if (taskParamPtr == nullptr) {
+    if (taskParamPtr == nullptr || taskParamPtr.GetRefPtr() == nullptr) {
         BGTASK_LOGE("Failed to create continuous task param");
         return ERR_BGTASK_NO_MEMORY;
     }
@@ -92,9 +97,11 @@ ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(ContinuousTaskParam
         static_cast<uint32_t>(taskParam.bgModeIds_.size()),
         taskParamPtr->isBatchApi_, taskParam.isBatchApi_,
         taskParamPtr->abilityId_);
-    ErrCode res = proxy_->StartBackgroundRunning(taskParamPtr);
-    taskParam.notificationId_ = taskParamPtr->notificationId_;
-    taskParam.continuousTaskId_ = taskParamPtr->continuousTaskId_;
+    int32_t notificationId = taskParamPtr->notificationId_;
+    int32_t continuousTaskId = taskParamPtr->continuousTaskId_;
+    ErrCode res = proxy_->StartBackgroundRunning(*taskParamPtr.GetRefPtr(), notificationId, continuousTaskId);
+    taskParam.notificationId_ = notificationId;
+    taskParam.continuousTaskId_ = continuousTaskId;
     return res;
 }
 
@@ -107,7 +114,7 @@ ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(ContinuousTaskPara
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     sptr<ContinuousTaskParam> taskParamPtr = new (std::nothrow) ContinuousTaskParam(taskParam);
-    if (taskParamPtr == nullptr) {
+    if (taskParamPtr == nullptr || taskParamPtr.GetRefPtr() == nullptr) {
         BGTASK_LOGE("Failed to create continuous task param");
         return ERR_BGTASK_NO_MEMORY;
     }
@@ -116,9 +123,11 @@ ErrCode BackgroundTaskManager::RequestUpdateBackgroundRunning(ContinuousTaskPara
         static_cast<uint32_t>(taskParamPtr->bgModeIds_.size()),
         static_cast<uint32_t>(taskParam.bgModeIds_.size()), taskParamPtr->isBatchApi_, taskParam.isBatchApi_,
         taskParamPtr->abilityId_);
-    ErrCode ret = proxy_->UpdateBackgroundRunning(taskParamPtr);
-    taskParam.notificationId_ = taskParamPtr->notificationId_;
-    taskParam.continuousTaskId_ = taskParamPtr->continuousTaskId_;
+    int32_t notificationId = taskParamPtr->notificationId_;
+    int32_t continuousTaskId = taskParamPtr->continuousTaskId_;
+    ErrCode ret = proxy_->UpdateBackgroundRunning(*taskParamPtr.GetRefPtr(), notificationId, continuousTaskId);
+    taskParam.notificationId_ = notificationId;
+    taskParam.continuousTaskId_ = continuousTaskId;
     return ret;
 }
 
@@ -131,12 +140,12 @@ ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const Continuous
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     sptr<ContinuousTaskParamForInner> taskParamPtr = new (std::nothrow) ContinuousTaskParamForInner(taskParam);
-    if (taskParamPtr == nullptr) {
+    if (taskParamPtr == nullptr || taskParamPtr.GetRefPtr() == nullptr) {
         BGTASK_LOGE("Failed to create continuous task param");
         return ERR_BGTASK_NO_MEMORY;
     }
 
-    return proxy_->RequestBackgroundRunningForInner(taskParamPtr);
+    return proxy_->RequestBackgroundRunningForInner(*taskParamPtr.GetRefPtr());
 }
 
 ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &abilityName,
@@ -183,7 +192,16 @@ ErrCode BackgroundTaskManager::GetTransientTaskApps(std::vector<std::shared_ptr<
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return proxy_->GetTransientTaskApps(list);
+    std::vector<TransientTaskAppInfo> TaskAppsList;
+    ErrCode result = proxy_->GetTransientTaskApps(TaskAppsList);
+    if (result == ERR_OK) {
+        list.clear();
+        for (const auto& item : TaskAppsList) {
+            list.push_back(std::make_shared<TransientTaskAppInfo>(item));
+        }
+    }
+
+    return result;
 }
 
 ErrCode BackgroundTaskManager::PauseTransientTaskTimeForInner(int32_t uid)
@@ -211,11 +229,11 @@ ErrCode BackgroundTaskManager::ApplyEfficiencyResources(const EfficiencyResource
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     sptr<EfficiencyResourceInfo> resourceInfoPtr = new (std::nothrow) EfficiencyResourceInfo(resourceInfo);
-    if (resourceInfoPtr == nullptr) {
+    if (resourceInfoPtr == nullptr || resourceInfoPtr.GetRefPtr() == nullptr) {
         BGTASK_LOGE("Failed to create efficiency resource info");
         return ERR_BGTASK_NO_MEMORY;
     }
-    return proxy_->ApplyEfficiencyResources(resourceInfoPtr);
+    return proxy_->ApplyEfficiencyResources(*resourceInfoPtr.GetRefPtr());
 }
 
 ErrCode BackgroundTaskManager::ResetAllEfficiencyResources()
@@ -235,7 +253,21 @@ ErrCode BackgroundTaskManager::GetEfficiencyResourcesInfos(std::vector<std::shar
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return proxy_->GetEfficiencyResourcesInfos(appList, procList);
+    std::vector<ResourceCallbackInfo> resourceAppList;
+    std::vector<ResourceCallbackInfo> resourceProcList;
+    ErrCode result = proxy_->GetEfficiencyResourcesInfos(resourceAppList, resourceProcList);
+    if (result == ERR_OK) {
+        appList.clear();
+        procList.clear();
+        for (const auto& item : resourceAppList) {
+            appList.push_back(std::make_shared<ResourceCallbackInfo>(item));
+        }
+
+        for (const auto& item : resourceProcList) {
+            procList.push_back(std::make_shared<ResourceCallbackInfo>(item));
+        }
+    }
+    return result;
 }
 
 bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
@@ -276,7 +308,16 @@ ErrCode BackgroundTaskManager::GetContinuousTaskApps(std::vector<std::shared_ptr
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return proxy_->GetContinuousTaskApps(list);
+    std::vector<ContinuousTaskCallbackInfo> TaskAppsList;
+    ErrCode result = proxy_->GetContinuousTaskApps(TaskAppsList);
+    if (result == ERR_OK) {
+        list.clear();
+        for (const auto& item : TaskAppsList) {
+            list.push_back(std::make_shared<ContinuousTaskCallbackInfo>(item));
+        }
+    }
+
+    return result;
 }
 
 ErrCode BackgroundTaskManager::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key)

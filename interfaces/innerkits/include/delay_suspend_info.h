@@ -29,7 +29,7 @@ public:
      * @param parcel Indicates the parcel object for unmarshalling.
      * @return The info of delay suspend.
      */
-    static std::shared_ptr<DelaySuspendInfo> Unmarshalling(Parcel& in);
+    static DelaySuspendInfo* Unmarshalling(Parcel& in);
 
     /**
      * @brief Marshals a purpose into a parcel.

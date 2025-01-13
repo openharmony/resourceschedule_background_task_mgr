@@ -71,86 +71,114 @@ const sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> BackgroundTas
 BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::BackgroundTaskSubscriberImpl(
     BackgroundTaskSubscriber &subscriber) : subscriber_(subscriber) {}
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnConnected() {}
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnConnected() {return ERR_OK;}
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnDisconnected() {}
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnDisconnected() {return ERR_OK;}
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyResourcesApply(
-    const std::shared_ptr<ResourceCallbackInfo> &resourceInfo)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyResourcesApply(
+    const ResourceCallbackInfo &resourceInfo)
 {
-    subscriber_.OnAppEfficiencyResourcesApply(resourceInfo);
+    std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
+    subscriber_.OnAppEfficiencyResourcesApply(sharedResourceInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyResourcesReset(
-    const std::shared_ptr<ResourceCallbackInfo> &resourceInfo)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyResourcesReset(
+    const ResourceCallbackInfo &resourceInfo)
 {
-    subscriber_.OnAppEfficiencyResourcesReset(resourceInfo);
+    std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
+    subscriber_.OnAppEfficiencyResourcesReset(sharedResourceInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiencyResourcesApply(
-    const std::shared_ptr<ResourceCallbackInfo> &resourceInfo)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiencyResourcesApply(
+    const ResourceCallbackInfo &resourceInfo)
 {
-    subscriber_.OnProcEfficiencyResourcesApply(resourceInfo);
+    std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
+    subscriber_.OnProcEfficiencyResourcesApply(sharedResourceInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiencyResourcesReset(
-    const std::shared_ptr<ResourceCallbackInfo> &resourceInfo)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiencyResourcesReset(
+    const ResourceCallbackInfo &resourceInfo)
 {
-    subscriber_.OnProcEfficiencyResourcesReset(resourceInfo);
+    std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
+    subscriber_.OnProcEfficiencyResourcesReset(sharedResourceInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskStart(
-    const std::shared_ptr<TransientTaskAppInfo>& info)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskStart(
+    const TransientTaskAppInfo& info)
 {
-    subscriber_.OnTransientTaskStart(info);
+    std::shared_ptr<TransientTaskAppInfo> sharedInfo = std::make_shared<TransientTaskAppInfo>(info);
+    subscriber_.OnTransientTaskStart(sharedInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskEnd(
-    const std::shared_ptr<TransientTaskAppInfo>& info)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskEnd(
+    const TransientTaskAppInfo& info)
 {
-    subscriber_.OnTransientTaskEnd(info);
+    std::shared_ptr<TransientTaskAppInfo> sharedInfo = std::make_shared<TransientTaskAppInfo>(info);
+    subscriber_.OnTransientTaskEnd(sharedInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskErr(
-    const std::shared_ptr<TransientTaskAppInfo>& info)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskErr(
+    const TransientTaskAppInfo& info)
 {
-    subscriber_.OnTransientTaskErr(info);
+    std::shared_ptr<TransientTaskAppInfo> sharedInfo = std::make_shared<TransientTaskAppInfo>(info);
+    subscriber_.OnTransientTaskErr(sharedInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppTransientTaskStart(
-    const std::shared_ptr<TransientTaskAppInfo>& info)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppTransientTaskStart(
+    const TransientTaskAppInfo& info)
 {
-    subscriber_.OnAppTransientTaskStart(info);
+    std::shared_ptr<TransientTaskAppInfo> sharedInfo = std::make_shared<TransientTaskAppInfo>(info);
+    subscriber_.OnAppTransientTaskStart(sharedInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppTransientTaskEnd(
-    const std::shared_ptr<TransientTaskAppInfo>& info)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppTransientTaskEnd(
+    const TransientTaskAppInfo& info)
 {
-    subscriber_.OnAppTransientTaskEnd(info);
+    std::shared_ptr<TransientTaskAppInfo> sharedInfo = std::make_shared<TransientTaskAppInfo>(info);
+    subscriber_.OnAppTransientTaskEnd(sharedInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStart(
-    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStart(
+    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo)
 {
-    subscriber_.OnContinuousTaskStart(continuousTaskCallbackInfo);
+    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
+        std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
+    subscriber_.OnContinuousTaskStart(sharedInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskUpdate(
-    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskUpdate(
+    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo)
 {
-    subscriber_.OnContinuousTaskUpdate(continuousTaskCallbackInfo);
+    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
+        std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
+    subscriber_.OnContinuousTaskUpdate(sharedInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStop(
-    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStop(
+    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo)
 {
-    subscriber_.OnContinuousTaskStop(continuousTaskCallbackInfo);
+    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
+        std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
+    subscriber_.OnContinuousTaskStop(sharedInfo);
+    return ERR_OK;
 }
 
-void BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppContinuousTaskStop(int32_t uid)
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppContinuousTaskStop(int32_t uid)
     __attribute__((no_sanitize("cfi")))
 {
     subscriber_.OnAppContinuousTaskStop(uid);
+    return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

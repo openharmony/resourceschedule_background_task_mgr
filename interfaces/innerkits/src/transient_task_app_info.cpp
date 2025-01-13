@@ -21,7 +21,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-bool TransientTaskAppInfo::Marshalling(MessageParcel& out) const
+bool TransientTaskAppInfo::Marshalling(Parcel& out) const
 {
     WRITE_PARCEL_WITH_RET(out, String16, Str8ToStr16(packageName_), false);
     WRITE_PARCEL_WITH_RET(out, Int32, uid_, false);
@@ -29,7 +29,7 @@ bool TransientTaskAppInfo::Marshalling(MessageParcel& out) const
     return true;
 }
 
-bool TransientTaskAppInfo::ReadFromParcel(MessageParcel& in)
+bool TransientTaskAppInfo::ReadFromParcel(Parcel& in)
 {
     std::u16string package = in.ReadString16();
     packageName_ = Str16ToStr8(package);
@@ -38,13 +38,15 @@ bool TransientTaskAppInfo::ReadFromParcel(MessageParcel& in)
     return true;
 }
 
-std::shared_ptr<TransientTaskAppInfo> TransientTaskAppInfo::Unmarshalling(MessageParcel& in)
+TransientTaskAppInfo* TransientTaskAppInfo::Unmarshalling(Parcel& in)
 {
-    auto transientAppInfo = std::make_shared<TransientTaskAppInfo>();
-    if (!transientAppInfo->ReadFromParcel(in)) {
-        return nullptr;
+    TransientTaskAppInfo* info = new (std::nothrow) TransientTaskAppInfo();
+    if (info && !info->ReadFromParcel(in)) {
+        BGTASK_LOGE("read from parcel failed");
+        delete info;
+        info = nullptr;
     }
-    return transientAppInfo;
+    return info;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
