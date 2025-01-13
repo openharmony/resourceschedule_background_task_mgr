@@ -298,7 +298,7 @@ ohos_unittest("bgtask_misc_unit_test") {
     cfi_cross_dso = true
     debug = false
   }
-  
+
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
