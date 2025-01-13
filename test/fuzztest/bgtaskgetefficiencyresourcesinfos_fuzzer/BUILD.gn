@@ -27,7 +27,7 @@ ohos_fuzztest("BgTaskGetEfficiencyResourcesInfosFuzzTest") {
     "../common",
     "${target_gen_dir}",
   ]
-  
+
   cflags = [
     "-g",
     "-O0",

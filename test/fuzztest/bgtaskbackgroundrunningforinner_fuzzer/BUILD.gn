@@ -27,7 +27,7 @@ ohos_fuzztest("BgTaskBackgroundRunningForInnerFuzzTest") {
     "../common",
     "${target_gen_dir}",
   ]
-  
+
   cflags = [
     "-g",
     "-O0",
