@@ -154,23 +154,22 @@ WEAK_FUNC void NotificationTools::RefreshContinuousNotifications(
     const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos, int32_t serviceUid)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
-    std::vector<sptr<Notification::Notification>> notifications;
-    ErrCode ret = Notification::NotificationHelper::GetAllActiveNotifications(notifications);
+    std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
+    ErrCode ret = Notification::NotificationHelper::GetActiveNotifications(notificationRequests);
     if (ret != ERR_OK) {
         BGTASK_LOGE("get all active notification fail!");
         return;
     }
-    for (auto &var : notifications) {
-        Notification::NotificationRequest request = var->GetNotificationRequest();
+    for (const Notification::NotificationRequest *var : notificationRequests) {
         std::string label = var->GetLabel();
-        if (newPromptInfos.count(label) == 0 || request.GetCreatorUid() != serviceUid) {
+        if (newPromptInfos.count(label) == 0 || var->GetCreatorUid() != serviceUid) {
             continue;
         }
-        auto &content = request.GetContent();
+        auto &content = var->GetContent();
         auto const &normalContent = content->GetNotificationContent();
         normalContent->SetTitle(newPromptInfos.at(label).first);
         normalContent->SetText(newPromptInfos.at(label).second);
-        if (Notification::NotificationHelper::PublishContinuousTaskNotification(request) != ERR_OK) {
+        if (Notification::NotificationHelper::PublishContinuousTaskNotification(*var) != ERR_OK) {
             BGTASK_LOGE("refresh notification error");
         }
     }
