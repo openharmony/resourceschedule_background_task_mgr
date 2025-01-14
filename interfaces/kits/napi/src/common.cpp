@@ -23,7 +23,7 @@ namespace BackgroundTaskMgr {
 const uint32_t STR_MAX_SIZE = 64;
 const uint32_t EXPIRE_CALLBACK_PARAM_NUM = 1;
 const uint32_t ASYNC_CALLBACK_PARAM_NUM = 2;
-const inline std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
+const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_PERMISSION_DENIED, "Permission denied."},
     {ERR_BGTASK_NOT_SYSTEM_APP,
         "System API verification failed. Only system application can apply."},
@@ -68,7 +68,7 @@ const inline std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_INVALID_PROCESS_NAME, "Transient task verification failed. caller process name invaild."},
 };
 
-const inline std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
+const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
     {ERR_PARAM_NUMBER_ERR, "The number of arguments is wrong."},
     {ERR_REASON_NULL_OR_TYPE_ERR, "The reason cannot be null and its type must be string."},
     {ERR_CALLBACK_NULL_OR_TYPE_ERR, "The callback cannot be null and its type must be function."},
