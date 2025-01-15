@@ -163,14 +163,24 @@ ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const ContinuousTaskPar
     int32_t& notificationId, int32_t& continuousTaskId)
 {
     auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
-    return BgContinuousTaskMgr::GetInstance()->StartBackgroundRunning(paramPtr);
+    ErrCode result = BgContinuousTaskMgr::GetInstance()->StartBackgroundRunning(paramPtr);
+    if (result == ERR_OK) {
+        notificationId = paramPtr->notificationId_;
+        continuousTaskId = paramPtr->continuousTaskId_;
+    }
+    return result;
 }
 
 ErrCode BackgroundTaskMgrService::UpdateBackgroundRunning(const ContinuousTaskParam &taskParam,
     int32_t& notificationId, int32_t& continuousTaskId)
 {
     auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
-    return BgContinuousTaskMgr::GetInstance()->UpdateBackgroundRunning(paramPtr);
+    ErrCode result = BgContinuousTaskMgr::GetInstance()->UpdateBackgroundRunning(paramPtr);
+    if (result == ERR_OK) {
+        notificationId = paramPtr->notificationId_;
+        continuousTaskId = paramPtr->continuousTaskId_;
+    }
+    return result;
 }
 
 ErrCode BackgroundTaskMgrService::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)
