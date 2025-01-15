@@ -17,7 +17,7 @@ sequenceable transient_task_app_info..OHOS.BackgroundTaskMgr.TransientTaskAppInf
 sequenceable continuous_task_callback_info..OHOS.BackgroundTaskMgr.ContinuousTaskCallbackInfo;
 sequenceable resource_callback_info..OHOS.BackgroundTaskMgr.ResourceCallbackInfo;
 interface OHOS.BackgroundTaskMgr.IBackgroundTaskSubscriber {
-    [oneway, ipccode 0x00000001] void OnConnected();
+    [oneway] void OnConnected();
     [oneway] void OnDisconnected();
     [oneway] void OnTransientTaskStart([in] TransientTaskAppInfo info);
     [oneway] void OnTransientTaskEnd([in] TransientTaskAppInfo info);
