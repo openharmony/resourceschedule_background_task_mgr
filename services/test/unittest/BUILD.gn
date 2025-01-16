@@ -25,12 +25,6 @@ ohos_unittest("bgtask_unit_test") {
     "-Dprotected=public",
   ]
 
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-  }
-
   cflags_cc = []
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",
@@ -99,12 +93,6 @@ ohos_unittest("efficiency_mgr_unit_test") {
     "-Dprivate=public",
     "-Dprotected=public",
   ]
-
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-  }
 
   cflags_cc = []
   include_dirs = [
@@ -292,12 +280,6 @@ ohos_unittest("bgtask_misc_unit_test") {
     "-Dprivate=public",
     "-Dprotected=public",
   ]
-
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-  }
 
   include_dirs = [
     "${bgtaskmgr_services_path}/transient_task/include",

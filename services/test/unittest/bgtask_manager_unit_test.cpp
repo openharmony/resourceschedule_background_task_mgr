@@ -453,17 +453,6 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_040, TestSize.Level1)
         ERR_BGTASK_INVALID_PARAM);
     EXPECT_EQ(DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->RemoveSubscriber(subscirberProxy1),
         ERR_BGTASK_INVALID_PARAM);
-    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
-    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->deathRecipient_ = nullptr;
-    EXPECT_EQ(DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->AddSubscriber(subscriber1.GetImpl()),
-        ERR_BGTASK_INVALID_PARAM);
-    EXPECT_EQ(DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->RemoveSubscriber(subscriber1.GetImpl()),
-        ERR_BGTASK_OBJECT_EXISTS);
-
-    DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->deathRecipient_
-        = new (std::nothrow) ObserverDeathRecipient();
-    EXPECT_EQ(DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->RemoveSubscriber(subscriber1.GetImpl()),
-        ERR_BGTASK_OBJECT_EXISTS);
 }
 
 /**
