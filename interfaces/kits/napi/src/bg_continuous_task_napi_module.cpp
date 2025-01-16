@@ -135,36 +135,6 @@ napi_value GetAbilityContext(const napi_env &env, const napi_value &value,
     }
 }
 
-std::string GetMainAbilityLabel(const std::string &bundleName)
-{
-    sptr<ISystemAbilityManager> systemAbilityManager =
-        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityManager == nullptr) {
-        BGTASK_LOGE("get SystemAbilityManager failed");
-        return "";
-    }
-
-    sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-    if (remoteObject == nullptr) {
-        BGTASK_LOGE("get Bundle Manager object failed");
-        return "";
-    }
-
-    auto bundleMgr = iface_cast<AppExecFwk::IBundleMgr>(remoteObject);
-    if (bundleMgr == nullptr) {
-        BGTASK_LOGE("get Bundle Manager Proxy failed");
-        return "";
-    }
-
-    AAFwk::Want want;
-    want.SetAction("action.system.home");
-    want.AddEntity("entity.system.home");
-    want.SetElementName("", bundleName, "", "");
-    AppExecFwk::AbilityInfo abilityInfo;
-    bundleMgr->QueryAbilityInfo(want, abilityInfo);
-    return bundleMgr->GetAbilityLabel(bundleName, abilityInfo.name);
-}
-
 bool CheckBackgroundMode(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
 {
     if (!asyncCallbackInfo->isBatchApi) {
@@ -241,8 +211,7 @@ void UpdateBackgroundRunningExecuteCB(napi_env env, void *data)
     }
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode, nullptr, info->name,
-        asyncCallbackInfo->abilityContext->GetToken(),
-        GetMainAbilityLabel(info->bundleName), true, asyncCallbackInfo->bgModes,
+        asyncCallbackInfo->abilityContext->GetToken(), "", true, asyncCallbackInfo->bgModes,
         asyncCallbackInfo->abilityContext->GetAbilityRecordId());
     BGTASK_LOGI("RequestUpdateBackgroundRunning isBatch: %{public}d, bgModeSize: %{public}u",
         taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
@@ -264,7 +233,7 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
     }
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode, asyncCallbackInfo->wantAgent,
-        info->name, asyncCallbackInfo->abilityContext->GetToken(), GetMainAbilityLabel(info->bundleName),
+        info->name, asyncCallbackInfo->abilityContext->GetToken(), "",
         asyncCallbackInfo->isBatchApi, asyncCallbackInfo->bgModes,
         asyncCallbackInfo->abilityContext->GetAbilityRecordId());
     BGTASK_LOGI("RequestStartBackgroundRunning isBatch: %{public}d, bgModeSize: %{public}u",
