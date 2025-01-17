@@ -76,7 +76,7 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnConnected() {r
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnDisconnected() {return ERR_OK;}
 
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyResourcesApply(
-    const ResourceCallbackInfo &resourceInfo)
+    const ResourceCallbackInfo &resourceInfo) __attribute__((no_sanitize("cfi")))
 {
     std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
     subscriber_.OnAppEfficiencyResourcesApply(sharedResourceInfo);
@@ -84,7 +84,7 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyR
 }
 
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyResourcesReset(
-    const ResourceCallbackInfo &resourceInfo)
+    const ResourceCallbackInfo &resourceInfo) __attribute__((no_sanitize("cfi")))
 {
     std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
     subscriber_.OnAppEfficiencyResourcesReset(sharedResourceInfo);
@@ -92,7 +92,7 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyR
 }
 
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiencyResourcesApply(
-    const ResourceCallbackInfo &resourceInfo)
+    const ResourceCallbackInfo &resourceInfo) __attribute__((no_sanitize("cfi")))
 {
     std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
     subscriber_.OnProcEfficiencyResourcesApply(sharedResourceInfo);
@@ -100,7 +100,7 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiency
 }
 
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiencyResourcesReset(
-    const ResourceCallbackInfo &resourceInfo)
+    const ResourceCallbackInfo &resourceInfo) __attribute__((no_sanitize("cfi")))
 {
     std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
     subscriber_.OnProcEfficiencyResourcesReset(sharedResourceInfo);
@@ -148,7 +148,7 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppTransientTa
 }
 
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStart(
-    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo)
+    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) __attribute__((no_sanitize("cfi")))
 {
     std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
         std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
@@ -157,7 +157,7 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTask
 }
 
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskUpdate(
-    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo)
+    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) __attribute__((no_sanitize("cfi")))
 {
     std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
         std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
@@ -166,7 +166,7 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTask
 }
 
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStop(
-    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo)
+    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) __attribute__((no_sanitize("cfi")))
 {
     std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
         std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
