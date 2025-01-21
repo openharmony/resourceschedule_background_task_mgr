@@ -60,6 +60,7 @@ ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reasonu
         BGTASK_LOGE("callbackSptr is nullptr");
         return ERR_CALLBACK_NULL_OR_TYPE_ERR;
     }
+    delayInfo = std::make_shared<DelaySuspendInfo>();
     if (!delayInfo) {
         BGTASK_LOGE("delayInfo is nullptr");
         return ERR_CALLBACK_NULL_OR_TYPE_ERR;

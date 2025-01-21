@@ -185,7 +185,7 @@ napi_value RequestSuspendDelay(napi_env env, napi_callback_info info, bool isThr
         return Common::NapiGetNull(env);
     }
 
-    std::shared_ptr<DelaySuspendInfo> delaySuspendInfo = std::make_shared<DelaySuspendInfo>();
+    std::shared_ptr<DelaySuspendInfo> delaySuspendInfo {nullptr};
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestSuspendDelay(reason, *callback, delaySuspendInfo);
     Common::HandleErrCode(env, errCode, isThrow);
