@@ -257,6 +257,7 @@ napi_value Common::GetU16StringValue(const napi_env &env, const napi_value &valu
         result = Str8ToStr16((std::string)str);
         BGTASK_LOGD("GetU16StringValue result: %{public}s", Str16ToStr8(result).c_str());
     } else {
+        BGTASK_LOGE("valuetype is not stringU16");
         return nullptr;
     }
 
@@ -268,6 +269,7 @@ napi_value Common::GetInt32NumberValue(const napi_env &env, const napi_value &va
     napi_valuetype valuetype = napi_undefined;
     BGTASK_NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     if (valuetype != napi_number) {
+        BGTASK_LOGE("valuetype is not number");
         return nullptr;
     }
     BGTASK_NAPI_CALL(env, napi_get_value_int32(env, value, &result));
@@ -314,6 +316,7 @@ napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, 
     napi_valuetype valuetype = napi_undefined;
     BGTASK_NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     if (valuetype != napi_string) {
+        BGTASK_LOGE("valuetype is not string");
         return nullptr;
     }
 
@@ -321,6 +324,7 @@ napi_value Common::GetStringValue(const napi_env &env, const napi_value &value, 
     size_t strLen = 0;
     napi_status status = napi_get_value_string_utf8(env, value, str, STR_MAX_SIZE - 1, &strLen);
     if (status != napi_ok) {
+        BGTASK_LOGE("get value string utf8 failed");
         return nullptr;
     }
     result = std::string(str);
@@ -392,6 +396,7 @@ napi_value Common::GetBooleanValue(const napi_env &env, const napi_value &value,
     napi_valuetype valuetype = napi_undefined;
     BGTASK_NAPI_CALL(env, napi_typeof(env, value, &valuetype));
     if (valuetype != napi_boolean) {
+        BGTASK_LOGE("valuetype is not boolean");
         return nullptr;
     }
     BGTASK_NAPI_CALL(env, napi_get_value_bool(env, value, &result));
