@@ -69,6 +69,7 @@ void BgEfficiencyResourcesMgr::LoadResourceQuotaMgrLib()
 
 bool BgEfficiencyResourcesMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
+    BGTASK_LOGI("BgEfficiencyResourcesMgr service init start");
     subscriberMgr_ = DelayedSingleton<ResourcesSubscriberMgr>::GetInstance();
     if (runner == nullptr) {
         BGTASK_LOGE("efficiency resources mgr runner create failed!");
@@ -88,6 +89,7 @@ bool BgEfficiencyResourcesMgr::Init(const std::shared_ptr<AppExecFwk::EventRunne
 void BgEfficiencyResourcesMgr::InitNecessaryState()
 {
     if (isSysReady_.load()) {
+        BGTASK_LOGW("Efficiency resources manager is ready");
         return;
     }
     HandlePersistenceData();

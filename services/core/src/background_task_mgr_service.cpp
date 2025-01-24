@@ -48,6 +48,7 @@ BackgroundTaskMgrService::~BackgroundTaskMgrService() {}
 
 void BackgroundTaskMgrService::OnStart()
 {
+    BGTASK_LOGI("BackgroundTaskMgrService service onStart.");
     if (state_ == ServiceRunningState::STATE_RUNNING) {
         BGTASK_LOGW("Service has already started.");
         return;
@@ -62,6 +63,7 @@ void BackgroundTaskMgrService::OnStart()
 
 void BackgroundTaskMgrService::SetReady(uint32_t flag)
 {
+    BGTASK_LOGI("BackgroundTaskMgrService service SetReady.");
     {
         std::lock_guard<std::mutex> lock(readyMutex_);
         if (dependsReady_ == ServiceReadyState::ALL_READY) {
@@ -73,6 +75,7 @@ void BackgroundTaskMgrService::SetReady(uint32_t flag)
         }
     }
     DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
+    BGTASK_LOGI("BackgroundTaskMgrService service Publish.");
     if (!Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get())) {
         BGTASK_LOGE("Service start failed!");
         return;

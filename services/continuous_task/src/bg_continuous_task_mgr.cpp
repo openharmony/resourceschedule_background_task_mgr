@@ -102,6 +102,7 @@ BgContinuousTaskMgr::~BgContinuousTaskMgr() {}
 
 bool BgContinuousTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
+    BGTASK_LOGI("BgContinuousTaskMgr service init start");
     if (runner == nullptr) {
         BGTASK_LOGE("BgContinuousTaskMgr runner create failed!");
         return false;
@@ -929,7 +930,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
         BGTASK_LOGW("%{public}s continuous task not exists", mapKey.c_str());
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
-    BGTASK_LOGI("%{public}s stop continuous task", mapKey.c_str());
+    BGTASK_LOGI("TASK STOP: user: %{public}s stop continuous task", mapKey.c_str());
     ErrCode result = ERR_OK;
     if (iter->second->GetNotificationId() != -1) {
         result = NotificationTools::GetInstance()->CancelNotification(
