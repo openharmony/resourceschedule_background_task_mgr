@@ -70,6 +70,7 @@ BgTransientTaskMgr::~BgTransientTaskMgr() {}
 
 void BgTransientTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
+    BGTASK_LOGI("BgTransientTaskMgr service init start");
     if (runner == nullptr) {
         BGTASK_LOGE("Failed to init due to create runner error");
         return;
