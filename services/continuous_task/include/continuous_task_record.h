@@ -55,6 +55,7 @@ public:
     int32_t GetAbilityId() const;
     std::string GetNotificationLabel() const;
     int32_t GetNotificationId() const;
+    int32_t GetContinuousTaskId() const;
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
     std::string ParseToJsonStr();
     bool ParseFromJson(const nlohmann::json &value);
@@ -82,6 +83,7 @@ private:
     int32_t abilityId_ {-1};
     int32_t reason_ {0};
     bool isSystem_ {false};
+    int32_t continuousTaskId_ {-1};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

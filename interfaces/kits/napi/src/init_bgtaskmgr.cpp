@@ -40,6 +40,8 @@ napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("stopBackgroundRunning", StopBackgroundRunningThrow),
         DECLARE_NAPI_FUNCTION("applyEfficiencyResources", ApplyEfficiencyResources),
         DECLARE_NAPI_FUNCTION("resetAllEfficiencyResources", ResetAllEfficiencyResources),
+        DECLARE_NAPI_FUNCTION("on", OnOnContinuousTaskCancel),
+        DECLARE_NAPI_FUNCTION("off", OffOnContinuousTaskCancel),
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));

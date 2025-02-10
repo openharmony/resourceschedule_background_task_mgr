@@ -14,10 +14,9 @@
  */
 
 #include "continuous_task_callback_info.h"
-
 #include "string_ex.h"
-
 #include "continuous_task_log.h"
+#include "ipc_util.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -68,50 +67,40 @@ uint64_t ContinuousTaskCallbackInfo::GetTokenId() const
     return tokenId_;
 }
 
+void ContinuousTaskCallbackInfo::SetContinuousTaskId(const int32_t id)
+{
+    continuousTaskId_ = id;
+}
+ 
+void ContinuousTaskCallbackInfo::SetCancelReason(const int32_t reason)
+{
+    cancelReason_ = reason;
+}
+ 
+int32_t ContinuousTaskCallbackInfo::GetContinuousTaskId() const
+{
+    return continuousTaskId_;
+}
+ 
+int32_t ContinuousTaskCallbackInfo::GetCancelReason() const
+{
+    return cancelReason_;
+}
+
 bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
 {
-    if (!parcel.WriteUint32(typeId_)) {
-        BGTASK_LOGE("Failed to write typeId");
-        return false;
-    }
-
-    if (!parcel.WriteInt32(creatorUid_)) {
-        BGTASK_LOGE("Failed to write creator uid");
-        return false;
-    }
-
-    if (!parcel.WriteInt32(creatorPid_)) {
-        BGTASK_LOGE("Failed to write creator pid");
-        return false;
-    }
-
-    if (!parcel.WriteBool(isFromWebview_)) {
-        BGTASK_LOGE("Failed to write the flag which indicates from webview");
-        return false;
-    }
-
+    WRITE_PARCEL_WITH_RET(parcel, Uint32, typeId_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Int32, creatorUid_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Int32, creatorPid_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Bool, isFromWebview_, false);
     std::u16string u16AbilityName = Str8ToStr16(abilityName_);
-    if (!parcel.WriteString16(u16AbilityName)) {
-        BGTASK_LOGE("Failed to write ability name");
-        return false;
-    }
-    if (!parcel.WriteBool(isBatchApi_)) {
-        BGTASK_LOGE("Failed to write isBatchApi_");
-        return false;
-    }
-    BGTASK_LOGD("write typeIds_ size %{public}u", static_cast<uint32_t>(typeIds_.size()));
-    if (!parcel.WriteUInt32Vector(typeIds_)) {
-        BGTASK_LOGE("Failed to write typeIds_");
-        return false;
-    }
-    if (!parcel.WriteInt32(abilityId_)) {
-        BGTASK_LOGE("Failed to write abilityId_");
-        return false;
-    }
-    if (!parcel.WriteUint64(tokenId_)) {
-        BGTASK_LOGE("Failed to write tokenId_");
-        return false;
-    }
+    WRITE_PARCEL_WITH_RET(parcel, String16, u16AbilityName, false);
+    WRITE_PARCEL_WITH_RET(parcel, Bool, isBatchApi_, false);
+    WRITE_PARCEL_WITH_RET(parcel, UInt32Vector, typeIds_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Int32, abilityId_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Uint64, tokenId_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Int32, continuousTaskId_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Int32, cancelReason_, false);
     return true;
 }
 
@@ -128,47 +117,19 @@ ContinuousTaskCallbackInfo *ContinuousTaskCallbackInfo::Unmarshalling(Parcel &pa
 
 bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
 {
-    if (!parcel.ReadUint32(typeId_)) {
-        BGTASK_LOGE("read parce typeId error");
-        return false;
-    }
-    if (!parcel.ReadInt32(creatorUid_)) {
-        BGTASK_LOGE("read parce creatorUid error");
-        return false;
-    }
-    if (!parcel.ReadInt32(creatorPid_)) {
-        BGTASK_LOGE("read parce creatorPid error");
-        return false;
-    }
-
-    if (!parcel.ReadBool(isFromWebview_)) {
-        BGTASK_LOGE("Failed to read the flag which indicates from webview");
-        return false;
-    }
-
+    READ_PARCEL_WITH_RET(parcel, Uint32, typeId_, false);
+    READ_PARCEL_WITH_RET(parcel, Int32, creatorUid_, false);
+    READ_PARCEL_WITH_RET(parcel, Int32, creatorPid_, false);
+    READ_PARCEL_WITH_RET(parcel, Bool, isFromWebview_, false);
     std::u16string u16AbilityName;
-    if (!parcel.ReadString16(u16AbilityName)) {
-        BGTASK_LOGE("Failed to read creator ability name");
-        return false;
-    }
+    READ_PARCEL_WITH_RET(parcel, String16, u16AbilityName, false);
     abilityName_ = Str16ToStr8(u16AbilityName);
-    if (!parcel.ReadBool(isBatchApi_)) {
-        BGTASK_LOGE("Failed to read the flag isBatchApi_");
-        return false;
-    }
-    if (!parcel.ReadUInt32Vector(&typeIds_)) {
-        BGTASK_LOGE("read parce typeIds_ error");
-        return false;
-    }
-    BGTASK_LOGD("read parce typeIds_ size %{public}u", static_cast<uint32_t>(typeIds_.size()));
-    if (!parcel.ReadInt32(abilityId_)) {
-        BGTASK_LOGE("read parce abilityId error");
-        return false;
-    }
-    if (!parcel.ReadUint64(tokenId_)) {
-        BGTASK_LOGE("read parce tokenId error");
-        return false;
-    }
+    READ_PARCEL_WITH_RET(parcel, Bool, isBatchApi_, false);
+    READ_PARCEL_WITH_RET(parcel, UInt32Vector, (&typeIds_), false);
+    READ_PARCEL_WITH_RET(parcel, Int32, abilityId_, false);
+    READ_PARCEL_WITH_RET(parcel, Uint64, tokenId_, false);
+    READ_PARCEL_WITH_RET(parcel, Int32, continuousTaskId_, false);
+    READ_PARCEL_WITH_RET(parcel, Int32, cancelReason_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr

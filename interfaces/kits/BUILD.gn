@@ -83,6 +83,7 @@ ohos_shared_library("backgroundtaskmanager_napi") {
     "napi/src/efficiency_resources_operation.cpp",
     "napi/src/get_remaining_delay_time.cpp",
     "napi/src/init_bgtaskmgr.cpp",
+    "napi/src/js_backgroundtask_subscriber.cpp",
     "napi/src/request_suspend_delay.cpp",
   ]
 
@@ -95,6 +96,7 @@ ohos_shared_library("backgroundtaskmanager_napi") {
     "ability_runtime:ability_context_native",
     "ability_runtime:abilitykit_native",
     "ability_runtime:napi_base_context",
+    "ability_runtime:runtime",
     "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
