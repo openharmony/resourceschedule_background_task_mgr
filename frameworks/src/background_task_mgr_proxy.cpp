@@ -188,12 +188,19 @@ ErrCode BackgroundTaskMgrProxy::StartBackgroundRunning(const sptr<ContinuousTask
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
     int32_t notificationId = -1;
+    int32_t continuousTaskId = -1;
     if (!reply.ReadInt32(notificationId)) {
         BGTASK_LOGE("StartBackgroundRunning fail: read notificationId failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    BGTASK_LOGI("read notificationId %{public}d", notificationId);
+    if (!reply.ReadInt32(continuousTaskId)) {
+        BGTASK_LOGE("StartBackgroundRunning fail: read continuousTaskId failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGI("BackgroundTaskMgrProxy read notificationId %{public}d, continuousTaskId %{public}d",
+        notificationId, continuousTaskId);
     taskParam->notificationId_ = notificationId;
+    taskParam->continuousTaskId_ = continuousTaskId;
     return result;
 }
 
@@ -230,8 +237,15 @@ ErrCode BackgroundTaskMgrProxy::UpdateBackgroundRunning(const sptr<ContinuousTas
         BGTASK_LOGE("UpdateBackgroundRunning fail: read notificationId failed.");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    BGTASK_LOGI("read notificationId %{public}d", notificationId);
+    int32_t continuousTaskId = -1;
+    if (!reply.ReadInt32(continuousTaskId)) {
+        BGTASK_LOGE("UpdateBackgroundRunning fail: read continuousTaskId failed.");
+        return ERR_BGTASK_PARCELABLE_FAILED;
+    }
+    BGTASK_LOGI("BackgroundTaskMgrProxy read notificationId %{public}d, continuousTaskId %{public}d",
+        notificationId, continuousTaskId);
     taskParam->notificationId_ = notificationId;
+    taskParam->continuousTaskId_ = continuousTaskId;
     return result;
 }
 
