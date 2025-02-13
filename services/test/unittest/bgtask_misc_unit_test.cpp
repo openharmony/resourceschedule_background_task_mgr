@@ -127,7 +127,7 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
     appStateObserver->OnAppStopped(appStateData);
     appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END);
     appStateObserver->OnAppStopped(appStateData);
-    EXPECT_TRUE(appStateObserver->ValidateAppStateData(appStateData););
+    EXPECT_TRUE(appStateObserver->ValidateAppStateData(appStateData));
 }
 
 /**
