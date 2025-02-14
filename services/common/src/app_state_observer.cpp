@@ -107,7 +107,7 @@ void AppStateObserver::OnAppStopped(const AppExecFwk::AppStateData &appStateData
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveAppRecord(uid, bundleName, false);
 }
 
-inline bool AppStateObserver::ValidateAppStateData(const AppExecFwk::AppStateData &appStateData)
+bool AppStateObserver::ValidateAppStateData(const AppExecFwk::AppStateData &appStateData)
 {
     return appStateData.uid > 0 && appStateData.bundleName.size() > 0;
 }
