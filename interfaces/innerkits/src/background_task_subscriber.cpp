@@ -78,10 +78,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnDisconnected()
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyResourcesApply(
     const ResourceCallbackInfo &resourceInfo) __attribute__((no_sanitize("cfi")))
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
     subscriber_.OnAppEfficiencyResourcesApply(sharedResourceInfo);
     return ERR_OK;
@@ -90,10 +86,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyR
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyResourcesReset(
     const ResourceCallbackInfo &resourceInfo) __attribute__((no_sanitize("cfi")))
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
     subscriber_.OnAppEfficiencyResourcesReset(sharedResourceInfo);
     return ERR_OK;
@@ -102,10 +94,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppEfficiencyR
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiencyResourcesApply(
     const ResourceCallbackInfo &resourceInfo) __attribute__((no_sanitize("cfi")))
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
     subscriber_.OnProcEfficiencyResourcesApply(sharedResourceInfo);
     return ERR_OK;
@@ -114,10 +102,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiency
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiencyResourcesReset(
     const ResourceCallbackInfo &resourceInfo) __attribute__((no_sanitize("cfi")))
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<ResourceCallbackInfo> sharedResourceInfo = std::make_shared<ResourceCallbackInfo>(resourceInfo);
     subscriber_.OnProcEfficiencyResourcesReset(sharedResourceInfo);
     return ERR_OK;
@@ -126,10 +110,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnProcEfficiency
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskStart(
     const TransientTaskAppInfo& info)
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<TransientTaskAppInfo> sharedInfo = std::make_shared<TransientTaskAppInfo>(info);
     subscriber_.OnTransientTaskStart(sharedInfo);
     return ERR_OK;
@@ -138,10 +118,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskS
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskEnd(
     const TransientTaskAppInfo& info)
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<TransientTaskAppInfo> sharedInfo = std::make_shared<TransientTaskAppInfo>(info);
     subscriber_.OnTransientTaskEnd(sharedInfo);
     return ERR_OK;
@@ -150,10 +126,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskE
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskErr(
     const TransientTaskAppInfo& info)
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<TransientTaskAppInfo> sharedInfo = std::make_shared<TransientTaskAppInfo>(info);
     subscriber_.OnTransientTaskErr(sharedInfo);
     return ERR_OK;
@@ -162,10 +134,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnTransientTaskE
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppTransientTaskStart(
     const TransientTaskAppInfo& info)
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<TransientTaskAppInfo> sharedInfo = std::make_shared<TransientTaskAppInfo>(info);
     subscriber_.OnAppTransientTaskStart(sharedInfo);
     return ERR_OK;
@@ -174,10 +142,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppTransientTa
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppTransientTaskEnd(
     const TransientTaskAppInfo& info)
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<TransientTaskAppInfo> sharedInfo = std::make_shared<TransientTaskAppInfo>(info);
     subscriber_.OnAppTransientTaskEnd(sharedInfo);
     return ERR_OK;
@@ -186,10 +150,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppTransientTa
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStart(
     const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) __attribute__((no_sanitize("cfi")))
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
         std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
     subscriber_.OnContinuousTaskStart(sharedInfo);
@@ -199,10 +159,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTask
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskUpdate(
     const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) __attribute__((no_sanitize("cfi")))
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
         std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
     subscriber_.OnContinuousTaskUpdate(sharedInfo);
@@ -212,10 +168,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTask
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskStop(
     const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) __attribute__((no_sanitize("cfi")))
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
         std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
     subscriber_.OnContinuousTaskStop(sharedInfo);
@@ -225,10 +177,6 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTask
 ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppContinuousTaskStop(int32_t uid)
     __attribute__((no_sanitize("cfi")))
 {
-    if (subscriber_ == nullptr) {
-        BGTASK_LOGE("subscriber is nullptr");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     subscriber_.OnAppContinuousTaskStop(uid);
     return ERR_OK;
 }
