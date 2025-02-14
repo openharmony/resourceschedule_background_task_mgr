@@ -1406,7 +1406,7 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
                 BGTASK_LOGD("continuous task stop callback trigger");
                 if (!(*iter)->isHap_ && (*iter)->subscriber_) {
                     // notify all sa
-                    (*iter)->subscriber_ ->OnContinuousTaskStop(taskCallbackInfoRef);
+                    (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
                 } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo)) {
                     // notify self hap
                     BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify cancel", (*iter)->uid_);
