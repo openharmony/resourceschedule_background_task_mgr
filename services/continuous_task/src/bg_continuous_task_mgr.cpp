@@ -1611,9 +1611,16 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
             std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
 
             std::string notificationText {""};
-            uint32_t index = GetBgModeNameIndex(record->bgModeId_, record->isNewApi_);
-            if (index < BGMODE_NUMS) {
-                notificationText = continuousTaskText_.at(index);
+            for (auto mode : record->bgModeIds_) {
+                if (mode == BackgroundMode::AUDIO_PLAYBACK || ((mode == BackgroundMode::VOIP ||
+                    mode == BackgroundMode::AUDIO_RECORDING) && record->IsSystem())) {
+                    continue;
+                }
+                uint32_t index = GetBgModeNameIndex(mode, record->isNewApi_);
+                if (index < continuousTaskText_.size()) {
+                    notificationText += continuousTaskText_.at(index);
+                    notificationText += "\n";
+                }
             }
             newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
         }
