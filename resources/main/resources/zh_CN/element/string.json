@@ -70,6 +70,10 @@
         {
             "name":"ohos_app_name",
             "value":"长时任务通知提示资源"
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"关闭卡片后无感车钥匙即将失效"
         }
     ]
 }
