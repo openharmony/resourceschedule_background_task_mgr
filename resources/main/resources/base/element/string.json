@@ -70,6 +70,10 @@
         {
             "name":"ohos_app_name",
             "value":"Continuous task notification prompt resource"
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"The insensible Bluetooth car key will be invalid when the card is closed."
         }
     ]
 }
