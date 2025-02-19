@@ -260,15 +260,19 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
     pid_t callingUid = IPCSkeleton::GetCallingUid();
     BGTASK_LOGI("uid %{public}d pid %{public}d isHap %{public}d subscribe", callingUid, callingPid, isHap);
     auto subscriberInfo = std::make_shared<SubscriberInfo>(subscriber, callingUid, callingPid, isHap);
-    if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) == ERR_OK
-        && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) == ERR_OK
-        && BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriberInfo) == ERR_OK) {
-        BGTASK_LOGI("subscribe success for pid %{public}d", callingPid);
-        return ERR_OK;
-    } else {
-        BGTASK_LOGW("subscribe background task failed");
+    if (BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriberInfo) != ERR_OK) {
+        BGTASK_LOGE("continuous task subscribe background task failed");
+        return ERR_BGTASK_SYS_NOT_READY;
     }
-    return ERR_BGTASK_SYS_NOT_READY;
+    if (!isHap) {
+        if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber) != ERR_OK
+            || DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->AddSubscriber(subscriber) != ERR_OK) {
+            BGTASK_LOGE("transient task or efficiency resource subscribe background task failed");
+            return ERR_BGTASK_SYS_NOT_READY;
+        }
+    }
+    BGTASK_LOGW("subscribe background task success");
+    return ERR_OK;
 }
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
@@ -278,12 +282,19 @@ ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgrou
         BGTASK_LOGW("UnsubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) == ERR_OK
-        && DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK
-        && BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) == ERR_OK) {
-        return ERR_OK;
+    if (BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) != ERR_OK) {
+        BGTASK_LOGE("continuous task unsubscribe background task failed");
+        return ERR_BGTASK_SYS_NOT_READY;
     }
-    return ERR_BGTASK_SYS_NOT_READY;
+    if (!isHap) {
+        if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber) != ERR_OK
+            || DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveSubscriber(subscriber) != ERR_OK) {
+            BGTASK_LOGE("transient task or efficiency resource unsubscribe background task failed");
+            return ERR_BGTASK_SYS_NOT_READY;
+        }
+    }
+    BGTASK_LOGW("unsubscribe background task success");
+    return ERR_OK;
 }
 
 void BackgroundTaskMgrService::HandleRequestExpired(const int32_t requestId)
