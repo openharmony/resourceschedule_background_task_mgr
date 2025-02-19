@@ -135,6 +135,7 @@ private:
     bool checkNotificationCondition(const std::set<std::string> &notificationLabels, const std::string &label);
     std::shared_ptr<Global::Resource::ResourceManager> GetBundleResMgr(const AppExecFwk::BundleInfo &bundleInfo);
     std::string GetMainAbilityLabel(const std::string &bundleName, int32_t userId);
+    std::string GetNotificationTest(const std::shared_ptr<ContinuousTaskRecord> record);
     void RemoveContinuousTaskRecordByUidAndMode(int32_t uid, uint32_t mode);
     void RemoveContinuousTaskRecordByUid(int32_t uid);
     void ReclaimProcessMemory(int32_t pid);
