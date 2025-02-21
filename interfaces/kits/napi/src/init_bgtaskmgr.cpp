@@ -18,6 +18,7 @@
 #include "background_mode.h"
 #include "bg_continuous_task_napi_module.h"
 #include "cancel_suspend_delay.h"
+#include "continuous_task_cancel_reason.h"
 #include "get_remaining_delay_time.h"
 #include "request_suspend_delay.h"
 #include "transient_task_log.h"
@@ -95,6 +96,41 @@ napi_value BackgroundModeInit(napi_env env, napi_value exports)
     return exports;
 }
 
+napi_value ContinuousTaskCancelReasonInit(napi_env env, napi_value exports)
+{
+    napi_value obj = nullptr;
+    napi_create_object(env, &obj);
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ContinuousTaskCancelReason::USER_CANCEL), "USER_CANCEL");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ContinuousTaskCancelReason::SYSTEM_CANCEL),
+        "SYSTEM_CANCEL");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::USER_CANCEL_REMOVE_NOTIFICATION), "USER_CANCEL_REMOVE_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_DATA_TRANSFER_LOW_SPEED), "SYSTEM_CANCEL_DATA_TRANSFER_LOW_SPEED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_USE_AVSESSION),
+        "SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_USE_AVSESSION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING),
+        "SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_RECORDING_NOT_RUNNING),
+        "SYSTEM_CANCEL_AUDIO_RECORDING_NOT_RUNNING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_LOCATION), "SYSTEM_CANCEL_NOT_USE_LOCATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_BLUETOOTH), "SYSTEM_CANCEL_NOT_USE_BLUETOOTH");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE), "SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_USE_ILLEGALLY), "SYSTEM_CANCEL_USE_ILLEGALLY");
+    napi_property_descriptor exportFuncs[] = {
+        DECLARE_NAPI_PROPERTY("ContinuousTaskCancelReason", obj),
+    };
+    napi_define_properties(env, exports, sizeof(exportFuncs) / sizeof(*exportFuncs), exportFuncs);
+    return exports;
+}
+
 /*
  * Module export function
  */
@@ -105,6 +141,7 @@ static napi_value InitApi(napi_env env, napi_value exports)
      */
     BackgroundTaskMgrInit(env, exports);
     BackgroundModeInit(env, exports);
+    ContinuousTaskCancelReasonInit(env, exports);
     return exports;
 }
 
