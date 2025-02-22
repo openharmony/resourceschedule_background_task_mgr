@@ -24,6 +24,7 @@
 #include "background_task_subscriber.h"
 #include "background_task_subscriber_stub.h"
 #include "continuous_task_callback_info.h"
+#include "continuous_task_cancel_reason.h"
 #include "continuous_task_param.h"
 #include "delay_suspend_info.h"
 #include "efficiency_resource_info.h"
@@ -57,6 +58,17 @@ constexpr uint32_t GPS_TYPE = 32;
 constexpr uint32_t AUDIO_TYPE = 64;
 constexpr uint32_t RUNNING_LOCK = 128;
 constexpr uint32_t SENSOR = 256;
+constexpr uint32_t USER_CANCEL = 1;
+constexpr uint32_t SYSTEM_CANCEL = 2;
+constexpr uint32_t USER_CANCEL_REMOVE_NOTIFICATION = 3;
+constexpr uint32_t SYSTEM_CANCEL_DATA_TRANSFER_LOW_SPEED = 4;
+constexpr uint32_t SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_USE_AVSESSION = 5;
+constexpr uint32_t SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING = 6;
+constexpr uint32_t SYSTEM_CANCEL_AUDIO_RECORDING_NOT_RUNNING = 7;
+constexpr uint32_t SYSTEM_CANCEL_NOT_USE_LOCATION = 8;
+constexpr uint32_t SYSTEM_CANCEL_NOT_USE_BLUETOOTH = 9;
+constexpr uint32_t SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE = 10;
+constexpr uint32_t SYSTEM_CANCEL_USE_ILLEGALLY = 11;
 }
 class BgTaskClientUnitTest : public testing::Test {
 public:
@@ -200,6 +212,32 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundMode_001, TestSize.Level1)
     EXPECT_EQ(WIFI_INTERACTION_ID, (int32_t)BackgroundMode::WIFI_INTERACTION);
     EXPECT_EQ(VOIP_ID, (int32_t)BackgroundMode::VOIP);
     EXPECT_EQ(TASK_KEEPING_ID, (int32_t)BackgroundMode::TASK_KEEPING);
+}
+
+/**
+* @tc.name: ContinuousTaskCancelReason_001
+* @tc.desc: test continuous tsak cancel reason constant.
+* @tc.type: FUNC
+* @tc.require: issueIBNOEQ
+*/
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCancelReason_001, TestSize.Level1)
+{
+    EXPECT_EQ(USER_CANCEL, (int32_t)ContinuousTaskCancelReason::USER_CANCEL);
+    EXPECT_EQ(SYSTEM_CANCEL, (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL);
+    EXPECT_EQ(USER_CANCEL_REMOVE_NOTIFICATION, (int32_t)ContinuousTaskCancelReason::USER_CANCEL_REMOVE_NOTIFICATION);
+    EXPECT_EQ(SYSTEM_CANCEL_DATA_TRANSFER_LOW_SPEED,
+        (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_DATA_TRANSFER_LOW_SPEED);
+    EXPECT_EQ(SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_USE_AVSESSION,
+        (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_USE_AVSESSION);
+    EXPECT_EQ(SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING,
+        (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING);
+    EXPECT_EQ(SYSTEM_CANCEL_AUDIO_RECORDING_NOT_RUNNING,
+        (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_RECORDING_NOT_RUNNING);
+    EXPECT_EQ(SYSTEM_CANCEL_NOT_USE_LOCATION, (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_LOCATION);
+    EXPECT_EQ(SYSTEM_CANCEL_NOT_USE_BLUETOOTH, (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_BLUETOOTH);
+    EXPECT_EQ(SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE,
+        (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE);
+    EXPECT_EQ(SYSTEM_CANCEL_USE_ILLEGALLY, (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_USE_ILLEGALLY);
 }
 
 /**
