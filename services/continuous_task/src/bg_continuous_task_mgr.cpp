@@ -1376,7 +1376,7 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
         case ContinuousTaskEventTriggerType::TASK_START:
             for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task start callback trigger");
-                if (!(*iter)->isHap_) {
+                if (!(*iter)->isHap_ && (*iter)->subscriber_) {
                     (*iter)->subscriber_->OnContinuousTaskStart(continuousTaskCallbackInfo);
                 }
             }
@@ -1384,7 +1384,7 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
         case ContinuousTaskEventTriggerType::TASK_UPDATE:
             for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task update callback trigger");
-                if (!(*iter)->isHap_) {
+                if (!(*iter)->isHap_ && (*iter)->subscriber_) {
                     (*iter)->subscriber_->OnContinuousTaskUpdate(continuousTaskCallbackInfo);
                 }
             }
@@ -1392,10 +1392,10 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
         case ContinuousTaskEventTriggerType::TASK_CANCEL:
             for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
                 BGTASK_LOGD("continuous task stop callback trigger");
-                if (!(*iter)->isHap_) {
+                if (!(*iter)->isHap_ && (*iter)->subscriber_) {
                     // notify all sa
                     (*iter)->subscriber_->OnContinuousTaskStop(continuousTaskCallbackInfo);
-                } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo)) {
+                } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo) && (*iter)->subscriber_) {
                     // notify self hap
                     BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify cancel", (*iter)->uid_);
                     (*iter)->subscriber_->OnContinuousTaskStop(continuousTaskCallbackInfo);
@@ -1533,7 +1533,7 @@ void BgContinuousTaskMgr::HandleAppContinuousTaskStop(int32_t uid)
     }
     BGTASK_LOGI("All continuous task has stopped of uid: %{public}d, so notify related subsystem", uid);
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); iter++) {
-        if (!(*iter)->isHap_) {
+        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
             (*iter)->subscriber_->OnAppContinuousTaskStop(uid);
         }
     }
