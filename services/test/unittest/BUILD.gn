@@ -31,7 +31,6 @@ ohos_unittest("bgtask_unit_test") {
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_services_path}/test/unittest/mock/include",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
-    "//third_party/icu/icu4c/source/i18n",
   ]
 
   sources = [
@@ -64,6 +63,7 @@ ohos_unittest("bgtask_unit_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "i18n:intl_util",
     "image_framework:image_native",
     "ipc:ipc_single",
     "relational_store:native_rdb",
@@ -99,7 +99,6 @@ ohos_unittest("efficiency_mgr_unit_test") {
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
-    "//third_party/icu/icu4c/source/i18n",
   ]
 
   sources = [
@@ -128,6 +127,7 @@ ohos_unittest("efficiency_mgr_unit_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "i18n:intl_util",
     "image_framework:image_native",
     "ipc:ipc_single",
     "relational_store:native_rdb",
@@ -219,7 +219,6 @@ ohos_unittest("bgtask_manager_unit_test") {
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_services_path}/test/unittest/mock/include",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
-    "//third_party/icu/icu4c/source/i18n",
     "${target_gen_dir}",
   ]
 
@@ -251,6 +250,7 @@ ohos_unittest("bgtask_manager_unit_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "i18n:intl_util",
     "image_framework:image_native",
     "ipc:ipc_single",
     "relational_store:native_rdb",
@@ -285,7 +285,6 @@ ohos_unittest("bgtask_misc_unit_test") {
     "${bgtaskmgr_services_path}/transient_task/include",
     "${bgtaskmgr_services_path}/core/inlcude",
     "${bgtaskmgr_interfaces_path}/innerkits/transient_task/include",
-    "//third_party/icu/icu4c/source/i18n",
   ]
 
   sources = [ "bgtask_misc_unit_test.cpp" ]
@@ -312,6 +311,7 @@ ohos_unittest("bgtask_misc_unit_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "i18n:intl_util",
     "image_framework:image_native",
     "ipc:ipc_single",
     "relational_store:native_rdb",
