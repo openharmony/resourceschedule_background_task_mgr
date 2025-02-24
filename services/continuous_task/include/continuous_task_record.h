@@ -80,6 +80,7 @@ private:
     uint64_t fullTokenId_ {0};
     bool isBatchApi_ {false};
     std::vector<uint32_t> bgModeIds_ {};
+    std::vector<uint32_t> bgSubModeIds_ {};
     int32_t abilityId_ {-1};
     int32_t reason_ {0};
     bool isSystem_ {false};

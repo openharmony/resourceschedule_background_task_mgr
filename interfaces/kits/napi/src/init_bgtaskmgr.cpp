@@ -16,6 +16,7 @@
 #include "init_bgtaskmgr.h"
 
 #include "background_mode.h"
+#include "background_sub_mode.h"
 #include "bg_continuous_task_napi_module.h"
 #include "cancel_suspend_delay.h"
 #include "continuous_task_cancel_reason.h"
@@ -28,6 +29,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+    static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 EXTERN_C_START
 
 napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
@@ -54,6 +56,14 @@ void SetNamedPropertyByInteger(napi_env env, napi_value dstObj, int32_t objName,
 {
     napi_value prop = nullptr;
     if (napi_create_int32(env, objName, &prop) == napi_ok) {
+        napi_set_named_property(env, dstObj, propName, prop);
+    }
+}
+
+void SetNamedPropertyByString(napi_env env, napi_value dstObj, const char *objName, const char *propName)
+{
+    napi_value prop = nullptr;
+    if (napi_create_string_utf8(env, objName, strlen(objName), &prop) == napi_ok) {
         napi_set_named_property(env, dstObj, propName, prop);
     }
 }
@@ -87,9 +97,14 @@ napi_value BackgroundModeInit(napi_env env, napi_value exports)
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::RUNNING_LOCK), "RUNNING_LOCK");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(ResourceType::SENSOR), "SENSOR");
 
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundSubMode::CAR_KEY), "CAR_KEY");
+    SetNamedPropertyByString(env, obj, BG_TASK_SUB_MODE_TYPE, "SUB_MODE");
+
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("BackgroundMode", obj),
         DECLARE_NAPI_PROPERTY("ResourceType", obj),
+        DECLARE_NAPI_PROPERTY("BackgroundSubMode", obj),
+        DECLARE_NAPI_PROPERTY("BackgroundModeType", obj),
     };
 
     napi_define_properties(env, exports, sizeof(exportFuncs) / sizeof(*exportFuncs), exportFuncs);
