@@ -26,8 +26,6 @@ ohos_systemtest("BgtaskDumpTest") {
 
   sources = [ "bgtask_dump_test.cpp" ]
 
-  include_dirs = [ "//third_party/json/single_include" ]
-
   cflags = [
     "-Dprivate=public",
     "-Dprotected=public",
@@ -65,6 +63,7 @@ ohos_systemtest("BgtaskDumpTest") {
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "json:nlohmann_json_static",
   ]
 }
 
