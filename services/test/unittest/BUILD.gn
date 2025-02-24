@@ -62,6 +62,7 @@ ohos_unittest("bgtask_unit_test") {
     "eventhandler:libeventhandler",
     "googletest:gtest_main",
     "hilog:libhilog",
+    "i18n:intl_util",
     "hisysevent:libhisysevent",
     "image_framework:image_native",
     "ipc:ipc_single",
@@ -69,7 +70,6 @@ ohos_unittest("bgtask_unit_test") {
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "i18n:intl_util",
   ]
 
   if (has_os_account_part) {
@@ -128,12 +128,12 @@ ohos_unittest("efficiency_mgr_unit_test") {
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "image_framework:image_native",
+    "i18n:intl_util",
     "ipc:ipc_single",
     "relational_store:native_rdb",
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "i18n:intl_util",
   ]
 
   if (has_os_account_part) {
@@ -250,13 +250,13 @@ ohos_unittest("bgtask_manager_unit_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "i18n:intl_util",
     "image_framework:image_native",
     "ipc:ipc_single",
     "relational_store:native_rdb",
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "i18n:intl_util",
   ]
 
   if (has_os_account_part) {
@@ -311,13 +311,13 @@ ohos_unittest("bgtask_misc_unit_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "i18n:intl_util",
     "image_framework:image_native",
     "ipc:ipc_single",
     "relational_store:native_rdb",
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "i18n:intl_util",
   ]
 
   if (has_os_account_part) {

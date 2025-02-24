@@ -56,13 +56,13 @@ ohos_unittest("bgtask_manager_abnormal_unit_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "i18n:intl_util",
     "image_framework:image_native",
     "ipc:ipc_single",
     "relational_store:native_rdb",
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "i18n:intl_util",
   ]
 
   if (has_os_account_part) {
