@@ -51,6 +51,7 @@
 #include "locale_config.h"
 #endif // SUPPORT_GRAPHICS
 #include "background_mode.h"
+#include "background_sub_mode.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -68,12 +69,17 @@ static const char *g_taskPromptResNames[] = {
     "ohos_bgmode_prompt_default_value",
 };
 
+static const char *g_taskPromptResNamesSubMode[] = {
+    "ohos_bgsubmode_prompt_car_key",
+};
+
 static constexpr char SEPARATOR[] = "_";
 static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_CANCEL_ALL[] = "--cancel_all";
 static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
+static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DELAY_TIME = 2000;
@@ -396,6 +402,7 @@ std::shared_ptr<Global::Resource::ResourceManager> BgContinuousTaskMgr::GetBundl
 bool BgContinuousTaskMgr::GetNotificationPrompt()
 {
     continuousTaskText_.clear();
+    continuousTaskSubText_.clear();
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(BG_TASK_RES_BUNDLE_NAME,
         AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo)) {
@@ -416,6 +423,16 @@ bool BgContinuousTaskMgr::GetNotificationPrompt()
         }
         BGTASK_LOGI("get taskText: %{public}s", taskText.c_str());
         continuousTaskText_.push_back(taskText);
+    }
+    std::string taskSubText {""};
+    for (std::string name : g_taskPromptResNamesSubMode) {
+        resourceManager->GetStringByName(name.c_str(), taskSubText);
+        if (taskSubText.empty()) {
+            BGTASK_LOGE("get continuous task notification sub text failed!");
+            return false;
+        }
+        BGTASK_LOGI("get sub taskSubText: %{public}s", taskSubText.c_str());
+        continuousTaskSubText_.push_back(taskSubText);
     }
     return true;
 }
@@ -636,15 +653,12 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
     }
-
     if (!CheckTaskParam(taskParam)) {
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
     ErrCode result = ERR_OK;
-
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     pid_t callingPid = IPCSkeleton::GetCallingPid();
-    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     int32_t userId = -1;
 #ifdef HAS_OS_ACCOUNT_PART
@@ -652,22 +666,14 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 #else // HAS_OS_ACCOUNT_PART
     GetOsAccountIdFromUid(callingUid, userId);
 #endif // HAS_OS_ACCOUNT_PART
-
     if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         taskParam->abilityName_, callingUid, callingPid, taskParam->bgModeId_, taskParam->isBatchApi_,
         taskParam->bgModeIds_, taskParam->abilityId_);
-    continuousTaskRecord->wantAgent_ = taskParam->wantAgent_;
-    continuousTaskRecord->userId_ = userId;
-    continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
-    continuousTaskRecord->appName_ = taskParam->appName_;
-    continuousTaskRecord->fullTokenId_ = fullTokenId;
-    continuousTaskRecord->isSystem_ = BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId);
-
+    InitRecordParam(continuousTaskRecord, taskParam, userId);
     if (taskParam->wantAgent_ != nullptr && taskParam->wantAgent_->GetPendingWant() != nullptr) {
         auto target = taskParam->wantAgent_->GetPendingWant()->GetTarget();
         auto want = taskParam->wantAgent_->GetPendingWant()->GetWant(target);
@@ -676,18 +682,47 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
             info->bundleName_ = want->GetOperation().GetBundleName();
             info->abilityName_ = want->GetOperation().GetAbilityName();
             continuousTaskRecord->wantAgentInfo_ = info;
+            result = CheckSubMode(want, continuousTaskRecord);
+            if (result != ERR_OK) {
+                return result;
+            }
         }
     }
-
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::StartBackgroundRunningInner");
     handler_->PostSyncTask([this, continuousTaskRecord, &result]() mutable {
         result = this->StartBackgroundRunningInner(continuousTaskRecord);
         }, AppExecFwk::EventQueue::Priority::HIGH);
-
     taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
     taskParam->continuousTaskId_ = continuousTaskRecord->continuousTaskId_;
     return result;
+}
+
+void BgContinuousTaskMgr::InitRecordParam(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
+    const sptr<ContinuousTaskParam> &taskParam, int32_t userId)
+{
+    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+    continuousTaskRecord->wantAgent_ = taskParam->wantAgent_;
+    continuousTaskRecord->userId_ = userId;
+    continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
+    continuousTaskRecord->appName_ = taskParam->appName_;
+    continuousTaskRecord->fullTokenId_ = fullTokenId;
+    continuousTaskRecord->isSystem_ = BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId);
+}
+
+ErrCode BgContinuousTaskMgr::CheckSubMode(const std::shared_ptr<AAFwk::Want> want,
+    std::shared_ptr<ContinuousTaskRecord> record)
+{
+    if (want->HasParameter(BG_TASK_SUB_MODE_TYPE)) {
+        if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::BLUETOOTH_INTERACTION) &&
+            want->GetIntParam(BG_TASK_SUB_MODE_TYPE, 0) == BackgroundSubMode::CAR_KEY) {
+            record->bgSubModeIds_.push_back(BackgroundSubMode::CAR_KEY);
+        } else {
+            BGTASK_LOGE("subMode is invaild.");
+            return ERR_BGTASK_CHECK_TASK_PARAM;
+        }
+    }
+    return ERR_OK;
 }
 
 ErrCode BgContinuousTaskMgr::UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
@@ -744,7 +779,10 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
             continuousTaskRecord->uid_, continuousTaskRecord->bundleName_.c_str(), continuousTaskRecord->abilityId_);
         return ERR_OK;
     }
-
+    if (!CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::BLUETOOTH_INTERACTION) &&
+        !continuousTaskRecord->bgSubModeIds_.empty()) {
+        continuousTaskRecord->bgSubModeIds_.clear();
+    }
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_, continuousTaskRecord->abilityName_);
     for (auto it =  taskParam->bgModeIds_.begin(); it != taskParam->bgModeIds_.end(); it++) {
         ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord->fullTokenId_);
@@ -865,6 +903,9 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
             return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
         }
     }
+    if (CheckSubModeNotificationText(notificationText, continuousTaskRecord) != ERR_OK) {
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
     if (notificationText.empty()) {
         if (continuousTaskRecord->GetNotificationId() != -1) {
             NotificationTools::GetInstance()->CancelNotification(
@@ -876,6 +917,30 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     BGTASK_LOGD("notificationText %{public}s", notificationText.c_str());
     return NotificationTools::GetInstance()->PublishNotification(continuousTaskRecord,
         appName, notificationText, bgTaskUid_);
+}
+
+ErrCode BgContinuousTaskMgr::CheckSubModeNotificationText(std::string &notificationText,
+    const std::shared_ptr<ContinuousTaskRecord> record)
+{
+    if (record->bgSubModeIds_.size() > 0) {
+        if (continuousTaskSubText_.empty()) {
+            BGTASK_LOGE("get subMode notification prompt info failed, continuousTaskSubText_ is empty");
+            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+        }
+        notificationText = "";
+        for (auto subMode : record->bgSubModeIds_) {
+            BGTASK_LOGD("subMode %{public}d", subMode);
+            uint32_t index = subMode - 1;
+            if (index < continuousTaskSubText_.size()) {
+                notificationText += continuousTaskSubText_.at(index);
+                notificationText += "\n";
+            } else {
+                BGTASK_LOGI("sub index is invalid");
+                return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+            }
+        }
+    }
+    return ERR_OK;
 }
 
 ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
@@ -1177,6 +1242,7 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
             iter->second->GetBgModeId(), iter->second->IsNewApi())] << "\n";
         stream << "\t\tisBatchApi: " << (iter->second->isBatchApi_ ? "true" : "false") << "\n";
         stream << "\t\tbackgroundModes: " << iter->second->ToString(iter->second->bgModeIds_) << "\n";
+        stream << "\t\tbackgroundSubModes: " << iter->second->ToString(iter->second->bgSubModeIds_) << "\n";
         stream << "\t\tuid: " << iter->second->GetUid() << "\n";
         stream << "\t\tuserId: " << iter->second->GetUserId() << "\n";
         stream << "\t\tpid: " << iter->second->GetPid() << "\n";
@@ -1609,7 +1675,7 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
         auto record = iter->second;
         if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
             std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
-            std::string notificationText = GetNotificationTest(record);
+            std::string notificationText = GetNotificationText(record);
             newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
         }
         iter++;
@@ -1617,7 +1683,7 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
     NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
 }
 
-std::string BgContinuousTaskMgr::GetNotificationTest(const std::shared_ptr<ContinuousTaskRecord> record)
+std::string BgContinuousTaskMgr::GetNotificationText(const std::shared_ptr<ContinuousTaskRecord> record)
 {
     std::string notificationText {""};
     for (auto mode : record->bgModeIds_) {
@@ -1629,6 +1695,17 @@ std::string BgContinuousTaskMgr::GetNotificationTest(const std::shared_ptr<Conti
         if (index < continuousTaskText_.size()) {
             notificationText += continuousTaskText_.at(index);
             notificationText += "\n";
+        }
+    }
+    if (record->bgSubModeIds_.size() > 0) {
+        notificationText = "";
+        for (auto subMode : record->bgSubModeIds_) {
+            BGTASK_LOGD("subMode %{public}d", subMode);
+            uint32_t index = subMode - 1;
+            if (index < continuousTaskSubText_.size()) {
+                notificationText += continuousTaskSubText_.at(index);
+                notificationText += "\n";
+            }
         }
     }
     return notificationText;

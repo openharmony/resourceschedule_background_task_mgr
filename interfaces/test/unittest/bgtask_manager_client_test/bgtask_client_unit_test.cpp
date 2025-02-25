@@ -20,6 +20,7 @@
 
 #include "bgtaskmgr_inner_errors.h"
 #include "background_mode.h"
+#include "background_sub_mode.h"
 #include "background_task_mgr_helper.h"
 #include "background_task_subscriber.h"
 #include "background_task_subscriber_stub.h"
@@ -71,6 +72,7 @@ constexpr uint32_t SYSTEM_CANCEL_NOT_USE_LOCATION = 8;
 constexpr uint32_t SYSTEM_CANCEL_NOT_USE_BLUETOOTH = 9;
 constexpr uint32_t SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE = 10;
 constexpr uint32_t SYSTEM_CANCEL_USE_ILLEGALLY = 11;
+constexpr uint32_t CAR_KEY = 1;
 }
 class BgTaskClientUnitTest : public testing::Test {
 public:
@@ -220,7 +222,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundMode_001, TestSize.Level1)
 
 /**
 * @tc.name: ContinuousTaskCancelReason_001
-* @tc.desc: test continuous tsak cancel reason constant.
+* @tc.desc: test continuous task cancel reason constant.
 * @tc.type: FUNC
 * @tc.require: issueIBNOEQ
 */
@@ -242,6 +244,17 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCancelReason_001, TestSize.Level1)
     EXPECT_EQ(SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE,
         (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE);
     EXPECT_EQ(SYSTEM_CANCEL_USE_ILLEGALLY, (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_USE_ILLEGALLY);
+}
+
+/**
+* @tc.name: BackgroundSubMode_001
+* @tc.desc: test continuous task sub mode constant.
+* @tc.type: FUNC
+* @tc.require: issueIBNOEQ
+*/
+HWTEST_F(BgTaskClientUnitTest, BackgroundSubMode_001, TestSize.Level1)
+{
+    EXPECT_EQ(CAR_KEY, (int32_t)BackgroundSubMode::CAR_KEY);
 }
 
 /**

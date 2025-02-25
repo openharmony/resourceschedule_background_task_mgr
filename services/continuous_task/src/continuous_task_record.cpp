@@ -162,6 +162,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["notificationId"] = notificationId_;
     root["isBatchApi"] = isBatchApi_;
     root["bgModeIds"] = ToString(bgModeIds_);
+    root["bgSubModeIds"] = ToString(bgSubModeIds_);
     root["isSystem"] = isSystem_;
     if (wantAgentInfo_ != nullptr) {
         nlohmann::json info;
@@ -215,6 +216,10 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
     if (value.contains("bgModeIds") && value["bgModeIds"].is_string()) {
         auto modes = value.at("bgModeIds").get<std::string>();
         this->bgModeIds_ = ToVector(modes);
+    }
+    if (value.contains("bgSubModeIds") && value["bgSubModeIds"].is_string()) {
+        auto subModes = value.at("bgSubModeIds").get<std::string>();
+        this->bgSubModeIds_ = ToVector(subModes);
     }
     if (value.find("wantAgentInfo") != value.end()) {
         nlohmann::json infoVal = value["wantAgentInfo"];

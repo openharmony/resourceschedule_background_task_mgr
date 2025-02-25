@@ -37,6 +37,7 @@
 #include "remote_death_recipient.h"
 #include "system_event_observer.h"
 #include "config_change_observer.h"
+#include "want.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -129,13 +130,18 @@ private:
         ContinuousTaskEventTriggerType changeEventType);
     ErrCode CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, uint64_t fullTokenId);
     ErrCode CheckBgmodeTypeForInner(uint32_t requestedBgModeId);
+    void InitRecordParam(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
+        const sptr<ContinuousTaskParam> &taskParam, int32_t userId);
+    ErrCode CheckSubMode(const std::shared_ptr<AAFwk::Want> want, std::shared_ptr<ContinuousTaskRecord> record);
+    ErrCode CheckSubModeNotificationText(std::string &notificationText,
+        const std::shared_ptr<ContinuousTaskRecord> record);
     int32_t RefreshTaskRecord();
     void HandleAppContinuousTaskStop(int32_t uid);
     bool checkPidCondition(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t pid);
     bool checkNotificationCondition(const std::set<std::string> &notificationLabels, const std::string &label);
     std::shared_ptr<Global::Resource::ResourceManager> GetBundleResMgr(const AppExecFwk::BundleInfo &bundleInfo);
     std::string GetMainAbilityLabel(const std::string &bundleName, int32_t userId);
-    std::string GetNotificationTest(const std::shared_ptr<ContinuousTaskRecord> record);
+    std::string GetNotificationText(const std::shared_ptr<ContinuousTaskRecord> record);
     void RemoveContinuousTaskRecordByUidAndMode(int32_t uid, uint32_t mode);
     void RemoveContinuousTaskRecordByUid(int32_t uid);
     void ReclaimProcessMemory(int32_t pid);
@@ -163,6 +169,7 @@ private:
     sptr<RemoteDeathRecipient> susriberDeathRecipient_ {nullptr};
     std::unordered_map<int32_t, CachedBundleInfo> cachedBundleInfos_ {};
     std::vector<std::string> continuousTaskText_ {};
+    std::vector<std::string> continuousTaskSubText_ {};
     int32_t continuousTaskIdIndex_ = 0;
 
     DECLARE_DELAYED_SINGLETON(BgContinuousTaskMgr);
