@@ -179,23 +179,27 @@ void BgContinuousTaskMgr::InitNecessaryState()
         handler_->PostTask(task, DELAY_TIME);
         return;
     }
-
+    BGTASK_LOGW("RegisterNotificationSubscriber start");
     if (!RegisterNotificationSubscriber()) {
         BGTASK_LOGE("RegisterNotificationSubscriber failed");
         return;
     }
+    BGTASK_LOGW("RegisterAppStateObserver start");
     if (!RegisterAppStateObserver()) {
         BGTASK_LOGE("RegisterAppStateObserver failed");
         return;
     }
+    BGTASK_LOGW("RegisterSysCommEventListener start");
     if (!RegisterSysCommEventListener()) {
         BGTASK_LOGE("RegisterSysCommEventListener failed");
         return;
     }
+    BGTASK_LOGW("RegisterConfigurationObserver start");
     if (!RegisterConfigurationObserver()) {
         BGTASK_LOGE("RegisterConfigurationObserver failed");
         return;
     }
+    BGTASK_LOGW("InitRequiredResourceInfo start");
     InitRequiredResourceInfo();
 }
 
