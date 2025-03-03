@@ -89,8 +89,12 @@ static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
+#ifdef DFEATURE_PRODUCT_PHONE
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7259;
-static constexpr uint32_t HEALTHSPORT_WEARABLE_SA_UID = 7500;
+#endif // DFEATURE_PRODUCT_PHONE
+#ifdef DFEATURE_PRODUCT_WATCH
+static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
+#endif // DFEATURE_PRODUCT_WATCH
 static constexpr uint32_t ALL_MODES = 0xFF;
 
 #ifndef HAS_OS_ACCOUNT_PART
@@ -602,8 +606,7 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     // webview sdk申请长时任务，上下文在应用。callkit sa 申请长时时，上下文在sa;
-    if (callingUid != VOIP_SA_UID && callingUid != HEALTHSPORT_SA_UID && callingUid != HEALTHSPORT_WEARABLE_SA_UID
-        && callingUid != taskParam->uid_) {
+    if (callingUid != VOIP_SA_UID && callingUid != HEALTHSPORT_SA_UID && callingUid != taskParam->uid_) {
         BGTASK_LOGE("continuous task param uid %{public}d is invalid, real %{public}d", taskParam->uid_, callingUid);
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
@@ -626,7 +629,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     if (callingUid == VOIP_SA_UID) {
         fullTokenId = taskParam->tokenId_;
         abilityName = "CallKit" + std::to_string(taskParam->bgModeId_);
-    } else if (callingUid == HEALTHSPORT_SA_UID || callingUid == HEALTHSPORT_WEARABLE_SA_UID) {
+    } else if (callingUid == HEALTHSPORT_SA_UID) {
         abilityName = "HealthKit" + std::to_string(taskParam->bgModeId_);
     }
     int32_t userId = -1;
