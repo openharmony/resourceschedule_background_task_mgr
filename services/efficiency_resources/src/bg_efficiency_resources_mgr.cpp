@@ -401,12 +401,18 @@ void BgEfficiencyResourcesMgr::ApplyResourceForPkgAndProc(int32_t uid, int32_t p
     // Only cpu can apply for process
     if ((resourceInfo->GetResourceNumber() & ResourceType::CPU) !=0) {
         sptr<EfficiencyResourceInfo> procResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
+        if (procResourceInfo == nullptr) {
+            return;
+        }
         procResourceInfo->SetResourceNumber(ResourceType::CPU);
         SendResourceApplyTask(uid, pid, bundleName, procResourceInfo);
     }
     int resourceNumber = resourceInfo->GetResourceNumber() & (~ResourceType::CPU);
     if (resourceNumber != 0) {
         sptr<EfficiencyResourceInfo> appResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
+        if (appResourceInfo == nullptr) {
+            return;
+        }
         appResourceInfo->SetResourceNumber(resourceNumber);
         appResourceInfo->SetProcess(false);
         SendResourceApplyTask(uid, pid, bundleName, appResourceInfo);
