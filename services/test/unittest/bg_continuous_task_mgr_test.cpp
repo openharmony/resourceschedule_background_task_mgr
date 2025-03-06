@@ -50,6 +50,7 @@ static constexpr int32_t TEST_NUM_ONE = 1;
 static constexpr int32_t TEST_NUM_TWO = 2;
 static constexpr int32_t TEST_NUM_THREE = 3;
 static constexpr uint32_t CONFIGURE_ALL_MODES = 0x1FF;
+static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 }
 class BgContinuousTaskMgrTest : public testing::Test {
 public:
@@ -1045,12 +1046,11 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_048, TestSize.Level1)
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSubMode(want, continuousTaskRecord), ERR_OK);
 
-    std::string car_key = "subMode";
-    want->SetParam(car_key, 0);
+    want->SetParam(BG_TASK_SUB_MODE_TYPE, 0);
     continuousTaskRecord->bgModeIds_.push_back(1);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSubMode(want, continuousTaskRecord), ERR_BGTASK_CHECK_TASK_PARAM);
 
-    want->SetParam(car_key, 1);
+    want->SetParam(BG_TASK_SUB_MODE_TYPE, 1);
     continuousTaskRecord->bgModeIds_.push_back(1);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSubMode(want, continuousTaskRecord), ERR_BGTASK_CHECK_TASK_PARAM);
 
