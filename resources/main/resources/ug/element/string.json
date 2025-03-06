@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"كارتىنى ئەتسىڭىز، سېزىلمەس ماشىنا ئاچقۇچ كۈچتىن قالىدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
