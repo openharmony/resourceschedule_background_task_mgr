@@ -1045,37 +1045,49 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_048, TestSize.Level1)
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSubMode(want, continuousTaskRecord), ERR_OK);
 
+    std::string car_key = "subMode";
+    want->SetParam(car_key, 0);
+    continuousTaskRecord->bgModeIds_.push_back(1);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSubMode(want, continuousTaskRecord), ERR_BGTASK_CHECK_TASK_PARAM);
+
+    want->SetParam(car_key, 1);
     continuousTaskRecord->bgModeIds_.push_back(1);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSubMode(want, continuousTaskRecord), ERR_BGTASK_CHECK_TASK_PARAM);
 
     continuousTaskRecord->bgModeIds_.push_back(5);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSubMode(want, continuousTaskRecord), ERR_BGTASK_CHECK_TASK_PARAM);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSubMode(want, continuousTaskRecord), ERR_OK);
 }
 
 /**
  * @tc.name: BgTaskManagerUnitTest_049
- * @tc.desc: test CheckSubModeNotificationText.
+ * @tc.desc: test CheckNotificationText.
  * @tc.type: FUNC
  * @tc.require: issueIBOIHY
  */
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_049, TestSize.Level1)
 {
     std::string notificationText {""};
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSubModeNotificationText(notificationText, continuousTaskRecord), ERR_OK);
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->bgModeIds_.clear();
+    record->bgModeIds_.push_back(2);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckNotificationText(notificationText, record), ERR_OK);
 
+    record->bgModeIds_.clear();
+    record->bgModeIds_.push_back(100);
+    bgContinuousTaskMgr_->continuousTaskText_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckNotificationText(notificationText, record),
+        ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+
+    record->bgModeIds_.clear();
+    record->bgModeIds_.push_back(5);
+    record->bgSubModeIds_.push_back(1);
     bgContinuousTaskMgr_->continuousTaskSubText_.clear();
-    continuousTaskRecord->bgSubModeIds_.push_back(100);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSubModeNotificationText(notificationText, continuousTaskRecord),
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmmode_test");
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckNotificationText(notificationText, record),
         ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
 
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgsubmode_test");
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSubModeNotificationText(notificationText, continuousTaskRecord),
-        ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
-
-    continuousTaskRecord->bgSubModeIds_.clear();
-    continuousTaskRecord->bgSubModeIds_.push_back(1);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSubModeNotificationText(notificationText, continuousTaskRecord), ERR_OK);
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckNotificationText(notificationText, record), ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
