@@ -133,8 +133,8 @@ private:
     void InitRecordParam(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
         const sptr<ContinuousTaskParam> &taskParam, int32_t userId);
     ErrCode CheckSubMode(const std::shared_ptr<AAFwk::Want> want, std::shared_ptr<ContinuousTaskRecord> record);
-    ErrCode CheckSubModeNotificationText(std::string &notificationText,
-        const std::shared_ptr<ContinuousTaskRecord> record);
+    ErrCode CheckNotificationText(std::string &notificationText,
+        const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord);
     int32_t RefreshTaskRecord();
     void HandleAppContinuousTaskStop(int32_t uid);
     bool checkPidCondition(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t pid);
