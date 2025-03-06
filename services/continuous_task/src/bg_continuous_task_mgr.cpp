@@ -888,23 +888,9 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     }
 
     std::string notificationText {""};
-    for (auto mode : continuousTaskRecord->bgModeIds_) {
-        if (mode == BackgroundMode::AUDIO_PLAYBACK || ((mode == BackgroundMode::VOIP ||
-            mode == BackgroundMode::AUDIO_RECORDING) && continuousTaskRecord->IsSystem())) {
-            continue;
-        }
-        BGTASK_LOGD("mode %{public}d", mode);
-        uint32_t index = GetBgModeNameIndex(mode, continuousTaskRecord->isNewApi_);
-        if (index < continuousTaskText_.size()) {
-            notificationText += continuousTaskText_.at(index);
-            notificationText += "\n";
-        } else {
-            BGTASK_LOGI("index is invalid");
-            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
-        }
-    }
-    if (CheckSubModeNotificationText(notificationText, continuousTaskRecord) != ERR_OK) {
-        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    ErrCode ret = CheckNotificationText(notificationText, continuousTaskRecord);
+    if (ret != ERR_OK) {
+        return ret;
     }
     if (notificationText.empty()) {
         if (continuousTaskRecord->GetNotificationId() != -1) {
@@ -919,18 +905,22 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
         appName, notificationText, bgTaskUid_);
 }
 
-ErrCode BgContinuousTaskMgr::CheckSubModeNotificationText(std::string &notificationText,
-    const std::shared_ptr<ContinuousTaskRecord> record)
+ErrCode BgContinuousTaskMgr::CheckNotificationText(std::string &notificationText,
+    const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord)
 {
-    if (record->bgSubModeIds_.size() > 0) {
-        if (continuousTaskSubText_.empty()) {
-            BGTASK_LOGE("get subMode notification prompt info failed, continuousTaskSubText_ is empty");
-            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    for (auto mode : continuousTaskRecord->bgModeIds_) {
+        if (mode == BackgroundMode::AUDIO_PLAYBACK || ((mode == BackgroundMode::VOIP ||
+            mode == BackgroundMode::AUDIO_RECORDING) && continuousTaskRecord->IsSystem())) {
+            continue;
         }
-        notificationText = "";
-        for (auto subMode : record->bgSubModeIds_) {
-            BGTASK_LOGD("subMode %{public}d", subMode);
-            uint32_t index = subMode - 1;
+        BGTASK_LOGD("mode %{public}d", mode);
+        if (mode == BackgroundMode::BLUETOOTH_INTERACTION &&
+            CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_, BackgroundSubMode::CAR_KEY)) {
+            if (continuousTaskSubText_.empty()) {
+                BGTASK_LOGE("get subMode notification prompt info failed, continuousTaskSubText_ is empty");
+                return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+            }
+            uint32_t index = BackgroundSubMode::CAR_KEY - 1;
             if (index < continuousTaskSubText_.size()) {
                 notificationText += continuousTaskSubText_.at(index);
                 notificationText += "\n";
@@ -938,6 +928,15 @@ ErrCode BgContinuousTaskMgr::CheckSubModeNotificationText(std::string &notificat
                 BGTASK_LOGI("sub index is invalid");
                 return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
             }
+            continue;
+        }
+        uint32_t index = GetBgModeNameIndex(mode, continuousTaskRecord->isNewApi_);
+        if (index < continuousTaskText_.size()) {
+            notificationText += continuousTaskText_.at(index);
+            notificationText += "\n";
+        } else {
+            BGTASK_LOGI("index is invalid");
+            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
         }
     }
     return ERR_OK;
