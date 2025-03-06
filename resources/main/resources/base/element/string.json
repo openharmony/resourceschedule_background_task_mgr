@@ -73,7 +73,10 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"The insensible Bluetooth car key will be invalid when the card is closed."
+            "value":"Remote car key will be disabled if you close this card.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
