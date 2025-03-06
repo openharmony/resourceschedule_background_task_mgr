@@ -35,6 +35,10 @@
         {
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"[TS_972426]_A data transfer task is running."
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"[TS_1039903]_Remote car key will be disabled if you close this card."
         }
     ]
 }
