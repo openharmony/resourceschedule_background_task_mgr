@@ -383,7 +383,6 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     }
 
     if (!CheckOrUpdateCpuApplyQuota(uid, bundleName, resourceInfo)) {
-        BGTASK_LOGE("apply efficiency resources failed, check cpu apply quota failed!");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
 
