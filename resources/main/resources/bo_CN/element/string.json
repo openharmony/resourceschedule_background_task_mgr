@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"བྱང་བུ་ཁ་བརྒྱབ་རྗེས་ཚོར་མེད་རླངས་འཁོར་ལྡེ་མིག་ནུས་མེད་དུ་འགྱུར་ངེས།",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
