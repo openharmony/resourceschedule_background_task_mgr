@@ -1690,21 +1690,19 @@ std::string BgContinuousTaskMgr::GetNotificationText(const std::shared_ptr<Conti
             mode == BackgroundMode::AUDIO_RECORDING) && record->IsSystem())) {
             continue;
         }
-        uint32_t index = GetBgModeNameIndex(mode, record->isNewApi_);
-        if (index < continuousTaskText_.size()) {
-            notificationText += continuousTaskText_.at(index);
-            notificationText += "\n";
-        }
-    }
-    if (record->bgSubModeIds_.size() > 0) {
-        notificationText = "";
-        for (auto subMode : record->bgSubModeIds_) {
-            BGTASK_LOGD("subMode %{public}d", subMode);
-            uint32_t index = subMode - 1;
+        if (mode == BackgroundMode::BLUETOOTH_INTERACTION &&
+            CommonUtils::CheckExistMode(record->bgSubModeIds_, BackgroundSubMode::CAR_KEY)) {
+            uint32_t index = BackgroundSubMode::CAR_KEY - 1;
             if (index < continuousTaskSubText_.size()) {
                 notificationText += continuousTaskSubText_.at(index);
                 notificationText += "\n";
             }
+            continue;
+        }
+        uint32_t index = GetBgModeNameIndex(mode, record->isNewApi_);
+        if (index < continuousTaskText_.size()) {
+            notificationText += continuousTaskText_.at(index);
+            notificationText += "\n";
         }
     }
     return notificationText;
