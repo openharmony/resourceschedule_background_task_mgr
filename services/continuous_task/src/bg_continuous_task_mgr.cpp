@@ -89,10 +89,11 @@ static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
-static constexpr uint32_t HEALTHSPORT_SA_UID = 7259;
-#ifdef DFEATURE_PRODUCT_WATCH
+#ifdef FEATURE_PRODUCT_WATCH
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
-#endif // DFEATURE_PRODUCT_WATCH
+#else
+static constexpr uint32_t HEALTHSPORT_SA_UID = 7259;
+#endif
 static constexpr uint32_t ALL_MODES = 0xFF;
 
 #ifndef HAS_OS_ACCOUNT_PART
