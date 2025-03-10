@@ -434,6 +434,16 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_032, TestSize.Level1)
     dumpOption.emplace_back("DUMP_CANCEL");
     EXPECT_EQ(bgTransientTaskMgr_->ShellDump(dumpOption, dumpInfo), ERR_OK);
     dumpOption.pop_back();
+    dumpOption.emplace_back("PAUSE");
+    dumpOption.emplace_back("1");
+    EXPECT_EQ(bgTransientTaskMgr_->ShellDump(dumpOption, dumpInfo), ERR_OK);
+    dumpOption.pop_back();
+    dumpOption.pop_back();
+    dumpOption.emplace_back("START");
+    dumpOption.emplace_back("1");
+    EXPECT_EQ(bgTransientTaskMgr_->ShellDump(dumpOption, dumpInfo), ERR_OK);
+    dumpOption.pop_back();
+    dumpOption.pop_back();
     dumpOption.emplace_back("invalid");
     EXPECT_EQ(bgTransientTaskMgr_->ShellDump(dumpOption, dumpInfo), ERR_BGTASK_PERMISSION_DENIED);
 }
@@ -478,6 +488,27 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_041, TestSize.Level1)
     DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->OnResourceChanged(callbackInfo,
         EfficiencyResourcesEventType::RESOURCE_RESET);
     EXPECT_EQ((int32_t)DelayedSingleton<ResourcesSubscriberMgr>::GetInstance()->subscriberList_.size(), 1);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_042
+ * @tc.desc: test BgTransientTaskMgr NotifyTransientTaskSuscriber.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_042, TestSize.Level1)
+{
+    bgTransientTaskMgr_->subscriberList_.clear();
+    auto taskInfo = std::make_shared<TransientTaskAppInfo>();
+    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
+    bgTransientTaskMgr_->subscriberList_.emplace_back(subscriber1.GetImpl());
+
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo, TransientTaskEventType::TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo, TransientTaskEventType::TASK_END);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo, TransientTaskEventType::TASK_ERR);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo, TransientTaskEventType::APP_TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(taskInfo, TransientTaskEventType::APP_TASK_END);
+    EXPECT_NE((int32_t)bgTransientTaskMgr_->subscriberList_.size(), 0);
 }
 
 /**
@@ -589,6 +620,65 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_046, TestSize.Level1)
     uid = 1;
     bgTransientTaskMgr_->OnAppCacheStateChanged(uid, pid, bundleName);
     EXPECT_NE(bgTransientTaskMgr_->CancelSuspendDelay(-1), ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_047
+ * @tc.desc: test BgTransientTaskMgr HandleSuspendManagerDie.
+ * @tc.type: FUNC
+ * @tc.require: issueIB08SV
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_047, TestSize.Level1)
+{
+    bgTransientTaskMgr_->HandleSuspendManagerDie();
+
+    bgTransientTaskMgr_->transientPauseUid_.insert(1);
+    bgTransientTaskMgr_->HandleSuspendManagerDie();
+    int32_t uid = GetUidByBundleName(LAUNCHER_BUNDLE_NAME, DEFAULT_USERID);
+    if (uid == -1) {
+        uid = GetUidByBundleName(SCB_BUNDLE_NAME, DEFAULT_USERID);
+    }
+    bgTransientTaskMgr_->transientPauseUid_.insert(uid);
+    bgTransientTaskMgr_->HandleSuspendManagerDie();
+    EXPECT_EQ(bgTransientTaskMgr_->transientPauseUid_.size(), 0);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_048
+ * @tc.desc: test BgTransientTaskMgr DumpTaskTime.
+ * @tc.type: FUNC
+ * @tc.require: issueIB08SV
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_048, TestSize.Level1)
+{
+    std::vector<std::string> dumpOption;
+    std::vector<std::string> dumpInfo;
+    int32_t uid = GetUidByBundleName(LAUNCHER_BUNDLE_NAME, DEFAULT_USERID);
+    if (uid == -1) {
+        uid = GetUidByBundleName(SCB_BUNDLE_NAME, DEFAULT_USERID);
+    }
+    std::string sUid = std::to_string(uid);
+    dumpOption.emplace_back("-C");
+    dumpOption.emplace_back("START");
+    dumpOption.emplace_back(sUid);
+    bgTransientTaskMgr_->DumpTaskTime(dumpOption, true, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
+    bgTransientTaskMgr_->DumpTaskTime(dumpOption, false, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 2);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_049
+ * @tc.desc: test BgTransientTaskMgr OnRemoveSystemAbility.
+ * @tc.type: FUNC
+ * @tc.require: issueIB08SV
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_049, TestSize.Level1)
+{
+    bgTransientTaskMgr_->isReady_.store(true);
+    bgTransientTaskMgr_->OnRemoveSystemAbility(-1, "");
+    bgTransientTaskMgr_->OnRemoveSystemAbility(SUSPEND_MANAGER_SYSTEM_ABILITY_ID, "");
+    EXPECT_TRUE(true);
 }
 }
 }
