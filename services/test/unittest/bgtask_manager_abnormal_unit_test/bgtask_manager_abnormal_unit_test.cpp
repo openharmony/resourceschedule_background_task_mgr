@@ -48,6 +48,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_001
     BackgroundTaskMgrService_->OnStart();
     BackgroundTaskMgrService_->state_ = ServiceRunningState::STATE_NOT_START;
 
+    BackgroundTaskMgrService_->OnAddSystemAbility(-1, "");
     BackgroundTaskMgrService_->OnRemoveSystemAbility(-1, "");
     EXPECT_EQ(BackgroundTaskMgrService_->state_, ServiceRunningState::STATE_NOT_START);
 }
@@ -100,6 +101,80 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_003
     args1.clear();
     args1.emplace_back(Str8ToStr16("Invalid"));
     EXPECT_EQ(BackgroundTaskMgrService_->Dump(-1, args1), ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_004
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_004, TestSize.Level1)
+{
+    DelaySuspendInfo delayInfo;
+    EXPECT_EQ(BackgroundTaskMgrService_->RequestSuspendDelay("test", nullptr, delayInfo), ERR_BGTASK_SYS_NOT_READY);
+    int32_t requestId = 1;
+    int32_t delayTime = 1;
+    EXPECT_EQ(BackgroundTaskMgrService_->GetRemainingDelayTime(requestId, delayTime), ERR_BGTASK_SYS_NOT_READY);
+    BackgroundTaskMgrService_->ForceCancelSuspendDelay(requestId);
+    EXPECT_EQ(BackgroundTaskMgrService_->CancelSuspendDelay(requestId), ERR_BGTASK_SYS_NOT_READY);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_005
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_005, TestSize.Level1)
+{
+    int32_t notificationId = -1;
+    int32_t continuousTaskId = -1;
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    EXPECT_EQ(BackgroundTaskMgrService_->StartBackgroundRunning(
+        taskParam, notificationId, continuousTaskId), ERR_BGTASK_SYS_NOT_READY);
+
+    ContinuousTaskParamForInner taskParamInner = ContinuousTaskParamForInner();
+    EXPECT_EQ(BackgroundTaskMgrService_->RequestBackgroundRunningForInner(taskParamInner), ERR_BGTASK_SYS_NOT_READY);
+
+    EXPECT_EQ(BackgroundTaskMgrService_->UpdateBackgroundRunning(
+        taskParam, notificationId, continuousTaskId), ERR_BGTASK_SYS_NOT_READY);
+    int32_t abilityId = -1;
+    EXPECT_EQ(BackgroundTaskMgrService_->StopBackgroundRunning("test", nullptr, abilityId), ERR_BGTASK_SYS_NOT_READY);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_006
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_006, TestSize.Level1)
+{
+    int32_t requestId = 1;
+    BackgroundTaskMgrService_->HandleRequestExpired(requestId);
+    BackgroundTaskMgrService_->HandleExpiredCallbackDeath(nullptr);
+    BackgroundTaskMgrService_->HandleSubscriberDeath(nullptr);
+    EXPECT_TRUE(true);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_007
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_007, TestSize.Level1)
+{
+    int32_t uid = 0;
+    EXPECT_EQ(BackgroundTaskMgrService_->StartTransientTaskTimeForInner(uid), ERR_BGTASK_SYS_NOT_READY);
+    EXPECT_EQ(BackgroundTaskMgrService_->PauseTransientTaskTimeForInner(uid), ERR_BGTASK_SYS_NOT_READY);
+
+    EfficiencyResourceInfo resources = EfficiencyResourceInfo();
+    EXPECT_EQ(BackgroundTaskMgrService_->ApplyEfficiencyResources(resources), ERR_BGTASK_SYS_NOT_READY);
+    EXPECT_EQ(BackgroundTaskMgrService_->ResetAllEfficiencyResources(), ERR_BGTASK_SYS_NOT_READY);
+    
+    EXPECT_EQ(BackgroundTaskMgrService_->SetBgTaskConfig("", 1), ERR_BGTASK_PERMISSION_DENIED);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
