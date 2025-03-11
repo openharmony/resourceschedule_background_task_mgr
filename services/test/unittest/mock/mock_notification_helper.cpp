@@ -128,5 +128,19 @@ ErrCode NotificationHelper::GetAllActiveNotifications(std::vector<sptr<Notificat
     }
     return 0;
 }
+
+ErrCode NotificationHelper::GetActiveNotifications(std::vector<sptr<NotificationRequest>> &request)
+{
+    std::shared_ptr<NotificationNormalContent> normalContent
+        = std::make_shared<NotificationNormalContent>();
+    normalContent->SetTitle("appName1");
+    normalContent->SetText("prompt1");
+    sptr<NotificationRequest> notificationRequest = sptr<NotificationRequest>(new NotificationRequest());
+    notificationRequest->SetContent(std::make_shared<NotificationContent>(normalContent));
+    notificationRequest->SetLabel("label");
+    notificationRequest->SetCreatorUid(0);
+    request.emplace_back(notificationRequest);
+    return ERR_OK;
+}
 }  // namespace Notification
 }  // namespace OHOS
