@@ -104,7 +104,7 @@ public:
     int32_t GetContinuousTaskId() const;
 
     /**
-     * @brief Set continuous task id.
+     * @brief Set the continuous task id.
      *
      * @param id The continuous task id.
      */
