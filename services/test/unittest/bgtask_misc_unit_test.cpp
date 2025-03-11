@@ -226,7 +226,7 @@ HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_001, TestSize.Level1)
  * @tc.name: TaskNotificationSubscriber_001
  * @tc.desc: test TaskNotificationSubscriber class.
  * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V
+ * @tc.require: issueI4QT3W issueI4QU0V issueIBSI0L
  */
 HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_001, TestSize.Level1)
 {
@@ -246,8 +246,12 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_001, TestSize.Level1)
     subscriber->OnCanceled(notification, notificationMap, 1);
     notification->request_->label_ = "bgmode_1_1";
     subscriber->OnCanceled(notification, notificationMap, 1);
+    notification->request_->label_ = "bgmode_1_1_1";
     subscriber->OnCanceled(notification, notificationMap,
         Notification::NotificationConstant::APP_CANCEL_REASON_DELETE);
+
+    subscriber->OnCanceled(notification, notificationMap,
+        Notification::NotificationConstant::USER_STOPPED_REASON_DELETE);
 
     std::shared_ptr<AAFwk::WantParams> extraInfo = std::make_shared<AAFwk::WantParams>();
     extraInfo->SetParam("abilityName", AAFwk::String::Box("abilityName"));
@@ -259,6 +263,29 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_001, TestSize.Level1)
     BgContinuousTaskMgr::GetInstance()->continuousTaskInfosMap_["1_abilityName"] = continuousTaskRecord;
     subscriber->OnCanceled(notification, notificationMap,
         Notification::NotificationConstant::USER_STOPPED_REASON_DELETE);
+    EXPECT_TRUE(true);
+}
+
+/**
+ * @tc.name: TaskNotificationSubscriber_002
+ * @tc.desc: test TaskNotificationSubscriber class.
+ * @tc.type: FUNC
+ * @tc.require: issueIBSI0L
+ */
+HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_002, TestSize.Level1)
+{
+    auto subscriber = std::make_shared<TaskNotificationSubscriber>();
+    subscriber->OnConsumed(nullptr, nullptr);
+    subscriber->OnUpdate(nullptr);
+    subscriber->OnDied();
+    subscriber->OnDoNotDisturbDateChange(nullptr);
+    subscriber->OnEnabledNotificationChanged(nullptr);
+    subscriber->OnBadgeChanged(nullptr);
+    subscriber->OnBadgeEnabledChanged(nullptr);
+    const std::vector<std::shared_ptr<Notification::Notification>> requestList;
+    auto notificationMap = std::make_shared<Notification::NotificationSortingMap>();
+    subscriber->OnBatchCanceled(requestList, notificationMap, 1);
+    subscriber->OnDisconnected();
     EXPECT_TRUE(true);
 }
 
