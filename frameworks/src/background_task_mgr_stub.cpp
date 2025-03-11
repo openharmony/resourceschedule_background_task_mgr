@@ -273,7 +273,7 @@ ErrCode BackgroundTaskMgrStub::HandleUpdateBackgroundRunning(MessageParcel &data
         BGTASK_LOGE("HandleUpdateBackgroundRunning write continuousTaskId failed");
         return ERR_BGTASK_PARCELABLE_FAILED;
     }
-    BGTASK_LOGI("write notificationId %{public}d, continuousTaskId %{public}d", taskParam->notificationId_,
+    BGTASK_LOGI("write notificationId %{public}d, continuousTaskId: %{public}d", taskParam->notificationId_,
         taskParam->continuousTaskId_);
     return ERR_OK;
 }

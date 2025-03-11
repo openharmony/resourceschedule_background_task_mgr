@@ -104,23 +104,23 @@ public:
     int32_t GetContinuousTaskId() const;
 
     /**
-     * @brief Get the cancel reason.
+     * @brief Set continuous task id.
      *
-     * @return The reason.
+     * @param id The continuous task id.
      */
     void SetContinuousTaskId(const int32_t id);
 
     /**
-     * @brief Set the cancel reasion.
+     * @brief Get the cancel reason.
      *
-     * @param reason The the cancel reasion.
+     * @return The reason.
      */
     int32_t GetCancelReason() const;
 
     /**
-     * @brief Set the continuous task id.
+     * @brief Set the cancel reason.
      *
-     * @param id The continuous task id.
+     * @param reason The the cancel reason.
      */
     void SetCancelReason(const int32_t reason);
 
