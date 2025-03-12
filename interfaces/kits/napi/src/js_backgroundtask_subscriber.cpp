@@ -131,7 +131,8 @@ void JsBackgroundTaskSubscriber::UnSubscriberBgtaskSaStatusChange()
 void JsBackgroundTaskSubscriber::OnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
-    BGTASK_LOGI("Test %{public}s %{public}d %{public}d", continuousTaskCallbackInfo->GetAbilityName().c_str(),
+    BGTASK_LOGI("abilityname %{public}s continuousTaskId %{public}d cancelReason %{public}d",
+        continuousTaskCallbackInfo->GetAbilityName().c_str(),
         continuousTaskCallbackInfo->GetContinuousTaskId(),
         continuousTaskCallbackInfo->GetCancelReason());
     std::unique_ptr<NapiAsyncTask::CompleteCallback> complete = std::make_unique<NapiAsyncTask::CompleteCallback>(
