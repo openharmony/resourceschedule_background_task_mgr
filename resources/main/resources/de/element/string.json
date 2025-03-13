@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Der Remote-Autoschlüssel wird deaktiviert, wenn Sie diese Karte schließen.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
