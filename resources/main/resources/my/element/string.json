@@ -29,6 +29,13 @@
             }
         },
         {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"ဤကတ်ကို ပိတ်လိုက်ပါက အဝေးထိန်းကားသော့ကို ပိတ်ပါမည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
             "name":"ohos_bgmode_prompt_location",
             "value":"တည်နေရာရှာဖွေသတ်မှတ်ခြင်း အလုပ်ကို လုပ်ဆောင်နေပါသည်။",
             "attr":{

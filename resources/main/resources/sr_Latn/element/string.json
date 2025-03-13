@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Daljinski ključ od automobila će biti onemogućen ako zatvorite ovu karticu.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

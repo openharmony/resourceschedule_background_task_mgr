@@ -2,63 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Tugas perekaman sedang berlangsung.",
+            "value":"פועלת משימת הקלטה.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Tugas pemutaran audio sedang berlangsung.",
+            "value":"פועלת משימת הפעלת שמע.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Tugas terdistribusi sedang berlangsung.",
+            "value":"פועלת משימה מבוזרת.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Tugas terkait panggilan sedang berlangsung.",
+            "value":"פועלת משימה הקשורה לשיחות.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"אם תסגור כרטיס זה, מפתח מכונית מרוחק יושבת.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Tugas penentuan posisi sedang berlangsung.",
+            "value":"פועלת משימת מיקום.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Tugas terkait WLAN sedang berlangsung.",
+            "value":"פועלת משימה הקשורה ל-WLAN.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Tugas terkait Bluetooth sedang berlangsung.",
+            "value":"פועלת משימה הקשורה ל-Bluetooth.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Tugas komputasi sedang berlangsung.",
+            "value":"פועלת משימת מחשוב.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Tugas transfer data sedang berlangsung.",
+            "value":"פועלת משימת העברת נתונים.",
             "attr":{
                 "priority":"translate"
             }

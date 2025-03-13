@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Το απομακρυσμένο κλειδί αυτοκινήτου θα απενεργοποιηθεί εάν κλείσετε αυτήν την κάρτα.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

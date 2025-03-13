@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Se chiudi questa scheda, la chiave dell'auto remota verrà disattivata.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

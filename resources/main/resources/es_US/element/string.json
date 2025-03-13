@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"La llave a distancia del coche se deshabilitará si cierras esta tarjeta.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

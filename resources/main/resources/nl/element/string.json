@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Als u deze kaart sluit, wordt de afstandsbediening van de autosleutel uitgeschakeld.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

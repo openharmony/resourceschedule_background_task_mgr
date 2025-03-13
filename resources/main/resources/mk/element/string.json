@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Далечинскиот клуч за автомобилот ќе се оневозможи ако ја затворите оваа картичка.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

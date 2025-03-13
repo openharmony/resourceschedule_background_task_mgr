@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Chìa khóa xe từ xa sẽ bị tắt nếu bạn đóng thẻ này.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

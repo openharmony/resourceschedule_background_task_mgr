@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Selle kaardi sulgemisel auto kaugjuhtimispult keelatakse.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

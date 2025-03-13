@@ -2,63 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"פועלת משימת הקלטה.",
+            "value":"Tugas perekaman sedang berlangsung.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"פועלת משימת הפעלת שמע.",
+            "value":"Tugas pemutaran audio sedang berlangsung.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"פועלת משימה מבוזרת.",
+            "value":"Tugas terdistribusi sedang berlangsung.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"פועלת משימה הקשורה לשיחות.",
+            "value":"Tugas terkait panggilan sedang berlangsung.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Kunci mobil jarak jauh akan dinonaktifkan jika Anda menutup kartu ini.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"פועלת משימת מיקום.",
+            "value":"Tugas penentuan posisi sedang berlangsung.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"פועלת משימה הקשורה ל-WLAN.",
+            "value":"Tugas terkait WLAN sedang berlangsung.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"פועלת משימה הקשורה ל-Bluetooth.",
+            "value":"Tugas terkait Bluetooth sedang berlangsung.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"פועלת משימת מחשוב.",
+            "value":"Tugas komputasi sedang berlangsung.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"פועלת משימת העברת נתונים.",
+            "value":"Tugas transfer data sedang berlangsung.",
             "attr":{
                 "priority":"translate"
             }

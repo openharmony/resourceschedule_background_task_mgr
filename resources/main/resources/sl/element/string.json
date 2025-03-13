@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Oddaljeni avtomobilski ključ bo onemogočen, če zaprete ta zavihek.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Ключ віддаленого керування автомобілем буде вимкнено, якщо ви закриєте цю картку.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

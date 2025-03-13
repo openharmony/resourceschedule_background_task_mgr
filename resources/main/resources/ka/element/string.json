@@ -29,6 +29,13 @@
             }
         },
         {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"მანქანის დისტანციური გასაღები გამოირთვება, თუ ამ ბარათს დახურავთ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
             "name":"ohos_bgmode_prompt_location",
             "value":"გაშვებულია პოზიციონირების დავალება.",
             "attr":{

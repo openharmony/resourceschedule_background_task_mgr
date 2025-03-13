@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"এই কার্ডটি বন্ধ করলে রিমোট গাড়ির চাবি নিষ্ক্রিয় হয়ে যাবে।",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
