@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Дистанционният ключ за колата ще се деактивира, ако затворите тази карта.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
