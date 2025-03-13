@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"A chave remota do carro será desativada se você fechar este cartão.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
