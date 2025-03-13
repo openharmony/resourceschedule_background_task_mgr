@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Kunci kereta jauh akan dinyahdayakan jika anda menutup kad ini.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
