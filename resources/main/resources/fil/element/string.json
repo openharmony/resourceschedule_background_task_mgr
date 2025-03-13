@@ -2,63 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"هناك مهمة تسجيل جارية.",
+            "value":"May tumatakbong task sa pag-record.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"هناك مهمة جارية لتشغيل مقطع صوتي.",
+            "value":"May tumatakbong task sa pag-playback ng audio.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"هناك مهمة موزعة جارية.",
+            "value":"May tumatakbong task sa pag-distribute.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"هناك مهمة جارية متعلقة المكالمات.",
+            "value":"May tumatakbong task na may kaugnayan sa taawag.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Madi-disable ang remote na susi ng kotse kung isasara mo ang card na ito.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"هناك مهمة جارية لتحديد الموقع.",
+            "value":"May tumatakbong task sa pag-posisyon.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"هناك مهمة جارية متعلقة بالشبكة اللاسلكية.",
+            "value":"May tumatakbong task na may kaugnayan sa WLAN.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"هناك مهمة جارية متعلقة بالبلوتوث.",
+            "value":"May tumatakbong task na may kaugnayan sa Bluetooth.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"هناك مهمة حوسبة جارية.",
+            "value":"May tumatakbong task sa pag-compute.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"هناك مهمة جارية لنقل البيانات.",
+            "value":"May tumatakbong task sa paglipat ng data.",
             "attr":{
                 "priority":"translate"
             }
