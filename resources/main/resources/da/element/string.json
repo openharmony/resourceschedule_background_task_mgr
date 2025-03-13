@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Fjernbetjeningsbilnøgle deaktiveres, hvis du lukker dette kort.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
