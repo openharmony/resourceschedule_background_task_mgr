@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"اگر این کارت را ببندید، کلید ریموت خودرو غیرفعال خواهد شد.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
