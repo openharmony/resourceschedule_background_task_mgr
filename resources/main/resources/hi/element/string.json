@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"अगर आप इस कार्ड को बंद करेंगे, तो रिमोट कार की कुंजी अक्षम हो जाएगी।",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
