@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Ha bezárja ezt a kártyát, a távoli kocsikulcs kikapcsol.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
