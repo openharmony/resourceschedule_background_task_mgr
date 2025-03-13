@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Fjernkontrollnøkkelen deaktiveres hvis du lukker dette kortet.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
