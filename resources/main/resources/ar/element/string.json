@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"سيتم تعطيل مفتاح السيارة عن بُعد إذا أغلقت هذه البطاقة.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
