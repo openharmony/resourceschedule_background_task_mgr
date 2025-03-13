@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"La clé de voiture à distance sera désactivée si vous fermez cette carte.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
