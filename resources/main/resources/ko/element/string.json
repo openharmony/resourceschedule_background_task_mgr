@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"이 카드를 닫으면 원격 차량 키가 종료됩니다.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
