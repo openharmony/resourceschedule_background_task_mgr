@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Ключ дистанционного управления автомобилем будет выключен, если вы закроете эту карточку.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
