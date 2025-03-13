@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Fjärrstyrd bilnyckel kommer att avaktiveras om du stänger detta kort.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
