@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Auton kaukoavain poistetaan käytöstä, jos suljet tämän kortin.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
