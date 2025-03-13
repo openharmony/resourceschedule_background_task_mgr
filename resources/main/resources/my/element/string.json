@@ -2,70 +2,63 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"ئۈن ئېلىش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"هناك مهمة تسجيل جارية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"ئاۋاز قويۇش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"هناك مهمة جارية لتشغيل مقطع صوتي.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"تارقاق ۋەزىپە يۈرۈۋاتىدۇ...",
+            "value":"هناك مهمة موزعة جارية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"چاقىرىق ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"هناك مهمة جارية متعلقة المكالمات.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"ئورۇن بەلگىلەش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"هناك مهمة جارية لتحديد الموقع.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"\u200fWLAN ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"هناك مهمة جارية متعلقة بالشبكة اللاسلكية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"كۆكچىش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"هناك مهمة جارية متعلقة بالبلوتوث.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"ھېسابلاش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"هناك مهمة حوسبة جارية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"مەلۇمات يوللاش ۋەزىپىسى يۈرۈۋاتىدۇ...",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"كارتىنى ئەتسىڭىز، سېزىلمەس ماشىنا ئاچقۇچ كۈچتىن قالىدۇ.",
+            "value":"هناك مهمة جارية لنقل البيانات.",
             "attr":{
                 "priority":"translate"
             }

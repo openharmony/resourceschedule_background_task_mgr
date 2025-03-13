@@ -2,63 +2,63 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"פועלת משימת הקלטה.",
+            "value":"هناك مهمة تسجيل جارية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"פועלת משימת הפעלת שמע.",
+            "value":"هناك مهمة جارية لتشغيل مقطع صوتي.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"פועלת משימה מבוזרת.",
+            "value":"هناك مهمة موزعة جارية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"פועלת משימה הקשורה לשיחות.",
+            "value":"هناك مهمة جارية متعلقة المكالمات.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"פועלת משימת מיקום.",
+            "value":"هناك مهمة جارية لتحديد الموقع.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"פועלת משימה הקשורה ל-WLAN.",
+            "value":"هناك مهمة جارية متعلقة بالشبكة اللاسلكية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"פועלת משימה הקשורה ל-Bluetooth.",
+            "value":"هناك مهمة جارية متعلقة بالبلوتوث.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"פועלת משימת מחשוב.",
+            "value":"هناك مهمة حوسبة جارية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"פועלת משימת העברת נתונים.",
+            "value":"هناك مهمة جارية لنقل البيانات.",
             "attr":{
                 "priority":"translate"
             }

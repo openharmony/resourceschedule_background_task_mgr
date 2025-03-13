@@ -2,63 +2,63 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Tugas perekaman sedang berlangsung.",
+            "value":"هناك مهمة تسجيل جارية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Tugas pemutaran audio sedang berlangsung.",
+            "value":"هناك مهمة جارية لتشغيل مقطع صوتي.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Tugas terdistribusi sedang berlangsung.",
+            "value":"هناك مهمة موزعة جارية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Tugas terkait panggilan sedang berlangsung.",
+            "value":"هناك مهمة جارية متعلقة المكالمات.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Tugas penentuan posisi sedang berlangsung.",
+            "value":"هناك مهمة جارية لتحديد الموقع.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Tugas terkait WLAN sedang berlangsung.",
+            "value":"هناك مهمة جارية متعلقة بالشبكة اللاسلكية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Tugas terkait Bluetooth sedang berlangsung.",
+            "value":"هناك مهمة جارية متعلقة بالبلوتوث.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Tugas komputasi sedang berlangsung.",
+            "value":"هناك مهمة حوسبة جارية.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Tugas transfer data sedang berlangsung.",
+            "value":"هناك مهمة جارية لنقل البيانات.",
             "attr":{
                 "priority":"translate"
             }
