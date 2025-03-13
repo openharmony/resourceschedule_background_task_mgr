@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Zamknięcie tej karty spowoduje wyłączenie zdalnego kluczyka samochodowego.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
