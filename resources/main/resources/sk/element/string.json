@@ -62,6 +62,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Ak zatvoríte túto kartu vypne sa vzdialený kľúč od auta.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
