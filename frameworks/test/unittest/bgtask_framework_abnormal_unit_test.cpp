@@ -223,7 +223,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_004
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V issueI99HSB
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_005, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_005, TestSize.Level2)
 {
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
 
@@ -257,7 +257,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_005
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_006, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_006, TestSize.Level2)
 {
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
     EXPECT_EQ(backgroundTaskMgrProxy.SubscribeBackgroundTask(nullptr), ERR_INVALID_DATA);
@@ -287,7 +287,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_006
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_007, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_007, TestSize.Level2)
 {
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
     EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(nullptr), ERR_INVALID_DATA);
@@ -317,7 +317,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_007
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_008, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_008, TestSize.Level2)
 {
     std::vector<TransientTaskAppInfo> list;
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
@@ -343,7 +343,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_008
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_009, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_009, TestSize.Level3)
 {
     std::vector<ContinuousTaskCallbackInfo> list;
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
@@ -369,7 +369,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_009
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_010, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_010, TestSize.Level3)
 {
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
 
@@ -399,7 +399,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_010
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_011, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_011, TestSize.Level3)
 {
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
     EXPECT_EQ(backgroundTaskMgrProxy.ApplyEfficiencyResources(*new EfficiencyResourceInfo()), ERR_INVALID_DATA);
@@ -428,7 +428,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_011
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_012, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_012, TestSize.Level3)
 {
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
 
@@ -450,7 +450,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_012
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_013, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_013, TestSize.Level3)
 {
     std::vector<ResourceCallbackInfo> appList;
     std::vector<ResourceCallbackInfo> procList;
@@ -477,7 +477,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_013
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_014, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_014, TestSize.Level4)
 {
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
     EXPECT_EQ(backgroundTaskMgrProxy.RequestBackgroundRunningForInner(
@@ -507,7 +507,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_014
  * @tc.type: FUNC
  * @tc.require: issuesI936BL
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_015, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_015, TestSize.Level4)
 {
     int32_t uid = -1;
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
@@ -534,7 +534,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_015
  * @tc.type: FUNC
  * @tc.require: issuesI936BL
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_016, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_016, TestSize.Level4)
 {
     int32_t uid = -1;
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
@@ -561,7 +561,7 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_016
  * @tc.type: FUNC
  * @tc.require: issueIAULHW
  */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_017, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_017, TestSize.Level4)
 {
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
     
