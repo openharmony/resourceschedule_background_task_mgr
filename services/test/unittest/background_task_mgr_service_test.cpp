@@ -39,7 +39,7 @@ public:
  * @tc.type: FUNC
  * @tc.require: SR000GGTET SR000GMUG8 AR000GH86O AR000GH86Q AR000GMUIA AR000GMUHN
  */
-HWTEST_F(BackgroundTaskMgrServiceTest, BackgroundTaskMgrServiceTest_001, TestSize.Level1)
+HWTEST_F(BackgroundTaskMgrServiceTest, BackgroundTaskMgrServiceTest_001, TestSize.Level3)
 {
     sptr<ISystemAbilityManager> sm = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     EXPECT_TRUE(sm != nullptr) << "BackgroundTaskMgrServiceTest fail to get GetSystemAbilityManager";

@@ -12,7 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-module_output_path = "background_task_mgr/interfaces/transient_task"
+module_output_path = "background_task_mgr/background_task_mgr"
 
 ohos_js_unittest("TransientTaskJsTest") {
   module_out_path = module_output_path
