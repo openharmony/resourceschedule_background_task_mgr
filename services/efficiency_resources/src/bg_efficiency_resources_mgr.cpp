@@ -915,6 +915,9 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
         iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
+    
+    // update the left quota of cpu efficiency resource when reset
+    UpdateQuotaIfCpuReset(type, callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
     BGTASK_LOGI("remove record from info map, mapkey %{public}d, uid: %{public}d, bundle name: %{public}s"
         "erasebit %{public}d", mapKey, callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str(), eraseBit);
     subscriberMgr_->OnResourceChanged(callbackInfo, type);
