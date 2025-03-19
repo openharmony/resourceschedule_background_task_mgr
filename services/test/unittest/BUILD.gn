@@ -353,7 +353,6 @@ ohos_unittest("bg_continuous_task_mgr_unit_test") {
 
   sources = [
     "bg_continuous_task_mgr_unit_test.cpp",
-    "bg_transient_task_mgr_test.cpp",
     "mock/mock_bundle_manager_helper.cpp",
     "mock/mock_event_handler.cpp",
     "mock/mock_ipc.cpp",
