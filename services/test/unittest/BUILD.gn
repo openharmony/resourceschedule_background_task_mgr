@@ -406,12 +406,12 @@ group("unittest") {
   testonly = true
 
   deps = [
+    ":bg_continuous_task_mgr_unit_test",
     ":bgtask_manager_unit_test",
     ":bgtask_misc_unit_test",
     ":bgtask_unit_test",
     ":efficiency_mgr_unit_test",
     ":mock_efficiency_mgr_unit_test",
-    ":bg_continuous_task_mgr_unit_test",
     "bgtask_manager_abnormal_unit_test:bgtask_manager_abnormal_unit_test",
   ]
 }
