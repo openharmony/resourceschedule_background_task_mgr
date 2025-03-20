@@ -1089,5 +1089,73 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_049, TestSize.Level1)
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
     EXPECT_EQ(bgContinuousTaskMgr_->CheckNotificationText(notificationText, record), ERR_OK);
 }
+
+/**
+ * @tc.name: BgtaskNotificationVerifyFailed_001
+ * @tc.desc: use batch api.
+ * @tc.type: FUNC
+ * @tc.require: issueI94UH9 issueI99HSB
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgtaskNotificationVerifyFailed_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundModeInfo(1, "abilityName"), 0u);
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1, 2, 3}, 1);
+    
+    bgContinuousTaskMgr_->continuousTaskText_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+}
+
+/**
+ * @tc.name: BgtaskNotificationVerifyFailed_002
+ * @tc.desc: use batch api.
+ * @tc.type: FUNC
+ * @tc.require: issueI94UH9 issueI99HSB
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgtaskNotificationVerifyFailed_002, TestSize.Level3)
+{
+    bgContinuousTaskMgr_->continuousTaskText_.push_back("bgmode_test");
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundModeInfo(1, "abilityName"), 0u);
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1, 2, 3}, 1);
+    EXPECT_EQ(bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), ERR_OK);
+
+    sptr<ContinuousTaskParam> taskParam3 = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {4}, 1);
+    bgContinuousTaskMgr_->continuousTaskText_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam3), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+}
+
+/**
+ * @tc.name: BgtaskSysNotReady_001
+ * @tc.desc: use batch api.
+ * @tc.type: FUNC
+ * @tc.require: issueI94UH9 issueI99HSB
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgtaskSysNotReady_001, TestSize.Level3)
+{
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1, 2, 3}, 1);
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    EXPECT_EQ(bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), ERR_BGTASK_SYS_NOT_READY);
+    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam), ERR_BGTASK_SYS_NOT_READY);
+    EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunning("", 0), ERR_BGTASK_SYS_NOT_READY);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
