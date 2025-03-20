@@ -680,5 +680,107 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_049, TestSize.Level1)
     bgTransientTaskMgr_->OnRemoveSystemAbility(SUSPEND_MANAGER_SYSTEM_ABILITY_ID, "");
     EXPECT_TRUE(true);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_050
+ * @tc.desc: test BgtaskConfig Init.
+ * @tc.type: FUNC
+ * @tc.require: DTS2025031836567
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_050, TestSize.Level1)
+{
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.clear();
+    DelayedSingleton<BgtaskConfig>::GetInstance()->isInit_ = true;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
+    
+    EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_051
+ * @tc.desc: test BgtaskConfig Init.
+ * @tc.type: FUNC
+ * @tc.require: DTS2025031836567
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_051, TestSize.Level1)
+{
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.clear();
+    DelayedSingleton<BgtaskConfig>::GetInstance()->isInit_ = false;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
+    
+    EXPECT_NE(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_052
+ * @tc.desc: test BgtaskConfig ParseTransientTaskExemptedQuatoList.
+ * @tc.type: FUNC
+ * @tc.require: DTS2025031836567
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_052, TestSize.Level1)
+{
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.clear();
+    nlohmann::json root = nullptr;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseTransientTaskExemptedQuatoList(root);
+    EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
+
+    nlohmann::json root2;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseTransientTaskExemptedQuatoList(root2);
+    EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
+
+    root2[TRANSIENT_ERR_DELAYED_FROZEN_LIST] = 1;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseTransientTaskExemptedQuatoList(root2);
+    EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
+
+    nlohmann::json root3;
+    auto appInfo = nlohmann::json::array();
+    appInfo.push_back("com.myapplication.demo1");
+    appInfo.push_back("com.myapplication.demo2");
+    root3[TRANSIENT_ERR_DELAYED_FROZEN_LIST] = appInfo;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseTransientTaskExemptedQuatoList(root3);
+    EXPECT_NE(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_053
+ * @tc.desc: test BgtaskConfig GetTransientTaskExemptedQuato.
+ * @tc.type: FUNC
+ * @tc.require: DTS2025031836567
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_053, TestSize.Level1)
+{
+    int32_t timeValue = DelayedSingleton<BgtaskConfig>::GetInstance()->GetTransientTaskExemptedQuato();
+    EXPECT_NE(timeValue, 0);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_054
+ * @tc.desc: test BgtaskConfig ParseTransientTaskExemptedQuato.
+ * @tc.type: FUNC
+ * @tc.require: DTS2025031836567
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_054, TestSize.Level1)
+{
+    nlohmann::json root = nullptr;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseTransientTaskExemptedQuato(root);
+    int32_t timeValue = DelayedSingleton<BgtaskConfig>::GetInstance()->GetTransientTaskExemptedQuato();
+    EXPECT_NE(timeValue, 0);
+
+    nlohmann::json root2;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseTransientTaskExemptedQuato(root2);
+    int32_t timeValue2 = DelayedSingleton<BgtaskConfig>::GetInstance()->GetTransientTaskExemptedQuato();
+    EXPECT_NE(timeValue2, 0);
+
+    root2[TRANSIENT_EXEMPTED_QUOTA] = "1";
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseTransientTaskExemptedQuato(root2);
+    int32_t timeValue3 = DelayedSingleton<BgtaskConfig>::GetInstance()->GetTransientTaskExemptedQuato();
+    EXPECT_NE(timeValue3, 0);
+
+    nlohmann::json root3;
+    root3[TRANSIENT_EXEMPTED_QUOTA] = 0;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseTransientTaskExemptedQuato(root3);
+    int32_t timeValue4 = DelayedSingleton<BgtaskConfig>::GetInstance()->GetTransientTaskExemptedQuato();
+    EXPECT_EQ(timeValue4, 0);
+}
 }
 }
