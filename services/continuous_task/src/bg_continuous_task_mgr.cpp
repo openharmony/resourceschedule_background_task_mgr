@@ -1326,8 +1326,8 @@ bool BgContinuousTaskMgr::StopContinuousTaskByUser(const std::string &mapKey)
         return false;
     }
     bool result = true;
-    SetReason(mapKey, REMOVE_NOTIFICATION_CANCEL);
     handler_->PostSyncTask([this, mapKey, &result]() {
+        SetReason(mapKey, REMOVE_NOTIFICATION_CANCEL);
         result = RemoveContinuousTaskRecord(mapKey);
     });
     return result;
