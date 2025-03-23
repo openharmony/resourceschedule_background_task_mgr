@@ -60,8 +60,8 @@ std::string CreateNotificationLabel(int32_t uid, const std::string &bundleName,
     std::stringstream stream;
     stream.clear();
     stream.str("");
-    stream << NOTIFICATION_PREFIX << SEPARATOR << uid << SEPARATOR << std::hash<std::string>()(abilityName)
-        << SEPARATOR << abilityId;
+    stream << NOTIFICATION_PREFIX << SEPARATOR << uid << SEPARATOR << std::hash<std::string>()(abilityName) <<
+        SEPARATOR << abilityId;
     std::string label = stream.str();
     BGTASK_LOGD("notification label: %{public}s", label.c_str());
     return label;
