@@ -25,7 +25,7 @@
             "name":"ohos_bgmode_prompt_voip",
             "value":"May tumatakbong task na may kaugnayan sa taawag.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
