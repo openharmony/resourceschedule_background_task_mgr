@@ -25,7 +25,7 @@
             "name":"ohos_bgmode_prompt_voip",
             "value":"Изпълнява се задача свързана с обаждане.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,14 +39,14 @@
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Изпълнява се задача свързана с WLAN.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Изпълнява се задача свързана с Bluetooth.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -58,9 +58,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Изпълнява се задача за трансфер на данни.",
+            "value":"Изпълнява се задача за прехвърляне на данни.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
