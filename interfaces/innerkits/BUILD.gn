@@ -115,6 +115,7 @@ ohos_shared_library("bgtaskmgr_innerkits") {
 }
 
 ohos_source_set("background_task_mgr_stub") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -137,6 +138,7 @@ ohos_source_set("background_task_mgr_stub") {
 }
 
 ohos_source_set("background_task_mgr_proxy") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -159,6 +161,7 @@ ohos_source_set("background_task_mgr_proxy") {
 }
 
 ohos_source_set("background_task_subscriber_stub") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -181,6 +184,7 @@ ohos_source_set("background_task_subscriber_stub") {
 }
 
 ohos_source_set("background_task_subscriber_proxy") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -203,6 +207,7 @@ ohos_source_set("background_task_subscriber_proxy") {
 }
 
 ohos_source_set("expired_callback_stub") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -225,6 +230,7 @@ ohos_source_set("expired_callback_stub") {
 }
 
 ohos_source_set("expired_callback_proxy") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
