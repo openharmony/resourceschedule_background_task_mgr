@@ -126,9 +126,9 @@ ohos_shared_library("bgtaskmgr_service") {
     ]
   }
 
-  if (background_task_mgr_workout_device_type == "phone") {
+  if (target_platform == "phone") {
     defines = [ "FEATURE_PRODUCT_PHONE" ]
-  } else if (background_task_mgr_workout_device_type == "watch") {
+  } else if (target_platform == "watch") {
     defines = [ "FEATURE_PRODUCT_WATCH" ]
   }
 
@@ -190,9 +190,9 @@ ohos_static_library("bgtaskmgr_service_static") {
     ]
   }
 
-  if (background_task_mgr_workout_device_type == "phone") {
+  if (target_platform == "phone") {
     defines = [ "FEATURE_PRODUCT_PHONE" ]
-  } else if (background_task_mgr_workout_device_type == "watch") {
+  } else if (target_platform == "watch") {
     defines = [ "FEATURE_PRODUCT_WATCH" ]
   }
 
