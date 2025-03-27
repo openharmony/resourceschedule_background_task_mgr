@@ -20,8 +20,7 @@
       "features": [
         "background_task_mgr_graphics",
         "background_task_mgr_jsstack",
-        "background_task_mgr_device_enable",
-        "background_task_mgr_workout_device_type"
+        "background_task_mgr_device_enable"
       ],
       "adapted_system_type": [
         "standard"
