@@ -16,9 +16,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"En distribusjonsoppgave kjører.",
+            "value":"En distribusjons\u200boppgave kjører.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -30,9 +30,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"En posisjoneringsoppgave kjører.",
+            "value":"En posisjonerings\u200boppgave kjører.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -58,9 +58,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"En dataoverføringsoppgave kjører.",
+            "value":"En dataoverførings\u200boppgave kjører.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

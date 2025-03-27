@@ -65,9 +65,9 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Cheia auto de la distanţă va fi dezactivată dacă închizi acest card.",
+            "value":"Cheia auto de la distanță va fi dezactivată dacă închideți acest card.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
