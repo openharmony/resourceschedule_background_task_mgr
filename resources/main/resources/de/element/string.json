@@ -30,9 +30,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Eine Positionierungsaufgabe wird ausgeführt.",
+            "value":"Eine Positionierungsauf\u200bgabe wird ausgeführt.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

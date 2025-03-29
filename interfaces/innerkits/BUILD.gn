@@ -115,6 +115,7 @@ ohos_shared_library("bgtaskmgr_innerkits") {
 }
 
 ohos_source_set("background_task_mgr_stub") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -123,7 +124,10 @@ ohos_source_set("background_task_mgr_stub") {
   output_values = get_target_outputs(":background_task_mgr_interface")
   sources = filter_include(output_values, [ "*_stub.cpp" ])
   public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
-  deps = [ ":background_task_mgr_interface" ]
+  deps = [
+    ":background_task_mgr_interface",
+    ":expired_callback_interface",
+  ]
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
   external_deps = [
@@ -137,6 +141,7 @@ ohos_source_set("background_task_mgr_stub") {
 }
 
 ohos_source_set("background_task_mgr_proxy") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -145,7 +150,10 @@ ohos_source_set("background_task_mgr_proxy") {
   output_values = get_target_outputs(":background_task_mgr_interface")
   sources = filter_include(output_values, [ "*_proxy.cpp" ])
   public_configs = [ ":bgtaskmgr_innerkits_public_config" ]
-  deps = [ ":background_task_mgr_interface" ]
+  deps = [
+    ":background_task_mgr_interface",
+    ":expired_callback_interface",
+  ]
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
   external_deps = [
@@ -159,6 +167,7 @@ ohos_source_set("background_task_mgr_proxy") {
 }
 
 ohos_source_set("background_task_subscriber_stub") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -181,6 +190,7 @@ ohos_source_set("background_task_subscriber_stub") {
 }
 
 ohos_source_set("background_task_subscriber_proxy") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -203,6 +213,7 @@ ohos_source_set("background_task_subscriber_proxy") {
 }
 
 ohos_source_set("expired_callback_stub") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -225,6 +236,7 @@ ohos_source_set("expired_callback_stub") {
 }
 
 ohos_source_set("expired_callback_proxy") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
