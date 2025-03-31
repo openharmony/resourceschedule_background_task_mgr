@@ -88,6 +88,9 @@
               ]
             },
             "name": "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits:bgtaskmgr_innerkits"
+          },
+          {
+            "name": "//foundation/resourceschedule/background_task_mgr/interfaces/kits:cj_background_task_mgr_ffi"
           }
         ],
         "test": [
