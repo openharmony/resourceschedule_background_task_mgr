@@ -109,7 +109,7 @@ public:
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_018, TestSize.Level1)
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_018, TestSize.Level0)
 {
     EXPECT_EQ(bgTransientTaskMgr_->isReady_.load(), false);
     bgTransientTaskMgr_->Init(AppExecFwk::EventRunner::Create("tdd_test_handler"));
@@ -122,7 +122,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_018, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_019, TestSize.Level1)
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_019, TestSize.Level0)
 {
     std::string bundleName;
     EXPECT_EQ(bgTransientTaskMgr_->IsCallingInfoLegal(-1, -1, bundleName, nullptr), ERR_BGTASK_INVALID_PID_OR_UID);
@@ -146,7 +146,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_019, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_020, TestSize.Level1)
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_020, TestSize.Level0)
 {
     std::shared_ptr<DelaySuspendInfo> delayInfo = std::make_shared<DelaySuspendInfo>();
     bgTransientTaskMgr_->isReady_.store(false);
@@ -170,7 +170,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_020, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_021, TestSize.Level1)
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_021, TestSize.Level0)
 {
     bgTransientTaskMgr_->handler_ = nullptr;
     bgTransientTaskMgr_->HandleTransientTaskSuscriberTask(nullptr, TransientTaskEventType::TASK_START);
@@ -197,7 +197,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_021, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_022, TestSize.Level1)
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_022, TestSize.Level0)
 {
     bgTransientTaskMgr_->keyInfoMap_.clear();
     bgTransientTaskMgr_->isReady_.store(false);
@@ -222,7 +222,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_022, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_023, TestSize.Level1)
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_023, TestSize.Level0)
 {
     EXPECT_EQ(bgTransientTaskMgr_->CancelSuspendDelayLocked(-1), ERR_BGTASK_CALLBACK_NOT_EXIST);
 
@@ -243,7 +243,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_023, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_024, TestSize.Level1)
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_024, TestSize.Level0)
 {
     bgTransientTaskMgr_->keyInfoMap_.clear();
     bgTransientTaskMgr_->ForceCancelSuspendDelay(1);
@@ -260,7 +260,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_024, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_025, TestSize.Level1)
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_025, TestSize.Level0)
 {
     int32_t delayTime;
     bgTransientTaskMgr_->isReady_.store(false);
@@ -285,7 +285,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_025, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_026, TestSize.Level1)
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_026, TestSize.Level0)
 {
     bgTransientTaskMgr_->HandleExpiredCallbackDeath(nullptr);
     sptr<TestExpiredCallbackStub> expiredCallbackStub = sptr<TestExpiredCallbackStub>(new TestExpiredCallbackStub());
