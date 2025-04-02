@@ -188,7 +188,11 @@ bool DataStorageHelper::CreateNodeFile(const std::string &filePath)
         BGTASK_LOGE("Fail to open file: %{private}s", filePath.c_str());
         return false;
     }
-    fclose(file);
+    int closeResult = fclose(file);
+    if (closeResult < 0) {
+        BGTASK_LOGE("Fail to close file: %{private}s", filePath.c_str());
+        return false;
+    }
     return true;
 }
 

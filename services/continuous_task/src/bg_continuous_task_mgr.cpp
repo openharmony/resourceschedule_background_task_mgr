@@ -152,7 +152,10 @@ void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
     if (res == -1) {
         BGTASK_LOGE("BgContinuousTaskMgr ReclaimProcessMemory write file failed!");
     }
-    fclose(file);
+    int closeResult = fclose(file);
+    if (closeResult < 0) {
+        BGTASK_LOGE("Fail to close file: %{private}s", filePath.c_str());
+    }
     BGTASK_LOGI("BgContinuousTaskMgr reclaimProcessMemory pid: %{public}d end.", pid);
 }
 
