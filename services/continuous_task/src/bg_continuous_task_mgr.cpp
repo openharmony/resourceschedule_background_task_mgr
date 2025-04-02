@@ -145,7 +145,7 @@ void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
     std::string contentStr = "1";
     FILE *file = fopen(path.c_str(), "w");
     if (file == nullptr) {
-        BGTASK_LOGE("Fail to open file: %{private}s, erron: %{private}s",path.c_str(), strerror(erron));
+        BGTASK_LOGE("Fail to open file: %{private}s, erron: %{private}s", path.c_str(), strerror(erron));
         return;
     }
     size_t res = fwrite(contentStr.c_str(), 1, contentStr.length(), file);
