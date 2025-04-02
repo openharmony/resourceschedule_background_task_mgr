@@ -185,12 +185,12 @@ bool DataStorageHelper::CreateNodeFile(const std::string &filePath)
     }
     FILE *file = fopen(filePath.c_str(), "w+");
     if (file == nullptr) {
-        BGTASK_LOGE("Fail to open file: %{private}s, erron: %{private}s", filePath.c_str(), strerror(erron));
+        BGTASK_LOGE("Fail to open file: %{private}s, erron: %{public}s", filePath.c_str(), strerror(erron));
         return false;
     }
     int closeResult = fclose(file);
     if (closeResult < 0) {
-        BGTASK_LOGE("Fail to close file: %{private}s, erron: %{private}s", filePath.c_str(), strerror(erron));
+        BGTASK_LOGE("Fail to close file: %{private}s, erron: %{public}s", filePath.c_str(), strerror(erron));
         return false;
     }
     return true;
