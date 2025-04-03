@@ -143,16 +143,19 @@ void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
     BGTASK_LOGI("BgContinuousTaskMgr reclaimProcessMemory pid: %{public}d start.", pid);
     std::string path = "/proc/" + std::to_string(pid) + "/reclaim";
     std::string contentStr = "1";
-    int fd = open(path.c_str(), O_WRONLY);
-    if (fd < 0) {
-        BGTASK_LOGE("BgContinuousTaskMgr ReclaimProcessMemory open file failed!");
+    FILE *file = fopen(path.c_str(), "w");
+    if (file == nullptr) {
+        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", path.c_str(), strerror(errno));
         return;
     }
-    int res = write(fd, contentStr.c_str(), contentStr.length());
-    if (res == -1) {
-        BGTASK_LOGE("BgContinuousTaskMgr ReclaimProcessMemory write file failed!");
+    size_t res = fwrite(contentStr.c_str(), 1, contentStr.length(), file);
+    if (res != contentStr.length()) {
+        BGTASK_LOGE("Fail to write file: %{private}s, errno: %{public}s", path.c_str(), strerror(errno));
     }
-    close(fd);
+    int closeResult = fclose(file);
+    if (closeResult < 0) {
+        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", path.c_str(), strerror(errno));
+    }
     BGTASK_LOGI("BgContinuousTaskMgr reclaimProcessMemory pid: %{public}d end.", pid);
 }
 
