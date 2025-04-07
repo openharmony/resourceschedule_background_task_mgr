@@ -2,9 +2,9 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"งานบันทึกเสียงกำลังดำเนินการอยู่",
+            "value":"งานบันทึกเสียงกำลัง\u200bดำเนินการอยู่",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
