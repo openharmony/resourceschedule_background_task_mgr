@@ -75,7 +75,7 @@
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"Remote car key will be disabled if you close this card.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
