@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -124,6 +124,53 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_004, Function | MediumTest | L
     options.push_back("-T");
     options.push_back("START");
     options.push_back("-1");
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
+}
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_005
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_005, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-C");
+    options.push_back("--get");
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
+}
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_006
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_006, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-C");
+    options.push_back("--get 20020056");
+    BgContinuousTaskMgr::GetInstance()->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->abilityName_ = "abilityName";
+    continuousTaskRecord1->uid_ = 20020056;
+    continuousTaskRecord1->bgModeId_ = 2;
+    continuousTaskRecord1->bgModeIds_.push_back(2);
+    continuousTaskRecord1->bgSubModeIds_.push_back(2);
+    continuousTaskRecord1->notificationId_ = 1;
+    continuousTaskRecord1->continuousTaskId_ = 1;
+    continuousTaskRecord1->abilityId_ = 1;
+    std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+    info->bundleName_ = "wantAgentBundleName";
+    info->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord1->wantAgentInfo_ = info;
+    BgContinuousTaskMgr::GetInstance()->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
     EXPECT_EQ(ret, 0);
 }
