@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,7 @@
 #include "background_task_mgr_helper.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "common.h"
+#include "continuous_task_info.h"
 #include "continuous_task_log.h"
 #include "continuous_task_param.h"
 #include "js_backgroundtask_subscriber.h"
@@ -41,6 +42,7 @@ namespace {
 static constexpr uint32_t MAX_START_BG_RUNNING_PARAMS = 4;
 static constexpr uint32_t MAX_STOP_BG_RUNNING_PARAMS = 2;
 static constexpr uint32_t MAX_UPDATE_BG_RUNNING_PARAMS = 2;
+static constexpr uint32_t MAX_GET_ALL_CONTINUOUSTASK_PARAMS = 1;
 static constexpr uint32_t CALLBACK_RESULT_PARAMS_NUM = 2;
 static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
@@ -73,6 +75,7 @@ struct AsyncCallbackInfo : public AsyncWorkData {
     bool isBatchApi {false};
     int32_t notificationId {-1}; // out
     int32_t continuousTaskId {-1}; // out
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list; // out
 };
 
 napi_value WrapVoidToJS(napi_env env)
@@ -887,6 +890,112 @@ napi_value OffOnContinuousTaskCancel(napi_env env, napi_callback_info info)
     return WrapUndefinedToJS(env);
 }
 
+void GetAllContinuousTasksExecuteCB(napi_env env, void *data)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::GetAllContinuousTasksExecuteCB");
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
+    if (asyncCallbackInfo == nullptr || asyncCallbackInfo->errCode != ERR_OK) {
+        BGTASK_LOGE("input params error");
+        return;
+    }
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(asyncCallbackInfo->list);
+}
+
+void GetAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status, void *data)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::GetAllContinuousTasksPromiseCompletedCB");
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
+    std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
+    napi_value result {nullptr};
+    if (asyncCallbackInfo->errCode == ERR_OK) {
+        if (asyncCallbackInfo->list.size() > 0) {
+            napi_create_array(env, &result);
+            uint32_t count = 0;
+            for (const auto continuoustTaskInfo : asyncCallbackInfo->list) {
+                napi_value napiWork = Common::GetNapiContinuousTaskInfo(env, continuoustTaskInfo);
+                napi_set_element(env, result, count, napiWork);
+                count++;
+            }
+        } else {
+            napi_create_array(env, &result);
+        }
+        NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result));
+    } else {
+        std::string errMsg = Common::FindErrMsg(env, asyncCallbackInfo->errCode);
+        int32_t errCodeInfo = Common::FindErrCode(env, asyncCallbackInfo->errCode);
+        result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);
+        NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
+    }
+}
+
+napi_value GetAllContinuousTasksPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("param is nullptr");
+        return nullptr;
+    }
+    napi_value resourceName;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    napi_deferred deferred;
+    napi_value promise {nullptr};
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    asyncCallbackInfo->deferred = deferred;
+    NAPI_CALL(env, napi_create_async_work(env,
+        nullptr,
+        resourceName,
+        GetAllContinuousTasksExecuteCB,
+        GetAllContinuousTasksPromiseCompletedCB,
+        static_cast<void *>(asyncCallbackInfo),
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+    return promise;
+}
+
+napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isThrow)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::GetAllContinuousTasks");
+    ReportXPowerJsStackSysEventByType(env, "GET_ALL_CONTINUOUS_TASK");
+    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo == nullpter");
+        return WrapVoidToJS(env);
+    }
+    std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
+
+    size_t argc = MAX_GET_ALL_CONTINUOUSTASK_PARAMS;
+    napi_value argv[MAX_GET_ALL_CONTINUOUSTASK_PARAMS] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc != MAX_GET_ALL_CONTINUOUSTASK_PARAMS) {
+        BGTASK_LOGE("wrong param nums");
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        return WrapVoidToJS(env);
+    }
+
+    // argv[0] : context : AbilityContext
+    if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
+        BGTASK_LOGE("Get ability context failed");
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
+        return WrapVoidToJS(env);
+    }
+
+    napi_value ret {nullptr};
+    ret = GetAllContinuousTasksPromise(env, asyncCallbackInfo, isThrow);
+    callbackPtr.release();
+    if (ret == nullptr) {
+        BGTASK_LOGE("ret is nullpter");
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        ret = WrapVoidToJS(env);
+    }
+    return ret;
+}
+
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
 {
     return StartBackgroundRunning(env, info, false);
@@ -910,6 +1019,11 @@ napi_value UpdateBackgroundRunningThrow(napi_env env, napi_callback_info info)
 napi_value StopBackgroundRunningThrow(napi_env env, napi_callback_info info)
 {
     return StopBackgroundRunning(env, info, true);
+}
+
+napi_value GetAllContinuousTasksThrow(napi_env env, napi_callback_info info)
+{
+    return GetAllContinuousTasks(env, info, true);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
