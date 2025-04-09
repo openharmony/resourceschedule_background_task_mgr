@@ -50,7 +50,7 @@ CallbackInstance::~CallbackInstance()
 
 void CallbackInstance::DeleteNapiRef()
 {
-    CallbackReceiveDataWorker *dataWorker = new (std::nothrow) CallbackReceiveDataWorker();
+    std::shared_ptr<CallbackReceiveDataWorker> dataWorker = std::make_shared<CallbackReceiveDataWorker>();
     if (dataWorker == nullptr) {
         BGTASK_LOGE("DeleteNapiRef new dataWorker failed");
         return;
@@ -61,11 +61,9 @@ void CallbackInstance::DeleteNapiRef()
 
     auto task = [dataWorker]() {
         napi_delete_reference(dataWorker->env, dataWorker->ref);
-        delete dataWorker;
     };
     if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high)) {
         BGTASK_LOGE("DeleteNapiRef: Failed to SendEvent");
-        delete dataWorker;
         dataWorker = nullptr;
     }
 }
@@ -87,7 +85,7 @@ __attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpired()
         return;
     }
 
-    CallbackReceiveDataWorker *dataWorker = new (std::nothrow) CallbackReceiveDataWorker();
+    std::shared_ptr<CallbackReceiveDataWorker> dataWorker = std::make_shared<CallbackReceiveDataWorker>();
     if (dataWorker == nullptr) {
         BGTASK_LOGE("OnExpired new dataWorker failed");
         callbackInstances_.erase(findCallback);
@@ -108,11 +106,9 @@ __attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpired()
         if (findCallback != callbackInstances_.end()) {
             callbackInstances_.erase(findCallback);
         }
-        delete dataWorker;
     };
     if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high)) {
         BGTASK_LOGE("OnExpired: Failed to SendEvent");
-        delete dataWorker;
         dataWorker = nullptr;
         callbackInstances_.erase(findCallback);
     }
