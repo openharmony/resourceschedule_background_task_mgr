@@ -16,6 +16,8 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_SUB_MODE_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_SUB_MODE_H
 
+#include <string>
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class BackgroundSubMode {
@@ -25,6 +27,8 @@ public:
         CAR_KEY = 1,
         END,
     };
+
+    static std::string GetBackgroundSubModeStr(uint32_t mode);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
