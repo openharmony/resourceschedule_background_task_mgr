@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -149,6 +149,26 @@ ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const Continuous
     return proxy_->RequestBackgroundRunningForInner(*taskParamPtr.GetRefPtr());
 }
 
+ErrCode BackgroundTaskManager::RequestGetAllContinuousTasksForInner(int32_t uid,
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Mgr::RequestGetAllContinuousTasksForInner");
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    std::vector<ContinuousTaskInfo> tasksList;
+    ErrCode result = proxy_->RequestGetAllContinuousTasksForInner(uid, tasksList);
+    if (result == ERR_OK) {
+        list.clear();
+        for (const auto& item : tasksList) {
+            list.push_back(std::make_shared<ContinuousTaskInfo>(item));
+        }
+    }
+    return result;
+}
+
 ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken, int32_t abilityId)
 {
@@ -159,6 +179,25 @@ ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &a
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     return proxy_->StopBackgroundRunning(abilityName, abilityToken, abilityId);
+}
+
+ErrCode BackgroundTaskManager::RequestGetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Mgr::RequestGetAllContinuousTasks");
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    std::vector<ContinuousTaskInfo> tasksList;
+    ErrCode result = proxy_->GetAllContinuousTasks(tasksList);
+    if (result == ERR_OK) {
+        list.clear();
+        for (const auto& item : tasksList) {
+            list.push_back(std::make_shared<ContinuousTaskInfo>(item));
+        }
+    }
+    return result;
 }
 
 __attribute__((no_sanitize("cfi"))) ErrCode BackgroundTaskManager::SubscribeBackgroundTask(
