@@ -77,6 +77,7 @@ static constexpr char SEPARATOR[] = "_";
 static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_CANCEL_ALL[] = "--cancel_all";
 static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
+static constexpr char DUMP_PARAM_GET[] = "--get";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
@@ -621,6 +622,22 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     return StopBackgroundRunningForInner(taskParam);
 }
 
+ErrCode BgContinuousTaskMgr::RequestGetAllContinuousTasksForInner(int32_t uid,
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    ErrCode result = ERR_OK;
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Service::RequestGetAllContinuousTasksForInner");
+    handler_->PostSyncTask([this, uid, &list, &result]() {
+        result = this->GetAllContinuousTasksInner(uid, list);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return result;
+}
+
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
 {
     ErrCode result = ERR_OK;
@@ -1010,6 +1027,55 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     return result;
 }
 
+ErrCode BgContinuousTaskMgr::GetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
+        BGTASK_LOGE("uid: %{public}d no have permission", callingUid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    ErrCode result = ERR_OK;
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Service::GetAllContinuousTasks");
+    handler_->PostSyncTask([this, callingUid, &list, &result]() {
+        result = this->GetAllContinuousTasksInner(callingUid, list);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    if (uid < 0) {
+        BGTASK_LOGE("param uid is invaild.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+    if (continuousTaskInfosMap_.empty()) {
+        return ERR_OK;
+    }
+    for (const auto &record : continuousTaskInfosMap_) {
+        if (record.second->uid_ != uid) {
+            continue;
+        }
+        std::string wantAgentBundleName {"NULL"};
+        std::string wantAgentAbilityName {"NULL"};
+        if (record.second->wantAgentInfo_ != nullptr) {
+            wantAgentBundleName = record.second->wantAgentInfo_->bundleName_;
+            wantAgentAbilityName = record.second->wantAgentInfo_->abilityName_;
+        }
+        auto info = std::make_shared<ContinuousTaskInfo>(record.second->abilityName_, record.second->uid_,
+            record.second->pid_, record.second->isFromWebview_, record.second->bgModeIds_, record.second->bgSubModeIds_,
+            record.second->notificationId_, record.second->continuousTaskId_, record.second->abilityId_,
+            wantAgentBundleName, wantAgentAbilityName);
+        list.push_back(info);
+    }
+    return ERR_OK;
+}
+
 void BgContinuousTaskMgr::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key)
 {
     if (!isSysReady_.load()) {
@@ -1218,6 +1284,8 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
         DumpCancelTask(dumpOption, true);
     } else if (dumpOption[1] == DUMP_PARAM_CANCEL) {
         DumpCancelTask(dumpOption, false);
+    } else if (dumpOption[1] == DUMP_PARAM_GET) {
+        DumpGetTask(dumpOption, dumpInfo);
     } else {
         BGTASK_LOGW("invalid dump param");
     }
@@ -1295,6 +1363,47 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
         NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
             iter->second->GetNotificationId());
         RemoveContinuousTaskRecord(taskKey);
+    }
+}
+
+void BgContinuousTaskMgr::DumpGetTask(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
+{
+    if (dumpOption.size() != MAX_DUMP_PARAM_NUMS) {
+        dumpInfo.emplace_back("param invaild\n");
+        return;
+    }
+    int32_t uid = std::atoi(dumpOption[MAX_DUMP_PARAM_NUMS - 1].c_str());
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    ErrCode ret = RequestGetAllContinuousTasksForInner(uid, list);
+    if (ret != ERR_OK) {
+        dumpInfo.emplace_back("param invaild\n");
+        return;
+    }
+    if (list.empty()) {
+        dumpInfo.emplace_back("No running continuous task\n");
+        return;
+    }
+    std::stringstream stream;
+    uint32_t index = 1;
+    for (const auto &info : list) {
+        stream.str("");
+        stream.clear();
+        stream << "No." << index;
+        stream << "\t\tabilityName: " << info->GetAbilityName() << "\n";
+        stream << "\t\tisFromWebview: " << (info->IsFromWebView() ? "true" : "false") << "\n";
+        stream << "\t\tuid: " << info->GetUid() << "\n";
+        stream << "\t\tpid: " << info->GetPid() << "\n";
+        stream << "\t\tnotificationId: " << info->GetNotificationId() << "\n";
+        stream << "\t\tcontinuousTaskId: " << info->GetContinuousTaskId() << "\n";
+        stream << "\t\tabilityId: " << info->GetAbilityId() << "\n";
+        stream << "\t\twantAgentBundleName: " << info->GetWantAgentBundleName() << "\n";
+        stream << "\t\twantAgentAbilityName: " << info->GetWantAgentAbilityName() << "\n";
+        stream << "\t\tbackgroundModes: " << info->ToString(info->GetBackgroundModes()) << "\n";
+        stream << "\t\tbackgroundSubModes: " << info->ToString(info->GetBackgroundSubModes()) << "\n";
+        stream << "\n";
+        dumpInfo.emplace_back(stream.str());
+        index++;
     }
 }
 
