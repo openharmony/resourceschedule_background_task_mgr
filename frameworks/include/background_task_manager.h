@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -84,6 +84,15 @@ public:
     ErrCode RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam);
 
     /**
+     * @brief Request service to get all continuous task info for inner ability.
+     *
+     * @param uid app uid.
+     * @param list continuous task info list.
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode RequestGetAllContinuousTasksForInner(int32_t uid, std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
+
+    /**
      * @brief Request service to stop running background.
      *
      * @param abilityName Ability name of the requester ability.
@@ -93,6 +102,14 @@ public:
      */
     ErrCode RequestStopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken,
         int32_t abilityId);
+
+    /**
+     * @brief Request service to get all continuous tasks.
+     *
+     * @param list continuous task info.
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode RequestGetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
 
     /**
      * @brief Reset proxy for background task.
