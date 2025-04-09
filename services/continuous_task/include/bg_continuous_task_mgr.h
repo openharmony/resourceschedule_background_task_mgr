@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +31,7 @@
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 #include "task_notification_subscriber.h"
 #endif
+#include "continuous_task_info.h"
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
 #include "ibackground_task_subscriber.h"
@@ -75,7 +76,9 @@ public:
     ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode StopBackgroundRunning(const std::string &abilityName, int32_t abilityId);
+    ErrCode GetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
     ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
+    ErrCode RequestGetAllContinuousTasksForInner(int32_t uid, std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
     ErrCode AddSubscriber(const std::shared_ptr<SubscriberInfo> subscriberInfo);
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
@@ -103,6 +106,7 @@ private:
     ErrCode StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName, int32_t abilityId);
     ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
+    ErrCode GetAllContinuousTasksInner(int32_t uid, std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
     ErrCode AddSubscriberInner(const std::shared_ptr<SubscriberInfo> subscriberInfo);
     ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDumpInner(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
@@ -112,6 +116,7 @@ private:
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
+    void DumpGetTask(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t uid);
