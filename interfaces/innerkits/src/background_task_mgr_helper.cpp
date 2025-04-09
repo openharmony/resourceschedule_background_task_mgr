@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,9 +40,20 @@ ErrCode BackgroundTaskMgrHelper::RequestStopBackgroundRunning(const std::string 
         RequestStopBackgroundRunning(abilityName, abilityToken, abilityId);
 }
 
+ErrCode BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list);
+}
+
 ErrCode BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam);
+}
+
+ErrCode BackgroundTaskMgrHelper::RequestGetAllContinuousTasksForInner(int32_t uid,
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasksForInner(uid, list);
 }
 
 __attribute__((no_sanitize("cfi"))) ErrCode BackgroundTaskMgrHelper::SubscribeBackgroundTask(
