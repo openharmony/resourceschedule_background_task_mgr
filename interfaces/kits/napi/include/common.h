@@ -23,6 +23,7 @@
 #include "napi/native_node_api.h"
 
 #include "bgtaskmgr_inner_errors.h"
+#include "continuous_task_info.h"
 #include "delay_suspend_info.h"
 
 #define BGTASK_NAPI_CALL_BASE(env, theCall, retVal) \
@@ -94,6 +95,12 @@ public:
     static int32_t FindErrCode(const napi_env &env, const int32_t errCodeIn);
 
     static napi_value GetBooleanValue(const napi_env &env, const napi_value &value, bool &result);
+
+    static napi_value GetNapiContinuousTaskInfo(napi_env env,
+        const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo);
+
+    static void NapiSetBgTaskMode(napi_env env, napi_value napiInfo,
+        const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
