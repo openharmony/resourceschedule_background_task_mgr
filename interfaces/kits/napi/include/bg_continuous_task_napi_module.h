@@ -28,6 +28,7 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info);
 napi_value StopBackgroundRunningThrow(napi_env env, napi_callback_info info);
 napi_value OnOnContinuousTaskCancel(napi_env env, napi_callback_info info);
 napi_value OffOnContinuousTaskCancel(napi_env env, napi_callback_info info);
+napi_value GetAllContinuousTasksThrow(napi_env env, napi_callback_info info);
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_CANCEL_SUSPEND_DELAY_H
