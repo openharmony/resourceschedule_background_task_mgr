@@ -30,9 +30,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"En positionerings\u200buppgift pågår.",
+            "value":"En positioneringsuppgift pågår.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -58,9 +58,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"En dataöverförings\u200buppgift pågår.",
+            "value":"En dataöverföringsuppgift pågår.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {

@@ -1,0 +1,18 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"En positionerings\u200buppgift pågår.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"En dataöverförings\u200buppgift pågår.",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
+}

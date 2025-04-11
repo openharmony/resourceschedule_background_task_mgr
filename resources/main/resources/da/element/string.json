@@ -30,9 +30,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"En positionerings\u200bopgave er i gang.",
+            "value":"En positioneringsopgave er i gang.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -58,16 +58,16 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"En dataoverførsels\u200bopgave er i gang.",
+            "value":"En dataoverførselsopgave er i gang.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Fjernbetjeningsbil\u200bnøgle deaktiveres, hvis du lukker dette kort.",
+            "value":"Fjernbetjeningsbilnøgle deaktiveres, hvis du lukker dette kort.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         }
     ]
