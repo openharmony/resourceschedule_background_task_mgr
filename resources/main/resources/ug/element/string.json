@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"გაშვებულია ჩაწერის დავალება.",
+            "value":"ئۈن ئېلىش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"გაშვებულია აუდიოდაკვრის დავალება.",
+            "value":"ئاۋاز قويۇش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"გაშვებულია განაწილებული დავალება.",
+            "value":"تارقاق ۋەزىپە يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"გაშვებულია ზართან დაკავშირებული დავალება.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"მანქანის დისტანციური გასაღები გამოირთვება, თუ ამ ბარათს დახურავთ.",
+            "value":"چاقىرىق ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"გაშვებულია პოზიციონირების დავალება.",
+            "value":"ئورۇن بەلگىلەش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"გაშვებულია WLAN-თან დაკავშირებული დავალება.",
+            "value":"\u200fWLAN ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"გაშვებულია Bluetooth-თან დაკავშირებული დავალება.",
+            "value":"كۆكچىش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"გაშვებულია გამოთვლითი დავალება.",
+            "value":"ھېسابلاش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"გაშვებულია მონაცემთა გადაცემის დავალება.",
+            "value":"مەلۇمات يوللاش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"كارتىنى ئەتسىڭىز، سېزىلمەس ماشىنا ئاچقۇچ كۈچتىن قالىدۇ.",
             "attr":{
                 "priority":"translate"
             }
