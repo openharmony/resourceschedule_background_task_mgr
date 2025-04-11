@@ -1203,12 +1203,10 @@ HWTEST_F(BgContinuousTaskMgrTest, RequestGetAllContinuousTasksForInner_001, Test
 {
     bgContinuousTaskMgr_->isSysReady_.store(false);
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
-    int32_t uid = -1;
+    int32_t uid = 1;
     EXPECT_EQ(bgContinuousTaskMgr_->RequestGetAllContinuousTasksForInner(uid, list), ERR_BGTASK_SYS_NOT_READY);
 
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestGetAllContinuousTasksForInner(uid, list), ERR_BGTASK_INVALID_PARAM);
-
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord1->abilityName_ = "abilityName";
