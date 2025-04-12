@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-#include <map>
+#include <unordered_map>
 
 #include "background_sub_mode.h"
 
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const std::map<uint32_t, std::string> PARAM_BACKGROUND_SUBMODE_STR_MAP = {
+const std::unordered_map<uint32_t, std::string> PARAM_BACKGROUND_SUBMODE_STR_MAP = {
     {BackgroundSubMode::CAR_KEY, "CAR_KEY"},
     {BackgroundSubMode::END, "end"}
 };
