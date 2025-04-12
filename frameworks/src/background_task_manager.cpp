@@ -158,6 +158,11 @@ ErrCode BackgroundTaskManager::RequestGetAllContinuousTasksForInner(int32_t uid,
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
+    if (uid < 0) {
+        BGTASK_LOGE("param uid is invaild.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
     std::vector<ContinuousTaskInfo> tasksList;
     ErrCode result = proxy_->RequestGetAllContinuousTasksForInner(uid, tasksList);
     if (result == ERR_OK) {
