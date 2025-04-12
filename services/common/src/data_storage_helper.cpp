@@ -183,11 +183,6 @@ bool DataStorageHelper::CreateNodeFile(const std::string &filePath)
         BGTASK_LOGD("the file: %{private}s already exists.", filePath.c_str());
         return true;
     }
-    char resolvedPath[PATH_MAX] = {0};
-    if (realpath(filePath.c_str(), resolvedPath) == nullptr) {
-        BGTASK_LOGE("Fail to resolved file: %{private}s, errno: %{public}s", filePath.c_str(), strerror(errno));
-        return false;
-    }
     FILE *file = fopen(filePath.c_str(), "w+");
     if (file == nullptr) {
         BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", filePath.c_str(), strerror(errno));
