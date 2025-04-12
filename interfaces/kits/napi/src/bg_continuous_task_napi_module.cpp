@@ -959,13 +959,11 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Napi::GetAllContinuousTasks");
-    ReportXPowerJsStackSysEventByType(env, "GET_ALL_CONTINUOUS_TASK");
     if (env == nullptr) {
         BGTASK_LOGE("env param invaild.");
-        Common::HandleParamErr(env, ERR_BGTASK_SERVICE_INNER_ERROR, isThrow);
         return WrapVoidToJS(env);
     }
-
+    ReportXPowerJsStackSysEventByType(env, "GET_ALL_CONTINUOUS_TASK");
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo == nullpter");
