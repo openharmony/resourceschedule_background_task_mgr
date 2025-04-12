@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-#include <map>
+#include <unordered_map>
 
 #include "background_mode.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const std::map<uint32_t, std::string> PARAM_BACKGROUND_MODE_STR_MAP = {
+const std::unordered_map<uint32_t, std::string> PARAM_BACKGROUND_MODE_STR_MAP = {
     {BackgroundMode::DATA_TRANSFER, "dataTransfer"},
     {BackgroundMode::AUDIO_PLAYBACK, "audioPlayback"},
     {BackgroundMode::AUDIO_RECORDING, "audioRecording"},
