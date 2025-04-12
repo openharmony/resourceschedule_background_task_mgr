@@ -911,15 +911,17 @@ void GetAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status, v
     napi_value result {nullptr};
     if (asyncCallbackInfo->errCode == ERR_OK) {
         if (asyncCallbackInfo->list.size() > 0) {
-            napi_create_array(env, &result);
+            NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
             uint32_t count = 0;
-            for (const auto continuoustTaskInfo : asyncCallbackInfo->list) {
+            for (const auto &continuoustTaskInfo : asyncCallbackInfo->list) {
                 napi_value napiWork = Common::GetNapiContinuousTaskInfo(env, continuoustTaskInfo);
-                napi_set_element(env, result, count, napiWork);
-                count++;
+                if (napiWork != nullptr) {
+                    NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, count, napiWork));
+                    count++;
+                }
             }
         } else {
-            napi_create_array(env, &result);
+            NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
         }
         NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result));
     } else {
@@ -958,6 +960,12 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Napi::GetAllContinuousTasks");
     ReportXPowerJsStackSysEventByType(env, "GET_ALL_CONTINUOUS_TASK");
+    if (env == nullptr) {
+        BGTASK_LOGE("env param invaild.");
+        Common::HandleParamErr(env, ERR_BGTASK_SERVICE_INNER_ERROR, isThrow);
+        return WrapVoidToJS(env);
+    }
+
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo == nullpter");
@@ -978,7 +986,6 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
         BGTASK_LOGE("Get ability context failed");
         Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
-        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
         return WrapVoidToJS(env);
     }
 
