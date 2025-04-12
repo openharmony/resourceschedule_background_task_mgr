@@ -699,21 +699,27 @@ HWTEST_F(BgTaskFrameworkUnitTest, SetBgTaskConfig_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: RequestGetAllContinuousTasks_001
- * @tc.desc: test RequestGetAllContinuousTasks
+ * @tc.name: RequestGetAllContinuousTasksForInner_001
+ * @tc.desc: test RequestGetAllContinuousTasksForInner
  * @tc.type: FUNC
  * @tc.require: issueIBY0DN
  */
-HWTEST_F(BgTaskFrameworkUnitTest, RequestGetAllContinuousTasks_001, TestSize.Level1)
+HWTEST_F(BgTaskFrameworkUnitTest, RequestGetAllContinuousTasksForInner_001, TestSize.Level1)
 {
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list),
+    int32_t uid = -1;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasksForInner(uid, list),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list), ERR_OK);
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasksForInner(uid, list),
+        ERR_BGTASK_INVALID_PARAM);
+
+    uid = 1;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasksForInner(uid, list),
+        ERR_OK);
 }
 
 /**
