@@ -1038,6 +1038,10 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasks(std::vector<std::shared_ptr<C
         BGTASK_LOGE("uid: %{public}d no have permission", callingUid);
         return ERR_BGTASK_PERMISSION_DENIED;
     }
+    if (callingUid < 0) {
+        BGTASK_LOGE("param callingUid is invaild");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
     ErrCode result = ERR_OK;
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::GetAllContinuousTasks");
@@ -1058,6 +1062,9 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
         return ERR_OK;
     }
     for (const auto &record : continuousTaskInfosMap_) {
+        if (!record.second) {
+            continue;
+        }
         if (record.second->uid_ != uid) {
             continue;
         }
@@ -1374,6 +1381,10 @@ void BgContinuousTaskMgr::DumpGetTask(const std::vector<std::string> &dumpOption
         return;
     }
     int32_t uid = std::atoi(dumpOption[MAX_DUMP_PARAM_NUMS - 1].c_str());
+    if (uid < 0) {
+        dumpInfo.emplace_back("param invaild\n");
+        return;
+    }
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
     ErrCode ret = RequestGetAllContinuousTasksForInner(uid, list);
     if (ret != ERR_OK) {
