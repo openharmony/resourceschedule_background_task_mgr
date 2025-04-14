@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"En optagelsesopgave er i gang.",
+            "value":"ئۈن ئېلىش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"En lydafspilningsopgave er i gang.",
+            "value":"ئاۋاز قويۇش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"En distribueret opgave er i gang.",
+            "value":"تارقاق ۋەزىپە يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"En opkaldsrelateret opgave er i gang.",
+            "value":"چاقىرىق ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"En positioneringsopgave er i gang.",
+            "value":"ئورۇن بەلگىلەش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"En WLAN-relateret opgave er i gang.",
+            "value":"\u200fWLAN ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"En Bluetooth-relateret opgave er i gang.",
+            "value":"كۆكچىش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"En beregningsopgave er i gang.",
+            "value":"ھېسابلاش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"En dataoverførselsopgave er i gang.",
+            "value":"مەلۇمات يوللاش ۋەزىپىسى يۈرۈۋاتىدۇ...",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Fjernbetjeningsbilnøgle deaktiveres, hvis du lukker dette kort.",
+            "value":"كارتىنى ئەتسىڭىز، سېزىلمەس ماشىنا ئاچقۇچ كۈچتىن قالىدۇ.",
             "attr":{
                 "priority":"translate"
             }
