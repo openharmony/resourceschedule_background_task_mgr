@@ -1,0 +1,32 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"งานบันทึกเสียงกำลัง\u200bดำเนินการอยู่",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"งานหาตำแหน่งกำลัง\u200bดำเนินการอยู่",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"งานที่เกี่ยวข้องกับ\u200bบลูทูธกำลังดำเนินการอยู่",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"งานถ่ายโอนข้อมูล\u200bกำลังดำเนินการอยู่",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
+}
