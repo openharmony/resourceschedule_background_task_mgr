@@ -129,7 +129,8 @@ ErrCode NotificationHelper::GetAllActiveNotifications(std::vector<sptr<Notificat
     return 0;
 }
 
-ErrCode NotificationHelper::GetActiveNotifications(std::vector<sptr<NotificationRequest>> &request)
+ErrCode NotificationHelper::GetActiveNotifications(
+    std::vector<sptr<NotificationRequest>> &request, std::string instanceKey)
 {
     std::shared_ptr<NotificationNormalContent> normalContent
         = std::make_shared<NotificationNormalContent>();
