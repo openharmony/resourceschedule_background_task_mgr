@@ -192,15 +192,15 @@ ErrCode BackgroundTaskMgrService::RequestBackgroundRunningForInner(const Continu
     return BgContinuousTaskMgr::GetInstance()->RequestBackgroundRunningForInner(paramPtr);
 }
 
-ErrCode BackgroundTaskMgrService::RequestGetAllContinuousTasksForInner(int32_t uid,
+ErrCode BackgroundTaskMgrService::RequestGetContinuousTasksByUidForInner(int32_t uid,
     std::vector<ContinuousTaskInfo> &list)
 {
     if (!CheckCallingToken()) {
-        BGTASK_LOGW("RequestGetAllContinuousTasksForInner not allowed");
+        BGTASK_LOGW("RequestGetContinuousTasksByUidForInner not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     std::vector<std::shared_ptr<ContinuousTaskInfo>> tasksList;
-    ErrCode result = BgContinuousTaskMgr::GetInstance()->RequestGetAllContinuousTasksForInner(uid, tasksList);
+    ErrCode result = BgContinuousTaskMgr::GetInstance()->RequestGetContinuousTasksByUidForInner(uid, tasksList);
     if (result == ERR_OK) {
         for (const auto& ptr : tasksList) {
             if (ptr != nullptr) {

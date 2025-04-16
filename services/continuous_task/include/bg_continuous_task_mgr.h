@@ -78,7 +78,8 @@ public:
     ErrCode StopBackgroundRunning(const std::string &abilityName, int32_t abilityId);
     ErrCode GetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
     ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
-    ErrCode RequestGetAllContinuousTasksForInner(int32_t uid, std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
+    ErrCode RequestGetContinuousTasksByUidForInner(int32_t uid,
+        std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
     ErrCode AddSubscriber(const std::shared_ptr<SubscriberInfo> subscriberInfo);
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);

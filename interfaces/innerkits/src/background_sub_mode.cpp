@@ -17,7 +17,6 @@
 
 #include "background_sub_mode.h"
 
-
 namespace OHOS {
 namespace BackgroundTaskMgr {
 const std::unordered_map<uint32_t, std::string> PARAM_BACKGROUND_SUBMODE_STR_MAP = {

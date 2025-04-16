@@ -41,6 +41,7 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_KEEPING_TASK_VERIFY_ERR,
         "Continuous Task verification failed. TASK_KEEPING background mode only supported in particular device."},
     {ERR_BGTASK_INVALID_BGMODE, "Continuous Task verification failed. The bgMode is invalid."},
+    {ERR_BGTASK_INVALID_UID, "Continuous Task verification failed. The uid is invalid."},
     {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED, "Notification verification failed for a continuous task."
         " The title or text of the notification cannot be empty."},
     {ERR_BGTASK_NOTIFICATION_ERR, "Notification verification failed. Failed to send or cancel the notification."},
@@ -407,39 +408,40 @@ napi_value Common::GetBooleanValue(const napi_env &env, const napi_value &value,
     return Common::NapiGetNull(env);
 }
 
-void Common::NapiSetBgTaskMode(napi_env env, napi_value napiInfo,
+napi_value Common::NapiSetBgTaskMode(napi_env env, napi_value napiInfo,
     const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo)
 {
     // backgroundmode
     napi_value napiBackgroundModes = nullptr;
-    NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &napiBackgroundModes));
+    NAPI_CALL(env, napi_create_array(env, &napiBackgroundModes));
     uint32_t count = 0;
     for (auto mode : continuousTaskInfo->GetBackgroundModes()) {
         if (mode < BackgroundMode::END) {
             napi_value napiModeText = nullptr;
             std::string modeStr = BackgroundMode::GetBackgroundModeStr(mode);
-            NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, modeStr.c_str(), modeStr.length(), &napiModeText));
-            NAPI_CALL_RETURN_VOID(env, napi_set_element(env, napiBackgroundModes, count, napiModeText));
+            NAPI_CALL(env, napi_create_string_utf8(env, modeStr.c_str(), modeStr.length(), &napiModeText));
+            NAPI_CALL(env, napi_set_element(env, napiBackgroundModes, count, napiModeText));
             count++;
         }
     }
-    NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, napiInfo, "backgroundModes", napiBackgroundModes));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "backgroundModes", napiBackgroundModes));
 
     // backgroundsubmode
     napi_value napiBackgroundSubModes = nullptr;
-    NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &napiBackgroundSubModes));
+    NAPI_CALL(env, napi_create_array(env, &napiBackgroundSubModes));
     count = 0;
     for (auto subMode : continuousTaskInfo->GetBackgroundSubModes()) {
         if (subMode < BackgroundSubMode::END) {
             napi_value napiSubModeText = nullptr;
             std::string subModeStr = BackgroundSubMode::GetBackgroundSubModeStr(subMode);
-            NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, subModeStr.c_str(), subModeStr.length(),
+            NAPI_CALL(env, napi_create_string_utf8(env, subModeStr.c_str(), subModeStr.length(),
                 &napiSubModeText));
-            NAPI_CALL_RETURN_VOID(env, napi_set_element(env, napiBackgroundSubModes, count, napiSubModeText));
+                NAPI_CALL(env, napi_set_element(env, napiBackgroundSubModes, count, napiSubModeText));
             count++;
         }
     }
-    NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, napiInfo, "backgroundSubModes", napiBackgroundSubModes));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "backgroundSubModes", napiBackgroundSubModes));
+    return napiInfo;
 }
 
 napi_value Common::GetNapiContinuousTaskInfo(napi_env env,
@@ -473,7 +475,10 @@ napi_value Common::GetNapiContinuousTaskInfo(napi_env env,
     NAPI_CALL(env, napi_get_boolean(env, continuousTaskInfo->IsFromWebView(), &napiIsFromWebView));
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "isFromWebView", napiIsFromWebView));
 
-    NapiSetBgTaskMode(env, napiInfo, continuousTaskInfo);
+    if (NapiSetBgTaskMode(env, napiInfo, continuousTaskInfo) == nullptr) {
+        BGTASK_LOGE("set bavktask mode fail.");
+        return NapiGetNull(env);
+    }
 
     // notificationId
     napi_value napiNotificationId = nullptr;

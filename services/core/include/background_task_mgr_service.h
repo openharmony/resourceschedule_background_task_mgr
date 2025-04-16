@@ -68,7 +68,7 @@ public:
     ErrCode UpdateBackgroundRunning(const ContinuousTaskParam &taskParam, int32_t& notificationId,
         int32_t& continuousTaskId) override;
     ErrCode RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam) override;
-    ErrCode RequestGetAllContinuousTasksForInner(int32_t uid, std::vector<ContinuousTaskInfo> &list) override;
+    ErrCode RequestGetContinuousTasksByUidForInner(int32_t uid, std::vector<ContinuousTaskInfo> &list) override;
     ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken,
         int32_t abilityId) override;
     ErrCode GetAllContinuousTasks(std::vector<ContinuousTaskInfo> &list) override;

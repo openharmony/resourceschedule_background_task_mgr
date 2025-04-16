@@ -622,7 +622,7 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     return StopBackgroundRunningForInner(taskParam);
 }
 
-ErrCode BgContinuousTaskMgr::RequestGetAllContinuousTasksForInner(int32_t uid,
+ErrCode BgContinuousTaskMgr::RequestGetContinuousTasksByUidForInner(int32_t uid,
     std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
 {
     if (!isSysReady_.load()) {
@@ -1039,8 +1039,8 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasks(std::vector<std::shared_ptr<C
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     if (callingUid < 0) {
-        BGTASK_LOGE("param callingUid is invaild");
-        return ERR_BGTASK_INVALID_PARAM;
+        BGTASK_LOGE("param callingUid: %{public}d is invaild", callingUid);
+        return ERR_BGTASK_INVALID_UID;
     }
     ErrCode result = ERR_OK;
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
@@ -1054,10 +1054,6 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasks(std::vector<std::shared_ptr<C
 ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
     std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
 {
-    if (uid < 0) {
-        BGTASK_LOGE("param uid is invaild.");
-        return ERR_BGTASK_INVALID_PARAM;
-    }
     if (continuousTaskInfosMap_.empty()) {
         return ERR_OK;
     }

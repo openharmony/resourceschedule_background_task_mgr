@@ -909,7 +909,7 @@ void GetAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status, v
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
     napi_value result {nullptr};
-    if (asyncCallbackInfo->errCode == ERR_OK) {
+    if (asyncCallbackInfo != nullptr && asyncCallbackInfo->errCode == ERR_OK) {
         if (asyncCallbackInfo->list.size() > 0) {
             NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
             uint32_t count = 0;
@@ -930,6 +930,7 @@ void GetAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status, v
         result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);
         NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
     }
+    callbackPtr.release();
 }
 
 napi_value GetAllContinuousTasksPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
@@ -977,6 +978,11 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     if (argc != MAX_GET_ALL_CONTINUOUSTASK_PARAMS) {
         BGTASK_LOGE("wrong param nums");
         Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        callbackPtr.release();
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
         return WrapVoidToJS(env);
     }
 
@@ -984,6 +990,11 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
         BGTASK_LOGE("Get ability context failed");
         Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
+        callbackPtr.release();
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
         return WrapVoidToJS(env);
     }
 

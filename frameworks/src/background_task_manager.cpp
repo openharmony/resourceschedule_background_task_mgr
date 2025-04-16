@@ -149,22 +149,22 @@ ErrCode BackgroundTaskManager::RequestBackgroundRunningForInner(const Continuous
     return proxy_->RequestBackgroundRunningForInner(*taskParamPtr.GetRefPtr());
 }
 
-ErrCode BackgroundTaskManager::RequestGetAllContinuousTasksForInner(int32_t uid,
+ErrCode BackgroundTaskManager::RequestGetContinuousTasksByUidForInner(int32_t uid,
     std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
-        "BackgroundTaskManager::ContinuousTask::Mgr::RequestGetAllContinuousTasksForInner");
+        "BackgroundTaskManager::ContinuousTask::Mgr::RequestGetContinuousTasksByUidForInner");
 
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     if (uid < 0) {
-        BGTASK_LOGE("param uid is invaild.");
-        return ERR_BGTASK_INVALID_PARAM;
+        BGTASK_LOGE("param uid: %{public}d is invaild.", uid);
+        return ERR_BGTASK_INVALID_UID;
     }
 
     std::vector<ContinuousTaskInfo> tasksList;
-    ErrCode result = proxy_->RequestGetAllContinuousTasksForInner(uid, tasksList);
+    ErrCode result = proxy_->RequestGetContinuousTasksByUidForInner(uid, tasksList);
     if (result == ERR_OK) {
         list.clear();
         for (const auto& item : tasksList) {

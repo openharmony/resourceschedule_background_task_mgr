@@ -1194,17 +1194,17 @@ HWTEST_F(BgContinuousTaskMgrTest, GetAllContinuousTasks_001, TestSize.Level1)
 }
 
 /**
- * @tc.name: RequestGetAllContinuousTasksForInner_001
- * @tc.desc: test RequestGetAllContinuousTasksForInner interface.
+ * @tc.name: RequestGetContinuousTasksByUidForInner_001
+ * @tc.desc: test RequestGetContinuousTasksByUidForInner interface.
  * @tc.type: FUNC
  * @tc.require: issueIBY0DN
  */
-HWTEST_F(BgContinuousTaskMgrTest, RequestGetAllContinuousTasksForInner_001, TestSize.Level1)
+HWTEST_F(BgContinuousTaskMgrTest, RequestGetContinuousTasksByUidForInner_001, TestSize.Level1)
 {
     bgContinuousTaskMgr_->isSysReady_.store(false);
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
     int32_t uid = 1;
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestGetAllContinuousTasksForInner(uid, list), ERR_BGTASK_SYS_NOT_READY);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestGetContinuousTasksByUidForInner(uid, list), ERR_BGTASK_SYS_NOT_READY);
 
     bgContinuousTaskMgr_->isSysReady_.store(true);
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
@@ -1223,11 +1223,11 @@ HWTEST_F(BgContinuousTaskMgrTest, RequestGetAllContinuousTasksForInner_001, Test
     continuousTaskRecord1->wantAgentInfo_ = info;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     uid = 2;
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestGetAllContinuousTasksForInner(uid, list), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestGetContinuousTasksByUidForInner(uid, list), ERR_OK);
 
     uid = 1;
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list2;
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestGetAllContinuousTasksForInner(uid, list2), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestGetContinuousTasksByUidForInner(uid, list2), ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

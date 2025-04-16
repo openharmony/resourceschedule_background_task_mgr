@@ -748,16 +748,16 @@ HWTEST_F(BgTaskClientUnitTest, RequestGetAllContinuousTasks_001, TestSize.Level1
 }
 
 /**
- * @tc.name: RequestGetAllContinuousTasksForInner_001
- * @tc.desc: test RequestGetAllContinuousTasksForInner interface.
+ * @tc.name: RequestGetContinuousTasksByUidForInner_001
+ * @tc.desc: test RequestGetContinuousTasksByUidForInner interface.
  * @tc.type: FUNC
  * @tc.require: issueIBY0DN
  */
-HWTEST_F(BgTaskClientUnitTest, RequestGetAllContinuousTasksForInner_001, TestSize.Level1)
+HWTEST_F(BgTaskClientUnitTest, RequestGetContinuousTasksByUidForInner_001, TestSize.Level1)
 {
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
     int32_t uid = 1;
-    EXPECT_EQ(BackgroundTaskMgrHelper::RequestGetAllContinuousTasksForInner(uid, list),
+    EXPECT_EQ(BackgroundTaskMgrHelper::RequestGetContinuousTasksByUidForInner(uid, list),
         ERR_OK);
 }
 }

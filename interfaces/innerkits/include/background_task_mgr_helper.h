@@ -48,13 +48,13 @@ public:
     static ErrCode RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam);
 
     /**
-     * @brief Request service to get all continuous task info for inner ability.
+     * @brief Request service to get continuous task info by uid for inner ability.
      *
      * @param uid app uid.
      * @param list continuous task info list.
      * @return ERR_OK if success, else fail.
      */
-    static ErrCode RequestGetAllContinuousTasksForInner(int32_t uid,
+    static ErrCode RequestGetContinuousTasksByUidForInner(int32_t uid,
         std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
 
     /**

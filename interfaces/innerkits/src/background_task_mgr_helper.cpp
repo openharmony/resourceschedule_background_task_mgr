@@ -50,10 +50,10 @@ ErrCode BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(const Continuo
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam);
 }
 
-ErrCode BackgroundTaskMgrHelper::RequestGetAllContinuousTasksForInner(int32_t uid,
+ErrCode BackgroundTaskMgrHelper::RequestGetContinuousTasksByUidForInner(int32_t uid,
     std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
 {
-    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasksForInner(uid, list);
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetContinuousTasksByUidForInner(uid, list);
 }
 
 __attribute__((no_sanitize("cfi"))) ErrCode BackgroundTaskMgrHelper::SubscribeBackgroundTask(

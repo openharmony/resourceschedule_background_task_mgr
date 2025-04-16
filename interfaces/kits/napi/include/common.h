@@ -99,7 +99,7 @@ public:
     static napi_value GetNapiContinuousTaskInfo(napi_env env,
         const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo);
 
-    static void NapiSetBgTaskMode(napi_env env, napi_value napiInfo,
+    static napi_value NapiSetBgTaskMode(napi_env env, napi_value napiInfo,
         const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo);
 };
 }  // namespace BackgroundTaskMgr
