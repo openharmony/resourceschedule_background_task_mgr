@@ -20,6 +20,7 @@
 #include "bg_continuous_task_napi_module.h"
 #include "cancel_suspend_delay.h"
 #include "continuous_task_cancel_reason.h"
+#include "get_all_transient_tasks.h"
 #include "get_remaining_delay_time.h"
 #include "request_suspend_delay.h"
 #include "transient_task_log.h"
@@ -38,6 +39,7 @@ napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("requestSuspendDelay", RequestSuspendDelayThrow),
         DECLARE_NAPI_FUNCTION("cancelSuspendDelay", CancelSuspendDelayThrow),
         DECLARE_NAPI_FUNCTION("getRemainingDelayTime", GetRemainingDelayTimeThrow),
+        DECLARE_NAPI_FUNCTION("getAllTransientTasks", GetAllTransientTasksThrow),
         DECLARE_NAPI_FUNCTION("startBackgroundRunning", StartBackgroundRunningThrow),
         DECLARE_NAPI_FUNCTION("updateBackgroundRunning", UpdateBackgroundRunningThrow),
         DECLARE_NAPI_FUNCTION("stopBackgroundRunning", StopBackgroundRunningThrow),
