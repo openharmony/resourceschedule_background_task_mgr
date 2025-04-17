@@ -631,7 +631,7 @@ ErrCode BgContinuousTaskMgr::RequestGetContinuousTasksByUidForInner(int32_t uid,
     }
     ErrCode result = ERR_OK;
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
-        "BackgroundTaskManager::ContinuousTask::Service::RequestGetAllContinuousTasksForInner");
+        "BackgroundTaskManager::ContinuousTask::Service::RequestGetContinuousTasksByUidForInner");
     handler_->PostSyncTask([this, uid, &list, &result]() {
         result = this->GetAllContinuousTasksInner(uid, list);
         }, AppExecFwk::EventQueue::Priority::HIGH);
@@ -1382,7 +1382,7 @@ void BgContinuousTaskMgr::DumpGetTask(const std::vector<std::string> &dumpOption
         return;
     }
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
-    ErrCode ret = RequestGetAllContinuousTasksForInner(uid, list);
+    ErrCode ret = RequestGetContinuousTasksByUidForInner(uid, list);
     if (ret != ERR_OK) {
         dumpInfo.emplace_back("param invaild\n");
         return;
