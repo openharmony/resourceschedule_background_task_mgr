@@ -733,7 +733,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, RequestGetAllContinuousTasks_001, TestSize.Lev
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
-    int32_t uid = 1;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
