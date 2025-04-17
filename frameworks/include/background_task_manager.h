@@ -60,6 +60,15 @@ public:
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime);
 
     /**
+     * @brief Request service to get all transient tasks.
+     *
+     * @param remainingQuota remain quota for the day.
+     * @param list transient tasks.
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode GetAllTransientTasks(int32_t &remainingQuota, std::vector<std::shared_ptr<DelaySuspendInfo>> &list);
+
+    /**
      * @brief Request service to keep running background.
      *
      * @param taskParam Request params.
