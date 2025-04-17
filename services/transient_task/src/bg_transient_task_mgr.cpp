@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -458,6 +458,49 @@ ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &de
     }
 
     delayTime = decisionMaker_->GetRemainingDelayTime(keyInfoMap_[requestId], requestId);
+    return ERR_OK;
+}
+
+ErrCode BgTransientTaskMgr::GetAllTransientTasks(int32_t &remainingQuota,
+    std::vector<std::shared_ptr<DelaySuspendInfo>> &list)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::TransientTask::Service::GetAllTransientTasks");
+    if (!isReady_.load()) {
+        BGTASK_LOGW("Transient task manager is not ready.");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    auto uid = IPCSkeleton::GetCallingUid();
+    auto pid = IPCSkeleton::GetCallingPid();
+    if (!VerifyCallingInfo(uid, pid)) {
+        BGTASK_LOGI("get remain time failed, uid: %{public}d or pid: %{public}d is invalid", uid, pid);
+        return ERR_BGTASK_INVALID_PID_OR_UID;
+    }
+    std::string name = "";
+    if (!GetBundleNamesForUid(uid, name)) {
+        BGTASK_LOGE("GetBundleNamesForUid fail.");
+        return ERR_BGTASK_SERVICE_INNER_ERROR;
+    }
+    auto keyInfo = std::make_shared<KeyInfo>(name, uid, pid);
+    remainingQuota = decisionMaker_->GetQuota(keyInfo);
+    if (keyInfoMap_.empty()) {
+        BGTASK_LOGD("not have transient task, pkg : %{public}s, uid : %{public}d", name.c_str(), uid);
+        return ERR_OK;
+    }
+    lock_guard<mutex> lock(expiredCallbackLock_);
+    for (const auto &record : keyInfoMap_) {
+        if (!record.second) {
+            continue;
+        }
+        if (record.second->GetPkg() != name || record.second->GetUid() != uid) {
+            continue;
+        }
+        auto info = std::make_shared<DelaySuspendInfo>();
+        info->SetRequestId(record.first);
+        info->SetActualDelayTime(decisionMaker_->GetRemainingDelayTime(record.second, record.first));
+        list.push_back(info);
+    }
+    BGTASK_LOGI("get transient task, pkg : %{public}s, uid : %{public}d", name.c_str(), uid);
     return ERR_OK;
 }
 
