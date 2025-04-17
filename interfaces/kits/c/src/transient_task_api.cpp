@@ -77,6 +77,26 @@ int32_t OH_BackgroundTaskManager_CancelSuspendDelay(int32_t requestId)
     return errCode / INNER_ERROR_SHIFT;
 }
 
+int32_t OH_BackgroundTaskManager_GetAllTransientTasks(TransientTask_TransientTaskInfo *info)
+{
+    int32_t remainingQuotaValue = 0;
+    std::vector<std::shared_ptr<DelaySuspendInfo>> listValue;
+    auto errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        GetAllTransientTasks(remainingQuotaValue, listValue);
+    std::lock_guard<std::recursive_mutex> lock(callbackLock_);
+    if (errCode != 0) {
+        return errCode / INNER_ERROR_SHIFT;
+    }
+    info->remainingQuota = remainingQuotaValue;
+    for (const auto &transientTasksRecord : listValue) {
+        TransientTask_DelaySuspendInfo taskRecord;
+        taskRecord.requestId = transientTasksRecord->GetRequestId();
+        taskRecord.actualDelayTime = transientTasksRecord->GetActualDelayTime();
+        info->transientTasks.push_back(taskRecord);
+    }
+    return ERR_TRANSIENT_TASK_OK;
+}
+
 Callback::Callback() {}
 
 Callback::~Callback()
