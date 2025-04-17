@@ -29,6 +29,7 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void RequestSuspendDelay([in] String reason, [in] IExpiredCallback expiredCallback, [out] DelaySuspendInfo delayInfo);
     void CancelSuspendDelay([in] int requestId);
     void GetRemainingDelayTime([in] int requestId, [out] int delayTime);
+    void GetAllTransientTasks([out] int remainingQuota, [out] sharedptr<DelaySuspendInfo>[] list);
     void StartBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int continuousTaskId);
     void UpdateBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int continuousTaskId);
     void StopBackgroundRunning([in] String abilityName, [in] IRemoteObject abilityToken, [in] int abilityId);
