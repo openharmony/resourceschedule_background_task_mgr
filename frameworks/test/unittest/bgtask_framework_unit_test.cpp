@@ -740,5 +740,25 @@ HWTEST_F(BgTaskFrameworkUnitTest, RequestGetAllContinuousTasks_001, TestSize.Lev
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list),
         ERR_OK);
 }
+
+/**
+ * @tc.name: GetAllTransientTasks_001
+ * @tc.desc: test GetAllTransientTasks.
+ * @tc.type: FUNC
+ * @tc.require: issueIC1HDY
+ */
+HWTEST_F(BgTaskManagerUnitTest, GetAllTransientTasks_001, TestSize.Level0)
+{
+    int32_t remainingQuota = -1;
+    std::vector<std::shared_ptr<DelaySuspendInfo>> list;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllTransientTasks(remainingQuota, list),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetContinuousTasksByUidForInner(uid, list),
+        ERR_OK);
+}
 }
 }
