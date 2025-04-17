@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -99,6 +99,18 @@ int32_t OH_BackgroundTaskManager_GetRemainingDelayTime(int32_t requestId, int32_
  * @version 1.0
  */
 int32_t OH_BackgroundTaskManager_CancelSuspendDelay(int32_t requestId);
+
+/**
+ * @brief Obtains all the transient task before an application enters the suspended state.
+ *
+ * @param transientTaskInfo Indicates the transient task info of an application.
+ * @return {@link ERR_TRANSIENT_TASK_OK} 0 - Success.
+ *         {@link ERR_TRANSIENT_TASK_CLIENT_INFO_VERIFICATION_FAILED} 9900001 - uid or pid info verify failed.
+ * @syscap SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask
+ * @since 20
+ * @version 1.0
+ */
+int32_t OH_BackgroundTaskManager_GetAllTransientTasks(TransientTask_TransientTaskInfo  *transientTaskInfo);
 
 #ifdef __cplusplus
 }
