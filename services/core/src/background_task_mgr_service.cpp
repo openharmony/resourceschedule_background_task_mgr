@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -192,10 +192,43 @@ ErrCode BackgroundTaskMgrService::RequestBackgroundRunningForInner(const Continu
     return BgContinuousTaskMgr::GetInstance()->RequestBackgroundRunningForInner(paramPtr);
 }
 
+ErrCode BackgroundTaskMgrService::RequestGetContinuousTasksByUidForInner(int32_t uid,
+    std::vector<ContinuousTaskInfo> &list)
+{
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("RequestGetContinuousTasksByUidForInner not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> tasksList;
+    ErrCode result = BgContinuousTaskMgr::GetInstance()->RequestGetContinuousTasksByUidForInner(uid, tasksList);
+    if (result == ERR_OK) {
+        for (const auto& ptr : tasksList) {
+            if (ptr != nullptr) {
+                list.push_back(*ptr);
+            }
+        }
+    }
+    return result;
+}
+
 ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken, int32_t abilityId)
 {
     return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName, abilityId);
+}
+
+ErrCode BackgroundTaskMgrService::GetAllContinuousTasks(std::vector<ContinuousTaskInfo> &list)
+{
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> tasksList;
+    ErrCode result = BgContinuousTaskMgr::GetInstance()->GetAllContinuousTasks(tasksList);
+    if (result == ERR_OK) {
+        for (const auto& ptr : tasksList) {
+            if (ptr != nullptr) {
+                list.push_back(*ptr);
+            }
+        }
+    }
+    return result;
 }
 
 ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<TransientTaskAppInfo> &list)

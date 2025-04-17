@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -68,8 +68,10 @@ public:
     ErrCode UpdateBackgroundRunning(const ContinuousTaskParam &taskParam, int32_t& notificationId,
         int32_t& continuousTaskId) override;
     ErrCode RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam) override;
+    ErrCode RequestGetContinuousTasksByUidForInner(int32_t uid, std::vector<ContinuousTaskInfo> &list) override;
     ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken,
         int32_t abilityId) override;
+    ErrCode GetAllContinuousTasks(std::vector<ContinuousTaskInfo> &list) override;
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
     ErrCode GetTransientTaskApps(std::vector<TransientTaskAppInfo> &list) override;

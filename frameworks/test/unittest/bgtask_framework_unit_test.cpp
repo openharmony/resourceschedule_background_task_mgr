@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,7 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "bgtaskmgr_log_wrapper.h"
 #include "continuous_task_callback_info.h"
+#include "continuous_task_info.h"
 #include "continuous_task_param.h"
 #include "delay_suspend_info.h"
 #include "efficiency_resource_info.h"
@@ -694,6 +695,49 @@ HWTEST_F(BgTaskFrameworkUnitTest, SetBgTaskConfig_001, TestSize.Level1)
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBgTaskConfig("", 1),
+        ERR_OK);
+}
+
+/**
+ * @tc.name: RequestGetContinuousTasksByUidForInner_001
+ * @tc.desc: test RequestGetContinuousTasksByUidForInner
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, RequestGetContinuousTasksByUidForInner_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    int32_t uid = -1;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        RequestGetContinuousTasksByUidForInner(uid, list), ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        RequestGetContinuousTasksByUidForInner(uid, list), ERR_BGTASK_INVALID_PARAM);
+
+    uid = 1;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        RequestGetContinuousTasksByUidForInner(uid, list), ERR_OK);
+}
+
+/**
+ * @tc.name: RequestGetAllContinuousTasks_001
+ * @tc.desc: test RequestGetAllContinuousTasks
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, RequestGetAllContinuousTasks_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list),
         ERR_OK);
 }
 }

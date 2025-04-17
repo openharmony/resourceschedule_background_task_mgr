@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -701,6 +701,64 @@ HWTEST_F(BgTaskClientUnitTest, SetBgTaskConfig_001, TestSize.Level1)
 {
     const std::string configData = "";
     EXPECT_NE(BackgroundTaskMgrHelper::SetBgTaskConfig(configData, 1), ERR_OK);
+}
+
+/**
+ * @tc.name: ContinuousTaskInfo_001
+ * @tc.desc: test ContinuousTaskInfo.
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskInfo_001, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskInfo> info1 = std::make_shared<ContinuousTaskInfo>();
+    std::vector<uint32_t> backgroundModes {1};
+    std::vector<uint32_t> backgroundSubModes {1};
+    std::shared_ptr<ContinuousTaskInfo> info2 = std::make_shared<ContinuousTaskInfo>(
+        "abilityName", 1, 1, false, backgroundModes, backgroundSubModes, 1, 1, 1, "wantAgentBundleName",
+        "wantAgentAbilityName");
+
+    MessageParcel parcel = MessageParcel();
+    info2->Marshalling(parcel);
+    sptr<ContinuousTaskInfo> info3 = ContinuousTaskInfo::Unmarshalling(parcel);
+    EXPECT_EQ(info3->GetAbilityName(), "abilityName");
+    EXPECT_EQ(info3->GetWantAgentBundleName(), "wantAgentBundleName");
+    EXPECT_EQ(info3->GetWantAgentAbilityName(), "wantAgentAbilityName");
+    EXPECT_EQ(info3->GetUid(), 1);
+    EXPECT_EQ(info3->GetPid(), 1);
+    EXPECT_EQ(info3->GetNotificationId(), 1);
+    EXPECT_EQ(info3->GetContinuousTaskId(), 1);
+    EXPECT_EQ(info3->GetAbilityId(), 1);
+    EXPECT_EQ(info3->IsFromWebView(), false);
+    EXPECT_EQ(info3->GetBackgroundModes().size(), 1);
+    EXPECT_EQ(info3->GetBackgroundSubModes().size(), 1);
+    EXPECT_NE(info3->ToString(backgroundModes), "");
+}
+
+/**
+ * @tc.name: RequestGetAllContinuousTasks_001
+ * @tc.desc: test RequestGetAllContinuousTasks interface.
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgTaskClientUnitTest, RequestGetAllContinuousTasks_001, TestSize.Level1)
+{
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    EXPECT_NE(BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(list), ERR_OK);
+}
+
+/**
+ * @tc.name: RequestGetContinuousTasksByUidForInner_001
+ * @tc.desc: test RequestGetContinuousTasksByUidForInner interface.
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgTaskClientUnitTest, RequestGetContinuousTasksByUidForInner_001, TestSize.Level1)
+{
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    int32_t uid = 1;
+    EXPECT_EQ(BackgroundTaskMgrHelper::RequestGetContinuousTasksByUidForInner(uid, list),
+        ERR_OK);
 }
 }
 }

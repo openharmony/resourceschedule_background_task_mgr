@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1156,6 +1156,78 @@ HWTEST_F(BgContinuousTaskMgrTest, BgtaskSysNotReady_001, TestSize.Level3)
     EXPECT_EQ(bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), ERR_BGTASK_SYS_NOT_READY);
     EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam), ERR_BGTASK_SYS_NOT_READY);
     EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunning("", 0), ERR_BGTASK_SYS_NOT_READY);
+}
+
+/**
+ * @tc.name: GetAllContinuousTasks_001
+ * @tc.desc: test GetAllContinuousTasks interface.
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgContinuousTaskMgrTest, GetAllContinuousTasks_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasks(list), ERR_BGTASK_SYS_NOT_READY);
+
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasks(list), ERR_OK);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->abilityName_ = "abilityName";
+    continuousTaskRecord1->uid_ = 1;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_TWO;
+    continuousTaskRecord1->bgModeIds_.push_back(TEST_NUM_TWO);
+    continuousTaskRecord1->bgSubModeIds_.push_back(TEST_NUM_TWO);
+    continuousTaskRecord1->notificationId_ = 1;
+    continuousTaskRecord1->continuousTaskId_ = 1;
+    continuousTaskRecord1->abilityId_ = 1;
+    std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+    info->bundleName_ = "wantAgentBundleName";
+    info->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord1->wantAgentInfo_ = info;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list2;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasks(list2), ERR_OK);
+}
+
+/**
+ * @tc.name: RequestGetContinuousTasksByUidForInner_001
+ * @tc.desc: test RequestGetContinuousTasksByUidForInner interface.
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgContinuousTaskMgrTest, RequestGetContinuousTasksByUidForInner_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    int32_t uid = 1;
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestGetContinuousTasksByUidForInner(uid, list), ERR_BGTASK_SYS_NOT_READY);
+
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->abilityName_ = "abilityName";
+    continuousTaskRecord1->uid_ = 1;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_TWO;
+    continuousTaskRecord1->bgModeIds_.push_back(TEST_NUM_TWO);
+    continuousTaskRecord1->bgSubModeIds_.push_back(TEST_NUM_TWO);
+    continuousTaskRecord1->notificationId_ = 1;
+    continuousTaskRecord1->continuousTaskId_ = 1;
+    continuousTaskRecord1->abilityId_ = 1;
+    std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+    info->bundleName_ = "wantAgentBundleName";
+    info->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord1->wantAgentInfo_ = info;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    uid = 2;
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestGetContinuousTasksByUidForInner(uid, list), ERR_OK);
+
+    uid = 1;
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list2;
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestGetContinuousTasksByUidForInner(uid, list2), ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

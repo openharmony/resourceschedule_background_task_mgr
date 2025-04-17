@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,6 +46,24 @@ public:
      * @return ERR_OK if success, else fail.
      */
     static ErrCode RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam);
+
+    /**
+     * @brief Request service to get continuous task info by uid for inner ability.
+     *
+     * @param uid app uid.
+     * @param list continuous task info list.
+     * @return ERR_OK if success, else fail.
+     */
+    static ErrCode RequestGetContinuousTasksByUidForInner(int32_t uid,
+        std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
+
+    /**
+     * @brief Request service to get all continuous task info.
+     *
+     * @param list continuous task info list.
+     * @return ERR_OK if success, else fail.
+     */
+    static ErrCode RequestGetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
 
     /**
      * @brief Request service to stop running background

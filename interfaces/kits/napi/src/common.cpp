@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,8 @@
 
 #include "common.h"
 
+#include "background_mode.h"
+#include "background_sub_mode.h"
 #include "cancel_suspend_delay.h"
 #include "transient_task_log.h"
 
@@ -39,6 +41,7 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_KEEPING_TASK_VERIFY_ERR,
         "Continuous Task verification failed. TASK_KEEPING background mode only supported in particular device."},
     {ERR_BGTASK_INVALID_BGMODE, "Continuous Task verification failed. The bgMode is invalid."},
+    {ERR_BGTASK_INVALID_UID, "Continuous Task verification failed. The uid is invalid."},
     {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED, "Notification verification failed for a continuous task."
         " The title or text of the notification cannot be empty."},
     {ERR_BGTASK_NOTIFICATION_ERR, "Notification verification failed. Failed to send or cancel the notification."},
@@ -403,6 +406,107 @@ napi_value Common::GetBooleanValue(const napi_env &env, const napi_value &value,
     BGTASK_LOGD("GetBooleanValue result: %{public}d", result);
 
     return Common::NapiGetNull(env);
+}
+
+napi_value Common::NapiSetBgTaskMode(napi_env env, napi_value napiInfo,
+    const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo)
+{
+    // backgroundmode
+    napi_value napiBackgroundModes = nullptr;
+    NAPI_CALL(env, napi_create_array(env, &napiBackgroundModes));
+    uint32_t count = 0;
+    for (auto mode : continuousTaskInfo->GetBackgroundModes()) {
+        if (mode < BackgroundMode::END) {
+            napi_value napiModeText = nullptr;
+            std::string modeStr = BackgroundMode::GetBackgroundModeStr(mode);
+            NAPI_CALL(env, napi_create_string_utf8(env, modeStr.c_str(), modeStr.length(), &napiModeText));
+            NAPI_CALL(env, napi_set_element(env, napiBackgroundModes, count, napiModeText));
+            count++;
+        }
+    }
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "backgroundModes", napiBackgroundModes));
+
+    // backgroundsubmode
+    napi_value napiBackgroundSubModes = nullptr;
+    NAPI_CALL(env, napi_create_array(env, &napiBackgroundSubModes));
+    count = 0;
+    for (auto subMode : continuousTaskInfo->GetBackgroundSubModes()) {
+        if (subMode < BackgroundSubMode::END) {
+            napi_value napiSubModeText = nullptr;
+            std::string subModeStr = BackgroundSubMode::GetBackgroundSubModeStr(subMode);
+            NAPI_CALL(env, napi_create_string_utf8(env, subModeStr.c_str(), subModeStr.length(),
+                &napiSubModeText));
+                NAPI_CALL(env, napi_set_element(env, napiBackgroundSubModes, count, napiSubModeText));
+            count++;
+        }
+    }
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "backgroundSubModes", napiBackgroundSubModes));
+    return napiInfo;
+}
+
+napi_value Common::GetNapiContinuousTaskInfo(napi_env env,
+    const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo)
+{
+    if (continuousTaskInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskInfo is null");
+        return NapiGetNull(env);
+    }
+    napi_value napiInfo = nullptr;
+    NAPI_CALL(env, napi_create_object(env, &napiInfo));
+
+    // ability name
+    napi_value napiAbilityName = nullptr;
+    NAPI_CALL(env, napi_create_string_utf8(env, continuousTaskInfo->GetAbilityName().c_str(),
+        continuousTaskInfo->GetAbilityName().length(), &napiAbilityName));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "abilityName", napiAbilityName));
+
+    // uid
+    napi_value napiUid = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, continuousTaskInfo->GetUid(), &napiUid));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "uid", napiUid));
+
+    // pid
+    napi_value napiPid = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, continuousTaskInfo->GetPid(), &napiPid));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "pid", napiPid));
+
+    // Set isFromWebView.
+    napi_value napiIsFromWebView = nullptr;
+    NAPI_CALL(env, napi_get_boolean(env, continuousTaskInfo->IsFromWebView(), &napiIsFromWebView));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "isFromWebView", napiIsFromWebView));
+
+    if (NapiSetBgTaskMode(env, napiInfo, continuousTaskInfo) == nullptr) {
+        BGTASK_LOGE("set bavktask mode fail.");
+        return NapiGetNull(env);
+    }
+
+    // notificationId
+    napi_value napiNotificationId = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, continuousTaskInfo->GetNotificationId(), &napiNotificationId));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "notificationId", napiNotificationId));
+
+    // continuousTaskId
+    napi_value napiContinuousTaskId = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, continuousTaskInfo->GetContinuousTaskId(), &napiContinuousTaskId));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "continuousTaskId", napiContinuousTaskId));
+
+    // abilityId
+    napi_value napiAbilityId = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, continuousTaskInfo->GetAbilityId(), &napiAbilityId));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "abilityId", napiAbilityId));
+
+    // want agent bundle name
+    napi_value napiWantAgentBundleName = nullptr;
+    NAPI_CALL(env, napi_create_string_utf8(env, continuousTaskInfo->GetWantAgentBundleName().c_str(),
+        continuousTaskInfo->GetWantAgentBundleName().length(), &napiWantAgentBundleName));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "wantAgentBundleName", napiWantAgentBundleName));
+
+    // want agent ability name
+    napi_value napiWantAgentAbilityName = nullptr;
+    NAPI_CALL(env, napi_create_string_utf8(env, continuousTaskInfo->GetWantAgentAbilityName().c_str(),
+        continuousTaskInfo->GetWantAgentAbilityName().length(), &napiWantAgentAbilityName));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "wantAgentAbilityName", napiWantAgentAbilityName));
+    return napiInfo;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
