@@ -915,10 +915,8 @@ void GetAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status, v
             uint32_t count = 0;
             for (const auto &continuoustTaskInfo : asyncCallbackInfo->list) {
                 napi_value napiWork = Common::GetNapiContinuousTaskInfo(env, continuoustTaskInfo);
-                if (napiWork != nullptr) {
-                    NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, count, napiWork));
-                    count++;
-                }
+                NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, count, napiWork));
+                count++;
             }
         } else {
             NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
