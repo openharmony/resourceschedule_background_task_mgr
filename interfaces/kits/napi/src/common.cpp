@@ -508,5 +508,27 @@ napi_value Common::GetNapiContinuousTaskInfo(napi_env env,
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "wantAgentAbilityName", napiWantAgentAbilityName));
     return napiInfo;
 }
+
+napi_value Common::GetNapiDelaySuspendInfo(napi_env env,
+    const std::shared_ptr<DelaySuspendInfo> &delaySuspendInfo)
+{
+    if (delaySuspendInfo == nullptr) {
+        BGTASK_LOGE("delaySuspendInfo is null");
+        return NapiGetNull(env);
+    }
+    napi_value napiInfo = nullptr;
+    NAPI_CALL(env, napi_create_object(env, &napiInfo));
+
+    // requestId
+    napi_value napiRequestId = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, delaySuspendInfo->GetRequestId(), &napiRequestId));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "requestId", napiRequestId));
+
+    // actualDelayTime
+    napi_value napiActualDelayTime = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, delaySuspendInfo->GetActualDelayTime(), &napiActualDelayTime));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "actualDelayTime", napiActualDelayTime));
+    return napiInfo;
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
