@@ -101,6 +101,9 @@ public:
 
     static napi_value NapiSetBgTaskMode(napi_env env, napi_value napiInfo,
         const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo);
+
+    static napi_value GetNapiDelaySuspendInfo(napi_env env,
+        const std::shared_ptr<DelaySuspendInfo> &delaySuspendInfo);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
