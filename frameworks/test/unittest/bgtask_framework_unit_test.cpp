@@ -747,7 +747,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, RequestGetAllContinuousTasks_001, TestSize.Lev
  * @tc.type: FUNC
  * @tc.require: issueIC1HDY
  */
-HWTEST_F(BgTaskManagerUnitTest, GetAllTransientTasks_001, TestSize.Level0)
+HWTEST_F(BgTaskFrameworkUnitTest, GetAllTransientTasks_001, TestSize.Level0)
 {
     int32_t remainingQuota = -1;
     std::vector<std::shared_ptr<DelaySuspendInfo>> list;
@@ -757,7 +757,7 @@ HWTEST_F(BgTaskManagerUnitTest, GetAllTransientTasks_001, TestSize.Level0)
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetContinuousTasksByUidForInner(uid, list),
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllTransientTasks(remainingQuota, list),
         ERR_OK);
 }
 }
