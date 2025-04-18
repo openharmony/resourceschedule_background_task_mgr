@@ -61,6 +61,7 @@ ohos_fuzztest("BgTaskSubscriberStubOnRemoteFuzzTest") {
     "access_token:libtokenid_sdk",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    “cJSON:cjson_static”,
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
@@ -71,6 +72,7 @@ ohos_fuzztest("BgTaskSubscriberStubOnRemoteFuzzTest") {
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "selinux_adapter:librestorecon",
   ]
 }
 
