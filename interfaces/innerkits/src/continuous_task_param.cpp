@@ -95,7 +95,7 @@ bool ContinuousTaskParamForInner::ReadFromParcel(Parcel &parcel)
         BGTASK_LOGE("Failed to read the abilityId");
         return false;
     }
-    if (!parcel.ReadInt32(tokenId_)) {
+    if (!parcel.ReadUint64(tokenId_)) {
         BGTASK_LOGE("Failed to read the tokenId");
         return false;
     }
