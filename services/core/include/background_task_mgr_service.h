@@ -63,6 +63,7 @@ public:
         const sptr<IExpiredCallback>& callback, DelaySuspendInfo &delayInfo) override;
     ErrCode CancelSuspendDelay(int32_t requestId) override;
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime) override;
+    // notificationId和continuousTaskId为idl化整改工具能力暂不具备而添加，在proxy中使用
     ErrCode StartBackgroundRunning(const ContinuousTaskParam &taskParam, int32_t& notificationId,
         int32_t& continuousTaskId) override;
     ErrCode UpdateBackgroundRunning(const ContinuousTaskParam &taskParam, int32_t& notificationId,

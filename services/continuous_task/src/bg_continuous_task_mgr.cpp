@@ -204,14 +204,11 @@ void BgContinuousTaskMgr::HandlePersistenceData()
     DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreTaskRecord(continuousTaskInfosMap_);
     auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
-    if (appMgrClient == nullptr) {
-        BGTASK_LOGE("connect to app mgr service failed");
+    if (appMgrClient->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGW("connect to app mgr service failed");
         return;
     }
-    if (appMgrClient->GetAllRunningProcesses(allAppProcessInfos) != ERR_OK) {
-        BGTASK_LOGE("get all running process failed");
-        return;
-    }
+    appMgrClient->GetAllRunningProcesses(allAppProcessInfos);
     CheckPersistenceData(allAppProcessInfos);
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
 }
@@ -357,14 +354,13 @@ void BgContinuousTaskMgr::UnregisterAppStateObserver()
 __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterConfigurationObserver()
 {
     auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
-    if (appMgrClient == nullptr) {
-        BGTASK_LOGE("connect to app mgr service failed");
+    if (appMgrClient->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGW("connect to app mgr service failed");
         return false;
     }
     configChangeObserver_ = sptr<AppExecFwk::IConfigurationObserver>(
         new (std::nothrow) ConfigChangeObserver(handler_, shared_from_this()));
     if (appMgrClient->RegisterConfigurationObserver(configChangeObserver_) != ERR_OK) {
-        BGTASK_LOGE("register configuration observer failed");
         return false;
     }
     return true;
@@ -644,7 +640,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
     }
     if (!CheckTaskParam(taskParam)) {
@@ -1050,6 +1045,7 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUid(int32_t uid)
         iter = continuousTaskInfosMap_.erase(iter);
         RefreshTaskRecord();
     }
+    HandleAppContinuousTaskStop(uid);
 }
 
 void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, uint32_t mode)
@@ -1073,6 +1069,7 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, ui
         iter = continuousTaskInfosMap_.erase(iter);
         RefreshTaskRecord();
     }
+    HandleAppContinuousTaskStop(uid);
 }
 
 ErrCode BgContinuousTaskMgr::AddSubscriber(const std::shared_ptr<SubscriberInfo> subscriberInfo)

@@ -31,7 +31,7 @@ public:
 
     ConfigChangeObserver(const std::shared_ptr<AppExecFwk::EventHandler> handler,
         const std::shared_ptr<BgContinuousTaskMgr> taskMgr);
-    
+
     /**
      * @brief Called when the system configuration is updated.
      *

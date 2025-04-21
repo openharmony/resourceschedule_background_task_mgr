@@ -42,7 +42,7 @@ std::shared_ptr<BackgroundTaskMgrService> BgTaskManagerAbnormalUnitTest::Backgro
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_001, TestSize.Level3)
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_001, TestSize.Level1)
 {
     BackgroundTaskMgrService_->state_ = ServiceRunningState::STATE_RUNNING;
     BackgroundTaskMgrService_->OnStart();
@@ -59,7 +59,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_001
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_002, TestSize.Level3)
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_002, TestSize.Level1)
 {
     std::vector<TransientTaskAppInfo> list1;
     EXPECT_EQ(BackgroundTaskMgrService_->GetTransientTaskApps(list1), ERR_BGTASK_PERMISSION_DENIED);
@@ -83,7 +83,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_002
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_003, TestSize.Level3)
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_003, TestSize.Level1)
 {
     std::vector<std::u16string> args1;
     BackgroundTaskMgrService_->Dump(-1, args1);
@@ -109,7 +109,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_003
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_004, TestSize.Level3)
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_004, TestSize.Level1)
 {
     DelaySuspendInfo delayInfo;
     EXPECT_EQ(BackgroundTaskMgrService_->RequestSuspendDelay("test", nullptr, delayInfo), ERR_BGTASK_SYS_NOT_READY);
@@ -126,7 +126,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_004
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_005, TestSize.Level3)
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_005, TestSize.Level1)
 {
     int32_t notificationId = -1;
     int32_t continuousTaskId = -1;
@@ -149,7 +149,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_005
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_006, TestSize.Level3)
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_006, TestSize.Level1)
 {
     int32_t requestId = 1;
     BackgroundTaskMgrService_->HandleRequestExpired(requestId);
@@ -164,7 +164,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_006
  * @tc.type: FUNC
  * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_007, TestSize.Level3)
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_007, TestSize.Level1)
 {
     int32_t uid = 0;
     EXPECT_EQ(BackgroundTaskMgrService_->StartTransientTaskTimeForInner(uid), ERR_BGTASK_SYS_NOT_READY);
