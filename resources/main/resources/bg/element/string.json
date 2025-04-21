@@ -60,14 +60,14 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Изпълнява се задача за прехвърляне на данни.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"Дистанционният ключ за колата ще се деактивира, ако затворите тази карта.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
