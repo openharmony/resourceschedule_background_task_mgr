@@ -54,7 +54,8 @@
           "hiview",
           "i18n",
           "relational_store",
-          "icu"
+          "icu",
+          "jsoncpp"
         ]
       },
       "build": {
