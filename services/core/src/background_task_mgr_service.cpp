@@ -157,6 +157,12 @@ ErrCode BackgroundTaskMgrService::GetRemainingDelayTime(int32_t requestId, int32
     return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetRemainingDelayTime(requestId, delayTime);
 }
 
+ErrCode BackgroundTaskMgrService::GetAllTransientTasks(int32_t &remainingQuota,
+    std::vector<std::shared_ptr<DelaySuspendInfo>> &list)
+{
+    return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetAllTransientTasks(remainingQuota, list);
+}
+
 void BackgroundTaskMgrService::ForceCancelSuspendDelay(int32_t requestId)
 {
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->ForceCancelSuspendDelay(requestId);

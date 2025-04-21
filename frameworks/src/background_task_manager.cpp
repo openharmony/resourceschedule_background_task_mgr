@@ -80,6 +80,18 @@ ErrCode BackgroundTaskManager::GetRemainingDelayTime(int32_t requestId, int32_t 
     return proxy_->GetRemainingDelayTime(requestId, delayTime);
 }
 
+ErrCode BackgroundTaskManager::GetAllTransientTasks(int32_t &remainingQuota,
+    std::vector<std::shared_ptr<DelaySuspendInfo>> &list)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Mgr::GetAllTransientTasks");
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->GetAllTransientTasks(remainingQuota, list);
+}
+
 ErrCode BackgroundTaskManager::RequestStartBackgroundRunning(ContinuousTaskParam &taskParam)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,

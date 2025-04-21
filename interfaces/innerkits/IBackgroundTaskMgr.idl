@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +29,7 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void RequestSuspendDelay([in] String reason, [in] IExpiredCallback expiredCallback, [out] DelaySuspendInfo delayInfo);
     void CancelSuspendDelay([in] int requestId);
     void GetRemainingDelayTime([in] int requestId, [out] int delayTime);
+    void GetAllTransientTasks([out] int remainingQuota, [out] sharedptr<DelaySuspendInfo>[] list);
     void StartBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int continuousTaskId);
     void UpdateBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int continuousTaskId);
     void StopBackgroundRunning([in] String abilityName, [in] IRemoteObject abilityToken, [in] int abilityId);

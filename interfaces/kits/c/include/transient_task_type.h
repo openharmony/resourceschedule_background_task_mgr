@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
 #define OHOS_BACKGROUOND_TASK_MANAGER_TRANSIENT_TASK_TYPE_H
 
 #include <stdint.h>
+#include <vector>
 
 #ifdef __cplusplus
 extern "C" {
@@ -90,6 +91,19 @@ typedef struct TransientTask_DelaySuspendInfo {
     /** The actual delay duration (ms) */
     int32_t actualDelayTime;
 } TransientTask_DelaySuspendInfo;
+
+/**
+ * @brief Define CallBack Info for an application.
+ *
+ * @since 20
+ * @version 1.0
+ */
+typedef struct TransientTask_TransientTaskInfo {
+    /** The remaining quota of the delay request */
+    int32_t remainingQuota;
+    /** The info of delay suspend */
+    std::vector<TransientTask_DelaySuspendInfo> transientTasks;
+} TransientTask_TransientTaskInfo;
 
 /**
  * @brief Define a callback function when delay time expired.

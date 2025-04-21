@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -781,6 +781,35 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_054, TestSize.Level1)
     DelayedSingleton<BgtaskConfig>::GetInstance()->ParseTransientTaskExemptedQuato(root3);
     int32_t timeValue4 = DelayedSingleton<BgtaskConfig>::GetInstance()->GetTransientTaskExemptedQuato();
     EXPECT_EQ(timeValue4, 0);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_055
+ * @tc.desc: test GetAllTransientTasks.
+ * @tc.type: FUNC
+ * @tc.require: issueIC1HDY
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_055, TestSize.Level0)
+{
+    int32_t remainingQuota = -1;
+    std::vector<std::shared_ptr<DelaySuspendInfo>> list;
+    bgTransientTaskMgr_->isReady_.store(false);
+    EXPECT_EQ(bgTransientTaskMgr_->GetAllTransientTasks(remainingQuota, list), ERR_BGTASK_SYS_NOT_READY);
+
+
+    bgTransientTaskMgr_->isReady_.store(true);
+    EXPECT_EQ(bgTransientTaskMgr_->GetAllTransientTasks(remainingQuota, list), ERR_OK);
+
+    std::string bundleName = LAUNCHER_BUNDLE_NAME;
+    int32_t uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
+    if (uid == -1) {
+        bundleName = SCB_BUNDLE_NAME;
+        uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
+    }
+    auto keyInfo = std::make_shared<KeyInfo>(bundleName, uid);
+    bgTransientTaskMgr_->keyInfoMap_.clear();
+    bgTransientTaskMgr_->keyInfoMap_[1] = keyInfo;
+    EXPECT_EQ(bgTransientTaskMgr_->GetAllTransientTasks(remainingQuota, list), ERR_OK);
 }
 }
 }

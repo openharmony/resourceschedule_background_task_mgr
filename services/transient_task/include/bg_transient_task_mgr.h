@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,6 +62,7 @@ public:
         const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo);
     ErrCode CancelSuspendDelay(int32_t requestId);
     ErrCode GetRemainingDelayTime(int32_t requestId, int32_t &delayTime);
+    ErrCode GetAllTransientTasks(int32_t &remainingQuota, std::vector<std::shared_ptr<DelaySuspendInfo>> &list);
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber);
     ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);

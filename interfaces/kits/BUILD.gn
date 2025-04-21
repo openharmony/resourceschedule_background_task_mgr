@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Huawei Device Co., Ltd.
+# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -32,6 +32,7 @@ ohos_shared_library("backgroundtaskmanager") {
     "napi/src/cancel_suspend_delay.cpp",
     "napi/src/common.cpp",
     "napi/src/efficiency_resources_operation.cpp",
+    "napi/src/get_all_transient_tasks.cpp",
     "napi/src/get_remaining_delay_time.cpp",
     "napi/src/init.cpp",
     "napi/src/request_suspend_delay.cpp",
@@ -83,6 +84,7 @@ ohos_shared_library("backgroundtaskmanager_napi") {
     "napi/src/cancel_suspend_delay.cpp",
     "napi/src/common.cpp",
     "napi/src/efficiency_resources_operation.cpp",
+    "napi/src/get_all_transient_tasks.cpp",
     "napi/src/get_remaining_delay_time.cpp",
     "napi/src/init_bgtaskmgr.cpp",
     "napi/src/js_backgroundtask_subscriber.cpp",
