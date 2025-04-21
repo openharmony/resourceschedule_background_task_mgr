@@ -545,6 +545,9 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, Dump_002, TestSize.Level1)
     bgEfficiencyResourcesMgr_->ShellDump({"-E", "--resetquota", "0"}, dumpInfo);
     EXPECT_EQ(dumpInfo.size(), 0);
 
+    // not apply cpu quota, no dumpInfo
+    bgEfficiencyResourcesMgr_->ShellDump({"-E", "--getquota", "0"}, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
     SUCCEED();
 }
 
