@@ -93,6 +93,7 @@ private:
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &list);
     uint32_t GetExemptedResourceType(uint32_t resourceNumber, const int32_t uid, const std::string &bundleName);
     std::vector<int32_t> QueryRunningResourcesApply(const int32_t uid, const std::string &bundleName);
+    bool CheckAlivedApp(int32_t uid);
     int32_t GetUserIdByUid(int32_t uid);
     void ApplyResourceForPkgAndProc(int32_t uid, int32_t pid, const std::string &bundleName,
         const sptr<EfficiencyResourceInfo> &resourceInfo);

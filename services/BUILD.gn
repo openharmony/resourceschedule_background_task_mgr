@@ -126,12 +126,6 @@ ohos_shared_library("bgtaskmgr_service") {
     ]
   }
 
-  if (background_task_mgr_workout_device_type == "phone") {
-    defines = [ "FEATURE_PRODUCT_PHONE" ]
-  } else if (background_task_mgr_workout_device_type == "watch") {
-    defines = [ "FEATURE_PRODUCT_WATCH" ]
-  }
-
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
 }
@@ -188,12 +182,6 @@ ohos_static_library("bgtaskmgr_service_static") {
       "i18n:intl_util",
       "icu:shared_icuuc",
     ]
-  }
-
-  if (background_task_mgr_workout_device_type == "phone") {
-    defines = [ "FEATURE_PRODUCT_PHONE" ]
-  } else if (background_task_mgr_workout_device_type == "watch") {
-    defines = [ "FEATURE_PRODUCT_WATCH" ]
   }
 
   subsystem_name = "resourceschedule"

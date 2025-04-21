@@ -159,18 +159,15 @@ void BgEfficiencyResourcesMgr::HandlePersistenceData()
 
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
-        if (!appMgrClient_) {
-            BGTASK_LOGE("ResourceRecordStorage connect to app mgr service failed");
+        if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+            BGTASK_LOGW("ResourceRecordStorage connect to app mgr service failed");
             DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
                 appResourceApplyMap_, procResourceApplyMap_);
             return;
         }
     }
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
-    if (appMgrClient_->GetAllRunningProcesses(allAppProcessInfos) != ERR_OK) {
-        BGTASK_LOGE("get all running processes failed");
-        return;
-    }
+    appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
     BGTASK_LOGI("start to recovery delayed task of apps and processes");
     DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreResourceRecord(
         appResourceApplyMap_, procResourceApplyMap_);
@@ -269,6 +266,23 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
     return ERR_OK;
 }
 
+bool BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
+{
+    BGTASK_LOGD("start check app alive or not");
+    if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGE("ResourceRecordStorage connect to app mgr service failed");
+        return true;
+    }
+    std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos {};
+    appMgrClient_->GetAllRunningProcesses(allAppProcessInfos);
+    for (const auto &info : allAppProcessInfos) {
+        if (info.uid_ == uid) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void BgEfficiencyResourcesMgr::Clear()
 {
 }
@@ -289,17 +303,14 @@ bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
 
 bool BgEfficiencyResourcesMgr::IsServiceExtensionType(const pid_t pid)
 {
-    if (!appMgrClient_) {
+    if (!appMgrClient_ || appMgrClient_->ConnectAppMgrService() != ERR_OK) {
         BGTASK_LOGE("ApplyEfficiencyResources connect to app mgr service failed");
         return false;
     }
 
     int32_t proId = static_cast<int32_t>(pid);
     std::vector<AppExecFwk::RunningProcessInfo> allRunningProcessInfos;
-    if (appMgrClient_->GetAllRunningProcesses(allRunningProcessInfos) != ERR_OK) {
-        BGTASK_LOGE("get all running processes failed");
-        return false;
-    }
+    appMgrClient_->GetAllRunningProcesses(allRunningProcessInfos);
     for (const auto &info : allRunningProcessInfos) {
         if (info.pid_ == proId && info.extensionType_ == OHOS::AppExecFwk::ExtensionAbilityType::SERVICE) {
             return true;
@@ -383,6 +394,7 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     }
 
     if (!CheckOrUpdateCpuApplyQuota(uid, bundleName, resourceInfo)) {
+        BGTASK_LOGE("apply efficiency resources failed, check cpu apply quota failed!");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
 
@@ -401,6 +413,7 @@ void BgEfficiencyResourcesMgr::ApplyResourceForPkgAndProc(int32_t uid, int32_t p
     if ((resourceInfo->GetResourceNumber() & ResourceType::CPU) !=0) {
         sptr<EfficiencyResourceInfo> procResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
         if (procResourceInfo == nullptr) {
+            BGTASK_LOGE("procResourceInfo is null!");
             return;
         }
         procResourceInfo->SetResourceNumber(ResourceType::CPU);
@@ -410,6 +423,7 @@ void BgEfficiencyResourcesMgr::ApplyResourceForPkgAndProc(int32_t uid, int32_t p
     if (resourceNumber != 0) {
         sptr<EfficiencyResourceInfo> appResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
         if (appResourceInfo == nullptr) {
+            BGTASK_LOGE("appResourceInfo is null!");
             return;
         }
         appResourceInfo->SetResourceNumber(resourceNumber);
@@ -915,6 +929,9 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
         iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
+
+    // update the left quota of cpu efficiency resource when reset
+    UpdateQuotaIfCpuReset(type, callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
     BGTASK_LOGI("remove record from info map, mapkey %{public}d, uid: %{public}d, bundle name: %{public}s"
         "erasebit %{public}d", mapKey, callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str(), eraseBit);
     subscriberMgr_->OnResourceChanged(callbackInfo, type);

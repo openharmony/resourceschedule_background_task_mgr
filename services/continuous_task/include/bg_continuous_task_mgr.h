@@ -128,7 +128,8 @@ private:
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);
-    ErrCode CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi, uint64_t fullTokenId);
+    ErrCode CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi,
+        uint64_t fullTokenId);
     ErrCode CheckBgmodeTypeForInner(uint32_t requestedBgModeId);
     void InitRecordParam(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
         const sptr<ContinuousTaskParam> &taskParam, int32_t userId);

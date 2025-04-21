@@ -402,9 +402,11 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SystemAbility_001, TestSize.Level1)
     bgEfficiencyResourcesMgr_->OnAddSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, "");
 
     bgEfficiencyResourcesMgr_->isSysReady_.store(true);
+    bgEfficiencyResourcesMgr_->CheckAlivedApp(0);
     bgEfficiencyResourcesMgr_->Clear();
     bgEfficiencyResourcesMgr_->appStateObserver_ = nullptr;
     bgEfficiencyResourcesMgr_->Clear();
+    bgEfficiencyResourcesMgr_->CheckAlivedApp(0);
     EXPECT_TRUE(true);
 }
 
@@ -543,6 +545,9 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, Dump_002, TestSize.Level1)
     bgEfficiencyResourcesMgr_->ShellDump({"-E", "--resetquota", "0"}, dumpInfo);
     EXPECT_EQ(dumpInfo.size(), 0);
 
+    // not apply cpu quota, no dumpInfo
+    bgEfficiencyResourcesMgr_->ShellDump({"-E", "--getquota", "0"}, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
     SUCCEED();
 }
 

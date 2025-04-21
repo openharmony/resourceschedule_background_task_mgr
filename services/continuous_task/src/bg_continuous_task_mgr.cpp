@@ -36,7 +36,6 @@
 #include "os_account_manager.h"
 #endif // HAS_OS_ACCOUNT_PART
 #include "notification_tools.h"
-#include "parameters.h"
 #include "running_process_info.h"
 #include "string_wrapper.h"
 #include "system_ability_definition.h"
@@ -89,11 +88,7 @@ static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
-#ifdef FEATURE_PRODUCT_WATCH
-static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
-#else
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7259;
-#endif
 static constexpr uint32_t ALL_MODES = 0xFF;
 
 #ifndef HAS_OS_ACCOUNT_PART
@@ -183,27 +178,23 @@ void BgContinuousTaskMgr::InitNecessaryState()
         handler_->PostTask(task, DELAY_TIME);
         return;
     }
-    BGTASK_LOGW("RegisterNotificationSubscriber start");
+
     if (!RegisterNotificationSubscriber()) {
         BGTASK_LOGE("RegisterNotificationSubscriber failed");
         return;
     }
-    BGTASK_LOGW("RegisterAppStateObserver start");
     if (!RegisterAppStateObserver()) {
         BGTASK_LOGE("RegisterAppStateObserver failed");
         return;
     }
-    BGTASK_LOGW("RegisterSysCommEventListener start");
     if (!RegisterSysCommEventListener()) {
         BGTASK_LOGE("RegisterSysCommEventListener failed");
         return;
     }
-    BGTASK_LOGW("RegisterConfigurationObserver start");
     if (!RegisterConfigurationObserver()) {
         BGTASK_LOGE("RegisterConfigurationObserver failed");
         return;
     }
-    BGTASK_LOGW("InitRequiredResourceInfo start");
     InitRequiredResourceInfo();
 }
 
