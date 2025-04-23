@@ -841,7 +841,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
         + continuousTaskRecord->abilityName_ + SEPARATOR + std::to_string(continuousTaskRecord->abilityId_);
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
-        BGTASK_LOGW("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
+        BGTASK_LOGD("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
     BGTASK_LOGI("continuous task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d,"
@@ -1014,7 +1014,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
 
     auto iter = continuousTaskInfosMap_.find(mapKey);
     if (iter == continuousTaskInfosMap_.end()) {
-        BGTASK_LOGW("%{public}s continuous task not exists", mapKey.c_str());
+        BGTASK_LOGD("%{public}s continuous task not exists", mapKey.c_str());
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
     BGTASK_LOGI("TASK STOP: user: %{public}s stop continuous task", mapKey.c_str());
