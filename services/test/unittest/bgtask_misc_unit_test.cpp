@@ -91,7 +91,7 @@ void BgTaskMiscUnitTest::TearDown() {}
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V issueIB08SV
  */
-HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level1)
 {
     sptr<AppStateObserver> appStateObserver = sptr<AppStateObserver>(new AppStateObserver());
     AppExecFwk::ProcessData processData = AppExecFwk::ProcessData();
@@ -136,7 +136,7 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, BundleManagerHelperTest_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, BundleManagerHelperTest_001, TestSize.Level1)
 {
     EXPECT_EQ(BundleManagerHelper::GetInstance()->GetClientBundleName(1), "");
     EXPECT_FALSE(BundleManagerHelper::GetInstance()->CheckPermission("permission"));
@@ -168,7 +168,7 @@ HWTEST_F(BgTaskMiscUnitTest, BundleManagerHelperTest_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, ContinuousTaskRecordTest_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, ContinuousTaskRecordTest_001, TestSize.Level1)
 {
     ContinuousTaskRecord record = ContinuousTaskRecord();
     std::string str1 = record.ParseToJsonStr();
@@ -196,7 +196,7 @@ HWTEST_F(BgTaskMiscUnitTest, ContinuousTaskRecordTest_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_001, TestSize.Level1)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     auto taskRecord = std::make_shared<ContinuousTaskRecord>();
@@ -228,7 +228,7 @@ HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V issueIBSI0L
  */
-HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_001, TestSize.Level1)
 {
     auto subscriber = std::make_shared<TaskNotificationSubscriber>();
     subscriber->OnCanceled(nullptr, nullptr, 1);
@@ -272,7 +272,7 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueIBSI0L
  */
-HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_002, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_002, TestSize.Level1)
 {
     auto subscriber = std::make_shared<TaskNotificationSubscriber>();
     subscriber->OnConsumed(nullptr, nullptr);
@@ -295,7 +295,7 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_002, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_001, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
@@ -336,7 +336,7 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_002, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_002, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
@@ -401,7 +401,7 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_002, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, DeviceInfoManagerTest_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, DeviceInfoManagerTest_001, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     deviceInfoManeger->isDump_ = true;
@@ -435,7 +435,7 @@ HWTEST_F(BgTaskMiscUnitTest, DeviceInfoManagerTest_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, PkgDelaySuspendInfoTest_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, PkgDelaySuspendInfoTest_001, TestSize.Level1)
 {
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
     auto timerManager = std::make_shared<TimerManager>(bgtaskService,
@@ -472,7 +472,7 @@ HWTEST_F(BgTaskMiscUnitTest, PkgDelaySuspendInfoTest_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, PkgDelaySuspendInfoTest_002, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, PkgDelaySuspendInfoTest_002, TestSize.Level1)
 {
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
     auto timerManager =
@@ -524,7 +524,7 @@ HWTEST_F(BgTaskMiscUnitTest, PkgDelaySuspendInfoTest_002, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, SuspendControllerTest_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, SuspendControllerTest_001, TestSize.Level1)
 {
     SuspendController suspendController = SuspendController();
     auto keyInfo = std::make_shared<KeyInfo>("bundleName", 1);
@@ -541,7 +541,7 @@ HWTEST_F(BgTaskMiscUnitTest, SuspendControllerTest_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, WatchdogTest_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, WatchdogTest_001, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
@@ -560,7 +560,7 @@ HWTEST_F(BgTaskMiscUnitTest, WatchdogTest_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_001, TestSize.Level1)
 {
     // Given
     sptr<ConfigChangeObserver> configChangeObserver1 = sptr<ConfigChangeObserver>(
@@ -576,7 +576,7 @@ HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_002, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_002, TestSize.Level1)
 {
     // Given
     auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
@@ -594,7 +594,7 @@ HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_002, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_003, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_003, TestSize.Level1)
 {
     // Given
     auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
@@ -616,7 +616,7 @@ HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_003, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_001, TestSize.Level1)
 {
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap1;
     auto continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
@@ -641,7 +641,7 @@ HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issue#I99360
  */
-HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_002, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_002, TestSize.Level1)
 {
     int time = -1;
     // 文件路径错误
@@ -660,7 +660,7 @@ HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_002, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_003, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_003, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
@@ -704,7 +704,7 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_003, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI936BL
  */
-HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_004, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_004, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
@@ -736,7 +736,7 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_004, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI936BL
  */
-HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_005, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_005, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
@@ -768,7 +768,7 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_005, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueIB08SV
  */
-HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_006, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_006, TestSize.Level1)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
@@ -800,7 +800,7 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_006, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, DelaySuspendInfoEx_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, DelaySuspendInfoEx_001, TestSize.Level1)
 {
     auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1);
     delayInfo->baseTime_ = 1;
@@ -816,7 +816,7 @@ HWTEST_F(BgTaskMiscUnitTest, DelaySuspendInfoEx_001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: issueI4QT3W issueI4QU0V
  */
-HWTEST_F(BgTaskMiscUnitTest, SystemEventObserver_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, SystemEventObserver_001, TestSize.Level1)
 {
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED);

@@ -15,7 +15,7 @@
 
 #ifndef BGGTASK_ONREMOTE_REQUEST_FUZZER_H
 #define BGGTASK_ONREMOTE_REQUEST_FUZZER_H
- 
+
 #include "securec.h"
 #include "singleton.h"
 

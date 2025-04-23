@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 #ifndef BGTASK_FRAMEWORK_MOCK_MESSAGEPARCEL_INCLUDE_H
 #define BGTASK_FRAMEWORK_MOCK_MESSAGEPARCEL_INCLUDE_H
-
+ 
 namespace OHOS {
 class MessageParcelHelper {
 public:

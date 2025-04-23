@@ -47,7 +47,6 @@ ohos_shared_library("backgroundtaskmanager") {
     "ability_runtime:abilitykit_native",
     "ability_runtime:extensionkit_native",
     "ability_runtime:napi_base_context",
-    "ability_runtime:runtime",
     "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",

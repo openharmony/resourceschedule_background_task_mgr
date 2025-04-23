@@ -15,7 +15,7 @@ import("//build/ohos.gni")
 import("//build/test.gni")
 import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
-module_output_path = "background_task_mgr/background_task_mgr"
+module_output_path = "background_task_mgr/unittest"
 
 ohos_unittest("bgtask_client_unit_test") {
   module_out_path = module_output_path
