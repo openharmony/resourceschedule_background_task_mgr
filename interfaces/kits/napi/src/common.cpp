@@ -31,7 +31,7 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "System API verification failed. Only system application can apply."},
     {ERR_BGTASK_NO_MEMORY, "Memory operation failed. Failed to allocate the memory."},
     {ERR_BGTASK_SYS_NOT_READY, "Failed to get bgtask manager service, necessary system service is not ready."},
-    {ERR_BGTASK_SERVICE_NOT_CONNECTED, "Failed to get bgtask manager service, necessary system service is not ready."},
+    {ERR_BGTASK_SERVICE_NOT_CONNECTED, "System service operation failed. The system service is not connected."},
     {ERR_BGTASK_PARCELABLE_FAILED,
         "Failed to write data into parcel. Possible reasons: 1. Invalid parameters; 2. Failed to apply for memory."},
     {ERR_BGTASK_TRANSACT_FAILED, "Internal transaction failed."},
