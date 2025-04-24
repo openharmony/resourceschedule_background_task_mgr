@@ -203,13 +203,7 @@ ohos_shared_library("transient_task") {
     cfi_cross_dso = true
     debug = false
   }
-  cflags_cc = [
-    "-fdata-sections",
-    "-ffunction-sections",
-    "-fvisibility=hidden",
-    "-fstack-protector-strong",
-    "-Os",
-  ]
+
   branch_protector_ret = "pac_ret"
 
   output_extension = "so"
