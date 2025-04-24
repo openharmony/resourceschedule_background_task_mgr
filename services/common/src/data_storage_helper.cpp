@@ -23,11 +23,11 @@
 #include "common_utils.h"
 #include "continuous_task_log.h"
 #include "config_policy_utils.h"
+#include <file_ex.h>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-static constexpr int32_t MAX_BUFFER = 2048;
 static constexpr char TASK_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/running_task";
 static const std::string RESOURCE_RECORD_FILE_PATH = "/data/service/el1/public/background_task_mgr/resource_record";
 static const std::string APP_RESOURCE_RECORD = "appResourceRecord";
