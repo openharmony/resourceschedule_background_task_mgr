@@ -38,7 +38,7 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     if (abilityStateData.abilityState != static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED)) {
         return;
     }
-    BGTASK_LOGI("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d, "
+    BGTASK_LOGD("ability state changed, uid: %{public}d abilityName: %{public}s, abilityState: %{public}d, "
         "abilityId: %{public}d",
         abilityStateData.uid, abilityStateData.abilityName.c_str(), abilityStateData.abilityState,
         abilityStateData.abilityRecordId);
