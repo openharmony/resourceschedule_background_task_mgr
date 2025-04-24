@@ -362,6 +362,20 @@ ErrCode BackgroundTaskMgrService::ResetAllEfficiencyResources()
     return DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->ResetAllEfficiencyResources();
 }
 
+ErrCode BackgroundTaskMgrService::GetAllEfficiencyResources(std::vector<EfficiencyResourceInfo> &resourceInfoList)
+{
+    std::vector<std::shared_ptr<EfficiencyResourceInfo>> list {};
+    ErrCode result = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->GetAllEfficiencyResources(list);
+    if (result == ERR_OK) {
+        for (const auto ptr : list) {
+            if (ptr != nullptr) {
+                resourceInfoList.push_back(*ptr);
+            }
+        }
+    }
+    return result;
+}
+
 ErrCode BackgroundTaskMgrService::GetEfficiencyResourcesInfos(
     std::vector<ResourceCallbackInfo> &appList,
     std::vector<ResourceCallbackInfo> &procList)

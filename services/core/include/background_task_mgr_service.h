@@ -84,6 +84,7 @@ public:
     ErrCode ResetAllEfficiencyResources() override;
     ErrCode GetEfficiencyResourcesInfos(std::vector<ResourceCallbackInfo> &appList,
         std::vector<ResourceCallbackInfo> &procList) override;
+    ErrCode GetAllEfficiencyResources(std::vector<EfficiencyResourceInfo> &resourceInfoList) override;
     ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key) override;
     ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
@@ -92,7 +93,7 @@ public:
     void HandleRequestExpired(const int32_t requestId);
     void HandleExpiredCallbackDeath(const wptr<IRemoteObject>& remote);
     void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
-    
+
 private:
     void Init();
     void DumpUsage(std::string &result);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,10 @@ namespace BackgroundTaskMgr {
 napi_value ApplyEfficiencyResources(napi_env env, napi_callback_info info);
 
 napi_value ResetAllEfficiencyResources(napi_env env, napi_callback_info info);
+
+void GetAllEfficiencyResourcesAsyncWork(napi_env env, void *data);
+void GetAllEfficiencyResourcesAsyncWork(napi_env env, napi_status status, void *data);
+napi_value GetAllEfficiencyResources(napi_env env, napi_callback_info info);
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_EFFICIENCY_RES_OPERATION_H

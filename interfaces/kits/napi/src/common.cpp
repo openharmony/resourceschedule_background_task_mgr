@@ -531,5 +531,43 @@ napi_value Common::GetNapiDelaySuspendInfo(napi_env env,
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "actualDelayTime", napiActualDelayTime));
     return napiInfo;
 }
+
+napi_value Common::GetNapiEfficiencyResourcesInfo(const napi_env &env,
+    std::shared_ptr<EfficiencyResourceInfo> efficiencyResourceInfo)
+{
+    if (efficiencyResourceInfo == nullptr) {
+        BGTASK_LOGE("efficiencyResourceInfo is null");
+        return NapiGetNull(env);
+    }
+    napi_value napiInfo = nullptr;
+    NAPI_CALL(env, napi_create_object(env, &napiInfo));
+
+    napi_value napiResourceType = nullptr;
+    napi_value napiTimeOut = nullptr;
+    napi_value napiIsPersist = nullptr;
+    napi_value napiIsProcess = nullptr;
+    napi_value napiReason = nullptr;
+    napi_value napiUid = nullptr;
+    napi_value napiPid = nullptr;
+
+    NAPI_CALL(env, napi_create_int32(env, efficiencyResourceInfo->GetResourceNumber(), &napiResourceType));
+    NAPI_CALL(env, napi_create_int32(env, efficiencyResourceInfo->GetTimeOut(), &napiTimeOut));
+    NAPI_CALL(env, napi_get_boolean(env, efficiencyResourceInfo->IsPersist(), &napiIsPersist));
+    NAPI_CALL(env, napi_get_boolean(env, efficiencyResourceInfo->IsProcess(), &napiIsProcess));
+    NAPI_CALL(env, napi_create_string_utf8(env, efficiencyResourceInfo->GetReason().c_str(),
+        efficiencyResourceInfo->GetReason().length(), &napiReason));
+    NAPI_CALL(env, napi_create_int32(env, efficiencyResourceInfo->GetUid(), &napiUid));
+    NAPI_CALL(env, napi_create_int32(env, efficiencyResourceInfo->GetPid(), &napiPid));
+
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "resourceTypes", napiResourceType));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "timeout", napiTimeOut));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "isPersistent", napiIsPersist));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "isForProcess", napiIsProcess));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "reason", napiReason));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "uid", napiUid));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "pid", napiPid));
+
+    return napiInfo;
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

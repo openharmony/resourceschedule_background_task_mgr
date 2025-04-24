@@ -25,6 +25,7 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_info.h"
 #include "delay_suspend_info.h"
+#include "efficiency_resource_info.h"
 
 #define BGTASK_NAPI_CALL_BASE(env, theCall, retVal) \
     do {                                     \
@@ -104,6 +105,9 @@ public:
 
     static napi_value GetNapiDelaySuspendInfo(napi_env env,
         const std::shared_ptr<DelaySuspendInfo> &delaySuspendInfo);
+
+    static napi_value GetNapiEfficiencyResourcesInfo(const napi_env &env,
+        std::shared_ptr<EfficiencyResourceInfo> efficiencyResourceInfo);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

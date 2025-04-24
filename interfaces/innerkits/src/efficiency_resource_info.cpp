@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,8 @@ bool EfficiencyResourceInfo::Marshalling(Parcel& out) const
     WRITE_PARCEL_WITH_RET(out, String, reason_, false);
     WRITE_PARCEL_WITH_RET(out, Bool, isPersist_, false);
     WRITE_PARCEL_WITH_RET(out, Bool, isProcess_, false);
+    WRITE_PARCEL_WITH_RET(out, Int32, uid_, false);
+    WRITE_PARCEL_WITH_RET(out, Int32, pid_, false);
     return true;
 }
 
@@ -49,6 +51,8 @@ bool EfficiencyResourceInfo::ReadFromParcel(Parcel& in)
     READ_PARCEL_WITH_RET(in, String, reason_, false);
     READ_PARCEL_WITH_RET(in, Bool, isPersist_, false);
     READ_PARCEL_WITH_RET(in, Bool, isProcess_, false);
+    READ_PARCEL_WITH_RET(in, Int32, uid_, false);
+    READ_PARCEL_WITH_RET(in, Int32, pid_, false);
     return true;
 }
 }

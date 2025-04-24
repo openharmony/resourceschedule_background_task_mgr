@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,9 +32,10 @@ struct PersistTime {
     bool isPersist_ {false};
     int64_t endTime_ {0};
     std::string reason_ {""};
+    int64_t timeOut_ {0};
     PersistTime() = default;
     PersistTime(const uint32_t resourceIndex, const bool isPersist, const int64_t endTime,
-        const std::string &reason);
+        const std::string &reason, const int64_t timeOut_ = 0);
     bool operator < (const PersistTime& rhs) const;
 };
 
