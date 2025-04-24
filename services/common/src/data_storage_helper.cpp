@@ -152,23 +152,13 @@ bool DataStorageHelper::ParseFastSuspendDozeTime(const std::string &FilePath, in
 
 int32_t DataStorageHelper::ParseJsonValueFromFile(nlohmann::json &value, const std::string &filePath)
 {
-    std::ifstream fin;
     std::string realPath;
     if (!ConvertFullPath(filePath, realPath)) {
         BGTASK_LOGE("Get real path failed");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
-    fin.open(realPath, std::ios::in);
-    if (!fin.is_open()) {
-        BGTASK_LOGE("cannot open file %{private}s", realPath.c_str());
-        return ERR_BGTASK_DATA_STORAGE_ERR;
-    }
-    char buffer[MAX_BUFFER];
-    std::ostringstream os;
-    while (fin.getline(buffer, MAX_BUFFER)) {
-        os << buffer;
-    }
-    std::string data = os.str();
+    std::string data;
+    LoadStringFromFile(realPath.c_str(), data);
     value = nlohmann::json::parse(data, nullptr, false);
     if (value.is_discarded()) {
         BGTASK_LOGE("failed due to data is discarded");
