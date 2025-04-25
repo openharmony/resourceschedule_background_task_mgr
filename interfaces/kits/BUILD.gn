@@ -27,6 +27,13 @@ ohos_shared_library("backgroundtaskmanager") {
     cfi_cross_dso = true
     debug = false
   }
+  cflags_cc = [
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fvisibility=hidden",
+    "-fstack-protector-strong",
+    "-Os",
+  ]
   sources = [
     "napi/src/bg_continuous_task_napi_module.cpp",
     "napi/src/cancel_suspend_delay.cpp",
@@ -79,6 +86,13 @@ ohos_shared_library("backgroundtaskmanager_napi") {
     cfi_cross_dso = true
     debug = false
   }
+  cflags_cc = [
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fvisibility=hidden",
+    "-fstack-protector-strong",
+    "-Os",
+  ]
   sources = [
     "napi/src/bg_continuous_task_napi_module.cpp",
     "napi/src/cancel_suspend_delay.cpp",
@@ -131,7 +145,13 @@ ohos_shared_library("cj_background_task_mgr_ffi") {
     cfi_cross_dso = true
     debug = false
   }
-
+  cflags_cc = [
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fvisibility=hidden",
+    "-fstack-protector-strong",
+    "-Os",
+  ]
   include_dirs = [ "../innerkits/include" ]
 
   if (!defined(defines)) {
