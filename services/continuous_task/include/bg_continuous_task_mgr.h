@@ -118,6 +118,7 @@ private:
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
     void DumpGetTask(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+    void DumpInnerTask(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t uid);
