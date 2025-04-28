@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,8 +23,8 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 PersistTime::PersistTime(const uint32_t resourceIndex, const bool isPersist, const int64_t endTime,
-    const std::string &reason) : resourceIndex_(resourceIndex), isPersist_(isPersist), endTime_(endTime),
-    reason_(reason) {}
+    const std::string &reason, const int64_t timeOut)
+    : resourceIndex_(resourceIndex), isPersist_(isPersist), endTime_(endTime), reason_(reason), timeOut_(timeOut) {}
 
 bool PersistTime::operator < (const PersistTime& rhs) const
 {
@@ -109,9 +109,11 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
                 continue;
             }
             const nlohmann::json &persistTime = resourceVal.at(i);
-            if (!CommonUtils::CheckJsonValue(persistTime, {"resourceIndex", "isPersist", "endTime", "reason"}) ||
+            if (!CommonUtils::CheckJsonValue(persistTime,
+                {"resourceIndex", "isPersist", "endTime", "reason", "timeOut"}) ||
                 !persistTime.at("resourceIndex").is_number_integer() || !persistTime.at("isPersist").is_boolean() ||
-                !persistTime.at("endTime").is_number_integer() || !persistTime.at("reason").is_string()) {
+                !persistTime.at("endTime").is_number_integer() || !persistTime.at("reason").is_string() ||
+                !persistTime.at("timeOut").is_number_integer()) {
                 BGTASK_LOGE("checkJsonValue of persistTime is failed");
                 continue;
             }
@@ -119,8 +121,9 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
             bool isPersist_ = persistTime.at("isPersist").get<bool>();
             int64_t endTime_ = persistTime.at("endTime").get<int64_t>();
             std::string reason_ = persistTime.at("reason").get<std::string>();
+            int64_t timeOut_ = persistTime.at("timeOut").get<int64_t>();
             this->resourceUnitList_.emplace_back(PersistTime {resourceIndex, isPersist_, endTime_,
-                reason_});
+                reason_, timeOut_});
         }
     } else {
         BGTASK_LOGE("resourceUnitList error");

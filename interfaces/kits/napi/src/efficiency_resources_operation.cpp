@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,6 +28,11 @@ namespace BackgroundTaskMgr {
 namespace {
     static constexpr int32_t APPLY_EFFICIENCY_RESOURCES_PARAMS = 1;
 }
+
+struct AsyncCallbackInfoGetAllEfficiencyResources : public AsyncWorkData {
+    explicit AsyncCallbackInfoGetAllEfficiencyResources(napi_env env) : AsyncWorkData(env) {}
+    std::vector<std::shared_ptr<EfficiencyResourceInfo>> efficiencyResourceInfoList;    // out
+};
 
 napi_value GetNamedBoolValue(const napi_env &env, napi_value &object, const char* utf8name,
     bool& result, bool isNecessary)
@@ -168,6 +173,85 @@ napi_value ResetAllEfficiencyResources(napi_env env, napi_callback_info info)
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources();
     Common::HandleErrCode(env, errCode, true);
     return Common::NapiGetNull(env);
+}
+
+void GetAllEfficiencyResourcesAsyncWork(napi_env env, void *data)
+{
+    AsyncCallbackInfoGetAllEfficiencyResources *asyncCallbackInfo =
+    static_cast<AsyncCallbackInfoGetAllEfficiencyResources *>(data);
+    if (asyncCallbackInfo == nullptr || asyncCallbackInfo->errCode != ERR_OK) {
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        return;
+    }
+    asyncCallbackInfo->errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        GetAllEfficiencyResources(asyncCallbackInfo->efficiencyResourceInfoList);
+}
+
+void GetAllEfficiencyResourcesAsyncWork(napi_env env, napi_status status, void *data)
+{
+    AsyncCallbackInfoGetAllEfficiencyResources *asyncCallbackInfo =
+        static_cast<AsyncCallbackInfoGetAllEfficiencyResources *>(data);
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        return;
+    }
+    napi_value result = nullptr;
+    if (asyncCallbackInfo != nullptr && asyncCallbackInfo->errCode == ERR_OK) {
+        NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
+        if (asyncCallbackInfo->efficiencyResourceInfoList.size() > 0) {
+            uint32_t count = 0;
+            for (const auto &efficiencyResourceTaskInfo : asyncCallbackInfo->efficiencyResourceInfoList) {
+                napi_value napiWork = Common::GetNapiEfficiencyResourcesInfo(env, efficiencyResourceTaskInfo);
+                NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, count, napiWork));
+                count++;
+            }
+        }
+        NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result));
+    } else {
+        std::string errMsg = Common::FindErrMsg(env, asyncCallbackInfo->errCode);
+        int32_t errCodeInfo = Common::FindErrCode(env, asyncCallbackInfo->errCode);
+        result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);
+        NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
+    }
+}
+
+napi_value GetAllEfficiencyResources(napi_env env, napi_callback_info info)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Napi::GetAllEfficiencyResources");
+
+    // Get params
+    napi_ref callback = nullptr;
+    napi_value promise = nullptr;
+    AsyncCallbackInfoGetAllEfficiencyResources *asyncCallbackInfo =
+        new (std::nothrow)AsyncCallbackInfoGetAllEfficiencyResources(env);
+    if (!asyncCallbackInfo) {
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        return Common::JSParaError(env, callback);
+    }
+    std::unique_ptr<AsyncCallbackInfoGetAllEfficiencyResources> callbackPtr {asyncCallbackInfo};
+    Common::PaddingAsyncWorkData(env, callback, *asyncCallbackInfo, promise);
+
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, "GetAllEfficiencyResources", NAPI_AUTO_LENGTH, &resourceName));
+
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName,
+        [](napi_env env, void *data) {
+            GetAllEfficiencyResourcesAsyncWork(env, data);
+        },
+        [](napi_env env, napi_status status, void *data) {
+            GetAllEfficiencyResourcesAsyncWork(env, status, data);
+        },
+        static_cast<AsyncCallbackInfoGetAllEfficiencyResources *>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
+
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+    if (asyncCallbackInfo->isCallback) {
+        callbackPtr.release();
+        return Common::NapiGetNull(env);
+    } else {
+        callbackPtr.release();
+        return promise;
+    }
 }
 }
 }

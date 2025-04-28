@@ -265,7 +265,7 @@ ErrCode BackgroundTaskManager::PauseTransientTaskTimeForInner(int32_t uid)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
-    
+
     return proxy_->PauseTransientTaskTimeForInner(uid);
 }
 
@@ -302,6 +302,26 @@ ErrCode BackgroundTaskManager::ResetAllEfficiencyResources()
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     return proxy_->ResetAllEfficiencyResources();
+}
+
+ErrCode BackgroundTaskManager::GetAllEfficiencyResources(
+    std::vector<std::shared_ptr<EfficiencyResourceInfo>> &resourceInfoList)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Mgr::GetAllEfficiencyResources");
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    std::vector<EfficiencyResourceInfo> list;
+    ErrCode result = proxy_->GetAllEfficiencyResources(list);
+    if (result == ERR_OK) {
+        resourceInfoList.clear();
+        for (const auto& item : list) {
+            resourceInfoList.push_back(std::make_shared<EfficiencyResourceInfo>(item));
+        }
+    }
+    return result;
 }
 
 ErrCode BackgroundTaskManager::GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,

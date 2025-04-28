@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -84,7 +84,7 @@ public:
     {
         return reason_;
     }
-    
+
     /**
      * @brief persist or not.
      *
@@ -124,6 +124,47 @@ public:
     {
         isProcess_ = isProcess;
     }
+
+    /**
+     * @brief Set the pid.
+     *
+     * @param pid The pid of app.
+     */
+    inline void SetPid(int32_t pid)
+    {
+        pid_ = pid;
+    }
+
+    /**
+     * @brief Get the pid.
+     *
+     * @return the pid.
+     */
+    inline int32_t GetPid() const
+    {
+        return pid_;
+    }
+
+    /**
+     * @brief Set the uid.
+     *
+     * @param uid The uid of app.
+     */
+    inline void SetUid(int32_t uid)
+    {
+        uid_ = uid;
+    }
+
+    /**
+     * @brief Get the uid.
+     *
+     * @return the uid.
+     */
+    inline int32_t GetUid() const
+    {
+        return uid_;
+    }
+
 private:
     bool ReadFromParcel(Parcel& in);
 
@@ -133,6 +174,8 @@ private:
     std::string reason_;
     bool isPersist_ {false};
     bool isProcess_ {false};
+    int32_t uid_ {-1};
+    int32_t pid_ {-1};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

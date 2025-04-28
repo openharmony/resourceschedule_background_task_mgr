@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -490,12 +490,13 @@ __attribute__((no_sanitize("cfi"))) void BgEfficiencyResourcesMgr::UpdateResourc
         auto resourceUnitIter = std::find_if(record->resourceUnitList_.begin(),
             record->resourceUnitList_.end(), task);
         int64_t endtime = TimeProvider::GetCurrentTime() + static_cast<int64_t>(resourceInfo->GetTimeOut());
+        int64_t timeOut = static_cast<int64_t>(resourceInfo->GetTimeOut());
         if (resourceUnitIter == record->resourceUnitList_.end()) {
             if (resourceInfo->IsPersist()) {
                 endtime = 0;
             }
             record->resourceUnitList_.emplace_back(PersistTime {resourceIndex, resourceInfo->IsPersist(),
-                endtime, resourceInfo->GetReason()});
+                endtime, resourceInfo->GetReason(), timeOut});
         } else {
             resourceUnitIter->reason_ = resourceInfo->GetReason();
             resourceUnitIter->isPersist_ = resourceUnitIter->isPersist_ || resourceInfo->IsPersist();
@@ -584,7 +585,7 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
     RemoveListRecord(resourceRecord->resourceUnitList_, eraseBit);
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(resourceRecord->uid_, resourceRecord->pid_, eraseBit,
         resourceRecord->bundleName_);
-    
+
     // update quota after time reset if CPU resource apply
     UpdateQuotaIfCpuReset(type, callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
 
@@ -915,7 +916,7 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
         iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
-    
+
     // update the left quota of cpu efficiency resource when reset
     UpdateQuotaIfCpuReset(type, callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
     BGTASK_LOGI("remove record from info map, mapkey %{public}d, uid: %{public}d, bundle name: %{public}s"
@@ -1018,6 +1019,72 @@ int32_t BgEfficiencyResourcesMgr::GetUserIdByUid(int32_t uid)
 {
     const int32_t BASE_USER_RANGE = 200000;
     return uid / BASE_USER_RANGE;
+}
+
+ErrCode BgEfficiencyResourcesMgr::GetAllEfficiencyResources(
+    std::vector<std::shared_ptr<EfficiencyResourceInfo>> &resourceInfoList)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::EfficiencyResource::Service::GetAllEfficiencyResources");
+
+    BGTASK_LOGI("start to get all efficiency resources");
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("efficiency resources is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+
+    auto uid = IPCSkeleton::GetCallingUid();
+    auto pid = IPCSkeleton::GetCallingPid();
+    std::string bundleName = "";
+    if (!IsCallingInfoLegal(uid, pid, bundleName)) {
+        BGTASK_LOGE("get all efficiency resources failed, calling info is illegal");
+        return ERR_BGTASK_INVALID_PID_OR_UID;
+    }
+    uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId) && !IsServiceExtensionType(pid)) {
+        BGTASK_LOGE("get all efficiency resources failed, %{public}s is not system app and service extension type",
+            bundleName.c_str());
+        return ERR_BGTASK_NOT_SYSTEM_APP;
+    }
+
+    handler_->PostSyncTask([this, &resourceInfoList, uid, pid]() {
+            this->GetAllEfficiencyResourcesInner(appResourceApplyMap_, resourceInfoList, uid, pid, false);
+            this->GetAllEfficiencyResourcesInner(procResourceApplyMap_, resourceInfoList, uid, pid, true);
+        });
+    return ERR_OK;
+}
+
+void BgEfficiencyResourcesMgr::GetAllEfficiencyResourcesInner(const ResourceRecordMap &infoMap,
+    std::vector<std::shared_ptr<EfficiencyResourceInfo>> &resourceInfoList, const int32_t uid, const int32_t pid,
+    const bool isProcess)
+{
+    if (infoMap.empty()) {
+        BGTASK_LOGD("infoMap is empty");
+        return;
+    }
+    BGTASK_LOGD("get efficiency resources info inner function, resources record size(): %{public}d",
+        static_cast<int32_t>(infoMap.size()));
+
+    for (auto iter = infoMap.begin(); iter != infoMap.end(); iter++) {
+        if (iter->second == nullptr) {
+            continue;
+        }
+        if (iter->second->uid_ != uid) {
+            continue;
+        }
+        auto &resourceList = iter->second->resourceUnitList_;
+        for (auto recordIter = resourceList.begin(); recordIter != resourceList.end(); recordIter++) {
+            int32_t resourceNumber = 1;
+            if (recordIter->resourceIndex_ != 0) {
+                resourceNumber = recordIter->resourceIndex_ << 1;
+            }
+            auto appInfo = std::make_shared<EfficiencyResourceInfo>(resourceNumber, false,
+                recordIter->timeOut_, recordIter->reason_, recordIter->isPersist_, isProcess);
+            appInfo->SetPid(pid);
+            appInfo->SetUid(uid);
+            resourceInfoList.push_back(appInfo);
+        }
+    }
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

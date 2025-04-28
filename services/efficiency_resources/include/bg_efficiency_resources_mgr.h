@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,6 +52,7 @@ public:
     void Clear();
     ErrCode ApplyEfficiencyResources(const sptr<EfficiencyResourceInfo> &resourceInfo);
     ErrCode ResetAllEfficiencyResources();
+    ErrCode GetAllEfficiencyResources(std::vector<std::shared_ptr<EfficiencyResourceInfo>> &resourceInfoList);
     ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList);
     ErrCode AddSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
@@ -91,6 +92,9 @@ private:
     void RemoveListRecord(std::list<PersistTime> &resourceUnitList, uint32_t eraseBit);
     void GetEfficiencyResourcesInfosInner(const ResourceRecordMap &infoMap,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &list);
+    void GetAllEfficiencyResourcesInner(const ResourceRecordMap &infoMap,
+        std::vector<std::shared_ptr<EfficiencyResourceInfo>> &resourceInfoList, const int32_t uid, const int32_t pid,
+        const bool isProcess);
     uint32_t GetExemptedResourceType(uint32_t resourceNumber, const int32_t uid, const std::string &bundleName);
     std::vector<int32_t> QueryRunningResourcesApply(const int32_t uid, const std::string &bundleName);
     int32_t GetUserIdByUid(int32_t uid);

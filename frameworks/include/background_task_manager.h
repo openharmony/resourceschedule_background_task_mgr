@@ -186,6 +186,14 @@ public:
     ErrCode ResetAllEfficiencyResources();
 
     /**
+     * @brief Get all efficiency resources
+     *
+     * @param resourceInfoList efficiency resource infos.
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode GetAllEfficiencyResources(std::vector<std::shared_ptr<EfficiencyResourceInfo>> &resourceInfoList);
+
+    /**
      * @brief Get all effficiency resources running infos.
      * @param appList EFficiency Resources infos of apps.
      * @param procList  EFficiency Resources infos of processes.
@@ -193,7 +201,7 @@ public:
      */
     ErrCode GetEfficiencyResourcesInfos(std::vector<std::shared_ptr<ResourceCallbackInfo>> &appList,
         std::vector<std::shared_ptr<ResourceCallbackInfo>> &procList);
-    
+
     /*
      * @brief Request stop continuous task.
      * @param uid app uid.
