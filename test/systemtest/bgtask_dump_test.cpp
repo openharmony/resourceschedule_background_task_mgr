@@ -174,5 +174,85 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_006, Function | MediumTest | L
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
     EXPECT_EQ(ret, 0);
 }
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_007
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: issueIC4IFG
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_007, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-C");
+    options.push_back("--inner_task");
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
+}
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_008
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: issueIC4IFG
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_008, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-C");
+    options.push_back("--inner_task DEMO apply");
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
+}
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_009
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: issueIC4IFG
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_009, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-C");
+    options.push_back("--inner_task WORKOUT DEMO");
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
+}
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_010
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: issueIC4IFG
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_010, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-C");
+    options.push_back("--inner_task WORKOUT apply");
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
+}
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_011
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: issueIC4IFG
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_011, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-C");
+    options.push_back("--inner_task WORKOUT reset");
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
