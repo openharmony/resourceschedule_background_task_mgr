@@ -389,6 +389,24 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_016, TestSize.Level1)
 }
 
 /**
+ * @tc.name: BgTaskFrameworkUnitTest_017
+ * @tc.desc: test GetAllEfficiencyResources.
+ * @tc.type: FUNC
+ * @tc.require: issuesIC3JY3
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_017, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::vector<std::shared_ptr<EfficiencyResourceInfo>> resourceInfoList;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllEfficiencyResources(resourceInfoList),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllEfficiencyResources(resourceInfoList),
+        ERR_OK);
+}
+
+/**
  * @tc.name: BackgroundTaskSubscriberProxyTest_001
  * @tc.desc: test BackgroundTaskSubscriberProxy.
  * @tc.type: FUNC
@@ -715,7 +733,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, RequestGetContinuousTasksByUidForInner_001, Te
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->
-        RequestGetContinuousTasksByUidForInner(uid, list), ERR_BGTASK_INVALID_PARAM);
+        RequestGetContinuousTasksByUidForInner(uid, list), ERR_BGTASK_INVALID_UID);
 
     uid = 1;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->
@@ -738,7 +756,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, RequestGetAllContinuousTasks_001, TestSize.Lev
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list),
-        ERR_OK);
+        ERR_BGTASK_PERMISSION_DENIED);
 }
 
 /**
@@ -758,7 +776,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetAllTransientTasks_001, TestSize.Level0)
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllTransientTasks(remainingQuota, list),
-        ERR_OK);
+        ERR_BGTASK_SERVICE_INNER_ERROR);
 }
 }
 }

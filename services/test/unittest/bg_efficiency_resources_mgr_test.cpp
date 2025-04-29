@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -625,6 +625,33 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, Should_Return_All_Resource_Type_When_0_in
     auto resourceNumber = (1 << MAX_RESOURCES_TYPE_NUM);
     auto ret = bgEfficiencyResourcesMgr_->GetExemptedResourceType(resourceNumber, 0, "bundleName");
     EXPECT_EQ(ret, resourceNumber);
+}
+
+/**
+ * @tc.name: GetAllEfficiencyResources_001
+ * @tc.desc: cover the GetAllEfficiencyResources.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, GetAllEfficiencyResources_001, TestSize.Level1)
+{
+    std::vector<std::shared_ptr<EfficiencyResourceInfo>> resourceInfoList;
+    bgEfficiencyResourcesMgr_->isSysReady_.store(false);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->GetAllEfficiencyResources(resourceInfoList),
+        ERR_BGTASK_SYS_NOT_READY);
+
+    bgEfficiencyResourcesMgr_->isSysReady_.store(true);
+    std::string bundleName {""};
+    EXPECT_FALSE(bgEfficiencyResourcesMgr_->IsCallingInfoLegal(-1, 0, bundleName));
+    EXPECT_FALSE(bgEfficiencyResourcesMgr_->IsCallingInfoLegal(0, -1, bundleName));
+
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->GetAllEfficiencyResources(resourceInfoList), ERR_OK);
+
+    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(1, true, 0, "apply", true,
+        false);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->ApplyEfficiencyResources(resourceInfo), (int32_t)ERR_OK);
+    SleepFor(WAIT_TIME);
+    bgEfficiencyResourcesMgr_->GetAllEfficiencyResources(resourceInfoList);
+    EXPECT_EQ((int32_t)resourceInfoList.size(), 1);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
