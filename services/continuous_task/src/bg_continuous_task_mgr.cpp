@@ -78,6 +78,7 @@ static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_CANCEL_ALL[] = "--cancel_all";
 static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
 static constexpr char DUMP_PARAM_GET[] = "--get";
+static constexpr char DUMP_INNER_TASK[] = "--inner_task";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
@@ -86,6 +87,7 @@ static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
+static constexpr int32_t MAX_DUMP_INNER_PARAM_NUMS = 4;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
@@ -1289,6 +1291,8 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
         DumpCancelTask(dumpOption, false);
     } else if (dumpOption[1] == DUMP_PARAM_GET) {
         DumpGetTask(dumpOption, dumpInfo);
+    } else if (dumpOption[1] == DUMP_INNER_TASK) {
+        DumpInnerTask(dumpOption, dumpInfo);
     } else {
         BGTASK_LOGW("invalid dump param");
     }
@@ -1411,6 +1415,43 @@ void BgContinuousTaskMgr::DumpGetTask(const std::vector<std::string> &dumpOption
         stream << "\n";
         dumpInfo.emplace_back(stream.str());
         index++;
+    }
+}
+
+void BgContinuousTaskMgr::DumpInnerTask(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
+{
+    if (dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS) {
+        dumpInfo.emplace_back("param invaild\n");
+        return;
+    }
+    std::string modeStr = dumpOption[2].c_str();
+    uint32_t mode = 0;
+    if (modeStr == "WORKOUT") {
+        mode = BackgroundMode::WORKOUT;
+    }
+    if (mode == 0) {
+        dumpInfo.emplace_back("param invaild\n");
+        return;
+    }
+    std::string operationType = dumpOption[3].c_str();
+    if (operationType != "apply" && operationType != "reset") {
+        dumpInfo.emplace_back("param invaild\n");
+        return;
+    }
+    bool isApply = (operationType == "apply");
+    sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
+        new ContinuousTaskParamForInner(1, mode, isApply));
+    ErrCode ret = ERR_OK;
+    if (isApply) {
+        ret = StartBackgroundRunningForInner(taskParam);
+    } else {
+        ret = StopBackgroundRunningForInner(taskParam);
+    }
+    if (ret != ERR_OK) {
+        dumpInfo.emplace_back("dump inner continuous task fail.\n");
+    } else {
+        dumpInfo.emplace_back("dump inner continuous task success.\n");
     }
 }
 
