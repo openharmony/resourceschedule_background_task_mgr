@@ -49,7 +49,12 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     cfi_cross_dso = true
     debug = false
   }
-
+  cflags_cc = [
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fstack-protector-strong",
+    "-Os",
+  ]
   deps = [
     ":background_task_mgr_interface",
     ":background_task_subscriber_interface",
