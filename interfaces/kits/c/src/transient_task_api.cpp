@@ -88,11 +88,11 @@ int32_t OH_BackgroundTaskManager_GetAllTransientTasks(TransientTask_TransientTas
         return errCode / INNER_ERROR_SHIFT;
     }
     info->remainingQuota = remainingQuotaValue;
+    int index = 0;
     for (const auto &transientTasksRecord : listValue) {
-        TransientTask_DelaySuspendInfo taskRecord;
-        taskRecord.requestId = transientTasksRecord->GetRequestId();
-        taskRecord.actualDelayTime = transientTasksRecord->GetActualDelayTime();
-        info->transientTasks.push_back(taskRecord);
+        info->transientTasks[index].requestId = transientTasksRecord->GetRequestId();
+        info->transientTasks[index].actualDelayTime = transientTasksRecord->GetActualDelayTime();
+        index++;
     }
     return ERR_TRANSIENT_TASK_OK;
 }
