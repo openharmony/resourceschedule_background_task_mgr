@@ -50,7 +50,7 @@ extern "C" {
  *
  * @param reason Indicates the reason for delayed transition to the suspended state.
  * @param callback Indicates the callback delay time expired.
- * @param delaySuspendInfo Indicates the info of delay request.
+ * @param info Indicates the info of delay request.
  * @return {@link ERR_TRANSIENT_TASK_OK} 0 - Success.
  *         {@link ERR_TRANSIENT_TASK_INVALID_PARAM} 401 - Invalid parameter.
  *         {@link ERR_TRANSIENT_TASK_PARCEL_FAILED} 9800002 - Parcelable failed.
@@ -69,7 +69,7 @@ int32_t OH_BackgroundTaskManager_RequestSuspendDelay(const char* reason,
  * @brief Obtains the remaining time before an application enters the suspended state.
  *
  * @param requestId Indicates the identifier of the delay request.
- * @param time Indicates the remaining Time.
+ * @param delayTime Indicates the remaining Time.
  * @return {@link ERR_TRANSIENT_TASK_OK} 0 - Success.
  *         {@link ERR_TRANSIENT_TASK_INVALID_PARAM} 401 - Invalid parameter.
  *         {@link ERR_TRANSIENT_TASK_PARCEL_FAILED} 9800002 - Parcelable failed.
