@@ -37,11 +37,13 @@
 #define OHOS_BACKGROUOND_TASK_MANAGER_TRANSIENT_TASK_TYPE_H
 
 #include <stdint.h>
-#include <vector>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define TRANSIENT_TASK_MAX_NUM 3
+
 /**
  * @brief Enum for transient task error code.
  * @since 13
@@ -102,7 +104,7 @@ typedef struct TransientTask_TransientTaskInfo {
     /** The remaining quota of the delay request */
     int32_t remainingQuota;
     /** The info of delay suspend */
-    std::vector<TransientTask_DelaySuspendInfo> transientTasks;
+    TransientTask_DelaySuspendInfo transientTasks[TRANSIENT_TASK_MAX_NUM];
 } TransientTask_TransientTaskInfo;
 
 /**
