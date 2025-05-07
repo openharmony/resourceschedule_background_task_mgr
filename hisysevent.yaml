@@ -46,3 +46,36 @@ CONTINUOUS_TASK_CANCEL:
   BGMODE: {type: INT32, desc: task background mode}
   UIABILITY_IDENTITY: {type: INT32, desc: ability identity}
   STOP_REASON: {type: INT32, desc: stop reason}
+
+BGTASK_ERR:
+  __BASE: {type: STATISTIC, level: CRITICAL, desc: Use of illegal acts, preserve: true}
+  APP_UID: {type: INT32, arrsize: 100, desc: application uid}
+  APP_PID: {type: INT32, arrsize: 100, desc: application pid}
+  APP_NAME: {type: STRING, arrsize: 100, desc: application package name}
+  UIABILITY_IDENTITY: {type: INT32, arrsize: 100, desc: uiability identity}
+  MODULE_NAME: {type: STRING, arrsize: 100, desc: module name}
+  FUNC_NAME: {type: STRING, arrsize: 100, desc: function name}
+  ERR_CODE: {type: INT32, arrsize: 100, desc: err code}
+  ERR_MSG: {type: STRING, arrsize: 100, desc: err message}
+
+EFFICIENCY_RESOURCE_APPLY:
+  __BASE: {type: STATISTIC, level: CRITICAL, desc: apply efficiency resource, preserve: true}
+  APP_UID: {type: INT32, arrsize: 100, desc: application uid}
+  APP_PID: {type: INT32, arrsize: 100, desc: application pid}
+  APP_NAME: {type: STRING, arrsize: 100, desc: application package name}
+  UIABILITY_IDENTITY: {type: INT32, arrsize: 100, desc: uiability identity}
+  RESOURCE_TYPE: {type: INT32, arrsize: 100, desc: efficiency resource type}
+  TIMEOUT: {type: INT64, arrsize: 100, desc: efficiency resource timeout}
+  PERSIST: {type: BOOL, arrsize: 100, desc: efficiency resource is persist}
+  PROCESS: {type: BOOL, arrsize: 100, desc: is process}
+
+EFFICIENCY_RESOURCE_RESET:
+  __BASE: {type: STATISTIC, level: CRITICAL, desc: reset efficiency resource, preserve: true}
+  APP_UID: {type: INT32, arrsize: 100, desc: application uid}
+  APP_PID: {type: INT32, arrsize: 100, desc: application pid}
+  APP_NAME: {type: STRING, arrsize: 100, desc: application package name}
+  UIABILITY_IDENTITY: {type: INT32, arrsize: 100, desc: uiability identity}
+  RESOURCE_TYPE: {type: INT32, arrsize: 100, desc: efficiency resource type}
+  PROCESS: {type: BOOL, arrsize: 100, desc: is process}
+  QUOTA: {type: INT64, arrsize: 100, desc: application quota for one day}
+  ALL_QUOTA: {type: INT64, arrsize: 100, desc: application all quota for one day}
