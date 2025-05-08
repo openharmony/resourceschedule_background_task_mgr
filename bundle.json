@@ -56,7 +56,8 @@
           "i18n",
           "relational_store",
           "icu",
-          "jsoncpp"
+          "jsoncpp",
+          "cJSON"
         ]
       },
       "build": {
