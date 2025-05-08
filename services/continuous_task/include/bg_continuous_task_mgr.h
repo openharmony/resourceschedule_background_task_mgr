@@ -53,6 +53,8 @@ enum class ContinuousTaskEventTriggerType: uint32_t {
     TASK_START,
     TASK_UPDATE,
     TASK_CANCEL,
+    TASK_SUSPEND,
+    TASK_ACTIVE,
 };
 
 
@@ -96,6 +98,8 @@ public:
     void Clear();
     int32_t GetBgTaskUid();
     void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
+    void SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
+    void ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void HandleRemoveTaskByMode(uint32_t mode);
@@ -132,6 +136,8 @@ private:
     bool GetNotificationPrompt();
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
+    void HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
+    void HandleActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);
@@ -156,6 +162,8 @@ private:
     uint32_t GetModeNumByTypeIds(const std::vector<uint32_t> &typeIds);
     void NotifySubscribers(ContinuousTaskEventTriggerType changeEventType,
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void NotifySubscribersTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void NotifySubscribersTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void ReportHisysEvent(ContinuousTaskEventTriggerType changeEventType,
         const std::shared_ptr<ContinuousTaskRecord> &continuousTaskInfo);
     bool CanNotifyHap(const std::shared_ptr<SubscriberInfo> subscriberInfo,

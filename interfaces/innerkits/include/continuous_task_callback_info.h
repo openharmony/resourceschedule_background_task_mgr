@@ -104,25 +104,53 @@ public:
     int32_t GetContinuousTaskId() const;
 
     /**
-     * @brief Get the cancel reason.
-     *
-     * @return The reason.
-     */
-    void SetContinuousTaskId(const int32_t id);
-
-    /**
-     * @brief Set the cancel reasion.
-     *
-     * @param reason The the cancel reasion.
-     */
-    int32_t GetCancelReason() const;
-
-    /**
      * @brief Set the continuous task id.
      *
      * @param id The continuous task id.
      */
+    void SetContinuousTaskId(const int32_t id);
+
+    /**
+     * @brief Get the cancel reason.
+     *
+     * @return The cancel reason.
+     */
+    int32_t GetCancelReason() const;
+
+    /**
+     * @brief Set the cancel reasond.
+     *
+     * @param reason The cancel reason.
+     */
     void SetCancelReason(const int32_t reason);
+
+    /**
+     * @brief Get the suspend reason.
+     *
+     * @return The suspend reason.
+     */
+    int32_t GetSuspendReason() const;
+
+    /**
+     * @brief Set the suspend reason.
+     *
+     * @param suspendReason The suspend reason.
+     */
+    void SetSuspendReason(const int32_t suspendReason) const;
+
+    /**
+     * @brief Get the suspend state.
+     *
+     * @return The suspend state.
+     */
+    bool GetSuspendState() const;
+
+    /**
+     * @brief Set the suspend state.
+     *
+     * @param suspendState The suspend state.
+     */
+    void SetSuspendState(const bool suspendState) const;
 
     /**
      * @brief Marshals a purpose into a parcel.
@@ -148,6 +176,8 @@ private:
     uint64_t tokenId_ {0};
     int32_t continuousTaskId_ {-1};
     int32_t cancelReason_ {-1};
+    bool suspendState_ {false};
+    int32_t suspendReason_ {-1};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

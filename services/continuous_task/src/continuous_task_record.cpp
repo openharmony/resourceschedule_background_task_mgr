@@ -172,6 +172,8 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     }
     root["continuousTaskId"] = continuousTaskId_;
     root["abilityId"] = abilityId_;
+    root["suspendState"] = suspendState_;
+    root["suspendReason"] = suspendReason_;
     return root.dump(CommonUtils::jsonFormat_);
 }
 
@@ -182,15 +184,15 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["pid"].is_number_integer() || !value["bgModeId"].is_number_integer()
         || !value["isNewApi"].is_boolean() || !value["isFromWebview"].is_boolean()
         || !value["notificationLabel"].is_string() || !value["isSystem"].is_boolean()
-        || !value["continuousTaskId"].is_number_integer()
-        || !value["abilityId"].is_number_integer();
+        || !value["continuousTaskId"].is_number_integer() || !value["abilityId"].is_number_integer()
+        || !value["suspendState"].is_boolean() || !value["suspendReason"].is_number_integer();
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
 {
     if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value, { "bundleName",
         "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel",
-        "isSystem", "continuousTaskId", "abilityId"})) {
+        "isSystem", "continuousTaskId", "abilityId", "suspendState", "suspendReason"})) {
         BGTASK_LOGE("continuoustaskrecord no key");
         return false;
     }
@@ -198,6 +200,26 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
         BGTASK_LOGE("continuoustaskrecord parse from json fail");
         return false;
     }
+    SetRecordValue(value);
+    if (value.find("wantAgentInfo") != value.end()) {
+        nlohmann::json infoVal = value["wantAgentInfo"];
+        if (!CommonUtils::CheckJsonValue(infoVal, { "bundleName", "abilityName" })
+            || !infoVal["bundleName"].is_string() || !infoVal["abilityName"].is_string()) {
+            return false;
+        }
+        std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+        info->bundleName_ = infoVal.at("bundleName").get<std::string>();
+        info->abilityName_ = infoVal.at("abilityName").get<std::string>();
+        this->wantAgentInfo_ = info;
+    }
+    if (value.contains("notificationId") && value["notificationId"].is_number_integer()) {
+        this->notificationId_ = value.at("notificationId").get<int32_t>();
+    }
+    return true;
+}
+
+void ContinuousTaskRecord::SetRecordValue(const nlohmann::json &value)
+{
     this->bundleName_ = value.at("bundleName").get<std::string>();
     this->abilityName_ = value.at("abilityName").get<std::string>();
     this->userId_ = value.at("userId").get<int32_t>();
@@ -221,21 +243,6 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
         auto subModes = value.at("bgSubModeIds").get<std::string>();
         this->bgSubModeIds_ = ToVector(subModes);
     }
-    if (value.find("wantAgentInfo") != value.end()) {
-        nlohmann::json infoVal = value["wantAgentInfo"];
-        if (!CommonUtils::CheckJsonValue(infoVal, { "bundleName", "abilityName" })
-            || !infoVal["bundleName"].is_string() || !infoVal["abilityName"].is_string()) {
-            return false;
-        }
-        std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
-        info->bundleName_ = infoVal.at("bundleName").get<std::string>();
-        info->abilityName_ = infoVal.at("abilityName").get<std::string>();
-        this->wantAgentInfo_ = info;
-    }
-    if (value.contains("notificationId") && value["notificationId"].is_number_integer()) {
-        this->notificationId_ = value.at("notificationId").get<int32_t>();
-    }
-    return true;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

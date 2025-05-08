@@ -76,6 +76,16 @@ void ContinuousTaskCallbackInfo::SetCancelReason(const int32_t reason)
 {
     cancelReason_ = reason;
 }
+
+void ContinuousTaskCallbackInfo::SetSuspendReason(const int32_t suspendReason)
+{
+    suspendReason_ = suspendReason;
+}
+
+void ContinuousTaskCallbackInfo::SetSuspendState(const bool suspendState)
+{
+    suspendState_ = suspendState;
+}
  
 int32_t ContinuousTaskCallbackInfo::GetContinuousTaskId() const
 {
@@ -85,6 +95,16 @@ int32_t ContinuousTaskCallbackInfo::GetContinuousTaskId() const
 int32_t ContinuousTaskCallbackInfo::GetCancelReason() const
 {
     return cancelReason_;
+}
+
+int32_t ContinuousTaskCallbackInfo::GetSuspendReason() const
+{
+    return suspendReason_;
+}
+
+bool ContinuousTaskCallbackInfo::GetSuspendState() const
+{
+    return suspendState_;
 }
 
 bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const

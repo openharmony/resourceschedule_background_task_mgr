@@ -47,6 +47,12 @@ void BackgroundTaskSubscriber::OnContinuousTaskUpdate(
 void BackgroundTaskSubscriber::OnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) {}
 
+void BackgroundTaskSubscriber::OnContinuousTaskSuspend(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) {}
+
+void BackgroundTaskSubscriber::OnContinuousTaskActive(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) {}
+
 void BackgroundTaskSubscriber::OnAppContinuousTaskStop(int32_t uid) {}
 
 void BackgroundTaskSubscriber::OnRemoteDied(const wptr<IRemoteObject> &object) {}
@@ -171,6 +177,24 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTask
     std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
         std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
     subscriber_.OnContinuousTaskStop(sharedInfo);
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskSuspend(
+    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) __attribute__((no_sanitize("cfi")))
+{
+    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
+        std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
+    subscriber_.OnContinuousTaskSuspend(sharedInfo);
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnContinuousTaskActive(
+    const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) __attribute__((no_sanitize("cfi")))
+{
+    std::shared_ptr<ContinuousTaskCallbackInfo> sharedInfo =
+        std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskCallbackInfo);
+    subscriber_.OnContinuousTaskActive(sharedInfo);
     return ERR_OK;
 }
 

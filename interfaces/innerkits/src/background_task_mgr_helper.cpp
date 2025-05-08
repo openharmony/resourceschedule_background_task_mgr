@@ -111,5 +111,15 @@ ErrCode BackgroundTaskMgrHelper::SetBgTaskConfig(const std::string &configData, 
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBgTaskConfig(configData, sourceType);
 }
+
+ErrCode BackgroundTaskMgrHelper::SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousTask(uid, pid, reason, key);
+}
+
+ErrCode BackgroundTaskMgrHelper::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(uid, pid, key);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

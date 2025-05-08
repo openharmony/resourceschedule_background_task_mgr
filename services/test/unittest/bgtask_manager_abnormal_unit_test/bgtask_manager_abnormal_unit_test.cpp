@@ -72,6 +72,8 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_002
     EXPECT_EQ(BackgroundTaskMgrService_->GetEfficiencyResourcesInfos(list3, list4), ERR_BGTASK_PERMISSION_DENIED);
 
     EXPECT_EQ(BackgroundTaskMgrService_->StopContinuousTask(1, 1, 1, ""), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->SuspendContinuousTask(1, 1, 4, ""), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->ActiveContinuousTask(1, 1, ""), ERR_BGTASK_PERMISSION_DENIED);
 
     EXPECT_EQ(BackgroundTaskMgrService_->SubscribeBackgroundTask(nullptr), ERR_BGTASK_PERMISSION_DENIED);
     EXPECT_EQ(BackgroundTaskMgrService_->UnsubscribeBackgroundTask(nullptr), ERR_BGTASK_PERMISSION_DENIED);

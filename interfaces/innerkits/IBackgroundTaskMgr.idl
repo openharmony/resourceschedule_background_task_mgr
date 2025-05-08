@@ -43,6 +43,8 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void GetAllEfficiencyResources([out] EfficiencyResourceInfo[] list);
     void GetEfficiencyResourcesInfos([out] ResourceCallbackInfo[] appList, [out] ResourceCallbackInfo[] procList);
     void StopContinuousTask([in] int uid, [in] int pid, [in] unsigned int taskType, [in] String key);
+    void SuspendContinuousTask([in] int uid, [in] int pid, [in] int reason, [in] String key);
+    void ActiveContinuousTask([in] int uid, [in] int pid, [in] String key);
     void RequestBackgroundRunningForInner([in] ContinuousTaskParamForInner taskParam);
     void RequestGetContinuousTasksByUidForInner([in] int uid, [out] ContinuousTaskInfo[] list);
     void PauseTransientTaskTimeForInner([in] int uid);

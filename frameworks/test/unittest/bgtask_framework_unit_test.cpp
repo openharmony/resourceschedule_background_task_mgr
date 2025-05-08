@@ -91,6 +91,10 @@ class TestBackgroundTaskSubscriberStub : public BackgroundTaskSubscriberStub {
         const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
     ErrCode OnContinuousTaskStop(
         const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
+    ErrCode OnContinuousTaskSuspend(
+        const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
+    ErrCode OnContinuousTaskActive(
+        const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
     ErrCode OnAppContinuousTaskStop(int32_t uid) override {return ERR_OK;}
     ErrCode OnAppEfficiencyResourcesApply(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
     ErrCode OnAppEfficiencyResourcesReset(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
@@ -407,6 +411,40 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_017, TestSize.Level1)
 }
 
 /**
+ * @tc.name: BgTaskFrameworkUnitTest_018
+ * @tc.desc: test SuspendContinuousTask.
+ * @tc.type: FUNC
+ * @tc.require: issueIC6B53
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_018, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousTask(1, 1, 4, ""),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousTask(1, 1, 4, ""), ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskFrameworkUnitTest_019
+ * @tc.desc: test StopContinuousTask.
+ * @tc.type: FUNC
+ * @tc.require: issueIC6B53
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_019, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(1, 1, ""),,
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(1, 1, ""),, ERR_OK);
+}
+
+/**
  * @tc.name: BackgroundTaskSubscriberProxyTest_001
  * @tc.desc: test BackgroundTaskSubscriberProxy.
  * @tc.type: FUNC
@@ -483,6 +521,24 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_004, TestSiz
     subscirberProxy2.OnAppEfficiencyResourcesReset(*info);
     subscirberProxy2.OnProcEfficiencyResourcesApply(*info);
     subscirberProxy2.OnProcEfficiencyResourcesReset(*info);
+    EXPECT_NE(subscirberStub, nullptr);
+}
+
+/**
+ * @tc.name: BackgroundTaskSubscriberProxyTest_005
+ * @tc.desc: test BackgroundTaskSubscriberProxy.
+ * @tc.type: FUNC
+ * @tc.require: issueIC6B53
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_005, TestSize.Level1)
+{
+    sptr<TestBackgroundTaskSubscriberStub> subscirberStub
+        = sptr<TestBackgroundTaskSubscriberStub>(new TestBackgroundTaskSubscriberStub());
+    BackgroundTaskSubscriberProxy subscirberProxy1 = BackgroundTaskSubscriberProxy(nullptr);
+    BackgroundTaskSubscriberProxy subscirberProxy2 = BackgroundTaskSubscriberProxy(subscirberStub->AsObject());
+    std::shared_ptr<ContinuousTaskCallbackInfo> info = std::make_shared<ContinuousTaskCallbackInfo>();
+    subscirberProxy2.OnContinuousTaskSuspend(*info);
+    subscirberProxy2.OnContinuousTaskActive(*info);
     EXPECT_NE(subscirberStub, nullptr);
 }
 

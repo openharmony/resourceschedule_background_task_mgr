@@ -1091,6 +1091,98 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_049, TestSize.Level1)
 }
 
 /**
+ * @tc.name: BgTaskManagerUnitTest_050
+ * @tc.desc: test SuspendContinuousTask.
+ * @tc.type: FUNC
+ * @tc.require: issueIC6B53
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_050, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    bgContinuousTaskMgr_->SuspendContinuousTask(1, 1, 4, "");
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->SuspendContinuousTask(-1, 1, 4, "");
+    SleepForFC();
+    bgContinuousTaskMgr_->SuspendContinuousTask(1, 1, 4, "");
+    EXPECT_TRUE(bgContinuousTaskMgr_->continuousTaskInfosMap_.empty());
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_051
+ * @tc.desc: test HandleSuspendContinuousTask.
+ * @tc.type: FUNC
+ * @tc.require: issueIC6B53
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_051, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_ONE;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_TWO;
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    // 查不到对应的key值
+    bgContinuousTaskMgr_->HandleSuspendContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, 4, "");
+    EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
+    // 查到对应的key值
+    bgContinuousTaskMgr_->HandleSuspendContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, 4, "key1");
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_[key1]->suspendReason_, 4);
+    EXPECT_EQ(continuousTaskInfosMap_[key1]->suspendState_, true);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_052
+ * @tc.desc: test ActiveContinuousTask.
+ * @tc.type: FUNC
+ * @tc.require: issueIC6B53
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_052, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    bgContinuousTaskMgr_->ActiveContinuousTask(1, 1, "");
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->ActiveContinuousTask(1, 1, "");
+    SleepForFC();
+    bgContinuousTaskMgr_->ActiveContinuousTask(1, 1, "");
+    EXPECT_TRUE(bgContinuousTaskMgr_->continuousTaskInfosMap_.empty());
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_053
+ * @tc.desc: test HandleActiveContinuousTask.
+ * @tc.type: FUNC
+ * @tc.require: issueIC6B53
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_053, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_ONE;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_TWO;
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    // 暂停长时任务
+    bgContinuousTaskMgr_->HandleSuspendContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, 4, "key1");
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"]->suspendReason_, 4);
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"]->suspendState_, true);
+    // 恢复长时任务
+    bgContinuousTaskMgr_->HandleActiveContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, "");
+    EXPECT_FALSE(bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"]->suspendState_);
+    bgContinuousTaskMgr_->HandleActiveContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, "key1");
+    EXPECT_TRUE(bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"]->suspendState_);
+}
+
+/**
  * @tc.name: GetAllContinuousTasks_001
  * @tc.desc: test GetAllContinuousTasks interface.
  * @tc.type: FUNC

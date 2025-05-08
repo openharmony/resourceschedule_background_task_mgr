@@ -30,11 +30,15 @@ public:
     virtual ~JsBackgroundTaskSubscriber();
     void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
     void HandleOnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void OnContinuousTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+    void HandleOnContinuousTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void OnContinuousTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+    void HandleOnContinuousTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void CallJsFunction(const napi_value value, const char *methodName, const napi_value *argv, const size_t argc);
-    void AddJsObserverObject(const napi_value &jsObserverObject);
-    void RemoveJsObserverObject(const napi_value &jsObserverObject);
-    void RemoveAllJsObserverObjects();
-    std::shared_ptr<NativeReference> GetObserverObject(const napi_value &jsObserverObject);
+    void AddJsObserverObject(const std::string cbType, const napi_value &jsObserverObject);
+    void RemoveJsObserverObject(const std::string cbType, const napi_value &jsObserverObject);
+    void RemoveJsObserverObjects(const std::string cbType);
+    std::shared_ptr<NativeReference> GetObserverObject(const std::string cbType, const napi_value &jsObserverObject);
     bool IsEmpty();
     void SubscriberBgtaskSaStatusChange();
     void UnSubscriberBgtaskSaStatusChange();
@@ -53,7 +57,7 @@ private:
 private:
     napi_env env_;
     std::mutex jsObserverObjectSetLock_;
-    std::set<std::shared_ptr<NativeReference>> jsObserverObjectSet_ {};
+    std::map<std::string, std::set<std::shared_ptr<NativeReference>>> jsObserverObjectMap_;
     sptr<JsBackgroudTaskSystemAbilityStatusChange> jsSaListner_ = nullptr;
     std::atomic<bool> needRestoreSubscribeStatus_ = false;
 }; // JsBackgroundTaskSubscriber

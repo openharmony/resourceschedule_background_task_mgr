@@ -1117,6 +1117,83 @@ void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uin
     RemoveContinuousTaskRecord(key);
 }
 
+void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+    auto self = shared_from_this();
+    auto task = [self, uid, pid, reason, key]() {
+        if (self) {
+            self->HandleSuspendContinuousTask(uid, pid, reason, key);
+        }
+    };
+    handler_->PostTask(task);
+}
+
+void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+{
+    if (continuousTaskInfosMap_.find(key) == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGW("suspend TaskInfo failure, no matched task: %{public}s", key.c_str());
+        return;
+    }
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        if (iter->second->GetUid() != uid) {
+            ++iter;
+            continue;
+        }
+        BGTASK_LOGW("SuspendContinuousTask reason: %{public}d, key %{public}s", reason, key.c_str());
+        iter->second->suspendState_ = true;
+        iter->second->suspendReason_ = reason;
+        OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_SUSPEND);
+        RefreshTaskRecord();
+        break;
+    }
+    // 暂停状态取消尝试任务通知
+    NotificationTools::GetInstance()->CancelNotification(continuousTaskInfosMap_[key]->GetNotificationLabel(),
+        continuousTaskInfosMap_[key]->GetNotificationId());
+    // 对SA来说，暂停状态等同于取消
+    HandleAppContinuousTaskStop(key);
+}
+
+void BgContinuousTaskMgr::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+    auto self = shared_from_this();
+    auto task = [self, uid, pid, reason, key]() {
+        if (self) {
+            self->HandleActiveContinuousTask(uid, pid, key);
+        }
+    };
+    handler_->PostTask(task);
+}
+
+void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
+{
+    if (continuousTaskInfosMap_.find(key) == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGW("active TaskInfo failure, no matched task: %{public}s", key.c_str());
+        return;
+    }
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        if (iter->second->GetUid() != uid) {
+            ++iter;
+            continue;
+        }
+        BGTASK_LOGI("ActiveContinuousTask key: %{public}s", key.c_str());
+        iter->second->suspendState_ = false;
+        OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_ACTIVE);
+        RefreshTaskRecord();
+        break;
+    }
+    SendContinuousTaskNotification(iter->second);
+}
+
 void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUid(int32_t uid)
 {
     auto iter = continuousTaskInfosMap_.begin();
@@ -1642,6 +1719,47 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
                 }
             }
             break;
+        case ContinuousTaskEventTriggerType::TASK_SUSPEND:
+            NotifySubscribersTaskSuspend(continuousTaskCallbackInfo);
+            break;
+        case ContinuousTaskEventTriggerType::TASK_ACTIVE:
+            NotifySubscribersTaskActive(continuousTaskCallbackInfo);
+            break;
+        default:
+            BGTASK_LOGE("unknow ContinuousTaskEventTriggerType: %{public}d", changeEventType);
+            break;
+    }
+}
+
+void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        BGTASK_LOGD("continuous task suspend callback trigger");
+        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
+            // 对SA来说，长时任务暂停状态等同于取消长时任务，保持原有逻辑
+            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+        } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo) && (*iter)->subscriber_) {
+            // 回调通知应用长时任务暂停
+            BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify suspend", (*iter)->uid_);
+            (*iter)->subscriber_->OnContinuousTaskSuspend(taskCallbackInfoRef);
+        }
+    }
+}
+
+void BgContinuousTaskMgr::NotifySubscribersTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        BGTASK_LOGD("continuous task active callback trigger");
+        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
+            // notify all sa
+            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+        } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo) && (*iter)->subscriber_) {
+            // notify self hap
+            BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify active", (*iter)->uid_);
+            (*iter)->subscriber_->OnContinuousTaskActive(taskCallbackInfoRef);
+        }
     }
 }
 
@@ -1665,6 +1783,8 @@ void BgContinuousTaskMgr::ReportHisysEvent(ContinuousTaskEventTriggerType change
                 "ABILITY", continuousTaskInfo->GetAbilityName(),
                 "BGMODE", GetModeNumByTypeIds(continuousTaskInfo->bgModeIds_),
                 "UIABILITY_IDENTITY", continuousTaskInfo->GetAbilityId(), "STOP_REASON", continuousTaskInfo->reason_);
+            break;
+        default:
             break;
     }
 }
