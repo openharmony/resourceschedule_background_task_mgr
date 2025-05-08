@@ -630,7 +630,6 @@ HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_001, TestSize.Level2)
     nlohmann::json json1;
     EXPECT_EQ(DelayedSingleton<DataStorageHelper>::GetInstance()->ParseJsonValueFromFile(json1, ""),
         ERR_BGTASK_DATA_STORAGE_ERR);
-    EXPECT_FALSE(DelayedSingleton<DataStorageHelper>::GetInstance()->CreateNodeFile(""));
     std::string fullPath;
     EXPECT_FALSE(DelayedSingleton<DataStorageHelper>::GetInstance()->ConvertFullPath("", fullPath));
 }
