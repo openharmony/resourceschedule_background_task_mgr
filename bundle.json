@@ -57,7 +57,8 @@
           "relational_store",
           "icu",
           "jsoncpp",
-          "cJSON"
+          "cJSON",
+          "selinux_adapter"
         ]
       },
       "build": {
