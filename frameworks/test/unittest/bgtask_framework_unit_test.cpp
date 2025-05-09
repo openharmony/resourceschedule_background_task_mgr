@@ -429,7 +429,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_018, TestSize.Level1)
 
 /**
  * @tc.name: BgTaskFrameworkUnitTest_019
- * @tc.desc: test StopContinuousTask.
+ * @tc.desc: test ActiveContinuousTask.
  * @tc.type: FUNC
  * @tc.require: issueIC6B53
  */
@@ -437,11 +437,11 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_019, TestSize.Level1)
 {
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(1, 1, ""),,
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(1, 1, ""),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(1, 1, ""),, ERR_OK);
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(1, 1, ""), ERR_OK);
 }
 
 /**

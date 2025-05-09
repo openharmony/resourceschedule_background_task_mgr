@@ -1753,10 +1753,10 @@ void BgContinuousTaskMgr::NotifySubscribersTaskActive(const std::shared_ptr<Cont
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         BGTASK_LOGD("continuous task active callback trigger");
         if (!(*iter)->isHap_ && (*iter)->subscriber_) {
-            // notify all sa
+            // 对SA来说，长时任务激活状态等同于注册长时任务，保持原有逻辑
             (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
         } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo) && (*iter)->subscriber_) {
-            // notify self hap
+            // 回调通知应用长时任务激活
             BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify active", (*iter)->uid_);
             (*iter)->subscriber_->OnContinuousTaskActive(taskCallbackInfoRef);
         }
