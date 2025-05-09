@@ -77,7 +77,7 @@ static const std::set<std::string> TASK_KEEPING_EXEMPTION_LIST = {
     {"com.sankuai.hmeituan.itakeawaybiz"},
     {"cn.wps.mobileoffice.hap.ent"},
     {"com.estrongs.hm.pop"},
-}
+};
 
 static constexpr char SEPARATOR[] = "_";
 static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
@@ -541,7 +541,7 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
             BGTASK_LOGE("wifiInteraction background mode only support for system app");
             return ERR_BGTASK_NOT_SYSTEM_APP;
         }
-        if (recordedBgMode == PC_BGMODE_TASK_KEEPING && !SUPPORT_TASK_KEEPING) {
+        if (recordedBgMode == PC_BGMODE_TASK_KEEPING && !AllowUseTaskKeeping(bundleName)) {
             BGTASK_LOGE("task keeping is not supported, please set param "
                 "persist.sys.bgtask_support_task_keeping.");
             return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
@@ -561,8 +561,8 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::string &bundleName)
     if (SUPPORT_TASK_KEEPING) {
         return true;
     }
-    if (TASK_KEEPING_EXEMPTION_LIST.size() > 0) {
-        return false;
+    if (TASK_KEEPING_EXEMPTION_LIST.find(bundleName) != TASK_KEEPING_EXEMPTION_LIST.end()) {
+        return true;
     }
     return false;
 }
@@ -827,7 +827,8 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     }
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_, continuousTaskRecord->abilityName_);
     for (auto it =  taskParam->bgModeIds_.begin(); it != taskParam->bgModeIds_.end(); it++) {
-        ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord->fullTokenId_);
+        ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord->fullTokenId_,
+            continuousTaskRecord->bundleName_);
         if (ret != ERR_OK) {
             BGTASK_LOGE("CheckBgmodeType error, config mode: %{public}u, apply mode: %{public}u.", configuredBgMode,
                 *it);
@@ -883,7 +884,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
             continuousTaskRecord->abilityName_);
         for (auto it = continuousTaskRecord->bgModeIds_.begin(); it != continuousTaskRecord->bgModeIds_.end(); it++) {
             ret = CheckBgmodeType(configuredBgMode, *it, continuousTaskRecord->isNewApi_,
-                continuousTaskRecord->fullTokenId_);
+                continuousTaskRecord->fullTokenId_, continuousTaskRecord->bundleName_);
             if (ret != ERR_OK) {
                 BGTASK_LOGE("CheckBgmodeType invalid!");
                 return ret;
