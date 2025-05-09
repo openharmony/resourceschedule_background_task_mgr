@@ -73,6 +73,12 @@ static const char *g_taskPromptResNamesSubMode[] = {
     "ohos_bgsubmode_prompt_car_key",
 };
 
+static const std::set<std::string> TASK_KEEPING_EXEMPTION_LIST = {
+    {"com.sankuai.hmeituan.itakeawaybiz"},
+    {"cn.wps.mobileoffice.hap.ent"},
+    {"com.estrongs.hm.pop"},
+}
+
 static constexpr char SEPARATOR[] = "_";
 static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_CANCEL_ALL[] = "--cancel_all";
@@ -519,7 +525,7 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
 }
 
 ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId,
-    bool isNewApi, uint64_t fullTokenId)
+    bool isNewApi, uint64_t fullTokenId, const std::string &bundleName)
 {
     if (!isNewApi) {
         if (configuredBgMode == INVALID_BGMODE) {
@@ -548,6 +554,17 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
         }
     }
     return ERR_OK;
+}
+
+bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::string &bundleName)
+{
+    if (SUPPORT_TASK_KEEPING) {
+        return true;
+    }
+    if (TASK_KEEPING_EXEMPTION_LIST.size() > 0) {
+        return false;
+    }
+    return false;
 }
 
 uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, const std::string &abilityName)
