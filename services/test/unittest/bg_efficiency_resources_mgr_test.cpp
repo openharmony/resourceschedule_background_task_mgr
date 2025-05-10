@@ -637,7 +637,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, GetAllEfficiencyResources_001, TestSize.L
     std::vector<std::shared_ptr<EfficiencyResourceInfo>> resourceInfoList;
     bgEfficiencyResourcesMgr_->isSysReady_.store(false);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->GetAllEfficiencyResources(resourceInfoList),
-        ERR_BGTASK_SYS_NOT_READY);
+        ERR_BGTASK_RESOURCES_SYS_NOT_READY);
 
     bgEfficiencyResourcesMgr_->isSysReady_.store(true);
     std::string bundleName {""};
