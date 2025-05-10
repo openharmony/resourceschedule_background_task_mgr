@@ -54,6 +54,19 @@ ErrCode DataStorageHelper::RefreshTaskRecord(const std::unordered_map<std::strin
             root[iter.first] = recordJson;
         }
     }
+    if (access(TASK_RECORD_FILE_PATH, F_OK) == ERR_OK) {
+        BGTASK_LOGD("the file: %{private}s already exists.", TASK_RECORD_FILE_PATH);
+    }
+    FILE *file = fopen(TASK_RECORD_FILE_PATH, "w+");
+    if (file == nullptr) {
+        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", TASK_RECORD_FILE_PATH, strerror(errno));
+        return ERR_BGTASK_CREATE_FILE_ERR;
+    }
+    int closeResult = fclose(file);
+    if (closeResult < 0) {
+        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", TASK_RECORD_FILE_PATH, strerror(errno));
+        return ERR_BGTASK_CREATE_FILE_ERR;;
+    }
     return SaveJsonValueToFile(root.dump(CommonUtils::jsonFormat_), TASK_RECORD_FILE_PATH);
 }
 
@@ -79,6 +92,21 @@ ErrCode DataStorageHelper::RefreshResourceRecord(const ResourceRecordMap &appRec
 {
     std::string record {""};
     ConvertMapToString(appRecord, processRecord, record);
+    if (access(RESOURCE_RECORD_FILE_PATH.c_str(), F_OK) == ERR_OK) {
+        BGTASK_LOGD("the file: %{private}s already exists.", RESOURCE_RECORD_FILE_PATH.c_str());
+    }
+    FILE *file = fopen(RESOURCE_RECORD_FILE_PATH.c_str(), "w+");
+    if (file == nullptr) {
+        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s",
+            RESOURCE_RECORD_FILE_PATH.c_str(), strerror(errno));
+        return ERR_BGTASK_CREATE_FILE_ERR;
+    }
+    int closeResult = fclose(file);
+    if (closeResult < 0) {
+        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s",
+            RESOURCE_RECORD_FILE_PATH.c_str(), strerror(errno));
+        return ERR_BGTASK_CREATE_FILE_ERR;;
+    }
     return SaveJsonValueToFile(record, RESOURCE_RECORD_FILE_PATH);
 }
 
@@ -96,10 +124,6 @@ ErrCode DataStorageHelper::RestoreResourceRecord(ResourceRecordMap &appRecord,
 
 int32_t DataStorageHelper::SaveJsonValueToFile(const std::string &value, const std::string &filePath)
 {
-    if (!CreateNodeFile(filePath)) {
-        BGTASK_LOGE("Create file failed.");
-        return ERR_BGTASK_CREATE_FILE_ERR;
-    }
     std::ofstream fout;
     std::string realPath;
     if (!ConvertFullPath(filePath, realPath)) {
@@ -165,25 +189,6 @@ int32_t DataStorageHelper::ParseJsonValueFromFile(nlohmann::json &value, const s
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
     return ERR_OK;
-}
-
-bool DataStorageHelper::CreateNodeFile(const std::string &filePath)
-{
-    if (access(filePath.c_str(), F_OK) == ERR_OK) {
-        BGTASK_LOGD("the file: %{private}s already exists.", filePath.c_str());
-        return true;
-    }
-    FILE *file = fopen(filePath.c_str(), "w+");
-    if (file == nullptr) {
-        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", filePath.c_str(), strerror(errno));
-        return false;
-    }
-    int closeResult = fclose(file);
-    if (closeResult < 0) {
-        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", filePath.c_str(), strerror(errno));
-        return false;
-    }
-    return true;
 }
 
 std::string DataStorageHelper::GetConfigFileAbsolutePath(const std::string &relativePath)
