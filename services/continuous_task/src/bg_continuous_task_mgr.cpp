@@ -1155,7 +1155,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, 
     NotificationTools::GetInstance()->CancelNotification(continuousTaskInfosMap_[key]->GetNotificationLabel(),
         continuousTaskInfosMap_[key]->GetNotificationId());
     // 对SA来说，暂停状态等同于取消
-    HandleAppContinuousTaskStop(key);
+    HandleAppContinuousTaskStop(uid);
 }
 
 void BgContinuousTaskMgr::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
@@ -1184,10 +1184,10 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
         BGTASK_LOGI("ActiveContinuousTask uid: %{public}d, pid: %{public}d", uid, pid);
         iter->second->suspendState_ = false;
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_ACTIVE);
+        SendContinuousTaskNotification(iter->second);
         RefreshTaskRecord();
         break;
     }
-    SendContinuousTaskNotification(iter->second);
 }
 
 void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUid(int32_t uid)

@@ -367,7 +367,7 @@ bool JsBackgroundTaskSubscriber::IsEmpty()
     return jsObserverObjectMap_.empty();
 }
  
-void JsBackgroundTaskSubscriber::RemoveAllJsObserverObjects(const std::string cbType)
+void JsBackgroundTaskSubscriber::RemoveJsObserverObjects(const std::string cbType)
 {
     std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find(cbType);

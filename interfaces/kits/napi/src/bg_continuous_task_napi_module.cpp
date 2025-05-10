@@ -794,7 +794,7 @@ bool CheckOnParam(napi_env env, uint32_t argc, napi_value argv[], std::string& t
         BGTASK_LOGE("type must be string");
         return false;
     }
-    auto it = std::find(g_callbackTypes.begin(), g_callbackTypes.end(), result);
+    auto it = std::find(g_callbackTypes.begin(), g_callbackTypes.end(), typeString);
     if (it == g_callbackTypes.end()) {
         BGTASK_LOGE("continuousTask type error: %{public}s", typeString.c_str());
         return false;
@@ -818,7 +818,7 @@ bool CheckOffParam(napi_env env, uint32_t argc, napi_value argv[], std::string& 
         BGTASK_LOGE("type must be string");
         return false;
     }
-    auto it = std::find(g_callbackTypes.begin(), g_callbackTypes.end(), result);
+    auto it = std::find(g_callbackTypes.begin(), g_callbackTypes.end(), typeString);
     if (it == g_callbackTypes.end()) {
         BGTASK_LOGE("continuousTask type error: %{public}s", typeString.c_str());
         return false;
