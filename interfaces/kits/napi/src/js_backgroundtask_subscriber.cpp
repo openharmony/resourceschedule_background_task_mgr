@@ -200,7 +200,7 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskSuspend(
                 BGTASK_LOGE("null observer");
                 return;
             }
-            BGTASK_LOGI("OnContinuousTaskSuspend js thread %{public}s",
+            BGTASK_LOGD("OnContinuousTaskSuspend js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
             jsObserver->HandleOnContinuousTaskSuspend(continuousTaskCallbackInfo);
         });
@@ -226,20 +226,20 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
 
         napi_create_object(env_, &jsContinuousTaskSuspendInfo);
 
-        // set suspendReason
-        napi_value suspendReason = nullptr;
-        napi_create_int32(env_, continuousTaskCallbackInfo->GetSuspendReason(), &suspendReason);
-        napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendReason", suspendReason);
+        // set continuousTaskId
+        napi_value continuousTaskId = nullptr;
+        napi_create_int32(env_, continuousTaskCallbackInfo->GetContinuousTaskId(), &continuousTaskId);
+        napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "continuousTaskId", continuousTaskId);
 
         // set suspendState
         napi_value suspendState = nullptr;
         napi_get_boolean(env_, continuousTaskCallbackInfo->GetSuspendState(), &suspendState);
         napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendState", suspendState);
 
-        // set continuousTaskId
-        napi_value continuousTaskId = nullptr;
-        napi_create_int32(env_, continuousTaskCallbackInfo->GetContinuousTaskId(), &continuousTaskId);
-        napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "continuousTaskId", continuousTaskId);
+        // set suspendReason
+        napi_value suspendReason = nullptr;
+        napi_create_int32(env_, continuousTaskCallbackInfo->GetSuspendReason(), &suspendReason);
+        napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendReason", suspendReason);
 
         napi_value argv[1] = { jsContinuousTaskSuspendInfo };
         napi_value callResult = nullptr;
