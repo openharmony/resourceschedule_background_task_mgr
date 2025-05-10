@@ -1165,7 +1165,7 @@ void BgContinuousTaskMgr::ActiveContinuousTask(int32_t uid, int32_t pid, const s
         return;
     }
     auto self = shared_from_this();
-    auto task = [self, uid, pid, reason, key]() {
+    auto task = [self, uid, pid, key]() {
         if (self) {
             self->HandleActiveContinuousTask(uid, pid, key);
         }
