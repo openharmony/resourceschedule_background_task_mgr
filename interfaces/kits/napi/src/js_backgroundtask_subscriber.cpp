@@ -305,7 +305,7 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskActive(
         }
     }
 }
- 
+
 void JsBackgroundTaskSubscriber::AddJsObserverObject(const std::string cbType, const napi_value &jsObserverObject)
 {
     if (jsObserverObject == nullptr) {
@@ -324,7 +324,7 @@ void JsBackgroundTaskSubscriber::AddJsObserverObject(const std::string cbType, c
         BGTASK_LOGI("observer exist");
     }
 }
- 
+
 std::shared_ptr<NativeReference> JsBackgroundTaskSubscriber::GetObserverObject(
     const std::string cbType, const napi_value &jsObserverObject)
 {
@@ -366,7 +366,7 @@ bool JsBackgroundTaskSubscriber::IsEmpty()
     std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
     return jsObserverObjectMap_.empty();
 }
- 
+
 void JsBackgroundTaskSubscriber::RemoveJsObserverObjects(const std::string cbType)
 {
     std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
@@ -375,7 +375,7 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObjects(const std::string cbTyp
         jsObserverObjectMap_.erase(cbType);
     }
 }
- 
+
 void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType, const napi_value &jsObserverObject)
 {
     if (jsObserverObject == nullptr) {
