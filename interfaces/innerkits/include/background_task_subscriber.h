@@ -85,23 +85,37 @@ public:
     /**
      * Called back when a continuous task start.
      *
-     * @param info Transient task app info.
+     * @param continuousTaskCallbackInfo Continuous task app info.
      **/
     virtual void OnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
 
     /**
      * Called back when a continuous task update.
      *
-     * @param info Transient task app info.
+     * @param continuousTaskCallbackInfo Continuous task app info.
      **/
     virtual void OnContinuousTaskUpdate(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
 
     /**
      * Called back when a continuous task end.
      *
-     * @param info Transient task app info.
+     * @param continuousTaskCallbackInfo Continuous task app info.
      **/
     virtual void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+
+    /**
+     * Called back when a continuous task suspend.
+     *
+     * @param continuousTaskCallbackInfo Continuous task app info.
+     **/
+    virtual void OnContinuousTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+
+    /**
+     * Called back when a continuous task active.
+     *
+     * @param continuousTaskCallbackInfo Continuous task app info.
+     **/
+    virtual void OnContinuousTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
 
     /**
      * Called back when the app does not have continuous task.
@@ -213,6 +227,20 @@ private:
          * @param continuousTaskCallbackInfo Continuous task app info.
          */
         ErrCode OnContinuousTaskStop(const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override;
+
+        /**
+         * @brief Called back when a continuous task suspend.
+         *
+         * @param continuousTaskCallbackInfo Continuous task app info.
+         */
+        ErrCode OnContinuousTaskSuspend(const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override;
+
+        /**
+         * @brief Called back when a continuous task active.
+         *
+         * @param continuousTaskCallbackInfo Continuous task app info.
+         */
+        ErrCode OnContinuousTaskActive(const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override;
         
         /**
          * Called back when the app does not have continuous task.

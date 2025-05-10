@@ -26,6 +26,8 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskSubscriber {
     [oneway] void OnContinuousTaskStart([in] ContinuousTaskCallbackInfo continuousTaskCallbackInfo);
     [oneway] void OnContinuousTaskUpdate([in] ContinuousTaskCallbackInfo continuousTaskCallbackInfo);
     [oneway] void OnContinuousTaskStop([in] ContinuousTaskCallbackInfo continuousTaskCallbackInfo);
+    [oneway] void OnContinuousTaskSuspend([in] ContinuousTaskCallbackInfo continuousTaskCallbackInfo);
+    [oneway] void OnContinuousTaskActive([in] ContinuousTaskCallbackInfo continuousTaskCallbackInfo);
     [oneway] void OnAppContinuousTaskStop([in] int uid);
     void OnAppEfficiencyResourcesApply([in] ResourceCallbackInfo resourceInfo);
     void OnAppEfficiencyResourcesReset([in] ResourceCallbackInfo resourceInfo);

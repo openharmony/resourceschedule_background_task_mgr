@@ -414,6 +414,26 @@ ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, u
     return ERR_OK;
 }
 
+ErrCode BackgroundTaskMgrService::SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+{
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("SuspendContinuousTask not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    BgContinuousTaskMgr::GetInstance()->SuspendContinuousTask(uid, pid, reason, key);
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrService::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
+{
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("ActiveContinuousTask not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    BgContinuousTaskMgr::GetInstance()->ActiveContinuousTask(uid, pid, key);
+    return ERR_OK;
+}
+
 ErrCode BackgroundTaskMgrService::SetBgTaskConfig(const std::string &configData, int32_t sourceType)
 {
     if (!CheckCallingToken()) {

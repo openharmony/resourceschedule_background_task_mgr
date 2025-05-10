@@ -75,6 +75,10 @@ class TestBackgroundTaskSubscriberStub : public BackgroundTaskSubscriberStub {
         const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
     ErrCode OnContinuousTaskStop(
         const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
+    ErrCode OnContinuousTaskSuspend(
+        const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
+    ErrCode OnContinuousTaskActive(
+        const ContinuousTaskCallbackInfo &continuousTaskCallbackInfo) override {return ERR_OK;}
     ErrCode OnAppContinuousTaskStop(int32_t uid) override {return ERR_OK;}
     ErrCode OnAppEfficiencyResourcesApply(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
     ErrCode OnAppEfficiencyResourcesReset(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
@@ -583,6 +587,66 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_017
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
     EXPECT_NE(backgroundTaskMgrProxy.SetBgTaskConfig("", 1), 0);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrProxyAbnormalTest_018
+ * @tc.desc: test BackgroundTaskMgrProxy abnormal.
+ * @tc.type: FUNC
+ * @tc.require: issueIC6B53
+ */
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_018, TestSize.Level2)
+{
+    BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, ""), ERR_INVALID_VALUE);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, ""), ERR_INVALID_DATA);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(true);
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteUint32Flag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, ""), ERR_INVALID_DATA);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteUint32Flag(true);
+    BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, ""), ERR_INVALID_DATA);
+
+    BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, ""), ERR_INVALID_DATA);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrProxyAbnormalTest_019
+ * @tc.desc: test BackgroundTaskMgrProxy abnormal.
+ * @tc.type: FUNC
+ * @tc.require: issueIC6B53
+ */
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_019, TestSize.Level2)
+{
+    BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.ActiveContinuousTask(1, 1, ""), ERR_INVALID_VALUE);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.ActiveContinuousTask(1, 1, ""), ERR_INVALID_DATA);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(true);
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteUint32Flag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.ActiveContinuousTask(1, 1, ""), ERR_INVALID_DATA);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteUint32Flag(true);
+    BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
+    EXPECT_EQ(backgroundTaskMgrProxy.ActiveContinuousTask(1, 1, ""), ERR_INVALID_DATA);
+
+    BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.ActiveContinuousTask(1, 1, ""), ERR_INVALID_DATA);
 }
 }
 }

@@ -27,6 +27,7 @@
 #include "continuous_task_callback_info.h"
 #include "continuous_task_cancel_reason.h"
 #include "continuous_task_param.h"
+#include "continuous_task_suspend_reason.h"
 #include "delay_suspend_info.h"
 #include "efficiency_resource_info.h"
 #include "expired_callback.h"
@@ -73,6 +74,15 @@ constexpr uint32_t SYSTEM_CANCEL_NOT_USE_BLUETOOTH = 9;
 constexpr uint32_t SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE = 10;
 constexpr uint32_t SYSTEM_CANCEL_USE_ILLEGALLY = 11;
 constexpr uint32_t CAR_KEY = 1;
+constexpr uint32_t SYSTEM_SUSPEND_DATA_TRANSFER_LOW_SPEED = 4;
+constexpr uint32_t SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_USE_AVSESSION = 5;
+constexpr uint32_t SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_RUNNING = 6;
+constexpr uint32_t SYSTEM_SUSPEND_AUDIO_RECORDING_NOT_RUNNING = 7;
+constexpr uint32_t SYSTEM_SUSPEND_LOCATION_NOT_USED = 8;
+constexpr uint32_t SYSTEM_SUSPEND_BLUETOOTH_NOT_USED = 9;
+constexpr uint32_t SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED = 10;
+constexpr uint32_t SYSTEM_SUSPEND_USE_ILLEGALLY = 11;
+constexpr uint32_t SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING = 12;
 }
 class BgTaskClientUnitTest : public testing::Test {
 public:
@@ -150,6 +160,18 @@ public:
         &continuousTaskCallbackInfo) override
     {
         BgTaskClientUnitTest::bgtaskSubscriberRet_ = "interface8";
+    }
+
+    void OnContinuousTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo>
+        &continuousTaskCallbackInfo) override
+    {
+        BgTaskClientUnitTest::bgtaskSubscriberRet_ = "interface17";
+    }
+
+    void OnContinuousTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo>
+        &continuousTaskCallbackInfo) override
+    {
+        BgTaskClientUnitTest::bgtaskSubscriberRet_ = "interface18";
     }
 
     void OnAppContinuousTaskStop(int32_t uid) override
@@ -244,6 +266,33 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCancelReason_001, TestSize.Level1)
     EXPECT_EQ(SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE,
         (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE);
     EXPECT_EQ(SYSTEM_CANCEL_USE_ILLEGALLY, (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_USE_ILLEGALLY);
+}
+
+/**
+* @tc.name: ContinuousTaskSuspendReason_001
+* @tc.desc: test continuous task suspend reason constant.
+* @tc.type: FUNC
+* @tc.require: issueIC6B53
+*/
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskSuspendReason_001, TestSize.Level1)
+{
+    EXPECT_EQ(SYSTEM_SUSPEND_DATA_TRANSFER_LOW_SPEED,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_DATA_TRANSFER_LOW_SPEED);
+    EXPECT_EQ(SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_USE_AVSESSION,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_USE_AVSESSION);
+    EXPECT_EQ(SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_RUNNING,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_RUNNING);
+    EXPECT_EQ(SYSTEM_SUSPEND_AUDIO_RECORDING_NOT_RUNNING,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_RECORDING_NOT_RUNNING);
+    EXPECT_EQ(SYSTEM_SUSPEND_LOCATION_NOT_USED,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_LOCATION_NOT_USED);
+    EXPECT_EQ(SYSTEM_SUSPEND_BLUETOOTH_NOT_USED,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_NOT_USED);
+    EXPECT_EQ(SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED);
+    EXPECT_EQ(SYSTEM_SUSPEND_USE_ILLEGALLY, (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USE_ILLEGALLY);
+    EXPECT_EQ(SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING);
 }
 
 /**
@@ -418,6 +467,28 @@ HWTEST_F(BgTaskClientUnitTest, StopContinuousTask_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: SuspendContinuousTask_001
+ * @tc.desc: request suspend target continuous task api test.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, SuspendContinuousTask_001, TestSize.Level1)
+{
+    EXPECT_EQ((int32_t)BackgroundTaskMgrHelper::SuspendContinuousTask(1, 1, 4, ""), (int32_t)ERR_OK);
+}
+
+/**
+ * @tc.name: ActiveContinuousTask_001
+ * @tc.desc: request active target continuous task api test.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, ActiveContinuousTask_001, TestSize.Level1)
+{
+    EXPECT_EQ((int32_t)BackgroundTaskMgrHelper::ActiveContinuousTask(1, 1, ""), (int32_t)ERR_OK);
+}
+
+/**
  * @tc.name: BackgroundTaskSubscriber_001
  * @tc.desc: test BackgroundTaskSubscriber.
  * @tc.type: FUNC
@@ -446,6 +517,10 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
     EXPECT_EQ(bgtaskSubscriberRet_, "interface7");
     subscriberImpl->OnContinuousTaskStop(continousInfo);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface8");
+    subscriberImpl->OnContinuousTaskSuspend(continousInfo);
+    EXPECT_EQ(bgtaskSubscriberRet_, "interface17");
+    subscriberImpl->OnContinuousTaskActive(continousInfo);
+    EXPECT_EQ(bgtaskSubscriberRet_, "interface18");
     subscriberImpl->OnAppContinuousTaskStop(1);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface9");
     subscriberImpl->OnAppEfficiencyResourcesApply(resourceInfo);
@@ -479,6 +554,8 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_002, TestSize.Level1)
     subscriber.OnContinuousTaskStart(nullptr);
     subscriber.OnContinuousTaskUpdate(nullptr);
     subscriber.OnContinuousTaskStop(nullptr);
+    subscriber.OnContinuousTaskSuspend(nullptr);
+    subscriber.OnContinuousTaskActive(nullptr);
     subscriber.OnAppContinuousTaskStop(1);
     subscriber.OnRemoteDied(nullptr);
     subscriber.OnAppEfficiencyResourcesApply(nullptr);

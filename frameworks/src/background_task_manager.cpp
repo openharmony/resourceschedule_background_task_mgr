@@ -405,6 +405,22 @@ ErrCode BackgroundTaskManager::StopContinuousTask(int32_t uid, int32_t pid, uint
     return proxy_->StopContinuousTask(uid, pid, taskType, key);
 }
 
+ErrCode BackgroundTaskManager::SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->SuspendContinuousTask(uid, pid, reason, key);
+}
+
+ErrCode BackgroundTaskManager::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->ActiveContinuousTask(uid, pid, key);
+}
+
 void BackgroundTaskManager::ResetBackgroundTaskManagerProxy()
 {
     std::lock_guard<std::mutex> lock(mutex_);

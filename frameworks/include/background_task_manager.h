@@ -212,6 +212,25 @@ public:
      */
     ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
 
+    /*
+     * @brief Request suspend continuous task.
+     * @param uid app uid.
+     * @param pid app pid.
+     * @param reason continuous task suspend reason.
+     * @param key continuous task key.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
+
+    /*
+     * @brief Request active continuous task.
+     * @param uid app uid.
+     * @param pid app pid.
+     * @param key continuous task key.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
+
     /**
      * @brief Set background task config.
      * @param configData config param.

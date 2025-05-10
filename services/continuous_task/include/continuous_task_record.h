@@ -64,6 +64,8 @@ public:
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
+    void SetRecordValue(const nlohmann::json &value);
+
     std::string bundleName_ {""};
     std::string abilityName_ {""};
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
@@ -85,6 +87,8 @@ private:
     int32_t reason_ {0};
     bool isSystem_ {false};
     int32_t continuousTaskId_ {-1};
+    bool suspendState_ {false};
+    int32_t suspendReason_ {0};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

@@ -64,6 +64,12 @@ static std::vector<std::string> g_backgroundModes = {
     "voip",
     "taskKeeping"
     };
+
+static std::vector<std::string> g_callbackTypes = {
+    "continuousTaskCancel",
+    "continuousTaskSuspend",
+    "continuousTaskActive"
+    };
 }
 
 struct AsyncCallbackInfo : public AsyncWorkData {
@@ -777,21 +783,20 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info, bool isT
     return ret;
 }
 
-
-bool CheckOnParam(napi_env env, uint32_t argc, napi_value argv[], int size)
+bool CheckOnParam(napi_env env, uint32_t argc, napi_value argv[], std::string& typeString)
 {
     if (argc < ARGC_TWO) {
         BGTASK_LOGE("wrong param nums");
         return false;
     }
     // argv[0] : type
-    std::string type;
-    if (!AbilityRuntime::ConvertFromJsValue(env, argv[INDEX_ZERO], type)) {
+    if (!AbilityRuntime::ConvertFromJsValue(env, argv[INDEX_ZERO], typeString)) {
         BGTASK_LOGE("type must be string");
         return false;
     }
-    if (type != "continuousTaskCancel") {
-        BGTASK_LOGE("type must be continuousTaskCancel");
+    auto it = std::find(g_callbackTypes.begin(), g_callbackTypes.end(), typeString);
+    if (it == g_callbackTypes.end()) {
+        BGTASK_LOGE("continuousTask type error: %{public}s", typeString.c_str());
         return false;
     }
     // arg[1] : callback
@@ -800,39 +805,8 @@ bool CheckOnParam(napi_env env, uint32_t argc, napi_value argv[], int size)
     }
     return true;
 }
- 
-napi_value OnOnContinuousTaskCancel(napi_env env, napi_callback_info info)
-{
-    size_t argc = ARGC_TWO;
-    napi_value argv[ARGC_TWO] = {nullptr};
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    if (!CheckOnParam(env, argc, argv, ARGC_TWO)) {
-        Common::HandleParamErr(env, ERR_BGTASK_INVALID_PARAM, true);
-        return WrapUndefinedToJS(env);
-    }
- 
-    if (backgroundTaskSubscriber_ == nullptr) {
-        backgroundTaskSubscriber_ = std::make_shared<JsBackgroundTaskSubscriber>(env);
-        if (backgroundTaskSubscriber_ == nullptr) {
-            BGTASK_LOGE("ret is nullptr");
-            Common::HandleErrCode(env, ERR_BGTASK_SERVICE_INNER_ERROR, true);
-            return WrapUndefinedToJS(env);
-        }
-    }
-    if (backgroundTaskSubscriber_->IsEmpty()) {
-        ErrCode errCode = BackgroundTaskMgrHelper::SubscribeBackgroundTask(*backgroundTaskSubscriber_);
-        if (errCode != ERR_OK) {
-            BGTASK_LOGE("SubscribeBackgroundTask failed.");
-            Common::HandleErrCode(env, errCode, true);
-            return WrapUndefinedToJS(env);
-        }
-    }
-    backgroundTaskSubscriber_->AddJsObserverObject(argv[INDEX_ONE]);
-    backgroundTaskSubscriber_->SubscriberBgtaskSaStatusChange();
-    return WrapUndefinedToJS(env);
-}
- 
-bool CheckOffParam(napi_env env, uint32_t argc, napi_value argv[], int size)
+
+bool CheckOffParam(napi_env env, uint32_t argc, napi_value argv[], std::string& typeString)
 {
     if (argc < ARGC_ONE) {
         BGTASK_LOGE("wrong param nums < 1");
@@ -840,13 +814,13 @@ bool CheckOffParam(napi_env env, uint32_t argc, napi_value argv[], int size)
     }
  
     // argv[0] : type
-    std::string type;
-    if (!AbilityRuntime::ConvertFromJsValue(env, argv[INDEX_ZERO], type)) {
+    if (!AbilityRuntime::ConvertFromJsValue(env, argv[INDEX_ZERO], typeString)) {
         BGTASK_LOGE("type must be string");
         return false;
     }
-    if (type != "continuousTaskCancel") {
-        BGTASK_LOGE("type must be continuousTaskCancel");
+    auto it = std::find(g_callbackTypes.begin(), g_callbackTypes.end(), typeString);
+    if (it == g_callbackTypes.end()) {
+        BGTASK_LOGE("continuousTask type error: %{public}s", typeString.c_str());
         return false;
     }
     // arg[1] : callback
@@ -857,36 +831,81 @@ bool CheckOffParam(napi_env env, uint32_t argc, napi_value argv[], int size)
     }
     return true;
 }
- 
-napi_value OffOnContinuousTaskCancel(napi_env env, napi_callback_info info)
+
+bool SubscribeBackgroundTask(napi_env env)
+{
+    if (backgroundTaskSubscriber_ == nullptr) {
+        backgroundTaskSubscriber_ = std::make_shared<JsBackgroundTaskSubscriber>(env);
+        if (backgroundTaskSubscriber_ == nullptr) {
+            BGTASK_LOGE("ret is nullptr");
+            Common::HandleErrCode(env, ERR_BGTASK_SERVICE_INNER_ERROR, true);
+            return false;
+        }
+    }
+    ErrCode errCode = BackgroundTaskMgrHelper::SubscribeBackgroundTask(*backgroundTaskSubscriber_);
+    if (errCode != ERR_OK) {
+        BGTASK_LOGE("SubscribeBackgroundTask failed.");
+        Common::HandleErrCode(env, errCode, true);
+        return false;
+    }
+    return true;
+}
+
+void UnSubscribeBackgroundTask(napi_env env)
+{
+    if (!backgroundTaskSubscriber_->IsEmpty()) {
+        return;
+    }
+    ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);
+    if (errCode != ERR_OK) {
+        BGTASK_LOGE("UnsubscribeBackgroundTask failed.");
+        Common::HandleErrCode(env, errCode, true);
+        return;
+    }
+    backgroundTaskSubscriber_->UnSubscriberBgtaskSaStatusChange();
+    backgroundTaskSubscriber_ = nullptr;
+}
+
+napi_value OnOnContinuousTaskCallback(napi_env env, napi_callback_info info)
 {
     size_t argc = ARGC_TWO;
     napi_value argv[ARGC_TWO] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    if (!CheckOffParam(env, argc, argv, ARGC_TWO)) {
+    std::string typeString;
+    if (!CheckOnParam(env, argc, argv, typeString)) {
+        Common::HandleParamErr(env, ERR_BGTASK_INVALID_PARAM, true);
+        return WrapUndefinedToJS(env);
+    }
+    BGTASK_LOGD("SubscribeBackgroundTask type: %{public}s", typeString.c_str());
+    if (!SubscribeBackgroundTask(env)) {
+        return WrapUndefinedToJS(env);
+    }
+    backgroundTaskSubscriber_->AddJsObserverObject(typeString, argv[INDEX_ONE]);
+    backgroundTaskSubscriber_->SubscriberBgtaskSaStatusChange();
+    return WrapUndefinedToJS(env);
+}
+
+napi_value OffOnContinuousTaskCallback(napi_env env, napi_callback_info info)
+{
+    size_t argc = ARGC_TWO;
+    napi_value argv[ARGC_TWO] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    std::string typeString;
+    if (!CheckOffParam(env, argc, argv, typeString)) {
         Common::HandleParamErr(env, ERR_BGTASK_INVALID_PARAM, true);
         return WrapUndefinedToJS(env);
     }
     if (!backgroundTaskSubscriber_) {
-        BGTASK_LOGD("backgroundTaskSubscriber_ is null, return");
+        BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return WrapUndefinedToJS(env);
     }
     if (argc == ARGC_ONE) {
-        backgroundTaskSubscriber_->RemoveAllJsObserverObjects();
+        backgroundTaskSubscriber_->RemoveJsObserverObjects(typeString);
     } else if (argc == ARGC_TWO) {
-        backgroundTaskSubscriber_->RemoveJsObserverObject(argv[INDEX_ONE]);
+        backgroundTaskSubscriber_->RemoveJsObserverObject(typeString, argv[INDEX_ONE]);
     }
  
-    if (backgroundTaskSubscriber_->IsEmpty()) {
-        ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);
-        if (errCode != ERR_OK) {
-            BGTASK_LOGE("UnsubscribeBackgroundTask failed.");
-            Common::HandleErrCode(env, errCode, true);
-            return WrapUndefinedToJS(env);
-        }
-        backgroundTaskSubscriber_->UnSubscriberBgtaskSaStatusChange();
-        backgroundTaskSubscriber_ = nullptr;
-    }
+    UnSubscribeBackgroundTask(env);
     return WrapUndefinedToJS(env);
 }
 

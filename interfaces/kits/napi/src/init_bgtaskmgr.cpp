@@ -20,6 +20,7 @@
 #include "bg_continuous_task_napi_module.h"
 #include "cancel_suspend_delay.h"
 #include "continuous_task_cancel_reason.h"
+#include "continuous_task_suspend_reason.h"
 #include "get_all_transient_tasks.h"
 #include "get_remaining_delay_time.h"
 #include "request_suspend_delay.h"
@@ -47,8 +48,8 @@ napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("applyEfficiencyResources", ApplyEfficiencyResources),
         DECLARE_NAPI_FUNCTION("resetAllEfficiencyResources", ResetAllEfficiencyResources),
         DECLARE_NAPI_FUNCTION("getAllEfficiencyResources", GetAllEfficiencyResources),
-        DECLARE_NAPI_FUNCTION("on", OnOnContinuousTaskCancel),
-        DECLARE_NAPI_FUNCTION("off", OffOnContinuousTaskCancel),
+        DECLARE_NAPI_FUNCTION("on", OnOnContinuousTaskCallback),
+        DECLARE_NAPI_FUNCTION("off", OffOnContinuousTaskCallback),
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
@@ -150,6 +151,39 @@ napi_value ContinuousTaskCancelReasonInit(napi_env env, napi_value exports)
     return exports;
 }
 
+napi_value ContinuousTaskSuspendReasonInit(napi_env env, napi_value exports)
+{
+    napi_value obj = nullptr;
+    napi_create_object(env, &obj);
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_DATA_TRANSFER_LOW_SPEED),
+        "SYSTEM_SUSPEND_DATA_TRANSFER_LOW_SPEED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_USE_AVSESSION),
+        "SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_USE_AVSESSION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_RUNNING),
+        "SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_RUNNING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_RECORDING_NOT_RUNNING),
+        "SYSTEM_SUSPEND_AUDIO_RECORDING_NOT_RUNNING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_LOCATION_NOT_USED), "SYSTEM_SUSPEND_LOCATION_NOT_USED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_NOT_USED), "SYSTEM_SUSPEND_BLUETOOTH_NOT_USED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED), "SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USE_ILLEGALLY), "SYSTEM_SUSPEND_USE_ILLEGALLY");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING), "SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING");
+    napi_property_descriptor exportFuncs[] = {
+        DECLARE_NAPI_PROPERTY("ContinuousTaskSuspendReason", obj),
+    };
+    napi_define_properties(env, exports, sizeof(exportFuncs) / sizeof(*exportFuncs), exportFuncs);
+    return exports;
+}
+
 /*
  * Module export function
  */
@@ -161,6 +195,7 @@ static napi_value InitApi(napi_env env, napi_value exports)
     BackgroundTaskMgrInit(env, exports);
     BackgroundModeInit(env, exports);
     ContinuousTaskCancelReasonInit(env, exports);
+    ContinuousTaskSuspendReasonInit(env, exports);
     return exports;
 }
 
