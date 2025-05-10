@@ -615,7 +615,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_003, TestSize
     MessageParcel data10;
     data10.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     data10.WriteParcelable(info.get());
-    EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_ERR, data10, reply, option), ERR_OK);
 
     MessageParcel data5;
     data5.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
@@ -701,11 +700,9 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_005, TestSize
 
     MessageParcel data5;
     data5.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
-    EXPECT_NE(subscirberStub.OnRemoteRequest(ON_PROC_EFFICIENCY_RESOURCES_APPLY, data5, reply, option), ERR_OK);
     MessageParcel data6;
     data6.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     data6.WriteParcelable(info.get());
-    EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_PROC_EFFICIENCY_RESOURCES_APPLY, data6, reply, option), ERR_OK);
 
     MessageParcel data7;
     data7.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());

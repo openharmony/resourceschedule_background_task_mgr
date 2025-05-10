@@ -1151,7 +1151,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, 
         RefreshTaskRecord();
         break;
     }
-    // 暂停状态取消尝试任务通知
+    // 暂停状态取消长时任务通知
     NotificationTools::GetInstance()->CancelNotification(continuousTaskInfosMap_[key]->GetNotificationLabel(),
         continuousTaskInfosMap_[key]->GetNotificationId());
     // 对SA来说，暂停状态等同于取消
@@ -1754,7 +1754,7 @@ void BgContinuousTaskMgr::NotifySubscribersTaskActive(const std::shared_ptr<Cont
         BGTASK_LOGD("continuous task active callback trigger");
         if (!(*iter)->isHap_ && (*iter)->subscriber_) {
             // 对SA来说，长时任务激活状态等同于注册长时任务，保持原有逻辑
-            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+            (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
         } else if ((*iter)->isHap_ &&
             (*iter)->uid_ == continuousTaskCallbackInfo->GetCreatorUid() && (*iter)->subscriber_) {
             // 回调通知应用长时任务激活

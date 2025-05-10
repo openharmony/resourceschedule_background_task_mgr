@@ -853,7 +853,7 @@ bool SubscribeBackgroundTask(napi_env env)
 
 void UnSubscribeBackgroundTask(napi_env env)
 {
-    if (backgroundTaskSubscriber_->IsEmpty()) {
+    if (!backgroundTaskSubscriber_->IsEmpty()) {
         return;
     }
     ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);

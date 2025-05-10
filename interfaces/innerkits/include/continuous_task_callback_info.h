@@ -136,7 +136,7 @@ public:
      *
      * @param suspendReason The suspend reason.
      */
-    void SetSuspendReason(const int32_t suspendReason) const;
+    void SetSuspendReason(const int32_t suspendReason);
 
     /**
      * @brief Get the suspend state.
@@ -150,7 +150,7 @@ public:
      *
      * @param suspendState The suspend state.
      */
-    void SetSuspendState(const bool suspendState) const;
+    void SetSuspendState(const bool suspendState);
 
     /**
      * @brief Marshals a purpose into a parcel.
