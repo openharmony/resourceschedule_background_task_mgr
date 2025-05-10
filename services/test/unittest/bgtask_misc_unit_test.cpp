@@ -626,7 +626,7 @@ HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_001, TestSize.Level2)
     EXPECT_EQ(DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreTaskRecord(continuousTaskInfosMap2),
         ERR_OK);
     EXPECT_EQ(DelayedSingleton<DataStorageHelper>::GetInstance()->SaveJsonValueToFile("", ""),
-    ERR_BGTASK_GET_ACTUAL_FILE_ERR);
+        ERR_BGTASK_GET_ACTUAL_FILE_ERR);
     nlohmann::json json1;
     EXPECT_EQ(DelayedSingleton<DataStorageHelper>::GetInstance()->ParseJsonValueFromFile(json1, ""),
         ERR_BGTASK_DATA_STORAGE_ERR);
