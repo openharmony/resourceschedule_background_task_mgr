@@ -1030,7 +1030,7 @@ ErrCode BgEfficiencyResourcesMgr::GetAllEfficiencyResources(
     BGTASK_LOGI("start to get all efficiency resources");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("efficiency resources is not ready");
-        return ERR_BGTASK_SYS_NOT_READY;
+        return ERR_BGTASK_RESOURCES_SYS_NOT_READY;
     }
 
     auto uid = IPCSkeleton::GetCallingUid();
@@ -1038,7 +1038,7 @@ ErrCode BgEfficiencyResourcesMgr::GetAllEfficiencyResources(
     std::string bundleName = "";
     if (!IsCallingInfoLegal(uid, pid, bundleName)) {
         BGTASK_LOGE("get all efficiency resources failed, calling info is illegal");
-        return ERR_BGTASK_INVALID_PID_OR_UID;
+        return ERR_BGTASK_RESOURCES_INVALID_PID_OR_UID;
     }
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
     if (!BundleManagerHelper::GetInstance()->IsSystemApp(tokenId) && !IsServiceExtensionType(pid)) {
