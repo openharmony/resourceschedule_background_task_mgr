@@ -87,7 +87,10 @@ ErrCode BackgroundTaskManager::GetAllTransientTasks(int32_t &remainingQuota,
         "BackgroundTaskManager::ContinuousTask::Mgr::GetAllTransientTasks");
 
     std::lock_guard<std::mutex> lock(mutex_);
-    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManager Proxy failed.");
+        return ERR_BGTASK_TRANSIENT_SERVICE_NOT_CONNECTED;
+    }
 
     return proxy_->GetAllTransientTasks(remainingQuota, list);
 }
@@ -311,7 +314,10 @@ ErrCode BackgroundTaskManager::GetAllEfficiencyResources(
         "BackgroundTaskManager::EfficiencyResource::Mgr::GetAllEfficiencyResources");
 
     std::lock_guard<std::mutex> lock(mutex_);
-    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+    if (!GetBackgroundTaskManagerProxy()) {
+        BGTASK_LOGE("GetBackgroundTaskManager Proxy failed.");
+        return ERR_BGTASK_RESOURCES_SERVICE_NOT_CONNECTED;
+    }
 
     std::vector<EfficiencyResourceInfo> list;
     ErrCode result = proxy_->GetAllEfficiencyResources(list);
