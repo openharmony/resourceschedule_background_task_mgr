@@ -468,7 +468,7 @@ ErrCode BgTransientTaskMgr::GetAllTransientTasks(int32_t &remainingQuota,
         "BackgroundTaskManager::TransientTask::Service::GetAllTransientTasks");
     if (!isReady_.load()) {
         BGTASK_LOGW("Transient task manager is not ready.");
-        return ERR_BGTASK_SYS_NOT_READY;
+        return ERR_BGTASK_TRANSIENT_SYS_NOT_READY;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();

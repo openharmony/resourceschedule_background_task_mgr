@@ -66,9 +66,17 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Transient task verification failed. The remaining time to run transient task is insufficient."},
     {ERR_BGTASK_RESOURCES_EXCEEDS_MAX, "Caller information verification failed for an energy"
         " resource request. The number of resources applied exceeds maximun."},
+    {ERR_BGTASK_RESOURCES_INVALID_PID_OR_UID,
+        "Caller information verification failed for an energy resource. Invalid pid or uid."},
+    {ERR_BGTASK_RESOURCES_SYS_NOT_READY, "System service operation failed. The system service is not ready."},
+    {ERR_BGTASK_RESOURCES_SERVICE_NOT_CONNECTED,
+        "System service operation failed. The system service is not connected."},
     {ERR_BGTASK_SERVICE_INNER_ERROR, "Service inner error."},
     {ERR_BGTASK_NOREQUEST_TASK, "Transient task verification failed. application no request transient task."},
     {ERR_BGTASK_FOREGROUND, "Transient task verification failed. application is foreground."},
+    {ERR_BGTASK_TRANSIENT_SYS_NOT_READY, "System service operation failed. The system service is not ready."},
+    {ERR_BGTASK_TRANSIENT_SERVICE_NOT_CONNECTED,
+        "System service operation failed. The system service is not connected."},
     {ERR_BGTASK_INVALID_PROCESS_NAME, "Transient task verification failed. caller process name invaild."},
 };
 

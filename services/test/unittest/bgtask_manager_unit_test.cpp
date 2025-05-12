@@ -794,7 +794,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_055, TestSize.Level0)
     int32_t remainingQuota = -1;
     std::vector<std::shared_ptr<DelaySuspendInfo>> list;
     bgTransientTaskMgr_->isReady_.store(false);
-    EXPECT_EQ(bgTransientTaskMgr_->GetAllTransientTasks(remainingQuota, list), ERR_BGTASK_SYS_NOT_READY);
+    EXPECT_EQ(bgTransientTaskMgr_->GetAllTransientTasks(remainingQuota, list), ERR_BGTASK_TRANSIENT_SYS_NOT_READY);
 
 
     bgTransientTaskMgr_->isReady_.store(true);

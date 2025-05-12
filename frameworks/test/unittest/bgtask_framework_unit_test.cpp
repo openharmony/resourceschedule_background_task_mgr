@@ -404,7 +404,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_017, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::vector<std::shared_ptr<EfficiencyResourceInfo>> resourceInfoList;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllEfficiencyResources(resourceInfoList),
-        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+        ERR_BGTASK_RESOURCES_SERVICE_NOT_CONNECTED);
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllEfficiencyResources(resourceInfoList),
         ERR_OK);
@@ -827,7 +827,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetAllTransientTasks_001, TestSize.Level0)
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllTransientTasks(remainingQuota, list),
-        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+        ERR_BGTASK_TRANSIENT_SERVICE_NOT_CONNECTED);
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllTransientTasks(remainingQuota, list),
