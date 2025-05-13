@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"녹음 작업이 실행 중입니다.",
+            "value":"កិច្ចការថតកំពុងដំណើរការ។",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"오디오 재생 작업이 실행 중입니다.",
+            "value":"កិច្ចការចាក់សំឡេងកំពុងដំណើរការ។",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"분산 작업이 실행 중입니다.",
+            "value":"កិច្ចការចែកចាយកំពុងដំណើរការ។",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"통화 관련 작업이 실행 중입니다.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_location",
-            "value":"포지셔닝 작업이 실행 중입니다.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"WLAN 관련 작업이 실행 중입니다.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"블루투스 관련 작업이 실행 중입니다.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"컴퓨팅 작업이 실행 중입니다.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"데이터 전송 작업이 실행 중입니다.",
+            "value":"កិច្ចការពាក់ព័ន្ធនឹងការហៅទូរស័ព្ទកំពុងដំណើរការ។",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"이 카드를 닫으면 원격 차량 키가 종료됩니다.",
+            "value":"សោរថយន្តបញ្ជាពីចម្ងាយនឹងត្រូវបានបិទ ប្រសិនបើអ្នកបិទកាតនេះ។",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"កិច្ចការកំណត់ទីតាំងកំពុងដំណើរការ។",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_wifi_interaction",
+            "value":"កិច្ចការពាក់ព័ន្ធនឹង WLAN កំពុងដំណើរការ។",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"កិច្ចការពាក់ព័ន្ធនឹងប៊្លូធូសកំពុងដំណើរការ។",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_task_keeping",
+            "value":"កិច្ចការគណនាកំពុងដំណើរការ។",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"កិច្ចការផ្ទេរទិន្នន័យកំពុងដំណើរការ។",
             "attr":{
                 "priority":"translate"
             }
