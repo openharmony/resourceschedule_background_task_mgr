@@ -196,7 +196,7 @@ void GetAllEfficiencyResourcesAsyncWork(napi_env env, napi_status status, void *
         return;
     }
     napi_value result = nullptr;
-    if (asyncCallbackInfo != nullptr && asyncCallbackInfo->errCode == ERR_OK) {
+    if (asyncCallbackInfo->errCode == ERR_OK) {
         NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
         if (asyncCallbackInfo->efficiencyResourceInfoList.size() > 0) {
             uint32_t count = 0;
