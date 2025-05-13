@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Виконується завдання записування.",
+            "value":"Yozib olish vazifasi bajarilmoqda.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Виконується завдання відтворення аудіо.",
+            "value":"Audio ijrosi vazifasi bajarilmoqda.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Виконується розподілене завдання.",
+            "value":"Taqsimlangan vazifa bajarilmoqda.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Виконується завдання, пов’язане з викликом.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_location",
-            "value":"Виконується завдання визначення розташування.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Виконується завдання, пов’язане з WLAN.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Виконується завдання, пов’язане з Bluetooth.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Виконується завдання обчислення.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Виконується завдання передавання даних.",
+            "value":"Chaqiruvga aloqador vazifa bajarilmoqda.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Ключ віддаленого керування автомобілем буде вимкнено, якщо ви закриєте цю картку.",
+            "value":"Agar ushbu kartochkani yopsangiz, masofaviy avtomobil kaliti faolsizlantiriladi.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"Joylashuvni aniqlash vazifasi bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_wifi_interaction",
+            "value":"WLAN tarmoqqa aloqador vazifa bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"Bluetooth funksiyasiga aloqador vazifa bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_task_keeping",
+            "value":"Hisoblash vazifasi bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"Maʼlumot o‘tkazish vazifasi bajarilmoqda.",
             "attr":{
                 "priority":"translate"
             }
