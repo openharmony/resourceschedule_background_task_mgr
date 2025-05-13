@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Изпълнява се задача за запис.",
+            "value":"Выконваецца запіс.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Изпълнява се задача за възпроизвеждане на аудио.",
+            "value":"Выконваецца аўтапрайграванне.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Изпълнява се разпределена задача.",
+            "value":"Выконваецца размеркаваная задача.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Изпълнява се задача свързана с обаждане.",
+            "value":"Выконваецца задача, звязаная з выклікам.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Калі закрыць гэту картку, аддалены ключ ад аўтамабіля будзе адключаны.",
+            "attr":{
+                "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Изпълнява се задача за позициониране.",
+            "value":"Выконваецца пазіцыянаванне.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Изпълнява се задача свързана с WLAN.",
+            "value":"Выконваецца задача, звязаная з WLAN.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Изпълнява се задача свързана с Bluetooth.",
+            "value":"Выконваецца задача, звязаная з Bluetooth.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Изпълнява се задача за изчисление.",
+            "value":"Выконваецца разлік.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Изпълнява се задача за прехвърляне на данни.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Дистанционният ключ за колата ще се деактивира, ако затворите тази карта.",
+            "value":"Выконваецца задача, звязаная з перадачай.",
             "attr":{
                 "priority":"translate"
             }
