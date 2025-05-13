@@ -1,0 +1,74 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"Выконваецца запіс.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"Выконваецца аўтапрайграванне.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"Выконваецца размеркаваная задача.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_voip",
+            "value":"Выконваецца задача, звязаная з выклікам.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Калі закрыць гэту картку, аддалены ключ ад аўтамабіля будзе адключаны.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"Выконваецца пазіцыянаванне.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_wifi_interaction",
+            "value":"Выконваецца задача, звязаная з WLAN.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"Выконваецца задача, звязаная з Bluetooth.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_task_keeping",
+            "value":"Выконваецца разлік.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"Выконваецца задача, звязаная з перадачай.",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}

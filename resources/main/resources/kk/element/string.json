@@ -1,0 +1,74 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"Жазу тапсырмасы орындалуда.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"Аудио ойнату тапсырмасы орындалуда.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"Таратылған тапсырма орындалуда.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_voip",
+            "value":"Қоңырауға қатысты тапсырма орындалуда.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Бұл картаны жапсаңыз, қашықтағы көлік кілті өшіріледі.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"Орналастыру тапсырмасы орындалуда.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_wifi_interaction",
+            "value":"WLAN-ға қатысты тапсырма орындалуда.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"Bluetooth-ға қатысты тапсырма орындалуда.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_task_keeping",
+            "value":"Есептеу тапсырмасы орындалуда.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"Деректерді тасымалдау тапсырмасы орындалуда.",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}

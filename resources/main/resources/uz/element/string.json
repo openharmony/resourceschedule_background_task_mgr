@@ -1,0 +1,74 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"Yozib olish vazifasi bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"Audio ijrosi vazifasi bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"Taqsimlangan vazifa bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_voip",
+            "value":"Chaqiruvga aloqador vazifa bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Agar ushbu kartochkani yopsangiz, masofaviy avtomobil kaliti faolsizlantiriladi.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"Joylashuvni aniqlash vazifasi bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_wifi_interaction",
+            "value":"WLAN tarmoqqa aloqador vazifa bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"Bluetooth funksiyasiga aloqador vazifa bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_task_keeping",
+            "value":"Hisoblash vazifasi bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"Maʼlumot o‘tkazish vazifasi bajarilmoqda.",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}
