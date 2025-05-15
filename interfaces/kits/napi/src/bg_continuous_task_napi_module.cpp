@@ -928,7 +928,7 @@ void GetAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status, v
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
     napi_value result {nullptr};
-    if (asyncCallbackInfo != nullptr && asyncCallbackInfo->errCode == ERR_OK) {
+    if (asyncCallbackInfo->errCode == ERR_OK) {
         if (asyncCallbackInfo->list.size() > 0) {
             NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
             uint32_t count = 0;
