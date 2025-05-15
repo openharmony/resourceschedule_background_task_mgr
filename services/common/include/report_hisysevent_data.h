@@ -24,7 +24,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const int32_t MAX_EFFICIENTCY_RESOURCE_HISYSEVCENT_DATA_LENGTH = 100;
+const int32_t MAX_EFFICIENTCY_RESOURCE_HISYSEVCENT_DATA_LENGTH = 20;
 
 struct EfficiencyResourceApplyReportHisysEvent {
     int32_t length_ {0};
