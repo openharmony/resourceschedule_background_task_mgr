@@ -817,8 +817,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
         continuousTaskRecord->isBatchApi_, continuousTaskRecord->abilityId_);
     // update continuoustask by same modes.
     if (CommonUtils::CheckModesSame(oldModes, taskParam->bgModeIds_)) {
-        BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same modes.",
-            continuousTaskRecord->uid_, continuousTaskRecord->bundleName_.c_str(), continuousTaskRecord->abilityId_);
         return ERR_OK;
     }
     if (!CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::BLUETOOTH_INTERACTION) &&
