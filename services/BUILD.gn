@@ -30,6 +30,7 @@ BgTaskMgrServicecSrc = [
   "common/src/bgtask_config.cpp",
   "common/src/bundle_manager_helper.cpp",
   "common/src/data_storage_helper.cpp",
+  "common/src/report_hisysevent_data.cpp",
   "common/src/system_event_observer.cpp",
   "common/src/time_provider.cpp",
   "continuous_task/src/bg_continuous_task_mgr.cpp",
