@@ -1105,21 +1105,23 @@ void BgEfficiencyResourcesMgr::ReportHisysEvent(EfficiencyResourceEventTriggerTy
         case EfficiencyResourceEventTriggerType::EFFICIENCY_RESOURCE_APPLY:
             if (!applyEventData_.AddData(resourceInfo, callbackInfo)) {
                 HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "EFFICIENCY_RESOURCE_APPLY",
-                HiviewDFX::HiSysEvent::EventType::STATISTIC,
-                "APP_UID", applyEventData_.appUid_, "APP_PID", applyEventData_.appPid_,
-                "APP_NAME", applyEventData_.appName_, "UIABILITY_IDENTITY", applyEventData_.uiabilityIdentity_,
-                "RESOURCE_TYPE", applyEventData_.resourceType_, "TIMEOUT", applyEventData_.timeout_,
-                "PERSIST", applyEventData_.persist_, "PROCESS", applyEventData_.process_);
+                    HiviewDFX::HiSysEvent::EventType::STATISTIC,
+                    "APP_UID", applyEventData_.appUid_, "APP_PID", applyEventData_.appPid_,
+                    "APP_NAME", applyEventData_.appName_, "UIABILITY_IDENTITY", applyEventData_.uiabilityIdentity_,
+                    "RESOURCE_TYPE", applyEventData_.resourceType_, "TIMEOUT", applyEventData_.timeout_,
+                    "PERSIST", applyEventData_.persist_, "PROCESS", applyEventData_.process_);
+                applyEventData_.ClearData();
             }
             break;
         case EfficiencyResourceEventTriggerType::EFFICIENCY_RESOURCE_RESET:
             if (!resetEventData_.AddData(callbackInfo, type)) {
                 HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "EFFICIENCY_RESOURCE_RESET",
-                HiviewDFX::HiSysEvent::EventType::STATISTIC,
-                "APP_UID", resetEventData_.appUid_, "APP_PID", resetEventData_.appPid_,
-                "APP_NAME", resetEventData_.appName_, "UIABILITY_IDENTITY", resetEventData_.uiabilityIdentity_,
-                "RESOURCE_TYPE", resetEventData_.resourceType_, "PROCESS", resetEventData_.process_,
-                "QUOTA", resetEventData_.quota_, "ALL_QUOTA", resetEventData_.allQuota_);
+                    HiviewDFX::HiSysEvent::EventType::STATISTIC,
+                    "APP_UID", resetEventData_.appUid_, "APP_PID", resetEventData_.appPid_,
+                    "APP_NAME", resetEventData_.appName_, "UIABILITY_IDENTITY", resetEventData_.uiabilityIdentity_,
+                    "RESOURCE_TYPE", resetEventData_.resourceType_, "PROCESS", resetEventData_.process_,
+                    "QUOTA", resetEventData_.quota_, "ALL_QUOTA", resetEventData_.allQuota_);
+                resetEventData_.ClearData();
             }
             break;
     }
