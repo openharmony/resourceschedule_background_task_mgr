@@ -1111,6 +1111,7 @@ void BgEfficiencyResourcesMgr::ReportHisysEvent(EfficiencyResourceEventTriggerTy
                     "RESOURCE_TYPE", applyEventData_.resourceType_, "TIMEOUT", applyEventData_.timeout_,
                     "PERSIST", applyEventData_.persist_, "PROCESS", applyEventData_.process_);
                 applyEventData_.ClearData();
+                applyEventData_.AddData(resourceInfo, callbackInfo)
             }
             break;
         case EfficiencyResourceEventTriggerType::EFFICIENCY_RESOURCE_RESET:
@@ -1122,6 +1123,7 @@ void BgEfficiencyResourcesMgr::ReportHisysEvent(EfficiencyResourceEventTriggerTy
                     "RESOURCE_TYPE", resetEventData_.resourceType_, "PROCESS", resetEventData_.process_,
                     "QUOTA", resetEventData_.quota_, "ALL_QUOTA", resetEventData_.allQuota_);
                 resetEventData_.ClearData();
+                resetEventData_.AddData(callbackInfo, type);
             }
             break;
     }
