@@ -44,7 +44,7 @@ namespace BackgroundTaskMgr {
 enum class EfficiencyResourceEventTriggerType: uint32_t {
     EFFICIENCY_RESOURCE_APPLY,
     EFFICIENCY_RESOURCE_RESET,
-}
+};
 
 class DataStorageHelper;
 class BgEfficiencyResourcesMgr : public DelayedSingleton<BgEfficiencyResourcesMgr>,
