@@ -833,5 +833,25 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetAllTransientTasks_001, TestSize.Level0)
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllTransientTasks(remainingQuota, list),
         ERR_BGTASK_SERVICE_INNER_ERROR);
 }
+
+/**
+ * @tc.name: NotifyAVSessionNotificationUpdate_001
+ * @tc.desc: test NotifyAVSessionNotificationUpdate.
+ * @tc.type: FUNC
+ * @tc.require: issueIC1HDY
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, NotifyAVSessionNotificationUpdate_001, TestSize.Level0)
+{
+    int32_t uid = -1;
+    int32_t pid = -1;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        NotifyAVSessionNotificationUpdate(uid, pid, true), ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        NotifyAVSessionNotificationUpdate(uid, pid, true), ERR_BGTASK_OBJECT_NOT_EXIST);
+}
 }
 }

@@ -890,7 +890,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         }
     }
 
-    if (!continuousTaskRecord->isFromWebview_) {
+    auto iter = AVSessionNotification_.find(continuousTaskRecord->uid_);
+    bool isPublish = (iter != AVSessionNotification_.end()) ? iter->second : false;
+    if (!continuousTaskRecord->isFromWebview_ && !isPublish) {
         ret = SendContinuousTaskNotification(continuousTaskRecord);
         if (ret != ERR_OK) {
             BGTASK_LOGE("publish error");
@@ -950,8 +952,8 @@ ErrCode BgContinuousTaskMgr::CheckNotificationText(std::string &notificationText
     const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord)
 {
     for (auto mode : continuousTaskRecord->bgModeIds_) {
-        if (mode == BackgroundMode::AUDIO_PLAYBACK || ((mode == BackgroundMode::VOIP ||
-            mode == BackgroundMode::AUDIO_RECORDING) && continuousTaskRecord->IsSystem())) {
+        if ((mode == BackgroundMode::VOIP || mode == BackgroundMode::AUDIO_RECORDING) && 
+            continuousTaskRecord->IsSystem()) {
             continue;
         }
         BGTASK_LOGD("mode %{public}d", mode);
@@ -1353,6 +1355,48 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
         list.push_back(appInfo);
     }
     return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::NotifyAVSessionNotificationUpdate(int32_t uid, int32_t pid, bool isPublish)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+
+    ErrCode result = ERR_OK;
+    handler_->PostSyncTask([this, uid, pid, isPublish, &result]() {
+        result = this->NotifyAVSessionNotificationUpdateInner(uid, pid, isPublish);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::NotifyAVSessionNotificationUpdateInner(int32_t uid, int32_t pid, bool isPublish)
+{
+    AVSessionNotification_[uid] = isPublish;
+
+    auto findUid = [uid](const auto &target) {
+        return uid == target.second->GetUid();
+    };
+    auto findUidIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findUid);
+    if (findUidIter == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGW("continuous task is not exist: %{public}d", uid);
+        return ERR_BGTASK_OBJECT_NOT_EXIST;
+    }
+
+    ErrCode result = ERR_OK;
+    if (isPublish && findUidIter->second->GetNotificationId() != -1) {
+        result = NotificationTools::GetInstance()->CancelNotification(findUidIter->second->GetNotificationLabel(),
+        findUidIter->second->GetNotificationId());
+        findUidIter->second->notificationId_ = -1;
+    } else if (!isPublish) {
+        result = SendContinuousTaskNotification(findUidIter->second);
+        if (result != ERR_OK) {
+            BGTASK_LOGE("publish error");
+        }
+    }
+    return result;
 }
 
 ErrCode BgContinuousTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
@@ -1988,8 +2032,7 @@ std::string BgContinuousTaskMgr::GetNotificationText(const std::shared_ptr<Conti
 {
     std::string notificationText {""};
     for (auto mode : record->bgModeIds_) {
-        if (mode == BackgroundMode::AUDIO_PLAYBACK || ((mode == BackgroundMode::VOIP ||
-            mode == BackgroundMode::AUDIO_RECORDING) && record->IsSystem())) {
+        if ((mode == BackgroundMode::VOIP || mode == BackgroundMode::AUDIO_RECORDING) && record->IsSystem()) {
             continue;
         }
         if (mode == BackgroundMode::BLUETOOTH_INTERACTION &&

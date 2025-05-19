@@ -174,6 +174,15 @@ public:
     static ErrCode ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
 
     /**
+     * @brief Notify AVsession notification update.
+     * @param uid app uid.
+     * @param pid app pid.
+     * @param isPublish isPublish notification.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode NotifyAVSessionNotificationUpdate(int32_t uid, int32_t pid, bool isPublish = false);
+
+    /**
      * @brief Set background task config.
      * @param configData config param.
      * @param sourceType data source.

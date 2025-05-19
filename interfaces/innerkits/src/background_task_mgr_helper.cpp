@@ -121,5 +121,11 @@ ErrCode BackgroundTaskMgrHelper::ActiveContinuousTask(int32_t uid, int32_t pid, 
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(uid, pid, key);
 }
+
+ErrCode BackgroundTaskMgrHelper::NotifyAVSessionNotificationUpdate(int32_t uid, int32_t pid, bool isPublish)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        NotifyAVSessionNotificationUpdate(uid, pid, isPublish);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
