@@ -73,7 +73,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"关闭卡片后无感车钥匙即将失效",
+            "value":"关闭卡片后无感车钥匙将失效",
             "attr":{
                 "priority":"translate"
             }
