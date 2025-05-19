@@ -597,7 +597,7 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
         callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str());
     EfficiencyResourcesEventType processType = EfficiencyResourcesEventType::APP_RESOURCE_RESET;
     if (isProcess) {
-        processType = EfficiencyResourcesEventType::ESOURCE_RESET;
+        processType = EfficiencyResourcesEventType::RESOURCE_RESET;
     }
     ReportHisysEvent(EfficiencyResourceEventTriggerType::EFFICIENCY_RESOURCE_RESET, nullptr, callbackInfo,
         processType);
