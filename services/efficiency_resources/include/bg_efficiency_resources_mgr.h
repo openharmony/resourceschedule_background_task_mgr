@@ -36,9 +36,16 @@
 #include "resources_subscriber_mgr.h"
 #include "app_state_observer.h"
 #include "data_storage_helper.h"
+#include "report_hisysevent_data.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+
+enum class EfficiencyResourceEventTriggerType: uint32_t {
+    EFFICIENCY_RESOURCE_APPLY,
+    EFFICIENCY_RESOURCE_RESET,
+};
+
 class DataStorageHelper;
 class BgEfficiencyResourcesMgr : public DelayedSingleton<BgEfficiencyResourcesMgr>,
                             public std::enable_shared_from_this<BgEfficiencyResourcesMgr> {
@@ -110,6 +117,10 @@ private:
     void DumpSetCpuQuota(const std::vector<std::string> &dumpOption);
     void DumpResetCpuQuotaUsage(const std::vector<std::string> &dumpOption);
     void DumpGetCpuQuota(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+    void ReportHisysEvent(EfficiencyResourceEventTriggerType operationType,
+        const sptr<EfficiencyResourceInfo> &resourceInfo,
+        const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
+        EfficiencyResourcesEventType type);
 
 private:
     std::atomic<bool> isSysReady_ {false};
@@ -122,6 +133,8 @@ private:
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_ {nullptr};
     uint32_t dependsReady_ = 0;
     void *resourceQuotaMgrHandle_ {nullptr};
+    EfficiencyResourceApplyReportHisysEvent applyEventData_;
+    EfficiencyResourceResetReportHisysEvent resetEventData_;
 
     DECLARE_DELAYED_SINGLETON(BgEfficiencyResourcesMgr);
 };

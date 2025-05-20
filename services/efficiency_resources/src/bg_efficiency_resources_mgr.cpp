@@ -32,6 +32,7 @@
 #include "efficiency_resource_log.h"
 #include "tokenid_kit.h"
 #include "extension_ability_info.h"
+#include "hisysevent.h"
 #include "hitrace_meter.h"
 
 namespace OHOS {
@@ -455,6 +456,8 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
     }
     BGTASK_LOGD("start to update resources end time");
     UpdateResourcesEndtime(callbackInfo, iter->second, resourceInfo);
+    ReportHisysEvent(EfficiencyResourceEventTriggerType::EFFICIENCY_RESOURCE_APPLY, resourceInfo, callbackInfo,
+        EfficiencyResourcesEventType::APP_RESOURCE_APPLY);
     uint32_t diffResourceNumber = iter->second->resourceNumber_ ^ (preResourceNumber & iter->second->resourceNumber_);
     if (diffResourceNumber == 0) {
         BGTASK_LOGD("after update end time, diff between resourcesNumbers is zero");
@@ -592,6 +595,12 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
     BGTASK_LOGI("after reset time out resources, callbackInfo resource number is %{public}u,"\
         " uid: %{public}d, bundle name: %{public}s", callbackInfo->GetResourceNumber(),
         callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str());
+    EfficiencyResourcesEventType processType = EfficiencyResourcesEventType::APP_RESOURCE_RESET;
+    if (isProcess) {
+        processType = EfficiencyResourcesEventType::RESOURCE_RESET;
+    }
+    ReportHisysEvent(EfficiencyResourceEventTriggerType::EFFICIENCY_RESOURCE_RESET, nullptr, callbackInfo,
+        processType);
     subscriberMgr_->OnResourceChanged(callbackInfo, type);
     if (resourceRecord->resourceNumber_ == 0) {
         infoMap.erase(iter);
@@ -921,6 +930,7 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     UpdateQuotaIfCpuReset(type, callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
     BGTASK_LOGI("remove record from info map, mapkey %{public}d, uid: %{public}d, bundle name: %{public}s"
         "erasebit %{public}d", mapKey, callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str(), eraseBit);
+    ReportHisysEvent(EfficiencyResourceEventTriggerType::EFFICIENCY_RESOURCE_RESET, nullptr, callbackInfo, type);
     subscriberMgr_->OnResourceChanged(callbackInfo, type);
     if (iter->second->resourceNumber_ == 0) {
         infoMap.erase(iter);
@@ -1084,6 +1094,38 @@ void BgEfficiencyResourcesMgr::GetAllEfficiencyResourcesInner(const ResourceReco
             appInfo->SetUid(uid);
             resourceInfoList.push_back(appInfo);
         }
+    }
+}
+
+void BgEfficiencyResourcesMgr::ReportHisysEvent(EfficiencyResourceEventTriggerType operationType,
+    const sptr<EfficiencyResourceInfo> &resourceInfo, const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
+    EfficiencyResourcesEventType type)
+{
+    switch (operationType) {
+        case EfficiencyResourceEventTriggerType::EFFICIENCY_RESOURCE_APPLY:
+            if (!applyEventData_.AddData(resourceInfo, callbackInfo)) {
+                HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "EFFICIENCY_RESOURCE_APPLY",
+                    HiviewDFX::HiSysEvent::EventType::STATISTIC,
+                    "APP_UID", applyEventData_.appUid_, "APP_PID", applyEventData_.appPid_,
+                    "APP_NAME", applyEventData_.appName_, "UIABILITY_IDENTITY", applyEventData_.uiabilityIdentity_,
+                    "RESOURCE_TYPE", applyEventData_.resourceType_, "TIMEOUT", applyEventData_.timeout_,
+                    "PERSIST", applyEventData_.persist_, "PROCESS", applyEventData_.process_);
+                applyEventData_.ClearData();
+                applyEventData_.AddData(resourceInfo, callbackInfo);
+            }
+            break;
+        case EfficiencyResourceEventTriggerType::EFFICIENCY_RESOURCE_RESET:
+            if (!resetEventData_.AddData(callbackInfo, type)) {
+                HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "EFFICIENCY_RESOURCE_RESET",
+                    HiviewDFX::HiSysEvent::EventType::STATISTIC,
+                    "APP_UID", resetEventData_.appUid_, "APP_PID", resetEventData_.appPid_,
+                    "APP_NAME", resetEventData_.appName_, "UIABILITY_IDENTITY", resetEventData_.uiabilityIdentity_,
+                    "RESOURCE_TYPE", resetEventData_.resourceType_, "PROCESS", resetEventData_.process_,
+                    "QUOTA", resetEventData_.quota_, "ALL_QUOTA", resetEventData_.allQuota_);
+                resetEventData_.ClearData();
+                resetEventData_.AddData(callbackInfo, type);
+            }
+            break;
     }
 }
 }  // namespace BackgroundTaskMgr
