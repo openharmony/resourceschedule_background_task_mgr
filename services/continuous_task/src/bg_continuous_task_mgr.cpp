@@ -842,10 +842,14 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
         BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same mode: DATA_TRANSFER",
             continuousTaskRecord->uid_, continuousTaskRecord->bundleName_.c_str(), continuousTaskRecord->abilityId_);
     } else {
-        ret = SendContinuousTaskNotification(continuousTaskRecord);
-        if (ret != ERR_OK) {
-            BGTASK_LOGE("publish error");
-            return ret;
+        auto iter = AVSessionNotification_.find(continuousTaskRecord->uid_);
+        bool isPublish = (iter != AVSessionNotification_.end()) ? iter->second : false;
+        if (!isPublish) {
+            ret = SendContinuousTaskNotification(continuousTaskRecord);
+            if (ret != ERR_OK) {
+                BGTASK_LOGE("publish error");
+                return ret;
+            }
         }
     }
     OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_UPDATE);
