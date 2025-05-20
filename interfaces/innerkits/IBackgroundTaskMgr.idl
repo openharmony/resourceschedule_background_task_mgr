@@ -49,5 +49,6 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void RequestGetContinuousTasksByUidForInner([in] int uid, [out] ContinuousTaskInfo[] list);
     void PauseTransientTaskTimeForInner([in] int uid);
     void StartTransientTaskTimeForInner([in] int uid);
+    void NotifyAVSessionNotificationUpdate([in] int uid, [in] int pid, [in] boolean isPublish);
     void SetBgTaskConfig([in] String configData, [in] int sourceType);
 }
