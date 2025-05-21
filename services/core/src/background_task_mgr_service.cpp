@@ -34,6 +34,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
+static constexpr int32_t RESOURCE_SCHEDULE_SERVICE_UID = 1096;
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
@@ -132,6 +133,18 @@ bool BackgroundTaskMgrService::CheckHapCalling(bool &isHap)
         return BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION);
     }
     return false;
+}
+
+bool BackgroundTaskMgrService::CheckCallingProcess()
+{
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    pid_t callingUid = IPCSkeleton::GetCallingUid();
+    // only rss is allowed to call
+    if (callingUid == RESOURCE_SCHEDULE_SERVICE_UID) {
+        BGTASK_LOGW("uid %{public}d pid %{public}d not allowed to call", callingUid, callingPid);
+        return false;
+    }
+    return true;
 }
 
 ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::string& reason,
@@ -268,10 +281,9 @@ ErrCode BackgroundTaskMgrService::StartTransientTaskTimeForInner(int32_t uid)
 
 ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list)
 {
-    bool isHap = false;
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
-    if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
+    if (!CheckCallingToken()) {
         BGTASK_LOGW("uid %{public}d pid %{public}d GetContinuousTaskApps not allowed", callingUid, callingPid);
         return ERR_BGTASK_PERMISSION_DENIED;
     }
@@ -406,7 +418,7 @@ ErrCode BackgroundTaskMgrService::GetEfficiencyResourcesInfos(
 ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType,
     const std::string &key)
 {
-    if (!CheckCallingToken()) {
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
         BGTASK_LOGW("StopContinuousTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
@@ -416,7 +428,7 @@ ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, u
 
 ErrCode BackgroundTaskMgrService::SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
 {
-    if (!CheckCallingToken()) {
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
         BGTASK_LOGW("SuspendContinuousTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
@@ -426,7 +438,7 @@ ErrCode BackgroundTaskMgrService::SuspendContinuousTask(int32_t uid, int32_t pid
 
 ErrCode BackgroundTaskMgrService::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
 {
-    if (!CheckCallingToken()) {
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
         BGTASK_LOGW("ActiveContinuousTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
