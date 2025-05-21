@@ -950,8 +950,8 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
 ErrCode BgContinuousTaskMgr::CheckNotificationText(std::string &notificationText,
     const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord)
 {
-    auto iter = AVSessionNotification_.find(continuousTaskRecord->uid_);
-    bool isPublish = (iter != AVSessionNotification_.end()) ? iter->second : false;
+    auto iter = avSessionNotification_.find(continuousTaskRecord->uid_);
+    bool isPublish = (iter != avSessionNotification_.end()) ? iter->second : false;
     BGTASK_LOGD("AVSession Notification isPublish: %{public}d", isPublish);
     for (auto mode : continuousTaskRecord->bgModeIds_) {
         if ((mode == BackgroundMode::AUDIO_PLAYBACK && isPublish) || ((mode == BackgroundMode::VOIP ||
@@ -1382,7 +1382,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
 
 ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish)
 {
-    AVSessionNotification_[uid] = isPublish;
+    avSessionNotification_[uid] = isPublish;
 
     auto findUid = [uid](const auto &target) {
         return uid == target.second->GetUid();
@@ -2038,8 +2038,8 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
 
 std::string BgContinuousTaskMgr::GetNotificationText(const std::shared_ptr<ContinuousTaskRecord> record)
 {
-    auto iter = AVSessionNotification_.find(record->uid_);
-    bool isPublish = (iter != AVSessionNotification_.end()) ? iter->second : false;
+    auto iter = avSessionNotification_.find(record->uid_);
+    bool isPublish = (iter != avSessionNotification_.end()) ? iter->second : false;
     BGTASK_LOGD("AVSession Notification isPublish: %{public}d", isPublish);
     std::string notificationText {""};
     for (auto mode : record->bgModeIds_) {
