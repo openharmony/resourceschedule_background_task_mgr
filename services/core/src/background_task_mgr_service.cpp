@@ -367,7 +367,7 @@ ErrCode BackgroundTaskMgrService::GetAllEfficiencyResources(std::vector<Efficien
     std::vector<std::shared_ptr<EfficiencyResourceInfo>> list {};
     ErrCode result = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->GetAllEfficiencyResources(list);
     if (result == ERR_OK) {
-        for (const auto ptr : list) {
+        for (const auto& ptr : list) {
             if (ptr != nullptr) {
                 resourceInfoList.push_back(*ptr);
             }
