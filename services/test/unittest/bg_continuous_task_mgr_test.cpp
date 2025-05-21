@@ -1299,13 +1299,8 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_002, TestSiz
     info.appName_ = "appName";
     bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
-<<<<<<< HEAD
     EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, true), ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, false), ERR_OK);
-=======
-    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAVSessionNotificationUpdate(uid, pid, true), ERR_OK);
-    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAVSessionNotificationUpdate(uid, pid, false), ERR_OK);
->>>>>>> 5d6b3858e121a768a05a2836484bfcefd136e08f
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
