@@ -34,7 +34,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
-static constexpr RESOURCE_SCHEDULE_SERVICE_UID = 1096;
+static constexpr int32_t RESOURCE_SCHEDULE_SERVICE_UID = 1096;
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
