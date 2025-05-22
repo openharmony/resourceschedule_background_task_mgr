@@ -1257,7 +1257,7 @@ HWTEST_F(BgContinuousTaskMgrTest, RequestGetContinuousTasksByUidForInner_001, Te
  * @tc.name: AVSessionNotifyUpdateNotification_001
  * @tc.desc: test AVSessionNotifyUpdateNotification interface.
  * @tc.type: FUNC
- * @tc.require: issueIC8XRZ
+ * @tc.require: issueIC9VN9
  */
 HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_001, TestSize.Level1)
 {
@@ -1274,7 +1274,7 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_001, TestSiz
  * @tc.name: AVSessionNotifyUpdateNotification_002
  * @tc.desc: test AVSessionNotifyUpdateNotification interface.
  * @tc.type: FUNC
- * @tc.require: issueIC8XRZ
+ * @tc.require: issueIC9VN9
  */
 HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_002, TestSize.Level1)
 {

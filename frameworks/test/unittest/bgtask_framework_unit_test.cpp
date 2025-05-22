@@ -838,7 +838,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetAllTransientTasks_001, TestSize.Level0)
  * @tc.name: AVSessionNotifyUpdateNotification_001
  * @tc.desc: test AVSessionNotifyUpdateNotification.
  * @tc.type: FUNC
- * @tc.require: issueIC8XRZ
+ * @tc.require: issueIC9VN9
  */
 HWTEST_F(BgTaskFrameworkUnitTest, AVSessionNotifyUpdateNotification_001, TestSize.Level1)
 {

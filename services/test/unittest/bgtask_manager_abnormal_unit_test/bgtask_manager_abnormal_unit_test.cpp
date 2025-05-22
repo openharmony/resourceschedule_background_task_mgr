@@ -183,7 +183,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_007
  * @tc.name: BackgroundTaskMgrServiceAbnormalTest_008
  * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
  * @tc.type: FUNC
- * @tc.require: issueIC8XRZ
+ * @tc.require: issueIC9VN9
  */
 HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_008, TestSize.Level3)
 {
