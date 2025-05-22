@@ -140,7 +140,7 @@ bool BackgroundTaskMgrService::CheckCallingProcess()
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
     // only rss is allowed to call
-    if (callingUid == RESOURCE_SCHEDULE_SERVICE_UID) {
+    if (callingUid != RESOURCE_SCHEDULE_SERVICE_UID) {
         BGTASK_LOGW("uid %{public}d pid %{public}d not allowed to call", callingUid, callingPid);
         return false;
     }
