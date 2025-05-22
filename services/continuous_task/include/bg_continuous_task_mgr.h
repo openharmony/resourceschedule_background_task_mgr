@@ -177,7 +177,7 @@ private:
     int32_t bgTaskUid_ {-1};
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
-    std::unordered_map<int32_t, bool> AVSessionNotification_ {};
+    std::unordered_map<int32_t, bool> avSessionNotification_ {};
 
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};

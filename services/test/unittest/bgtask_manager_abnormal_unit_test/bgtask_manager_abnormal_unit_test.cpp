@@ -190,9 +190,9 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_008
     int32_t uid = 0;
     int32_t pid = 0;
     EXPECT_EQ(BackgroundTaskMgrService_->AVSessionNotifyUpdateNotification(uid, pid, true),
-        ERR_BGTASK_SYS_NOT_READY);
+        ERR_BGTASK_PERMISSION_DENIED);
     EXPECT_EQ(BackgroundTaskMgrService_->AVSessionNotifyUpdateNotification(uid, pid, false),
-        ERR_BGTASK_SYS_NOT_READY);
+        ERR_BGTASK_PERMISSION_DENIED);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

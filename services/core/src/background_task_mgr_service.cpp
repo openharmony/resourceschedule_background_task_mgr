@@ -436,6 +436,10 @@ ErrCode BackgroundTaskMgrService::ActiveContinuousTask(int32_t uid, int32_t pid,
 
 ErrCode BackgroundTaskMgrService::AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish)
 {
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("AVSessionNotifyUpdateNotification not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
     return BgContinuousTaskMgr::GetInstance()->AVSessionNotifyUpdateNotification(uid, pid, isPublish);
 }
 
