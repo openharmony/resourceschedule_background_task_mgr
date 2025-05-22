@@ -2,63 +2,63 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"A data transfer task is running.",
+            "value":"The data transfer task will stop if you turn off this notification.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"An audio playback task is running.",
+            "value":"The audio and video playback task will stop if you turn off this notification.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"A recording task is running.",
+            "value":"The recording task will stop if you turn off this notification.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"A positioning task is running.",
+            "value":"The positioning task will stop if you turn off this notification.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"A Bluetooth-related task is running.",
+            "value":"The Bluetooth-related task will stop if you turn off this notification.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"A distributed task is running.",
+            "value":"The distributed task will stop if you turn off this notification.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"A WLAN-related task is running.",
+            "value":"The WLAN-related task will stop if you turn off this notification.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"A call-related task is running.",
+            "value":"The call-related task will stop if you turn off this notification.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"A computing task is running.",
+            "value":"The computing task will stop if you turn off this notification.",
             "attr":{
                 "priority":"translate"
             }
