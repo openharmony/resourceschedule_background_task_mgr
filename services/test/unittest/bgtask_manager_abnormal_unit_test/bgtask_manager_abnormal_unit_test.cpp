@@ -178,5 +178,21 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_007
     
     EXPECT_EQ(BackgroundTaskMgrService_->SetBgTaskConfig("", 1), ERR_BGTASK_PERMISSION_DENIED);
 }
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_008
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
+ * @tc.type: FUNC
+ * @tc.require: issueIC9VN9
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_008, TestSize.Level3)
+{
+    int32_t uid = 0;
+    int32_t pid = 0;
+    EXPECT_EQ(BackgroundTaskMgrService_->AVSessionNotifyUpdateNotification(uid, pid, true),
+        ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->AVSessionNotifyUpdateNotification(uid, pid, false),
+        ERR_BGTASK_PERMISSION_DENIED);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

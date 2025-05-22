@@ -427,6 +427,14 @@ ErrCode BackgroundTaskManager::ActiveContinuousTask(int32_t uid, int32_t pid, co
     return proxy_->ActiveContinuousTask(uid, pid, key);
 }
 
+ErrCode BackgroundTaskManager::AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->AVSessionNotifyUpdateNotification(uid, pid, isPublish);
+}
+
 void BackgroundTaskManager::ResetBackgroundTaskManagerProxy()
 {
     std::lock_guard<std::mutex> lock(mutex_);

@@ -837,5 +837,19 @@ HWTEST_F(BgTaskClientUnitTest, RequestGetContinuousTasksByUidForInner_001, TestS
     EXPECT_EQ(BackgroundTaskMgrHelper::RequestGetContinuousTasksByUidForInner(uid, list),
         ERR_OK);
 }
+
+/**
+ * @tc.name: AVSessionNotifyUpdateNotification_001
+ * @tc.desc: test AVSessionNotifyUpdateNotification interface.
+ * @tc.type: FUNC
+ * @tc.require: issueIC9VN9
+ */
+HWTEST_F(BgTaskClientUnitTest, AVSessionNotifyUpdateNotification_001, TestSize.Level1)
+{
+    int32_t uid = 1;
+    int32_t pid = 1;
+    EXPECT_NE(BackgroundTaskMgrHelper::AVSessionNotifyUpdateNotification(uid, pid, true), ERR_OK);
+    EXPECT_NE(BackgroundTaskMgrHelper::AVSessionNotifyUpdateNotification(uid, pid, false), ERR_OK);
+}
 }
 }
