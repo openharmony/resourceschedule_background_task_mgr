@@ -18,6 +18,7 @@
 #include <iremote_broker.h>
 #include "gtest/gtest.h"
 
+#include "accesstoken_kit.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "background_mode.h"
 #include "background_sub_mode.h"
@@ -34,6 +35,7 @@
 #include "ibackground_task_mgr.h"
 #include "resource_callback_info.h"
 #include "resource_type.h"
+#include "token_setproc.h"
 #include "transient_task_app_info.h"
 
 using namespace testing::ext;
@@ -53,6 +55,7 @@ constexpr int32_t TASK_KEEPING_ID = 9;
 constexpr int32_t WORKOUT = 10;
 constexpr int32_t END = 11;
 constexpr int32_t SLEEP_TIME = 500;
+constexpr int32_t RSS_UID = 1096;
 constexpr uint32_t CPU_TYPE = 1;
 constexpr uint32_t COMMON_EVENT_TYPE = 2;
 constexpr uint32_t TIMER_TYPE = 4;
@@ -83,6 +86,8 @@ constexpr uint32_t SYSTEM_SUSPEND_BLUETOOTH_NOT_USED = 9;
 constexpr uint32_t SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED = 10;
 constexpr uint32_t SYSTEM_SUSPEND_USE_ILLEGALLY = 11;
 constexpr uint32_t SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING = 12;
+
+static const std::string RSS_NAME = "resource_schedule_service";
 }
 class BgTaskClientUnitTest : public testing::Test {
 public:
@@ -110,6 +115,13 @@ void BgTaskClientUnitTest::TearDownTestCase() {}
 void BgTaskClientUnitTest::SetUp() {}
 
 void BgTaskClientUnitTest::TearDown() {}
+
+void GetNativeToken(const std::string &name, const int32_t uid)
+{
+    auto tokenId = Security::AccessToken::AccessTokenKit::GetNativeTokenId(name);
+    setuid(uid);
+    SetSelfTokenId(tokenId);
+}
 
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
 public:
@@ -463,6 +475,7 @@ HWTEST_F(BgTaskClientUnitTest, ResetAllEfficiencyResources_001, TestSize.Level1)
  */
 HWTEST_F(BgTaskClientUnitTest, StopContinuousTask_001, TestSize.Level1)
 {
+    GetNativeToken(RSS_NAME, RSS_UID);
     EXPECT_EQ((int32_t)BackgroundTaskMgrHelper::StopContinuousTask(1, 1, 1, ""), (int32_t)ERR_OK);
 }
 
@@ -474,6 +487,7 @@ HWTEST_F(BgTaskClientUnitTest, StopContinuousTask_001, TestSize.Level1)
  */
 HWTEST_F(BgTaskClientUnitTest, SuspendContinuousTask_001, TestSize.Level1)
 {
+    GetNativeToken(RSS_NAME, RSS_UID);
     EXPECT_EQ((int32_t)BackgroundTaskMgrHelper::SuspendContinuousTask(1, 1, 4, ""), (int32_t)ERR_OK);
 }
 
@@ -485,6 +499,7 @@ HWTEST_F(BgTaskClientUnitTest, SuspendContinuousTask_001, TestSize.Level1)
  */
 HWTEST_F(BgTaskClientUnitTest, ActiveContinuousTask_001, TestSize.Level1)
 {
+    GetNativeToken(RSS_NAME, RSS_UID);
     EXPECT_EQ((int32_t)BackgroundTaskMgrHelper::ActiveContinuousTask(1, 1, ""), (int32_t)ERR_OK);
 }
 
