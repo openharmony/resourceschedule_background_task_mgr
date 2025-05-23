@@ -120,7 +120,7 @@ void GetNativeToken(const std::string &name, const int32_t uid)
 {
     auto tokenId = Security::AccessToken::AccessTokenKit::GetNativeTokenId(name);
     setuid(uid);
-    SetSelfTokenId(tokenId);
+    SetSelfTokenID(tokenId);
 }
 
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
