@@ -151,9 +151,9 @@ bool BackgroundTaskMgrService::CheckCallingProcess()
 ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::string& reason,
     const sptr<IExpiredCallback>& callback, DelaySuspendInfo &delayInfo)
 {
-    pid_t callingPid = IPCSkeleton::GetCallingPid();
-    pid_t callingUid = IPCSkeleton::GetCallingUid();
     if (CheckAtomicService()) {
+        pid_t callingPid = IPCSkeleton::GetCallingPid();
+        pid_t callingUid = IPCSkeleton::GetCallingUid();
         BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail, apply transienttask not allowed",
             callingUid, callingPid);
         return ERR_BGTASK_PERMISSION_DENIED;
@@ -192,11 +192,11 @@ void BackgroundTaskMgrService::ForceCancelSuspendDelay(int32_t requestId)
 ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const ContinuousTaskParam &taskParam,
     int32_t& notificationId, int32_t& continuousTaskId)
 {
-    pid_t callingPid = IPCSkeleton::GetCallingPid();
-    pid_t callingUid = IPCSkeleton::GetCallingUid();
     if (CheckAtomicService()) {
         for (const auto mode : taskParam.bgModeIds_) {
             if (mode != BackgroundMode::AUDIO_PLAYBACK && mode != BackgroundMode::MULTI_DEVICE_CONNECTION) {
+                pid_t callingPid = IPCSkeleton::GetCallingPid();
+                pid_t callingUid = IPCSkeleton::GetCallingUid();
                 BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail,"
                     " apply continuoustask not allowed", callingUid, callingPid);
                 return ERR_BGTASK_PERMISSION_DENIED;
@@ -215,11 +215,11 @@ ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const ContinuousTaskPar
 ErrCode BackgroundTaskMgrService::UpdateBackgroundRunning(const ContinuousTaskParam &taskParam,
     int32_t& notificationId, int32_t& continuousTaskId)
 {
-    pid_t callingPid = IPCSkeleton::GetCallingPid();
-    pid_t callingUid = IPCSkeleton::GetCallingUid();
     if (CheckAtomicService()) {
         for (const auto mode : taskParam.bgModeIds_) {
             if (mode != BackgroundMode::AUDIO_PLAYBACK && mode != BackgroundMode::MULTI_DEVICE_CONNECTION) {
+                pid_t callingPid = IPCSkeleton::GetCallingPid();
+                pid_t callingUid = IPCSkeleton::GetCallingUid();
                 BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail,"
                     " update continuoustask not allowed", callingUid, callingPid);
                 return ERR_BGTASK_PERMISSION_DENIED;
