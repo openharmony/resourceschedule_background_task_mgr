@@ -14,6 +14,7 @@
  */
 
 #include "background_task_mgr_service.h"
+#include "background_mode.h"
 #include "bgtask_config.h"
 #include "bundle_manager_helper.h"
 #include <functional>
@@ -150,6 +151,13 @@ bool BackgroundTaskMgrService::CheckCallingProcess()
 ErrCode BackgroundTaskMgrService::RequestSuspendDelay(const std::string& reason,
     const sptr<IExpiredCallback>& callback, DelaySuspendInfo &delayInfo)
 {
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    pid_t callingUid = IPCSkeleton::GetCallingUid();
+    if (CheckAtomicService()) {
+        BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail, apply transienttask not allowed",
+            callingUid, callingPid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
     std::u16string reasonu16 = Str8ToStr16(reason);
     std::shared_ptr<DelaySuspendInfo> delayInfoPtr = std::make_shared<DelaySuspendInfo>(delayInfo);
     ErrCode result = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RequestSuspendDelay(
@@ -184,6 +192,17 @@ void BackgroundTaskMgrService::ForceCancelSuspendDelay(int32_t requestId)
 ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const ContinuousTaskParam &taskParam,
     int32_t& notificationId, int32_t& continuousTaskId)
 {
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    pid_t callingUid = IPCSkeleton::GetCallingUid();
+    if (CheckAtomicService()) {
+        for (const auto mode : taskParam.bgModeIds_) {
+            if (mode != BackgroundMode::AUDIO_PLAYBACK && mode != BackgroundMode::MULTI_DEVICE_CONNECTION) {
+                BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail,"
+                    " apply continuoustask not allowed", callingUid, callingPid);
+                return ERR_BGTASK_PERMISSION_DENIED;
+            }
+        }
+    }
     auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
     ErrCode result = BgContinuousTaskMgr::GetInstance()->StartBackgroundRunning(paramPtr);
     if (result == ERR_OK) {
@@ -196,6 +215,17 @@ ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const ContinuousTaskPar
 ErrCode BackgroundTaskMgrService::UpdateBackgroundRunning(const ContinuousTaskParam &taskParam,
     int32_t& notificationId, int32_t& continuousTaskId)
 {
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    pid_t callingUid = IPCSkeleton::GetCallingUid();
+    if (CheckAtomicService()) {
+        for (const auto mode : taskParam.bgModeIds_) {
+            if (mode != BackgroundMode::AUDIO_PLAYBACK && mode != BackgroundMode::MULTI_DEVICE_CONNECTION) {
+                BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail,"
+                    " update continuoustask not allowed", callingUid, callingPid);
+                return ERR_BGTASK_PERMISSION_DENIED;
+            }
+        }
+    }
     auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
     ErrCode result = BgContinuousTaskMgr::GetInstance()->UpdateBackgroundRunning(paramPtr);
     if (result == ERR_OK) {
@@ -462,6 +492,12 @@ ErrCode BackgroundTaskMgrService::SetBgTaskConfig(const std::string &configData,
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SetBgTaskConfig(configData, sourceType);
+}
+
+bool BackgroundTaskMgrService::CheckAtomicService()
+{
+    uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
+    return Security::AccessToken::AccessTokenKit::IsAtomicServiceByFullTokenID(tokenId);
 }
 
 bool BackgroundTaskMgrService::AllowDump()
