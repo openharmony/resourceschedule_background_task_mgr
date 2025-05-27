@@ -239,7 +239,7 @@ public:
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK
  */
-HWTEST_F(BgTaskClientUnitTest, BackgroundMode_001, TestSize.Level1)
+HWTEST_F(BgTaskClientUnitTest, BackgroundMode_001, TestSize.Level0)
 {
     EXPECT_EQ(DATA_TRANSFER_ID, (int32_t)BackgroundMode::DATA_TRANSFER);
     EXPECT_EQ(AUDIO_PLAYBACK_ID, (int32_t)BackgroundMode::AUDIO_PLAYBACK);
@@ -324,7 +324,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundSubMode_001, TestSize.Level1)
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK
  */
-HWTEST_F(BgTaskClientUnitTest, RequestStartBackgroundRunning_001, TestSize.Level1)
+HWTEST_F(BgTaskClientUnitTest, RequestStartBackgroundRunning_001, TestSize.Level0)
 {
     ContinuousTaskParam taskParam = ContinuousTaskParam();
     EXPECT_NE(BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam), ERR_OK);
@@ -336,7 +336,7 @@ HWTEST_F(BgTaskClientUnitTest, RequestStartBackgroundRunning_001, TestSize.Level
  * @tc.type: FUNC
  * @tc.require: issueI94UH9
  */
-HWTEST_F(BgTaskClientUnitTest, RequestUpdateBackgroundRunning_001, TestSize.Level1)
+HWTEST_F(BgTaskClientUnitTest, RequestUpdateBackgroundRunning_001, TestSize.Level0)
 {
     ContinuousTaskParam taskParam = ContinuousTaskParam();
     EXPECT_NE(BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam), ERR_OK);
@@ -348,7 +348,7 @@ HWTEST_F(BgTaskClientUnitTest, RequestUpdateBackgroundRunning_001, TestSize.Leve
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK issueI99HSB
  */
-HWTEST_F(BgTaskClientUnitTest, RequestStopBackgroundRunning_001, TestSize.Level1)
+HWTEST_F(BgTaskClientUnitTest, RequestStopBackgroundRunning_001, TestSize.Level0)
 {
     EXPECT_NE(BackgroundTaskMgrHelper::RequestStopBackgroundRunning("test", nullptr, -1), ERR_OK);
 }
@@ -359,7 +359,7 @@ HWTEST_F(BgTaskClientUnitTest, RequestStopBackgroundRunning_001, TestSize.Level1
  * @tc.type: FUNC
  * @tc.require: issueI5IRJK
  */
-HWTEST_F(BgTaskClientUnitTest, RequestBackgroundRunningForInner_001, TestSize.Level1)
+HWTEST_F(BgTaskClientUnitTest, RequestBackgroundRunningForInner_001, TestSize.Level0)
 {
     ContinuousTaskParamForInner taskParam = ContinuousTaskParamForInner();
     EXPECT_NE(BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(taskParam), ERR_OK);
