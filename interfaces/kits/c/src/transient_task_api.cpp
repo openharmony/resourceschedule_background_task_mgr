@@ -77,7 +77,7 @@ int32_t OH_BackgroundTaskManager_CancelSuspendDelay(int32_t requestId)
     return errCode / INNER_ERROR_SHIFT;
 }
 
-int32_t OH_BackgroundTaskManager_GetTransientTasksInfo(TransientTask_TransientTasksInfo *info)
+int32_t OH_BackgroundTaskManager_GetTransientTaskInfo(TransientTask_TransientTaskInfo *info)
 {
     int32_t remainingQuotaValue = 0;
     std::vector<std::shared_ptr<DelaySuspendInfo>> listValue;
