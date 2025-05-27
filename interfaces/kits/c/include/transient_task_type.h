@@ -110,17 +110,17 @@ typedef struct TransientTask_DelaySuspendInfo {
 } TransientTask_DelaySuspendInfo;
 
 /**
- * @brief Define TransientTasksInfo for an application.
+ * @brief Define TransientTaskInfo for an application.
  *
  * @since 20
  * @version 1.0
  */
-typedef struct TransientTask_TransientTasksInfo {
+typedef struct TransientTask_TransientTaskInfo {
     /** The remaining quota of the delay request */
     int32_t remainingQuota;
     /** The info of delay suspend */
     TransientTask_DelaySuspendInfo transientTasks[TRANSIENT_TASK_MAX_NUM];
-} TransientTask_TransientTasksInfo;
+} TransientTask_TransientTaskInfo;
 
 /**
  * @brief Define a callback function when delay time expired.
