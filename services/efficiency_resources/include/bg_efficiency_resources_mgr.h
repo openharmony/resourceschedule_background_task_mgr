@@ -46,6 +46,16 @@ enum class EfficiencyResourceEventTriggerType: uint32_t {
     EFFICIENCY_RESOURCE_RESET,
 };
 
+enum class CancelReason: uint32_t {
+    DEFAULT,
+    DUMPER,
+    APPLY_INTERFACE,
+    RESET_INTERFACE,
+    APP_DIED,
+    APP_DIDE_TRIGGER_PROCESS_DIED,
+    PROCESS_DIED,
+};
+
 class DataStorageHelper;
 class BgEfficiencyResourcesMgr : public DelayedSingleton<BgEfficiencyResourcesMgr>,
                             public std::enable_shared_from_this<BgEfficiencyResourcesMgr> {
@@ -75,7 +85,7 @@ private:
     void UpdateResourcesEndtime(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
         std::shared_ptr<ResourceApplicationRecord> &record, const sptr<EfficiencyResourceInfo> &resourceInfo);
     void ResetEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
-        bool isProcess);
+        bool isProcess, CancelReason cancelType = CancelReason::DEFAULT);
     ErrCode ResetAllEfficiencyResourcesInner(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
         bool isProcess);
     void RemoveRelativeProcessRecord(int32_t uid, uint32_t resourceNumber);
@@ -89,7 +99,7 @@ private:
     void ResetTimeOutResource(int32_t mapKey, bool isProcess);
     bool RemoveTargetResourceRecord(std::unordered_map<int32_t,
         std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey,
-        uint32_t cleanResource, EfficiencyResourcesEventType type);
+        uint32_t cleanResource, EfficiencyResourcesEventType type, CancelReason cancelType);
     bool GetBundleNamesForUid(int32_t uid, std::string &bundleName);
     bool IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &bundleName);
     void EraseRecordIf(ResourceRecordMap &infoMap, const std::function<bool(ResourceRecordPair)> &fun);
