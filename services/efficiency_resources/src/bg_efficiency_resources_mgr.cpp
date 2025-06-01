@@ -249,7 +249,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveAppRecord(int32_t uid, const std::string
             ResourceType::TIMER);
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             0, resourceNumber, bundleName);
-        this->ResetEfficiencyResourcesInner(callbackInfo, false);
+        this->ResetEfficiencyResourcesInner(callbackInfo, false, CancelReason::APP_DIED);
     });
     return ERR_OK;
 }
@@ -265,7 +265,7 @@ ErrCode BgEfficiencyResourcesMgr::RemoveProcessRecord(int32_t uid, int32_t pid, 
     handler_->PostTask([this, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             pid, MAX_RESOURCE_MASK ^ ResourceType::WORK_SCHEDULER ^ ResourceType::TIMER, bundleName);
-        this->ResetEfficiencyResourcesInner(callbackInfo, true);
+        this->ResetEfficiencyResourcesInner(callbackInfo, true, CancelReason::PROCESS_DIED);
     });
     return ERR_OK;
 }
@@ -430,7 +430,8 @@ void BgEfficiencyResourcesMgr::SendResourceApplyTask(int32_t uid, int32_t pid, c
         });
     } else {
         handler_->PostTask([this, callbackInfo, resourceInfo]() {
-            this->ResetEfficiencyResourcesInner(callbackInfo, resourceInfo->IsProcess());
+            this->ResetEfficiencyResourcesInner(callbackInfo, resourceInfo->IsProcess(),
+            CancelReason::APPLY_INTERFACE);
         });
     }
 }
@@ -641,7 +642,7 @@ ErrCode BgEfficiencyResourcesMgr::ResetAllEfficiencyResources()
     handler_->PostTask([this, exemptedResourceType, uid, pid, bundleName]() {
         std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
             pid, exemptedResourceType, bundleName);
-        this->ResetEfficiencyResourcesInner(callbackInfo, false);
+        this->ResetEfficiencyResourcesInner(callbackInfo, false, CancelReason::RESET_INTERFACE);
     });
     return ERR_OK;
 }
@@ -654,14 +655,14 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
             std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
                 iter->second->pid_, eraseBit, iter->second->bundleName_);
             handler_->PostTask([this, callbackInfo]() {
-                this->ResetEfficiencyResourcesInner(callbackInfo, true);
+                this->ResetEfficiencyResourcesInner(callbackInfo, true, CancelReason::APP_DIDE_TRIGGER_PROCESS_DIED);
             });
         }
     }
 }
 
 void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
-    const std::shared_ptr<ResourceCallbackInfo> &callbackInfo, bool isProcess)
+    const std::shared_ptr<ResourceCallbackInfo> &callbackInfo, bool isProcess, CancelReason cancelType)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::EfficiencyResource::Service::ResetEfficiencyResourcesInner");
@@ -671,11 +672,11 @@ void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
         callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), isProcess);
     if (isProcess) {
         RemoveTargetResourceRecord(procResourceApplyMap_, callbackInfo->GetPid(),
-            callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::RESOURCE_RESET);
+            callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::RESOURCE_RESET, cancelType);
     } else {
         RemoveTargetResourceRecord(appResourceApplyMap_, callbackInfo->GetUid(),
             callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::APP_RESOURCE_RESET);
-        RemoveRelativeProcessRecord(callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
+        RemoveRelativeProcessRecord(callbackInfo->GetUid(), callbackInfo->GetResourceNumber(), cancelType);
     }
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
         appResourceApplyMap_, procResourceApplyMap_);
@@ -905,13 +906,13 @@ void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> 
         }
         int32_t mapKey = std::atoi(dumpOption[2].c_str());
         uint32_t cleanResource = static_cast<uint32_t>(std::atoi(dumpOption[3].c_str()));
-        RemoveTargetResourceRecord(infoMap, mapKey, cleanResource, type);
+        RemoveTargetResourceRecord(infoMap, mapKey, cleanResource, type, CancelReason::DUMPER);
     }
 }
 
 bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int32_t,
     std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey, uint32_t cleanResource,
-    EfficiencyResourcesEventType type)
+    EfficiencyResourcesEventType type, CancelReason cancelType)
 {
     BGTASK_LOGD("resource record key: %{public}d, resource record size(): %{public}d",
         mapKey, static_cast<int32_t>(infoMap.size()));
@@ -928,8 +929,9 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
 
     // update the left quota of cpu efficiency resource when reset
     UpdateQuotaIfCpuReset(type, callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
-    BGTASK_LOGI("remove record from info map, mapkey %{public}d, uid: %{public}d, bundle name: %{public}s"
-        "erasebit %{public}d", mapKey, callbackInfo->GetUid(), callbackInfo->GetBundleName().c_str(), eraseBit);
+    BGTASK_LOGI("remove record from info map, mapkey %{public}d, uid: %{public}d, bundle name: %{public}s "
+        "erasebit %{public}d, reason: %{public}u", mapKey, callbackInfo->GetUid(),
+        callbackInfo->GetBundleName().c_str(), eraseBit, cancelType);
     ReportHisysEvent(EfficiencyResourceEventTriggerType::EFFICIENCY_RESOURCE_RESET, nullptr, callbackInfo, type);
     subscriberMgr_->OnResourceChanged(callbackInfo, type);
     if (iter->second->resourceNumber_ == 0) {
