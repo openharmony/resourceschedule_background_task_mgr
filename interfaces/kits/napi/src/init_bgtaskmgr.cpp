@@ -174,7 +174,7 @@ napi_value ContinuousTaskSuspendReasonInit(napi_env env, napi_value exports)
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         ContinuousTaskSuspendReason::SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED), "SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
-        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USE_ILLEGALLY), "SYSTEM_SUSPEND_USE_ILLEGALLY");
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USED_ILLEGALLY), "SYSTEM_SUSPEND_USED_ILLEGALLY");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         ContinuousTaskSuspendReason::SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING), "SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING");
     napi_property_descriptor exportFuncs[] = {

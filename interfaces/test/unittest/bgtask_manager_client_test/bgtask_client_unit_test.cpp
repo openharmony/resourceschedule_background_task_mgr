@@ -84,7 +84,7 @@ constexpr uint32_t SYSTEM_SUSPEND_AUDIO_RECORDING_NOT_RUNNING = 7;
 constexpr uint32_t SYSTEM_SUSPEND_LOCATION_NOT_USED = 8;
 constexpr uint32_t SYSTEM_SUSPEND_BLUETOOTH_NOT_USED = 9;
 constexpr uint32_t SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED = 10;
-constexpr uint32_t SYSTEM_SUSPEND_USE_ILLEGALLY = 11;
+constexpr uint32_t SYSTEM_SUSPEND_USED_ILLEGALLY = 11;
 constexpr uint32_t SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING = 12;
 
 static const std::string RSS_NAME = "resource_schedule_service";
@@ -302,7 +302,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskSuspendReason_001, TestSize.Level1)
         (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_NOT_USED);
     EXPECT_EQ(SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED,
         (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED);
-    EXPECT_EQ(SYSTEM_SUSPEND_USE_ILLEGALLY, (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USE_ILLEGALLY);
+    EXPECT_EQ(SYSTEM_SUSPEND_USED_ILLEGALLY, (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USED_ILLEGALLY);
     EXPECT_EQ(SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING,
         (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING);
 }
