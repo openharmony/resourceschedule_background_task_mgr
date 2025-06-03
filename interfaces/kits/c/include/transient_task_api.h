@@ -103,7 +103,7 @@ int32_t OH_BackgroundTaskManager_CancelSuspendDelay(int32_t requestId);
 /**
  * @brief Obtains transient task info.
  *
- * @param transientTasksInfo Indicates the transient task info of an application.
+ * @param transientTaskInfo Indicates the transient task info of an application.
  * @return {@link ERR_TRANSIENT_TASK_OK} 0 - Success.
  *         {@link ERR_TRANSIENT_TASK_CLIENT_INFO_VERIFICATION_FAILED} 9900001 - uid or pid info verify failed.
  *         {@link ERR_TRANSIENT_TASK_PARCELABLE_FAILED} 9900003 - Failed to write data into parcel.
@@ -111,7 +111,7 @@ int32_t OH_BackgroundTaskManager_CancelSuspendDelay(int32_t requestId);
  * @since 20
  * @version 1.0
  */
-int32_t OH_BackgroundTaskManager_GetTransientTaskInfo(TransientTask_TransientTaskInfo  *transientTaskInfo);
+int32_t OH_BackgroundTaskManager_GetTransientTaskInfo(TransientTask_TransientTaskInfo *transientTaskInfo);
 
 #ifdef __cplusplus
 }
