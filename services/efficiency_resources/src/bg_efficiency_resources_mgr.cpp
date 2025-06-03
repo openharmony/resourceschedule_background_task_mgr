@@ -675,8 +675,8 @@ void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
             callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::RESOURCE_RESET, cancelType);
     } else {
         RemoveTargetResourceRecord(appResourceApplyMap_, callbackInfo->GetUid(),
-            callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::APP_RESOURCE_RESET);
-        RemoveRelativeProcessRecord(callbackInfo->GetUid(), callbackInfo->GetResourceNumber(), cancelType);
+            callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::APP_RESOURCE_RESET, cancelType);
+        RemoveRelativeProcessRecord(callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
     }
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
         appResourceApplyMap_, procResourceApplyMap_);
