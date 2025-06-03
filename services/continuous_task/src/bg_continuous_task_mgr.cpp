@@ -1795,11 +1795,11 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
     }
 }
 
-void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-        
         if (!(*iter)->isHap_ && (*iter)->subscriber_) {
             // 对SA来说，长时任务暂停状态等同于取消长时任务，保持原有逻辑
             BGTASK_LOGD("continuous task suspend callback trigger");
@@ -1815,7 +1815,8 @@ void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(const std::shared_ptr<Con
     }
 }
 
-void BgContinuousTaskMgr::NotifySubscribersTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+void BgContinuousTaskMgr::NotifySubscribersTaskActive(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {

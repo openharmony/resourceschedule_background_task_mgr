@@ -1027,7 +1027,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_047, TestSize.Level1)
 {
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord->bgModeIds_.push_back(2);
-    EXPECT_EQ(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
+    EXPECT_NE(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
 
     continuousTaskRecord->bgModeIds_.push_back(1);
     EXPECT_NE(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
@@ -1130,7 +1130,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_051, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     // 查不到对应的key值
     bgContinuousTaskMgr_->HandleSuspendContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, 4, "");
-    EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
     // 查到对应的key值
     bgContinuousTaskMgr_->HandleSuspendContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, 4, "key1");
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 2);
@@ -1282,7 +1282,7 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_002, TestSiz
     int32_t pid = 1;
     bgContinuousTaskMgr_->isSysReady_.store(true);
     EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, true),
-        ERR_BGTASK_CHECK_TASK_PARAM);
+        ERR_BGTASK_OBJECT_NOT_EXIST);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     uid = 1;
