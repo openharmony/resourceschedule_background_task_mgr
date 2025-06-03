@@ -431,7 +431,7 @@ void BgEfficiencyResourcesMgr::SendResourceApplyTask(int32_t uid, int32_t pid, c
     } else {
         handler_->PostTask([this, callbackInfo, resourceInfo]() {
             this->ResetEfficiencyResourcesInner(callbackInfo, resourceInfo->IsProcess(),
-            CancelReason::APPLY_INTERFACE);
+                CancelReason::APPLY_INTERFACE);
         });
     }
 }
