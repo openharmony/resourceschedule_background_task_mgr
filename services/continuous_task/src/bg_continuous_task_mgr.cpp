@@ -91,6 +91,7 @@ static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DELAY_TIME = 2000;
+static constexpr int32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 5000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
 static constexpr int32_t MAX_DUMP_INNER_PARAM_NUMS = 4;
@@ -943,6 +944,17 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
         return ERR_OK;
     }
     BGTASK_LOGD("notificationText %{public}s", notificationText.c_str());
+    if (continuousTaskRecord->bgModeIds_.size() == 1 &&
+        continuousTaskRecord->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
+            auto task = [this, continuousTaskRecord, appName, notificationText, &ret]() {
+                if (!continuousTaskInfosMap_.empty()) {
+                    ret = NotificationTools::GetInstance()->PublishNotification(continuousTaskRecord,
+                        appName, notificationText, bgTaskUid_);
+                }
+            };
+            handler_->PostTask(task, NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
+            return ret;
+        }
     return NotificationTools::GetInstance()->PublishNotification(continuousTaskRecord,
         appName, notificationText, bgTaskUid_);
 }
