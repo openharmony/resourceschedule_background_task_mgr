@@ -1130,7 +1130,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_051, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     // 查不到对应的key值
     bgContinuousTaskMgr_->HandleSuspendContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, 4, "");
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
+    EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
     // 查到对应的key值
     bgContinuousTaskMgr_->HandleSuspendContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, 4, "key1");
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 2);

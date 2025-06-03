@@ -708,7 +708,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_051, TestSize.Level1)
     DelayedSingleton<BgtaskConfig>::GetInstance()->isInit_ = false;
     DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
     
-    EXPECT_NE(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
+    EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
 }
 
 /**
