@@ -1027,7 +1027,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_047, TestSize.Level1)
 {
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord->bgModeIds_.push_back(2);
-    EXPECT_EQ(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
+    EXPECT_NE(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
 
     continuousTaskRecord->bgModeIds_.push_back(1);
     EXPECT_NE(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
@@ -1282,7 +1282,7 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_002, TestSiz
     int32_t pid = 1;
     bgContinuousTaskMgr_->isSysReady_.store(true);
     EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, true),
-        ERR_BGTASK_CHECK_TASK_PARAM);
+        ERR_BGTASK_OBJECT_NOT_EXIST);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     uid = 1;
@@ -1301,6 +1301,28 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_002, TestSiz
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, true), ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, false), ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_050
+ * @tc.desc: test SendContinuousTaskNotification.
+ * @tc.type: FUNC
+ * @tc.require: issueICC87K
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_050, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["abilityName"] = 1;
+    info.appName_ = "appName";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+    continuousTaskRecord->uid_ = 1;
+    continuousTaskRecord->bgModeId_ = 2;
+    continuousTaskRecord->bgModeIds_.clear();
+    continuousTaskRecord->bgModeIds_.push_back(continuousTaskRecord->bgModeId_);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord;
+    EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(continuousTaskRecord), ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
