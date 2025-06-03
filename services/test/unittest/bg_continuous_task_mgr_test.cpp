@@ -1304,12 +1304,12 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_002, TestSiz
 }
 
 /**
- * @tc.name: BgTaskManagerUnitTest_050
+ * @tc.name: BgTaskManagerUnitTest_054
  * @tc.desc: test SendContinuousTaskNotification.
  * @tc.type: FUNC
  * @tc.require: issueICC87K
  */
-HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_050, TestSize.Level1)
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_054, TestSize.Level1)
 {
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
