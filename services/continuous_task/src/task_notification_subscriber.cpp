@@ -18,6 +18,7 @@
 #include <sstream>
 
 #include "bg_continuous_task_mgr.h"
+#include "bgtask_hitrace_chain.h"
 #include "continuous_task_log.h"
 #include "string_wrapper.h"
 
@@ -47,6 +48,7 @@ void TaskNotificationSubscriber::OnDisconnected() {}
 void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::Notification> &notification,
     const std::shared_ptr<Notification::NotificationSortingMap> &sortingMap, int deleteReason)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (notification == nullptr) {
         BGTASK_LOGW("notification param is null");
         return;

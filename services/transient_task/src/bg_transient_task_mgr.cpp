@@ -31,6 +31,7 @@
 #include "want.h"
 
 #include "background_task_mgr_service.h"
+#include "bgtask_hitrace_chain.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "time_provider.h"
 #include "transient_task_log.h"
@@ -176,6 +177,7 @@ ErrCode BgTransientTaskMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::st
 ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
     const sptr<IExpiredCallback>& callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::TransientTask::Service::RequestSuspendDelay");
 

@@ -24,6 +24,7 @@
 #include "event_runner.h"
 #include "system_ability_definition.h"
 #include "iservice_registry.h"
+#include "bgtask_hitrace_chain.h"
 #include "bgtaskmgr_inner_errors.h"
 
 #include "resource_type.h"
@@ -348,6 +349,7 @@ bool BgEfficiencyResourcesMgr::CheckOrUpdateCpuApplyQuota(int32_t uid, const std
 ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
     const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::EfficiencyResource::Service::ApplyEfficiencyResources");
 

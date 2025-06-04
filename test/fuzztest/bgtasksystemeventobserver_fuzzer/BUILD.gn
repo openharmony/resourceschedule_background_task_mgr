@@ -76,6 +76,7 @@ ohos_fuzztest("BgTaskSystemEventObserverFuzzTest") {
     "eventhandler:libeventhandler",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "hitrace:libhitracechain",
     "init:libbegetutil",
     "ipc:ipc_single",
     "resource_management:global_resmgr",

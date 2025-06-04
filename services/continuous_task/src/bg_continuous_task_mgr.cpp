@@ -42,6 +42,7 @@
 #include "system_ability_definition.h"
 
 #include "bgtask_common.h"
+#include "bgtask_hitrace_chain.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_record.h"
 #include "continuous_task_log.h"
@@ -425,6 +426,7 @@ std::shared_ptr<Global::Resource::ResourceManager> BgContinuousTaskMgr::GetBundl
 
 bool BgContinuousTaskMgr::GetNotificationPrompt()
 {
+    BgTaskHiTraceChain traceChain(__func__);
     continuousTaskText_.clear();
     continuousTaskSubText_.clear();
     AppExecFwk::BundleInfo bundleInfo;
@@ -493,6 +495,7 @@ int32_t BgContinuousTaskMgr::GetBgTaskUid()
 bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId,
     const std::string &bundleName, const std::string &appName)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
         AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId)) {
@@ -529,6 +532,7 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
 ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId,
     bool isNewApi, uint64_t fullTokenId, const std::string &bundleName)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (!isNewApi) {
         if (configuredBgMode == INVALID_BGMODE) {
             BGTASK_LOGE("ability without background mode config");
@@ -661,6 +665,7 @@ ErrCode BgContinuousTaskMgr::RequestGetContinuousTasksByUidForInner(int32_t uid,
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     ErrCode result = ERR_OK;
     int32_t uid = taskParam->uid_;
     pid_t callingPid = IPCSkeleton::GetCallingPid();
@@ -693,6 +698,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
@@ -771,6 +777,7 @@ ErrCode BgContinuousTaskMgr::CheckSubMode(const std::shared_ptr<AAFwk::Want> wan
 
 ErrCode BgContinuousTaskMgr::UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
@@ -917,6 +924,7 @@ uint32_t GetBgModeNameIndex(uint32_t bgModeId, bool isNewApi)
 ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (continuousTaskText_.empty()) {
         BGTASK_LOGE("get notification prompt info failed, continuousTaskText_ is empty");
         return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
@@ -1044,6 +1052,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityNam
 ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::string &abilityName,
     int32_t abilityId)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     std::string mapKey = std::to_string(uid) + SEPARATOR + abilityName + SEPARATOR + std::to_string(abilityId);
 
     auto iter = continuousTaskInfosMap_.find(mapKey);
@@ -1994,6 +2003,7 @@ int32_t BgContinuousTaskMgr::RefreshTaskRecord()
 
 std::string BgContinuousTaskMgr::GetMainAbilityLabel(const std::string &bundleName, int32_t userId)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
         AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId)) {
@@ -2023,6 +2033,7 @@ std::string BgContinuousTaskMgr::GetMainAbilityLabel(const std::string &bundleNa
 
 void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration &configuration)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;

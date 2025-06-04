@@ -28,6 +28,7 @@ config("bgtaskmgr_service_public_config") {
 BgTaskMgrServicecSrc = [
   "common/src/app_state_observer.cpp",
   "common/src/bgtask_config.cpp",
+  "common/src/bgtask_hitrace_chain.cpp",
   "common/src/bundle_manager_helper.cpp",
   "common/src/data_storage_helper.cpp",
   "common/src/report_hisysevent_data.cpp",
@@ -101,6 +102,7 @@ ohos_shared_library("bgtaskmgr_service") {
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
+    "hitrace:libhitracechain",
     "init:libbegetutil",
     "ipc:ipc_single",
     "jsoncpp:jsoncpp",
@@ -163,6 +165,7 @@ ohos_static_library("bgtaskmgr_service_static") {
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
+    "hitrace:libhitracechain",
     "init:libbegetutil",
     "ipc:ipc_single",
     "jsoncpp:jsoncpp",
