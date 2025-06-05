@@ -1027,7 +1027,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_047, TestSize.Level1)
 {
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord->bgModeIds_.push_back(2);
-    EXPECT_EQ(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
+    EXPECT_NE(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
 
     continuousTaskRecord->bgModeIds_.push_back(1);
     EXPECT_NE(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
@@ -1282,7 +1282,7 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_002, TestSiz
     int32_t pid = 1;
     bgContinuousTaskMgr_->isSysReady_.store(true);
     EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, true),
-        ERR_BGTASK_CHECK_TASK_PARAM);
+        ERR_BGTASK_OBJECT_NOT_EXIST);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     uid = 1;

@@ -426,7 +426,8 @@ ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, u
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskMgrService::SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+ErrCode BackgroundTaskMgrService::SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason,
+    const std::string &key)
 {
     if (!CheckCallingToken() || !CheckCallingProcess()) {
         BGTASK_LOGW("SuspendContinuousTask not allowed");
