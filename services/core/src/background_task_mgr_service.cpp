@@ -16,6 +16,7 @@
 #include "background_task_mgr_service.h"
 #include "background_mode.h"
 #include "bgtask_config.h"
+#include "bgtask_hitrace_chain.h"
 #include "bundle_manager_helper.h"
 #include <functional>
 #include "ability_manager_client.h"
@@ -50,6 +51,7 @@ BackgroundTaskMgrService::~BackgroundTaskMgrService() {}
 
 void BackgroundTaskMgrService::OnStart()
 {
+    BgTaskHiTraceChain traceChain(__func__);
     BGTASK_LOGI("BackgroundTaskMgrService service onStart.");
     if (state_ == ServiceRunningState::STATE_RUNNING) {
         BGTASK_LOGW("Service has already started.");
@@ -65,6 +67,7 @@ void BackgroundTaskMgrService::OnStart()
 
 void BackgroundTaskMgrService::SetReady(uint32_t flag)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     BGTASK_LOGI("BackgroundTaskMgrService service SetReady.");
     {
         std::lock_guard<std::mutex> lock(readyMutex_);
@@ -88,11 +91,13 @@ void BackgroundTaskMgrService::SetReady(uint32_t flag)
 
 void BackgroundTaskMgrService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->OnAddSystemAbility(systemAbilityId, deviceId);
 }
 
 void BackgroundTaskMgrService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
     BgContinuousTaskMgr::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
@@ -100,6 +105,7 @@ void BackgroundTaskMgrService::OnRemoveSystemAbility(int32_t systemAbilityId, co
 
 void BackgroundTaskMgrService::Init()
 {
+    BgTaskHiTraceChain traceChain(__func__);
     runner_ = AppExecFwk::EventRunner::Create(BGTASK_SERVICE_NAME);
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->Init(runner_);
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Init(runner_);
@@ -108,6 +114,7 @@ void BackgroundTaskMgrService::Init()
 
 void BackgroundTaskMgrService::OnStop()
 {
+    BgTaskHiTraceChain traceChain(__func__);
     BgContinuousTaskMgr::GetInstance()->Clear();
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->Clear();
     state_ = ServiceRunningState::STATE_NOT_START;
@@ -237,6 +244,7 @@ ErrCode BackgroundTaskMgrService::UpdateBackgroundRunning(const ContinuousTaskPa
 
 ErrCode BackgroundTaskMgrService::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     auto paramPtr = sptr<ContinuousTaskParamForInner>(new ContinuousTaskParamForInner(taskParam));
     return BgContinuousTaskMgr::GetInstance()->RequestBackgroundRunningForInner(paramPtr);
 }
@@ -244,6 +252,7 @@ ErrCode BackgroundTaskMgrService::RequestBackgroundRunningForInner(const Continu
 ErrCode BackgroundTaskMgrService::RequestGetContinuousTasksByUidForInner(int32_t uid,
     std::vector<ContinuousTaskInfo> &list)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (!CheckCallingToken()) {
         BGTASK_LOGW("RequestGetContinuousTasksByUidForInner not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
@@ -282,6 +291,7 @@ ErrCode BackgroundTaskMgrService::GetAllContinuousTasks(std::vector<ContinuousTa
 
 ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<TransientTaskAppInfo> &list)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (!CheckCallingToken()) {
         BGTASK_LOGW("GetTransientTaskApps not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
@@ -301,16 +311,19 @@ ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<TransientTask
 
 ErrCode BackgroundTaskMgrService::PauseTransientTaskTimeForInner(int32_t uid)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->PauseTransientTaskTimeForInner(uid);
 }
 
 ErrCode BackgroundTaskMgrService::StartTransientTaskTimeForInner(int32_t uid)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->StartTransientTaskTimeForInner(uid);
 }
 
 ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
     if (!CheckCallingToken()) {
@@ -332,6 +345,7 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTa
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     bool isHap = false;
     if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
         BGTASK_LOGW("SubscribeBackgroundTask not allowed");
@@ -358,6 +372,7 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
 
 ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     bool isHap = false;
     if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
         BGTASK_LOGW("UnsubscribeBackgroundTask not allowed");
@@ -406,6 +421,7 @@ ErrCode BackgroundTaskMgrService::ResetAllEfficiencyResources()
 
 ErrCode BackgroundTaskMgrService::GetAllEfficiencyResources(std::vector<EfficiencyResourceInfo> &resourceInfoList)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     std::vector<std::shared_ptr<EfficiencyResourceInfo>> list {};
     ErrCode result = DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->GetAllEfficiencyResources(list);
     if (result == ERR_OK) {
@@ -448,6 +464,7 @@ ErrCode BackgroundTaskMgrService::GetEfficiencyResourcesInfos(
 ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType,
     const std::string &key)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (!CheckCallingToken() || !CheckCallingProcess()) {
         BGTASK_LOGW("StopContinuousTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
@@ -478,6 +495,7 @@ ErrCode BackgroundTaskMgrService::ActiveContinuousTask(int32_t uid, int32_t pid,
 
 ErrCode BackgroundTaskMgrService::AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (!CheckCallingToken()) {
         BGTASK_LOGW("AVSessionNotifyUpdateNotification not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
@@ -487,6 +505,7 @@ ErrCode BackgroundTaskMgrService::AVSessionNotifyUpdateNotification(int32_t uid,
 
 ErrCode BackgroundTaskMgrService::SetBgTaskConfig(const std::string &configData, int32_t sourceType)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (!CheckCallingToken()) {
         BGTASK_LOGW("SetBgTaskConfig not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;

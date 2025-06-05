@@ -20,6 +20,7 @@
 #include "system_ability_definition.h"
 
 #include "bg_continuous_task_mgr.h"
+#include "bgtask_hitrace_chain.h"
 #include "bg_transient_task_mgr.h"
 #include "continuous_task_log.h"
 #include "bg_efficiency_resources_mgr.h"
@@ -35,6 +36,7 @@ const std::string TASK_ON_APP_DIED = "OnAppDiedTask";
 
 void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (abilityStateData.abilityState != static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED)) {
         return;
     }
@@ -57,6 +59,7 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
 
 void AppStateObserver::OnAppCacheStateChanged(const AppExecFwk::AppStateData &appStateData)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     if (appStateData.state != static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_CACHED)) {
         return;
     }
@@ -77,18 +80,21 @@ void AppStateObserver::OnAppCacheStateChanged(const AppExecFwk::AppStateData &ap
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     BGTASK_LOGD("process died, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
     OnProcessDiedEfficiencyRes(processData);
 }
 
 void AppStateObserver::OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->
         RemoveProcessRecord(processData.uid, processData.pid, processData.bundleName);
 }
 
 void AppStateObserver::OnAppStopped(const AppExecFwk::AppStateData &appStateData)
 {
+    BgTaskHiTraceChain traceChain(__func__);
     BGTASK_LOGD("app stopped, uid : %{public}d", appStateData.uid);
     if (!ValidateAppStateData(appStateData)) {
         BGTASK_LOGE("%{public}s : validate app state data failed!", __func__);
