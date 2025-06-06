@@ -254,7 +254,7 @@ ErrCode BackgroundTaskMgrService::RequestGetContinuousTasksByUidForInner(int32_t
 {
     BgTaskHiTraceChain traceChain(__func__);
     pid_t callingUid = IPCSkeleton::GetCallingUid();
-    if (!CheckCallingToken() || uid != callingUid) {
+    if (!CheckCallingToken() && uid != callingUid) {
         BGTASK_LOGW("RequestGetContinuousTasksByUidForInner not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
