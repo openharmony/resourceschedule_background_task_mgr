@@ -955,7 +955,9 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     if (continuousTaskRecord->bgModeIds_.size() == 1 &&
         continuousTaskRecord->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
             auto task = [this, continuousTaskRecord, appName, notificationText, &ret]() {
-                if (!continuousTaskInfosMap_.empty()) {
+                auto iter = avSessionNotification_.find(continuousTaskRecord->uid_);
+                bool isPublish = (iter != avSessionNotification_.end()) ? iter->second : false;
+                if (!continuousTaskInfosMap_.empty() && !isPublish) {
                     ret = NotificationTools::GetInstance()->PublishNotification(continuousTaskRecord,
                         appName, notificationText, bgTaskUid_);
                 }
