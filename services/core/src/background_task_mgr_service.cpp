@@ -325,6 +325,7 @@ ErrCode BackgroundTaskMgrService::StartTransientTaskTimeForInner(int32_t uid)
 ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list)
 {
     BgTaskHiTraceChain traceChain(__func__);
+    bool isHap = false;
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
     if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
