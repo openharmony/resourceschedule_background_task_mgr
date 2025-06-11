@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"关闭通知计算任务将停止",
+            "value":"正在运行计算任务，删除通知后任务将停止",
             "attr":{
                 "priority":"translate"
             }
