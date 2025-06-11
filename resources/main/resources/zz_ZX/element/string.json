@@ -30,7 +30,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"[TS_972421]_A computing task is running."
+            "value":"[TS_972421]_A computing task is in progress. Closing this notification will end it."
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
