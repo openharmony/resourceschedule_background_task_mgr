@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"रिकॉर्डिंग कार्य चल रहा है।",
+            "value":"रिकॉर्डिंग का कार्य प्रगति में है। इस अधिसूचना को बंद करने से यह समाप्त हो जाएगी।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"ऑडियो प्लेबैक कार्य चल रहा है।",
+            "value":"ऑडियो/वीडियो प्लेबैक का कार्य प्रगति में है। इस अधिसूचना को बंद करने से यह समाप्त हो जाएगी।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"वितरित कार्य चल रहा है।",
+            "value":"क्रॉस-डिवाइस सहयोग का कार्य प्रगति में है। इस अधिसूचना को बंद करने से यह समाप्त हो जाएगी।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"कॉल संबंधी कार्य चल रहा है।",
+            "value":"कॉल प्रगति में है। इस अधिसूचना को बंद करने से यह समाप्त हो जाएगी।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"स्थिति निर्धारण कार्य चल रहा है।",
+            "value":"स्थिति निर्धारण का कार्य प्रगति में है। इस अधिसूचना को बंद करने से यह समाप्त हो जाएगी।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"WLAN संबंधी कार्य चल रहा है।",
+            "value":"WLAN का कार्य प्रगति में है। इस अधिसूचना को बंद करने से यह समाप्त हो जाएगी।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"ब्लूटूथ संबंधी कार्य चल रहा है।",
+            "value":"ब्लूटूथ का कार्य प्रगति में है। इस अधिसूचना को बंद करने से यह समाप्त हो जाएगी।",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"डेटा ट्रांसफ़र कार्य चल रहा है।",
+            "value":"डेटा ट्रांसफ़र का कार्य प्रगति में है। इस अधिसूचना को बंद करने से यह समाप्त हो जाएगी।",
             "attr":{
                 "priority":"translate"
             }
