@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"正在運行錄製任務",
+            "value":"正在運行錄製任務，刪除通知後任務將停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"正在運行音訊播放任務",
+            "value":"正在運行影音播放任務，刪除通知後任務將停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"正在運行分佈式任務",
+            "value":"正在運行分佈式任務，刪除通知後任務將停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"正在運行通話相關任務",
+            "value":"正在運行通話相關任務，刪除通知後任務將停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"正在運行定位任務",
+            "value":"正在運行定位任務，刪除通知後任務將停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"正在運行 WLAN 相關任務",
+            "value":"正在運行 WLAN 相關任務，刪除通知後任務將停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"正在運行藍牙相關任務",
+            "value":"正在運行藍牙相關任務，刪除通知後任務將停止",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"正在運行數據傳輸任務",
+            "value":"正在運行數據傳輸任務，刪除通知後任務將停止",
             "attr":{
                 "priority":"translate"
             }
