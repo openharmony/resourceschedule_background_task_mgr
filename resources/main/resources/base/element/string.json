@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"The computing task will stop if you turn off this notification.",
+            "value":"A computing task is in progress. Closing this notification will end it.",
             "attr":{
                 "priority":"translate"
             }
