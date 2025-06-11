@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"একটি রেকর্ডিং টাস্ক চলমান রয়েছে।",
+            "value":"একটি রেকর্ডিং টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"একটি অডিও প্লেব্যাক টাস্ক চলমান রয়েছে।",
+            "value":"একটি অডিও/ভিডিও প্লেব্যাক টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"একটি ডিস্ট্রিবিউটেড টাস্ক চলমান রয়েছে।",
+            "value":"একাধিক ডিভাইসের মধ্যে সমন্বয়মূলক একটি টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"একটি কল সংশ্লিষ্ট টাস্ক চলমান রয়েছে।",
+            "value":"একটি কল চলছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"একটি পজিশনিং টাস্ক চলমান রয়েছে।",
+            "value":"একটি পজিশনিং টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"একটি WLAN সংশ্লিষ্ট টাস্ক চলমান রয়েছে।",
+            "value":"একটি WLAN টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"একটি ব্লুটুথ সংশ্লিষ্ট টাস্ক চলমান রয়েছে।",
+            "value":"একটি ব্লুটুথ টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"একটি ডেটা স্থানান্তর টাস্ক চলমান রয়েছে।",
+            "value":"একটি ডেটা স্থানান্তরের টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
                 "priority":"translate"
             }
