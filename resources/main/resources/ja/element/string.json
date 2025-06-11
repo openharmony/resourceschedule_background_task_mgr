@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"録音タスクが実行中です。",
+            "value":"録音タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"音声再生タスクが実行中です。",
+            "value":"オーディオ/ビデオ再生タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"分散タスクが実行中です。",
+            "value":"デバイス間のコラボレーションタスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"通話関連タスクが実行中です。",
+            "value":"通話中です。この通知を閉じると、通話が終了します。",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"測位タスクが実行中です。",
+            "value":"測位タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"WLAN関連タスクが実行中です。",
+            "value":"WLANタスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Bluetooth関連タスクが実行中です。",
+            "value":"Bluetoothタスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"データ転送タスクが実行中です。",
+            "value":"データ転送タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
                 "priority":"translate"
             }
