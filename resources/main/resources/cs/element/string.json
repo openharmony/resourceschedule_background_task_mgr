@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Úloha nahrávání je spuštěna.",
+            "value":"Probíhá úloha nahrávání. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Úloha přehrávání zvuku je spuštěna.",
+            "value":"Probíhá úloha přehrávání audia/videa. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Úloha distribuce je spuštěna.",
+            "value":"Probíhá úloha spolupráce mezi zařízeními. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Úloha související s voláním je spuštěna.",
+            "value":"Probíhá hovor. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Úloha polohování je spuštěna.",
+            "value":"Probíhá úloha určování polohy. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Úloha související se sítí WLAN je spuštěna.",
+            "value":"Probíhá úloha WLAN. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Úloha související s Bluetooth je spuštěna.",
+            "value":"Probíhá úloha Bluetooth. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Úloha přenosu dat je spuštěna.",
+            "value":"Probíhá úloha přenosu dat. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
                 "priority":"translate"
             }
