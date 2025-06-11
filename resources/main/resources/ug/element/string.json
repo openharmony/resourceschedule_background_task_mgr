@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"ھېسابلاش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"ھېسابلاش ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
                 "priority":"translate"
             }
