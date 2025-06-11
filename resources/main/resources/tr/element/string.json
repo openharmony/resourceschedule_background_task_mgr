@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Bir ses kaydı görevi çalışıyor.",
+            "value":"Bir kayıt görevi devam ediyor. Bu bildirim kapatıldığında sonlandırılacaktır.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Bir ses oynatma görevi çalışıyor.",
+            "value":"Bir ses/video oynatma görevi devam ediyor. Bu bildirim kapatıldığında sonlandırılacaktır.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Dağıtılmış bir görev çalışıyor.",
+            "value":"Cihazlar arası iş birliği görevi devam ediyor. Bu bildirim kapatıldığında sonlandırılacaktır.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Aramayla ilgili bir görev çalışıyor.",
+            "value":"Bir arama devam ediyor. Bu bildirim kapatıldığında sonlandırılacaktır.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Bir konumlandırma görevi çalışıyor.",
+            "value":"Bir konumlandırma görevi devam ediyor. Bu bildirim kapatıldığında sonlandırılacaktır.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"WLAN ile ilgili bir görev çalışıyor.",
+            "value":"Bir WLAN görevi devam ediyor. Bu bildirim kapatıldığında sonlandırılacaktır.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Bluetooth ile ilgili bir görev çalışıyor.",
+            "value":"Bir Bluetooth görevi devam ediyor. Bu bildirim kapatıldığında sonlandırılacaktır.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Bir veri aktarma görevi çalışıyor.",
+            "value":"Bir veri aktarma görevi devam ediyor. Bu bildirim kapatıldığında sonlandırılacaktır.",
             "attr":{
                 "priority":"translate"
             }
