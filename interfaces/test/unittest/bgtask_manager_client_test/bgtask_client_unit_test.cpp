@@ -605,6 +605,8 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetTokenId(), 0);
     EXPECT_EQ(info3->GetContinuousTaskId(), 1);
     EXPECT_EQ(info3->GetCancelReason(), 1);
+    EXPECT_EQ(info3->GetSuspendState(), false);
+    EXPECT_EQ(info3->GetSuspendReason(), -1);
 }
 
 /**
