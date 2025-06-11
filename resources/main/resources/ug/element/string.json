@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"ئۈن ئېلىش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"ئۈن ئېلىش ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"ئاۋاز قويۇش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"مېدىيا قويۇش ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"تارقاق ۋەزىپە يۈرۈۋاتىدۇ...",
+            "value":"تارقاق ۋەزىپە يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"چاقىرىق ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"چاقىرىق ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"ئورۇن بەلگىلەش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"ئورۇن بەلگىلەش ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"\u200fWLAN ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"نۆۋەتتە WLAN ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"كۆكچىش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"كۆكچىش ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"مەلۇمات يوللاش ۋەزىپىسى يۈرۈۋاتىدۇ...",
+            "value":"مەلۇمات يوللاش ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
                 "priority":"translate"
             }
