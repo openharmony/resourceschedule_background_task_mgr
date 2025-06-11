@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Tugas rakaman sedang berjalan.",
+            "value":"Tugas rakaman sedang dijalankan. Menutup pemberitahuan ini akan menamatkannya.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Tugas main balik audio sedang berjalan.",
+            "value":"Tugas main balik audio/video sedang berjalan. Menutup pemberitahuan ini akan menamatkannya.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Tugas teragih sedang berjalan.",
+            "value":"Tugas kolaborasi silang peranti sedang dijalankan. Menutup pemberitahuan ini akan menamatkannya.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Tugas yang berkaitan dengan panggilan sedang berjalan.",
+            "value":"Panggilan sedang berlangsung. Menutup pemberitahuan ini akan menamatkannya.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Tugas penentududukan sedang berjalan.",
+            "value":"Tugas penentududukan sedang dijalankan. Menutup pemberitahuan ini akan menamatkannya.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Tugas yang berkaitan dengan WLAN sedang berjalan.",
+            "value":"Tugas WLAN sedang dijalankan. Menutup pemberitahuan ini akan menamatkannya.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Tugas yang berkaitan dengan Bluetooth sedang berjalan.",
+            "value":"Tugas Bluetooth sedang dijalankan. Menutup pemberitahuan ini akan menamatkannya.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Tugas pemindahan data sedang berjalan.",
+            "value":"Tugas pemindahan data sedang dijalankan. Menutup pemberitahuan ini akan menamatkannya.",
             "attr":{
                 "priority":"translate"
             }

@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Je spustená úloha záznamu.",
+            "value":"Prebieha úloha záznamu. Zatvorením tohto upozornenia sa ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Je spustená úloha prehrávania zvuku.",
+            "value":"Prebieha úloha prehrávania zvuku/videa. Zatvorením tohto upozornenia sa ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Je spustená distribuovaná úloha.",
+            "value":"Prebieha úloha spolupráce medzi zariadeniami. Zatvorením tohto upozornenia sa ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Je spustená úloha volania.",
+            "value":"Prebieha hovor. Zatvorením tohto upozornenia sa ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Je spustená úloha určovania polohy.",
+            "value":"Prebieha úloha určovania polohy. Zatvorením tohto upozornenia sa ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Je spustená úloha WLAN.",
+            "value":"Prebieha úloha siete WLAN. Zatvorením tohto upozornenia sa ukončí.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Je spustená úloha Bluetooth.",
+            "value":"Prebieha úloha Bluetooth. Zatvorením tohto upozornenia sa ukončí.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Je spustená úloha prenosu údajov.",
+            "value":"Prebieha úloha prenosu údajov. Zatvorením tohto upozornenia sa ukončí.",
             "attr":{
                 "priority":"translate"
             }

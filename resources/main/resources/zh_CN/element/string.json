@@ -2,63 +2,63 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"关闭通知后数据传输任务将停止",
+            "value":"正在运行数据传输任务，删除通知后任务将停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"关闭通知后音视频播放任务将停止",
+            "value":"正在运行音视频播放任务，删除通知后任务将停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"关闭通知后录制任务将停止",
+            "value":"正在运行录制任务，删除通知后任务将停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"关闭通知后定位任务将停止",
+            "value":"正在运行定位任务，删除通知后任务将停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"关闭通知后蓝牙相关任务将停止",
+            "value":"正在运行蓝牙相关任务，删除通知后任务将停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"关闭通知后分布式任务将停止",
+            "value":"正在运行分布式任务，删除通知后任务将停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"关闭通知后 WLAN 相关任务将停止",
+            "value":"正在运行 WLAN 相关任务，删除通知后任务将停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"关闭通知后通话相关任务将停止",
+            "value":"正在运行通话相关任务，删除通知后任务将停止",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"关闭通知计算任务将停止",
+            "value":"正在运行计算任务，删除通知后任务将停止",
             "attr":{
                 "priority":"translate"
             }

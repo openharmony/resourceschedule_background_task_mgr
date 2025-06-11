@@ -2,28 +2,28 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Yozib olish vazifasi bajarilmoqda.",
+            "value":"Yozib olish jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Audio ijrosi vazifasi bajarilmoqda.",
+            "value":"Audio/video ijrosi jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Taqsimlangan vazifa bajarilmoqda.",
+            "value":"Qurilmalararo hamkorlik jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Chaqiruvga aloqador vazifa bajarilmoqda.",
+            "value":"Chaqiruv jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
@@ -37,21 +37,21 @@
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Joylashuvni aniqlash vazifasi bajarilmoqda.",
+            "value":"Joylashuvni aniqlash jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"WLAN tarmoqqa aloqador vazifa bajarilmoqda.",
+            "value":"WLAN vazifasi bajarilmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Bluetooth funksiyasiga aloqador vazifa bajarilmoqda.",
+            "value":"Bluetooth vazifasi bajarilmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Maʼlumot o‘tkazish vazifasi bajarilmoqda.",
+            "value":"Maʼlumot o‘tkazish jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
