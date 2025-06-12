@@ -1220,7 +1220,7 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
 {
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
-        if (iter->second->GetUid() != uid || iter->second->GetPid() != pid) {
+        if (iter->second->GetUid() != uid || iter->second->GetPid() != pid || !iter->second->suspendState_) {
             ++iter;
             continue;
         }
