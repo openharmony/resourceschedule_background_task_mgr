@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"En optagelsesopgave er i gang.",
+            "value":"Der er en optagelsesopgave i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"En lydafspilningsopgave er i gang.",
+            "value":"En opgave med lyd-/videoafspilning er i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"En distribueret opgave er i gang.",
+            "value":"Der er en opgave om samarbejde på tværs af enheder i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"En opkaldsrelateret opgave er i gang.",
+            "value":"Der er et opkald i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"En positioneringsopgave er i gang.",
+            "value":"Der er en positioneringsopgave i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"En WLAN-relateret opgave er i gang.",
+            "value":"Der er en WLAN-opgave i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"En Bluetooth-relateret opgave er i gang.",
+            "value":"Der er en Bluetooth-opgave i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"En dataoverførselsopgave er i gang.",
+            "value":"Der er en dataoverførselsopgave i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
                 "priority":"translate"
             }

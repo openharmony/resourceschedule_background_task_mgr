@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Tallennustehtävä on käynnissä.",
+            "value":"Tallennustehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Äänen toistotehtävä on käynnissä.",
+            "value":"Äänen/videon toistotehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Yleinen tehtävä on käynnissä.",
+            "value":"Laitteiden välinen yhteiskäyttötehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Puheluun liittyvä tehtävä on käynnissä.",
+            "value":"Puhelu on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Paikannustehtävä on käynnissä.",
+            "value":"Paikannustehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"WLANiin liittyvä tehtävä on käynnissä.",
+            "value":"WLAN-tehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Bluetoothiin liittyvä tehtävä on käynnissä.",
+            "value":"Bluetooth-tehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Tiedonsiirtotehtävä on käynnissä.",
+            "value":"Tietojen siirtotehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
                 "priority":"translate"
             }

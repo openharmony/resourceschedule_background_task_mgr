@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Izvaja se opravilo snemanja.",
+            "value":"V teku je opravilo snemanja. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Izvaja se opravilo predvajanja zvoka.",
+            "value":"V teku je opravilo predvajanja zvoka/videoposnetka. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Izvaja se opravilo porazdelitve.",
+            "value":"V teku je opravilo sodelovanja med napravami. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Izvaja se opravilo, povezano s klici.",
+            "value":"V teku je klic. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Izvaja se opravilo določanja položaja.",
+            "value":"V teku je opravilo določanja položaja. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Izvaja se opravilo, povezano z omrežjem WLAN.",
+            "value":"V teku je opravilo, ki uporablja omrežje WLAN. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Izvaja se opravilo, povezano s povezavo Bluetooth.",
+            "value":"V teku je opravilo, ki uporablja povezavo Bluetooth. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Izvaja se opravilo prenosa podatkov.",
+            "value":"V teku je opravilo prenosa podatkov. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
                 "priority":"translate"
             }

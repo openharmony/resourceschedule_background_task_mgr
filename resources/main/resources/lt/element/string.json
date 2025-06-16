@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Vykdoma įrašymo užduotis.",
+            "value":"Vykdoma įrašymo užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Vykdoma garso atkūrimo užduotis.",
+            "value":"Vykdoma garso ir (arba) vaizdo įrašo atkūrimo užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Vykdoma paskirstytoji užduotis.",
+            "value":"Vykdoma bendradarbiavimo keliais įrenginiais užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Vykdoma su skambučiu susijusi užduotis.",
+            "value":"Vyksta pokalbis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Vykdoma padėties nustatymo užduotis.",
+            "value":"Vykdomo padėties nustatymo užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Vykdoma su WLAN susijusi užduotis.",
+            "value":"Vykdoma WLAN užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Vykdoma su „Bluetooth“ susijusi užduotis.",
+            "value":"Vykdoma „Bluetooth“ užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Vykdoma duomenų persiuntimo užduotis.",
+            "value":"Vykdoma duomenų perdavimo užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
                 "priority":"translate"
             }
