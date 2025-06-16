@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Une tâche de calcul est en cours d'exécution.",
+            "value":"Une tâche informatique est en cours. La fermeture de cette notification y mettra fin.",
             "attr":{
                 "priority":"translate"
             }
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"La clé de voiture à distance sera désactivée si vous fermez cette carte.",
+            "value":"La clé de voiture automatique ne fonctionnera pas si vous fermez cette carte.",
             "attr":{
                 "priority":"translate"
             }
