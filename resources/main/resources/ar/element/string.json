@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"هناك مهمة حوسبة جارية.",
+            "value":"توجد مهمة حوسبة قيد التقدم، وسيؤدي إغلاق هذا الإشعار إلى إنهائها",
             "attr":{
                 "priority":"translate"
             }
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"سيتم تعطيل مفتاح السيارة عن بُعد إذا أغلقت هذه البطاقة.",
+            "value":"ستتوقف وظائف مفتاح السيارة الآلي عن العمل إذا أغلقت هذه البطاقة.",
             "attr":{
                 "priority":"translate"
             }
