@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Se está ejecutando una tarea de programación.",
+            "value":"Hay una tarea informática en curso. Si cierras esta notificación, se detendrá.",
             "attr":{
                 "priority":"translate"
             }
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"La llave a distancia del coche se deshabilitará si cierras esta tarjeta.",
+            "value":"Las funciones automáticas de la llave del coche no funcionarán si cierras esta tarjeta.",
             "attr":{
                 "priority":"translate"
             }
