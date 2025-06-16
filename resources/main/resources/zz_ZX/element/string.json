@@ -38,7 +38,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"[TS_1039903]_Remote car key will be disabled if you close this card."
+            "value":"[TS_1039903]_Automatic car key functions will not work if you close this card."
         }
     ]
 }

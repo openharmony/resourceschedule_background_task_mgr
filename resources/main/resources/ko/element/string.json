@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"컴퓨팅 작업이 실행 중입니다.",
+            "value":"컴퓨팅 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
                 "priority":"translate"
             }
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"이 카드를 닫으면 원격 차량 키가 종료됩니다.",
+            "value":"자동 키 기능은 이 카드를 닫으면 작동하지 않습니다.",
             "attr":{
                 "priority":"translate"
             }

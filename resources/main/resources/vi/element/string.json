@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Một tác vụ tính toán đang chạy.",
+            "value":"Đang có một tác vụ tính toán. Đóng thông báo này sẽ kết thúc tác vụ đó.",
             "attr":{
                 "priority":"translate"
             }
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Chìa khóa xe từ xa sẽ bị tắt nếu bạn đóng thẻ này.",
+            "value":"Các chức năng chìa khóa ô tô tự động sẽ không hoạt động nếu bạn đóng thẻ này.",
             "attr":{
                 "priority":"translate"
             }
