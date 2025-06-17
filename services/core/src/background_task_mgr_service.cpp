@@ -328,11 +328,20 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTa
     bool isHap = false;
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> resultList;
     if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
         BGTASK_LOGW("uid %{public}d pid %{public}d GetContinuousTaskApps not allowed", callingUid, callingPid);
+        ErrCode state = BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(resultList, callingUid);
+        if (state == ERR_OK) {
+            for (const auto& ptr : resultList) {
+                if (ptr != nullptr) {
+                    list.push_back(*ptr);
+                }
+            }
+            return state;
+        }
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> resultList;
     ErrCode result = BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(resultList);
     if (result == ERR_OK) {
         for (const auto& ptr : resultList) {
