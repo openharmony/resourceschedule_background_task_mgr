@@ -339,7 +339,7 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTa
                 list.push_back(*ptr);
             }
         }
-        return state;
+        return ERR_OK;
     }
     ErrCode result = BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(resultList);
     if (result == ERR_OK) {
