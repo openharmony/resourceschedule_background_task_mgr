@@ -425,7 +425,8 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_018, TestSize.Level1)
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousTask(1, 1, 4, ""), ERR_OK);
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousTask(1, 1, 4, ""),
+        ERR_BGTASK_PERMISSION_DENIED);
 }
 
 /**
@@ -442,7 +443,8 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_019, TestSize.Level1)
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(1, 1, ""), ERR_OK);
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(1, 1, ""),
+        ERR_BGTASK_PERMISSION_DENIED);
 }
 
 /**
@@ -616,7 +618,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_003, TestSize
     MessageParcel data10;
     data10.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     data10.WriteParcelable(info.get());
-    EXPECT_NE(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_ERR, data10, reply, option), ERR_OK);
+    EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_TRANSIENT_TASK_ERR, data10, reply, option), ERR_OK);
 
     MessageParcel data5;
     data5.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
@@ -698,7 +700,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_005, TestSize
     MessageParcel data4;
     data4.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     data4.WriteParcelable(info.get());
-    EXPECT_NE(subscirberStub.OnRemoteRequest(ON_APP_EFFICIENCY_RESOURCES_RESET, data4, reply, option), ERR_OK);
+    EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_APP_EFFICIENCY_RESOURCES_RESET, data4, reply, option), ERR_OK);
 
     MessageParcel data5;
     data5.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
