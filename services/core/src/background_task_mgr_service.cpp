@@ -325,11 +325,10 @@ ErrCode BackgroundTaskMgrService::StartTransientTaskTimeForInner(int32_t uid)
 ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list)
 {
     BgTaskHiTraceChain traceChain(__func__);
-    bool isHap = false;
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> resultList;
-    if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
+    if (!CheckCallingToken()) {
         BGTASK_LOGW("uid %{public}d pid %{public}d GetContinuousTaskApps not allowed", callingUid, callingPid);
         ErrCode state = BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(resultList, callingUid);
         if (state != ERR_OK) {
