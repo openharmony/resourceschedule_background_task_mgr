@@ -1351,7 +1351,8 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
     return ERR_OK;
 }
 
-ErrCode BgContinuousTaskMgr::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+ErrCode BgContinuousTaskMgr::GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list,
+    int32_t uid)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
@@ -1360,20 +1361,23 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskApps(std::vector<std::shared_ptr<C
 
     ErrCode result = ERR_OK;
 
-    handler_->PostSyncTask([this, &list, &result]() {
-        result = this->GetContinuousTaskAppsInner(list);
+    handler_->PostSyncTask([this, &list, uid, &result]() {
+        result = this->GetContinuousTaskAppsInner(list, uid);
         }, AppExecFwk::EventQueue::Priority::HIGH);
 
     return result;
 }
 
-ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list,
+    int32_t uid)
 {
     if (continuousTaskInfosMap_.empty()) {
         return ERR_OK;
     }
-
     for (auto record : continuousTaskInfosMap_) {
+        if (uid != -1 && uid != record.second->uid_) {
+            continue;
+        }
         auto appInfo = std::make_shared<ContinuousTaskCallbackInfo>(record.second->bgModeId_, record.second->uid_,
             record.second->pid_, record.second->abilityName_, record.second->isFromWebview_, record.second->isBatchApi_,
             record.second->bgModeIds_, record.second->abilityId_, record.second->fullTokenId_);
