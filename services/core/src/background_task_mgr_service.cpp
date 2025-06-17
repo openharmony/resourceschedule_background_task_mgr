@@ -332,7 +332,7 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTa
         BGTASK_LOGW("uid %{public}d pid %{public}d GetContinuousTaskApps not allowed", callingUid, callingPid);
         ErrCode state = BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(resultList, callingUid);
         if (state != ERR_OK) {
-            return ERR_BGTASK_PERMISSION_DENIED;
+            return state;
         }
         for (const auto& ptr : resultList) {
             if (ptr != nullptr) {
