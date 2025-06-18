@@ -325,14 +325,22 @@ ErrCode BackgroundTaskMgrService::StartTransientTaskTimeForInner(int32_t uid)
 ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list)
 {
     BgTaskHiTraceChain traceChain(__func__);
-    bool isHap = false;
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
-    if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
-        BGTASK_LOGW("uid %{public}d pid %{public}d GetContinuousTaskApps not allowed", callingUid, callingPid);
-        return ERR_BGTASK_PERMISSION_DENIED;
-    }
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> resultList;
+    if (!CheckCallingToken()) {
+        BGTASK_LOGW("uid %{public}d pid %{public}d GetContinuousTaskApps not allowed", callingUid, callingPid);
+        ErrCode state = BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(resultList, callingUid);
+        if (state != ERR_OK) {
+            return state;
+        }
+        for (const auto& ptr : resultList) {
+            if (ptr != nullptr) {
+                list.push_back(*ptr);
+            }
+        }
+        return ERR_OK;
+    }
     ErrCode result = BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(resultList);
     if (result == ERR_OK) {
         for (const auto& ptr : resultList) {
