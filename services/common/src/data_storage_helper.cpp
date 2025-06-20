@@ -19,10 +19,13 @@
 #include <unistd.h>
 #include <sstream>
 #include <sys/stat.h>
+#include <sys/statfs.h>
 
 #include "common_utils.h"
 #include "continuous_task_log.h"
 #include "config_policy_utils.h"
+#include "directory_ex.h"
+#include "hisysevent.h"
 #include <file_ex.h>
 
 namespace OHOS {
@@ -137,6 +140,9 @@ int32_t DataStorageHelper::SaveJsonValueToFile(const std::string &value, const s
     }
     fout << value.c_str() << std::endl;
     fout.close();
+    if (filePath == TASK_RECORD_FILE_PATH) {
+        ReportUserDataSizeEvent();
+    }
     return ERR_OK;
 }
 
@@ -266,6 +272,43 @@ void DataStorageHelper::ConvertJsonToMap(const nlohmann::json &value, ResourceRe
         recordPtr->ParseFromJson(iter.value());
         recordMap.emplace(static_cast<uint32_t>(std::atoi(iter.key().c_str())), recordPtr);
     }
+}
+
+uint64_t GetRemainPartitionSize(const std::string& partitionName)
+{
+    struct statfs stat;
+    if (statfs(partitionName.c_str(), &stat) != 0) {
+        return -1;
+    }
+    uint64_t blockSize = stat.f_bsize;
+    uint64_t freeSize = stat.f_bfree * blockSize;
+    constexpr double units = 1024.0;
+    return freeSize / (units * units);
+}
+
+std::vector<uint64_t> GetFileOrFolderSize(const std::vector<std::string>& paths)
+{
+    std::vector<uint64_t> folderSize;
+    for (auto path : paths) {
+        folderSize.emplace_back(OHOS::GetFolderSize(path));
+    }
+    return folderSize;
+}
+
+void DataStorageHelper::ReportUserDataSizeEvent()
+{
+    std::vector<std::string> paths = {
+        "/data/service/el1/public/background_task_mgr/"
+    };
+    uint64_t remainPartitionSize = GetRemainPartitionSize("/data");
+    std::vector<uint64_t> folderSize = GetFileOrFolderSize(paths);
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::FILEMANAGEMENT, "USER_DATA_SIZE",
+        HiviewDFX::HiSysEvent::EventType::STATISTIC,
+        "COMPONENT_NAME", "background_task_mgr",
+        "PARTITION_NAME", "/data",
+        "REMAIN_PARTITION_SIZE", remainPartitionSize,
+        "FILE_OR_FOLDER_PATH", paths,
+        "FILE_OR_FOLDER_SIZE", folderSize);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
