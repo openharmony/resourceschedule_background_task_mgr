@@ -70,7 +70,6 @@ ErrCode DataStorageHelper::RefreshTaskRecord(const std::unordered_map<std::strin
         BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", TASK_RECORD_FILE_PATH, strerror(errno));
         return ERR_BGTASK_CREATE_FILE_ERR;;
     }
-    ReportUserDataSizeEvent();
     return SaveJsonValueToFile(root.dump(CommonUtils::jsonFormat_), TASK_RECORD_FILE_PATH);
 }
 
@@ -141,6 +140,9 @@ int32_t DataStorageHelper::SaveJsonValueToFile(const std::string &value, const s
     }
     fout << value.c_str() << std::endl;
     fout.close();
+    if (filePath == TASK_RECORD_FILE_PATH) {
+        ReportUserDataSizeEvent();
+    }
     return ERR_OK;
 }
 
