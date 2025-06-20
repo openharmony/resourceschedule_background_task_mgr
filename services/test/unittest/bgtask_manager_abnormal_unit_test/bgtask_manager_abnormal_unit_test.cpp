@@ -65,7 +65,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_002
     EXPECT_EQ(BackgroundTaskMgrService_->GetTransientTaskApps(list1), ERR_BGTASK_PERMISSION_DENIED);
 
     std::vector<ContinuousTaskCallbackInfo> list2;
-    EXPECT_EQ(BackgroundTaskMgrService_->GetContinuousTaskApps(list2), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->GetContinuousTaskApps(list2), ERR_BGTASK_SYS_NOT_READY);
 
     std::vector<ResourceCallbackInfo> list3;
     std::vector<ResourceCallbackInfo> list4;
