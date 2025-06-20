@@ -46,6 +46,7 @@ private:
     void ConvertJsonToMap(const nlohmann::json &value, ResourceRecordMap &recordMap);
     ErrCode ConvertStringToJson(const std::string &recordString,
         nlohmann::json &appRecord, nlohmann::json &processRecord);
+    void ReportUserDataSizeEvent();
     DECLARE_DELAYED_SINGLETON(DataStorageHelper);
 };
 }  // namespace BackgroundTaskMgr
