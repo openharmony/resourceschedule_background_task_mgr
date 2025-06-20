@@ -288,6 +288,7 @@ uint64_t GetRemainPartitionSize(const std::string& partitionName)
 
 std::vector<uint64_t> GetFileOrFolderSize(const std::vector<std::string>& paths)
 {
+    std::vector<uint64_t> folderSize;
     for (auto path : paths) {
         folderSize.emplace_back(OHOS::GetFolderSize(path));
     }
