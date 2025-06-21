@@ -116,5 +116,3 @@ function OnContinuousTaskCancel(callback: (data: ContinuousTaskCancelInfo) => vo
 
 @on_off("continuousTaskCancel")
 function OffContinuousTaskCancel(callback: Optional<(data: ContinuousTaskCancelInfo) => void>): void;
-
-
