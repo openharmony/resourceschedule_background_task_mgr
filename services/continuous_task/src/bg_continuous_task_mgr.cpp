@@ -1109,6 +1109,9 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
         if (record.second->uid_ != uid) {
             continue;
         }
+        if (record.second->suspendState_) {
+            continue;
+        }
         std::string wantAgentBundleName {"NULL"};
         std::string wantAgentAbilityName {"NULL"};
         if (record.second->wantAgentInfo_ != nullptr) {
@@ -1376,6 +1379,9 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
     }
     for (auto record : continuousTaskInfosMap_) {
         if (uid != -1 && uid != record.second->uid_) {
+            continue;
+        }
+        if (record.second->suspendState_) {
             continue;
         }
         auto appInfo = std::make_shared<ContinuousTaskCallbackInfo>(record.second->bgModeId_, record.second->uid_,
