@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"このカードを閉じると、自動車のキーの機能が無効になります。",
+            "value":"データ転送タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
                 "priority":"translate"
             }
