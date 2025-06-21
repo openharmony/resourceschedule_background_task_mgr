@@ -1,0 +1,120 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@!namespace("@ohos.resourceschedule.backgroundTaskManager", "backgroundTaskManager")
+@!sts_inject_into_module("
+  import BaseContext from 'application.BaseContext';
+  import {WantAgent} from '@ohos.app.ability.wantAgent';
+")
+@!sts_inject("""
+static { loadLibrary("background_task_manager_ani.z"); }
+""")
+
+struct DelaySuspendInfo {
+  requestId: f64;
+  actualDelayTime: f64;
+}
+
+struct ContinuousTaskCancelInfo {
+  reason: ContinuousTaskCancelReason;
+  id: f64;
+}
+
+struct EfficiencyResourcesRequest {
+  resourceTypes: f64;
+  isApply: bool;
+  timeOut: f64;
+  reason: String;
+  isPersist: Optional<bool>;
+  isProcess: Optional<bool>;
+}
+
+enum BackgroundMode : i32 {
+  DATA_TRANSFER = 1,
+  AUDIO_PLAYBACK = 2,
+  AUDIO_RECORDING = 3,
+  LOCATION = 4,
+  BLUETOOTH_INTERACTION = 5,
+  MULTI_DEVICE_CONNECTION = 6,
+  WIFI_INTERACTION = 7,
+  VOIP = 8,
+  TASK_KEEPING = 9,
+}
+
+enum ResourceType : i32 {
+  CPU = 1,
+  COMMON_EVENT = 1 << 1,
+  TIMER = 1 << 2,
+  WORK_SCHEDULER = 1 << 3,
+  BLUETOOTH = 1 << 4,
+  GPS = 1 << 5,
+  AUDIO = 1 << 6,
+  RUNNING_LOCK = 1 << 7,
+  SENSOR = 1 << 8
+}
+
+enum ContinuousTaskCancelReason : i32 {
+  USER_CANCEL = 1,
+  SYSTEM_CANCEL = 2,
+  USER_CANCEL_REMOVE_NOTIFICATION = 3,
+  SYSTEM_CANCEL_DATA_TRANSFER_LOW_SPEED = 4,
+  SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_USE_AVSESSION = 5,
+  SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING = 6,
+  SYSTEM_CANCEL_AUDIO_RECORDING_NOT_RUNNING = 7,
+  SYSTEM_CANCEL_NOT_USE_LOCATION = 8,
+  SYSTEM_CANCEL_NOT_USE_BLUETOOTH = 9,
+  SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE = 10,
+  SYSTEM_CANCEL_USE_ILLEGALLY = 11,
+}
+
+enum BackgroundSubMode : i32 {
+  CAR_KEY = 1
+}
+
+enum BackgroundModeType : String {
+  SUB_MODE = "subMode"
+}
+
+function CancelSuspendDelay(requestId: f64): void;
+
+@gen_async("getRemainingDelayTime")
+@gen_promise("getRemainingDelayTime")
+function GetRemainingDelayTimeSync(requestId: f64): f64;
+
+union UndefinedType {
+  @Undefined undefined;
+}
+function RequestSuspendDelay(reason: String, callback: (data: UndefinedType) => void): DelaySuspendInfo;
+
+@gen_async("startBackgroundRunning")
+@gen_promise("startBackgroundRunning")
+function StartBackgroundRunningSync(
+  context: @sts_type("BaseContext") Opaque, bgMode: BackgroundMode, wantAgent: @sts_type("WantAgent") Opaque): void;
+
+@gen_async("stopBackgroundRunning")
+@gen_promise("stopBackgroundRunning")
+function StopBackgroundRunningSync(context: @sts_type("BaseContext") Opaque): void;
+
+function ApplyEfficiencyResources(request: EfficiencyResourcesRequest): void;
+
+function ResetAllEfficiencyResources(): void;
+
+@on_off("continuousTaskCancel")
+function OnContinuousTaskCancel(callback: (data: ContinuousTaskCancelInfo) => void): void;
+
+@on_off("continuousTaskCancel")
+function OffContinuousTaskCancel(callback: Optional<(data: ContinuousTaskCancelInfo) => void>): void;
+
+
