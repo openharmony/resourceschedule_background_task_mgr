@@ -6,20 +6,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"ohos_bgmode_prompt_location",
-            "value":"En positionerings\u200bopgave er i gang.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"En dataoverførsels\u200bopgave er i gang.",
-            "attr":{
-                "priority":"LT"
-            }
         }
     ]
 }
