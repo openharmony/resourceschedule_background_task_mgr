@@ -73,8 +73,8 @@ taihe_shared_library("background_task_manager_ani") {
 }
 
 generate_static_abc("background_task_manager_abc") {
-  base_url = "taihe_generated_file_path"
-  files = [ "taihe_generated_file_path/@ohos.resourceschedule.backgroundTaskManager.ets" ]
+  base_url = "$taihe_generated_file_path"
+  files = [ "$taihe_generated_file_path/@ohos.resourceschedule.backgroundTaskManager.ets" ]
   is_boot_abc = "True"
   device_dst_file = "/system/framework/background_task_manager_abc.abc"
   dependencies = [ ":run_taihe" ]
