@@ -29,7 +29,7 @@ ohos_taihe("run_taihe") {
   deps = [ ":copy_backgroundTaskManager" ]
   outputs = [
     "$taihe_generated_file_path/src/ohos.resourceschedule.backgroundTaskManager.ani.cpp",
-    "$taihe_generated_file_path/src/ohos.resourceschedule.backgroundTaskManagerabi.c",
+    "$taihe_generated_file_path/src/ohos.resourceschedule.backgroundTaskManager.abi.c",
   ]
 }
 
@@ -47,7 +47,7 @@ taihe_shared_library("background_task_manager_ani") {
   sources = get_target_outputs(":run_taihe")
   include_dirs = [
     "${bgtaskmgr_frameworks_path}/include",
-    "${bgtaskmgr_frameworks_path}/commom/include",
+    "${bgtaskmgr_frameworks_path}/common/include",
     "include",
   ]
   sources += [
@@ -83,8 +83,8 @@ generate_static_abc("background_task_manager_abc") {
 ohos_prebuilt_etc("background_task_manager_etc") {
   source = "$target_out_dir/background_task_manager_abc.abc"
   module_install_dir = "framework"
-  subsystem_name = "$subsystem_name"
   part_name = "$part_name"
+  subsystem_name = "$subsystem_name"
   deps = [ ":background_task_manager_abc" ]
 }
 
