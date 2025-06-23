@@ -18,8 +18,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-std::map<int32_t, std::shared_ptr<Callback>> callbackInstances_;
-std::mutex callbackLock_;
 
 Callback::Callback() {}
 

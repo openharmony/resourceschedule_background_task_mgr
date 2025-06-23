@@ -82,7 +82,7 @@ void CancelSuspendDelay(double requestId)
     }
 }
 
-double GetRemainingDelayTimeSync (double requestId)
+double GetRemainingDelayTimeSync(double requestId)
 {
     TransientTaskCallbackInfo callbackInfo;
     callbackInfo.requestId = static_cast<int32_t>(requestId);
@@ -95,7 +95,7 @@ double GetRemainingDelayTimeSync (double requestId)
     return static_cast<double>(callbackInfo.delayTime);
 }
 
-::ohos::resourceschedule::backgroundTaskManager::DelaySuspendInfo RequestSuspendDelay (
+::ohos::resourceschedule::backgroundTaskManager::DelaySuspendInfo RequestSuspendDelay(
     string_view reason, callback_view<void(UndefinedType const&)> callback)
 {
     std::string tmp(reason);
@@ -244,7 +244,6 @@ void StopBackgroundRunningSync(uintptr_t context)
 
 void StartBackgroundRunningSync(uintptr_t context, BackgroundMode bgMode, uintptr_t wantAgent)
 {
-
     auto env = taihe::get_env();
     ContinuousTaskCallbackInfo *asyncCallbackInfo = new (std::nothrow) ContinuousTaskCallbackInfo();
     if (!CheckParam(env, asyncCallbackInfo, context)) {
@@ -274,7 +273,6 @@ void StartBackgroundRunningSync(uintptr_t context, BackgroundMode bgMode, uintpt
         BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", errCode);
         set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
     }
-
 }
 
 void OnContinuousTaskCancel(callback_view<void(ContinuousTaskCancelInfo const&)> callback)

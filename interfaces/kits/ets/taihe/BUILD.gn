@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Huawei Device Co., Ltd.
+# Copyright (c) 2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -62,13 +62,13 @@ taihe_shared_library("background_task_manager_ani") {
   ]
 
   external_deps = [
-    "c_utils:utils",
-    "hilog:libhilog",
     "ability_runtime:ability_context_native",
     "ability_runtime:abilitykit_native",
-    "ability_runtime:wantagent_innerkits",
     "ability_runtime:ani_base_context",
     "ability_runtime:ani_wantagent_common",
+    "ability_runtime:wantagent_innerkits",
+    "c_utils:utils",
+    "hilog:libhilog",
   ]
 }
 
@@ -90,8 +90,7 @@ ohos_prebuilt_etc("background_task_manager_etc") {
 
 group("background_task_manager_taihe") {
   deps = [
-    ":background_task_manager_etc",
     ":background_task_manager_ani",
+    ":background_task_manager_etc",
   ]
-  deps = [":"]
 }

@@ -17,8 +17,6 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_TAIHE_INCLUDE_COMMON_H
 
 #include <string_ex.h>
-#include <memory>
-#include "bgtaskmgr_inner_errors.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {

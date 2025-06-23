@@ -15,17 +15,19 @@
 
 #include "bgtaskmgr_inner_errors.h"
 #include "common.h"
+#include <unordered_map>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
+const std::unordered_map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_PERMISSION_DENIED, "Permission denied."},
     {ERR_BGTASK_NOT_SYSTEM_APP,
         "System API verification failed. Only system application can apply."},
     {ERR_BGTASK_NO_MEMORY, "Memory operation failed. Failed to allocate the memory."},
     {ERR_BGTASK_SYS_NOT_READY, "System service operation failed. The system service is not ready."},
     {ERR_BGTASK_SERVICE_NOT_CONNECTED, "System service operation failed. The system service is not connected."},
-    {ERR_BGTASK_PARCELABLE_FAILED, "Parcel operation failed."},
+    {ERR_BGTASK_PARCELABLE_FAILED,
+        "Failed to write data into parcel. Possible reasons: 1. Invalid parameters; 2. Failed to apply for memory."},
     {ERR_BGTASK_TRANSACT_FAILED, "Internal transaction failed."},
     {ERR_BGTASK_OBJECT_EXISTS,
         "Continuous Task verification failed. The application has applied for a continuous task."},
@@ -34,6 +36,7 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_KEEPING_TASK_VERIFY_ERR,
         "Continuous Task verification failed. TASK_KEEPING background mode only supported in particular device."},
     {ERR_BGTASK_INVALID_BGMODE, "Continuous Task verification failed. The bgMode is invalid."},
+    {ERR_BGTASK_INVALID_UID, "Continuous Task verification failed. The uid is invalid."},
     {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED, "Notification verification failed for a continuous task."
         " The title or text of the notification cannot be empty."},
     {ERR_BGTASK_NOTIFICATION_ERR, "Notification verification failed. Failed to send or cancel the notification."},
@@ -57,13 +60,25 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Transient task verification failed. The remaining time to run transient task is insufficient."},
     {ERR_BGTASK_RESOURCES_EXCEEDS_MAX, "Caller information verification failed for an energy"
         " resource request. The number of resources applied exceeds maximun."},
+    {ERR_BGTASK_RESOURCES_INVALID_PID_OR_UID,
+        "Caller information verification failed for an energy resource. Invalid pid or uid."},
+    {ERR_BGTASK_RESOURCES_PARCELABLE_FAILED,
+        "Failed to write data into parcel. Possible reasons: 1. Invalid parameters; 2. Failed to apply for memory."},
+    {ERR_BGTASK_RESOURCES_SYS_NOT_READY, "System service operation failed. The system service is not ready."},
+    {ERR_BGTASK_RESOURCES_SERVICE_NOT_CONNECTED,
+        "System service operation failed. The system service is not connected."},
     {ERR_BGTASK_SERVICE_INNER_ERROR, "Service inner error."},
-    {ERR_BGTASK_NOREQUEST_TASK, "Transient task verification failed. application no request transient task."},
-    {ERR_BGTASK_FOREGROUND, "Transient task verification failed. application is foreground."},
-    {ERR_BGTASK_INVALID_PROCESS_NAME, "Transient task verification failed. caller process name invaild."},
+    {ERR_BGTASK_NOREQUEST_TASK, "Transient task verification failed. Application no request transient task."},
+    {ERR_BGTASK_FOREGROUND, "Transient task verification failed. Application is foreground."},
+    {ERR_BGTASK_TRANSIENT_PARCELABLE_FAILED,
+        "Failed to write data into parcel. Possible reasons: 1. Invalid parameters; 2. Failed to apply for memory."},
+    {ERR_BGTASK_TRANSIENT_SYS_NOT_READY, "System service operation failed. The system service is not ready."},
+    {ERR_BGTASK_TRANSIENT_SERVICE_NOT_CONNECTED,
+        "System service operation failed. The system service is not connected."},
+    {ERR_BGTASK_INVALID_PROCESS_NAME, "Transient task verification failed. Caller process name invalid."},
 };
 
-const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
+const std::unordered_map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
     {ERR_PARAM_NUMBER_ERR, "The number of arguments is wrong."},
     {ERR_REASON_NULL_OR_TYPE_ERR, "The reason cannot be null and its type must be string."},
     {ERR_CALLBACK_NULL_OR_TYPE_ERR, "The callback cannot be null and its type must be function."},
