@@ -78,6 +78,7 @@ void ResourceApplicationRecord::ParseToJson(nlohmann::json &root)
             info["isPersist"] = iter.isPersist_;
             info["endTime"] = iter.endTime_;
             info["reason"] = iter.reason_;
+            info["timeOut"] = iter.timeOut_;
             resource.push_back(info);
         }
         root["resourceUnitList"] = resource;
