@@ -237,7 +237,7 @@ void StopBackgroundRunningSync(uintptr_t context)
 
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStopBackgroundRunning(info->name, token, abilityId);
     if (asyncCallbackInfo->errCode) {
-        BGTASK_LOGE("StopBackgroundRunning falied errCode: %{public}d", errCode);
+        BGTASK_LOGE("StopBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
         set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
     }
 }
@@ -270,7 +270,7 @@ void StartBackgroundRunningSync(uintptr_t context, BackgroundMode bgMode, uintpt
     BGTASK_LOGI("notification %{public}d, continuousTaskId %{public}d", taskParam.notificationId_,
         taskParam.continuousTaskId_);
     if (asyncCallbackInfo->errCode) {
-        BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", errCode);
+        BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
         set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
     }
 }
