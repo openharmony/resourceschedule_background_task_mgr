@@ -94,7 +94,7 @@ function CancelSuspendDelay(requestId: f64): void;
 function GetRemainingDelayTimeSync(requestId: f64): f64;
 
 union UndefinedType {
-  @Undefined undefined;
+  @undefined undefined;
 }
 function RequestSuspendDelay(reason: String, callback: (data: UndefinedType) => void): DelaySuspendInfo;
 
