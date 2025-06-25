@@ -47,7 +47,7 @@ ContinuousTaskRecord::ContinuousTaskRecord(const std::string &bundleName, const 
         auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findNonDataTransfer);
         if (iter != bgModeIds_.end()) {
             bgModeId_ = *iter;
-            BGTASK_LOGI("batch api, find non-datatransfer mode, set %{public}d", bgModeId_);
+            BGTASK_LOGD("batch api, find non-datatransfer mode, set %{public}d", bgModeId_);
         } else {
             bgModeId_ = bgModeIds_[0];
         }
