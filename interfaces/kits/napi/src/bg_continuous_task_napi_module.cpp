@@ -245,7 +245,7 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         info->name, asyncCallbackInfo->abilityContext->GetToken(), "",
         asyncCallbackInfo->isBatchApi, asyncCallbackInfo->bgModes,
         asyncCallbackInfo->abilityContext->GetAbilityRecordId());
-    BGTASK_LOGI("RequestStartBackgroundRunning isBatch: %{public}d, bgModeSize: %{public}u",
+    BGTASK_LOGD("RequestStartBackgroundRunning isBatch: %{public}d, bgModeSize: %{public}u",
         taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
