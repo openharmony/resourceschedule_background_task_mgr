@@ -554,7 +554,7 @@ void BgEfficiencyResourcesMgr::UpdateQuotaIfCpuReset(
     }
 
     updateQuotaFunc(uid);
-    BGTASK_LOGI("Time's out, update cpu resource quota, uid: %{public}d.", uid);
+    BGTASK_LOGD("Time's out, update cpu resource quota, uid: %{public}d.", uid);
 }
 
 void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProcess)
@@ -1041,7 +1041,7 @@ ErrCode BgEfficiencyResourcesMgr::GetAllEfficiencyResources(
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::EfficiencyResource::Service::GetAllEfficiencyResources");
 
-    BGTASK_LOGI("start to get all efficiency resources");
+    BGTASK_LOGD("start to get all efficiency resources");
     if (!isSysReady_.load()) {
         BGTASK_LOGW("efficiency resources is not ready");
         return ERR_BGTASK_RESOURCES_SYS_NOT_READY;
