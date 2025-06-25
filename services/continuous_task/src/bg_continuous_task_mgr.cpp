@@ -1415,14 +1415,14 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
 
 ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish)
 {
+    BGTASK_LOGD("AVSessionNotifyUpdateNotificationInner start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
     avSessionNotification_[uid] = isPublish;
-
     auto findUid = [uid](const auto &target) {
         return uid == target.second->GetUid();
     };
     auto findUidIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findUid);
     if (findUidIter == continuousTaskInfosMap_.end()) {
-        BGTASK_LOGW("continuous task is not exist: %{public}d", uid);
+        BGTASK_LOGD("continuous task is not exist: %{public}d", uid);
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
 
