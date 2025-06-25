@@ -1415,7 +1415,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
 
 ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish)
 {
-    BGTASK_LOGD("AVSessionNotifyUpdateNotificationInner start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
+    BGTASK_LOGD("AVSessionNotifyUpdateNotification start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
     avSessionNotification_[uid] = isPublish;
     auto findUid = [uid](const auto &target) {
         return uid == target.second->GetUid();
