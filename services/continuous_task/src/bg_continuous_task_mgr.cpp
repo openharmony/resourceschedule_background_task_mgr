@@ -562,7 +562,7 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::string &bundleName)
     if (SUPPORT_TASK_KEEPING) {
         return true;
     }
-    bool isExemptedApp = DelayedSingleton<BgtaskConfig>::GetInstance()->\
+    bool isExemptedApp = DelayedSingleton<BgtaskConfig>::GetInstance()->
         IsTaskKeepingExemptedQuatoApp(bundleName);
     return isExemptedApp;
 }
