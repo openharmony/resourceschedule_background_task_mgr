@@ -245,7 +245,7 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         info->name, asyncCallbackInfo->abilityContext->GetToken(), "",
         asyncCallbackInfo->isBatchApi, asyncCallbackInfo->bgModes,
         asyncCallbackInfo->abilityContext->GetAbilityRecordId());
-    BGTASK_LOGI("RequestStartBackgroundRunning isBatch: %{public}d, bgModeSize: %{public}u",
+    BGTASK_LOGD("RequestStartBackgroundRunning isBatch: %{public}d, bgModeSize: %{public}u",
         taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
@@ -431,7 +431,7 @@ napi_value GetMode(const napi_env &env, const napi_value &value, AsyncCallbackIn
     }
     napi_get_value_uint32(env, value, &asyncCallbackInfo->bgMode);
     asyncCallbackInfo->isBatchApi = false;
-    BGTASK_LOGI("get bgmode info: %{public}u", asyncCallbackInfo->bgMode);
+    BGTASK_LOGD("get bgmode info: %{public}u", asyncCallbackInfo->bgMode);
     return WrapVoidToJS(env);
 }
 
@@ -439,7 +439,7 @@ napi_value GetModes(const napi_env &env, const napi_value &value, AsyncCallbackI
 {
     uint32_t arrayLen = 0;
     napi_get_array_length(env, value, &arrayLen);
-    BGTASK_LOGI("get bgModes arraylen: %{public}u", arrayLen);
+    BGTASK_LOGD("get bgModes arraylen: %{public}u", arrayLen);
     if (arrayLen == 0) {
         BGTASK_LOGE("get bgModes arraylen is 0");
         Common::HandleParamErr(env, ERR_BGMODE_NULL_OR_TYPE_ERR, true);

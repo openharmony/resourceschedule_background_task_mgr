@@ -17,8 +17,6 @@ import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 
 idl_gen_interface("background_task_mgr_interface") {
   src_idl = rebase_path("IBackgroundTaskMgr.idl")
-  log_domainid = "0xD001711"
-  log_tag = "IBackgroundTaskMgr"
 }
 
 idl_gen_interface("background_task_subscriber_interface") {
