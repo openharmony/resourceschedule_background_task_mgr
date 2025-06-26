@@ -144,7 +144,7 @@ bool BgtaskConfig::SetCloudConfigParam(const nlohmann::json &jsonObj)
         for (const auto &app : appArrayTaskKeeping) {
             taskKeepingExemptedQuatoList_.insert(app);
         }
-        for (const auto &appName : taskKeepingExemptedQuatoList_) { 
+        for (const auto &appName : taskKeepingExemptedQuatoList_) {
             BGTASK_LOGI("taskKeepingExemptedQuatoList_ appName: %{public}s", appName.c_str());
         }
     } else {
