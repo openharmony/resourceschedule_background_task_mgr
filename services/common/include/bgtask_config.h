@@ -29,6 +29,7 @@ class BgtaskConfig : public DelayedSingleton<BgtaskConfig> {
 public:
     void Init();
     bool IsTransientTaskExemptedQuatoApp(const std::string &bundleName);
+    bool IsTaskKeepingExemptedQuatoApp(const std::string &bundleName);
     int32_t GetTransientTaskExemptedQuato();
     bool AddExemptedQuatoData(const std::string &configData, int32_t sourceType);
 
@@ -42,6 +43,11 @@ private:
     bool isInit_ = false;
     std::set<std::string> transientTaskExemptedQuatoList_ {};
     std::set<std::string> transientTaskCloudExemptedQuatoList_ {};
+    std::set<std::string> taskKeepingExemptedQuatoList_ = {
+        {"com.sankuai.hmeituan.itakeawaybiz"},
+        {"cn.wps.mobileoffice.hap.ent"},
+        {"com.estrongs.hm.pop"},
+    };
     int32_t transientTaskExemptedQuato_ = 10 * 1000; // 10s
     std::mutex configMutex_;
 };

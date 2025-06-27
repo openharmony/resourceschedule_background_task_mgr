@@ -42,6 +42,7 @@
 #include "system_ability_definition.h"
 
 #include "bgtask_common.h"
+#include "bgtask_config.h"
 #include "bgtask_hitrace_chain.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_record.h"
@@ -72,12 +73,6 @@ static const char *g_taskPromptResNames[] = {
 
 static const char *g_taskPromptResNamesSubMode[] = {
     "ohos_bgsubmode_prompt_car_key",
-};
-
-static const std::set<std::string> TASK_KEEPING_EXEMPTION_LIST = {
-    {"com.sankuai.hmeituan.itakeawaybiz"},
-    {"cn.wps.mobileoffice.hap.ent"},
-    {"com.estrongs.hm.pop"},
 };
 
 static constexpr char SEPARATOR[] = "_";
@@ -567,10 +562,9 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::string &bundleName)
     if (SUPPORT_TASK_KEEPING) {
         return true;
     }
-    if (TASK_KEEPING_EXEMPTION_LIST.find(bundleName) != TASK_KEEPING_EXEMPTION_LIST.end()) {
-        return true;
-    }
-    return false;
+    bool isExemptedApp = DelayedSingleton<BgtaskConfig>::GetInstance()->
+        IsTaskKeepingExemptedQuatoApp(bundleName);
+    return isExemptedApp;
 }
 
 uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, const std::string &abilityName)

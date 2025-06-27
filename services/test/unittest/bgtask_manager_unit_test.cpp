@@ -42,6 +42,7 @@ static constexpr int32_t DEFAULT_USERID = 100;
 static constexpr int32_t JSON_FORMAT_DUMP = 4;
 static constexpr int32_t TRANSIENT_EXEMPTED_QUOTA_TIME = 10000;
 static constexpr char TRANSIENT_ERR_DELAYED_FROZEN_LIST[] = "transient_err_delayed_frozen_list";
+static constexpr char CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST[] = "continuous_task_keeping_exemption_list";
 static constexpr char TRANSIENT_ERR_DELAYED_FROZEN_TIME[] = "transient_err_delayed_frozen_time";
 static constexpr char TRANSIENT_EXEMPTED_QUOTA[] = "transient_exempted_quota";
 static constexpr char CONFIG_JSON_INDEX_TOP[] = "params";
@@ -592,6 +593,11 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_045, TestSize.Level1)
     param[TRANSIENT_EXEMPTED_QUOTA] = TRANSIENT_EXEMPTED_QUOTA_TIME;
     nlohmann::json params;
     params[TRANSIENT_ERR_DELAYED_FROZEN_LIST] = appInfo;
+
+    auto appInfo2 = nlohmann::json::array();
+    appInfo2.push_back("com.myapplication.demo1");
+    appInfo2.push_back("com.myapplication.demo2");
+    params[CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST] = appInfo2;
     params[CONFIG_JSON_INDEX_SUSPEND_SECOND] = param;
     nlohmann::json cloudConfig;
     cloudConfig[CONFIG_JSON_INDEX_TOP] = params;
