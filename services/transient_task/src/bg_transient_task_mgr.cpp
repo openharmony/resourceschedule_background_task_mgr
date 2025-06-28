@@ -775,7 +775,7 @@ void BgTransientTaskMgr::OnAppCacheStateChanged(int32_t uid, int32_t pid, const 
     auto keyInfo = make_shared<KeyInfo>(bundleName, uid, pid);
     vector<int32_t> requestIdList = decisionMaker_->GetRequestIdListByKey(keyInfo);
     if (requestIdList.empty()) {
-        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d not request transient task.",
+        BGTASK_LOGD("pkgname: %{public}s, uid: %{public}d not request transient task.",
             bundleName.c_str(), uid);
         return;
     }
