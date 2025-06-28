@@ -329,7 +329,7 @@ vector<int32_t> DecisionMaker::GetRequestIdListByKey(const std::shared_ptr<KeyIn
             requestIdList.emplace_back(task->GetRequestId());
         }
     } else {
-        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d not request transient task.",
+        BGTASK_LOGD("pkgname: %{public}s, uid: %{public}d not request transient task.",
             key->GetPkg().c_str(), key->GetUid());
     }
     return requestIdList;
