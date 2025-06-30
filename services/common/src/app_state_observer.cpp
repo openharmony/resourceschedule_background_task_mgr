@@ -67,7 +67,7 @@ void AppStateObserver::OnAppCacheStateChanged(const AppExecFwk::AppStateData &ap
         BGTASK_LOGE("handler_ null");
         return;
     }
-    BGTASK_LOGI("app cache, name : %{public}s,  uid : %{public}d, pid : %{public}d, state : %{public}d,",
+    BGTASK_LOGD("app cache, name : %{public}s,  uid : %{public}d, pid : %{public}d, state : %{public}d,",
         appStateData.bundleName.c_str(), appStateData.uid, appStateData.pid, appStateData.state);
     int32_t uid = appStateData.uid;
     int32_t pid = appStateData.pid;
