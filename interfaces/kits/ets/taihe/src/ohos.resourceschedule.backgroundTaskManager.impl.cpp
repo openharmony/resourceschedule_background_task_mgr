@@ -466,7 +466,7 @@ static ani_enum_item GetContentType(ani_env *env) {
     notification.slotType = (uintptr_t)GetSlotType(env);
     notification.contentType = (uintptr_t)GetContentType(env);
     notification.notificationId = static_cast<double>(taskParam.notificationId_);
-    notification.continuousTaskId = optional<double>(std::in_place, taskParam.continuousTaskId_);;
+    notification.continuousTaskId = optional<double>(std::in_place, taskParam.continuousTaskId_);
     return notification;
 }
 } // namespace
