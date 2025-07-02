@@ -37,8 +37,6 @@ namespace {
 // To be implemented.
 std::map<int32_t, std::shared_ptr<Callback>> callbackInstances_;
 std::mutex callbackLock_;
-static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
-static constexpr uint32_t BG_MODE_ID_END = 9;
 
 struct TransientTaskCallbackInfo {
     int32_t requestId = 0;
@@ -200,10 +198,6 @@ ani_status GetWantAgent(ani_env *env, const ani_object &value,
 
 bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uintptr_t context)
 {
-    if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo is nullpter");
-        return false;
-    }
     if (GetAbilityContext(env, reinterpret_cast<ani_object>(context), asyncCallbackInfo->abilityContext) != ANI_OK) {
         BGTASK_LOGE("get ability failed");
         asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
@@ -229,68 +223,11 @@ bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uin
     return true;
 }
 
-ani_status GetModes(ani_env *env, const array_view<string> &bgModes, ContinuousTaskCallbackInfo *asyncCallbackInfo)
-{
-    if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo is nullpter");
-        return ANI_ERROR;
-    }
-    if (bgModes.size() == 0) {
-        BGTASK_LOGE("get bgModes arraylen is 0");
-        asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
-        return ANI_ERROR;
-    }
-    std::vector<string> bgModesVector(bgModes.begin(), bgModes.end());
-    for (const auto &iter : bgModesVector) {
-        auto it = std::find(g_backgroundModes.begin(), g_backgroundModes.end(), iter);
-        if (it != g_backgroundModes.end()) {
-            auto index = std::distance(g_backgroundModes.begin(), it);
-            auto modeIter = std::find(asyncCallbackInfo->bgModes.begin(), asyncCallbackInfo->bgModes.end(), index + 1);
-            if (modeIter == asyncCallbackInfo->bgModes.end()) {
-                asyncCallbackInfo->bgModes.push_back(index + 1);
-            }
-        } else {
-            BGTASK_LOGE("mode string is invalid");
-            asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
-            set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
-            return ANI_ERROR;
-        }
-    }
-    return ANI_OK;
-}
-
-bool CheckBackgroundMode(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo)
-{
-    if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo is nullpter");
-        return false;
-    }
-    if (!asyncCallbackInfo->isBatchApi) {
-        if (asyncCallbackInfo->bgMode < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgMode > BG_MODE_ID_END) {
-            BGTASK_LOGE("request background mode id: %{public}u out of range", asyncCallbackInfo->bgMode);
-            asyncCallbackInfo->errCode = ERR_BGMODE_RANGE_ERR;
-            set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
-            return false;
-        }
-    } else {
-        for (unsigned int i = 0; i < asyncCallbackInfo->bgModes.size(); i++) {
-            if (asyncCallbackInfo->bgModes[i] < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgModes[i] > BG_MODE_ID_END) {
-                BGTASK_LOGE("request background mode id: %{public}u out of range", asyncCallbackInfo->bgModes[i]);
-                asyncCallbackInfo->errCode = ERR_BGMODE_RANGE_ERR;
-                set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
 void StopBackgroundRunningSync(uintptr_t context)
 {
     auto env = taihe::get_env();
-    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
-    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
+    ContinuousTaskCallbackInfo *asyncCallbackInfo = new (std::nothrow) ContinuousTaskCallbackInfo();
+    if (!CheckParam(env, asyncCallbackInfo, context)) {
         BGTASK_LOGE("check param failed");
         return;
     }
@@ -308,8 +245,8 @@ void StopBackgroundRunningSync(uintptr_t context)
 void StartBackgroundRunningSync(uintptr_t context, BackgroundMode bgMode, uintptr_t wantAgent)
 {
     auto env = taihe::get_env();
-    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
-    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
+    ContinuousTaskCallbackInfo *asyncCallbackInfo = new (std::nothrow) ContinuousTaskCallbackInfo();
+    if (!CheckParam(env, asyncCallbackInfo, context)) {
         BGTASK_LOGE("check param failed");
         return;
     }
@@ -325,10 +262,6 @@ void StartBackgroundRunningSync(uintptr_t context, BackgroundMode bgMode, uintpt
 
     asyncCallbackInfo->isBatchApi = false;
     asyncCallbackInfo->bgMode = static_cast<uint32_t>(bgMode);
-    if (!CheckBackgroundMode(env, asyncCallbackInfo.get())) {
-        BGTASK_LOGE("check backgroundMode failed");
-        return;
-    }
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
         asyncCallbackInfo->wantAgent, info->name, token, "", false, asyncCallbackInfo->bgModes, abilityId);
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
@@ -352,123 +285,6 @@ void OffContinuousTaskCancel(optional_view<callback<void(ContinuousTaskCancelInf
     TH_THROW(std::runtime_error, "OffContinuousTaskCancel not implemented");
 }
 
-static ani_enum_item GetSlotType(ani_env *env)
-{
-    ani_enum enumType;
-    if (ANI_OK != env->FindEnum("L@ohos/notificationManager/notificationManager/SlotType;", &enumType)) {
-        BGTASK_LOGE("get slotType failed");
-    }
-    
-    ani_enum_item enumItem;
-    if (ANI_OK != env->Enum_GetEnumItemByName(enumType, "LIVE_VIEW", &enumItem)) {
-        BGTASK_LOGE("get slotType item failed");
-    }
-    return enumItem;
-}
-
-static ani_enum_item GetContentType(ani_env *env)
-{
-    ani_enum enumType;
-    if (ANI_OK != env->FindEnum("L@ohos/notificationManager/notificationManager/ContentType;", &enumType)) {
-        BGTASK_LOGE("get contentType failed");
-    }
-    
-    ani_enum_item enumItem;
-    if (ANI_OK != env->Enum_GetEnumItemByName(enumType, "NOTIFICATION_CONTENT_MULTILINE", &enumItem)) {
-        BGTASK_LOGE("get contentType item failed");
-    }
-    return enumItem;
-}
-
-::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification StartBackgroundRunningSync2(
-    uintptr_t context, ::taihe::array_view<::taihe::string> bgModes, uintptr_t wantAgent)
-{
-    auto env = taihe::get_env();
-    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
-    ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification notification;
-    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
-        BGTASK_LOGE("check param failed");
-        return notification;
-    }
-    if (GetWantAgent(env, reinterpret_cast<ani_object>(wantAgent), asyncCallbackInfo->wantAgent) != ANI_OK) {
-        BGTASK_LOGE("Get ability failed");
-        asyncCallbackInfo->errCode = ERR_WANTAGENT_NULL_OR_TYPE_ERR;
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
-        return notification;
-    }
-    if (GetModes(env, bgModes, asyncCallbackInfo.get()) != ANI_OK) {
-        BGTASK_LOGE("Get modes failed");
-        return notification;
-    }
-    sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
-    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
-    int32_t abilityId = asyncCallbackInfo->abilityContext->GetAbilityRecordId();
-    asyncCallbackInfo->isBatchApi = true;
-    if (!CheckBackgroundMode(env, asyncCallbackInfo.get())) {
-        BGTASK_LOGE("check backgroundMode failed");
-        return notification;
-    }
-
-    ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
-        asyncCallbackInfo->wantAgent, info->name, token, "", true, asyncCallbackInfo->bgModes, abilityId);
-    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
-    asyncCallbackInfo->notificationId = taskParam.notificationId_;
-    asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
-    BGTASK_LOGI("notification %{public}d, continuousTaskId %{public}d", taskParam.notificationId_,
-        taskParam.continuousTaskId_);
-    if (asyncCallbackInfo->errCode) {
-        BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
-        return notification;
-    }
-    notification.slotType = (uintptr_t)GetSlotType(env);
-    notification.contentType = (uintptr_t)GetContentType(env);
-    notification.notificationId = static_cast<double>(taskParam.notificationId_);
-    notification.continuousTaskId = optional<double>(std::in_place, taskParam.continuousTaskId_);
-    return notification;
-}
-
-::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification UpdateBackgroundRunningSync(
-    uintptr_t context, ::taihe::array_view<::taihe::string> bgModes)
-{
-    auto env = taihe::get_env();
-    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
-    ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification notification;
-    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
-        BGTASK_LOGE("check param failed");
-        return notification;
-    }
-    if (GetModes(env, bgModes, asyncCallbackInfo.get()) != ANI_OK) {
-        BGTASK_LOGE("Get modes failed");
-        return notification;
-    }
-    sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
-    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
-    int32_t abilityId = asyncCallbackInfo->abilityContext->GetAbilityRecordId();
-    asyncCallbackInfo->isBatchApi = true;
-    if (!CheckBackgroundMode(env, asyncCallbackInfo.get())) {
-        BGTASK_LOGE("check backgroundMode failed");
-        return notification;
-    }
-
-    ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
-        nullptr, info->name, token, "", true, asyncCallbackInfo->bgModes, abilityId);
-    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam);
-    asyncCallbackInfo->notificationId = taskParam.notificationId_;
-    asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
-    BGTASK_LOGI("notification %{public}d, continuousTaskId %{public}d", taskParam.notificationId_,
-        taskParam.continuousTaskId_);
-    if (asyncCallbackInfo->errCode) {
-        BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
-        return notification;
-    }
-    notification.slotType = (uintptr_t)GetSlotType(env);
-    notification.contentType = (uintptr_t)GetContentType(env);
-    notification.notificationId = static_cast<double>(taskParam.notificationId_);
-    notification.continuousTaskId = optional<double>(std::in_place, taskParam.continuousTaskId_);
-    return notification;
-}
 } // namespace
 
 // Since these macros are auto-generate, lint will cause false positive.
@@ -482,6 +298,4 @@ TH_EXPORT_CPP_API_ApplyEfficiencyResources(ApplyEfficiencyResources);
 TH_EXPORT_CPP_API_ResetAllEfficiencyResources(ResetAllEfficiencyResources);
 TH_EXPORT_CPP_API_OnContinuousTaskCancel(OnContinuousTaskCancel);
 TH_EXPORT_CPP_API_OffContinuousTaskCancel(OffContinuousTaskCancel);
-TH_EXPORT_CPP_API_StartBackgroundRunningSync2(StartBackgroundRunningSync2);
-TH_EXPORT_CPP_API_UpdateBackgroundRunningSync(UpdateBackgroundRunningSync);
 // NOLINTEND
