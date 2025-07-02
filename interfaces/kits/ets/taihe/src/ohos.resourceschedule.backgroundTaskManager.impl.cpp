@@ -289,7 +289,7 @@ bool CheckBackgroundMode(ani_env *env, ContinuousTaskCallbackInfo *asyncCallback
 void StopBackgroundRunningSync(uintptr_t context)
 {
     auto env = taihe::get_env();
-    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo(new (std::nothrow) ContinuousTaskCallbackInfo());
+    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
     if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
         BGTASK_LOGE("check param failed");
         return;
@@ -308,7 +308,7 @@ void StopBackgroundRunningSync(uintptr_t context)
 void StartBackgroundRunningSync(uintptr_t context, BackgroundMode bgMode, uintptr_t wantAgent)
 {
     auto env = taihe::get_env();
-    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo(new (std::nothrow) ContinuousTaskCallbackInfo());
+    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
     if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
         BGTASK_LOGE("check param failed");
         return;
@@ -352,31 +352,31 @@ void OffContinuousTaskCancel(optional_view<callback<void(ContinuousTaskCancelInf
     TH_THROW(std::runtime_error, "OffContinuousTaskCancel not implemented");
 }
 
-static ani_enum_item GetSlotType(ani_env *env) {
+static ani_enum_item GetSlotType(ani_env *env)
+{
     ani_enum enumType;
-    if(ANI_OK != env->FindEnum("L@ohos/notificationManager/notificationManager/SlotType;", &enumType)) {
+    if (ANI_OK != env->FindEnum("L@ohos/notificationManager/notificationManager/SlotType;", &enumType)) {
         BGTASK_LOGE("get slotType failed");
     }
     
     ani_enum_item enumItem;
-    if(ANI_OK != env->Enum_GetEnumItemByName(enumType, "LIVE_VIEW", &enumItem)){
+    if (ANI_OK != env->Enum_GetEnumItemByName(enumType, "LIVE_VIEW", &enumItem)) {
         BGTASK_LOGE("get slotType item failed");
     }
-
     return enumItem;
 }
 
-static ani_enum_item GetContentType(ani_env *env) {
+static ani_enum_item GetContentType(ani_env *env)
+{
     ani_enum enumType;
-    if(ANI_OK != env->FindEnum("L@ohos/notificationManager/notificationManager/ContentType;", &enumType)) {
+    if (ANI_OK != env->FindEnum("L@ohos/notificationManager/notificationManager/ContentType;", &enumType)) {
         BGTASK_LOGE("get contentType failed");
     }
     
     ani_enum_item enumItem;
-    if(ANI_OK != env->Enum_GetEnumItemByName(enumType, "NOTIFICATION_CONTENT_MULTILINE", &enumItem)){
+    if (ANI_OK != env->Enum_GetEnumItemByName(enumType, "NOTIFICATION_CONTENT_MULTILINE", &enumItem)) {
         BGTASK_LOGE("get contentType item failed");
     }
-
     return enumItem;
 }
 
@@ -384,7 +384,7 @@ static ani_enum_item GetContentType(ani_env *env) {
     uintptr_t context, ::taihe::array_view<::taihe::string> bgModes, uintptr_t wantAgent)
 {
     auto env = taihe::get_env();
-    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo(new (std::nothrow) ContinuousTaskCallbackInfo());
+    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
     ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification notification;
     if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
         BGTASK_LOGE("check param failed");
@@ -432,7 +432,7 @@ static ani_enum_item GetContentType(ani_env *env) {
     uintptr_t context, ::taihe::array_view<::taihe::string> bgModes)
 {
     auto env = taihe::get_env();
-    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo(new (std::nothrow) ContinuousTaskCallbackInfo());
+    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
     ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification notification;
     if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
         BGTASK_LOGE("check param failed");
