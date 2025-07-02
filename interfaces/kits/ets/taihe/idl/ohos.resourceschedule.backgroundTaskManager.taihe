@@ -17,6 +17,7 @@
 @!sts_inject_into_module("
   import BaseContext from 'application.BaseContext';
   import {WantAgent} from '@ohos.app.ability.wantAgent';
+  import type notificationManager from '@ohos.notificationManager';
 ")
 @!sts_inject("""
 static { loadLibrary("background_task_manager_ani.z"); }
@@ -39,6 +40,13 @@ struct EfficiencyResourcesRequest {
   reason: String;
   isPersist: Optional<bool>;
   isProcess: Optional<bool>;
+}
+
+struct ContinuousTaskNotification {
+  slotType: @sts_type("notificationManager.SlotType") Opaque;
+  contentType: @sts_type("notificationManager.ContentType") Opaque;
+  notificationId: f64;
+  continuousTaskId: Optional<f64>;
 }
 
 enum BackgroundMode : i32 {
@@ -116,3 +124,11 @@ function OnContinuousTaskCancel(callback: (data: ContinuousTaskCancelInfo) => vo
 
 @on_off("continuousTaskCancel")
 function OffContinuousTaskCancel(callback: Optional<(data: ContinuousTaskCancelInfo) => void>): void;
+
+@gen_promise("startBackgroundRunning")
+function StartBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque,
+  bgModes: Array<String>, wantAgent: @sts_type("WantAgent") Opaque): ContinuousTaskNotification;
+
+@gen_promise("updateBackgroundRunning")
+function UpdateBackgroundRunningSync(
+  context: @sts_type("BaseContext") Opaque, bgModes: Array<String>): ContinuousTaskNotification;
