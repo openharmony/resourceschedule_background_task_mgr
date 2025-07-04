@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Запущена задача записи.",
+            "value":"Выполняется задача записи аудио. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Запущена задача воспроизведения аудио.",
+            "value":"Выполняется задача воспроизведения аудио/видео. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Запущена распределенная задача.",
+            "value":"Выполняется задача взаимодействия между устройствами. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Запущена задача, связанная с вызовом.",
+            "value":"Выполняется вызов. Если вы закроете это уведомление, он будет завершен.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Запущена задача геолокации.",
+            "value":"Выполняется задача геолокации. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Запущена задача, связанная с WLAN.",
+            "value":"Выполняется задача, связанная с WLAN. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Запущена задача с использованием Bluetooth.",
+            "value":"Выполняется задача с использованием Bluetooth. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Запущена вычислительная задача.",
+            "value":"Выполняется вычислительная задача. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Запущена задача переноса данных.",
+            "value":"Выполняется задача переноса данных. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Ключ дистанционного управления автомобилем будет выключен, если вы закроете эту карточку.",
+            "value":"Автоматический ключ от автомобиля не будут работать, если вы закроете эту карточку.",
             "attr":{
                 "priority":"translate"
             }

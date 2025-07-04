@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Tugas perekaman sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Жазу тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Tugas pemutaran audio/video sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Аудионы/бейнені ойнату тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Tugas kolaborasi lintas perangkat sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Құрылғыаралық бірлесіп жұмыс істеу тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Panggilan sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Қоңырау орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Kunci mobil jarak jauh akan dinonaktifkan jika Anda menutup kartu ini.",
+            "value":"Бұл картаны жапсаңыз, қашықтағы көлік кілті өшіріледі.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Tugas penentuan posisi sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Орынды анықтау тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Tugas WLAN sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"WLAN тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Tugas Bluetooth sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Bluetooth тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Tugas komputasi sedang berlangsung.",
+            "value":"Есептеу тапсырмасы орындалуда.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Tugas transfer data sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Деректер тасымалы тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
                 "priority":"translate"
             }

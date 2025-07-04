@@ -2,30 +2,30 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"May tumatakbong task sa pag-record.",
+            "value":"Kasalukuyang isinasagawa ang gawain ng pagre-record. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"May tumatakbong task sa pag-playback ng audio.",
+            "value":"Kasalukuyang isinasagawa ang gawain sa pag-playback ng audio/video. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"May tumatakbong task sa pag-distribute.",
+            "value":"Kasalukuyang isinasagawa ang cross-device na gawain sa pakikipag-collaborate. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"May tumatakbong task na may kaugnayan sa taawag.",
+            "value":"Kasalukuyang isinasagawa ang pagtawag. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -37,21 +37,21 @@
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"May tumatakbong task sa pag-posisyon.",
+            "value":"Kasalukuyang isinasagawa ang gawain sa pagpoposisyon. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"May tumatakbong task na may kaugnayan sa WLAN.",
+            "value":"Kasalukuyang isinasagawa ang gawain sa WLAN. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"May tumatakbong task na may kaugnayan sa Bluetooth.",
+            "value":"Kasalukuyang isinasagawa ang gawain sa Bluetooth. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
                 "priority":"translate"
             }
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"May tumatakbong task sa paglipat ng data.",
+            "value":"Kasalukuyang isinasagawa ang gawain sa paglipat ng data. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
                 "priority":"translate"
             }

@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Uruchomione jest zadanie nagrywania.",
+            "value":"Trwa wykonywanie zadania nagrywania. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Uruchomione jest zadanie odtwarzania dźwięku.",
+            "value":"Trwa zadanie odtwarzania audio/wideo. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Uruchomione jest zadanie rozproszone.",
+            "value":"Trwa wykonywanie zadanie współpracy między urządzeniami. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Uruchomione jest zadanie związane z połączeniem.",
+            "value":"Trwa połączenie. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Uruchomione jest zadanie pozycjonowania.",
+            "value":"Trwa wykonywanie zadania pozycjonowania. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Uruchomione jest zadanie związane z WLAN.",
+            "value":"Trwa wykonywanie zadania WLAN. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Uruchomione jest zadanie związane z Bluetooth.",
+            "value":"Trwa wykonywanie zadania Bluetooth. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Uruchomione jest zadanie przenoszenia danych.",
+            "value":"Trwa wykonywanie zadania przenoszenia danych. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
                 "priority":"translate"
             }

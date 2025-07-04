@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"En inspelningsuppgift pågår.",
+            "value":"En inspelningsuppgift pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"En ljuduppspelningsuppgift pågår.",
+            "value":"En ljud-/videouppspelningsuppgift pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"En distribuerad uppgift pågår.",
+            "value":"En samarbetsuppgift över flera enheter pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"En samtalsrelaterad uppgift pågår.",
+            "value":"Ett samtal pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"En positioneringsuppgift pågår.",
+            "value":"En positioneringsuppgift pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"En WLAN-relaterad uppgift pågår.",
+            "value":"En WLAN-uppgift pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"En Bluetooth-relaterad uppgift pågår.",
+            "value":"En Bluetooth-uppgift pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"En dataöverföringsuppgift pågår.",
+            "value":"En dataöverföringsuppgift pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
                 "priority":"translate"
             }

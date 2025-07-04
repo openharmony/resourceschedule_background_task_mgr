@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Se execută o sarcină de înregistrare.",
+            "value":"O sarcină de înregistrare este în curs de desfășurare. Închiderea acestei notificări va determina oprirea sa.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Se execută o sarcină de redare audio.",
+            "value":"O sarcină de redare audio/video este în curs de desfășurare. Închiderea acestei notificări va determina oprirea sa.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Se execută o sarcină distribuită.",
+            "value":"O sarcină de colaborare între dispozitive este în curs de desfășurare. Închiderea acestei notificări va determina oprirea sa.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Se execută o sarcină legată de apelare.",
+            "value":"Un apel este în desfășurare. Închiderea acestei notificări va determina oprirea sa.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Se execută o sarcină de poziționare.",
+            "value":"O sarcină de poziționare este în curs desfășurare. Închiderea acestei notificări va determina oprirea sa.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Se execută o sarcină legată de WLAN.",
+            "value":"O sarcină WLAN este în curs de desfășurare. Închiderea acestei notificări va determina oprirea sa.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Se execută o sarcină legată de Bluetooth.",
+            "value":"O sarcină Bluetooth este în curs de desfășurare. Închiderea acestei notificări va determina oprirea sa.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Se execută o sarcină de transfer.",
+            "value":"O sarcină de transfer de date este în curs de desfășurare. Închiderea acestei notificări va determina oprirea sa.",
             "attr":{
                 "priority":"translate"
             }
