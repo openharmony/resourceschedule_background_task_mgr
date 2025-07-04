@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"È in esecuzione un'attività di registrazione.",
+            "value":"È in corso un'attività di registrazione. Se chiudi questa notifica, verrà terminata.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"È in esecuzione un'attività di riproduzione audio.",
+            "value":"È in corso un'attività di riproduzione audio/video. Se chiudi questa notifica, verrà terminata.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"È in esecuzione un'attività distribuita.",
+            "value":"È in corso un'attività di collaborazione tra dispositivi. Se chiudi questa notifica, verrà terminata.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"È in esecuzione un'attività correlata alle chiamate.",
+            "value":"È in corso una chiamata. Se chiudi questa notifica, verrà terminata.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"È in esecuzione un'attività di posizionamento.",
+            "value":"È in corso un'attività di posizionamento. Se chiudi questa notifica, verrà terminata.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"È in esecuzione un'attività correlata alla WLAN.",
+            "value":"È in corso un'attività WLAN. Se chiudi questa notifica, verrà terminata.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"È in esecuzione un'attività correlata al Bluetooth.",
+            "value":"È in corso un'attività Bluetooth. Se chiudi questa notifica, verrà terminata.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"È in esecuzione un'attività di trasferimento dati.",
+            "value":"È in corso un'attività di trasferimento dei dati. Se chiudi questa notifica, verrà terminata.",
             "attr":{
                 "priority":"translate"
             }

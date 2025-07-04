@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"هناك مهمة تسجيل جارية.",
+            "value":"هناك عملية تسجيل جارية. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"هناك مهمة جارية لتشغيل مقطع صوتي.",
+            "value":"هناك صوت/فيديو قيد التشغيل. وإغلاق هذا الإشعار سيؤدي إلى إنهائه.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"هناك مهمة موزعة جارية.",
+            "value":"هناك عملية مشاركة بين الأجهزة جارية. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"هناك مهمة جارية متعلقة المكالمات.",
+            "value":"هناك مكالمة جارية. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"هناك مهمة جارية لتحديد الموقع.",
+            "value":"هناك عملية تحديد موقع جارية. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"هناك مهمة جارية متعلقة بالشبكة اللاسلكية.",
+            "value":"هناك عملية جارية عبر الشبكة اللاسلكية. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"هناك مهمة جارية متعلقة بالبلوتوث.",
+            "value":"هناك عملية جارية عبر البلوتوث. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"هناك مهمة حوسبة جارية.",
+            "value":"توجد مهمة حوسبة قيد التقدم، وسيؤدي إغلاق هذا الإشعار إلى إنهائها",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"هناك مهمة جارية لنقل البيانات.",
+            "value":"هناك عملية نقل بيانات جارية. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"سيتم تعطيل مفتاح السيارة عن بُعد إذا أغلقت هذه البطاقة.",
+            "value":"ستتوقف وظائف مفتاح السيارة الآلي عن العمل إذا أغلقت هذه البطاقة.",
             "attr":{
                 "priority":"translate"
             }

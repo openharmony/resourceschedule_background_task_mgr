@@ -2,51 +2,51 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Изпълнява се задача за запис.",
+            "value":"В ход е задача за звукозапис. Затварянето на това известие ще я прекрати.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Изпълнява се задача за възпроизвеждане на аудио.",
+            "value":"В ход е задача за възпроизвеждане на аудио/видео. Затварянето на това известие ще я прекрати.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Изпълнява се разпределена задача.",
+            "value":"В ход е задача за сътрудничество между устройства. Затварянето на това известие ще я прекрати.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Изпълнява се задача свързана с обаждане.",
+            "value":"Провежда се разговор. Затварянето на това известие ще го прекрати.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Изпълнява се задача за позициониране.",
+            "value":"В ход е задача за позициониране. Затварянето на това известие ще я прекрати.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Изпълнява се задача свързана с WLAN.",
+            "value":"В ход е WLAN задача. Затварянето на това известие ще я прекрати.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Изпълнява се задача свързана с Bluetooth.",
+            "value":"В ход е задача за Bluetooth. Затварянето на това известие ще я прекрати.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Изпълнява се задача за прехвърляне на данни.",
+            "value":"В ход е задача за прехвърляне на данни. Затварянето на това известие ще я прекрати.",
             "attr":{
                 "priority":"translate"
             }
@@ -67,7 +67,7 @@
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"Дистанционният ключ за колата ще се деактивира, ако затворите тази карта.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         }
     ]

@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Tugas perekaman sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Yozib olish jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Tugas pemutaran audio/video sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Audio/video ijrosi jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Tugas kolaborasi lintas perangkat sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Qurilmalararo hamkorlik jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Panggilan sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Chaqiruv jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Kunci mobil jarak jauh akan dinonaktifkan jika Anda menutup kartu ini.",
+            "value":"Agar ushbu kartochkani yopsangiz, masofaviy avtomobil kaliti faolsizlantiriladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Tugas penentuan posisi sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Joylashuvni aniqlash jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Tugas WLAN sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"WLAN vazifasi bajarilmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Tugas Bluetooth sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Bluetooth vazifasi bajarilmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Tugas komputasi sedang berlangsung.",
+            "value":"Hisoblash vazifasi bajarilmoqda.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Tugas transfer data sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "value":"Maʼlumot o‘tkazish jarayoni ketmoqda. Bu bildirishnoma yopilsa, u toʻxtatiladi.",
             "attr":{
                 "priority":"translate"
             }

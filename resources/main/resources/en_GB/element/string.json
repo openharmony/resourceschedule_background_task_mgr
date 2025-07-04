@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"A recording task is running.",
+            "value":"A recording task is in progress. Closing this notification will end it.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"An audio playback task is running.",
+            "value":"An audio/video playback task is in progress. Closing this notification will end it.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"A distributed task is running.",
+            "value":"A cross-device collaboration task is in progress. Closing this notification will end it.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"A call-related task is running.",
+            "value":"A call is in progress. Closing this notification will end it.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"A positioning task is running.",
+            "value":"A positioning task is in progress. Closing this notification will end it.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"A WLAN-related task is running.",
+            "value":"A WLAN task is in progress. Closing this notification will end it.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"A Bluetooth-related task is running.",
+            "value":"A Bluetooth task is in progress. Closing this notification will end it.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"A data transfer task is running.",
+            "value":"A data transfer task is in progress. Closing this notification will end it.",
             "attr":{
                 "priority":"translate"
             }

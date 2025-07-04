@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Une tâche d'enregistrement est en cours d'exécution.",
+            "value":"Une tâche d'enregistrement est en cours. La fermeture de cette notification mettra fin à cette tâche.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Une tâche de lecture audio est en cours d'exécution.",
+            "value":"Une tâche de lecture audio/vidéo est en cours. La fermeture de cette notification mettra fin à cette tâche.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Une tâche distribuée est en cours d'exécution.",
+            "value":"Une tâche de collaboration multi-appareils est en cours. La fermeture de cette notification mettra fin à cette tâche.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Une tâche relative aux appels est en cours d'exécution.",
+            "value":"Un appel est en cours. La fermeture de cette notification mettra fin à cette tâche.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Une tâche de positionnement est en cours d'exécution.",
+            "value":"Une tâche de positionnement est en cours. La fermeture de cette notification mettra fin à cette tâche.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Une tâche relative au WLAN est en cours d'exécution.",
+            "value":"Une tâche WLAN est en cours. La fermeture de cette notification mettra fin à cette tâche.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Une tâche relative au Bluetooth est en cours d'exécution.",
+            "value":"Une tâche Bluetooth est en cours. La fermeture de cette notification mettra fin à cette tâche.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Une tâche de calcul est en cours d'exécution.",
+            "value":"Une tâche informatique est en cours. La fermeture de cette notification y mettra fin.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Une tâche de transfert de données est en cours d'exécution.",
+            "value":"Une tâche de transfert de données est en cours. La fermeture de cette notification mettra fin à cette tâche.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"La clé de voiture à distance sera désactivée si vous fermez cette carte.",
+            "value":"La clé de voiture automatique ne fonctionnera pas si vous fermez cette carte.",
             "attr":{
                 "priority":"translate"
             }

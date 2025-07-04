@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"یک وظیفه ضبط در حال اجرا است.",
+            "value":"یک وظیفه ضبط کردن در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"یک وظیفه پخش صدا در حال اجرا است.",
+            "value":"یک وظیفه پخش صدا/ویدیو در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"یک وظیفه توزیع‌شده در حال اجرا است.",
+            "value":"یک وظیفه همکاری بین‌دستگاهی در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"یک وظیفه مرتبط با تماس در حال اجرا است.",
+            "value":"یک تماس در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"یک وظیفه موقعیت‌یابی در حال اجرا است.",
+            "value":"یک وظیفه موقعیت‌‌یابی در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"یک وظیفه مرتبط با WLAN در حال اجرا است.",
+            "value":"یک وظیفه WLAN در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"یک وظیفه مرتبط با بلوتوث در حال اجرا است.",
+            "value":"یک وظیفه بلوتوث در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"یک وظیفه انتقال داده‌ها در حال اجرا است.",
+            "value":"یک وظیفه انتقال داده در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
                 "priority":"translate"
             }

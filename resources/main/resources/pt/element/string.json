@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Uma tarefa de gravação está sendo executada.",
+            "value":"Uma tarefa de gravação está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Uma tarefa de reprodução de áudio está sendo executada.",
+            "value":"Uma tarefa de reprodução de áudio/vídeo está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Uma tarefa de distribuição está sendo executada.",
+            "value":"Uma tarefa de colaboração entre dispositivos está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Uma tarefa relacionada à chamada está sendo executada.",
+            "value":"Uma chamada está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Uma tarefa de posicionamento está sendo executada.",
+            "value":"Uma tarefa de posicionamento está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Uma tarefa relacionada à WLAN está sendo executada.",
+            "value":"Uma tarefa de WLAN está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Uma tarefa relacionada ao Bluetooth está sendo executada.",
+            "value":"Uma tarefa de Bluetooth está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Uma tarefa de transferência de dados está sendo executada.",
+            "value":"Uma tarefa de transferência de dados está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
                 "priority":"translate"
             }

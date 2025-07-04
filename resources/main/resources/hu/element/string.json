@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Egy felvételi feladat fut.",
+            "value":"Egy felvételkészítési feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Egy hanglejátszási feladat fut.",
+            "value":"Egy audio-/videólejátszási feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Egy osztott feladat fut.",
+            "value":"Egy készülékek közötti együttműködési feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Egy hívással kapcsolatos feladat fut.",
+            "value":"Egy hívás van folyamatban. Az értesítés bezárásával befejeződik.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Egy helymeghatározási feladat fut.",
+            "value":"Egy pozicionálási feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Egy WLAN-feladat fut.",
+            "value":"Egy WLAN-feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Egy Bluetooth-feladat fut.",
+            "value":"Egy Bluetooth-feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Egy adatátviteli feladat fut.",
+            "value":"Egy adatátviteli feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
                 "priority":"translate"
             }

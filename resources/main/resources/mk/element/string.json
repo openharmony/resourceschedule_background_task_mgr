@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Се извршува задача за снимање.",
+            "value":"Во тек е задача за снимање. Затворањето на ова известување ќе ја заврши.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Се извршува задача за репродуцирање аудио.",
+            "value":"Во тек е задача за репродуцирање аудио/видео. Затворањето на ова известување ќе ја заврши.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Се извршува дистрибуирана задача.",
+            "value":"Во тек е задача за соработка меѓу уреди. Затворањето на ова известување ќе ја заврши.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Се извршува задача поврзана со повик.",
+            "value":"Во тек е повик. Затворањето на ова известување ќе го заврши.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Се извршува задача за позиционирање.",
+            "value":"Во тек е задача за позиционирање. Затворањето на ова известување ќе ја заврши.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Се извршува задача поврзана со WLAN.",
+            "value":"Во тек е задача за WLAN. Затворањето на ова известување ќе ја заврши.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Се извршува задача поврзана со Bluetooth.",
+            "value":"Во тек е задача за Bluetooth. Затворањето на ова известување ќе ја заврши.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Се извршува задача за пренос на податоци.",
+            "value":"Во тек е задача за пренос на податоци. Затворањето на ова известување ќе ја заврши.",
             "attr":{
                 "priority":"translate"
             }

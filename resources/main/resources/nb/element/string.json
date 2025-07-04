@@ -2,49 +2,49 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"En opptaksoppgave kjører.",
+            "value":"En opptaksoppgave pågår. Lukking av dette varselet avslutter den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"En lydavspillingsoppgave kjører.",
+            "value":"En lyd-/videospillingsoppgave pågår. Lukking av dette varselet avslutter den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"En distribusjonsoppgave kjører.",
+            "value":"Et samarbeid på tvers av enheter pågår. Lukking av dette varselet avslutter det.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"En anropsrelatert oppgave kjører.",
+            "value":"Et anrop pågår. Lukking av dette varselet avslutter det.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"En posisjoneringsoppgave kjører.",
+            "value":"En posisjoneringsoppgave pågår. Lukking av dette varselet avslutter den.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"En WLAN-relatert oppgave kjører.",
+            "value":"En WLAN-oppgave pågår. Lukking av dette varselet avslutter det.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"En Bluetooth-relatert oppgave kjører.",
+            "value":"En Bluetooth-oppgave pågår. Lukking av dette varselet avslutter den.",
             "attr":{
                 "priority":"translate"
             }
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"En dataoverføringsoppgave kjører.",
+            "value":"En dataoverføringsoppgave pågår. Lukking av dette varselet avslutter den.",
             "attr":{
                 "priority":"translate"
             }

@@ -2,70 +2,70 @@
     "string":[
         {
             "name":"ohos_bgmode_prompt_audio_recording",
-            "value":"Se está ejecutando una tarea de grabación.",
+            "value":"Hay una tarea de grabación en curso. Cerrar esta notificación hará que finalice.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Se está ejecutando una tarea de reproducción de audio.",
+            "value":"Hay una tarea de reproducción de audio/vídeo en curso. Cerrar esta notificación hará que finalice.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
-            "value":"Se está ejecutando una tarea distribuida.",
+            "value":"Hay una tarea de colaboración entre dispositivos en curso. Cerrar esta notificación hará que finalice.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Se está ejecutando una tarea relacionada con llamadas.",
+            "value":"Hay una llamada en curso. Cerrar esta notificación hará que finalice.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Se está ejecutando una tarea de posicionamiento.",
+            "value":"Hay una tarea de posicionamiento en curso. Cerrar esta notificación hará que finalice.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
-            "value":"Se está ejecutando una tarea relacionada con WLAN.",
+            "value":"Hay una tarea de WLAN en curso. Cerrar esta notificación hará que finalice.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
-            "value":"Se está ejecutando una tarea relacionada con Bluetooth.",
+            "value":"Hay una tarea de Bluetooth en curso. Cerrar esta notificación hará que finalice.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Se está ejecutando una tarea de programación.",
+            "value":"Hay una tarea informática en curso. Si cierras esta notificación, se detendrá.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgmode_prompt_data_transfer",
-            "value":"Se está ejecutando una tarea de transferencia de datos.",
+            "value":"Hay una tarea de transferencia de datos en curso. Cerrar esta notificación hará que finalice.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"La llave a distancia del coche se deshabilitará si cierras esta tarjeta.",
+            "value":"Las funciones automáticas de la llave del coche no funcionarán si cierras esta tarjeta.",
             "attr":{
                 "priority":"translate"
             }
