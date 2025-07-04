@@ -1103,9 +1103,6 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
         if (record.second->uid_ != uid) {
             continue;
         }
-        if (record.second->suspendState_) {
-            continue;
-        }
         std::string wantAgentBundleName {"NULL"};
         std::string wantAgentAbilityName {"NULL"};
         if (record.second->wantAgentInfo_ != nullptr) {
