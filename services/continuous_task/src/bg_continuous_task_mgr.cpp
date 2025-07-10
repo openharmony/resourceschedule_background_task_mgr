@@ -816,7 +816,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
         continuousTaskRecord->ToString(taskParam->bgModeIds_).c_str(),
         continuousTaskRecord->isBatchApi_, continuousTaskRecord->abilityId_);
-    // update continuoustask by same modes.
     if (CommonUtils::CheckModesSame(oldModes, taskParam->bgModeIds_)) {
         return ERR_OK;
     }
@@ -829,8 +828,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
         ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord->fullTokenId_,
             continuousTaskRecord->bundleName_);
         if (ret != ERR_OK) {
-            BGTASK_LOGE("CheckBgmodeType error, config mode: %{public}u, apply mode: %{public}u.", configuredBgMode,
-                *it);
+            BGTASK_LOGE("CheckBgmodeType error, mode: %{public}u, apply mode: %{public}u.", configuredBgMode, *it);
             return ret;
         }
     }
@@ -1168,7 +1166,7 @@ void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_
     auto self = shared_from_this();
     auto task = [self, uid, pid, reason, key]() {
         if (self) {
-            if (self->IsExistCallback(uid)) {
+            if (self->IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND)) {
                 self->HandleSuspendContinuousTask(uid, pid, reason, key);
             } else {
                 self->HandleStopContinuousTask(uid, pid, 0, key);
@@ -1178,15 +1176,12 @@ void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_
     handler_->PostTask(task);
 }
 
-bool BgContinuousTaskMgr::IsExistCallback(int32_t uid)
+bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, int32_t type)
 {
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         int32_t flag = 0;
-        if ((*iter)->subscriber_) {
-            (*iter)->subscriber_->GetFlag(flag);
-        }
-        if ((*iter)->isHap_ && (*iter)->uid_ == uid &&
-                (*iter)->subscriber_ && ((flag & CONTINUOUS_TASK_SUSPEND) > 0)) {
+        if ((*iter)->isHap_ && (*iter)->uid_ == uid && (*iter)->subscriber_ &&
+            ((((*iter)->subscriber_->GetFlag(flag)) & type) > 0)) {
             BGTASK_LOGD("falg: %{public}d", flag);
             return true;
         }
