@@ -96,6 +96,7 @@ static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
 static constexpr uint32_t AVSESSION_SA_UID = 6700;
+static constexpr int32_t CONTINUOUS_TASK_SUSPEND = 2;
 #ifdef FEATURE_PRODUCT_WATCH
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
 #else
@@ -1168,7 +1169,7 @@ void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_
         return;
     }
     auto self = shared_from_this();
-    auto task = [self, uid, pid, reason, key, this]() {
+    auto task = [self, uid, pid, reason, key]() {
         if (self) {
             if (self->IsExistCallback(uid)) {
                 self->HandleSuspendContinuousTask(uid, pid, reason, key);
@@ -1188,7 +1189,7 @@ bool BgContinuousTaskMgr::IsExistCallback(int32_t uid)
             (*iter)->subscriber_->GetFlag(flag);
         }
         if ((*iter)->isHap_ && (*iter)->uid_ == uid &&
-                (*iter)->subscriber_ && ((flag & 2) > 0)) {
+                (*iter)->subscriber_ && ((flag & CONTINUOUS_TASK_SUSPEND) > 0)) {
             BGTASK_LOGD("falg: %{public}d", flag);
             return true;
         }
