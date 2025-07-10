@@ -40,6 +40,7 @@ public:
     void RemoveJsObserverObjects(const std::string cbType);
     std::shared_ptr<NativeReference> GetObserverObject(const std::string cbType, const napi_value &jsObserverObject);
     bool IsEmpty();
+    bool IsTypeEmpty(const std::string cbType);
     void SubscriberBgtaskSaStatusChange();
     void UnSubscriberBgtaskSaStatusChange();
     void SetFlag(int32_t flag, bool isSubscriber);

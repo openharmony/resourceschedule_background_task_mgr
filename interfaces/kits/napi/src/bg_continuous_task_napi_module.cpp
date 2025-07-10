@@ -921,6 +921,15 @@ napi_value OffOnContinuousTaskCallback(napi_env env, napi_callback_info info)
     }
  
     int32_t type = 0;
+    if (backgroundTaskSubscriber_-> IsTypeEmpty(typeString)) {
+        if (typeString == "continuousTaskCancel") {
+            type = CONTINUOUS_TASK_CANCEL;
+        } else if (typeString == "continuousTaskSuspend") {
+            type = CONTINUOUS_TASK_SUSPEND;
+        } else if (typeString == "continuousTaskActive") {
+            type = CONTINUOUS_TASK_ACTIVE;
+        }
+    }
     UnSubscribeBackgroundTask(env, type);
     return WrapUndefinedToJS(env);
 }
