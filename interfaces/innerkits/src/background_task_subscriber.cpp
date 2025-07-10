@@ -69,6 +69,8 @@ void BackgroundTaskSubscriber::OnAppEfficiencyResourcesApply(
 void BackgroundTaskSubscriber::OnAppEfficiencyResourcesReset(
     const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) {}
 
+void BackgroundTaskSubscriber::GetFlag(int32_t &flag) {}
+
 const sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> BackgroundTaskSubscriber::GetImpl() const
 {
     return impl_;
@@ -202,6 +204,12 @@ ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::OnAppContinuousT
     __attribute__((no_sanitize("cfi")))
 {
     subscriber_.OnAppContinuousTaskStop(uid);
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl::GetFlag(int32_t &flag)
+{
+    subscriber_.GetFlag(flag);
     return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr

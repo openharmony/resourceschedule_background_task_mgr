@@ -157,6 +157,13 @@ public:
      */
     virtual void OnProcEfficiencyResourcesReset(const std::shared_ptr<ResourceCallbackInfo> &resourceInfo);
 
+    /**
+     * @brief Called back when the subscriber get flag.
+     *
+     * @param flag subscriber flag.
+     */
+    virtual void GetFlag(int32_t &flag);
+
 private:
     class BackgroundTaskSubscriberImpl final : public BackgroundTaskSubscriberStub {
     public:
@@ -277,10 +284,18 @@ private:
          */
         ErrCode OnProcEfficiencyResourcesReset(const ResourceCallbackInfo &resourceInfo) override;
 
+        /**
+        * @brief Called back when the subscriber get flag.
+        *
+        * @param flag subscriber flag.
+        */
+        ErrCode GetFlag(int32_t &flag) override;
+
     public:
         BackgroundTaskSubscriber &subscriber_;
         sptr<IBackgroundTaskMgr> proxy_ {nullptr};
         std::mutex mutex_ {};
+        int32_t flag_ {0};
     };
 
 private:

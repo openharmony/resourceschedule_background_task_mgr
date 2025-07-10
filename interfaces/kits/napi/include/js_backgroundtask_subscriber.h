@@ -42,6 +42,7 @@ public:
     bool IsEmpty();
     void SubscriberBgtaskSaStatusChange();
     void UnSubscriberBgtaskSaStatusChange();
+    void SetFlag(int32_t flag, bool isSubscriber);
  
 private:
     class JsBackgroudTaskSystemAbilityStatusChange : public SystemAbilityStatusChangeStub {
@@ -60,6 +61,7 @@ private:
     std::map<std::string, std::set<std::shared_ptr<NativeReference>>> jsObserverObjectMap_;
     sptr<JsBackgroudTaskSystemAbilityStatusChange> jsSaListner_ = nullptr;
     std::atomic<bool> needRestoreSubscribeStatus_ = false;
+    int32_t flag_ {0};
 }; // JsBackgroundTaskSubscriber
 } // BackgroundTaskMgr
 } // OHOS
