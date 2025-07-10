@@ -845,7 +845,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     } else {
         ret = SendContinuousTaskNotification(continuousTaskRecord);
         if (ret != ERR_OK) {
-            BGTASK_LOGE("publish error");
             return ret;
         }
     }
