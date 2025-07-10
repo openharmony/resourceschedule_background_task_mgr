@@ -1173,7 +1173,7 @@ void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_
     handler_->PostTask(task);
 }
 
-bool CallbackIsExist(int32_t uid)
+bool BgContinuousTaskMgr::CallbackIsExist(int32_t uid)
 {
     return true;
 }
