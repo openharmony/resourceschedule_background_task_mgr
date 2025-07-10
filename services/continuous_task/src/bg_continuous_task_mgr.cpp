@@ -804,13 +804,16 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     const sptr<ContinuousTaskParam> &taskParam)
 {
     ErrCode ret;
+
     auto iter = continuousTaskInfosMap_.find(taskInfoMapKey);
     if (iter == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("continuous task is not exist: %{public}s, use start befor update", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
+
     auto continuousTaskRecord = iter->second;
     auto oldModes = continuousTaskRecord->bgModeIds_;
+
     BGTASK_LOGI("continuous task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d,"
         " abilityId %{public}d", continuousTaskRecord->bgModeId_,
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
@@ -835,7 +838,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     continuousTaskRecord->bgModeIds_ = taskParam->bgModeIds_;
     continuousTaskRecord->isBatchApi_ = taskParam->isBatchApi_;
 
-    // old and new task hava mode: DATA_TRANSFER, not update notification
     if (CommonUtils::CheckExistMode(oldModes, BackgroundMode::DATA_TRANSFER) &&
         CommonUtils::CheckExistMode(continuousTaskRecord->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
         BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same mode: DATA_TRANSFER",
