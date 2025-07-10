@@ -96,6 +96,7 @@ static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
 static constexpr uint32_t AVSESSION_SA_UID = 6700;
+static constexpr int32_t CONTINUOUS_TASK_SUSPEND = 2;
 #ifdef FEATURE_PRODUCT_WATCH
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
 #else
@@ -818,7 +819,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
         continuousTaskRecord->ToString(taskParam->bgModeIds_).c_str(),
         continuousTaskRecord->isBatchApi_, continuousTaskRecord->abilityId_);
-    // update continuoustask by same modes.
     if (CommonUtils::CheckModesSame(oldModes, taskParam->bgModeIds_)) {
         return ERR_OK;
     }
@@ -831,15 +831,13 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
         ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord->fullTokenId_,
             continuousTaskRecord->bundleName_);
         if (ret != ERR_OK) {
-            BGTASK_LOGE("CheckBgmodeType error, config mode: %{public}u, apply mode: %{public}u.", configuredBgMode,
-                *it);
+            BGTASK_LOGE("CheckBgmodeType error, mode: %{public}u, apply mode: %{public}u.", configuredBgMode, *it);
             return ret;
         }
     }
     continuousTaskRecord->bgModeIds_ = taskParam->bgModeIds_;
     continuousTaskRecord->isBatchApi_ = taskParam->isBatchApi_;
 
-    // old and new task hava mode: DATA_TRANSFER, not update notification
     if (CommonUtils::CheckExistMode(oldModes, BackgroundMode::DATA_TRANSFER) &&
         CommonUtils::CheckExistMode(continuousTaskRecord->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
         BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same mode: DATA_TRANSFER",
@@ -847,9 +845,11 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     } else {
         ret = SendContinuousTaskNotification(continuousTaskRecord);
         if (ret != ERR_OK) {
-            BGTASK_LOGE("publish error");
             return ret;
         }
+    }
+    if (continuousTaskRecord->suspendState_) {
+        HandleActiveContinuousTask(continuousTaskRecord->uid_, continuousTaskRecord->pid_, taskInfoMapKey);
     }
     OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_UPDATE);
     taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
@@ -862,6 +862,10 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
         + continuousTaskRecord->abilityName_ + SEPARATOR + std::to_string(continuousTaskRecord->abilityId_);
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
+        if (continuousTaskRecord->suspendState_) {
+            HandleActiveContinuousTask(continuousTaskRecord->uid_, continuousTaskRecord->pid_, taskInfoMapKey);
+            return ERR_OK;
+        }
         BGTASK_LOGD("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
@@ -1161,9 +1165,9 @@ void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_
         return;
     }
     auto self = shared_from_this();
-    auto task = [self, uid, pid, reason, key, this]() {
+    auto task = [self, uid, pid, reason, key]() {
         if (self) {
-            if (CallbackIsExist(uid)) {
+            if (self->IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND)) {
                 self->HandleSuspendContinuousTask(uid, pid, reason, key);
             } else {
                 self->HandleStopContinuousTask(uid, pid, 0, key);
@@ -1173,9 +1177,17 @@ void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_
     handler_->PostTask(task);
 }
 
-bool BgContinuousTaskMgr::CallbackIsExist(int32_t uid)
+bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, int32_t type)
 {
-    return true;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        int32_t flag = 0;
+        if ((*iter)->isHap_ && (*iter)->uid_ == uid && (*iter)->subscriber_ &&
+            ((((*iter)->subscriber_->GetFlag(flag)) & type) > 0)) {
+            BGTASK_LOGD("falg: %{public}d", flag);
+            return true;
+        }
+    }
+    return false;
 }
 
 void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
