@@ -84,6 +84,7 @@ class TestBackgroundTaskSubscriberStub : public BackgroundTaskSubscriberStub {
     ErrCode OnAppEfficiencyResourcesReset(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
     ErrCode OnProcEfficiencyResourcesApply(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
     ErrCode OnProcEfficiencyResourcesReset(const ResourceCallbackInfo &resourceInfo) override {return ERR_OK;}
+    ErrCode GetFlag(int32_t &flag)override {return ERR_OK;}
 };
 
 class TestExpiredCallbackStub : public ExpiredCallbackStub {
