@@ -1163,10 +1163,20 @@ void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_
     auto self = shared_from_this();
     auto task = [self, uid, pid, reason, key]() {
         if (self) {
-            self->HandleSuspendContinuousTask(uid, pid, reason, key);
+            if (CallbackIsExist(uid)) {
+                self->HandleSuspendContinuousTask(uid, pid, reason, key);
+            } else {
+                self->HandleStopContinuousTask(uid, pid, 0, key);
+            }
+            
         }
     };
     handler_->PostTask(task);
+}
+
+bool CallbackIsExist(int32_t uid)
+{
+    return true;
 }
 
 void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)

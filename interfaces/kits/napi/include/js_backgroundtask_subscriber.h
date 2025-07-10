@@ -42,6 +42,7 @@ public:
     bool IsEmpty();
     void SubscriberBgtaskSaStatusChange();
     void UnSubscriberBgtaskSaStatusChange();
+    void SetFlag(int32_t flag, bool isSubscriber);
  
 private:
     class JsBackgroudTaskSystemAbilityStatusChange : public SystemAbilityStatusChangeStub {

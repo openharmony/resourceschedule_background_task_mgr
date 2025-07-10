@@ -34,4 +34,5 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskSubscriber {
     void OnProcEfficiencyResourcesApply([in] ResourceCallbackInfo resourceInfo);
     void OnProcEfficiencyResourcesReset([in] ResourceCallbackInfo resourceInfo);
     [oneway] void OnTransientTaskErr([in] TransientTaskAppInfo info);
+    void GetFlag([out] int flag)
 }

@@ -388,5 +388,14 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType
         jsObserverObjectMap_[cbType].erase(observer);
     }
 }
+
+void SetFlag(int32_t flag, bool isSubscriber)
+{
+    if (isSubscriber) {
+        flag_ |= flag;
+    } else {
+        flag_ ^= flag;
+    }
+}
 } // BackgroundTaskMgr
 } // OHOS
