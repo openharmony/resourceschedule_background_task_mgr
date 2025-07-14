@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"U tijeku je zadatak snimanja. Ako zatvorite ovu obavijest, prekinut ćete ga.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"U tijeku je zadatak reprodukcije zvuka/videozapisa. Ako zatvorite ovu obavijest, prekinut ćete ga.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"U tijeku je zadatak suradnje između više uređaja. Ako zatvorite ovu obavijest, prekinut ćete ga.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"U tijeku je poziv. Ako zatvorite ovu obavijest, prekinut ćete ga.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"U tijeku je zadatak određivanja položaja. Ako zatvorite ovu obavijest, prekinut ćete ga.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"U tijeku je zadatak WLAN-a. Ako zatvorite ovu obavijest, prekinut ćete ga.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"U tijeku je zadatak Bluetootha. Ako zatvorite ovu obavijest, prekinut ćete ga.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"U tijeku je zadatak prijenosa. Ako zatvorite ovu obavijest, prekinut ćete ga.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Daljinski ključ automobila onemogućit će se ako zatvorite ovu karticu.",
+            "value":"Funkcije automatskog ključa za automobil neće raditi ako zatvorite ovu karticu.",
             "attr":{
                 "priority":"translate"
             }
