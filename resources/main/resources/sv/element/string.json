@@ -4,28 +4,28 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"En inspelningsuppgift pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"En ljud-/videouppspelningsuppgift pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"En samarbetsuppgift över flera enheter pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Ett samtal pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,14 +39,14 @@
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"En WLAN-uppgift pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"En Bluetooth-uppgift pågår. Om du stänger den här aviseringen avslutas den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Fjärrstyrd bilnyckel kommer att avaktiveras om du stänger detta kort.",
+            "value":"Automatiska bilnyckelfunktioner fungerar inte om du stänger det här kortet.",
             "attr":{
                 "priority":"translate"
             }
