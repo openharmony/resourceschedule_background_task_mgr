@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"녹음 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"오디오/비디오 재생 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"교차 장치 콜라보 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"통화가 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"포지셔닝 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"WLAN 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"블루투스 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,14 +60,14 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"데이터 전송 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"자동 키 기능은 이 카드를 닫으면 작동하지 않습니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
