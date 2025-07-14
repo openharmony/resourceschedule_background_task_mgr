@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"V teku je opravilo snemanja. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"V teku je opravilo predvajanja zvoka/videoposnetka. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"V teku je opravilo sodelovanja med napravami. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"V teku je klic. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"V teku je opravilo določanja položaja. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"V teku je opravilo, ki uporablja omrežje WLAN. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"V teku je opravilo, ki uporablja povezavo Bluetooth. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"V teku je opravilo prenosa podatkov. Če zaprete to obvestilo, ga boste končali.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Oddaljeni avtomobilski ključ bo onemogočen, če zaprete ta zavihek.",
+            "value":"Če zaprete to kartico, funkcije samodejnega ključa vozila ne bodo več delovale.",
             "attr":{
                 "priority":"translate"
             }
