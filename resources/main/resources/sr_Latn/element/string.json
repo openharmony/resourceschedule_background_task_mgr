@@ -4,14 +4,14 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"U toku je zadatak snimanja. Zatvaranje ovog obaveštenja će ga završiti.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"U toku je zadatak reprodukcije audio/video zapisa. Zatvaranje ovog obaveštenja će ga završiti.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -25,7 +25,7 @@
             "name":"ohos_bgmode_prompt_voip",
             "value":"U toku je poziv. Zatvaranje ovog obaveštenja će ga završiti.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,14 +39,14 @@
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"U toku je WLAN zadatak. Zatvaranje ovog obaveštenja će ga završiti.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"U toku je Bluetooth zadatak. Zatvaranje ovog obaveštenja će ga završiti.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Daljinski ključ od automobila će biti onemogućen ako zatvorite ovu karticu.",
+            "value":"Automatiske bilnøkkelfunksjoner vil ikke fungere hvis du lukker dette kortet.",
             "attr":{
                 "priority":"translate"
             }
