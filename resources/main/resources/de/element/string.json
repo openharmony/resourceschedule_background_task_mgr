@@ -4,14 +4,14 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Eine Aufnahmeaufgabe ist im Gange, durch das Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Eine Audio-/Videowiedergabeaufgabe ist im Gange, durch das Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -25,7 +25,7 @@
             "name":"ohos_bgmode_prompt_voip",
             "value":"Aktiver Anruf, durch das Schließen dieser Benachrichtigung wird er beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,14 +39,14 @@
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Eine WLAN-Aufgabe ist im Gange, durch das Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Eine Bluetooth-Aufgabe ist im Gange, durch das Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -65,9 +65,9 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Der Remote-Autoschlüssel wird deaktiviert, wenn Sie diese Karte schließen.",
+            "value":"Die automatischen Autoschlüsselfunktionen funktionieren nicht, wenn Sie diese Karte schließen.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

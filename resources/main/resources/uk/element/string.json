@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Виконується завдання, пов’язане із записуванням. Якщо закрити це сповіщення, завдання буде завершено.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Виконується завдання, пов’язане з відтворенням аудіо або відео. Якщо закрити це сповіщення, завдання буде завершено.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Виконується завдання, пов’язане з взаємодією між пристроями. Якщо закрити це сповіщення, завдання буде завершено.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Триває виклик. Якщо закрити це сповіщення, завдання буде завершено.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Виконується завдання, пов’язане з визначенням розташування. Якщо закрити це сповіщення, завдання буде завершено.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Виконується завдання, пов’язане з WLAN. Якщо закрити це сповіщення, завдання буде завершено.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Виконується завдання, пов’язане з Bluetooth. Якщо закрити це сповіщення, завдання буде завершено.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Виконується завдання, пов’язане з передаванням даних. Якщо закрити це сповіщення, завдання буде завершено.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Ключ віддаленого керування автомобілем буде вимкнено, якщо ви закриєте цю картку.",
+            "value":"Якщо закрити цю картку, автоматичні функції ключа керування автомобілем не працюватимуть.",
             "attr":{
                 "priority":"translate"
             }

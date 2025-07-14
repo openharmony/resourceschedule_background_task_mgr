@@ -4,56 +4,56 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Выконваецца задача запісу. Калі закрыць апавяшчэнне, яна завершыцца.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Выконваецца задача прайгравання аўдыя ці відэа. Калі закрыць апавяшчэнне, яна завершыцца.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Выконваецца задача сумеснага выкарыстання некалькіх прылад. Калі закрыць апавяшчэнне, яна завершыцца.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Выконваецца выклік. Калі закрыць апавяшчэнне, ён завершыцца.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Калі закрыць гэту картку, аддалены ключ ад аўтамабіля будзе адключаны.",
+            "value":"Калі закрыць гэту картку, аўтаматычныя функцыі аўтамабільнага ключа не будуць працаваць.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
          {
             "name":"ohos_bgmode_prompt_location",
             "value":"Выконваецца задача пазіцыянавання. Калі закрыць апавяшчэнне, яна завершыцца.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Выконваецца задача па WLAN. Калі закрыць апавяшчэнне, яна завершыцца.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Выконваецца задача па Bluetooth. Калі закрыць апавяшчэнне, яна завершыцца.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Выконваецца задача пераносу даных. Калі закрыць апавяшчэнне, яна завершыцца.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

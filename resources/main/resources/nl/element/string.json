@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Bezig met opnametaak. Door deze melding te sluiten, beëindigt u die taak.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Bezig met taak voor het afspelen van audio/video. Door deze melding te sluiten, beëindigt u die taak.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Bezig met taak voor samenwerking tussen apparaten. Door deze melding te sluiten, beëindigt u die taak.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Bezig met oproep. Door deze melding te sluiten, beëindigt u die taak.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Bezig met positioneringstaak. Door deze melding te sluiten, beëindigt u die taak.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Bezig met WLAN-taak. Door deze melding te sluiten, beëindigt u die taak.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Bezig met Bluetooth-taak. Door deze melding te sluiten, beëindigt u die taak.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Bezig met gegevensoverdrachttaak. Door deze melding te sluiten, beëindigt u die taak.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Als u deze kaart sluit, wordt de afstandsbediening van de autosleutel uitgeschakeld.",
+            "value":"Automatische autosleutelfuncties werken niet als u deze kaart sluit.",
             "attr":{
                 "priority":"translate"
             }

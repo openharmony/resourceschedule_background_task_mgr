@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Salvestamisega seotud ülesanne on pooleli. Selle teavituse sulgemine lõpetab selle.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Heli/video taasesitusega seotud ülesanne on pooleli. Selle teavituse sulgemine lõpetab selle.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Seadmeteülese koostööga seotud ülesanne on pooleli. Selle teavituse sulgemine lõpetab selle.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Kõne on pooleli. Selle teavituse sulgemine lõpetab selle.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Positsioneerimisega seotud ülesanne on pooleli. Selle teavituse sulgemine lõpetab selle.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"WLAN-iga seotud ülesanne on pooleli. Selle teavituse sulgemine lõpetab selle.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Bluetoothiga seotud ülesanne on pooleli. Selle teavituse sulgemine lõpetab selle.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Andmete edastamisega seotud ülesanne on pooleli. Selle teavituse sulgemine lõpetab selle.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Selle kaardi sulgemisel auto kaugjuhtimispult keelatakse.",
+            "value":"Kui te selle kaardi sulgete, siis automaatse autovõtme funktsioonid ei tööta.",
             "attr":{
                 "priority":"translate"
             }

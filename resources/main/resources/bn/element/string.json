@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"একটি রেকর্ডিং টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"একটি অডিও/ভিডিও প্লেব্যাক টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"একাধিক ডিভাইসের মধ্যে সমন্বয়মূলক একটি টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"একটি কল চলছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"একটি পজিশনিং টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"একটি WLAN টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"একটি ব্লুটুথ টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"একটি ডেটা স্থানান্তরের টাস্ক চলমান রয়েছে। এই বিজ্ঞপ্তি বন্ধ করলে এটি শেষ হয়ে যাবে।",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"এই কার্ডটি বন্ধ করলে রিমোট গাড়ির চাবি নিষ্ক্রিয় হয়ে যাবে।",
+            "value":"এই কার্ডটি বন্ধ করলে স্বয়ংক্রিয় গাড়ির চাবির ফাংশন কাজ করবে না।",
             "attr":{
                 "priority":"translate"
             }

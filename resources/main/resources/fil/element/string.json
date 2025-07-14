@@ -4,33 +4,33 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Kasalukuyang isinasagawa ang gawain ng pagre-record. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Kasalukuyang isinasagawa ang gawain sa pag-playback ng audio/video. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Kasalukuyang isinasagawa ang cross-device na gawain sa pakikipag-collaborate. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Kasalukuyang isinasagawa ang pagtawag. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Madi-disable ang remote na susi ng kotse kung isasara mo ang card na ito.",
+            "value":"Hindi gagana ang mga function ng awtomatikong susi ng kotse kung isasara mo ang card na ito.",
             "attr":{
                 "priority":"translate"
             }
@@ -46,14 +46,14 @@
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Kasalukuyang isinasagawa ang gawain sa WLAN. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Kasalukuyang isinasagawa ang gawain sa Bluetooth. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Kasalukuyang isinasagawa ang gawain sa paglipat ng data. Magtatapos nito ang pagsasara sa notification na ito.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

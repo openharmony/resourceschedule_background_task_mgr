@@ -4,33 +4,33 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"កិច្ចការថតសំឡេងកំពុងដំណើរការ។ ការបិទការជូនដំណឹងនេះនឹងបញ្ចប់វា។",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"កិច្ចការចាក់សំឡេង/វីដេអូកំពុងដំណើរការ។ ការបិទការជូនដំណឹងនេះនឹងបញ្ចប់វា។",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"កិច្ចការសហការឆ្លងឧបករណ៍កំពុងដំណើរការ។ ការបិទការជូនដំណឹងនេះនឹងបញ្ចប់វា។",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"ការហៅទូរស័ព្ទកំពុងដំណើរការ។ ការបិទការជូនដំណឹងនេះនឹងបញ្ចប់វា។",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"សោរថយន្តបញ្ជាពីចម្ងាយនឹងត្រូវបានបិទ ប្រសិនបើអ្នកបិទកាតនេះ។",
+            "value":"មុខងារសោរថយន្តស្វ័យប្រវត្តិនឹងមិនដំណើរការទេ ប្រសិនបើអ្នកបិទកាតនេះ។",
             "attr":{
                 "priority":"translate"
             }
@@ -39,21 +39,21 @@
             "name":"ohos_bgmode_prompt_location",
             "value":"កិច្ចការកំណត់ទីតាំងកំពុងដំណើរការ។ ការបិទការជូនដំណឹងនេះនឹងបញ្ចប់វា។",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"កិច្ចការ WLAN កំពុងដំណើរការ។ ការបិទការជូនដំណឹងនេះនឹងបញ្ចប់វា។",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"កិច្ចការប៊្លូធូសកំពុងដំណើរការ។ ការបិទការជូនដំណឹងនេះនឹងបញ្ចប់វា។",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"កិច្ចការផ្ទេរទិន្នន័យកំពុងដំណើរការ។ ការបិទការជូនដំណឹងនេះនឹងបញ្ចប់វា។",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

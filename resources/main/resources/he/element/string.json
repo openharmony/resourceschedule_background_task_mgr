@@ -4,33 +4,33 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"מתבצעת משימת הקלטה. סגירת התראה זו תגרום לסיומה.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"מתבצעת משימת הפעלת שמע/סרטון. סגירת התראה זו תגרום לסיומה.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"מתבצעת משימת שיתוף פעולה בין התקנים. סגירת התראה זו תגרום לסיומה.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"מתבצעת שיחה. סגירת התראה זו תגרום לסיומה.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"אם תסגור כרטיס זה, מפתח מכונית מרוחק יושבת.",
+            "value":"פונקציות מפתח הרכב האוטומטיות לא יפעלו אם תסגור כרטיס זה.",
             "attr":{
                 "priority":"translate"
             }
@@ -39,21 +39,21 @@
             "name":"ohos_bgmode_prompt_location",
             "value":"מתבצעת משימת מיקום. סגירת התראה זו תגרום לסיומה.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"מתבצעת משימת WLAN. סגירת התראה זו תגרום לסיומה.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"מתבצעת משימת Bluetooth. סגירת התראה זו תגרום לסיומה.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"מתבצעת משימת העברת נתונים. סגירת התראה זו תגרום לסיומה.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

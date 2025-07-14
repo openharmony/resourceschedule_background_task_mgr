@@ -4,33 +4,33 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"მიმდინარეობს ჩაწერის დავალება. ამ შეტყობინების დახურვით ის დასრულდება.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"მიმდინარეობს აუდიოს/ვიდეოს დაკვრის დავალება. ამ შეტყობინების დახურვით ის დასრულდება.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"მიმდინარეობს მოწყობილობათაშორისი დავალება. ამ შეტყობინების დახურვით ის დასრულდება.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"მიმდინარეობს ზარი. ამ შეტყობინების დახურვით ის დასრულდება.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"მანქანის დისტანციური გასაღები გამოირთვება, თუ ამ ბარათს დახურავთ.",
+            "value":"ამ ბარათის დახურვის შემთხვევაში, მანქანის ავტომატური გასაღების ფუნქციები არ იმუშავებს.",
             "attr":{
                 "priority":"translate"
             }
@@ -39,21 +39,21 @@
             "name":"ohos_bgmode_prompt_location",
             "value":"მიმდინარეობს პოზიციონირების დავალება. ამ შეტყობინების დახურვით ის დასრულდება.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"მიმდინარეობს WLAN დავალება. ამ შეტყობინების დახურვით ის დასრულდება.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"მიმდინარეობს Bluetooth დავალება. ამ შეტყობინების დახურვით ის დასრულდება.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"მიმდინარეობს მონაცემთა გადაცემის დავალება. ამ შეტყობინების დახურვით ის დასრულდება.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

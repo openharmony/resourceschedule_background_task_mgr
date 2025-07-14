@@ -4,33 +4,33 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Tugas perekaman sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Tugas pemutaran audio/video sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Tugas kolaborasi lintas perangkat sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Panggilan sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Kunci mobil jarak jauh akan dinonaktifkan jika Anda menutup kartu ini.",
+            "value":"Fungsi kunci mobil otomatis tidak akan berfungsi jika Anda menutup kartu ini.",
             "attr":{
                 "priority":"translate"
             }
@@ -39,21 +39,21 @@
             "name":"ohos_bgmode_prompt_location",
             "value":"Tugas penentuan posisi sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Tugas WLAN sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Tugas Bluetooth sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Tugas transfer data sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

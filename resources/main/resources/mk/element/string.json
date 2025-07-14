@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Во тек е задача за снимање. Затворањето на ова известување ќе ја заврши.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Во тек е задача за репродуцирање аудио/видео. Затворањето на ова известување ќе ја заврши.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Во тек е задача за соработка меѓу уреди. Затворањето на ова известување ќе ја заврши.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Во тек е повик. Затворањето на ова известување ќе го заврши.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Во тек е задача за позиционирање. Затворањето на ова известување ќе ја заврши.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Во тек е задача за WLAN. Затворањето на ова известување ќе ја заврши.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Во тек е задача за Bluetooth. Затворањето на ова известување ќе ја заврши.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Во тек е задача за пренос на податоци. Затворањето на ова известување ќе ја заврши.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Далечинскиот клуч за автомобилот ќе се оневозможи ако ја затворите оваа картичка.",
+            "value":"Функциите за автоматскиот клуч за автомобилот нема да функционираат ако ја затворите оваа картичка.",
             "attr":{
                 "priority":"translate"
             }

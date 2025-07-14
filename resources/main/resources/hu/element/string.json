@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Egy felvételkészítési feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Egy audio-/videólejátszási feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Egy készülékek közötti együttműködési feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Egy hívás van folyamatban. Az értesítés bezárásával befejeződik.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Egy pozicionálási feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Egy WLAN-feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Egy Bluetooth-feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Egy adatátviteli feladat folyamatban van. Az értesítés bezárásával befejeződik.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Ha bezárja ezt a kártyát, a távoli kocsikulcs kikapcsol.",
+            "value":"Az automatikus slusszkulcs-funkciók nem működnek, ha ezt a kártyát bezárja.",
             "attr":{
                 "priority":"translate"
             }

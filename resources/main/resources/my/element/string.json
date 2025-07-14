@@ -4,33 +4,33 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"မှတ်တမ်းတင်မှုအလုပ် လုပ်ဆောင်နေပါသည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်ပါက ၎င်းကို အဆုံးသတ်ပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"အော်ဒီယို/ဗီဒီယို ပြန်ဖွင့်မှုအလုပ် လုပ်ဆောင်နေပါသည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်ပါက ၎င်းကို အဆုံးသတ်ပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"စက်များအကြား သတ်မှတ်ချိန်ညှိမှုအလုပ် လုပ်ဆောင်နေပါသည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်ပါက ၎င်းကို အဆုံးသတ်ပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"ခေါ်ဆိုမှု လုပ်ဆောင်နေပါသည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်ပါက ၎င်းကို အဆုံးသတ်ပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"ဤကတ်ကို ပိတ်လိုက်ပါက အဝေးထိန်းကားသော့ကို ပိတ်ပါမည်။",
+            "value":"ဤကတ်ကို ပိတ်လိုက်ပါက အော်တို ကားသော့ လုပ်ဆောင်မှုများက အလုပ်လုပ်မည် မဟုတ်ပါ။",
             "attr":{
                 "priority":"translate"
             }
@@ -39,21 +39,21 @@
             "name":"ohos_bgmode_prompt_location",
             "value":"တည်နေရာရှာဖွေသတ်မှတ်မှု အလုပ် လုပ်ဆောင်နေပါသည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်ပါက ၎င်းကို အဆုံးသတ်ပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"WLAN အလုပ် လုပ်ဆောင်နေပါသည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်ပါက ၎င်းကို အဆုံးသတ်ပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"ဘလူးတုသ် အလုပ် လုပ်ဆောင်နေပါသည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်ပါက ၎င်းကို အဆုံးသတ်ပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"ဒေတာ လွှဲပြောင်းမှုအလုပ် လုပ်ဆောင်နေပါသည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်ပါက ၎င်းကို အဆုံးသတ်ပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

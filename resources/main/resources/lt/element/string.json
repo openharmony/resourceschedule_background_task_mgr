@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Vykdoma įrašymo užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Vykdoma garso ir (arba) vaizdo įrašo atkūrimo užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Vykdoma bendradarbiavimo keliais įrenginiais užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Vyksta pokalbis. Užvėrus šį pranešimą, ji bus nutraukta.",
+            "value":"Vyksta pokalbis. Užvėrus šį pranešimą, jis bus nutrauktas.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
-            "value":"Vykdomo padėties nustatymo užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
+            "value":"Vykdoma padėties nustatymo užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Vykdoma WLAN užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Vykdoma „Bluetooth“ užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Vykdoma duomenų perdavimo užduotis. Užvėrus šį pranešimą, ji bus nutraukta.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Užvėrus šią kortelę, nuotolinis automobilio raktas bus išjungtas.",
+            "value":"Jei užversite šią kortelę, automatinės automobilio raktų funkcijos neveiks.",
             "attr":{
                 "priority":"translate"
             }

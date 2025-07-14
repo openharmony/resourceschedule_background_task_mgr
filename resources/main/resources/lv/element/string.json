@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Tiek veikts ierakstīšanas uzdevums. Aizverot šo paziņojumu, tas tiks izbeigts.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Tiek veikts audio/video atskaņošanas uzdevums. Aizverot šo paziņojumu, tas tiks izbeigts.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Tiek veikts sadarbības uzdevums starp ierīcēm. Aizverot šo paziņojumu, tas tiks izbeigts.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Notiek zvans. Aizverot šo paziņojumu, tas tiks izbeigts.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Tiek veikts pozicionēšanas uzdevums. Aizverot šo paziņojumu, tas tiks izbeigts.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Tiek veikts WLAN uzdevums. Aizverot šo paziņojumu, tas tiks izbeigts.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Tiek veikts Bluetooth uzdevums. Aizverot šo paziņojumu, tas tiks izbeigts.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Tiek veikts datu pārsūtīšanas uzdevums. Aizverot šo paziņojumu, tas tiks izbeigts.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Ja aizvērsiet šo karti, tālvadības automašīnas atslēga tiks atspējota.",
+            "value":"Automātiskās automašīnas atslēgas funkcijas nedarbosies, ja aizvērsiet šo karti.",
             "attr":{
                 "priority":"translate"
             }

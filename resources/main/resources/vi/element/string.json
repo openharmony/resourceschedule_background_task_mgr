@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Một tác vụ ghi âm đang diễn ra. Thao tác đóng thông báo này sẽ kết thúc tác vụ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Một tác vụ phát âm thanh/video đang diễn ra. Thao tác đóng thông báo này sẽ kết thúc tác vụ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Một tác vụ cộng tác trên nhiều thiết bị đang diễn ra. Thao tác đóng thông báo này sẽ kết thúc tác vụ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Một cuộc gọi đang diễn ra. Thao tác đóng thông báo này sẽ kết thúc cuộc gọi.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Một tác vụ định vị đang diễn ra. Thao tác đóng thông báo này sẽ kết thúc tác vụ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Một tác vụ WLAN đang diễn ra. Thao tác đóng thông báo này sẽ kết thúc tác vụ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Một tác vụ Bluetooth đang diễn ra. Thao tác đóng thông báo này sẽ kết thúc tác vụ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,14 +60,14 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Một tác vụ truyền dữ liệu đang diễn ra. Thao tác đóng thông báo này sẽ kết thúc tác vụ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"Các chức năng chìa khóa ô tô tự động sẽ không hoạt động nếu bạn đóng thẻ này.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

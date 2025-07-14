@@ -4,56 +4,56 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Жазу тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Аудионы/бейнені ойнату тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Құрылғыаралық бірлесіп жұмыс істеу тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Қоңырау орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Бұл картаны жапсаңыз, қашықтағы көлік кілті өшіріледі.",
+            "value":"Бұл картаны жапсаңыз, көлік кілтінің автоматты функциялары жұмыс істемейді.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Орынды анықтау тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"WLAN тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Bluetooth тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Деректер тасымалы тапсырмасы орындалуда. Бұл хабарландыруды жабу оны аяқтайды.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

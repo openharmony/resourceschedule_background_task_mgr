@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Μια εργασία εγγραφής βρίσκεται σε εξέλιξη. Το κλείσιμο αυτής της ειδοποίησης θα την τερματίσει.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Μια εργασία αναπαραγωγής ήχου/βίντεο βρίσκεται σε εξέλιξη. Το κλείσιμο αυτής της ειδοποίησης θα την τερματίσει.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Μια εργασία συνεργασίας μεταξύ συσκευών βρίσκεται σε εξέλιξη. Το κλείσιμο αυτής της ειδοποίησης θα την τερματίσει.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Μια κλήση βρίσκεται σε εξέλιξη. Το κλείσιμο αυτής της ειδοποίησης θα την τερματίσει.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Μια εργασία εντοπισμού τοποθεσίας βρίσκεται σε εξέλιξη. Το κλείσιμο αυτής της ειδοποίησης θα την τερματίσει.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Μια εργασία WLAN βρίσκεται σε εξέλιξη. Το κλείσιμο αυτής της ειδοποίησης θα την τερματίσει.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Μια εργασία Bluetooth βρίσκεται σε εξέλιξη. Το κλείσιμο αυτής της ειδοποίησης θα την τερματίσει.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Μια εργασία μεταφοράς δεδομένων βρίσκεται σε εξέλιξη. Το κλείσιμο αυτής της ειδοποίησης θα την τερματίσει.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Το απομακρυσμένο κλειδί αυτοκινήτου θα απενεργοποιηθεί εάν κλείσετε αυτήν την κάρτα.",
+            "value":"Οι αυτόματες λειτουργίες κλειδιού αυτοκινήτου δεν θα λειτουργήσουν εάν κλείσετε αυτήν την κάρτα.",
             "attr":{
                 "priority":"translate"
             }
