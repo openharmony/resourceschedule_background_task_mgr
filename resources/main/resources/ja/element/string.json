@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"録音タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"オーディオ/ビデオ再生タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"デバイス間のコラボレーションタスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"通話中です。この通知を閉じると、通話が終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"測位タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"WLANタスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Bluetoothタスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"このカードを閉じると、車のリモートキーが無効になります。",
+            "value":"このカードを閉じると、自動車のキーの機能が無効になります。",
             "attr":{
                 "priority":"translate"
             }
