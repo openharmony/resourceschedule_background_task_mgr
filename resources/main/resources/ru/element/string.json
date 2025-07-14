@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Выполняется задача записи аудио. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Выполняется задача воспроизведения аудио/видео. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Выполняется задача взаимодействия между устройствами. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Выполняется вызов. Если вы закроете это уведомление, он будет завершен.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Выполняется задача геолокации. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Выполняется задача, связанная с WLAN. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Выполняется задача с использованием Bluetooth. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,14 +60,14 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Выполняется задача переноса данных. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Автоматический ключ от автомобиля не будут работать, если вы закроете эту карточку.",
+            "value":"Автоматический ключ от автомобиля не будeт работать, если вы закроете эту карточку.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
