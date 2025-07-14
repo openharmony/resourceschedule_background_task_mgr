@@ -11,42 +11,42 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"یک وظیفه پخش صدا/ویدیو در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"یک وظیفه همکاری بین‌دستگاهی در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"یک تماس در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"یک وظیفه موقعیت‌‌یابی در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"یک وظیفه WLAN در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"یک وظیفه بلوتوث در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"یک وظیفه انتقال داده در جریان است. بستن این اعلان منجر به خاتمه آن خواهد شد.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"اگر این کارت را ببندید، کلید ریموت خودرو غیرفعال خواهد شد.",
+            "value":"اگر این کارت را ببندید، عملکردهای خودکار کلید خودرو کار نخواهند کرد.",
             "attr":{
                 "priority":"translate"
             }
