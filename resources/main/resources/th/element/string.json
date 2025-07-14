@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"กำลังเล่นเสียง/วิดีโออยู่ การปิดการแจ้งเตือนนี้จะสิ้นสุดการดำเนินการนี้",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -25,7 +25,7 @@
             "name":"ohos_bgmode_prompt_voip",
             "value":"กำลังโทรอยู่ การปิดการแจ้งเตือนนี้จะสิ้นสุดการดำเนินการนี้",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,14 +39,14 @@
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"กำลังใช้ WLAN อยู่ การปิดการแจ้งเตือนนี้จะสิ้นสุดการดำเนินการนี้",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"กำลังใช้บลูทูธอยู่ การปิดการแจ้งเตือนนี้จะสิ้นสุดการดำเนินการนี้",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"จะปิดใช้งานกุญแจรถยนต์ระยะไกลหากคุณปิดบัตรนี้",
+            "value":"ฟังก์ชันกุญแจรถยนต์อัตโนมัติจะไม่ทำงานหากคุณปิดบัตรนี้",
             "attr":{
                 "priority":"translate"
             }
