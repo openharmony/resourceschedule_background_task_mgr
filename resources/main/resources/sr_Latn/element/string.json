@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Automatiske bilnøkkelfunksjoner vil ikke fungere hvis du lukker dette kortet.",
+            "value":"Automatske funkcije ključa od automobila neće raditi ako zatvorite ovu karticu.",
             "attr":{
                 "priority":"translate"
             }
