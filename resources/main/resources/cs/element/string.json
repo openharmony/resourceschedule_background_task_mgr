@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Probíhá úloha nahrávání. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Probíhá úloha přehrávání audia/videa. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Probíhá úloha spolupráce mezi zařízeními. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Probíhá hovor. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Probíhá úloha určování polohy. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Probíhá úloha WLAN. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Probíhá úloha Bluetooth. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Probíhá úloha přenosu dat. Uzavřením tohoto oznámení se ukončí.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Dálkový klíč od auta bude vypnut, pokud zavřete tuto kartu.",
+            "value":"Funkce automatického klíče od auta nebudou fungovat, pokud zavřete tuto kartu.",
             "attr":{
                 "priority":"translate"
             }
