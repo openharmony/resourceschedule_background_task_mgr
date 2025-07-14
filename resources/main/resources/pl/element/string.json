@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Trwa wykonywanie zadania nagrywania. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Trwa zadanie odtwarzania audio/wideo. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Trwa wykonywanie zadanie współpracy między urządzeniami. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Trwa połączenie. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Trwa wykonywanie zadania pozycjonowania. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Trwa wykonywanie zadania WLAN. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Trwa wykonywanie zadania Bluetooth. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Trwa wykonywanie zadania przenoszenia danych. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Zamknięcie tej karty spowoduje wyłączenie zdalnego kluczyka samochodowego.",
+            "value":"Funkcje automatycznego kluczyka samochodowego nie będą działać, jeśli zamkniesz tę kartę.",
             "attr":{
                 "priority":"translate"
             }
