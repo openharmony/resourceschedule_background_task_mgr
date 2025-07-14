@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Uma tarefa de gravação está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Uma tarefa de reprodução de áudio/vídeo está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Uma tarefa de colaboração entre dispositivos está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Uma chamada está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Uma tarefa de posicionamento está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Uma tarefa de WLAN está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Uma tarefa de Bluetooth está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Uma tarefa de transferência de dados está em andamento. Fechar esta notificação a encerrará.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"A chave remota do carro será desativada se você fechar este cartão.",
+            "value":"As funções automáticas da chave do carro não funcionarão se você fechar esse cartão.",
             "attr":{
                 "priority":"translate"
             }
