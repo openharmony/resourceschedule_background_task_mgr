@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"正在執行錄製任務，刪除通知後，任務將停止",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"正在執行音訊/影片播放任務，刪除通知後，任務將停止",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"正在執行分佈式任務，刪除通知後，任務將停止",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"正在執行通話相關任務，刪除通知後，任務將停止",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"正在執行定位任務，刪除通知後，任務將停止",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"正在執行 WLAN 相關任務，刪除通知後，任務將停止",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"正在執行藍牙相關任務，刪除通知後，任務將停止",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,14 +60,14 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"正在執行資料傳輸任務，刪除通知後，任務將停止",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"關閉卡片後，無感車鑰匙將失效",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
