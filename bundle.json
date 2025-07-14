@@ -58,7 +58,8 @@
           "icu",
           "jsoncpp",
           "cJSON",
-          "selinux_adapter"
+          "selinux_adapter",
+          "runtime_core"
         ]
       },
       "build": {
