@@ -4,28 +4,28 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Der er en optagelsesopgave i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"En opgave med lyd-/videoafspilning er i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Der er en opgave om samarbejde på tværs af enheder i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Der er et opkald i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,14 +39,14 @@
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Der er en WLAN-opgave i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Der er en Bluetooth-opgave i gang. Hvis du lukker denne meddelelse, afsluttes den.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -65,7 +65,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Fjernbetjeningsbilnøgle deaktiveres, hvis du lukker dette kort.",
+            "value":"Automatiske bilnøglefunktioner vil ikke virke, hvis du lukker dette kort.",
             "attr":{
                 "priority":"translate"
             }
