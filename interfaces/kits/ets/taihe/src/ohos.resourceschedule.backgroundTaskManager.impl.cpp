@@ -158,29 +158,18 @@ ani_status GetAbilityContext(ani_env *env, const ani_object &value,
     BGTASK_LOGD("is stage mode: %{public}s", stageMode ? "true" : "false");
 
     if (status != ANI_OK || !stageMode) {
-        BGTASK_LOGI("Getting context with FA model");
-        auto ability = AbilityRuntime::GetCurrentAbility(env);
-        if (!ability) {
-            BGTASK_LOGE("Failed to get native ability instance");
-            return ANI_ERROR;
-        }
-        abilityContext = ability->GetAbilityContext();
-        if (!abilityContext) {
-            BGTASK_LOGE("get FA model ability context failed");
-            return ANI_ERROR;
-        }
-    } else {
-        BGTASK_LOGD("Getting context with stage model");
-        auto context = AbilityRuntime::GetStageModeContext(env, value);
-        if (!context) {
-            BGTASK_LOGE("get context failed");
-            return ANI_ERROR;
-        }
-        abilityContext = AbilityRuntime::Context::ConvertTo<AbilityRuntime::AbilityContext>(context);
-        if (!abilityContext) {
-            BGTASK_LOGE("get Stage model ability context failed");
-            return ANI_ERROR;
-        }
+        return ANI_ERROR;
+    }
+    BGTASK_LOGD("Getting context with stage model");
+    auto context = AbilityRuntime::GetStageModeContext(env, value);
+    if (!context) {
+        BGTASK_LOGE("get context failed");
+        return ANI_ERROR;
+    }
+    abilityContext = AbilityRuntime::Context::ConvertTo<AbilityRuntime::AbilityContext>(context);
+    if (!abilityContext) {
+        BGTASK_LOGE("get Stage model ability context failed");
+        return ANI_ERROR;
     }
     return ANI_OK;
 }
