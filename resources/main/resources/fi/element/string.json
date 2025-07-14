@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"Tallennustehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Äänen/videon toistotehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Laitteiden välinen yhteiskäyttötehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"Puhelu on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"Paikannustehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"WLAN-tehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"Bluetooth-tehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,12 +60,12 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Tietojen siirtotehtävä on käynnissä. Tämän ilmoituksen sulkeminen päättää sen.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Auton kaukoavain poistetaan käytöstä, jos suljet tämän kortin.",
+            "value":"Automaattiset auton avaintoiminnot eivät toimi, jos suljet tämän kortin.",
             "attr":{
                 "priority":"translate"
             }
