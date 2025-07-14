@@ -4,49 +4,49 @@
             "name":"ohos_bgmode_prompt_audio_recording",
             "value":"È in corso un'attività di registrazione. Se chiudi questa notifica, verrà terminata.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"È in corso un'attività di riproduzione audio/video. Se chiudi questa notifica, verrà terminata.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"È in corso un'attività di collaborazione tra dispositivi. Se chiudi questa notifica, verrà terminata.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_voip",
             "value":"È in corso una chiamata. Se chiudi questa notifica, verrà terminata.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_location",
             "value":"È in corso un'attività di posizionamento. Se chiudi questa notifica, verrà terminata.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"È in corso un'attività WLAN. Se chiudi questa notifica, verrà terminata.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_bluetooth_interaction",
             "value":"È in corso un'attività Bluetooth. Se chiudi questa notifica, verrà terminata.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,14 +60,14 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"È in corso un'attività di trasferimento dei dati. Se chiudi questa notifica, verrà terminata.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
-            "value":"Se chiudi questa scheda, la chiave dell'auto remota verrà disattivata.",
+            "value":"Se chiudi questa scheda, le funzioni della chiave automatica dell'auto non funzioneranno.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
