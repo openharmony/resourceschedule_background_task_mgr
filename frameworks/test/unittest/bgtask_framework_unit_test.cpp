@@ -54,9 +54,6 @@ constexpr uint32_t ON_APP_TRANSIENT_TASK_END = 6;
 constexpr uint32_t ON_CONTINUOUS_TASK_START = 7;
 constexpr uint32_t ON_CONTINUOUS_TASK_STOP = 8;
 constexpr uint32_t ON_APP_CONTINUOUS_TASK_STOP = 9;
-constexpr uint32_t ON_APP_EFFICIENCY_RESOURCES_RESET = 11;
-constexpr uint32_t ON_PROC_EFFICIENCY_RESOURCES_APPLY = 12;
-constexpr uint32_t ON_PROC_EFFICIENCY_RESOURCES_RESET = 13;
 }
 class BgTaskFrameworkUnitTest : public testing::Test {
 public:
@@ -547,6 +544,25 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_005, TestSiz
 }
 
 /**
+ * @tc.name: BackgroundTaskSubscriberProxyTest_006
+ * @tc.desc: test BackgroundTaskSubscriberProxy.
+ * @tc.type: FUNC
+ * @tc.require: issueIC6B53
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberProxyTest_006, TestSize.Level1)
+{
+    sptr<TestBackgroundTaskSubscriberStub> subscirberStub
+        = sptr<TestBackgroundTaskSubscriberStub>(new TestBackgroundTaskSubscriberStub());
+    BackgroundTaskSubscriberProxy subscirberProxy1 = BackgroundTaskSubscriberProxy(nullptr);
+    BackgroundTaskSubscriberProxy subscirberProxy2 = BackgroundTaskSubscriberProxy(subscirberStub->AsObject());
+    int32_t flag = 1;
+    subscirberProxy1.GetFlag(flag);
+    flag = 2;
+    subscirberProxy2.GetFlag(flag);
+    EXPECT_NE(subscirberStub, nullptr);
+}
+
+/**
  * @tc.name: BackgroundTaskSubscriberStubTest_001
  * @tc.desc: test BackgroundTaskSubscriberStub.
  * @tc.type: FUNC
@@ -697,26 +713,48 @@ HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_005, TestSize
 
     MessageParcel data3;
     data3.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
-    EXPECT_NE(subscirberStub.OnRemoteRequest(ON_APP_EFFICIENCY_RESOURCES_RESET, data3, reply, option), ERR_OK);
+    EXPECT_NE(subscirberStub.OnRemoteRequest(static_cast<uint32_t>(OHOS::BackgroundTaskMgr::
+        IBackgroundTaskSubscriberIpcCode::COMMAND_ON_APP_EFFICIENCY_RESOURCES_RESET), data3, reply, option), ERR_OK);
     MessageParcel data4;
     data4.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     data4.WriteParcelable(info.get());
-    EXPECT_NE(subscirberStub.OnRemoteRequest(ON_APP_EFFICIENCY_RESOURCES_RESET, data4, reply, option), ERR_OK);
+    EXPECT_EQ(subscirberStub.OnRemoteRequest(static_cast<uint32_t>(OHOS::BackgroundTaskMgr::
+        IBackgroundTaskSubscriberIpcCode::COMMAND_ON_APP_EFFICIENCY_RESOURCES_RESET), data4, reply, option), ERR_OK);
 
     MessageParcel data5;
     data5.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
-    EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_PROC_EFFICIENCY_RESOURCES_APPLY, data5, reply, option), ERR_OK);
+    EXPECT_NE(subscirberStub.OnRemoteRequest(static_cast<uint32_t>(OHOS::BackgroundTaskMgr::
+        IBackgroundTaskSubscriberIpcCode::COMMAND_ON_PROC_EFFICIENCY_RESOURCES_APPLY), data5, reply, option), ERR_OK);
     MessageParcel data6;
     data6.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     data6.WriteParcelable(info.get());
 
     MessageParcel data7;
     data7.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
-    EXPECT_NE(subscirberStub.OnRemoteRequest(ON_PROC_EFFICIENCY_RESOURCES_RESET, data7, reply, option), ERR_OK);
+    EXPECT_NE(subscirberStub.OnRemoteRequest(static_cast<uint32_t>(OHOS::BackgroundTaskMgr::
+        IBackgroundTaskSubscriberIpcCode::COMMAND_ON_PROC_EFFICIENCY_RESOURCES_RESET), data7, reply, option), ERR_OK);
     MessageParcel data8;
     data8.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
     data8.WriteParcelable(info.get());
-    EXPECT_EQ(subscirberStub.OnRemoteRequest(ON_PROC_EFFICIENCY_RESOURCES_RESET, data8, reply, option), ERR_OK);
+    EXPECT_EQ(subscirberStub.OnRemoteRequest(static_cast<uint32_t>(OHOS::BackgroundTaskMgr::
+        IBackgroundTaskSubscriberIpcCode::COMMAND_ON_PROC_EFFICIENCY_RESOURCES_RESET), data8, reply, option), ERR_OK);
+}
+
+/**
+ * @tc.name: BackgroundTaskSubscriberStubTest_006
+ * @tc.desc: test BackgroundTaskSubscriberStub.
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X issueI5IRJK issueI4QT3W issueI4QU0V
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, BackgroundTaskSubscriberStubTest_006, TestSize.Level1)
+{
+    TestBackgroundTaskSubscriberStub subscirberStub = TestBackgroundTaskSubscriberStub();
+    MessageParcel reply;
+    MessageOption option;
+    MessageParcel data1;
+    data1.WriteInterfaceToken(TestBackgroundTaskSubscriberStub::GetDescriptor());
+    EXPECT_EQ(subscirberStub.OnRemoteRequest(static_cast<uint32_t>(OHOS::BackgroundTaskMgr::
+        IBackgroundTaskSubscriberIpcCode::COMMAND_GET_FLAG), data1, reply, option), ERR_OK);
 }
 
 /**

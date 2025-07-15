@@ -172,7 +172,7 @@ private:
         const std::shared_ptr<ContinuousTaskRecord> &continuousTaskInfo);
     bool CanNotifyHap(const std::shared_ptr<SubscriberInfo> subscriberInfo,
         const std::shared_ptr<ContinuousTaskCallbackInfo> &callbackInfo);
-    bool IsExistCallback(int32_t uid, int32_t type);
+    bool IsExistCallback(int32_t uid, uint32_t type);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};

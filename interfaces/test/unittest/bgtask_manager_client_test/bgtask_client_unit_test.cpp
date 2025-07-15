@@ -221,6 +221,11 @@ public:
     {
         BgTaskClientUnitTest::bgtaskSubscriberRet_ = "interface15";
     }
+
+    void GetFlag(int32_t &flag) override
+    {
+        BgTaskClientUnitTest::bgtaskSubscriberRet_ = "interface16";
+    }
 };
 
 class TestExpiredCallback : public ExpiredCallback {
@@ -548,6 +553,9 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_001, TestSize.Level1)
     EXPECT_EQ(bgtaskSubscriberRet_, "interface14");
     subscriberImpl->OnContinuousTaskUpdate(continousInfo);
     EXPECT_EQ(bgtaskSubscriberRet_, "interface15");
+    int32_t flag = 1;
+    subscriberImpl->GetFlag(flag);
+    EXPECT_EQ(bgtaskSubscriberRet_, "interface16");
 }
 
 /**
@@ -577,6 +585,8 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubscriber_002, TestSize.Level1)
     subscriber.OnAppEfficiencyResourcesReset(nullptr);
     subscriber.OnProcEfficiencyResourcesApply(nullptr);
     subscriber.OnProcEfficiencyResourcesReset(nullptr);
+    int32_t flag = 1;
+    subscriber.GetFlag(flag);
     EXPECT_NE(subscriber.GetImpl(), nullptr);
 }
 
