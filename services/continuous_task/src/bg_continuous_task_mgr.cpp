@@ -1049,7 +1049,9 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
         BGTASK_LOGD("%{public}s continuous task not exists", mapKey.c_str());
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
-    BGTASK_LOGI("TASK STOP: user: %{public}s stop continuous task", mapKey.c_str());
+    BGTASK_LOGI("TASK STOP: user: %{public}s stop continuous task, continuousTaskId: %{public}d, "
+        "notificationId: %{public}d", mapKey.c_str(), iter->second->GetContinuousTaskId(),
+        iter->second->GetNotificationId());
     ErrCode result = ERR_OK;
     if (iter->second->GetNotificationId() != -1) {
         result = NotificationTools::GetInstance()->CancelNotification(
@@ -1494,6 +1496,7 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
         stream << "\tcontinuousTaskValue:" << "\n";
         stream << "\t\tbundleName: " << iter->second->GetBundleName() << "\n";
         stream << "\t\tabilityName: " << iter->second->GetAbilityName() << "\n";
+        stream << "\t\tsuspendState: " << (iter->second->suspendState_ ? "true" : "false") << "\n";
         stream << "\t\tisFromWebview: " << (iter->second->IsFromWebview() ? "true" : "false") << "\n";
         stream << "\t\tisFromNewApi: " << (iter->second->IsNewApi() ? "true" : "false") << "\n";
         stream << "\t\tbackgroundMode: " << g_continuousTaskModeName[GetBgModeNameIndex(
