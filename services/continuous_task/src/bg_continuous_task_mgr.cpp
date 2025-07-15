@@ -1170,7 +1170,7 @@ bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, uint32_t type)
 {
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         int32_t flag = 0;
-        if ((*iter)->subscriber_ ) {
+        if ((*iter)->subscriber_) {
             (*iter)->subscriber_->GetFlag(flag);
         }
         if ((*iter)->isHap_ && (*iter)->uid_ == uid && (*iter)->subscriber_ &&
