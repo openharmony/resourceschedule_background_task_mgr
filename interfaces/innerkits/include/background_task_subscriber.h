@@ -295,7 +295,6 @@ private:
         BackgroundTaskSubscriber &subscriber_;
         sptr<IBackgroundTaskMgr> proxy_ {nullptr};
         std::mutex mutex_ {};
-        int32_t flag_ {0};
     };
 
 private:

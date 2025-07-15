@@ -36,7 +36,6 @@
 #include "os_account_manager.h"
 #endif // HAS_OS_ACCOUNT_PART
 #include "notification_tools.h"
-#include "parameters.h"
 #include "running_process_info.h"
 #include "string_wrapper.h"
 #include "system_ability_definition.h"
@@ -87,7 +86,6 @@ static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DELAY_TIME = 2000;
-static constexpr int32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 5000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
 static constexpr int32_t MAX_DUMP_INNER_PARAM_NUMS = 4;
@@ -96,7 +94,7 @@ static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
 static constexpr uint32_t AVSESSION_SA_UID = 6700;
-static constexpr int32_t CONTINUOUS_TASK_SUSPEND = 2;
+static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 2;
 #ifdef FEATURE_PRODUCT_WATCH
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
 #else
@@ -194,27 +192,23 @@ void BgContinuousTaskMgr::InitNecessaryState()
         handler_->PostTask(task, DELAY_TIME);
         return;
     }
-    BGTASK_LOGW("RegisterNotificationSubscriber start");
+
     if (!RegisterNotificationSubscriber()) {
         BGTASK_LOGE("RegisterNotificationSubscriber failed");
         return;
     }
-    BGTASK_LOGW("RegisterAppStateObserver start");
     if (!RegisterAppStateObserver()) {
         BGTASK_LOGE("RegisterAppStateObserver failed");
         return;
     }
-    BGTASK_LOGW("RegisterSysCommEventListener start");
     if (!RegisterSysCommEventListener()) {
         BGTASK_LOGE("RegisterSysCommEventListener failed");
         return;
     }
-    BGTASK_LOGW("RegisterConfigurationObserver start");
     if (!RegisterConfigurationObserver()) {
         BGTASK_LOGE("RegisterConfigurationObserver failed");
         return;
     }
-    BGTASK_LOGW("InitRequiredResourceInfo start");
     InitRequiredResourceInfo();
 }
 
@@ -848,7 +842,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
             return ret;
         }
     }
-    if (continuousTaskRecord->suspendState_) {
+    if (continuousTaskInfosMap_[taskInfoMapKey]->suspendState_) {
         HandleActiveContinuousTask(continuousTaskRecord->uid_, continuousTaskRecord->pid_, taskInfoMapKey);
     }
     OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_UPDATE);
@@ -862,7 +856,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
         + continuousTaskRecord->abilityName_ + SEPARATOR + std::to_string(continuousTaskRecord->abilityId_);
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
-        if (continuousTaskRecord->suspendState_) {
+        if (continuousTaskInfosMap_[taskInfoMapKey]->suspendState_) {
             HandleActiveContinuousTask(continuousTaskRecord->uid_, continuousTaskRecord->pid_, taskInfoMapKey);
             return ERR_OK;
         }
@@ -950,19 +944,14 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
         return ERR_OK;
     }
     BGTASK_LOGD("notificationText %{public}s", notificationText.c_str());
+    auto iter = avSessionNotification_.find(continuousTaskRecord->uid_);
+    bool isPublish = (iter != avSessionNotification_.end()) ? iter->second : false;
     if (continuousTaskRecord->bgModeIds_.size() == 1 &&
         continuousTaskRecord->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
-            auto task = [this, continuousTaskRecord, appName, notificationText, &ret]() {
-                auto iter = avSessionNotification_.find(continuousTaskRecord->uid_);
-                bool isPublish = (iter != avSessionNotification_.end()) ? iter->second : false;
-                if (!continuousTaskInfosMap_.empty() && !isPublish) {
-                    ret = NotificationTools::GetInstance()->PublishNotification(continuousTaskRecord,
-                        appName, notificationText, bgTaskUid_);
-                }
-            };
-            handler_->PostTask(task, NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
-            return ret;
+        if (isPublish) {
+            return ERR_OK;
         }
+    }
     return NotificationTools::GetInstance()->PublishNotification(continuousTaskRecord,
         appName, notificationText, bgTaskUid_);
 }
@@ -1177,12 +1166,15 @@ void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_
     handler_->PostTask(task);
 }
 
-bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, int32_t type)
+bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, uint32_t type)
 {
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         int32_t flag = 0;
+        if ((*iter)->subscriber_ ) {
+            (*iter)->subscriber_->GetFlag(flag);
+        }
         if ((*iter)->isHap_ && (*iter)->uid_ == uid && (*iter)->subscriber_ &&
-            ((((*iter)->subscriber_->GetFlag(flag)) & type) > 0)) {
+            ((static_cast<uint32_t>(flag) & type) > 0)) {
             BGTASK_LOGD("falg: %{public}d", flag);
             return true;
         }

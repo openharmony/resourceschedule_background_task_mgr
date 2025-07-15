@@ -40,10 +40,11 @@ public:
     void RemoveJsObserverObjects(const std::string cbType);
     std::shared_ptr<NativeReference> GetObserverObject(const std::string cbType, const napi_value &jsObserverObject);
     bool IsEmpty();
-    bool IsTypeEmpty(const std::string cbType);
+    bool IsTypeEmpty(const std::string &cbType);
     void SubscriberBgtaskSaStatusChange();
     void UnSubscriberBgtaskSaStatusChange();
     void SetFlag(int32_t flag, bool isSubscriber);
+    void GetFlag(int32_t &flag) override;
  
 private:
     class JsBackgroudTaskSystemAbilityStatusChange : public SystemAbilityStatusChangeStub {
@@ -62,7 +63,8 @@ private:
     std::map<std::string, std::set<std::shared_ptr<NativeReference>>> jsObserverObjectMap_;
     sptr<JsBackgroudTaskSystemAbilityStatusChange> jsSaListner_ = nullptr;
     std::atomic<bool> needRestoreSubscribeStatus_ = false;
-    int32_t flag_ {0};
+    uint32_t flag_ {0};
+    std::mutex flagLock_;
 }; // JsBackgroundTaskSubscriber
 } // BackgroundTaskMgr
 } // OHOS

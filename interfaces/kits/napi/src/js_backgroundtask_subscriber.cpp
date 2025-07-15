@@ -367,7 +367,7 @@ bool JsBackgroundTaskSubscriber::IsEmpty()
     return jsObserverObjectMap_.empty();
 }
 
-bool JsBackgroundTaskSubscriber::IsTypeEmpty(const std::string cbType)
+bool JsBackgroundTaskSubscriber::IsTypeEmpty(const std::string &cbType)
 {
     std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find(cbType);
@@ -398,11 +398,18 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType
 
 void JsBackgroundTaskSubscriber::SetFlag(int32_t flag, bool isSubscriber)
 {
+    std::lock_guard<std::mutex> lock(flagLock_);
     if (isSubscriber) {
-        flag_ |= flag;
+        flag_ |= static_cast<uint32_t>(flag);
     } else {
-        flag_ ^= flag;
+        flag_ ^= static_cast<uint32_t>(flag);
     }
+}
+
+void JsBackgroundTaskSubscriber::GetFlag(int32_t &flag)
+{
+    std::lock_guard<std::mutex> lock(flagLock_);
+    flag = static_cast<int32_t>(flag_);
 }
 } // BackgroundTaskMgr
 } // OHOS

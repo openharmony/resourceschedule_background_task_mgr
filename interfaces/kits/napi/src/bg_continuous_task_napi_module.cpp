@@ -52,9 +52,9 @@ static constexpr uint32_t ARGC_ONE = 1;
 static constexpr uint32_t ARGC_TWO = 2;
 static constexpr uint32_t INDEX_ZERO = 0;
 static constexpr uint32_t INDEX_ONE = 1;
-static constexpr int32_t CONTINUOUS_TASK_CANCEL = 1 << 0;
-static constexpr int32_t CONTINUOUS_TASK_SUSPEND = 1 << 1;
-static constexpr int32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
+static constexpr uint32_t CONTINUOUS_TASK_CANCEL = 1 << 0;
+static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 1 << 1;
+static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
 static std::shared_ptr<JsBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
 static std::vector<std::string> g_backgroundModes = {
     "dataTransfer",
@@ -837,7 +837,7 @@ bool CheckOffParam(napi_env env, uint32_t argc, napi_value argv[], std::string& 
     return true;
 }
 
-bool SubscribeBackgroundTask(napi_env env, int32_t flag = 0)
+bool SubscribeBackgroundTask(napi_env env, uint32_t flag = 0)
 {
     if (backgroundTaskSubscriber_ == nullptr) {
         backgroundTaskSubscriber_ = std::make_shared<JsBackgroundTaskSubscriber>(env);
@@ -857,7 +857,7 @@ bool SubscribeBackgroundTask(napi_env env, int32_t flag = 0)
     return true;
 }
 
-void UnSubscribeBackgroundTask(napi_env env, int32_t flag = 0)
+void UnSubscribeBackgroundTask(napi_env env, uint32_t flag = 0)
 {
     if (!backgroundTaskSubscriber_->IsEmpty()) {
         return;
@@ -883,7 +883,7 @@ napi_value OnOnContinuousTaskCallback(napi_env env, napi_callback_info info)
         Common::HandleParamErr(env, ERR_BGTASK_INVALID_PARAM, true);
         return WrapUndefinedToJS(env);
     }
-    int32_t type = 0;
+    uint32_t type = 0;
     if (typeString == "continuousTaskCancel") {
         type = CONTINUOUS_TASK_CANCEL;
     } else if (typeString == "continuousTaskSuspend") {
@@ -920,7 +920,7 @@ napi_value OffOnContinuousTaskCallback(napi_env env, napi_callback_info info)
         backgroundTaskSubscriber_->RemoveJsObserverObject(typeString, argv[INDEX_ONE]);
     }
  
-    int32_t type = 0;
+    uint32_t type = 0;
     if (backgroundTaskSubscriber_-> IsTypeEmpty(typeString)) {
         if (typeString == "continuousTaskCancel") {
             type = CONTINUOUS_TASK_CANCEL;
