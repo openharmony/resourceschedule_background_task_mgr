@@ -24,19 +24,19 @@ static { loadLibrary("background_task_manager_ani.z"); }
 """)
 
 struct DelaySuspendInfo {
-  requestId: f64;
-  actualDelayTime: f64;
+  requestId: i32;
+  actualDelayTime: i32;
 }
 
 struct ContinuousTaskCancelInfo {
   reason: ContinuousTaskCancelReason;
-  id: f64;
+  id: i32;
 }
 
 struct EfficiencyResourcesRequest {
-  resourceTypes: f64;
+  resourceTypes: i32;
   isApply: bool;
-  timeOut: f64;
+  timeOut: i32;
   reason: String;
   isPersist: Optional<bool>;
   isProcess: Optional<bool>;
@@ -45,8 +45,8 @@ struct EfficiencyResourcesRequest {
 struct ContinuousTaskNotification {
   slotType: @sts_type("notificationManager.SlotType") Opaque;
   contentType: @sts_type("notificationManager.ContentType") Opaque;
-  notificationId: f64;
-  continuousTaskId: Optional<f64>;
+  notificationId: i32;
+  continuousTaskId: Optional<i32>;
 }
 
 enum BackgroundMode : i32 {
@@ -95,11 +95,11 @@ enum BackgroundModeType : String {
   SUB_MODE = "subMode"
 }
 
-function CancelSuspendDelay(requestId: f64): void;
+function CancelSuspendDelay(requestId: i32): void;
 
 @gen_async("getRemainingDelayTime")
 @gen_promise("getRemainingDelayTime")
-function GetRemainingDelayTimeSync(requestId: f64): f64;
+function GetRemainingDelayTimeSync(requestId: i32): i32;
 
 union UndefinedType {
   @undefined undefined;
