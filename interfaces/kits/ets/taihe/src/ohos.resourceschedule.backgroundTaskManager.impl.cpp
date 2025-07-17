@@ -69,32 +69,31 @@ static std::vector<std::string> g_backgroundModes = {
     "taskKeeping"
 };
 
-void CancelSuspendDelay(double requestId)
+void CancelSuspendDelay(int32_t requestId)
 {
-    int32_t intRequestId = static_cast<int32_t>(requestId);
-    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(intRequestId);
+    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(requestId);
     if (errCode != ERR_OK) {
         BGTASK_LOGE("CancelSuspendDelay falied errCode: %{public}d", errCode);
         set_business_error(errCode, Common::FindErrMsg(errCode));
     }
     std::lock_guard<std::mutex> lock(callbackLock_);
-    auto findCallback = callbackInstances_.find(intRequestId);
+    auto findCallback = callbackInstances_.find(requestId);
     if (findCallback != callbackInstances_.end()) {
         callbackInstances_.erase(findCallback);
     }
 }
 
-double GetRemainingDelayTimeSync(double requestId)
+int32_t GetRemainingDelayTimeSync(int32_t requestId)
 {
     TransientTaskCallbackInfo callbackInfo;
-    callbackInfo.requestId = static_cast<int32_t>(requestId);
+    callbackInfo.requestId = requestId;
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         GetRemainingDelayTime(callbackInfo.requestId, callbackInfo.delayTime);
     if (errCode) {
         BGTASK_LOGE("GetRemainingDelayTime falied errCode: %{public}d", errCode);
         set_business_error(errCode, Common::FindErrMsg(errCode));
     }
-    return static_cast<double>(callbackInfo.delayTime);
+    return callbackInfo.delayTime;
 }
 
 ::ohos::resourceschedule::backgroundTaskManager::DelaySuspendInfo RequestSuspendDelay(
@@ -116,8 +115,8 @@ double GetRemainingDelayTimeSync(double requestId)
 
     ::ohos::resourceschedule::backgroundTaskManager::DelaySuspendInfo resultInfo;
     if (delaySuspendInfo) {
-        resultInfo.requestId = static_cast<double>(delaySuspendInfo->GetRequestId());
-        resultInfo.actualDelayTime = static_cast<double>(delaySuspendInfo->GetActualDelayTime());
+        resultInfo.requestId = delaySuspendInfo->GetRequestId();
+        resultInfo.actualDelayTime = delaySuspendInfo->GetActualDelayTime();
     }
     std::lock_guard<std::mutex> lock(callbackLock_);
     callbackInstances_[delaySuspendInfo->GetRequestId()] = callbackPtr;
@@ -425,8 +424,8 @@ static ani_enum_item GetContentType(ani_env *env)
     }
     notification.slotType = (uintptr_t)GetSlotType(env);
     notification.contentType = (uintptr_t)GetContentType(env);
-    notification.notificationId = static_cast<double>(taskParam.notificationId_);
-    notification.continuousTaskId = optional<double>(std::in_place, taskParam.continuousTaskId_);
+    notification.notificationId = taskParam.notificationId_;
+    notification.continuousTaskId = optional<int32_t>(std::in_place, taskParam.continuousTaskId_);
     return notification;
 }
 
@@ -468,8 +467,8 @@ static ani_enum_item GetContentType(ani_env *env)
     }
     notification.slotType = (uintptr_t)GetSlotType(env);
     notification.contentType = (uintptr_t)GetContentType(env);
-    notification.notificationId = static_cast<double>(taskParam.notificationId_);
-    notification.continuousTaskId = optional<double>(std::in_place, taskParam.continuousTaskId_);
+    notification.notificationId = taskParam.notificationId_;
+    notification.continuousTaskId = optional<int32_t>(std::in_place, taskParam.continuousTaskId_);
     return notification;
 }
 } // namespace
