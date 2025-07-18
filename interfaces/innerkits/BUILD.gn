@@ -21,14 +21,10 @@ idl_gen_interface("background_task_mgr_interface") {
 
 idl_gen_interface("background_task_subscriber_interface") {
   src_idl = rebase_path("IBackgroundTaskSubscriber.idl")
-  log_domainid = "0xD001711"
-  log_tag = "IBackgroundTaskSubscriber"
 }
 
 idl_gen_interface("expired_callback_interface") {
   src_idl = rebase_path("IExpiredCallback.idl")
-  log_domainid = "0xD001711"
-  log_tag = "IExpiredCallback"
 }
 
 config("bgtaskmgr_innerkits_public_config") {
