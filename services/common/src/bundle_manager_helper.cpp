@@ -67,6 +67,16 @@ bool BundleManagerHelper::CheckPermission(const std::string &permission)
     return true;
 }
 
+bool BundleManagerHelper::CheckACLPermission(const std::string &permission, uint64_t callingTokenId)
+{
+    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(callingTokenId, permission);
+    if (ret != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
+        BGTASK_LOGD("CheckPermission: %{public}s failed", permission.c_str());
+        return false;
+    }
+    return true;
+}
+
 bool BundleManagerHelper::IsSystemApp(uint64_t fullTokenId)
 {
     return Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(fullTokenId);
