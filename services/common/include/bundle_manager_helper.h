@@ -31,6 +31,7 @@ class BundleManagerHelper : public DelayedSingleton<BundleManagerHelper> {
 public:
     std::string GetClientBundleName(int32_t uid);
     bool CheckPermission(const std::string &permission);
+    bool CheckACLPermission(const std::string &permission, uint64_t callingTokenId);
     bool IsSystemApp(uint64_t fullTokenId);
     bool GetBundleInfo(const std::string &bundleName, const AppExecFwk::BundleFlag flag,
         AppExecFwk::BundleInfo &bundleInfo, int32_t userId = UNSPECIFIED_USERID);
