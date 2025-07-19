@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,6 +62,16 @@ bool BundleManagerHelper::CheckPermission(const std::string &permission)
     int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(callerToken, permission);
     if (ret != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
         BGTASK_LOGE("CheckPermission: %{public}s failed", permission.c_str());
+        return false;
+    }
+    return true;
+}
+
+bool BundleManagerHelper::CheckACLPermission(const std::string &permission, uint64_t callingTokenId)
+{
+    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(callingTokenId, permission);
+    if (ret != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
+        BGTASK_LOGD("CheckPermission: %{public}s failed", permission.c_str());
         return false;
     }
     return true;

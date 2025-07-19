@@ -65,6 +65,11 @@ bool BundleManagerHelper::CheckPermission(const std::string &permission)
     return true;
 }
 
+bool BundleManagerHelper::CheckACLPermission(const std::string &permission, uint64_t callingTokenId)
+{
+    return true;
+}
+
 bool BundleManagerHelper::IsSystemApp(uint64_t fullTokenId)
 {
     if (fullTokenId == NO_SYSTEM_APP_TOKEN_ID) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +31,7 @@ class BundleManagerHelper : public DelayedSingleton<BundleManagerHelper> {
 public:
     std::string GetClientBundleName(int32_t uid);
     bool CheckPermission(const std::string &permission);
+    bool CheckACLPermission(const std::string &permission, uint64_t callingTokenId);
     bool IsSystemApp(uint64_t fullTokenId);
     bool GetBundleInfo(const std::string &bundleName, const AppExecFwk::BundleFlag flag,
         AppExecFwk::BundleInfo &bundleInfo, int32_t userId = UNSPECIFIED_USERID);
