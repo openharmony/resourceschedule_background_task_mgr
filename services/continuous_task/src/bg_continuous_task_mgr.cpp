@@ -563,11 +563,11 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
     uint64_t callingTokenId = continuousTaskRecord->callingTokenId_;
     std::string bundleName = continuousTaskRecord->GetBundleName();
     if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-        if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId);) {
+        if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
             BGTASK_LOGE("bundleName: %{public}s is system app, have ACL permission", bundleName.c_str());
-            return
+            return false;
         }
-        return true
+        return true;
     }
     bool isExemptedApp = DelayedSingleton<BgtaskConfig>::GetInstance()->
         IsTaskKeepingExemptedQuatoApp(bundleName);
