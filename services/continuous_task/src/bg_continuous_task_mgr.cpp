@@ -81,6 +81,7 @@ static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
 static constexpr char DUMP_PARAM_GET[] = "--get";
 static constexpr char DUMP_INNER_TASK[] = "--inner_task";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
+static constexpr char BGMODE_PERMISSION_SYSTEM[] = "ohos.permission.KEEP_BACKGROUND_RUNNING_SYSTEM";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
@@ -520,7 +521,7 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
 }
 
 ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId,
-    bool isNewApi, uint64_t fullTokenId, const std::string &bundleName)
+    bool isNewApi, const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
     BgTaskHiTraceChain traceChain(__func__);
     if (!isNewApi) {
@@ -532,12 +533,13 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
         }
     } else {
         uint32_t recordedBgMode = BG_MODE_INDEX_HEAD << (requestedBgModeId - 1);
+        uint64_t fullTokenId = continuousTaskRecord->fullTokenId_;
         if (recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION &&
             !BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
             BGTASK_LOGE("wifiInteraction background mode only support for system app");
             return ERR_BGTASK_NOT_SYSTEM_APP;
         }
-        if (recordedBgMode == PC_BGMODE_TASK_KEEPING && !AllowUseTaskKeeping(bundleName)) {
+        if (recordedBgMode == PC_BGMODE_TASK_KEEPING && !AllowUseTaskKeeping(continuousTaskRecord)) {
             BGTASK_LOGE("task keeping is not supported, please set param "
                 "persist.sys.bgtask_support_task_keeping.");
             return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
@@ -552,10 +554,20 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
     return ERR_OK;
 }
 
-bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::string &bundleName)
+bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
     if (SUPPORT_TASK_KEEPING) {
         return true;
+    }
+    uint64_t fullTokenId = continuousTaskRecord->fullTokenId_;
+    uint64_t callingTokenId = continuousTaskRecord->callingTokenId_;
+    std::string bundleName = continuousTaskRecord->GetBundleName();
+    if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+        if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId);) {
+            BGTASK_LOGE("bundleName: %{public}s is system app, have ACL permission", bundleName.c_str());
+            return
+        }
+        return true
     }
     bool isExemptedApp = DelayedSingleton<BgtaskConfig>::GetInstance()->
         IsTaskKeepingExemptedQuatoApp(bundleName);
@@ -741,11 +753,13 @@ void BgContinuousTaskMgr::InitRecordParam(std::shared_ptr<ContinuousTaskRecord> 
     const sptr<ContinuousTaskParam> &taskParam, int32_t userId)
 {
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     continuousTaskRecord->wantAgent_ = taskParam->wantAgent_;
     continuousTaskRecord->userId_ = userId;
     continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
     continuousTaskRecord->appName_ = taskParam->appName_;
     continuousTaskRecord->fullTokenId_ = fullTokenId;
+    continuousTaskRecord->callingTokenId_ = callingTokenId;
     continuousTaskRecord->isSystem_ = BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId);
 }
 
@@ -822,8 +836,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     }
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_, continuousTaskRecord->abilityName_);
     for (auto it =  taskParam->bgModeIds_.begin(); it != taskParam->bgModeIds_.end(); it++) {
-        ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord->fullTokenId_,
-            continuousTaskRecord->bundleName_);
+        ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord);
         if (ret != ERR_OK) {
             BGTASK_LOGE("CheckBgmodeType error, mode: %{public}u, apply mode: %{public}u.", configuredBgMode, *it);
             return ret;
@@ -882,8 +895,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_,
             continuousTaskRecord->abilityName_);
         for (auto it = continuousTaskRecord->bgModeIds_.begin(); it != continuousTaskRecord->bgModeIds_.end(); it++) {
-            ret = CheckBgmodeType(configuredBgMode, *it, continuousTaskRecord->isNewApi_,
-                continuousTaskRecord->fullTokenId_, continuousTaskRecord->bundleName_);
+            ret = CheckBgmodeType(configuredBgMode, *it, continuousTaskRecord->isNewApi_, continuousTaskRecord);
             if (ret != ERR_OK) {
                 BGTASK_LOGE("CheckBgmodeType invalid!");
                 return ret;
