@@ -779,6 +779,7 @@ void BgTransientTaskMgr::OnAppCacheStateChanged(int32_t uid, int32_t pid, const 
             bundleName.c_str(), uid);
         return;
     }
+    lock_guard<mutex> lock(expiredCallbackLock_);
     for (auto &requestId : requestIdList) {
         BGTASK_LOGI("OnAppCacheStateChanged cancel task, bundlename: %{public}s, uid: %{public}d, pid: %{public}d,"
             " requestId: %{public}d.", bundleName.c_str(), uid, pid, requestId);
