@@ -1149,7 +1149,6 @@ void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uin
         return;
     }
     if (continuousTaskInfosMap_.find(key) == continuousTaskInfosMap_.end()) {
-        BGTASK_LOGW("remove TaskInfo failure, no matched task: %{public}s", key.c_str());
         return;
     }
     NotificationTools::GetInstance()->CancelNotification(continuousTaskInfosMap_[key]->GetNotificationLabel(),
@@ -1282,7 +1281,6 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, ui
             ++iter;
             continue;
         }
-        BGTASK_LOGW("erase key %{public}s", iter->first.c_str());
         iter->second->reason_ = FREEZE_CANCEL;
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
         NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
