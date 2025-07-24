@@ -552,8 +552,11 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
     if (SUPPORT_TASK_KEEPING) {
         return true;
     }
-    uint64_t callingTokenId = continuousTaskRecord->callingTokenId_;
     std::string bundleName = continuousTaskRecord->GetBundleName();
+    if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsTaskKeepingExemptedQuatoApp(bundleName)) {
+        return true;
+    }
+    uint64_t callingTokenId = continuousTaskRecord->callingTokenId_;
     if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
         if (continuousTaskRecord->IsSystem()) {
             BGTASK_LOGE("bundleName: %{public}s is system app, have ACL permission", bundleName.c_str());
@@ -562,9 +565,7 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
         BGTASK_LOGD("bundleName: %{public}s  have ACL permission", bundleName.c_str());
         return true;
     }
-    bool isExemptedApp = DelayedSingleton<BgtaskConfig>::GetInstance()->
-        IsTaskKeepingExemptedQuatoApp(bundleName);
-    return isExemptedApp;
+    return false;
 }
 
 uint32_t BgContinuousTaskMgr::GetBackgroundModeInfo(int32_t uid, const std::string &abilityName)
@@ -663,6 +664,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     ErrCode result = ERR_OK;
     int32_t uid = taskParam->uid_;
     pid_t callingPid = IPCSkeleton::GetCallingPid();
+    if (taskParam->GetPid() != 0) {
+        callingPid = taskParam->GetPid();
+    }
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
     std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);

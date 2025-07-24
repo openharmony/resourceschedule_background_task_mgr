@@ -95,7 +95,16 @@ bool ContinuousTaskParamForInner::ReadFromParcel(Parcel &parcel)
         BGTASK_LOGE("Failed to read the abilityId");
         return false;
     }
-    tokenId_ = parcel.ReadUint64();
+    
+    if (!parcel.ReadUint64(tokenId_)) {
+        BGTASK_LOGE("Failed to read the tokenId");
+        return false;
+    }
+
+    if (!parcel.ReadInt32(pid_)) {
+        BGTASK_LOGE("Failed to read the pid");
+        return false;
+    }
     return true;
 }
 
@@ -199,7 +208,21 @@ bool ContinuousTaskParamForInner::Marshalling(Parcel &parcel) const
         BGTASK_LOGE("Failed to write tokenId_");
         return false;
     }
+    if (!parcel.WriteInt32(pid_)) {
+        BGTASK_LOGE("Failed to write pid_");
+        return false;
+    }
     return true;
+}
+
+void ContinuousTaskParamForInner::SetPid(int32_t pid)
+{
+    pid_ = pid;
+}
+
+int32_t ContinuousTaskParamForInner::GetPid()
+{
+    return pid_
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
