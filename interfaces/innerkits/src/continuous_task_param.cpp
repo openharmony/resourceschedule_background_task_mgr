@@ -222,7 +222,7 @@ void ContinuousTaskParamForInner::SetPid(int32_t pid)
 
 int32_t ContinuousTaskParamForInner::GetPid()
 {
-    return pid_
+    return pid_;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
