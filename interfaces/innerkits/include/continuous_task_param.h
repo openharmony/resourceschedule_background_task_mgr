@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 
 #include <string>
 
+#include "background_mode.h"
 #include "iremote_object.h"
 #include "parcel.h"
 #include "refbase.h"
@@ -45,7 +46,17 @@ struct ContinuousTaskParam : public Parcelable {
         const std::vector<uint32_t> &bgModeIds = {}, int32_t abilityId = -1)
         : isNewApi_(isNewApi), bgModeId_(bgModeId), wantAgent_(wantAgent), abilityName_(abilityName),
           abilityToken_(abilityToken), appName_(appName), isBatchApi_(isBatchApi), bgModeIds_(bgModeIds),
-          abilityId_(abilityId) {}
+          abilityId_(abilityId) {
+            auto findNonDataTransfer = [](const auto &target) {
+                return target != BackgroundMode::DATA_TRANSFER;
+            };
+            auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findNonDataTransfer);
+            if (iter != bgModeIds_.end()) {
+                bgModeId_ = *iter;
+            } else {
+                bgModeId_ = bgModeIds_[0];
+            }
+        }
     bool ReadFromParcel(Parcel &parcel);
     bool Marshalling(Parcel &parcel) const override;
     static ContinuousTaskParam *Unmarshalling(Parcel &parcel);

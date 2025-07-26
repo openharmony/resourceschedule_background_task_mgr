@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -597,9 +597,6 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
             BGTASK_LOGE("bgModeIds_ is empty");
             return false;
         }
-        if (taskParam->abilityId_ < 0) {
-            BGTASK_LOGE("abilityId_ is invalid");
-        }
     } else {
         if (taskParam->abilityName_.empty()) {
             BGTASK_LOGE("continuous task params invalid!");
@@ -839,6 +836,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
             return ret;
         }
     }
+    continuousTaskRecord->bgModeId_ = taskParam->bgModeId_;
     continuousTaskRecord->bgModeIds_ = taskParam->bgModeIds_;
     continuousTaskRecord->isBatchApi_ = taskParam->isBatchApi_;
 
