@@ -48,7 +48,7 @@ struct ContinuousTaskParam : public Parcelable {
           abilityToken_(abilityToken), appName_(appName), isBatchApi_(isBatchApi), bgModeIds_(bgModeIds),
           abilityId_(abilityId) {
             auto findNonDataTransfer = [](const auto &target) {
-                return  target != BackgroundMode::DATA_TRANSFER;
+                return target != BackgroundMode::DATA_TRANSFER;
             };
             auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findNonDataTransfer);
             if (iter != bgModeIds_.end()) {
