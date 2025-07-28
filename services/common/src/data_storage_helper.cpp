@@ -59,16 +59,17 @@ ErrCode DataStorageHelper::RefreshTaskRecord(const std::unordered_map<std::strin
     }
     if (access(TASK_RECORD_FILE_PATH, F_OK) == ERR_OK) {
         BGTASK_LOGD("the file: %{private}s already exists.", TASK_RECORD_FILE_PATH);
-    }
-    FILE *file = fopen(TASK_RECORD_FILE_PATH, "w+");
-    if (file == nullptr) {
-        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", TASK_RECORD_FILE_PATH, strerror(errno));
-        return ERR_BGTASK_CREATE_FILE_ERR;
-    }
-    int closeResult = fclose(file);
-    if (closeResult < 0) {
-        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", TASK_RECORD_FILE_PATH, strerror(errno));
-        return ERR_BGTASK_CREATE_FILE_ERR;;
+    } else {
+        FILE *file = fopen(TASK_RECORD_FILE_PATH, "w+");
+        if (file == nullptr) {
+            BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", TASK_RECORD_FILE_PATH, strerror(errno));
+            return ERR_BGTASK_CREATE_FILE_ERR;
+        }
+        int closeResult = fclose(file);
+        if (closeResult < 0) {
+            BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", TASK_RECORD_FILE_PATH, strerror(errno));
+            return ERR_BGTASK_CREATE_FILE_ERR;;
+        }
     }
     return SaveJsonValueToFile(root.dump(CommonUtils::jsonFormat_), TASK_RECORD_FILE_PATH);
 }
@@ -97,18 +98,19 @@ ErrCode DataStorageHelper::RefreshResourceRecord(const ResourceRecordMap &appRec
     ConvertMapToString(appRecord, processRecord, record);
     if (access(RESOURCE_RECORD_FILE_PATH.c_str(), F_OK) == ERR_OK) {
         BGTASK_LOGD("the file: %{private}s already exists.", RESOURCE_RECORD_FILE_PATH.c_str());
-    }
-    FILE *file = fopen(RESOURCE_RECORD_FILE_PATH.c_str(), "w+");
-    if (file == nullptr) {
-        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s",
-            RESOURCE_RECORD_FILE_PATH.c_str(), strerror(errno));
-        return ERR_BGTASK_CREATE_FILE_ERR;
-    }
-    int closeResult = fclose(file);
-    if (closeResult < 0) {
-        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s",
-            RESOURCE_RECORD_FILE_PATH.c_str(), strerror(errno));
-        return ERR_BGTASK_CREATE_FILE_ERR;;
+    } else {
+        FILE *file = fopen(RESOURCE_RECORD_FILE_PATH.c_str(), "w+");
+        if (file == nullptr) {
+            BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s",
+                RESOURCE_RECORD_FILE_PATH.c_str(), strerror(errno));
+            return ERR_BGTASK_CREATE_FILE_ERR;
+        }
+        int closeResult = fclose(file);
+        if (closeResult < 0) {
+            BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s",
+                RESOURCE_RECORD_FILE_PATH.c_str(), strerror(errno));
+            return ERR_BGTASK_CREATE_FILE_ERR;;
+        }
     }
     return SaveJsonValueToFile(record, RESOURCE_RECORD_FILE_PATH);
 }

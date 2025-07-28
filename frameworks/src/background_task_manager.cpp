@@ -46,7 +46,7 @@ ErrCode BackgroundTaskManager::CancelSuspendDelay(int32_t requestId)
     return proxy_->CancelSuspendDelay(requestId);
 }
 
-ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reasonu16,
+ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reasonU16,
     const ExpiredCallback &callback, std::shared_ptr<DelaySuspendInfo> &delayInfo)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
@@ -65,7 +65,7 @@ ErrCode BackgroundTaskManager::RequestSuspendDelay(const std::u16string &reasonu
         BGTASK_LOGE("delayInfo is nullptr");
         return ERR_CALLBACK_NULL_OR_TYPE_ERR;
     }
-    std::string reason = Str16ToStr8(reasonu16);
+    std::string reason = Str16ToStr8(reasonU16);
     return proxy_->RequestSuspendDelay(reason, callbackSptr, *delayInfo.get());
 }
 

@@ -27,11 +27,6 @@ declare_args() {
   background_task_mgr_graphics = true
   background_task_mgr_jsstack = true
   background_task_mgr_device_enable = true
-
-  if (defined(global_parts_info) &&
-      !defined(global_parts_info.hiviewdfx_hiview)) {
-    background_task_mgr_jsstack = false
-  }
 }
 
 if (!defined(global_parts_info) ||

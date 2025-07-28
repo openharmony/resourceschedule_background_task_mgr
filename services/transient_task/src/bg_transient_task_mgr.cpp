@@ -475,7 +475,7 @@ ErrCode BgTransientTaskMgr::GetAllTransientTasks(int32_t &remainingQuota,
     auto uid = IPCSkeleton::GetCallingUid();
     auto pid = IPCSkeleton::GetCallingPid();
     if (!VerifyCallingInfo(uid, pid)) {
-        BGTASK_LOGI("get remain time failed, uid: %{public}d or pid: %{public}d is invalid", uid, pid);
+        BGTASK_LOGE("get remain time failed, uid: %{public}d or pid: %{public}d is invalid", uid, pid);
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
     std::string name = "";
@@ -485,11 +485,11 @@ ErrCode BgTransientTaskMgr::GetAllTransientTasks(int32_t &remainingQuota,
     }
     auto keyInfo = std::make_shared<KeyInfo>(name, uid, pid);
     remainingQuota = decisionMaker_->GetQuota(keyInfo);
+    lock_guard<mutex> lock(expiredCallbackLock_);
     if (keyInfoMap_.empty()) {
         BGTASK_LOGD("not have transient task, pkg : %{public}s, uid : %{public}d", name.c_str(), uid);
         return ERR_OK;
     }
-    lock_guard<mutex> lock(expiredCallbackLock_);
     for (const auto &record : keyInfoMap_) {
         if (!record.second) {
             continue;
@@ -811,6 +811,7 @@ void BgTransientTaskMgr::DumpTaskTime(const std::vector<std::string> &dumpOption
 
 bool BgTransientTaskMgr::DumpAllRequestId(std::vector<std::string> &dumpInfo)
 {
+    lock_guard<mutex> lock(expiredCallbackLock_);
     if (keyInfoMap_.empty()) {
         dumpInfo.push_back("No Transient Task!\n");
         return true;
@@ -866,23 +867,22 @@ void SubscriberDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 
 void BgTransientTaskMgr::HandleSuspendManagerDie()
 {
-    lock_guard<mutex> lock(transientUidLock_);
-    if (transientPauseUid_.empty()) {
-        return;
-    }
-    for (auto iter = transientPauseUid_.begin(); iter != transientPauseUid_.end(); iter++) {
-        int32_t uid = *iter;
-        std::string name = "";
-        if (!GetBundleNamesForUid(uid, name)) {
-            BGTASK_LOGE("GetBundleNamesForUid fail, uid : %{public}d.", uid);
-            continue;
+    if (!transientPauseUid_.empty()) {
+        for (auto iter = transientPauseUid_.begin(); iter != transientPauseUid_.end(); iter++) {
+            int32_t uid = *iter;
+            std::string name = "";
+            if (!GetBundleNamesForUid(uid, name)) {
+                BGTASK_LOGE("GetBundleNamesForUid fail, uid : %{public}d.", uid);
+                continue;
+            }
+            ErrCode ret = decisionMaker_->StartTransientTaskTimeForInner(uid, name);
+            if (ret != ERR_OK) {
+                BGTASK_LOGE("transient task uid: %{public}d, restart fail.", uid);
+            }
         }
-        ErrCode ret = decisionMaker_->StartTransientTaskTimeForInner(uid, name);
-        if (ret != ERR_OK) {
-            BGTASK_LOGE("transient task uid: %{public}d, restart fail.", uid);
-        }
+        lock_guard<mutex> lock(transientUidLock_);
+        transientPauseUid_.clear();
     }
-    transientPauseUid_.clear();
 }
 
 void BgTransientTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)

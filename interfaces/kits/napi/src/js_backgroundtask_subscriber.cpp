@@ -256,7 +256,7 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskActive(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("OnContinuousTaskActive abilityname: %{public}s, continuousTaskId: %{public}d",
-        continuousTaskCallbackInfo->GetAbilityName().c_str(),continuousTaskCallbackInfo->GetContinuousTaskId());
+        continuousTaskCallbackInfo->GetAbilityName().c_str(), continuousTaskCallbackInfo->GetContinuousTaskId());
     std::unique_ptr<NapiAsyncTask::CompleteCallback> complete = std::make_unique<NapiAsyncTask::CompleteCallback>(
         [self = weak_from_this(), continuousTaskCallbackInfo](napi_env env, NapiAsyncTask &task, int32_t status) {
             auto jsObserver = self.lock();
@@ -317,7 +317,8 @@ void JsBackgroundTaskSubscriber::AddJsObserverObject(const std::string cbType, c
         std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
         napi_ref ref = nullptr;
         napi_create_reference(env_, jsObserverObject, 1, &ref);
-        jsObserverObjectMap_[cbType].emplace(std::shared_ptr<NativeReference>(reinterpret_cast<NativeReference *>(ref)));
+        jsObserverObjectMap_[cbType].emplace(
+            std::shared_ptr<NativeReference>(reinterpret_cast<NativeReference *>(ref)));
         BGTASK_LOGI("add observer, type: %{public}s, size: %{public}d", cbType.c_str(),
             static_cast<int32_t>(jsObserverObjectMap_[cbType].size()));
     } else {
@@ -396,13 +397,13 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType
     }
 }
 
-void JsBackgroundTaskSubscriber::SetFlag(int32_t flag, bool isSubscriber)
+void JsBackgroundTaskSubscriber::SetFlag(uint32_t flag, bool isSubscriber)
 {
     std::lock_guard<std::mutex> lock(flagLock_);
     if (isSubscriber) {
-        flag_ |= static_cast<uint32_t>(flag);
+        flag_ |= flag;
     } else {
-        flag_ ^= static_cast<uint32_t>(flag);
+        flag_ &= ~flag;
     }
 }
 

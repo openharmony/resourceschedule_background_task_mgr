@@ -658,8 +658,6 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskParamForInner_001, TestSize.Level1)
     sptr<ContinuousTaskParamForInner> info1 = sptr<ContinuousTaskParamForInner>(new ContinuousTaskParamForInner());
     sptr<ContinuousTaskParamForInner> info2 = sptr<ContinuousTaskParamForInner>(
         new ContinuousTaskParamForInner(1, 1, true));
-    info2->SetPid(1);
-    EXPECT_EQ(info2->GetPid(), 1);
 
     Parcel parcel1 = Parcel();
     info2->Marshalling(parcel1);

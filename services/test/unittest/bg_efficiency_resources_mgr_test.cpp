@@ -402,9 +402,11 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SystemAbility_001, TestSize.Level1)
     bgEfficiencyResourcesMgr_->OnAddSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, "");
 
     bgEfficiencyResourcesMgr_->isSysReady_.store(true);
+    bgEfficiencyResourcesMgr_->CheckAlivedApp(0);
     bgEfficiencyResourcesMgr_->Clear();
     bgEfficiencyResourcesMgr_->appStateObserver_ = nullptr;
     bgEfficiencyResourcesMgr_->Clear();
+    bgEfficiencyResourcesMgr_->CheckAlivedApp(0);
     EXPECT_TRUE(true);
 }
 
