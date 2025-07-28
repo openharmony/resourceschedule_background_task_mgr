@@ -483,7 +483,8 @@ ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, u
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskMgrService::SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+ErrCode BackgroundTaskMgrService::SuspendContinuousTask(
+    int32_t uid, int32_t pid, int32_t reason, const std::string &key)
 {
     if (!CheckCallingToken() || !CheckCallingProcess()) {
         BGTASK_LOGW("SuspendContinuousTask not allowed");
@@ -505,7 +506,6 @@ ErrCode BackgroundTaskMgrService::ActiveContinuousTask(int32_t uid, int32_t pid,
 
 ErrCode BackgroundTaskMgrService::AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish)
 {
-    BgTaskHiTraceChain traceChain(__func__);
     if (!CheckCallingToken()) {
         BGTASK_LOGW("AVSessionNotifyUpdateNotification not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;

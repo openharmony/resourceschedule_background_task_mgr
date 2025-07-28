@@ -30,9 +30,11 @@ public:
     virtual ~JsBackgroundTaskSubscriber();
     void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
     void HandleOnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
-    void OnContinuousTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+    void OnContinuousTaskSuspend(
+        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
     void HandleOnContinuousTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
-    void OnContinuousTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+    void OnContinuousTaskActive(
+        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
     void HandleOnContinuousTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void CallJsFunction(const napi_value value, const char *methodName, const napi_value *argv, const size_t argc);
     void AddJsObserverObject(const std::string cbType, const napi_value &jsObserverObject);
@@ -43,7 +45,7 @@ public:
     bool IsTypeEmpty(const std::string &cbType);
     void SubscriberBgtaskSaStatusChange();
     void UnSubscriberBgtaskSaStatusChange();
-    void SetFlag(int32_t flag, bool isSubscriber);
+    void SetFlag(uint32_t flag, bool isSubscriber);
     void GetFlag(int32_t &flag) override;
  
 private:

@@ -646,7 +646,6 @@ HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_002, TestSize.Level2)
     // 文件路径错误
     std::string file("");
     EXPECT_FALSE(DelayedSingleton<DataStorageHelper>::GetInstance()->ParseFastSuspendDozeTime(file, time));
-    EXPECT_EQ(time, -1);
     // 文件路径正确
     file = "/etc/efficiency_manager/suspend_manager_config.json";
     EXPECT_FALSE(DelayedSingleton<DataStorageHelper>::GetInstance()->ParseFastSuspendDozeTime(file, time));

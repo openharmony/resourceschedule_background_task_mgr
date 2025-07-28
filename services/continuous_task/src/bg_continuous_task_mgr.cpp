@@ -215,14 +215,11 @@ void BgContinuousTaskMgr::HandlePersistenceData()
     DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreTaskRecord(continuousTaskInfosMap_);
     auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
-    if (appMgrClient == nullptr) {
-        BGTASK_LOGE("connect to app mgr service failed");
+    if (appMgrClient->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGW("connect to app mgr service failed");
         return;
     }
-    if (appMgrClient->GetAllRunningProcesses(allAppProcessInfos) != ERR_OK) {
-        BGTASK_LOGE("get all running process failed");
-        return;
-    }
+    appMgrClient->GetAllRunningProcesses(allAppProcessInfos);
     CheckPersistenceData(allAppProcessInfos);
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
 }
@@ -368,14 +365,13 @@ void BgContinuousTaskMgr::UnregisterAppStateObserver()
 __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterConfigurationObserver()
 {
     auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
-    if (appMgrClient == nullptr) {
-        BGTASK_LOGE("connect to app mgr service failed");
+    if (appMgrClient->ConnectAppMgrService() != ERR_OK) {
+        BGTASK_LOGW("connect to app mgr service failed");
         return false;
     }
     configChangeObserver_ = sptr<AppExecFwk::IConfigurationObserver>(
         new (std::nothrow) ConfigChangeObserver(handler_, shared_from_this()));
     if (appMgrClient->RegisterConfigurationObserver(configChangeObserver_) != ERR_OK) {
-        BGTASK_LOGE("register configuration observer failed");
         return false;
     }
     return true;
@@ -695,7 +691,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 {
     BgTaskHiTraceChain traceChain(__func__);
     if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
     }
     if (!CheckTaskParam(taskParam)) {
@@ -821,6 +816,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
         continuousTaskRecord->ToString(taskParam->bgModeIds_).c_str(),
         continuousTaskRecord->isBatchApi_, continuousTaskRecord->abilityId_);
+    // update continuoustask by same modes.
     if (CommonUtils::CheckModesSame(oldModes, taskParam->bgModeIds_)) {
         return ERR_OK;
     }
@@ -840,6 +836,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     continuousTaskRecord->bgModeIds_ = taskParam->bgModeIds_;
     continuousTaskRecord->isBatchApi_ = taskParam->isBatchApi_;
 
+    // old and new task hava mode: DATA_TRANSFER, not update notification
     if (CommonUtils::CheckExistMode(oldModes, BackgroundMode::DATA_TRANSFER) &&
         CommonUtils::CheckExistMode(continuousTaskRecord->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
         BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same mode: DATA_TRANSFER",
@@ -1286,6 +1283,7 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, ui
         iter = continuousTaskInfosMap_.erase(iter);
         RefreshTaskRecord();
     }
+    HandleAppContinuousTaskStop(uid);
 }
 
 ErrCode BgContinuousTaskMgr::AddSubscriber(const std::shared_ptr<SubscriberInfo> subscriberInfo)
@@ -1388,6 +1386,7 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
     if (continuousTaskInfosMap_.empty()) {
         return ERR_OK;
     }
+
     for (auto record : continuousTaskInfosMap_) {
         if (uid != -1 && uid != record.second->uid_) {
             continue;
@@ -1840,11 +1839,11 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
     }
 }
 
-void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-        
         if (!(*iter)->isHap_ && (*iter)->subscriber_) {
             // 对SA来说，长时任务暂停状态等同于取消长时任务，保持原有逻辑
             BGTASK_LOGD("continuous task suspend callback trigger");
@@ -1860,7 +1859,8 @@ void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(const std::shared_ptr<Con
     }
 }
 
-void BgContinuousTaskMgr::NotifySubscribersTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+void BgContinuousTaskMgr::NotifySubscribersTaskActive(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
