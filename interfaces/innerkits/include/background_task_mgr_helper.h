@@ -18,7 +18,7 @@
 
 #include "background_task_subscriber.h"
 #include "efficiency_resource_info.h"
-#include "bgtaskmgr_inner_error.h"
+#include "bgtaskmgr_inner_errors.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
