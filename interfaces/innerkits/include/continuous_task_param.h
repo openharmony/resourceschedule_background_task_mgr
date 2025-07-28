@@ -47,14 +47,18 @@ struct ContinuousTaskParam : public Parcelable {
         : isNewApi_(isNewApi), bgModeId_(bgModeId), wantAgent_(wantAgent), abilityName_(abilityName),
           abilityToken_(abilityToken), appName_(appName), isBatchApi_(isBatchApi), bgModeIds_(bgModeIds),
           abilityId_(abilityId) {
-            auto findNonDataTransfer = [](const auto &target) {
-                return target != BackgroundMode::DATA_TRANSFER;
-            };
-            auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findNonDataTransfer);
-            if (iter != bgModeIds_.end()) {
-                bgModeId_ = *iter;
+            if (isBatchApi_ && bgModeIds_.size() > 0) {
+                auto findNonDataTransfer = [](const auto &target) {
+                    return  target != BackgroundMode::DATA_TRANSFER;
+                };
+                auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findNonDataTransfer);
+                if (iter != bgModeIds_.end()) {
+                    bgModeId_ = *iter;
+                } else {
+                    bgModeId_ = bgModeIds_[0];
+                }
             } else {
-                bgModeId_ = bgModeIds_[0];
+                bgModeIds_.push_back(bgModeId);
             }
         }
     bool ReadFromParcel(Parcel &parcel);
