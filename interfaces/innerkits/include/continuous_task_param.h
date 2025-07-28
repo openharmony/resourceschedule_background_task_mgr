@@ -54,7 +54,7 @@ struct ContinuousTaskParam : public Parcelable {
                 auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findNonDataTransfer);
                 if (iter != bgModeIds_.end()) {
                     bgModeId_ = *iter;
-                } else {
+                } else if (bgModeIds_.size() > 0) {
                     bgModeId_ = bgModeIds_[0];
                 }
             }
