@@ -54,10 +54,7 @@
           "hiview",
           "i18n",
           "relational_store",
-          "icu",
-          "jsoncpp",
-          "cJSON",
-          "selinux_adapter"
+          "icu"
         ]
       },
       "build": {

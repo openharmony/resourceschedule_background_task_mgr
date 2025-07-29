@@ -65,7 +65,7 @@ ohos_fuzztest("BgTaskRequestSuspendDelayFuzzTest") {
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
-    "access_token:libnativetoken",
+    "access_token:libnativetoken_shared",
     "access_token:libtoken_setproc",
     "access_token:libtokenid_sdk",
     "bundle_framework:appexecfwk_base",
@@ -81,7 +81,6 @@ ohos_fuzztest("BgTaskRequestSuspendDelayFuzzTest") {
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "selinux_adapter:librestorecon",
   ]
 
   if (has_os_account_part) {

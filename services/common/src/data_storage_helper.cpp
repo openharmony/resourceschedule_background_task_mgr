@@ -68,7 +68,7 @@ ErrCode DataStorageHelper::RefreshTaskRecord(const std::unordered_map<std::strin
         int closeResult = fclose(file);
         if (closeResult < 0) {
             BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", TASK_RECORD_FILE_PATH, strerror(errno));
-            return ERR_BGTASK_CREATE_FILE_ERR;;
+            return ERR_BGTASK_CREATE_FILE_ERR;
         }
     }
     return SaveJsonValueToFile(root.dump(CommonUtils::jsonFormat_), TASK_RECORD_FILE_PATH);
@@ -109,7 +109,7 @@ ErrCode DataStorageHelper::RefreshResourceRecord(const ResourceRecordMap &appRec
         if (closeResult < 0) {
             BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s",
                 RESOURCE_RECORD_FILE_PATH.c_str(), strerror(errno));
-            return ERR_BGTASK_CREATE_FILE_ERR;;
+            return ERR_BGTASK_CREATE_FILE_ERR;
         }
     }
     return SaveJsonValueToFile(record, RESOURCE_RECORD_FILE_PATH);

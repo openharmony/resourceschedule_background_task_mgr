@@ -415,7 +415,7 @@ void BgEfficiencyResourcesMgr::ApplyResourceForPkgAndProc(int32_t uid, int32_t p
     if ((resourceInfo->GetResourceNumber() & ResourceType::CPU) !=0) {
         sptr<EfficiencyResourceInfo> procResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
         if (procResourceInfo == nullptr) {
-            BGTASK_LOGE("procResourceInfo is null");
+            BGTASK_LOGE("procResourceInfo is null!");
             return;
         }
         procResourceInfo->SetResourceNumber(ResourceType::CPU);
@@ -425,7 +425,7 @@ void BgEfficiencyResourcesMgr::ApplyResourceForPkgAndProc(int32_t uid, int32_t p
     if (resourceNumber != 0) {
         sptr<EfficiencyResourceInfo> appResourceInfo = new (std::nothrow) EfficiencyResourceInfo(*resourceInfo);
         if (appResourceInfo == nullptr) {
-            BGTASK_LOGE("appResourceInfo is null");
+            BGTASK_LOGE("appResourceInfo is null!");
             return;
         }
         appResourceInfo->SetResourceNumber(resourceNumber);
