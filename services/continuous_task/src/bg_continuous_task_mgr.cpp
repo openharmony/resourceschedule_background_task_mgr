@@ -1261,6 +1261,7 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUid(int32_t uid)
         iter = continuousTaskInfosMap_.erase(iter);
         RefreshTaskRecord();
     }
+    HandleAppContinuousTaskStop(uid);
 }
 
 void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, uint32_t mode)
