@@ -36,6 +36,7 @@ struct ContinuousTaskParam : public Parcelable {
     bool isBatchApi_ {false};
     std::vector<uint32_t> bgModeIds_ {};
     int32_t abilityId_ {-1};
+    bool isACLTaskkeeping_ {false};
     int32_t notificationId_ {-1}; // out
     int32_t continuousTaskId_ {-1}; // out
 
@@ -64,6 +65,8 @@ struct ContinuousTaskParam : public Parcelable {
     bool ReadFromParcel(Parcel &parcel);
     bool Marshalling(Parcel &parcel) const override;
     static ContinuousTaskParam *Unmarshalling(Parcel &parcel);
+    bool IsACLTaskkeeping() const;
+    void SetACLTaskkeeping(bool isACLTaskkeeping);
 };
 
 struct ContinuousTaskParamForInner : public Parcelable {
