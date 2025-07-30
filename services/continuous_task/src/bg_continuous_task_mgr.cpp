@@ -553,12 +553,7 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
         return true;
     }
     uint64_t callingTokenId = continuousTaskRecord->callingTokenId_;
-    if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-        if (continuousTaskRecord->IsSystem()) {
-            BGTASK_LOGE("bundleName: %{public}s is system app, have ACL permission", bundleName.c_str());
-            return false;
-        }
-        BGTASK_LOGD("bundleName: %{public}s  have ACL permission", bundleName.c_str());
+    if (continuousTaskRecord->IsACLTaskkeeping() && !continuousTaskRecord->IsSystem()) {
         return true;
     }
     return false;
@@ -706,7 +701,13 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 #else // HAS_OS_ACCOUNT_PART
     GetOsAccountIdFromUid(callingUid, userId);
 #endif // HAS_OS_ACCOUNT_PART
-    if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
+
+    if (taskParam->IsACLTaskkeeping()) {
+        uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
+        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
+    } else if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
@@ -742,14 +743,13 @@ void BgContinuousTaskMgr::InitRecordParam(std::shared_ptr<ContinuousTaskRecord> 
     const sptr<ContinuousTaskParam> &taskParam, int32_t userId)
 {
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
-    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     continuousTaskRecord->wantAgent_ = taskParam->wantAgent_;
     continuousTaskRecord->userId_ = userId;
     continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
     continuousTaskRecord->appName_ = taskParam->appName_;
     continuousTaskRecord->fullTokenId_ = fullTokenId;
-    continuousTaskRecord->callingTokenId_ = callingTokenId;
     continuousTaskRecord->isSystem_ = BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId);
+    continuousTaskRecord->isACLTaskkeeping_ = taskParam->IsACLTaskkeeping();
 }
 
 ErrCode BgContinuousTaskMgr::CheckSubMode(const std::shared_ptr<AAFwk::Want> want,
