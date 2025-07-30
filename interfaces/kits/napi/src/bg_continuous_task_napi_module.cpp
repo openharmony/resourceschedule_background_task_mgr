@@ -1121,11 +1121,6 @@ napi_value StartBackgroundRunningWithTaskKeeping(napi_env env, napi_callback_inf
     if (argc != MAX_START_BACKGROUND_RUNNING_WITH_TASK_KEEPING_PARAMS) {
         BGTASK_LOGE("wrong param nums");
         Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
-        callbackPtr.release();
-        if (asyncCallbackInfo != nullptr) {
-            delete asyncCallbackInfo;
-            asyncCallbackInfo = nullptr;
-        }
         return WrapVoidToJS(env);
     }
 
@@ -1133,22 +1128,13 @@ napi_value StartBackgroundRunningWithTaskKeeping(napi_env env, napi_callback_inf
     if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
         BGTASK_LOGE("Get ability context failed");
         Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
-        callbackPtr.release();
-        if (asyncCallbackInfo != nullptr) {
-            delete asyncCallbackInfo;
-            asyncCallbackInfo = nullptr;
-        }
         return WrapVoidToJS(env);
     }
+
     // argv[1] : wantAgent: WantAgent
     if (GetWantAgent(env, argv[1], asyncCallbackInfo->wantAgent) == nullptr) {
         BGTASK_LOGE("input wantAgent param is not object");
         Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR, isThrow);
-        callbackPtr.release();
-        if (asyncCallbackInfo != nullptr) {
-            delete asyncCallbackInfo;
-            asyncCallbackInfo = nullptr;
-        }
         return WrapVoidToJS(env);
     }
     napi_value ret {nullptr};
