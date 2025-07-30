@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -69,6 +69,11 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
     }
     if (!parcel.ReadInt32(abilityId_)) {
         BGTASK_LOGE("Failed to read the abilityId");
+        return false;
+    }
+    
+    if (!parcel.ReadBool(isACLTaskkeeping_)) {
+        BGTASK_LOGE("Failed to read the isACLTaskkeeping");
         return false;
     }
     return true;
@@ -180,6 +185,11 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         BGTASK_LOGE("Failed to write the abilityId");
         return false;
     }
+
+    if (!parcel.WriteBool(isACLTaskkeeping_)) {
+        BGTASK_LOGE("Failed to read the isACLTaskkeeping");
+        return false;
+    }
     return true;
 }
 
@@ -213,6 +223,16 @@ bool ContinuousTaskParamForInner::Marshalling(Parcel &parcel) const
         return false;
     }
     return true;
+}
+
+void ContinuousTaskParam::SetACLTaskkeeping(bool isACLTaskkeeping)
+{
+    isACLTaskkeeping_ = isACLTaskkeeping;
+}
+
+bool ContinuousTaskParam::IsACLTaskkeeping() const
+{
+    return isACLTaskkeeping_;
 }
 
 void ContinuousTaskParamForInner::SetPid(int32_t pid)
