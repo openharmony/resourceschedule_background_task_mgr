@@ -23,11 +23,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
 {
-    if (!parcel.ReadBool(isNewApi_)) {
-        BGTASK_LOGE("Failed to read the flag which indicate whether is called from newApi");
-        return false;
-    }
-
+    READ_PARCEL_WITH_RET(parcel, Bool, isNewApi_, false);
     if (!parcel.ReadUint32(bgModeId_)) {
         BGTASK_LOGE("Failed to read request background mode info");
         return false;
@@ -56,10 +52,7 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
     }
     appName_ = Str16ToStr8(u16AppName);
 
-    if (!parcel.ReadBool(isBatchApi_)) {
-        BGTASK_LOGE("Failed to read the flag isBatchApi");
-        return false;
-    }
+    READ_PARCEL_WITH_RET(parcel, Bool, isBatchApi_, false);
     if (isBatchApi_) {
         if (!parcel.ReadUInt32Vector(&bgModeIds_)) {
             BGTASK_LOGE("read parce bgmodes error");
@@ -67,15 +60,8 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
         }
         BGTASK_LOGD("read parce bgmodes_ size %{public}d", static_cast<uint32_t>(bgModeIds_.size()));
     }
-    if (!parcel.ReadInt32(abilityId_)) {
-        BGTASK_LOGE("Failed to read the abilityId");
-        return false;
-    }
-    
-    if (!parcel.ReadBool(isACLTaskkeeping_)) {
-        BGTASK_LOGE("Failed to read the isACLTaskkeeping");
-        return false;
-    }
+    READ_PARCEL_WITH_RET(parcel, Int32, abilityId_, false);
+    READ_PARCEL_WITH_RET(parcel, Bool, isACLTaskkeeping_, false);
     return true;
 }
 
@@ -137,11 +123,7 @@ ContinuousTaskParamForInner *ContinuousTaskParamForInner::Unmarshalling(Parcel &
 
 bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
 {
-    if (!parcel.WriteBool(isNewApi_)) {
-        BGTASK_LOGE("Failed to write the flag which indicate whether is called from newApi");
-        return false;
-    }
-
+    WRITE_PARCEL_WITH_RET(parcel, Bool, isNewApi_, false);
     if (!parcel.WriteUint32(bgModeId_)) {
         BGTASK_LOGE("Failed to write request background mode info");
         return false;
@@ -168,10 +150,7 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         BGTASK_LOGE("Failed to write appName");
         return false;
     }
-    if (!parcel.WriteBool(isBatchApi_)) {
-        BGTASK_LOGE("Failed to write the isBatchApi");
-        return false;
-    }
+    WRITE_PARCEL_WITH_RET(parcel, Bool, isBatchApi_, false);
 
     if (isBatchApi_) {
         BGTASK_LOGD("write modes %{public}u", static_cast<uint32_t>(bgModeIds_.size()));
@@ -181,15 +160,8 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         }
     }
 
-    if (!parcel.WriteInt32(abilityId_)) {
-        BGTASK_LOGE("Failed to write the abilityId");
-        return false;
-    }
-
-    if (!parcel.WriteBool(isACLTaskkeeping_)) {
-        BGTASK_LOGE("Failed to read the isACLTaskkeeping");
-        return false;
-    }
+    WRITE_PARCEL_WITH_RET(parcel, Int32, abilityId_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Bool, isACLTaskkeeping_, false);
     return true;
 }
 
