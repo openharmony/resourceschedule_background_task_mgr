@@ -231,7 +231,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
 
 /**
  * @tc.name: StartBackgroundRunning_004
- * @tc.desc: start background runnging with task keepingby abilityIds test 
+ * @tc.desc: start background runnging with task keepingby abilityIds test
  * @tc.type: FUNC
  * @tc.require: issueICPT89
  */
