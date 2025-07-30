@@ -681,6 +681,19 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     return result;
 }
 
+ErrCode BgContinuousTaskMgr::CheckPermission(const sptr<ContinuousTaskParam> &taskParam, uint64_t callingTokenId)
+{
+    if (taskParam->IsACLTaskkeeping()) {
+        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
+    } else if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
+        BGTASK_LOGE("background mode permission is not passed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return ERR_OK;
+}
+
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     BgTaskHiTraceChain traceChain(__func__);
@@ -693,6 +706,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     ErrCode result = ERR_OK;
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     pid_t callingPid = IPCSkeleton::GetCallingPid();
+    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     int32_t userId = -1;
 #ifdef HAS_OS_ACCOUNT_PART
@@ -700,15 +714,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 #else // HAS_OS_ACCOUNT_PART
     GetOsAccountIdFromUid(callingUid, userId);
 #endif // HAS_OS_ACCOUNT_PART
-
-    if (taskParam->IsACLTaskkeeping()) {
-        uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-            return ERR_BGTASK_PERMISSION_DENIED;
-        }
-    } else if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
-        BGTASK_LOGE("background mode permission is not passed");
-        return ERR_BGTASK_PERMISSION_DENIED;
+    result = CheckPermission(taskParam, callingTokenId);
+    if (result != ERR_OK) {
+        return result;
     }
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         taskParam->abilityName_, callingUid, callingPid, taskParam->bgModeId_, taskParam->isBatchApi_,
