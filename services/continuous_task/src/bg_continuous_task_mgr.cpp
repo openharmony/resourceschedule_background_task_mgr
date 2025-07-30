@@ -552,7 +552,6 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsTaskKeepingExemptedQuatoApp(bundleName)) {
         return true;
     }
-    uint64_t callingTokenId = continuousTaskRecord->callingTokenId_;
     if (continuousTaskRecord->IsACLTaskkeeping() && !continuousTaskRecord->IsSystem()) {
         return true;
     }
