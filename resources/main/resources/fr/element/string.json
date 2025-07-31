@@ -23,9 +23,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_voip",
-            "value":"Un appel est en cours. La fermeture de cette notification mettra fin à cette tâche.",
+            "value":"Un appel est en cours. La fermeture de cette notification mettra fin à cet appel.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,7 +39,7 @@
             "name":"ohos_bgmode_prompt_wifi_interaction",
             "value":"Une tâche WLAN est en cours. La fermeture de cette notification mettra fin à cette tâche.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
