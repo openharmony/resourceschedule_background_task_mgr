@@ -139,6 +139,7 @@ ohos_shared_library("backgroundtaskmanager_napi") {
 }
 
 ohos_shared_library("cj_background_task_mgr_ffi") {
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
