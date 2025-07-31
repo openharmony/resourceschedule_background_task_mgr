@@ -85,8 +85,8 @@ struct ContinuousTaskParamForInner : public Parcelable {
     bool ReadFromParcel(Parcel &parcel);
     bool Marshalling(Parcel &parcel) const override;
     static ContinuousTaskParamForInner *Unmarshalling(Parcel &parcel);
-    void SetPid(int32_t pid);
-    int32_t GetPid();
+    void SetPid(const int32_t pid);
+    int32_t GetPid() const;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
