@@ -53,7 +53,7 @@
             "name":"ohos_bgmode_prompt_task_keeping",
             "value":"Đang có một tác vụ tính toán. Đóng thông báo này sẽ kết thúc tác vụ đó.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

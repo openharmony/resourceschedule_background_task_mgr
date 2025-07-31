@@ -53,7 +53,7 @@
             "name":"ohos_bgmode_prompt_task_keeping",
             "value":"컴퓨팅 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
