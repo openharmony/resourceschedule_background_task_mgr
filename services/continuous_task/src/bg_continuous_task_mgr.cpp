@@ -545,14 +545,14 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
 
 bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord)
 {
+    if (continuousTaskRecord->IsACLTaskkeeping()) {
+        return !continuousTaskRecord->IsSystem();
+    }
     if (SUPPORT_TASK_KEEPING) {
         return true;
     }
     std::string bundleName = continuousTaskRecord->GetBundleName();
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsTaskKeepingExemptedQuatoApp(bundleName)) {
-        return true;
-    }
-    if (continuousTaskRecord->IsACLTaskkeeping() && !continuousTaskRecord->IsSystem()) {
         return true;
     }
     return false;
