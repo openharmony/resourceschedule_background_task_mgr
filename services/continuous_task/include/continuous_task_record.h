@@ -61,6 +61,7 @@ public:
     bool ParseFromJson(const nlohmann::json &value);
     std::string ToString(std::vector<uint32_t> &bgmodes);
     bool IsSystem() const;
+    bool IsACLTaskkeeping() const;
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
@@ -89,6 +90,7 @@ private:
     int32_t continuousTaskId_ {-1};
     bool suspendState_ {false};
     int32_t suspendReason_ {0};
+    bool isACLTaskkeeping_ {false};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;
