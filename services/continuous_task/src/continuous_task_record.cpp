@@ -147,6 +147,11 @@ bool ContinuousTaskRecord::IsSystem() const
     return isSystem_;
 }
 
+bool ContinuousTaskRecord::IsACLTaskkeeping() const
+{
+    return isACLTaskkeeping_;
+}
+
 std::string ContinuousTaskRecord::ParseToJsonStr()
 {
     nlohmann::json root;

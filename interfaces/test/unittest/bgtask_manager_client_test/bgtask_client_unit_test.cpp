@@ -623,13 +623,15 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
  * @tc.name: ContinuousTaskParam_001
  * @tc.desc: test ContinuousTaskParam.
  * @tc.type: FUNC
- * @tc.require: issueI5IRJK
+ * @tc.require: issueI5IRJK issueICPT89
  */
 HWTEST_F(BgTaskClientUnitTest, ContinuousTaskParam_001, TestSize.Level1)
 {
     sptr<ContinuousTaskParam> info1 = sptr<ContinuousTaskParam>(new ContinuousTaskParam());
     sptr<ContinuousTaskParam> info2 = sptr<ContinuousTaskParam>(
         new ContinuousTaskParam(true, 1, nullptr, "abilityName", nullptr, "appName"));
+    info2->SetACLTaskkeeping(true);
+    EXPECT_EQ(info2->IsACLTaskkeeping(), true);
 
     Parcel parcel1 = Parcel();
     info2->Marshalling(parcel1);

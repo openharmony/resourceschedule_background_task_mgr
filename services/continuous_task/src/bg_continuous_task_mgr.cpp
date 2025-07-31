@@ -545,20 +545,14 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
 
 bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord)
 {
+    if (continuousTaskRecord->IsACLTaskkeeping()) {
+        return !continuousTaskRecord->IsSystem();
+    }
     if (SUPPORT_TASK_KEEPING) {
         return true;
     }
     std::string bundleName = continuousTaskRecord->GetBundleName();
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsTaskKeepingExemptedQuatoApp(bundleName)) {
-        return true;
-    }
-    uint64_t callingTokenId = continuousTaskRecord->callingTokenId_;
-    if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-        if (continuousTaskRecord->IsSystem()) {
-            BGTASK_LOGE("bundleName: %{public}s is system app, have ACL permission", bundleName.c_str());
-            return false;
-        }
-        BGTASK_LOGD("bundleName: %{public}s  have ACL permission", bundleName.c_str());
         return true;
     }
     return false;
@@ -687,6 +681,19 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     return result;
 }
 
+ErrCode BgContinuousTaskMgr::CheckPermission(const sptr<ContinuousTaskParam> &taskParam, uint64_t callingTokenId)
+{
+    if (taskParam->IsACLTaskkeeping()) {
+        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
+    } else if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
+        BGTASK_LOGE("background mode permission is not passed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return ERR_OK;
+}
+
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     BgTaskHiTraceChain traceChain(__func__);
@@ -699,6 +706,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     ErrCode result = ERR_OK;
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     pid_t callingPid = IPCSkeleton::GetCallingPid();
+    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     int32_t userId = -1;
 #ifdef HAS_OS_ACCOUNT_PART
@@ -706,9 +714,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 #else // HAS_OS_ACCOUNT_PART
     GetOsAccountIdFromUid(callingUid, userId);
 #endif // HAS_OS_ACCOUNT_PART
-    if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
-        BGTASK_LOGE("background mode permission is not passed");
-        return ERR_BGTASK_PERMISSION_DENIED;
+    result = CheckPermission(taskParam, callingTokenId);
+    if (result != ERR_OK) {
+        return result;
     }
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         taskParam->abilityName_, callingUid, callingPid, taskParam->bgModeId_, taskParam->isBatchApi_,
@@ -742,14 +750,13 @@ void BgContinuousTaskMgr::InitRecordParam(std::shared_ptr<ContinuousTaskRecord> 
     const sptr<ContinuousTaskParam> &taskParam, int32_t userId)
 {
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
-    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     continuousTaskRecord->wantAgent_ = taskParam->wantAgent_;
     continuousTaskRecord->userId_ = userId;
     continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
     continuousTaskRecord->appName_ = taskParam->appName_;
     continuousTaskRecord->fullTokenId_ = fullTokenId;
-    continuousTaskRecord->callingTokenId_ = callingTokenId;
     continuousTaskRecord->isSystem_ = BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId);
+    continuousTaskRecord->isACLTaskkeeping_ = taskParam->IsACLTaskkeeping();
 }
 
 ErrCode BgContinuousTaskMgr::CheckSubMode(const std::shared_ptr<AAFwk::Want> want,
@@ -1025,9 +1032,6 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityNam
     if (abilityName.empty()) {
         BGTASK_LOGE("abilityName is empty!");
         return ERR_BGTASK_INVALID_PARAM;
-    }
-    if (abilityId < 0) {
-        BGTASK_LOGE("abilityId is Invalid!");
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
 
@@ -1323,7 +1327,6 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const std::shared_ptr<Subscriber
     if (susriberDeathRecipient_) {
         remoteObj->AddDeathRecipient(susriberDeathRecipient_);
     }
-    BGTASK_LOGI("continuous subscribers size %{public}d", static_cast<int32_t>(bgTaskSubscribers_.size()));
     return ERR_OK;
 }
 
@@ -1545,7 +1548,6 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
         }
     } else {
         if (dumpOption.size() < MAX_DUMP_PARAM_NUMS) {
-            BGTASK_LOGW("invalid dump param");
             return;
         }
         std::string taskKey = dumpOption[2];
@@ -1710,7 +1712,6 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
             iter++;
         }
     }
-    BGTASK_LOGI("continuous subscriber die, list size is %{public}d", static_cast<int>(bgTaskSubscribers_.size()));
 }
 
 void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId)
@@ -1922,9 +1923,6 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
         continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName(),
         continuousTaskInfo->IsFromWebview(), continuousTaskInfo->isBatchApi_, continuousTaskInfo->bgModeIds_,
         continuousTaskInfo->abilityId_, continuousTaskInfo->fullTokenId_);
-    BGTASK_LOGD("mode %{public}d isBatch %{public}d modes size %{public}u",
-        continuousTaskCallbackInfo->GetTypeId(), continuousTaskCallbackInfo->IsBatchApi(),
-        static_cast<uint32_t>(continuousTaskCallbackInfo->GetTypeIds().size()));
     continuousTaskCallbackInfo->SetContinuousTaskId(continuousTaskInfo->continuousTaskId_);
     continuousTaskCallbackInfo->SetCancelReason(continuousTaskInfo->reason_);
     continuousTaskCallbackInfo->SetSuspendState(continuousTaskInfo->suspendState_);
