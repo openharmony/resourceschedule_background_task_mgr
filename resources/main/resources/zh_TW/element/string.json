@@ -53,7 +53,7 @@
             "name":"ohos_bgmode_prompt_task_keeping",
             "value":"正在執行計算任務，刪除通知後，任務將停止",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
