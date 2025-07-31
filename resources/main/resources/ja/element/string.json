@@ -53,7 +53,7 @@
             "name":"ohos_bgmode_prompt_task_keeping",
             "value":"演算タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"このカードを閉じると、自動車のキーの機能が無効になります。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
