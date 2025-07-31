@@ -23,9 +23,10 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
 {
-    READ_PARCEL_WITH_RET(parcel, Bool, isNewApi_, false);
+    if (!parcel.ReadBool(isNewApi_)) {
+        return false;
+    }
     if (!parcel.ReadUint32(bgModeId_)) {
-        BGTASK_LOGE("Failed to read request background mode info");
         return false;
     }
     bool valid = parcel.ReadBool();
@@ -33,35 +34,35 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
         wantAgent_ = std::shared_ptr<AbilityRuntime::WantAgent::WantAgent>(
             parcel.ReadParcelable<AbilityRuntime::WantAgent::WantAgent>());
         if (!wantAgent_) {
-            BGTASK_LOGE("Failed to read wantAgent");
             return false;
         }
     }
-
     std::u16string u16AbilityName;
     if (!parcel.ReadString16(u16AbilityName)) {
-        BGTASK_LOGE("Failed to read ability name");
         return false;
     }
     abilityName_ = Str16ToStr8(u16AbilityName);
 
     std::u16string u16AppName;
     if (!parcel.ReadString16(u16AppName)) {
-        BGTASK_LOGE("Failed to read app name");
         return false;
     }
     appName_ = Str16ToStr8(u16AppName);
 
-    READ_PARCEL_WITH_RET(parcel, Bool, isBatchApi_, false);
+    if (!parcel.ReadBool(isBatchApi_)) {
+        return false;
+    }
     if (isBatchApi_) {
         if (!parcel.ReadUInt32Vector(&bgModeIds_)) {
-            BGTASK_LOGE("read parce bgmodes error");
             return false;
         }
-        BGTASK_LOGD("read parce bgmodes_ size %{public}d", static_cast<uint32_t>(bgModeIds_.size()));
     }
-    READ_PARCEL_WITH_RET(parcel, Int32, abilityId_, false);
-    READ_PARCEL_WITH_RET(parcel, Bool, isACLTaskkeeping_, false);
+    if (!parcel.ReadInt32(abilityId_)) {
+        return false;
+    }
+    if (!parcel.ReadBool(isACLTaskkeeping_)) {
+        return false;
+    }
     return true;
 }
 
@@ -123,45 +124,43 @@ ContinuousTaskParamForInner *ContinuousTaskParamForInner::Unmarshalling(Parcel &
 
 bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
 {
-    WRITE_PARCEL_WITH_RET(parcel, Bool, isNewApi_, false);
+    if (!parcel.WriteBool(isNewApi_)) {
+        return false;
+    }
     if (!parcel.WriteUint32(bgModeId_)) {
-        BGTASK_LOGE("Failed to write request background mode info");
         return false;
     }
     bool valid = wantAgent_ != nullptr;
     if (!parcel.WriteBool(valid)) {
-        BGTASK_LOGE("Failed to write the flag which indicate whether wantAgent is null");
         return false;
     }
     if (valid) {
         if (!parcel.WriteParcelable(wantAgent_.get())) {
-            BGTASK_LOGE("Failed to write wantAgent");
             return false;
         }
     }
-
     std::u16string u16AbilityName = Str8ToStr16(abilityName_);
     if (!parcel.WriteString16(u16AbilityName)) {
-        BGTASK_LOGE("Failed to write abilityName");
         return false;
     }
     std::u16string u16AppName = Str8ToStr16(appName_);
     if (!parcel.WriteString16(u16AppName)) {
-        BGTASK_LOGE("Failed to write appName");
         return false;
     }
-    WRITE_PARCEL_WITH_RET(parcel, Bool, isBatchApi_, false);
-
+    if (!parcel.WriteBool(isBatchApi_)) {
+        return false;
+    }
     if (isBatchApi_) {
-        BGTASK_LOGD("write modes %{public}u", static_cast<uint32_t>(bgModeIds_.size()));
         if (!parcel.WriteUInt32Vector(bgModeIds_)) {
-            BGTASK_LOGE("Failed to write bgModeIds");
             return false;
         }
     }
-
-    WRITE_PARCEL_WITH_RET(parcel, Int32, abilityId_, false);
-    WRITE_PARCEL_WITH_RET(parcel, Bool, isACLTaskkeeping_, false);
+    if (!parcel.WriteInt32(abilityId_)) {
+        return false;
+    }
+    if (!parcel.WriteBool(isACLTaskkeeping_)) {
+        return false;
+    }
     return true;
 }
 
@@ -207,12 +206,12 @@ bool ContinuousTaskParam::IsACLTaskkeeping() const
     return isACLTaskkeeping_;
 }
 
-void ContinuousTaskParamForInner::SetPid(int32_t pid)
+void ContinuousTaskParamForInner::SetPid(const int32_t pid)
 {
     pid_ = pid;
 }
 
-int32_t ContinuousTaskParamForInner::GetPid()
+int32_t ContinuousTaskParamForInner::GetPid() const
 {
     return pid_;
 }
