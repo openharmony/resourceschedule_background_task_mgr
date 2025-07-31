@@ -1033,9 +1033,6 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunning(const std::string &abilityNam
         BGTASK_LOGE("abilityName is empty!");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    if (abilityId < 0) {
-        BGTASK_LOGE("abilityId is Invalid!");
-    }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
 
     ErrCode result = ERR_OK;
@@ -1330,7 +1327,6 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const std::shared_ptr<Subscriber
     if (susriberDeathRecipient_) {
         remoteObj->AddDeathRecipient(susriberDeathRecipient_);
     }
-    BGTASK_LOGI("continuous subscribers size %{public}d", static_cast<int32_t>(bgTaskSubscribers_.size()));
     return ERR_OK;
 }
 
@@ -1552,7 +1548,6 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
         }
     } else {
         if (dumpOption.size() < MAX_DUMP_PARAM_NUMS) {
-            BGTASK_LOGW("invalid dump param");
             return;
         }
         std::string taskKey = dumpOption[2];
@@ -1717,7 +1712,6 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
             iter++;
         }
     }
-    BGTASK_LOGI("continuous subscriber die, list size is %{public}d", static_cast<int>(bgTaskSubscribers_.size()));
 }
 
 void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId)
@@ -1929,9 +1923,6 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
         continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName(),
         continuousTaskInfo->IsFromWebview(), continuousTaskInfo->isBatchApi_, continuousTaskInfo->bgModeIds_,
         continuousTaskInfo->abilityId_, continuousTaskInfo->fullTokenId_);
-    BGTASK_LOGD("mode %{public}d isBatch %{public}d modes size %{public}u",
-        continuousTaskCallbackInfo->GetTypeId(), continuousTaskCallbackInfo->IsBatchApi(),
-        static_cast<uint32_t>(continuousTaskCallbackInfo->GetTypeIds().size()));
     continuousTaskCallbackInfo->SetContinuousTaskId(continuousTaskInfo->continuousTaskId_);
     continuousTaskCallbackInfo->SetCancelReason(continuousTaskInfo->reason_);
     continuousTaskCallbackInfo->SetSuspendState(continuousTaskInfo->suspendState_);
