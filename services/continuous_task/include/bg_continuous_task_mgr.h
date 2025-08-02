@@ -149,7 +149,6 @@ private:
     ErrCode CheckBgmodeTypeForInner(uint32_t requestedBgModeId);
     void InitRecordParam(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
         const sptr<ContinuousTaskParam> &taskParam, int32_t userId);
-    ErrCode CheckPermission(const sptr<ContinuousTaskParam> &taskParam, uint64_t callingTokenId);
     ErrCode CheckSubMode(const std::shared_ptr<AAFwk::Want> want, std::shared_ptr<ContinuousTaskRecord> record);
     ErrCode CheckNotificationText(std::string &notificationText,
         const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord);

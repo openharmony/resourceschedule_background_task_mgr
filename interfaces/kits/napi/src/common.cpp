@@ -43,11 +43,6 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. TASK_KEEPING background mode only supported in particular device."},
     {ERR_BGTASK_INVALID_BGMODE, "Continuous Task verification failed. The bgMode is invalid."},
     {ERR_BGTASK_INVALID_UID, "Continuous Task verification failed. The uid is invalid."},
-    {ERR_BGTASK_PARAM_NUMBER_ERR, "Continuous Task verification failed. The number of arguments is wrong."},
-    {ERR_BGTASK_CONTEXT_NULL_OR_TYPE_ERR,
-        "Continuous Task verification failed. The context cannot be null and its type must be Context."},
-    {ERR_BGTASK_WANTAGENT_NULL_OR_TYPE_ERR,
-        "Continuous Task verification failed. The wantAgent cannot be null and its type must be WantAgent object."},
     {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED, "Notification verification failed for a continuous task."
         " The title or text of the notification cannot be empty."},
     {ERR_BGTASK_NOTIFICATION_ERR, "Notification verification failed. Failed to send or cancel the notification."},
