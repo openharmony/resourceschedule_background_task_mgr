@@ -365,7 +365,7 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
     BGTASK_LOGI("uid %{public}d pid %{public}d isHap %{public}d subscribe", callingUid, callingPid, isHap);
-    auto subscriberInfo = std::make_shared<SubscriberInfo>(subscriber, callingUid, callingPid, isHap);
+    auto subscriberInfo = std::make_shared<SubscriberInfo>(subscriber, callingUid, callingPid, isHap, flag);
     if (BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriberInfo) != ERR_OK) {
         BGTASK_LOGE("continuous task subscribe background task failed");
         return ERR_BGTASK_SYS_NOT_READY;
