@@ -341,7 +341,7 @@ HWTEST_F(BgContinuousTaskMgrTest, SubscribeContinuousTask_001, TestSize.Level1)
     SleepForFC();
     auto subscriber = new (std::nothrow) TestBackgroundTaskSubscriber();
     EXPECT_NE(subscriber, nullptr);
-    auto info = std::make_shared<SubscriberInfo>(subscriber->GetImpl(), 1, 1, 0);
+    auto info = std::make_shared<SubscriberInfo>(subscriber->GetImpl(), 1, 1, 0, 0);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->AddSubscriber(info), (int32_t)ERR_OK);
 }
 
@@ -355,7 +355,7 @@ HWTEST_F(BgContinuousTaskMgrTest, UnsubscribeContinuousTask_001, TestSize.Level1
 {
     auto subscriber = new (std::nothrow) TestBackgroundTaskSubscriber();
     EXPECT_NE(subscriber, nullptr);
-    auto info = std::make_shared<SubscriberInfo>(subscriber->GetImpl(), 1, 1, 0);
+    auto info = std::make_shared<SubscriberInfo>(subscriber->GetImpl(), 1, 1, 0, 0);
     bgContinuousTaskMgr_->AddSubscriber(info);
     SleepForFC();
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->RemoveSubscriber(subscriber->GetImpl()), (int32_t)ERR_OK);
@@ -616,9 +616,9 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_011, TestSize.Level1)
     bgContinuousTaskMgr_->isSysReady_.store(true);
     bgContinuousTaskMgr_->OnRemoteSubscriberDied(nullptr);
     TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
-    auto info1 = std::make_shared<SubscriberInfo>(subscriber1.GetImpl(), 1, 1, 0);
+    auto info1 = std::make_shared<SubscriberInfo>(subscriber1.GetImpl(), 1, 1, 0, 0);
     TestBackgroundTaskSubscriber subscriber2 = TestBackgroundTaskSubscriber();
-    auto info2 = std::make_shared<SubscriberInfo>(subscriber2.GetImpl(), 1, 1, 0);
+    auto info2 = std::make_shared<SubscriberInfo>(subscriber2.GetImpl(), 1, 1, 0, 0);
     bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info1);
     bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info2);
     bgContinuousTaskMgr_->OnRemoteSubscriberDied(subscriber1.GetImpl());
@@ -686,7 +686,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_014, TestSize.Level1)
     auto continuousTaskInfo =  std::make_shared<ContinuousTaskRecord>();
     bgContinuousTaskMgr_->OnContinuousTaskChanged(continuousTaskInfo, ContinuousTaskEventTriggerType::TASK_START);
     TestBackgroundTaskSubscriber subscriber = TestBackgroundTaskSubscriber();
-    auto info = std::make_shared<SubscriberInfo>(subscriber.GetImpl(), 1, 1, 0);
+    auto info = std::make_shared<SubscriberInfo>(subscriber.GetImpl(), 1, 1, 0, 0);
     bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info);
     bgContinuousTaskMgr_->OnContinuousTaskChanged(continuousTaskInfo, ContinuousTaskEventTriggerType::TASK_START);
     bgContinuousTaskMgr_->OnContinuousTaskChanged(continuousTaskInfo, ContinuousTaskEventTriggerType::TASK_UPDATE);
@@ -864,7 +864,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_035, TestSize.Level1)
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_036, TestSize.Level1)
 {
     TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
-    auto info = std::make_shared<SubscriberInfo>(subscriber1.GetImpl(), 1, 1, 0);
+    auto info = std::make_shared<SubscriberInfo>(subscriber1.GetImpl(), 1, 1, 0, 0);
     bgContinuousTaskMgr_->AddSubscriberInner(info);
     EXPECT_EQ(bgContinuousTaskMgr_->AddSubscriberInner(info), ERR_BGTASK_OBJECT_EXISTS);
     bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
