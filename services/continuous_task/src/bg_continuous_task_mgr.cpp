@@ -81,7 +81,6 @@ static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
 static constexpr char DUMP_PARAM_GET[] = "--get";
 static constexpr char DUMP_INNER_TASK[] = "--inner_task";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
-static constexpr char BGMODE_PERMISSION_SYSTEM[] = "ohos.permission.KEEP_BACKGROUND_RUNNING_SYSTEM";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
@@ -545,9 +544,6 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
 
 bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord)
 {
-    if (continuousTaskRecord->IsACLTaskkeeping()) {
-        return !continuousTaskRecord->IsSystem();
-    }
     if (SUPPORT_TASK_KEEPING) {
         return true;
     }
@@ -681,19 +677,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     return result;
 }
 
-ErrCode BgContinuousTaskMgr::CheckPermission(const sptr<ContinuousTaskParam> &taskParam, uint64_t callingTokenId)
-{
-    if (taskParam->IsACLTaskkeeping()) {
-        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-            return ERR_BGTASK_PERMISSION_DENIED;
-        }
-    } else if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
-        BGTASK_LOGE("background mode permission is not passed");
-        return ERR_BGTASK_PERMISSION_DENIED;
-    }
-    return ERR_OK;
-}
-
 ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     BgTaskHiTraceChain traceChain(__func__);
@@ -706,7 +689,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
     ErrCode result = ERR_OK;
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     pid_t callingPid = IPCSkeleton::GetCallingPid();
-    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     int32_t userId = -1;
 #ifdef HAS_OS_ACCOUNT_PART
@@ -714,9 +696,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunning(const sptr<ContinuousTaskPar
 #else // HAS_OS_ACCOUNT_PART
     GetOsAccountIdFromUid(callingUid, userId);
 #endif // HAS_OS_ACCOUNT_PART
-    result = CheckPermission(taskParam, callingTokenId);
-    if (result != ERR_OK) {
-        return result;
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
+        BGTASK_LOGE("background mode permission is not passed");
+        return ERR_BGTASK_PERMISSION_DENIED;
     }
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         taskParam->abilityName_, callingUid, callingPid, taskParam->bgModeId_, taskParam->isBatchApi_,
@@ -756,7 +738,6 @@ void BgContinuousTaskMgr::InitRecordParam(std::shared_ptr<ContinuousTaskRecord> 
     continuousTaskRecord->appName_ = taskParam->appName_;
     continuousTaskRecord->fullTokenId_ = fullTokenId;
     continuousTaskRecord->isSystem_ = BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId);
-    continuousTaskRecord->isACLTaskkeeping_ = taskParam->IsACLTaskkeeping();
 }
 
 ErrCode BgContinuousTaskMgr::CheckSubMode(const std::shared_ptr<AAFwk::Want> want,

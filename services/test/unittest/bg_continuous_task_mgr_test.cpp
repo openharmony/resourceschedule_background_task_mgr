@@ -230,36 +230,6 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
 }
 
 /**
- * @tc.name: StartBackgroundRunning_004
- * @tc.desc: start background runnging with task keepingby abilityIds test
- * @tc.type: FUNC
- * @tc.require: issueICPT89
- */
-HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_004, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
-    int taskSize = 0;
-    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
-    CachedBundleInfo info = CachedBundleInfo();
-    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
-    info.appName_ = "Entry";
-    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
-
-    // start one task by abilityId is 1
-    sptr<ContinuousTaskParam> taskParam1 = new (std::nothrow) ContinuousTaskParam(true, 9,
-        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
-        "ability1", nullptr, "Entry", true, {9}, 1);
-
-    // 设置为通过新接口申请taskkeeping
-    taskParam1->SetACLTaskkeeping(true);
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam1),
-        (int32_t)ERR_BGTASK_KEEPING_TASK_VERIFY_ERR);
-    
-    taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
-    EXPECT_EQ(taskSize, 0);
-}
-
-/**
  * @tc.name: StartAndUpdateBackgroundRunning_001
  * @tc.desc: use batch api.
  * @tc.type: FUNC
@@ -408,7 +378,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_002, TestSize.Level1)
  * @tc.name: BgTaskManagerUnitTest_003
  * @tc.desc: test CheckBgmodeType.
  * @tc.type: FUNC
- * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V issueICPT89
+ * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
  */
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_003, TestSize.Level1)
 {
@@ -438,17 +408,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_003, TestSize.Level1)
         ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BLUETOOTH_INTERACTION, LOCATION_BGMODE_ID, true,
         continuousTaskRecord), ERR_BGTASK_INVALID_BGMODE);
-
-    // 非系统应用，可通过新接口startBackgroundRunningWithTaskKeeping申请taskkeeping长时任务
-    continuousTaskRecord->isACLTaskkeeping_ = true;
-    continuousTaskRecord->isSystem_ = false;
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true,
-        continuousTaskRecord), ERR_OK);
-
-    // 系统应用，不可通过新接口startBackgroundRunningWithTaskKeeping申请taskkeeping长时任务
-    continuousTaskRecord->isSystem_ = true;
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(PC_BGMODE_TASK_KEEPING, BGMODE_TASK_KEEPING_ID, true,
-        continuousTaskRecord), ERR_BGTASK_KEEPING_TASK_VERIFY_ERR);
 }
 
 /**

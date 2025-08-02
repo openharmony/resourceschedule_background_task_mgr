@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,7 +61,6 @@ public:
     bool ParseFromJson(const nlohmann::json &value);
     std::string ToString(std::vector<uint32_t> &bgmodes);
     bool IsSystem() const;
-    bool IsACLTaskkeeping() const;
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
@@ -90,8 +89,7 @@ private:
     int32_t continuousTaskId_ {-1};
     bool suspendState_ {false};
     int32_t suspendReason_ {0};
-    bool isACLTaskkeeping_ {false};
-
+    
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;
 };
