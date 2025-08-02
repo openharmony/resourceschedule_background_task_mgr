@@ -34,7 +34,7 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void UpdateBackgroundRunning([in] ContinuousTaskParam taskParam, [out] int notificationId, [out] int continuousTaskId);
     void StopBackgroundRunning([in] String abilityName, [in] IRemoteObject abilityToken, [in] int abilityId);
     void GetAllContinuousTasks([out] ContinuousTaskInfo[] list);
-    void SubscribeBackgroundTask([in] IBackgroundTaskSubscriber subscriber);
+    void SubscribeBackgroundTask([in] IBackgroundTaskSubscriber subscriber, [in] unsigned int flag);
     void UnsubscribeBackgroundTask([in] IBackgroundTaskSubscriber subscriber);
     void GetTransientTaskApps([out] TransientTaskAppInfo[] list);
     void GetContinuousTaskApps([out] ContinuousTaskCallbackInfo[] list);

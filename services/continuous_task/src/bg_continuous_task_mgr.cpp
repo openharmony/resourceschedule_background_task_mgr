@@ -1178,13 +1178,8 @@ void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_
 bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, uint32_t type)
 {
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-        int32_t flag = 0;
-        if ((*iter)->subscriber_) {
-            (*iter)->subscriber_->GetFlag(flag);
-        }
-        if ((*iter)->isHap_ && (*iter)->uid_ == uid && (*iter)->subscriber_ &&
-            ((static_cast<uint32_t>(flag) & type) > 0)) {
-            BGTASK_LOGD("falg: %{public}d", flag);
+        if ((*iter)->isHap_ && (*iter)->uid_ == uid && (((*iter)->flag_ & type) > 0)) {
+            BGTASK_LOGD("falg: %{public}d", (*iter)->flag_);
             return true;
         }
     }

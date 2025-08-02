@@ -164,6 +164,8 @@ public:
      */
     virtual void GetFlag(int32_t &flag);
 
+    uint32_t flag_ = 0;
+
 private:
     class BackgroundTaskSubscriberImpl final : public BackgroundTaskSubscriberStub {
     public:
