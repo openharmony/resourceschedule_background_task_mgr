@@ -64,12 +64,13 @@ struct CachedBundleInfo {
 };
 
 struct SubscriberInfo {
-    SubscriberInfo(sptr<IBackgroundTaskSubscriber> subscriber, int uid, int pid, bool isHap)
-        : subscriber_(subscriber), uid_(uid), pid_(pid), isHap_(isHap) {};
+    SubscriberInfo(sptr<IBackgroundTaskSubscriber> subscriber, int uid, int pid, bool isHap, uint32_t flag)
+        : subscriber_(subscriber), uid_(uid), pid_(pid), isHap_(isHap), flag_(flag) {};
     sptr<IBackgroundTaskSubscriber> subscriber_;
     int uid_;
     int pid_;
     bool isHap_ {false};
+    uint32_t flag_ {0};
 };
 
 class BgContinuousTaskMgr : public DelayedSingleton<BgContinuousTaskMgr>,
