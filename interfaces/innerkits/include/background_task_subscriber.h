@@ -304,6 +304,9 @@ private:
     sptr<BackgroundTaskSubscriberImpl> impl_ {nullptr};
 
     friend class BackgroundTaskManager;
+
+public:
+    uint32_t flag_ = 0;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -243,7 +243,7 @@ __attribute__((no_sanitize("cfi"))) ErrCode BackgroundTaskManager::SubscribeBack
         BGTASK_LOGE("subscriberSptr is nullptr");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    return proxy_->SubscribeBackgroundTask(subscriberSptr);
+    return proxy_->SubscribeBackgroundTask(subscriberSptr, subscriber.flag_);
 }
 
 ErrCode BackgroundTaskManager::UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)

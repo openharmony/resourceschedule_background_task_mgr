@@ -359,7 +359,8 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTa
     return result;
 }
 
-ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
+ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
+    const sptr<IBackgroundTaskSubscriber>& subscriber, uint32_t flag)
 {
     BgTaskHiTraceChain traceChain(__func__);
     bool isHap = false;
@@ -369,8 +370,9 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(const sptr<IBackground
     }
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
-    BGTASK_LOGI("uid %{public}d pid %{public}d isHap %{public}d subscribe", callingUid, callingPid, isHap);
-    auto subscriberInfo = std::make_shared<SubscriberInfo>(subscriber, callingUid, callingPid, isHap);
+    BGTASK_LOGI("uid %{public}d pid %{public}d isHap %{public}d flag %{public}d subscribe",
+        callingUid, callingPid, isHap, flag);
+    auto subscriberInfo = std::make_shared<SubscriberInfo>(subscriber, callingUid, callingPid, isHap, flag);
     if (BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriberInfo) != ERR_OK) {
         BGTASK_LOGE("continuous task subscribe background task failed");
         return ERR_BGTASK_SYS_NOT_READY;
