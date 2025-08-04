@@ -354,7 +354,7 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTa
 }
 
 ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
-    const sptr<IBackgroundTaskSubscriber>& subscriber, uint32 flag)
+    const sptr<IBackgroundTaskSubscriber>& subscriber, uint32_t flag)
 {
     BgTaskHiTraceChain traceChain(__func__);
     bool isHap = false;
