@@ -70,7 +70,7 @@ struct SubscriberInfo {
     int uid_;
     int pid_;
     bool isHap_ {false};
-    uint32_t flag_;
+    uint32_t flag_ {0};
 };
 
 class BgContinuousTaskMgr : public DelayedSingleton<BgContinuousTaskMgr>,
