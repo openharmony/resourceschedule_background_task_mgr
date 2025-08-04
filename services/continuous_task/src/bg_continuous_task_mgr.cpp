@@ -1074,6 +1074,14 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasks(std::vector<std::shared_ptr<C
     return result;
 }
 
+ErrCode BgContinuousTaskMgr::GetAllContinuousTasks(
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Service::GetAllContinuousTasks");
+    return ERR_OK;
+}
+
 ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
     std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
 {

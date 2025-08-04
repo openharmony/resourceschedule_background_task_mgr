@@ -67,6 +67,16 @@ public:
     static ErrCode RequestGetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
 
     /**
+     * @brief Request service to get all continuous task info.
+     *
+     * @param list continuous task info list.
+     * @param includeSuspended whether include suspended continuous task.
+     * @return ERR_OK if success, else fail.
+     */
+    static ErrCode RequestGetAllContinuousTasks(
+        std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended);
+
+    /**
      * @brief Request service to stop running background
      *
      * @param abilityName Ability name of the requester ability

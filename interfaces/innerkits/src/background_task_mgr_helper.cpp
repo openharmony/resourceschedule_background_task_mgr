@@ -45,6 +45,12 @@ ErrCode BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(std::vector<std::s
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list);
 }
 
+ErrCode BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list, includeSuspended);
+}
+
 ErrCode BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestBackgroundRunningForInner(taskParam);
