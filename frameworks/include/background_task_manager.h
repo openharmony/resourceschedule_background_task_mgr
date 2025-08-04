@@ -122,6 +122,16 @@ public:
     ErrCode RequestGetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
 
     /**
+     * @brief Request service to get all continuous tasks.
+     *
+     * @param list continuous task info.
+     * @param includeSuspended whether include suspended continuous task.
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode RequestGetAllContinuousTasks(
+        std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended);
+
+    /**
      * @brief Reset proxy for background task.
      */
     void ResetBackgroundTaskManagerProxy();
