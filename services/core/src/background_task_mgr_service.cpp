@@ -293,7 +293,7 @@ ErrCode BackgroundTaskMgrService::GetAllContinuousTasks(std::vector<ContinuousTa
 ErrCode BackgroundTaskMgrService::GetAllContinuousTasks(
     std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended)
 {
-    return BgContinuousTaskMgr::GetInstance()->GetAllContinuousTasks(tasksList, includeSuspended);
+    return BgContinuousTaskMgr::GetInstance()->GetAllContinuousTasks(list, includeSuspended);
 }
 
 ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<TransientTaskAppInfo> &list)
