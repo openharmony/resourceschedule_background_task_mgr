@@ -229,15 +229,7 @@ ErrCode BackgroundTaskManager::RequestGetAllContinuousTasks(
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    std::vector<ContinuousTaskInfo> tasksList;
-    ErrCode result = proxy_->GetAllContinuousTasks(tasksList, includeSuspended);
-    if (result == ERR_OK) {
-        list.clear();
-        for (const auto& item : tasksList) {
-            list.push_back(std::make_shared<ContinuousTaskInfo>(item));
-        }
-    }
-    return result;
+    return proxy_->GetAllContinuousTasks(list, includeSuspended);
 }
 
 __attribute__((no_sanitize("cfi"))) ErrCode BackgroundTaskManager::SubscribeBackgroundTask(
