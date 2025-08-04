@@ -76,7 +76,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_002
     EXPECT_EQ(BackgroundTaskMgrService_->ActiveContinuousTask(1, 1, ""), ERR_BGTASK_PERMISSION_DENIED);
 
     EXPECT_EQ(BackgroundTaskMgrService_->SubscribeBackgroundTask(nullptr, 0), ERR_BGTASK_PERMISSION_DENIED);
-    EXPECT_EQ(BackgroundTaskMgrService_->UnsubscribeBackgroundTask(nullptr, 0), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->UnsubscribeBackgroundTask(nullptr), ERR_BGTASK_PERMISSION_DENIED);
 }
 
 /**
