@@ -120,6 +120,27 @@ bool BundleManagerHelper::QueryAbilityInfo(const AAFwk::Want &want, int32_t flag
     return false;
 }
 
+bool BundleManagerHelper::GetBundleResourceInfo(const std::string &bundleName, const AppExecFwk::ResourceFlag flags,
+    AppExecFwk::BundleResourceInfo &bundleResourceInfo)
+{
+    std::lock_guard<std::mutex> lock(connectionMutex_);
+    Connect();
+    if (bundleMgr_ == nullptr) {
+        return false;
+    }
+    sptr<AppExecFwk::IBundleResource> bundleResourceProxy = bundleMgr_->GetBundleResourceProxy();
+    if (bundleResourceProxy == nullptr) {
+        return false;
+    }
+    ErrCode result = bundleResourceProxy->
+        GetBundleResourceInfo(bundleName, static_cast<uint32_t>(flags), bundleResourceInfo);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("GetBundleResourceInfo fail, errcode: %{public}d", result);
+        return false;
+    }
+    return true;
+}
+
 bool BundleManagerHelper::Connect()
 {
     if (bundleMgr_ != nullptr) {

@@ -106,6 +106,13 @@ bool BundleManagerHelper::QueryAbilityInfo(const AAFwk::Want &want, int32_t flag
     return true;
 }
 
+bool BundleManagerHelper::GetBundleResourceInfo(const std::string &bundleName, const AppExecFwk::ResourceFlag flags,
+    AppExecFwk::BundleResourceInfo &bundleResourceInfo)
+{
+    bundleResourceInfo.label = "label";
+    return true;
+}
+
 bool BundleManagerHelper::Connect()
 {
     return true;

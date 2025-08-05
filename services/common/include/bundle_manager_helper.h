@@ -39,6 +39,8 @@ public:
         const int userId, AppExecFwk::ApplicationInfo &appInfo);
     bool QueryAbilityInfo(const AAFwk::Want &want, int32_t flags, int32_t userId,
         AppExecFwk::AbilityInfo &abilityInfo);
+    bool GetBundleResourceInfo(const std::string &bundleName, const AppExecFwk::ResourceFlag flags,
+        AppExecFwk::BundleResourceInfo &bundleResourceInfo);
 
 private:
     bool Connect();
