@@ -2014,7 +2014,7 @@ std::string BgContinuousTaskMgr::GetMainAbilityLabel(const std::string &bundleNa
     std::string mainAbilityLabel {""};
     AppExecFwk::BundleResourceInfo bundleResourceInfo;
     if (BundleManagerHelper::GetInstance()->GetBundleResourceInfo(bundleName,
-        AppExecFwk::ResourceFlag::GET_RESOURCE_INFO_ALL, bundleResourceInfo) && bundleResourceInfo != nullpter) {
+        AppExecFwk::ResourceFlag::GET_RESOURCE_INFO_ALL, bundleResourceInfo) && bundleResourceInfo != nullptr) {
         mainAbilityLabel = bundleResourceInfo.label;
     }
     return mainAbilityLabel;
