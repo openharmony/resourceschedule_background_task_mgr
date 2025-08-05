@@ -290,6 +290,12 @@ ErrCode BackgroundTaskMgrService::GetAllContinuousTasks(std::vector<ContinuousTa
     return result;
 }
 
+ErrCode BackgroundTaskMgrService::GetAllContinuousTasks(
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended)
+{
+    return BgContinuousTaskMgr::GetInstance()->GetAllContinuousTasks(list, includeSuspended);
+}
+
 ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<TransientTaskAppInfo> &list)
 {
     BgTaskHiTraceChain traceChain(__func__);
