@@ -2011,30 +2011,12 @@ int32_t BgContinuousTaskMgr::RefreshTaskRecord()
 std::string BgContinuousTaskMgr::GetMainAbilityLabel(const std::string &bundleName, int32_t userId)
 {
     BgTaskHiTraceChain traceChain(__func__);
-    AppExecFwk::BundleInfo bundleInfo;
-    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
-        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId)) {
-        BGTASK_LOGE("Get %{public}s bundle info failed", bundleName.c_str());
-        return "";
-    }
-    auto resourceManager = GetBundleResMgr(bundleInfo);
-    if (resourceManager == nullptr) {
-        BGTASK_LOGE("Get %{public}s resource manager failed", bundleName.c_str());
-        return "";
-    }
-
-    AppExecFwk::ApplicationInfo applicationInfo;
-    if (!BundleManagerHelper::GetInstance()->GetApplicationInfo(bundleName,
-        AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, userId, applicationInfo)) {
-        BGTASK_LOGE("failed to get applicationInfo from AppExecFwk, bundleName is %{public}s", bundleName.c_str());
-        return "";
-    }
-
     std::string mainAbilityLabel {""};
-    resourceManager->GetStringById(static_cast<uint32_t>(applicationInfo.labelId), mainAbilityLabel);
-    BGTASK_LOGI("Get main ability label: %{public}s by labelId: %{public}d", mainAbilityLabel.c_str(),
-        applicationInfo.labelId);
-    mainAbilityLabel = mainAbilityLabel.empty() ? applicationInfo.label : mainAbilityLabel;
+    AppExecFwk::BundleResourceInfo bundleResourceInfo;
+    if (BundleManagerHelper::GetInstance()->GetBundleResourceInfo(bundleName,
+        AppExecFwk::ResourceFlag::GET_RESOURCE_INFO_ALL, bundleResourceInfo) && bundleResourceInfo != nullpter) {
+        mainAbilityLabel = bundleResourceInfo.label;
+    }
     return mainAbilityLabel;
 }
 
