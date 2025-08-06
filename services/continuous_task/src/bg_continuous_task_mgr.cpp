@@ -1430,6 +1430,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     if (!isPublish && continuousTaskRecord->bgModeIds_.size() == 1 &&
         continuousTaskRecord->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
         result = SendContinuousTaskNotification(findUidIter->second);
+        return reault;
     }
     std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
     if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
