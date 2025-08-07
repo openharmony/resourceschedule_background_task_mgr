@@ -1427,9 +1427,8 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     ErrCode result = ERR_OK;
     auto record = findUidIter->second;
     // 只有播音类型长时任务，并且没有AVSession通知
-    if (!isPublish && continuousTaskRecord->bgModeIds_.size() == 1 &&
-        continuousTaskRecord->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
-        result = SendContinuousTaskNotification(findUidIter->second);
+    if (!isPublish && record->bgModeIds_.size() == 1 && record->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
+        result = SendContinuousTaskNotification(record);
         return reault;
     }
     std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
@@ -1438,8 +1437,8 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
         std::string notificationText = GetNotificationText(record);
         if (notificationText == "") {
             result = NotificationTools::GetInstance()->CancelNotification(
-                findUidIter->second->GetNotificationLabel(), findUidIter->second->GetNotificationId());
-            findUidIter->second->notificationId_ = -1;
+                record->GetNotificationLabel(), record->GetNotificationId());
+                record->notificationId_ = -1;
         } else {
             newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
             result = NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
