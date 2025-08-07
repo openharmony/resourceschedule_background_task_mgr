@@ -1429,7 +1429,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     // 只有播音类型长时任务，并且没有AVSession通知
     if (!isPublish && record->bgModeIds_.size() == 1 && record->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
         result = SendContinuousTaskNotification(record);
-        return reault;
+        return result;
     }
     std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
     if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
