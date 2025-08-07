@@ -1435,7 +1435,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
         std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
         std::string notificationText = GetNotificationText(record);
-        if (notificationText == "") {
+        if (notificationText.empty()) {
             result = NotificationTools::GetInstance()->CancelNotification(
                 record->GetNotificationLabel(), record->GetNotificationId());
                 record->notificationId_ = -1;
