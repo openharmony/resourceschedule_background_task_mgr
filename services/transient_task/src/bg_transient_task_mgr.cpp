@@ -232,10 +232,7 @@ bool WEAK_FUNC BgTransientTaskMgr::CheckProcessName()
     Security::AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     Security::AccessToken::NativeTokenInfo callingTokenInfo;
     Security::AccessToken::AccessTokenKit::GetNativeTokenInfo(tokenId, callingTokenInfo);
-    BGTASK_LOGD("process name: %{public}s called CheckProcessName.", callingTokenInfo.processName.c_str());
     if (SUSPEND_NATIVE_OPERATE_CALLER.find(callingTokenInfo.processName) == SUSPEND_NATIVE_OPERATE_CALLER.end()) {
-        BGTASK_LOGE("CheckProcessName illegal access to this interface; process name: %{public}s.",
-            callingTokenInfo.processName.c_str());
         return false;
     }
     return true;
