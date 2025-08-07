@@ -1425,14 +1425,23 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     }
 
     ErrCode result = ERR_OK;
-    if (isPublish && findUidIter->second->GetNotificationId() != -1) {
-        result = NotificationTools::GetInstance()->CancelNotification(findUidIter->second->GetNotificationLabel(),
-        findUidIter->second->GetNotificationId());
-        findUidIter->second->notificationId_ = -1;
-    } else if (!isPublish) {
-        result = SendContinuousTaskNotification(findUidIter->second);
-        if (result != ERR_OK) {
-            BGTASK_LOGE("publish error");
+    auto record = findUidIter->second;
+    // 只有播音类型长时任务，并且没有AVSession通知
+    if (!isPublish && record->bgModeIds_.size() == 1 && record->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
+        result = SendContinuousTaskNotification(record);
+        return result;
+    }
+    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
+    if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+        std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
+        std::string notificationText = GetNotificationText(record);
+        if (notificationText.empty()) {
+            result = NotificationTools::GetInstance()->CancelNotification(
+                record->GetNotificationLabel(), record->GetNotificationId());
+                record->notificationId_ = -1;
+        } else {
+            newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
+            NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
         }
     }
     return result;
