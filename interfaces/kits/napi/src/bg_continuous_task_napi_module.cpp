@@ -520,7 +520,7 @@ napi_value GetIncludeSuspended(const napi_env &env, const napi_value &value, boo
 bool GetAllContinuousTasksCheckParamBeforeSubmit(napi_env env, size_t argc, napi_value *argv, bool isThrow,
     AsyncCallbackInfo *asyncCallbackInfo)
 {
-    if (argc > MAX_GET_ALL_CONTINUOUSTASK_PARAMS) {
+    if (argc > MAX_GET_ALL_CONTINUOUSTASK_PARAMS || argc < ARGC_ONE) {
         BGTASK_LOGE("wrong param nums");
         Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
         asyncCallbackInfo->errCode = ERR_PARAM_NUMBER_ERR;
