@@ -125,6 +125,13 @@ public:
      */
     bool IsFromWebView() const;
 
+    /**
+     * @brief Get suspendState.
+     *
+     * @return the suspend state.
+     */
+    bool GetSuspendState() const;
+
     std::string ToString(const std::vector<uint32_t> &modes) const;
 
 private:
@@ -141,6 +148,7 @@ private:
     int32_t abilityId_ {-1};
     std::string wantAgentBundleName_ {""};
     std::string wantAgentAbilityName_ {""};
+    bool suspendState_ {false};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

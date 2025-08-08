@@ -758,16 +758,11 @@ ErrCode BgContinuousTaskMgr::CheckSubMode(const std::shared_ptr<AAFwk::Want> wan
 ErrCode BgContinuousTaskMgr::UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam)
 {
     BgTaskHiTraceChain traceChain(__func__);
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
-    if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
-        BGTASK_LOGE("background mode permission is not passed");
-        return ERR_BGTASK_PERMISSION_DENIED;
-    }
-    ErrCode result = ERR_OK;
     int32_t callingUid = IPCSkeleton::GetCallingUid();
+    ErrCode result = CheckIsSysReadyAndPermission(callingUid);
+    if (result != ERR_OK) {
+        return result;
+    }
 
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::UpdateBackgroundRunningInner");
@@ -1052,20 +1047,11 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
 
 ErrCode BgContinuousTaskMgr::GetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
 {
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
-    if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
-        BGTASK_LOGE("uid: %{public}d no have permission", callingUid);
-        return ERR_BGTASK_PERMISSION_DENIED;
+    ErrCode result = CheckIsSysReadyAndPermission(callingUid);
+    if (result != ERR_OK) {
+        return result;
     }
-    if (callingUid < 0) {
-        BGTASK_LOGE("param callingUid: %{public}d is invaild", callingUid);
-        return ERR_BGTASK_INVALID_UID;
-    }
-    ErrCode result = ERR_OK;
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::GetAllContinuousTasks");
     handler_->PostSyncTask([this, callingUid, &list, &result]() {
@@ -1077,22 +1063,51 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasks(std::vector<std::shared_ptr<C
 ErrCode BgContinuousTaskMgr::GetAllContinuousTasks(
     std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended)
 {
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    ErrCode result = CheckIsSysReadyAndPermission(callingUid);
+    if (result != ERR_OK) {
+        return result;
+    }
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::GetAllContinuousTasksIncludeSuspended");
+    handler_->PostSyncTask([this, callingUid, &list, &result, includeSuspended]() {
+        result = this->GetAllContinuousTasksInner(callingUid, list, includeSuspended);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::CheckIsSysReadyAndPermission(int32_t callingUid)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
+        BGTASK_LOGE("uid: %{public}d no have permission", callingUid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    if (callingUid < 0) {
+        BGTASK_LOGE("param callingUid: %{public}d is invaild", callingUid);
+        return ERR_BGTASK_INVALID_UID;
+    }
     return ERR_OK;
 }
 
 ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
-    std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended)
 {
     if (continuousTaskInfosMap_.empty()) {
         return ERR_OK;
     }
+    BGTASK_LOGW("GetAllContinuousTasksInner, includeSuspended: %{public}d", includeSuspended);
     for (const auto &record : continuousTaskInfosMap_) {
         if (!record.second) {
             continue;
         }
         if (record.second->uid_ != uid) {
+            continue;
+        }
+        if (!includeSuspended && record.second->suspendState_) {
             continue;
         }
         std::string wantAgentBundleName {"NULL"};

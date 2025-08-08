@@ -857,6 +857,25 @@ HWTEST_F(BgTaskFrameworkUnitTest, RequestGetAllContinuousTasks_001, TestSize.Lev
 }
 
 /**
+ * @tc.name: RequestGetAllContinuousTasks_002
+ * @tc.desc: test RequestGetAllContinuousTasks
+ * @tc.type: FUNC
+ * @tc.require: issuesICRZHF
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, RequestGetAllContinuousTasks_002, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list, false),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestGetAllContinuousTasks(list, false),
+        ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
  * @tc.name: GetAllTransientTasks_001
  * @tc.desc: test GetAllTransientTasks.
  * @tc.type: FUNC

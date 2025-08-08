@@ -42,7 +42,7 @@ namespace {
 static constexpr uint32_t MAX_START_BG_RUNNING_PARAMS = 4;
 static constexpr uint32_t MAX_STOP_BG_RUNNING_PARAMS = 2;
 static constexpr uint32_t MAX_UPDATE_BG_RUNNING_PARAMS = 2;
-static constexpr uint32_t MAX_GET_ALL_CONTINUOUSTASK_PARAMS = 1;
+static constexpr uint32_t MAX_GET_ALL_CONTINUOUSTASK_PARAMS = 2;
 static constexpr uint32_t CALLBACK_RESULT_PARAMS_NUM = 2;
 static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
@@ -82,6 +82,7 @@ struct AsyncCallbackInfo : public AsyncWorkData {
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent {nullptr};
     std::vector<uint32_t> bgModes {};
     bool isBatchApi {false};
+    bool includeSuspended {false};
     int32_t notificationId {-1}; // out
     int32_t continuousTaskId {-1}; // out
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list; // out
@@ -502,6 +503,45 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value,
     wantAgent = std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*wantAgentPtr);
 
     return WrapVoidToJS(env);
+}
+
+napi_value GetIncludeSuspended(const napi_env &env, const napi_value &value, bool &includeSuspended)
+{
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    if (valuetype != napi_boolean) {
+        Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR, true);
+        return nullptr;
+    }
+    napi_get_value_bool(env, value, &includeSuspended);
+    return WrapVoidToJS(env);
+}
+
+bool GetAllContinuousTasksCheckParamBeforeSubmit(napi_env env, size_t argc, napi_value *argv, bool isThrow,
+    AsyncCallbackInfo *asyncCallbackInfo)
+{
+    if (argc > MAX_GET_ALL_CONTINUOUSTASK_PARAMS || argc < ARGC_ONE) {
+        BGTASK_LOGE("wrong param nums");
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_PARAM_NUMBER_ERR;
+        return false;
+    }
+    // argv[0] : context : AbilityContext
+    if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
+        BGTASK_LOGE("GetAllContinuousTasks Get ability context failed");
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
+        return false;
+    }
+
+    // argv[1] : includeSuspended : includeSuspended
+    if (argc == ARGC_TWO && GetIncludeSuspended(env, argv[1], asyncCallbackInfo->includeSuspended) == nullptr) {
+        BGTASK_LOGE("GetAllContinuousTasks Get includeSuspended failed");
+        Common::HandleParamErr(env, ERR_BGMODE_NULL_OR_TYPE_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
+        return false;
+    }
+    return true;
 }
 
 bool StartBackgroundRunningCheckParamBeforeSubmit(napi_env env, napi_value *argv, size_t len, bool isThrow,
@@ -946,6 +986,19 @@ void GetAllContinuousTasksExecuteCB(napi_env env, void *data)
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(asyncCallbackInfo->list);
 }
 
+void GetAllContinuousTasksIncludeSuspendedExecuteCB(napi_env env, void *data)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::GetAllContinuousTasksIncludeSuspendedExecuteCB");
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
+    if (asyncCallbackInfo == nullptr || asyncCallbackInfo->errCode != ERR_OK) {
+        BGTASK_LOGE("input params error");
+        return;
+    }
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(
+        asyncCallbackInfo->list, asyncCallbackInfo->includeSuspended);
+}
+
 void GetAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status, void *data)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
@@ -998,6 +1051,30 @@ napi_value GetAllContinuousTasksPromise(napi_env env, AsyncCallbackInfo *asyncCa
     return promise;
 }
 
+napi_value GetAllContinuousTasksIncludeSuspendedPromise(
+    napi_env env, AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("param is nullptr");
+        return nullptr;
+    }
+    napi_value resourceName;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    napi_deferred deferred;
+    napi_value promise {nullptr};
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    asyncCallbackInfo->deferred = deferred;
+    NAPI_CALL(env, napi_create_async_work(env,
+        nullptr,
+        resourceName,
+        GetAllContinuousTasksIncludeSuspendedExecuteCB,
+        GetAllContinuousTasksPromiseCompletedCB,
+        static_cast<void *>(asyncCallbackInfo),
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+    return promise;
+}
+
 napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isThrow)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
@@ -1017,21 +1094,8 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     size_t argc = MAX_GET_ALL_CONTINUOUSTASK_PARAMS;
     napi_value argv[MAX_GET_ALL_CONTINUOUSTASK_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    if (argc != MAX_GET_ALL_CONTINUOUSTASK_PARAMS) {
-        BGTASK_LOGE("wrong param nums");
-        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
-        callbackPtr.release();
-        if (asyncCallbackInfo != nullptr) {
-            delete asyncCallbackInfo;
-            asyncCallbackInfo = nullptr;
-        }
-        return WrapVoidToJS(env);
-    }
 
-    // argv[0] : context : AbilityContext
-    if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
-        BGTASK_LOGE("Get ability context failed");
-        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
+    if (!GetAllContinuousTasksCheckParamBeforeSubmit(env, argc, argv, isThrow, asyncCallbackInfo)) {
         callbackPtr.release();
         if (asyncCallbackInfo != nullptr) {
             delete asyncCallbackInfo;
@@ -1041,7 +1105,11 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     }
 
     napi_value ret {nullptr};
-    ret = GetAllContinuousTasksPromise(env, asyncCallbackInfo, isThrow);
+    if (argc == ARGC_ONE) {
+        ret = GetAllContinuousTasksPromise(env, asyncCallbackInfo, isThrow);
+    } else {
+        ret = GetAllContinuousTasksIncludeSuspendedPromise(env, asyncCallbackInfo, isThrow);
+    }
     callbackPtr.release();
     if (ret == nullptr) {
         BGTASK_LOGE("ret is nullpter");

@@ -519,6 +519,11 @@ napi_value Common::GetNapiContinuousTaskInfo(napi_env env,
     NAPI_CALL(env, napi_create_string_utf8(env, continuousTaskInfo->GetWantAgentAbilityName().c_str(),
         continuousTaskInfo->GetWantAgentAbilityName().length(), &napiWantAgentAbilityName));
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "wantAgentAbilityName", napiWantAgentAbilityName));
+
+    // suspend state.
+    napi_value napiSuspendState = nullptr;
+    NAPI_CALL(env, napi_get_boolean(env, continuousTaskInfo->GetSuspendState(), &napiSuspendState));
+    NAPI_CALL(env, napi_set_named_property(env, napiInfo, "suspendState", napiSuspendState));
     return napiInfo;
 }
 

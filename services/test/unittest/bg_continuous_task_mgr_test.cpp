@@ -1220,6 +1220,77 @@ HWTEST_F(BgContinuousTaskMgrTest, GetAllContinuousTasks_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: GetAllContinuousTasks_002
+ * @tc.desc: test GetAllContinuousTasks interface.
+ * @tc.type: FUNC
+ * @tc.require: issuesICRZHF
+ */
+HWTEST_F(BgContinuousTaskMgrTest, GetAllContinuousTasks_002, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasks(list, true), ERR_BGTASK_SYS_NOT_READY);
+
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasks(list, true), ERR_OK);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->abilityName_ = "abilityName";
+    continuousTaskRecord1->uid_ = 1;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_TWO;
+    continuousTaskRecord1->bgModeIds_.push_back(TEST_NUM_TWO);
+    continuousTaskRecord1->bgSubModeIds_.push_back(TEST_NUM_TWO);
+    continuousTaskRecord1->notificationId_ = 1;
+    continuousTaskRecord1->continuousTaskId_ = 1;
+    continuousTaskRecord1->abilityId_ = 1;
+    continuousTaskRecord1->suspendState_ = true;
+
+    std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+    info->bundleName_ = "wantAgentBundleName";
+    info->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord1->wantAgentInfo_ = info;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list2;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasks(list2, false), ERR_OK);
+    EXPECT_TRUE(list2.empty());
+}
+
+/**
+ * @tc.name: GetAllContinuousTasksInner_001
+ * @tc.desc: test GetAllContinuousTasksInner interface.
+ * @tc.type: FUNC
+ * @tc.require: issuesICRZHF
+ */
+HWTEST_F(BgContinuousTaskMgrTest, GetAllContinuousTasksInner_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->abilityName_ = "abilityName";
+    continuousTaskRecord1->uid_ = 1;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_TWO;
+    continuousTaskRecord1->bgModeIds_.push_back(TEST_NUM_TWO);
+    continuousTaskRecord1->bgSubModeIds_.push_back(TEST_NUM_TWO);
+    continuousTaskRecord1->notificationId_ = 1;
+    continuousTaskRecord1->continuousTaskId_ = 1;
+    continuousTaskRecord1->abilityId_ = 1;
+    continuousTaskRecord1->suspendState_ = true;
+
+    std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+    info->bundleName_ = "wantAgentBundleName";
+    info->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord1->wantAgentInfo_ = info;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list3;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasksInner(100, list3, true), ERR_OK);
+    EXPECT_TRUE(list3.empty());
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasksInner(1, list3, true), ERR_OK);
+    EXPECT_FALSE(list3.empty());
+}
+
+/**
  * @tc.name: RequestGetContinuousTasksByUidForInner_001
  * @tc.desc: test RequestGetContinuousTasksByUidForInner interface.
  * @tc.type: FUNC

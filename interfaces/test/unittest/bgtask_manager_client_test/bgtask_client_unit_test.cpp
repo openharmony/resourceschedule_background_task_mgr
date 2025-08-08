@@ -854,6 +854,18 @@ HWTEST_F(BgTaskClientUnitTest, RequestGetAllContinuousTasks_001, TestSize.Level1
 }
 
 /**
+ * @tc.name: RequestGetAllContinuousTasks_002
+ * @tc.desc: test RequestGetAllContinuousTasks interface.
+ * @tc.type: FUNC
+ * @tc.require: issuesICRZHF
+ */
+HWTEST_F(BgTaskClientUnitTest, RequestGetAllContinuousTasks_002, TestSize.Level1)
+{
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    EXPECT_NE(BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(list, true), ERR_OK);
+}
+
+/**
  * @tc.name: RequestGetContinuousTasksByUidForInner_001
  * @tc.desc: test RequestGetContinuousTasksByUidForInner interface.
  * @tc.type: FUNC
