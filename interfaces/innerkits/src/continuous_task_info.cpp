@@ -74,6 +74,11 @@ bool ContinuousTaskInfo::IsFromWebView() const
     return isFromWebView_;
 }
 
+bool ContinuousTaskInfo::GetSuspendState() const
+{
+    return suspendState_;
+}
+
 std::string ContinuousTaskInfo::ToString(const std::vector<uint32_t> &modes) const
 {
     std::string result;
