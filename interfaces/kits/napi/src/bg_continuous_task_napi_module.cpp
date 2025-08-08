@@ -520,6 +520,12 @@ napi_value GetIncludeSuspended(const napi_env &env, const napi_value &value, boo
 bool GetAllContinuousTasksCheckParamBeforeSubmit(napi_env env, size_t argc, napi_value *argv, bool isThrow,
     AsyncCallbackInfo *asyncCallbackInfo)
 {
+    if (argc > MAX_GET_ALL_CONTINUOUSTASK_PARAMS) {
+        BGTASK_LOGE("wrong param nums");
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_PARAM_NUMBER_ERR;
+        return false;
+    }
     // argv[0] : context : AbilityContext
     if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
         BGTASK_LOGE("GetAllContinuousTasks Get ability context failed");
@@ -1088,19 +1094,8 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     size_t argc = MAX_GET_ALL_CONTINUOUSTASK_PARAMS;
     napi_value argv[MAX_GET_ALL_CONTINUOUSTASK_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    if (argc > MAX_GET_ALL_CONTINUOUSTASK_PARAMS) {
-        BGTASK_LOGE("wrong param nums");
-        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
-        callbackPtr.release();
-        if (asyncCallbackInfo != nullptr) {
-            delete asyncCallbackInfo;
-            asyncCallbackInfo = nullptr;
-        }
-        return WrapVoidToJS(env);
-    }
 
     if (!GetAllContinuousTasksCheckParamBeforeSubmit(env, argc, argv, isThrow, asyncCallbackInfo)) {
-        BGTASK_LOGE("failed to check parameters before GetAllContinuousTasks.");
         callbackPtr.release();
         if (asyncCallbackInfo != nullptr) {
             delete asyncCallbackInfo;
