@@ -1101,6 +1101,11 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
 
     if (!GetAllContinuousTasksCheckParamBeforeSubmit(env, argc, argv, isThrow, asyncCallbackInfo)) {
         BGTASK_LOGE("failed to check parameters before GetAllContinuousTasks.");
+        callbackPtr.release();
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
         return WrapVoidToJS(env);
     }
 

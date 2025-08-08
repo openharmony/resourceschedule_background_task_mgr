@@ -108,6 +108,7 @@ bool ContinuousTaskInfo::Marshalling(Parcel& out) const
     WRITE_PARCEL_WITH_RET(out, Int32, abilityId_, false);
     WRITE_PARCEL_WITH_RET(out, String, wantAgentBundleName_, false);
     WRITE_PARCEL_WITH_RET(out, String, wantAgentAbilityName_, false);
+    WRITE_PARCEL_WITH_RET(out, Bool, suspendState_, false);
     return true;
 }
 
@@ -141,6 +142,7 @@ bool ContinuousTaskInfo::ReadFromParcel(Parcel& in)
     READ_PARCEL_WITH_RET(in, Int32, abilityId_, false);
     READ_PARCEL_WITH_RET(in, String, wantAgentBundleName_, false);
     READ_PARCEL_WITH_RET(in, String, wantAgentAbilityName_, false);
+    READ_PARCEL_WITH_RET(in, Bool, suspendState_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr
