@@ -64,6 +64,7 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "src/continuous_task_callback_info.cpp",
     "src/continuous_task_info.cpp",
     "src/continuous_task_param.cpp",
+    "src/continuous_task_suspend_reason.cpp",
     "src/delay_suspend_info.cpp",
     "src/efficiency_resource_info.cpp",
     "src/expired_callback.cpp",
