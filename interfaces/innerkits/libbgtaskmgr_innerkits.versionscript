@@ -20,6 +20,7 @@
     *ContinuousTaskCallbackInfo*;
     *ContinuousTaskInfo*;
     *ContinuousTaskParam*;
+    *ContinuousTaskSuspendReason*;
     *DelaySuspendInfo*;
     *EfficiencyResourceInfo*;
     *ExpiredCallback*;
