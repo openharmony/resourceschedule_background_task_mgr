@@ -27,7 +27,7 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_SUSPEND_REASON = {
     {BackgroundMode::LOCATION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_LOCATION_NOT_USED},
     {BackgroundMode::BLUETOOTH_INTERACTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_NOT_USED},
     {BackgroundMode::MULTI_DEVICE_CONNECTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED},
-    {BackgroundMode::VOIP, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_RUNNING},
+    {BackgroundMode::VOIP, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_RECORDING_NOT_RUNNING},
     {ContinuousTaskSuspendReason::ALL_MODE, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USED_ILLEGALLY}
 };
 
