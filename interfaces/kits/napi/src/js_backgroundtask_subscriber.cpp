@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -239,11 +239,15 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
         napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendState", suspendState);
 
         // set suspendReason
-        uint32_t mode = continuousTaskCallbackInfo->GetSuspendReason();
-        if (mode < BackgroundMode::END || mode == ContinuousTaskSuspendReason::ALL_MODE) {
-            uint32_t reason = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode);
+        uint32_t modeReason = continuousTaskCallbackInfo->GetSuspendReason();
+        if (modeReason < BackgroundMode::END) {
+            uint32_t reasonValue = ContinuousTaskSuspendReason::GetSuspendReasonValue(modeReason);
             napi_value suspendReason = nullptr;
-            napi_create_int32(env_, reason, &suspendReason);
+            if (reasonValue == 0) {
+                napi_create_int32(env_, -1, &suspendReason);
+            } else {
+                napi_create_int32(env_, reasonValue, &suspendReason);
+            }
             napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendReason", suspendReason);
         }
 
