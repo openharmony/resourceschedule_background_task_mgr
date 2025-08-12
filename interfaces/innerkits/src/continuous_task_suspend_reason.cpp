@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,7 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_SUSPEND_REASON = {
     {BackgroundMode::AUDIO_RECORDING, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_RECORDING_NOT_RUNNING},
     {BackgroundMode::LOCATION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_LOCATION_NOT_USED},
     {BackgroundMode::BLUETOOTH_INTERACTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_NOT_USED},
-    {BackgroundMode::MULTI_DEVICE_CONNECTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED},
-    {BackgroundMode::VOIP, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_RECORDING_NOT_RUNNING},
-    {ContinuousTaskSuspendReason::ALL_MODE, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USED_ILLEGALLY}
+    {BackgroundMode::MULTI_DEVICE_CONNECTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED}
 };
 
 uint32_t ContinuousTaskSuspendReason::GetSuspendReasonValue(const uint32_t mode)
