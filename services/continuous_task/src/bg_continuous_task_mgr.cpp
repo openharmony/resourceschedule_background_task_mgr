@@ -1206,7 +1206,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, 
         BGTASK_LOGW("SuspendContinuousTask mode: %{public}d, key %{public}s", mode, key.c_str());
         iter->second->suspendState_ = true;
         if (mode < BackgroundMode::END) {
-            uint32_t reasonValue = continuousTaskSuspendReason::GetSuspendReasonValue(mode);
+            uint32_t reasonValue = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode);
             if (reasonValue == 0) {
                 iter->second->suspendReason_ = -1;
             } else {
