@@ -53,6 +53,7 @@
 #endif // SUPPORT_GRAPHICS
 #include "background_mode.h"
 #include "background_sub_mode.h"
+#include "continuous_task_suspend_reason.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -1190,7 +1191,7 @@ bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, uint32_t type)
     return false;
 }
 
-void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t mode, const std::string &key)
 {
     if (continuousTaskInfosMap_.find(key) == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("suspend TaskInfo failure, no matched task: %{public}s", key.c_str());
@@ -1202,9 +1203,16 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, 
             ++iter;
             continue;
         }
-        BGTASK_LOGW("SuspendContinuousTask reason: %{public}d, key %{public}s", reason, key.c_str());
+        BGTASK_LOGW("SuspendContinuousTask mode: %{public}d, key %{public}s", mode, key.c_str());
         iter->second->suspendState_ = true;
-        iter->second->suspendReason_ = reason;
+        if (mode < BackgroundMode::END) {
+            uint32_t reasonValue = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode);
+            if (reasonValue == 0) {
+                iter->second->suspendReason_ = -1;
+            } else {
+                iter->second->suspendReason_ = reasonValue;
+            }
+        }
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_SUSPEND);
         RefreshTaskRecord();
         break;

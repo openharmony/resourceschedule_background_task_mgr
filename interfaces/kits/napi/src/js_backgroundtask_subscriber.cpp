@@ -14,9 +14,7 @@
  */
  
 #include "js_backgroundtask_subscriber.h"
-#include "background_mode.h"
 #include "continuous_task_log.h"
-#include "continuous_task_suspend_reason.h"
 #include "js_runtime_utils.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
@@ -239,13 +237,9 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
         napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendState", suspendState);
 
         // set suspendReason
-        uint32_t mode = continuousTaskCallbackInfo->GetSuspendReason();
-        if (mode < BackgroundMode::END || mode == ContinuousTaskSuspendReason::ALL_MODE) {
-            uint32_t reason = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode);
-            napi_value suspendReason = nullptr;
-            napi_create_int32(env_, reason, &suspendReason);
-            napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendReason", suspendReason);
-        }
+        napi_value suspendReason = nullptr;
+        napi_create_int32(env_, continuousTaskCallbackInfo->GetSuspendReason(), &suspendReason);
+        napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendReason", suspendReason);
 
         napi_value argv[1] = { jsContinuousTaskSuspendInfo };
         napi_value callResult = nullptr;

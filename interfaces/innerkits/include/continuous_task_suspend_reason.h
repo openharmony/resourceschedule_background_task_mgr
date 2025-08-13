@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ public:
         SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED,
         SYSTEM_SUSPEND_USED_ILLEGALLY,
         SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING,
-        ALL_MODE = 0xFF,
     };
 
     static uint32_t GetSuspendReasonValue(const uint32_t mode);
