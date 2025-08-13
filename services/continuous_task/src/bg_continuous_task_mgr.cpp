@@ -1213,7 +1213,6 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, 
                 iter->second->suspendReason_ = reasonValue;
             }
         }
-        iter->second->suspendReason_ = reason;
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_SUSPEND);
         RefreshTaskRecord();
         break;
