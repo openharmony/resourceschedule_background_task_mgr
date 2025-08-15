@@ -914,5 +914,41 @@ HWTEST_F(BgTaskFrameworkUnitTest, AVSessionNotifyUpdateNotification_001, TestSiz
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         AVSessionNotifyUpdateNotification(uid, pid, true), ERR_BGTASK_CHECK_TASK_PARAM);
 }
+
+/**
+ * @tc.name: CheckRegisterSuspendCallback_001
+ * @tc.desc: test CheckRegisterSuspendCallback.
+ * @tc.type: FUNC
+ * @tc.require: issueICT1ZV
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, CheckRegisterSuspendCallback_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckRegisterSuspendCallback(1),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckRegisterSuspendCallback(1),
+        ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: SuspendContinuousAudioTask_001
+ * @tc.desc: test SuspendContinuousAudioTask.
+ * @tc.type: FUNC
+ * @tc.require: issueICT1ZV
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, SuspendContinuousAudioTask_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(1),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(1),
+        ERR_BGTASK_PERMISSION_DENIED);
+}
 }
 }
