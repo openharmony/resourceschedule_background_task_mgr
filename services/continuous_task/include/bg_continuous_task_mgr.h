@@ -89,6 +89,7 @@ public:
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid = -1);
     ErrCode AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish = false);
+    ErrCode CheckRegisterSuspendCallback(int32_t uid);
     bool StopContinuousTaskByUser(const std::string &mapKey);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
@@ -102,6 +103,7 @@ public:
     int32_t GetBgTaskUid();
     void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
+    void SuspendContinuousAudioTask(int32_t uid);
     void ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
@@ -123,6 +125,7 @@ private:
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
     ErrCode GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid);
     ErrCode AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish = false);
+    ErrCode CheckRegisterSuspendCallbackInner(int32_t uid);
     void HandlePersistenceData();
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
@@ -143,6 +146,7 @@ private:
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
+    void HandleSuspendContinuousAudioTask(int32_t uid);
     void HandleActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
