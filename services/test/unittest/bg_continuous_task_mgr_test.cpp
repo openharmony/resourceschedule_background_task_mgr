@@ -1398,5 +1398,93 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_054, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord;
     EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(continuousTaskRecord), ERR_OK);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_055
+ * @tc.desc: test CheckRegisterSuspendCallback.
+ * @tc.type: FUNC
+ * @tc.require: issueICT1ZV
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_055, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    bgContinuousTaskMgr_->CheckRegisterSuspendCallback(1);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+
+    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
+    auto info1 = std::make_shared<SubscriberInfo>(subscriber1.GetImpl(), 1, 1, 1, 0);
+    bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info1);
+    EXPECT_NE((int32_t)bgContinuousTaskMgr_->CheckRegisterSuspendCallback(1), (int32_t)ERR_OK);
+
+    TestBackgroundTaskSubscriber subscriber2 = TestBackgroundTaskSubscriber();
+    auto info2 = std::make_shared<SubscriberInfo>(subscriber2.GetImpl(), 1, 1, 1, 2);
+    bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info2);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->CheckRegisterSuspendCallback(1), (int32_t)ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_056
+ * @tc.desc: test CheckRegisterSuspendCallbackInner.
+ * @tc.type: FUNC
+ * @tc.require: issueICT1ZV
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_056, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
+    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
+    auto info1 = std::make_shared<SubscriberInfo>(subscriber1.GetImpl(), 1, 1, 1, 0);
+    bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info1);
+    EXPECT_NE((int32_t)bgContinuousTaskMgr_->CheckRegisterSuspendCallbackInner(1), (int32_t)ERR_OK);
+
+    TestBackgroundTaskSubscriber subscriber2 = TestBackgroundTaskSubscriber();
+    auto info2 = std::make_shared<SubscriberInfo>(subscriber2.GetImpl(), 1, 1, 1, 2);
+    bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info2);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->CheckRegisterSuspendCallbackInner(1), (int32_t)ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_057
+ * @tc.desc: test SuspendContinuousAudioTask.
+ * @tc.type: FUNC
+ * @tc.require: issueICT1ZV
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_057, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_TWO;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->SuspendContinuousAudioTask(1);
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 1);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_058
+ * @tc.desc: test HandleSuspendContinuousAudioTask.
+ * @tc.type: FUNC
+ * @tc.require: issueICT1ZV
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_058, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
+
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord->bgModeId_ = 2;
+    continuousTaskRecord->bgModeIds_.push_back(continuousTaskRecord->bgModeId_);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord;
+
+    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
+    auto info1 = std::make_shared<SubscriberInfo>(subscriber1.GetImpl(), 1, 1, 1, 2);
+    bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info1);
+
+    bgContinuousTaskMgr_->HandleSuspendContinuousAudioTask(1);
+    bgContinuousTaskMgr_->HandleSuspendContinuousAudioTask(1);
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
