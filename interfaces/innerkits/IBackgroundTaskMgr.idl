@@ -52,4 +52,6 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void StartTransientTaskTimeForInner([in] int uid);
     void AVSessionNotifyUpdateNotification([in] int uid, [in] int pid, [in] boolean isPublish);
     void SetBgTaskConfig([in] String configData, [in] int sourceType);
+    void CheckRegisterSuspendCallback([in] int uid);
+    void SuspendContinuousAudioTask([in] int uid);
 }
