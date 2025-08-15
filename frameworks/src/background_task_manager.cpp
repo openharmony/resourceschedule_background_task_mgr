@@ -464,6 +464,22 @@ ErrCode BackgroundTaskManager::SetBgTaskConfig(const std::string &configData, in
     return proxy_->SetBgTaskConfig(configData, sourceType);
 }
 
+ErrCode BackgroundTaskManager::CheckRegisterSuspendCallback(int32_t uid)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->CheckRegisterSuspendCallback(uid);
+}
+
+ErrCode BackgroundTaskManager::SuspendContinuousAudioTask(int32_t uid)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->SuspendContinuousAudioTask(uid);
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 
