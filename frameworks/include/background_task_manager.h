@@ -258,6 +258,20 @@ public:
      */
     ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType);
 
+    /**
+     * @brief check register suspend callback
+     * @param param uid app uid.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode CheckRegisterSuspendCallback(int32_t uid);
+
+    /**
+     * @brief Request suspend continuous audio playback task.
+     * @param uid app uid.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode SuspendContinuousAudioTask(int32_t uid);
+
 private:
     bool GetBackgroundTaskManagerProxy();
 
