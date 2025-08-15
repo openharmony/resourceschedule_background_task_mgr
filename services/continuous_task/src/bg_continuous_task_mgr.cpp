@@ -1468,6 +1468,73 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     return result;
 }
 
+void BgContinuousTaskMgr::SuspendContinuousAudioTask(int32_t uid)
+{
+    if (!isSysReady_.load()) {
+        return;
+    }
+    auto self = shared_from_this();
+    auto task = [self, uid]() {
+        if (self) {
+            self->HandleSuspendContinuousAudioTask(uid);
+        }
+    };
+    handler_->PostTask(task);
+}
+
+void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
+{
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        if (iter->second->GetUid() == uid &&
+            CommonUtils::CheckExistMode(iter->second->bgModeIds_, BackgroundMode::AUDIO_PLAYBACK)) {
+            NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
+                iter->second->GetNotificationId());
+            if (IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND) && iter->second->GetSuspendAudioTaskTime() == 0) {
+                // 注册暂停回调，第一次检测失败，不移除任务，触发暂停回调
+                iter->second->suspendState_ = true;
+                iter->second->suspendAudioTaskTime_ = 1;
+                iter->second->suspendReason_ =
+                    static_cast<int32_t>(ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_RUNNING);
+                OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_SUSPEND);
+                RefreshTaskRecord();
+                iter++;
+            } else if (IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND) && iter->second->GetSuspendAudioTaskTime() == 1) {
+                OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+                iter = continuousTaskInfosMap_.erase(iter);
+                RefreshTaskRecord();
+            } else {
+                iter++;
+            }
+        } else {
+            iter++;
+        }
+    }
+    HandleAppContinuousTaskStop(uid);
+}
+
+ErrCode BgContinuousTaskMgr::CheckRegisterSuspendCallback(int32_t uid)
+{
+    if (!isSysReady_.load()) {
+        return ERR_INVALID_VALUE;
+    }
+    ErrCode result = ERR_OK;
+    handler_->PostSyncTask([this, uid, &result]() mutable {
+        result = this->CheckRegisterSuspendCallbackInner(uid);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::CheckRegisterSuspendCallbackInner(int32_t uid)
+{
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        if ((*iter)->isHap_ && (*iter)->uid_ == uid && (((*iter)->flag_ & CONTINUOUS_TASK_SUSPEND) > 0)) {
+            return ERR_OK;
+        }
+    }
+    return ERR_INVALID_VALUE;
+}
+
 ErrCode BgContinuousTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     if (!isSysReady_.load()) {
