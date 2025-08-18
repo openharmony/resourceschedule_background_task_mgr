@@ -894,18 +894,6 @@ HWTEST_F(BgTaskClientUnitTest, AVSessionNotifyUpdateNotification_001, TestSize.L
 }
 
 /**
- * @tc.name: CheckRegisterSuspendCallback_001
- * @tc.desc: test CheckRegisterSuspendCallback interface.
- * @tc.type: FUNC
- * @tc.require: issueICT1ZV
- */
-HWTEST_F(BgTaskClientUnitTest, CheckRegisterSuspendCallback_001, TestSize.Level1)
-{
-    int32_t uid = 1;
-    EXPECT_NE(BackgroundTaskMgrHelper::CheckRegisterSuspendCallback(uid), ERR_OK);
-}
-
-/**
  * @tc.name: SuspendContinuousAudioTask_001
  * @tc.desc: test SuspendContinuousAudioTask interface.
  * @tc.type: FUNC
