@@ -1516,28 +1516,6 @@ void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
     HandleAppContinuousTaskStop(uid);
 }
 
-ErrCode BgContinuousTaskMgr::CheckRegisterSuspendCallback(int32_t uid)
-{
-    if (!isSysReady_.load()) {
-        return ERR_INVALID_VALUE;
-    }
-    ErrCode result = ERR_OK;
-    handler_->PostSyncTask([this, uid, &result]() mutable {
-        result = this->CheckRegisterSuspendCallbackInner(uid);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
-    return result;
-}
-
-ErrCode BgContinuousTaskMgr::CheckRegisterSuspendCallbackInner(int32_t uid)
-{
-    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-        if ((*iter)->isHap_ && (*iter)->uid_ == uid && (((*iter)->flag_ & CONTINUOUS_TASK_SUSPEND) > 0)) {
-            return ERR_OK;
-        }
-    }
-    return ERR_INVALID_VALUE;
-}
-
 ErrCode BgContinuousTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     if (!isSysReady_.load()) {
