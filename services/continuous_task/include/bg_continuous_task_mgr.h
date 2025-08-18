@@ -109,7 +109,7 @@ public:
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void HandleRemoveTaskByMode(uint32_t mode);
     void SetDumperTest(const bool dumperTest);
-    bool GetDumperTest() const;
+    bool IsDumperTest() const;
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
