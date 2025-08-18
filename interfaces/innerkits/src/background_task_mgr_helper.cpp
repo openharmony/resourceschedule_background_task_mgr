@@ -135,11 +135,6 @@ ErrCode BackgroundTaskMgrHelper::AVSessionNotifyUpdateNotification(int32_t uid, 
         AVSessionNotifyUpdateNotification(uid, pid, isPublish);
 }
 
-ErrCode BackgroundTaskMgrHelper::CheckRegisterSuspendCallback(int32_t uid)
-{
-    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckRegisterSuspendCallback(uid);
-}
-
 ErrCode BackgroundTaskMgrHelper::SuspendContinuousAudioTask(int32_t uid)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(uid);
