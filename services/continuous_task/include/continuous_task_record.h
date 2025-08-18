@@ -61,7 +61,7 @@ public:
     bool ParseFromJson(const nlohmann::json &value);
     std::string ToString(std::vector<uint32_t> &bgmodes);
     bool IsSystem() const;
-    int32_t GetSuspendAudioTaskTime() const;
+    int32_t GetSuspendAudioTaskTimes() const;
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
@@ -90,7 +90,7 @@ private:
     int32_t continuousTaskId_ {-1};
     bool suspendState_ {false};
     int32_t suspendReason_ {0};
-    int32_t suspendAudioTaskTime_ {0};
+    int32_t suspendAudioTaskTimes_ {0};
     
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;
