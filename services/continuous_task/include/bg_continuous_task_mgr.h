@@ -108,6 +108,8 @@ public:
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void HandleRemoveTaskByMode(uint32_t mode);
+    void SetDumperTest(const bool dumperTest);
+    bool GetDumperTest() const;
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
@@ -130,8 +132,6 @@ private:
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
-    void DumpGetTask(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
-    void DumpInnerTask(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t uid);
@@ -200,6 +200,7 @@ private:
     std::vector<std::string> continuousTaskText_ {};
     std::vector<std::string> continuousTaskSubText_ {};
     int32_t continuousTaskIdIndex_ = 0;
+    bool dumperTest_ {false};
 
     DECLARE_DELAYED_SINGLETON(BgContinuousTaskMgr);
 };
