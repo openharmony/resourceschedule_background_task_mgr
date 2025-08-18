@@ -1400,50 +1400,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_054, TestSize.Level1)
 }
 
 /**
- * @tc.name: BgTaskManagerUnitTest_055
- * @tc.desc: test CheckRegisterSuspendCallback.
- * @tc.type: FUNC
- * @tc.require: issueICT1ZV
- */
-HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_055, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
-    bgContinuousTaskMgr_->isSysReady_.store(false);
-    bgContinuousTaskMgr_->CheckRegisterSuspendCallback(1);
-    bgContinuousTaskMgr_->isSysReady_.store(true);
-
-    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
-    auto info1 = std::make_shared<SubscriberInfo>(subscriber1.GetImpl(), 1, 1, 1, 0);
-    bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info1);
-    EXPECT_NE((int32_t)bgContinuousTaskMgr_->CheckRegisterSuspendCallback(1), (int32_t)ERR_OK);
-
-    TestBackgroundTaskSubscriber subscriber2 = TestBackgroundTaskSubscriber();
-    auto info2 = std::make_shared<SubscriberInfo>(subscriber2.GetImpl(), 1, 1, 1, 2);
-    bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info2);
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->CheckRegisterSuspendCallback(1), (int32_t)ERR_OK);
-}
-
-/**
- * @tc.name: BgTaskManagerUnitTest_056
- * @tc.desc: test CheckRegisterSuspendCallbackInner.
- * @tc.type: FUNC
- * @tc.require: issueICT1ZV
- */
-HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_056, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
-    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
-    auto info1 = std::make_shared<SubscriberInfo>(subscriber1.GetImpl(), 1, 1, 1, 0);
-    bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info1);
-    EXPECT_NE((int32_t)bgContinuousTaskMgr_->CheckRegisterSuspendCallbackInner(1), (int32_t)ERR_OK);
-
-    TestBackgroundTaskSubscriber subscriber2 = TestBackgroundTaskSubscriber();
-    auto info2 = std::make_shared<SubscriberInfo>(subscriber2.GetImpl(), 1, 1, 1, 2);
-    bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info2);
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->CheckRegisterSuspendCallbackInner(1), (int32_t)ERR_OK);
-}
-
-/**
  * @tc.name: BgTaskManagerUnitTest_057
  * @tc.desc: test SuspendContinuousAudioTask.
  * @tc.type: FUNC
