@@ -17,7 +17,6 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_BG_CONTINUOUS_TASK_DUMPER_H
 
 #include <memory>
-#include <mutex>
 
 #include "singleton.h"
 
