@@ -2150,6 +2150,5 @@ bool BgContinuousTaskMgr::IsDumperTest() const
 {
     return dumperTest_;
 }
-}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
