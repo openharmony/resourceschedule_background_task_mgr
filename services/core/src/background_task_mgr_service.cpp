@@ -531,14 +531,6 @@ ErrCode BackgroundTaskMgrService::SetBgTaskConfig(const std::string &configData,
     return DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SetBgTaskConfig(configData, sourceType);
 }
 
-ErrCode BackgroundTaskMgrService::CheckRegisterSuspendCallback(int32_t uid)
-{
-    if (!CheckCallingToken() || !CheckCallingProcess()) {
-        return ERR_BGTASK_PERMISSION_DENIED;
-    }
-    return BgContinuousTaskMgr::GetInstance()->CheckRegisterSuspendCallback(uid);
-}
-
 ErrCode BackgroundTaskMgrService::SuspendContinuousAudioTask(int32_t uid)
 {
     if (!CheckCallingToken() || !CheckCallingProcess()) {
