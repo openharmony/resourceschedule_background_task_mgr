@@ -89,7 +89,6 @@ public:
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid = -1);
     ErrCode AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish = false);
-    ErrCode CheckRegisterSuspendCallback(int32_t uid);
     bool StopContinuousTaskByUser(const std::string &mapKey);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
@@ -127,7 +126,6 @@ private:
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
     ErrCode GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid);
     ErrCode AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish = false);
-    ErrCode CheckRegisterSuspendCallbackInner(int32_t uid);
     void HandlePersistenceData();
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
