@@ -203,7 +203,7 @@ public:
 
     /**
      * @brief check register suspend callback
-     * @param param uid app uid.
+     * @param uid app uid.
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode CheckRegisterSuspendCallback(int32_t uid);
