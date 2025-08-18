@@ -18,8 +18,10 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-    static constexpr int32_t MAX_DUMP_INNER_PARAM_NUMS = 4;
-    static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
+namespace {
+static constexpr int32_t MAX_DUMP_INNER_PARAM_NUMS = 4;
+static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
+}
 
 BgContinuousTaskDumper::BgContinuousTaskDumper() {}
 
@@ -32,7 +34,7 @@ void BgContinuousTaskDumper::DumpInnerTask(const std::vector<std::string> &dumpO
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
-    std::string modeStr = dumpOption[2].c_str();
+    std::string modeStr = dumpOption[MAX_DUMP_PARAM_NUMS -1].c_str();
     uint32_t mode = 0;
     if (modeStr == "WORKOUT") {
         mode = BackgroundMode::WORKOUT;
@@ -41,7 +43,7 @@ void BgContinuousTaskDumper::DumpInnerTask(const std::vector<std::string> &dumpO
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
-    std::string operationType = dumpOption[3].c_str();
+    std::string operationType = dumpOption[MAX_DUMP_PARAM_NUMS].c_str();
     if (operationType != "apply" && operationType != "reset") {
         dumpInfo.emplace_back("param invaild\n");
         return;
