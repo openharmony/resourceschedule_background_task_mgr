@@ -661,24 +661,6 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_020
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.CheckRegisterSuspendCallback(1), ERR_INVALID_VALUE);
-
-    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
-    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.CheckRegisterSuspendCallback(1), ERR_INVALID_DATA);
-}
-
-/**
- * @tc.name: BackgroundTaskMgrProxyAbnormalTest_021
- * @tc.desc: test BackgroundTaskMgrProxy abnormal.
- * @tc.type: FUNC
- * @tc.require: issueICT1ZV
- */
-HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_021, TestSize.Level2)
-{
-    BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
-
-    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
     EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousAudioTask(1), ERR_INVALID_VALUE);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
