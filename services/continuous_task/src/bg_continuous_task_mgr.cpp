@@ -1493,7 +1493,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
             CommonUtils::CheckExistMode(iter->second->bgModeIds_, BackgroundMode::AUDIO_PLAYBACK)) {
             NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
                 iter->second->GetNotificationId());
-            if (IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND) && iter->second->GetSuspendAudioTaskTime() == 0) {
+            if (IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND) && iter->second->GetSuspendAudioTaskTimes() == 0) {
                 // 注册暂停回调，第一次检测失败，不移除任务，触发暂停回调
                 iter->second->suspendState_ = true;
                 iter->second->suspendAudioTaskTime_ = 1;
@@ -1502,7 +1502,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
                 OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_SUSPEND);
                 RefreshTaskRecord();
                 iter++;
-            } else if (IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND) && iter->second->GetSuspendAudioTaskTime() == 1) {
+            } else if (IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND) && iter->second->GetSuspendAudioTaskTimes() == 1) {
                 OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
                 iter = continuousTaskInfosMap_.erase(iter);
                 RefreshTaskRecord();
