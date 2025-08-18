@@ -147,9 +147,9 @@ bool ContinuousTaskRecord::IsSystem() const
     return isSystem_;
 }
 
-int32_t ContinuousTaskRecord::GetSuspendAudioTaskTime() const
+int32_t ContinuousTaskRecord::GetSuspendAudioTaskTimes() const
 {
-    return suspendAudioTaskTime_;
+    return suspendAudioTaskTimes_;
 }
 
 std::string ContinuousTaskRecord::ParseToJsonStr()
