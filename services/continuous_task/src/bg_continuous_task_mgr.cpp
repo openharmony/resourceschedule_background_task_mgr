@@ -1499,7 +1499,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
             }
             if (iter->second->GetSuspendAudioTaskTimes() == 0) {
                 iter->second->suspendState_ = true;
-                iter->second->suspendAudioTaskTime_ = 1;
+                iter->second->suspendAudioTaskTimes_ = 1;
                 iter->second->suspendReason_ =
                     static_cast<int32_t>(ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_RUNNING);
                 OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_SUSPEND);
