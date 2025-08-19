@@ -54,6 +54,7 @@
 #include "background_mode.h"
 #include "background_sub_mode.h"
 #include "continuous_task_suspend_reason.h"
+#include "bg_continuous_task_dumper.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -89,7 +90,6 @@ static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
-static constexpr int32_t MAX_DUMP_INNER_PARAM_NUMS = 4;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
@@ -615,7 +615,10 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     // webview sdk申请长时任务，上下文在应用。callkit sa 申请长时时，上下文在sa;
-    if (callingUid != VOIP_SA_UID && callingUid != HEALTHSPORT_SA_UID && callingUid != taskParam->uid_) {
+    if (IsDumperTest()) {
+        SetDumperTest(false);
+        BGTASK_LOGW("RequestBackgroundRunningForInner dump test");
+    } else if (callingUid != VOIP_SA_UID && callingUid != HEALTHSPORT_SA_UID && callingUid != taskParam->uid_) {
         BGTASK_LOGE("continuous task param uid %{public}d is invalid, real %{public}d", taskParam->uid_, callingUid);
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
@@ -1468,6 +1471,52 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     return result;
 }
 
+void BgContinuousTaskMgr::SuspendContinuousAudioTask(int32_t uid)
+{
+    if (!isSysReady_.load()) {
+        return;
+    }
+    auto self = shared_from_this();
+    auto task = [self, uid]() {
+        if (self) {
+            self->HandleSuspendContinuousAudioTask(uid);
+        }
+    };
+    handler_->PostTask(task);
+}
+
+void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
+{
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        if (iter->second->GetUid() == uid &&
+            CommonUtils::CheckExistMode(iter->second->bgModeIds_, BackgroundMode::AUDIO_PLAYBACK)) {
+            NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
+                iter->second->GetNotificationId());
+            if (!IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND)) {
+                iter++;
+                continue;
+            }
+            if (iter->second->GetSuspendAudioTaskTimes() == 0) {
+                iter->second->suspendState_ = true;
+                iter->second->suspendAudioTaskTimes_ = 1;
+                iter->second->suspendReason_ =
+                    static_cast<int32_t>(ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_RUNNING);
+                OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_SUSPEND);
+                RefreshTaskRecord();
+                iter++;
+            } else {
+                OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
+                iter = continuousTaskInfosMap_.erase(iter);
+                RefreshTaskRecord();
+            }
+        } else {
+            iter++;
+        }
+    }
+    HandleAppContinuousTaskStop(uid);
+}
+
 ErrCode BgContinuousTaskMgr::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     if (!isSysReady_.load()) {
@@ -1492,9 +1541,9 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
     } else if (dumpOption[1] == DUMP_PARAM_CANCEL) {
         DumpCancelTask(dumpOption, false);
     } else if (dumpOption[1] == DUMP_PARAM_GET) {
-        DumpGetTask(dumpOption, dumpInfo);
+        BgContinuousTaskDumper::GetInstance()->DumpGetTask(dumpOption, dumpInfo);
     } else if (dumpOption[1] == DUMP_INNER_TASK) {
-        DumpInnerTask(dumpOption, dumpInfo);
+        BgContinuousTaskDumper::GetInstance()->DumpInnerTask(dumpOption, dumpInfo);
     } else {
         BGTASK_LOGW("invalid dump param");
     }
@@ -1572,88 +1621,6 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
         NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
             iter->second->GetNotificationId());
         RemoveContinuousTaskRecord(taskKey);
-    }
-}
-
-void BgContinuousTaskMgr::DumpGetTask(const std::vector<std::string> &dumpOption,
-    std::vector<std::string> &dumpInfo)
-{
-    if (dumpOption.size() != MAX_DUMP_PARAM_NUMS) {
-        dumpInfo.emplace_back("param invaild\n");
-        return;
-    }
-    int32_t uid = std::atoi(dumpOption[MAX_DUMP_PARAM_NUMS - 1].c_str());
-    if (uid < 0) {
-        dumpInfo.emplace_back("param invaild\n");
-        return;
-    }
-    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
-    ErrCode ret = RequestGetContinuousTasksByUidForInner(uid, list);
-    if (ret != ERR_OK) {
-        dumpInfo.emplace_back("param invaild\n");
-        return;
-    }
-    if (list.empty()) {
-        dumpInfo.emplace_back("No running continuous task\n");
-        return;
-    }
-    std::stringstream stream;
-    uint32_t index = 1;
-    for (const auto &info : list) {
-        stream.str("");
-        stream.clear();
-        stream << "No." << index;
-        stream << "\t\tabilityName: " << info->GetAbilityName() << "\n";
-        stream << "\t\tisFromWebview: " << (info->IsFromWebView() ? "true" : "false") << "\n";
-        stream << "\t\tuid: " << info->GetUid() << "\n";
-        stream << "\t\tpid: " << info->GetPid() << "\n";
-        stream << "\t\tnotificationId: " << info->GetNotificationId() << "\n";
-        stream << "\t\tcontinuousTaskId: " << info->GetContinuousTaskId() << "\n";
-        stream << "\t\tabilityId: " << info->GetAbilityId() << "\n";
-        stream << "\t\twantAgentBundleName: " << info->GetWantAgentBundleName() << "\n";
-        stream << "\t\twantAgentAbilityName: " << info->GetWantAgentAbilityName() << "\n";
-        stream << "\t\tbackgroundModes: " << info->ToString(info->GetBackgroundModes()) << "\n";
-        stream << "\t\tbackgroundSubModes: " << info->ToString(info->GetBackgroundSubModes()) << "\n";
-        stream << "\n";
-        dumpInfo.emplace_back(stream.str());
-        index++;
-    }
-}
-
-void BgContinuousTaskMgr::DumpInnerTask(const std::vector<std::string> &dumpOption,
-    std::vector<std::string> &dumpInfo)
-{
-    if (dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS) {
-        dumpInfo.emplace_back("param invaild\n");
-        return;
-    }
-    std::string modeStr = dumpOption[2].c_str();
-    uint32_t mode = 0;
-    if (modeStr == "WORKOUT") {
-        mode = BackgroundMode::WORKOUT;
-    }
-    if (mode == 0) {
-        dumpInfo.emplace_back("param invaild\n");
-        return;
-    }
-    std::string operationType = dumpOption[3].c_str();
-    if (operationType != "apply" && operationType != "reset") {
-        dumpInfo.emplace_back("param invaild\n");
-        return;
-    }
-    bool isApply = (operationType == "apply");
-    sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
-        new ContinuousTaskParamForInner(1, mode, isApply));
-    ErrCode ret = ERR_OK;
-    if (isApply) {
-        ret = StartBackgroundRunningForInner(taskParam);
-    } else {
-        ret = StopBackgroundRunningForInner(taskParam);
-    }
-    if (ret != ERR_OK) {
-        dumpInfo.emplace_back("dump inner continuous task fail.\n");
-    } else {
-        dumpInfo.emplace_back("dump inner continuous task success.\n");
     }
 }
 
@@ -2151,6 +2118,16 @@ void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const s
         default:
             break;
     }
+}
+
+void BgContinuousTaskMgr::SetDumperTest(const bool dumperTest)
+{
+    dumperTest_ = dumperTest;
+}
+
+bool BgContinuousTaskMgr::IsDumperTest() const
+{
+    return dumperTest_;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

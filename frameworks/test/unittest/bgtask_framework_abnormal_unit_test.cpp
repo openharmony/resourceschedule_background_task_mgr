@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -648,6 +648,24 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_019
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
     EXPECT_EQ(backgroundTaskMgrProxy.ActiveContinuousTask(1, 1, ""), ERR_INVALID_DATA);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrProxyAbnormalTest_020
+ * @tc.desc: test BackgroundTaskMgrProxy abnormal.
+ * @tc.type: FUNC
+ * @tc.require: issueICT1ZV
+ */
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_020, TestSize.Level2)
+{
+    BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousAudioTask(1), ERR_INVALID_VALUE);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousAudioTask(1), ERR_INVALID_DATA);
 }
 }
 }

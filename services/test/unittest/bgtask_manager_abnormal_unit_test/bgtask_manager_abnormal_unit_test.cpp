@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -77,6 +77,8 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_002
 
     EXPECT_EQ(BackgroundTaskMgrService_->SubscribeBackgroundTask(nullptr, 0), ERR_BGTASK_PERMISSION_DENIED);
     EXPECT_EQ(BackgroundTaskMgrService_->UnsubscribeBackgroundTask(nullptr), ERR_BGTASK_PERMISSION_DENIED);
+
+    EXPECT_EQ(BackgroundTaskMgrService_->SuspendContinuousAudioTask(1), ERR_BGTASK_PERMISSION_DENIED);
 }
 
 /**

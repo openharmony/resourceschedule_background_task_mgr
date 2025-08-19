@@ -134,5 +134,10 @@ ErrCode BackgroundTaskMgrHelper::AVSessionNotifyUpdateNotification(int32_t uid, 
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         AVSessionNotifyUpdateNotification(uid, pid, isPublish);
 }
+
+ErrCode BackgroundTaskMgrHelper::SuspendContinuousAudioTask(int32_t uid)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(uid);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

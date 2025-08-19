@@ -102,10 +102,13 @@ public:
     int32_t GetBgTaskUid();
     void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
+    void SuspendContinuousAudioTask(int32_t uid);
     void ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void HandleRemoveTaskByMode(uint32_t mode);
+    void SetDumperTest(const bool dumperTest);
+    bool IsDumperTest() const;
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
@@ -127,8 +130,6 @@ private:
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
-    void DumpGetTask(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
-    void DumpInnerTask(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     bool RemoveContinuousTaskRecord(const std::string &mapKey);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t uid);
@@ -143,6 +144,7 @@ private:
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
+    void HandleSuspendContinuousAudioTask(int32_t uid);
     void HandleActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
@@ -196,6 +198,7 @@ private:
     std::vector<std::string> continuousTaskText_ {};
     std::vector<std::string> continuousTaskSubText_ {};
     int32_t continuousTaskIdIndex_ = 0;
+    bool dumperTest_ {false};
 
     DECLARE_DELAYED_SINGLETON(BgContinuousTaskMgr);
 };

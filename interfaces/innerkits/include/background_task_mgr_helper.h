@@ -200,6 +200,13 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType);
+
+    /**
+     * @brief Request suspend continuous audio playback task.
+     * @param uid app uid.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode SuspendContinuousAudioTask(int32_t uid);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
