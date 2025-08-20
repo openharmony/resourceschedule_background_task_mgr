@@ -295,7 +295,7 @@ void StopBackgroundRunningSync(uintptr_t context)
 
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStopBackgroundRunning(info->name, token, abilityId);
     if (asyncCallbackInfo->errCode) {
-        BGTASK_LOGE("StopBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
+        BGTASK_LOGE("StopBackgroundRunning fail errCode: %{public}d", Common::FindErrCode(asyncCallbackInfo->errCode));
         set_business_error(
             Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
     }
@@ -334,7 +334,7 @@ void StartBackgroundRunningSync(uintptr_t context, BackgroundMode bgMode, uintpt
     BGTASK_LOGI("notification %{public}d, continuousTaskId %{public}d", taskParam.notificationId_,
         taskParam.continuousTaskId_);
     if (asyncCallbackInfo->errCode) {
-        BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
+        BGTASK_LOGE("StartBackgroundRunning fail errCode: %{public}d", Common::FindErrCode(asyncCallbackInfo->errCode));
         set_business_error(
             Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
     }
@@ -426,7 +426,7 @@ static ani_enum_item GetContentType(ani_env *env)
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
     asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
     if (asyncCallbackInfo->errCode) {
-        BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
+        BGTASK_LOGE("StartBackgroundRunning fail errCode: %{public}d", Common::FindErrCode(asyncCallbackInfo->errCode));
         set_business_error(
             Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return notification;
@@ -470,7 +470,7 @@ static ani_enum_item GetContentType(ani_env *env)
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
     asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
     if (asyncCallbackInfo->errCode) {
-        BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
+        BGTASK_LOGE("StartBackgroundRunning fail errCode: %{public}d", Common::FindErrCode(asyncCallbackInfo->errCode));
         set_business_error(
             Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return notification;
