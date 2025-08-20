@@ -370,7 +370,7 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
     }
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
-    BGTASK_LOGI("uid %{public}d pid %{public}d isHap %{public}d flag %{public}d subscribe",
+    BGTASK_LOGI("uid %{public}d pid %{public}d isHap %{public}d flag %{public}u subscribe",
         callingUid, callingPid, isHap, flag);
     auto subscriberInfo = std::make_shared<SubscriberInfo>(subscriber, callingUid, callingPid, isHap, flag);
     if (BgContinuousTaskMgr::GetInstance()->AddSubscriber(subscriberInfo) != ERR_OK) {
