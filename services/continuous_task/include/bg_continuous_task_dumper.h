@@ -24,7 +24,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class BgContinuousTaskDumper : public DelayedSingleton<BgContinuousTaskDumper> {
 public:
-    void DumpInnerTask(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+    void DebugContinuousTask(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     void DumpGetTask(const std::vector<std::string> &dumpOption,
         std::vector<std::string> &dumpInfo);
 
