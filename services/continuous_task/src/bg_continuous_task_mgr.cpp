@@ -1184,7 +1184,7 @@ bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, uint32_t type)
 {
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         if ((*iter)->isHap_ && (*iter)->uid_ == uid && (((*iter)->flag_ & type) > 0)) {
-            BGTASK_LOGD("falg: %{public}d", (*iter)->flag_);
+            BGTASK_LOGD("flag: %{public}u", (*iter)->flag_);
             return true;
         }
     }
