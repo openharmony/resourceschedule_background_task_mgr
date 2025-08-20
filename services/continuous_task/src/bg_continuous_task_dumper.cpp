@@ -56,7 +56,6 @@ void BgContinuousTaskDumper::DebugContinuousTask(const std::vector<std::string> 
     sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
         new ContinuousTaskParamForInner(uid, mode, isApply));
     ErrCode ret = ERR_OK;
-    BgContinuousTaskMgr::GetInstance()->SetDumperTest(true);
     ret = BgContinuousTaskMgr::GetInstance()->DebugContinuousTaskInner(taskParam);
     if (ret != ERR_OK) {
         dumpInfo.emplace_back("dump inner continuous task fail.\n");
