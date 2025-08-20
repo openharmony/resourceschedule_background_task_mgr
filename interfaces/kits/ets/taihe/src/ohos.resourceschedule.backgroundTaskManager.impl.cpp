@@ -73,8 +73,8 @@ void CancelSuspendDelay(int32_t requestId)
 {
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(requestId);
     if (errCode != ERR_OK) {
-        BGTASK_LOGE("CancelSuspendDelay falied errCode: %{public}d", errCode);
-        set_business_error(errCode, Common::FindErrMsg(errCode));
+        BGTASK_LOGE("CancelSuspendDelay falied errCode: %{public}d", Common::FindErrCode(errCode));
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
     std::lock_guard<std::mutex> lock(callbackLock_);
     auto findCallback = callbackInstances_.find(requestId);
@@ -90,8 +90,8 @@ int32_t GetRemainingDelayTimeSync(int32_t requestId)
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         GetRemainingDelayTime(callbackInfo.requestId, callbackInfo.delayTime);
     if (errCode) {
-        BGTASK_LOGE("GetRemainingDelayTime falied errCode: %{public}d", errCode);
-        set_business_error(errCode, Common::FindErrMsg(errCode));
+        BGTASK_LOGE("GetRemainingDelayTime falied errCode: %{public}d", Common::FindErrCode(errCode));
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
     return callbackInfo.delayTime;
 }
@@ -109,8 +109,8 @@ int32_t GetRemainingDelayTimeSync(int32_t requestId)
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestSuspendDelay(reasonU16, *callbackPtr, delaySuspendInfo);
     if (errCode) {
-        BGTASK_LOGE("DelaySuspendInfo falied errCode: %{public}d", errCode);
-        set_business_error(errCode, Common::FindErrMsg(errCode));
+        BGTASK_LOGE("DelaySuspendInfo falied errCode: %{public}d", Common::FindErrCode(errCode));
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
 
     ::ohos::resourceschedule::backgroundTaskManager::DelaySuspendInfo resultInfo;
@@ -135,8 +135,8 @@ void ApplyEfficiencyResources(EfficiencyResourcesRequest const& request)
     };
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(resourceInfo);
     if (errCode) {
-        BGTASK_LOGE("ApplyEfficiencyResources falied errCode: %{public}d", errCode);
-        set_business_error(errCode, Common::FindErrMsg(errCode));
+        BGTASK_LOGE("ApplyEfficiencyResources falied errCode: %{public}d", Common::FindErrCode(errCode));
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
 }
 
@@ -144,8 +144,8 @@ void ResetAllEfficiencyResources()
 {
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources();
     if (errCode) {
-        BGTASK_LOGE("ResetAllEfficiencyResources falied errCode: %{public}d", errCode);
-        set_business_error(errCode, Common::FindErrMsg(errCode));
+        BGTASK_LOGE("ResetAllEfficiencyResources falied errCode: %{public}d", Common::FindErrCode(errCode));
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
 }
 
@@ -195,7 +195,8 @@ bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uin
     if (GetAbilityContext(env, reinterpret_cast<ani_object>(context), asyncCallbackInfo->abilityContext) != ANI_OK) {
         BGTASK_LOGE("get ability failed");
         asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return false;
     }
 
@@ -203,7 +204,8 @@ bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uin
     if (info == nullptr) {
         BGTASK_LOGE("ability info is null");
         asyncCallbackInfo->errCode = ERR_ABILITY_INFO_EMPTY;
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return false;
     }
 
@@ -211,7 +213,8 @@ bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uin
     if (!token) {
         BGTASK_LOGE("get ability token info failed");
         asyncCallbackInfo->errCode = ERR_GET_TOKEN_ERR;
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return false;
     }
     return true;
@@ -226,7 +229,8 @@ ani_status GetModes(ani_env *env, const array_view<string> &bgModes, ContinuousT
     if (bgModes.size() == 0) {
         BGTASK_LOGE("get bgModes arraylen is 0");
         asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return ANI_ERROR;
     }
     std::vector<string> bgModesVector(bgModes.begin(), bgModes.end());
@@ -241,7 +245,8 @@ ani_status GetModes(ani_env *env, const array_view<string> &bgModes, ContinuousT
         } else {
             BGTASK_LOGE("mode string is invalid");
             asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
-            set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+            set_business_error(
+                Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
             return ANI_ERROR;
         }
     }
@@ -258,7 +263,8 @@ bool CheckBackgroundMode(ani_env *env, ContinuousTaskCallbackInfo *asyncCallback
         if (asyncCallbackInfo->bgMode < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgMode > BG_MODE_ID_END) {
             BGTASK_LOGE("request background mode id: %{public}u out of range", asyncCallbackInfo->bgMode);
             asyncCallbackInfo->errCode = ERR_BGMODE_RANGE_ERR;
-            set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+            set_business_error(
+                Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
             return false;
         }
     } else {
@@ -266,7 +272,8 @@ bool CheckBackgroundMode(ani_env *env, ContinuousTaskCallbackInfo *asyncCallback
             if (asyncCallbackInfo->bgModes[i] < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgModes[i] > BG_MODE_ID_END) {
                 BGTASK_LOGE("request background mode id: %{public}u out of range", asyncCallbackInfo->bgModes[i]);
                 asyncCallbackInfo->errCode = ERR_BGMODE_RANGE_ERR;
-                set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+                set_business_error(
+                    Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
                 return false;
             }
         }
@@ -289,7 +296,8 @@ void StopBackgroundRunningSync(uintptr_t context)
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStopBackgroundRunning(info->name, token, abilityId);
     if (asyncCallbackInfo->errCode) {
         BGTASK_LOGE("StopBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
     }
 }
 
@@ -304,7 +312,8 @@ void StartBackgroundRunningSync(uintptr_t context, BackgroundMode bgMode, uintpt
     if (GetWantAgent(env, reinterpret_cast<ani_object>(wantAgent), asyncCallbackInfo->wantAgent) != ANI_OK) {
         BGTASK_LOGE("Get ability failed");
         asyncCallbackInfo->errCode = ERR_WANTAGENT_NULL_OR_TYPE_ERR;
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return;
     }
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
@@ -326,7 +335,8 @@ void StartBackgroundRunningSync(uintptr_t context, BackgroundMode bgMode, uintpt
         taskParam.continuousTaskId_);
     if (asyncCallbackInfo->errCode) {
         BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
     }
 }
 
@@ -393,7 +403,8 @@ static ani_enum_item GetContentType(ani_env *env)
     if (GetWantAgent(env, reinterpret_cast<ani_object>(wantAgent), asyncCallbackInfo->wantAgent) != ANI_OK) {
         BGTASK_LOGE("Get ability failed");
         asyncCallbackInfo->errCode = ERR_WANTAGENT_NULL_OR_TYPE_ERR;
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return notification;
     }
     if (GetModes(env, bgModes, asyncCallbackInfo.get()) != ANI_OK) {
@@ -416,7 +427,8 @@ static ani_enum_item GetContentType(ani_env *env)
     asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
     if (asyncCallbackInfo->errCode) {
         BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return notification;
     }
     if (!GetSlotType(env) || !GetContentType(env)) {
@@ -459,7 +471,8 @@ static ani_enum_item GetContentType(ani_env *env)
     asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
     if (asyncCallbackInfo->errCode) {
         BGTASK_LOGE("StartBackgroundRunning falied errCode: %{public}d", asyncCallbackInfo->errCode);
-        set_business_error(asyncCallbackInfo->errCode, Common::FindErrMsg(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return notification;
     }
     if (!GetSlotType(env) || !GetContentType(env)) {
