@@ -21,6 +21,28 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+ContinuousTaskParam::ContinuousTaskParam(bool isNewApi, uint32_t bgModeId,
+    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent, const std::string abilityName,
+    const sptr<IRemoteObject> abilityToken, const std::string &appName, bool isBatchApi,
+    const std::vector<uint32_t> &bgModeIds, int32_t abilityId)
+    : isNewApi_(isNewApi), bgModeId_(bgModeId), wantAgent_(wantAgent), abilityName_(abilityName),
+    abilityToken_(abilityToken), appName_(appName), isBatchApi_(isBatchApi), bgModeIds_(bgModeIds),
+    abilityId_(abilityId) {
+    if (isBatchApi_ && bgModeIds_.size() > 0) {
+        auto findNonDataTransfer = [](const auto &target) {
+            return  target != BackgroundMode::DATA_TRANSFER;
+        };
+        auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findNonDataTransfer);
+        if (iter != bgModeIds_.end()) {
+            bgModeId_ = *iter;
+        } else {
+            bgModeId_ = bgModeIds_[0];
+        }
+    } else {
+        bgModeIds_.push_back(bgModeId);
+    }
+}
+
 bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
 {
     if (!parcel.ReadBool(isNewApi_)) {
