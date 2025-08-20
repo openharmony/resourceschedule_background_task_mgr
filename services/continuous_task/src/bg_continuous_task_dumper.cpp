@@ -27,10 +27,10 @@ BgContinuousTaskDumper::BgContinuousTaskDumper() {}
 
 BgContinuousTaskDumper::~BgContinuousTaskDumper() {}
 
-void BgContinuousTaskDumper::DumpInnerTask(const std::vector<std::string> &dumpOption,
+void BgContinuousTaskDumper::DebugContinuousTask(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
-    if (dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS) {
+    if (dumpOption.size() < MAX_DUMP_INNER_PARAM_NUMS) {
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
@@ -49,11 +49,15 @@ void BgContinuousTaskDumper::DumpInnerTask(const std::vector<std::string> &dumpO
         return;
     }
     bool isApply = (operationType == "apply");
+    int32_t uid = 1;
+    if (dumpOption.size() == MAX_DUMP_INNER_PARAM_NUMS + 1) {
+        uid = std::atoi(dumpOption[MAX_DUMP_PARAM_NUMS + 1].c_str());
+    }
     sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
-        new ContinuousTaskParamForInner(1, mode, isApply));
+        new ContinuousTaskParamForInner(uid, mode, isApply));
     ErrCode ret = ERR_OK;
     BgContinuousTaskMgr::GetInstance()->SetDumperTest(true);
-    ret = BgContinuousTaskMgr::GetInstance()->RequestBackgroundRunningForInner(taskParam);
+    ret = BgContinuousTaskMgr::GetInstance()->DebugContinuousTaskInner(taskParam);
     if (ret != ERR_OK) {
         dumpInfo.emplace_back("dump inner continuous task fail.\n");
     } else {
