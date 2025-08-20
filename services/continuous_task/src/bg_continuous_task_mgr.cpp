@@ -1540,7 +1540,7 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
     } else if (dumpOption[1] == DUMP_PARAM_GET) {
         BgContinuousTaskDumper::GetInstance()->DumpGetTask(dumpOption, dumpInfo);
     } else if (dumpOption[1] == DUMP_INNER_TASK) {
-        BgContinuousTaskDumper::GetInstance()->DumpInnerTask(dumpOption, dumpInfo);
+        BgContinuousTaskDumper::GetInstance()->DebugContinuousTask(dumpOption, dumpInfo);
     } else {
         BGTASK_LOGW("invalid dump param");
     }

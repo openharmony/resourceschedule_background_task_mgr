@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +22,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 ContinuousTaskParam::ContinuousTaskParam(bool isNewApi, uint32_t bgModeId,
-    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent, const std::string abilityName,
+    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent, const std::string &abilityName,
     const sptr<IRemoteObject> abilityToken, const std::string &appName, bool isBatchApi,
     const std::vector<uint32_t> &bgModeIds, int32_t abilityId)
     : isNewApi_(isNewApi), bgModeId_(bgModeId), wantAgent_(wantAgent), abilityName_(abilityName),
@@ -30,7 +30,7 @@ ContinuousTaskParam::ContinuousTaskParam(bool isNewApi, uint32_t bgModeId,
     abilityId_(abilityId) {
     if (isBatchApi_ && bgModeIds_.size() > 0) {
         auto findNonDataTransfer = [](const auto &target) {
-            return  target != BackgroundMode::DATA_TRANSFER;
+            return target != BackgroundMode::DATA_TRANSFER;
         };
         auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findNonDataTransfer);
         if (iter != bgModeIds_.end()) {

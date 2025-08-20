@@ -41,7 +41,7 @@ struct ContinuousTaskParam : public Parcelable {
 
     ContinuousTaskParam() = default;
     ContinuousTaskParam(bool isNewApi, uint32_t bgModeId,
-        const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent, const std::string abilityName,
+        const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent, const std::string &abilityName,
         const sptr<IRemoteObject> abilityToken, const std::string &appName, bool isBatchApi = false,
         const std::vector<uint32_t> &bgModeIds = {}, int32_t abilityId = -1);
     bool ReadFromParcel(Parcel &parcel);
