@@ -15,7 +15,7 @@
 
 #include <unordered_map>
 
-#include "continuous_task_mode.h"
+#include "continuous_task_submode.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -29,7 +29,7 @@ const std::unordered_map<uint32_t, std::string> PARAM_CONTINUOUS_TASK_SUBMODE_ST
     {ContinuousTaskSubmode::SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION, "submodeScreenRecordNormalNotification"},
     {ContinuousTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION, "submodeVoiceChatNormalNotification"},
     {ContinuousTaskSubmode::END, "end"}
-}
+};
 
 std::string ContinuousTaskSubmode::GetContinuousTaskSubmodeStr(uint32_t mode)
 {
@@ -37,7 +37,7 @@ std::string ContinuousTaskSubmode::GetContinuousTaskSubmodeStr(uint32_t mode)
     if (iter != PARAM_CONTINUOUS_TASK_SUBMODE_STR_MAP.end()) {
         return iter->second.c_str();
     }
-    return "default"；
+    return "default";
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
