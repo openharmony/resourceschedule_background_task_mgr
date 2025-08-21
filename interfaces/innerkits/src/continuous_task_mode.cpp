@@ -26,7 +26,7 @@ const std::unordered_map<uint32_t, std::string> PARAM_CONTINUOUS_TASK_MODE_STR_M
     {ContinuousTaskMode::MODE_MULTI_DEVICE_CONNECTION, "modeMultiDeviceConnection"},
     {ContinuousTaskMode::MODE_ALLOW_WIFI_AWARE, "modeAllowWifiAware"},
     {ContinuousTaskMode::MODE_TASK_KEEPING, "modeTaskKeeping"},
-    {ContinuousTaskMode::MODE_AV_PLAYBACK_AND_RECORD, "modeAvPlaybackAndRecord"},
+    {ContinuousTaskMode::MODE_AV_PLAYBACK_AND_RECORD, "modeAVPlaybackAndRecord"},
     {ContinuousTaskMode::END, "end"}
 };
 
