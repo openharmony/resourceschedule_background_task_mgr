@@ -615,10 +615,7 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     // webview sdk申请长时任务，上下文在应用。callkit sa 申请长时时，上下文在sa;
-    if (IsDumperTest()) {
-        SetDumperTest(false);
-        BGTASK_LOGW("RequestBackgroundRunningForInner dump test");
-    } else if (callingUid != VOIP_SA_UID && callingUid != HEALTHSPORT_SA_UID && callingUid != taskParam->uid_) {
+    if (callingUid != VOIP_SA_UID && callingUid != HEALTHSPORT_SA_UID && callingUid != taskParam->uid_) {
         BGTASK_LOGE("continuous task param uid %{public}d is invalid, real %{public}d", taskParam->uid_, callingUid);
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
@@ -1187,7 +1184,7 @@ bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, uint32_t type)
 {
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         if ((*iter)->isHap_ && (*iter)->uid_ == uid && (((*iter)->flag_ & type) > 0)) {
-            BGTASK_LOGD("falg: %{public}d", (*iter)->flag_);
+            BGTASK_LOGD("flag: %{public}u", (*iter)->flag_);
             return true;
         }
     }
@@ -1538,7 +1535,7 @@ ErrCode BgContinuousTaskMgr::ShellDumpInner(const std::vector<std::string> &dump
     } else if (dumpOption[1] == DUMP_PARAM_GET) {
         BgContinuousTaskDumper::GetInstance()->DumpGetTask(dumpOption, dumpInfo);
     } else if (dumpOption[1] == DUMP_INNER_TASK) {
-        BgContinuousTaskDumper::GetInstance()->DumpInnerTask(dumpOption, dumpInfo);
+        BgContinuousTaskDumper::GetInstance()->DebugContinuousTask(dumpOption, dumpInfo);
     } else {
         BGTASK_LOGW("invalid dump param");
     }
@@ -2115,14 +2112,18 @@ void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const s
     }
 }
 
-void BgContinuousTaskMgr::SetDumperTest(const bool dumperTest)
+ErrCode BgContinuousTaskMgr::DebugContinuousTaskInner(const sptr<ContinuousTaskParamForInner> &taskParam)
 {
-    dumperTest_ = dumperTest;
-}
-
-bool BgContinuousTaskMgr::IsDumperTest() const
-{
-    return dumperTest_;
+    if (!isSysReady_.load()) {
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    if (!taskParam) {
+        return ERR_BGTASK_CHECK_TASK_PARAM;
+    }
+    if (taskParam->isStart_) {
+        return StartBackgroundRunningForInner(taskParam);
+    }
+    return StopBackgroundRunningForInner(taskParam);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
