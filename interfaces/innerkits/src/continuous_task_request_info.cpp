@@ -14,7 +14,6 @@
  */
 
 #include "continuous_task_request_info.h"
-#include "ipc_util.h"
 #include "continuous_task_log.h"
 
 namespace OHOS {
@@ -52,9 +51,18 @@ bool ContinuousTaskRequestInfo::Marshalling(Parcel& out) const
             return false;
         }
     }
-    WRITE_PARCEL_WITH_RET(out, Bool, combinedTaskNotification_, false);
-    WRITE_PARCEL_WITH_RET(out, Int32, continuousTaskId_, false);
-    WRITE_PARCEL_WITH_RET(out, Bool, isBuildByRequest_, false);
+    if (!out.WriteBool(combinedTaskNotification_)) {
+        BGTASK_LOGE("Failed to write combinedTaskNotification");
+        return false;
+    }
+    if (!out.WriteInt32(continuousTaskId_)) {
+        BGTASK_LOGE("Failed to write continuousTaskId");
+        return false;
+    }
+    if (!out.WriteBool(isBuildByRequest_)) {
+        BGTASK_LOGE("Failed to write isBuildByRequest");
+        return false;
+    }
     return true;
 }
 
@@ -73,14 +81,22 @@ bool ContinuousTaskRequestInfo::ReadFromParcel(Parcel& in)
         wantAgent_ = std::shared_ptr<AbilityRuntime::WantAgent::WantAgent>(
             in.ReadParcelable<AbilityRuntime::WantAgent::WantAgent>());
         if (!wantAgent_) {
-            BGTASK_LOGE("Failed to read wantAgent");
+            BGTASK_LOGE("read parcel wantAgent error");
             return false;
         }
     }
-
-    READ_PARCEL_WITH_RET(in, Bool, combinedTaskNotification_, false);
-    READ_PARCEL_WITH_RET(in, Int32, continuousTaskId_, false);
-    READ_PARCEL_WITH_RET(in, Bool, isBuildByRequest_, false);
+    if (!in.ReadBool(combinedTaskNotification_)) {
+        BGTASK_LOGE("read parcel combinedTaskNotification error");
+        return false;
+    }
+    if (!in.ReadInt32(continuousTaskId_)) {
+        BGTASK_LOGE("read parcel continuousTaskId error");
+        return false;
+    }
+    if (!in.ReadBool(isBuildByRequest_)) {
+        BGTASK_LOGE("read parcel isBuildByRequest error");
+        return false;
+    }
     return true;
 }
 

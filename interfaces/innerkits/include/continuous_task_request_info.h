@@ -26,10 +26,9 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 class ContinuousTaskRequestInfo : public Parcelable {
 public:
-    ContinuousTaskRequestInfo() = default;
     ContinuousTaskRequestInfo(const std::vector<uint32_t> &continuousTaskModes = {},
         const std::vector<uint32_t> &continuousTaskSubmodes = {},
-        const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent,
+        const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent = nullptr,
         bool combinedTaskNotification = false, int32_t continuousTaskId = -1, bool isBuildByRequest = false)
         : continuousTaskModes_(continuousTaskModes), continuousTaskSubmodes_(continuousTaskSubmodes),
         wantAgent_(wantAgent), combinedTaskNotification_(combinedTaskNotification),
