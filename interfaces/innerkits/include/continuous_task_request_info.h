@@ -16,7 +16,6 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_REQUEST_INFO_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_REQUEST_INFO_H
 
-#include <string>
 #include <memory>
 
 #include "parcel.h"
@@ -33,11 +32,10 @@ public:
         : continuousTaskModes_(continuousTaskModes), continuousTaskSubmodes_(continuousTaskSubmodes),
         wantAgent_(wantAgent), combinedTaskNotification_(combinedTaskNotification),
         continuousTaskId_(continuousTaskId), isBuildByRequest_(isBuildByRequest) {}
-    
     /**
      * @brief Unmarshals a purpose from a Parcel.
      *
-     * @param parcel Indicates the parcel object for unmarshalling.
+     * @param in Indicates the parcel object for unmarshalling.
      * @return The info continuous task request.
      */
     static ContinuousTaskRequestInfo* Unmarshalling(Parcel& in);
@@ -45,7 +43,7 @@ public:
     /**
      * @brief Marshals a purpose into a parcel.
      *
-     * @param parcel indicates the parcel object for marshalling.
+     * @param out indicates the parcel object for marshalling.
      * @return True if success, else false.
      */
     bool Marshalling(Parcel& out) const override;
@@ -81,10 +79,9 @@ public:
     /**
      * @brief Set IsBuildByRequest.
      *
-     * @param IsBuildByRequest.
+     * @param isBuildByRequest.
      */
     void SetIsBuildByRequest(bool isBuildByRequest);
-    
 private:
     bool ReadFromParcel(Parcel& in);
 
