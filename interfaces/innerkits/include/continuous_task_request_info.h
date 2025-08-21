@@ -36,7 +36,7 @@ public:
     
     /**
      * @brief Unmarshals a purpose from a Parcel.
-     * 
+     *
      * @param parcel Indicates the parcel object for unmarshalling.
      * @return The info continuous task request.
      */
@@ -44,43 +44,43 @@ public:
 
     /**
      * @brief Marshals a purpose into a parcel.
-     * 
+     *
      * @param parcel indicates the parcel object for marshalling.
      * @return True if success, else false.
      */
     bool Marshalling(Parcel& out) const override;
-    
+
     /**
      * @brief Get WantAgent.
-     * 
+     *
      * @return WantAgent.
      */
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
 
     /**
      * @brief Get ContinuousTaskModes.
-     * 
+     *
      * @return ContinuousTaskModes.
      */
     std::vector<uint32_t> GetContinuousTaskModes() const;
 
     /**
      * @brief Get ContinuousTaskSubmodes.
-     * 
+     *
      * @return ContinuousTaskSubmodes.
      */
     std::vector<uint32_t> GetContinuousTaskSubmodes() const;
 
     /**
      * @brief Get IsBuildByRequest.
-     * 
+     *
      * @return IsBuildByRequest.
      */
     bool GetIsBuildByRequest() const;
 
     /**
      * @brief Set IsBuildByRequest.
-     * 
+     *
      * @param IsBuildByRequest.
      */
     void SetIsBuildByRequest(bool isBuildByRequest);
