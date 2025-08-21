@@ -238,7 +238,7 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
 
         // set suspendReason
         napi_value suspendReason = nullptr;
-        napi_create_int32(env_, continuousTaskCallbackInfo->GetSuspendReason(), &suspendReason);
+        napi_create_int32(env_, -1, &suspendReason);
         napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendReason", suspendReason);
 
         napi_value argv[1] = { jsContinuousTaskSuspendInfo };
