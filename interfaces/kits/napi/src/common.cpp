@@ -704,28 +704,34 @@ napi_value WrapWantAgentContinuousTask(napi_env env, AbilityRuntime::WantAgent::
 bool Common::GetContinuousTaskRequestInfo(napi_env env, napi_value objValue,
     std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo)
 {
-    BGTASK_LOGE("HUWEI GetContinuousTaskRequestInfo start");
     // Get continuousTaskModes.
-    GetContinuousTaskModesProperty(env, objValue, "continuousTaskModes", requestInfo);
-    BGTASK_LOGE("HUWEI GetContinuousTaskModesProperty end");
+    if (!GetContinuousTaskModesProperty(env, objValue, "continuousTaskModes", requestInfo)) {
+        return false;
+    }
+
     // Get continuousTaskSubmodes.
-    GetContinuousTaskSubmodesProperty(env, objValue, "continuousTaskSubmodes", requestInfo);
-    BGTASK_LOGE("HUWEI GetContinuousTaskSubmodesProperty end");
+    if (!GetContinuousTaskSubmodesProperty(env, objValue, "continuousTaskSubmodes", requestInfo)) {
+        return false;
+    }
+
     // Get wantAgent.
-    GetWantAgentProperty(env, objValue, "wantAgent", requestInfo);
-    BGTASK_LOGE("HUWEI GetWantAgentProperty end");
+    if (!GetWantAgentProperty(env, objValue, "wantAgent", requestInfo)) {
+        return false;
+    }
+
     // Get continuousTaskId.
     int32_t continuousTaskId = GetIntProperty(env, objValue, "continuousTaskId");
     if (continuousTaskId != INVALID_CONTINUOUSTASK_ID) {
         requestInfo->SetContinuousTaskId(continuousTaskId);
+    } else {
+        return false;
     }
-    BGTASK_LOGE("HUWEI GetIntProperty end");
+    
     // Get combinedTaskNotification.
     bool combinedTaskNotification = GetBoolProperty(env, objValue, "combinedTaskNotification");
     if (combinedTaskNotification) {
         requestInfo->SetCombinedTaskNotification(combinedTaskNotification);
     }
-    BGTASK_LOGE("HUWEI GetBoolProperty end");
     return true;
 }
 
