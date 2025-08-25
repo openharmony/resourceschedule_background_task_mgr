@@ -115,7 +115,7 @@ std::vector<uint32_t> ContinuousTaskRequestInfo::GetContinuousTaskSubmodes() con
     return continuousTaskSubmodes_;
 }
 
-bool ContinuousTaskRequestInfo::GetIsBuildByRequest() const
+bool ContinuousTaskRequestInfo::IsBuildByRequest() const
 {
     return isBuildByRequest_;
 }
@@ -123,6 +123,37 @@ bool ContinuousTaskRequestInfo::GetIsBuildByRequest() const
 void ContinuousTaskRequestInfo::SetIsBuildByRequest(bool isBuildByRequest)
 {
     isBuildByRequest_ = isBuildByRequest;
+}
+
+int32_t ContinuousTaskRequestInfo::GetContinuousTaskId() const
+{
+    return continuousTaskId_;
+}
+
+void ContinuousTaskRequestInfo::SetContinuousTaskId(const int32_t continuousTaskId)
+{
+    continuousTaskId_ = continuousTaskId;
+}
+
+void ContinuousTaskRequestInfo::SetCombinedTaskNotification(const bool combinedTaskNotification)
+{
+    combinedTaskNotification_ = combinedTaskNotification;
+}
+
+void ContinuousTaskRequestInfo::AddContinuousTaskMode(const uint32_t mode)
+{
+    continuousTaskModes_.push_back(mode);
+}
+
+void ContinuousTaskRequestInfo::AddContinuousTaskSubMode(const int32_t subMode)
+{
+    continuousTaskSubmodes_.push_back(subMode);
+}
+
+void ContinuousTaskRequestInfo::SetWantAgent(
+    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent)
+{
+    wantAgent_ = wantAgent;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
