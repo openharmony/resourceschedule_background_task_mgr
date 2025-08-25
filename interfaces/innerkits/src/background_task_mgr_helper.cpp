@@ -139,5 +139,11 @@ ErrCode BackgroundTaskMgrHelper::SuspendContinuousAudioTask(int32_t uid)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(uid);
 }
+
+ErrCode BackgroundTaskMgrHelper::CreateContinuousTaskRequest(
+    const std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->CreateContinuousTaskRequest(requestInfo);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

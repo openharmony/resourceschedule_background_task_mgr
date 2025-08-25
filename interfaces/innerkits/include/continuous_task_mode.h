@@ -35,6 +35,8 @@ public:
     };
 
     static std::string GetContinuousTaskModeStr(uint32_t mode);
+    static bool IsSubModeTypeMatching(const uint32_t continuousTaskSubMode);
+    static bool IsModeTypeMatching(const uint32_t continuousTaskMode);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

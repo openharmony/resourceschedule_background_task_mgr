@@ -15,7 +15,9 @@
 
 #include <unordered_map>
 
+#include "continuous_task_submode.h"
 #include "continuous_task_mode.h"
+#include "background_mode.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -30,6 +32,24 @@ const std::unordered_map<uint32_t, std::string> PARAM_CONTINUOUS_TASK_MODE_STR_M
     {ContinuousTaskMode::END, "end"}
 };
 
+const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_MODE_CORRESPONDENCE_SUBMODE = {
+    {ContinuousTaskSubmode::SUBMODE_LIVE_VIEW_NOTIFICATION, ContinuousTaskMode::MODE_DATA_TRANSFER},
+    {ContinuousTaskSubmode::SUBMODE_CAR_KEY_NORMAL_NOTIFICATION, ContinuousTaskMode::MODE_ALLOW_BLUETOOTH_AWARE},
+    {ContinuousTaskSubmode::SUBMODE_AUDIO_PLAYBACK_NORMAL_NOTIFICATION,
+        ContinuousTaskMode::MODE_AV_PLAYBACK_AND_RECORD},
+    {ContinuousTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK, ContinuousTaskMode::MODE_AV_PLAYBACK_AND_RECORD},
+    {ContinuousTaskSubmode::SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION, ContinuousTaskMode::MODE_AV_PLAYBACK_AND_RECORD},
+    {ContinuousTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION, ContinuousTaskMode::MODE_AV_PLAYBACK_AND_RECORD}
+};
+
+const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_SUBMODE_CORRESPONDENCE_MODE = {
+    {ContinuousTaskMode::MODE_SHARE_POSITION, ContinuousTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
+    {ContinuousTaskMode::MODE_ALLOW_BLUETOOTH_AWARE, ContinuousTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
+    {ContinuousTaskMode::MODE_MULTI_DEVICE_CONNECTION, ContinuousTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
+    {ContinuousTaskMode::MODE_ALLOW_WIFI_AWARE, ContinuousTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
+    {ContinuousTaskMode::MODE_TASK_KEEPING, ContinuousTaskSubmode::SUBMODE_NORMAL_NOTIFICATION}
+};
+
 std::string ContinuousTaskMode::GetContinuousTaskModeStr(uint32_t mode)
 {
     auto iter = PARAM_CONTINUOUS_TASK_MODE_STR_MAP.find(mode);
@@ -37,6 +57,18 @@ std::string ContinuousTaskMode::GetContinuousTaskModeStr(uint32_t mode)
         return iter->second.c_str();
     }
     return "default";
+}
+
+bool ContinuousTaskMode::IsSubModeTypeMatching(const uint32_t continuousTaskSubMode)
+{
+    auto iter = PARAM_CONTINUOUS_TASK_MODE_CORRESPONDENCE_SUBMODE.find(continuousTaskSubMode);
+    return iter != PARAM_CONTINUOUS_TASK_MODE_CORRESPONDENCE_SUBMODE.end();
+}
+
+bool ContinuousTaskMode::IsModeTypeMatching(const uint32_t continuousTaskMode)
+{
+    auto iter = PARAM_CONTINUOUS_TASK_SUBMODE_CORRESPONDENCE_MODE.find(continuousTaskMode);
+    return iter != PARAM_CONTINUOUS_TASK_SUBMODE_CORRESPONDENCE_MODE.end();
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

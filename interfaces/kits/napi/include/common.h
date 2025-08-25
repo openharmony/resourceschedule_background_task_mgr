@@ -24,8 +24,10 @@
 
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_info.h"
+#include "continuous_task_request_info.h"
 #include "delay_suspend_info.h"
 #include "efficiency_resource_info.h"
+#include "js_runtime_utils.h"
 
 #define BGTASK_NAPI_CALL_BASE(env, theCall, retVal) \
     do {                                     \
@@ -108,6 +110,24 @@ public:
 
     static napi_value GetNapiEfficiencyResourcesInfo(const napi_env &env,
         std::shared_ptr<EfficiencyResourceInfo> efficiencyResourceInfo);
+    static napi_value WrapWantAgentContinuousTask(napi_env env, AbilityRuntime::WantAgent::WantAgent *wantAgent,
+        napi_finalize finalizeCb);
+
+    static bool GetContinuousTaskRequestInfo(napi_env env, napi_value objValue,
+        std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo);
+
+    static int32_t GetIntProperty(napi_env env, napi_value object, const std::string &propertyName);
+
+    static bool GetBoolProperty(napi_env env, napi_value object, const std::string &propertyName);
+
+    static bool GetContinuousTaskModesProperty(napi_env env, napi_value object, const std::string &propertyName,
+        std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo);
+
+    static bool GetContinuousTaskSubmodesProperty(napi_env env, napi_value object, const std::string &propertyName,
+        std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo);
+
+    static bool GetWantAgentProperty(napi_env env, napi_value object, const std::string &propertyName,
+        std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

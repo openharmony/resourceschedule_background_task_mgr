@@ -23,8 +23,9 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class ContinuousTaskRequestInfo : public Parcelable {
+class ContinuousTaskRequestInfo : public std::enable_shared_from_this<ContinuousTaskRequestInfo>, public Parcelable {
 public:
+    ~ContinuousTaskRequestInfo() = default;
     ContinuousTaskRequestInfo(const std::vector<uint32_t> &continuousTaskModes = {},
         const std::vector<uint32_t> &continuousTaskSubmodes = {},
         const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent = nullptr,
@@ -70,11 +71,11 @@ public:
     std::vector<uint32_t> GetContinuousTaskSubmodes() const;
 
     /**
-     * @brief Get IsBuildByRequest.
+     * @brief IsBuildByRequest.
      *
      * @return IsBuildByRequest.
      */
-    bool GetIsBuildByRequest() const;
+    bool IsBuildByRequest() const;
 
     /**
      * @brief Set IsBuildByRequest.
@@ -82,6 +83,19 @@ public:
      * @param isBuildByRequest.
      */
     void SetIsBuildByRequest(bool isBuildByRequest);
+
+    /**
+     * @brief Get continuous task Id.
+     *
+     * @return continuous task Id
+     */
+    int32_t GetContinuousTaskId() const;
+
+    void SetContinuousTaskId(const int32_t continuousTaskId);
+    void SetCombinedTaskNotification(const bool combinedTaskNotification);
+    void AddContinuousTaskMode(const uint32_t mode);
+    void AddContinuousTaskSubMode(const int32_t subMode);
+    void SetWantAgent(const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent);
 private:
     bool ReadFromParcel(Parcel& in);
 

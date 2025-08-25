@@ -20,6 +20,8 @@
 #include "bg_continuous_task_napi_module.h"
 #include "cancel_suspend_delay.h"
 #include "continuous_task_cancel_reason.h"
+#include "continuous_task_mode.h"
+#include "continuous_task_submode.h"
 #include "continuous_task_suspend_reason.h"
 #include "get_all_transient_tasks.h"
 #include "get_remaining_delay_time.h"
@@ -184,6 +186,59 @@ napi_value ContinuousTaskSuspendReasonInit(napi_env env, napi_value exports)
     return exports;
 }
 
+napi_value ContinuousTaskModeInit(napi_env env, napi_value exports)
+{
+    napi_value obj = nullptr;
+    napi_create_object(env, &obj);
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskMode::MODE_DATA_TRANSFER), "MODE_DATA_TRANSFER");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskMode::MODE_SHARE_POSITION), "MODE_SHARE_POSITION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskMode::MODE_ALLOW_BLUETOOTH_AWARE), "MODE_ALLOW_BLUETOOTH_AWARE");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskMode::MODE_MULTI_DEVICE_CONNECTION), "MODE_MULTI_DEVICE_CONNECTION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskMode::MODE_ALLOW_WIFI_AWARE), "MODE_ALLOW_WIFI_AWARE");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskMode::MODE_TASK_KEEPING), "MODE_TASK_KEEPING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskMode::MODE_AV_PLAYBACK_AND_RECORD), "MODE_AV_PLAYBACK_AND_RECORD");
+    napi_property_descriptor exportFuncs[] = {
+        DECLARE_NAPI_PROPERTY("ContinuousTaskMode", obj),
+    };
+    napi_define_properties(env, exports, sizeof(exportFuncs) / sizeof(*exportFuncs), exportFuncs);
+    return exports;
+}
+
+napi_value ContinuousTaskSubModeInit(napi_env env, napi_value exports)
+{
+    napi_value obj = nullptr;
+    napi_create_object(env, &obj);
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSubmode::SUBMODE_CAR_KEY_NORMAL_NOTIFICATION), "SUBMODE_CAR_KEY_NORMAL_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSubmode::SUBMODE_NORMAL_NOTIFICATION), "SUBMODE_NORMAL_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSubmode::SUBMODE_LIVE_VIEW_NOTIFICATION), "SUBMODE_LIVE_VIEW_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSubmode::SUBMODE_AUDIO_PLAYBACK_NORMAL_NOTIFICATION),
+        "SUBMODE_AUDIO_PLAYBACK_NORMAL_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK), "SUBMODE_AVSESSION_AUDIO_PLAYBACK");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSubmode::SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION), "SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSubmode::SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION), "SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION), "SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION");
+    napi_property_descriptor exportFuncs[] = {
+        DECLARE_NAPI_PROPERTY("ContinuousTaskSubmode", obj),
+    };
+    napi_define_properties(env, exports, sizeof(exportFuncs) / sizeof(*exportFuncs), exportFuncs);
+    return exports;
+}
+
 /*
  * Module export function
  */
@@ -196,6 +251,8 @@ static napi_value InitApi(napi_env env, napi_value exports)
     BackgroundModeInit(env, exports);
     ContinuousTaskCancelReasonInit(env, exports);
     ContinuousTaskSuspendReasonInit(env, exports);
+    ContinuousTaskModeInit(env, exports);
+    ContinuousTaskSubModeInit(env, exports);
     return exports;
 }
 

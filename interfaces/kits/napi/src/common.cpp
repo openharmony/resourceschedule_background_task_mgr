@@ -25,6 +25,8 @@ namespace BackgroundTaskMgr {
 const uint32_t STR_MAX_SIZE = 64;
 const uint32_t EXPIRE_CALLBACK_PARAM_NUM = 1;
 const uint32_t ASYNC_CALLBACK_PARAM_NUM = 2;
+const int32_t INVALID_CONTINUOUSTASK_ID = -2;
+const int32_t INVALID_MODE_ID = -1;
 const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_PERMISSION_DENIED, "Permission denied."},
     {ERR_BGTASK_NOT_SYSTEM_APP,
@@ -82,6 +84,20 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_TRANSIENT_SERVICE_NOT_CONNECTED,
         "System service operation failed. The system service is not connected."},
     {ERR_BGTASK_INVALID_PROCESS_NAME, "Transient task verification failed. caller process name invaild."},
+    {ERR_BGTASK_CONTINUOUS_REQUESTINFO_NULL_OR_TYPE,
+        "Continuous Task verification failed. "
+        "The continuousRequestInfo cannot be null and its type must be continuousRequestInfo object."},
+    {ERR_BGTASK_CONTINUOUS_INVALID_TASK_ID, "Continuous Task verification failed. The continuous task id is Illegal."},
+    {ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_NULL,
+        "Continuous Task verification failed. The continuousTaskModes or continuousTaskSubmodes cannot be empty."},
+    {ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_LENGTH_MISMATCH,
+        "Continuous Task verification failed. "
+        "The length of the continuousTaskModes does not match the length of the continuousTaskSubmodes."},
+    {ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_CROSS_BORDER,
+        "Continuous Task verification failed. The continuousTaskModes or continuousTaskSubmodes are out of scope."},
+    {ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH,
+        "Continuous Task verification failed. "
+        "The sequence of continuousTaskModes does not match the continuousTaskSubmodes."}
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
@@ -585,6 +601,278 @@ napi_value Common::GetNapiEfficiencyResourcesInfo(const napi_env &env,
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "pid", napiPid));
 
     return napiInfo;
+}
+
+void *DetachCallbackFunc(napi_env env, void *value, void *)
+{
+    return value;
+}
+
+napi_value AttachWantAgentFunc(napi_env env, void *value, void *)
+{
+    if (value == nullptr) {
+        return nullptr;
+    }
+
+    napi_value jsObject = nullptr;
+    NAPI_CALL(env, napi_create_object(env, &jsObject));
+
+    if (!AbilityRuntime::WantAgent::WantAgent::GetIsMultithreadingSupported()) {
+        return jsObject;
+    }
+
+    auto wantAgent = new (std::nothrow) AbilityRuntime::WantAgent::WantAgent(
+        reinterpret_cast<AbilityRuntime::WantAgent::WantAgent*>(value)->GetPendingWant());
+    if (wantAgent == nullptr) {
+        return jsObject;
+    }
+
+    napi_value wantAgentClass = nullptr;
+    napi_define_class(env, "WantAgentClass", NAPI_AUTO_LENGTH,
+        [](napi_env env, napi_callback_info info) -> napi_value {
+            napi_value thisVar = nullptr;
+            napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+
+            return thisVar;
+        }, nullptr, 0, nullptr, &wantAgentClass);
+    napi_value result = nullptr;
+    napi_new_instance(env, wantAgentClass, 0, nullptr, &result);
+    if (result == nullptr) {
+        delete wantAgent;
+        wantAgent = nullptr;
+        return jsObject;
+    }
+
+    napi_coerce_to_native_binding_object(env, result, DetachCallbackFunc, AttachWantAgentFunc, value, nullptr);
+    auto res = napi_wrap(env, result, reinterpret_cast<void*>(wantAgent),
+        [](napi_env env, void* data, void* hint) {
+            auto agent = static_cast<AbilityRuntime::WantAgent::WantAgent*>(data);
+            delete agent;
+            agent = nullptr;
+        }, nullptr, nullptr);
+    if (res != napi_ok && wantAgent != nullptr) {
+        delete wantAgent;
+        wantAgent = nullptr;
+        return jsObject;
+    }
+    return result;
+}
+
+napi_value WrapWantAgentContinuousTask(napi_env env, AbilityRuntime::WantAgent::WantAgent *wantAgent,
+    napi_finalize finalizeCb)
+{
+    napi_value wantAgentClass = nullptr;
+    napi_define_class(
+        env,
+        "WantAgentClass",
+        NAPI_AUTO_LENGTH,
+        [](napi_env env, napi_callback_info info) -> napi_value {
+            napi_value thisVar = nullptr;
+            napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+            return thisVar;
+        },
+        nullptr,
+        0,
+        nullptr,
+        &wantAgentClass);
+    napi_value result = nullptr;
+    napi_new_instance(env, wantAgentClass, 0, nullptr, &result);
+    if (result == nullptr) {
+        return nullptr;
+    }
+
+    napi_coerce_to_native_binding_object(env, result, DetachCallbackFunc, AttachWantAgentFunc, wantAgent, nullptr);
+
+    napi_finalize finalize = [](napi_env env, void* data, void* hint) {
+        if (data != nullptr) {
+            auto agent = static_cast<AbilityRuntime::WantAgent::WantAgent*>(data);
+            delete agent;
+            agent = nullptr;
+        }
+    };
+    if (finalizeCb != nullptr) {
+        finalize = finalizeCb;
+    }
+
+    auto res = napi_wrap(env, result, reinterpret_cast<void*>(wantAgent), finalize, nullptr, nullptr);
+    if (res != napi_ok && wantAgent != nullptr) {
+        return nullptr;
+    }
+    return result;
+}
+
+bool Common::GetContinuousTaskRequestInfo(napi_env env, napi_value objValue,
+    std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo)
+{
+    // Get continuousTaskModes.
+    if (!GetContinuousTaskModesProperty(env, objValue, "continuousTaskModes", requestInfo)) {
+        return false;
+    }
+
+    // Get continuousTaskSubmodes.
+    if (!GetContinuousTaskSubmodesProperty(env, objValue, "continuousTaskSubmodes", requestInfo)) {
+        return false;
+    }
+
+    // Get wantAgent.
+    if (!GetWantAgentProperty(env, objValue, "wantAgent", requestInfo)) {
+        return false;
+    }
+
+    // Get continuousTaskId.
+    int32_t continuousTaskId = GetIntProperty(env, objValue, "continuousTaskId");
+    if (continuousTaskId != INVALID_CONTINUOUSTASK_ID) {
+        requestInfo->SetContinuousTaskId(continuousTaskId);
+    } else {
+        return false;
+    }
+    
+    // Get combinedTaskNotification.
+    bool combinedTaskNotification = GetBoolProperty(env, objValue, "combinedTaskNotification");
+    if (combinedTaskNotification) {
+        requestInfo->SetCombinedTaskNotification(combinedTaskNotification);
+    }
+    return true;
+}
+
+bool Common::GetContinuousTaskModesProperty(napi_env env, napi_value object, const std::string &propertyName,
+    std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo)
+{
+    bool boolValue = false;
+    napi_value value = nullptr;
+    napi_status getNameStatus = napi_get_named_property(env, object, propertyName.c_str(), &value);
+    if (getNameStatus != napi_ok) {
+        return boolValue;
+    }
+    napi_is_array(env, value, &boolValue);
+    if (!boolValue) {
+        return boolValue;
+    }
+    uint32_t length;
+    napi_get_array_length(env, value, &length);
+    for (uint32_t i = 0; i < length; i++) {
+        napi_value napiMode;
+        if (napi_get_element(env, value, i, &napiMode) != napi_ok) {
+            return false;
+        } else {
+            int32_t intValue = INVALID_MODE_ID;
+            napi_valuetype valueType = napi_undefined;
+            napi_typeof(env, napiMode, &valueType);
+            if (valueType == napi_undefined) {
+                return false;
+            } else if (valueType != napi_number) {
+                return false;
+            }
+            napi_get_value_int32(env, napiMode, &intValue);
+            if (intValue < 0) {
+                return false;
+            }
+            uint32_t mode = static_cast<uint32_t>(intValue);
+            requestInfo->AddContinuousTaskMode(mode);
+        }
+    }
+    return boolValue;
+}
+
+bool Common::GetContinuousTaskSubmodesProperty(napi_env env, napi_value object, const std::string &propertyName,
+    std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo)
+{
+    bool boolValue = false;
+    napi_value value = nullptr;
+    napi_status getNameStatus = napi_get_named_property(env, object, propertyName.c_str(), &value);
+    if (getNameStatus != napi_ok) {
+        return boolValue;
+    }
+    napi_is_array(env, value, &boolValue);
+    if (!boolValue) {
+        return boolValue;
+    }
+    uint32_t length;
+    napi_get_array_length(env, value, &length);
+    for (uint32_t i = 0; i < length; i++) {
+        napi_value napiSubMode;
+        if (napi_get_element(env, value, i, &napiSubMode) != napi_ok) {
+            return false;
+        } else {
+            int32_t intValue = INVALID_MODE_ID;
+            napi_valuetype valueType = napi_undefined;
+            napi_typeof(env, napiSubMode, &valueType);
+            if (valueType == napi_undefined) {
+                return false;
+            } else if (valueType != napi_number) {
+                return false;
+            }
+            napi_get_value_int32(env, napiSubMode, &intValue);
+            if (intValue < 0) {
+                return false;
+            }
+            uint32_t subMode = static_cast<uint32_t>(intValue);
+            requestInfo->AddContinuousTaskSubMode(subMode);
+        }
+    }
+    return boolValue;
+}
+
+bool Common::GetWantAgentProperty(napi_env env, napi_value object, const std::string &propertyName,
+    std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo)
+{
+    napi_value value = nullptr;
+    napi_status getNameStatus = napi_get_named_property(env, object, propertyName.c_str(), &value);
+    if (getNameStatus != napi_ok) {
+        return false;
+    }
+    napi_valuetype valuetype = napi_undefined;
+    AbilityRuntime::WantAgent::WantAgent *wantAgentPtr = nullptr;
+    napi_typeof(env, value, &valuetype);
+    if (valuetype != napi_object) {
+        return false;
+    }
+    napi_unwrap(env, value, (void **)&wantAgentPtr);
+    if (wantAgentPtr == nullptr) {
+        return false;
+    }
+    std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent =
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*wantAgentPtr);
+    requestInfo->SetWantAgent(wantAgent);
+    return true;
+}
+
+int32_t Common::GetIntProperty(napi_env env, napi_value object, const std::string &propertyName)
+{
+    int32_t intValue = INVALID_CONTINUOUSTASK_ID;
+    napi_value value = nullptr;
+    napi_status getNameStatus = napi_get_named_property(env, object, propertyName.c_str(), &value);
+    if (getNameStatus != napi_ok) {
+        return intValue;
+    }
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, value, &valueType);
+    if (valueType == napi_undefined) {
+        return intValue;
+    } else if (valueType != napi_number) {
+        return intValue;
+    }
+    napi_get_value_int32(env, value, &intValue);
+    return intValue;
+}
+
+bool Common::GetBoolProperty(napi_env env, napi_value object, const std::string &propertyName)
+{
+    bool boolValue = false;
+    napi_value value = nullptr;
+    napi_status getNameStatus = napi_get_named_property(env, object, propertyName.c_str(), &value);
+    if (getNameStatus != napi_ok) {
+        return boolValue;
+    }
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, value, &valueType);
+    if (valueType == napi_undefined) {
+        return boolValue;
+    } else if (valueType != napi_boolean) {
+        return boolValue;
+    }
+    napi_get_value_bool(env, value, &boolValue);
+    return boolValue;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
