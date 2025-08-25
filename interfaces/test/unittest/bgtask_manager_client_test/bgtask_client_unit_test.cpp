@@ -27,7 +27,10 @@
 #include "background_task_subscriber_stub.h"
 #include "continuous_task_callback_info.h"
 #include "continuous_task_cancel_reason.h"
+#include "continuous_task_mode.h"
 #include "continuous_task_param.h"
+#include "continuous_task_request_info.h"
+#include "continuous_task_submode.h"
 #include "continuous_task_suspend_reason.h"
 #include "delay_suspend_info.h"
 #include "efficiency_resource_info.h"
@@ -86,6 +89,23 @@ constexpr uint32_t SYSTEM_SUSPEND_BLUETOOTH_NOT_USED = 9;
 constexpr uint32_t SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED = 10;
 constexpr uint32_t SYSTEM_SUSPEND_USED_ILLEGALLY = 11;
 constexpr uint32_t SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING = 12;
+constexpr uint32_t MODE_DATA_TRANSFER = 1;
+constexpr uint32_t MODE_SHARE_POSITION = 4;
+constexpr uint32_t MODE_ALLOW_BLUETOOTH_AWARE = 5;
+constexpr uint32_t MODE_MULTI_DEVICE_CONNECTION = 6;
+constexpr uint32_t MODE_ALLOW_WIFI_AWARE = 7;
+constexpr uint32_t MODE_TASK_KEEPING = 9;
+constexpr uint32_t MODE_AV_PLAYBACK_AND_RECORD = 10;
+constexpr uint32_t MODE_END = 11;
+constexpr uint32_t SUBMODE_CAR_KEY_NORMAL_NOTIFICATION = 1;
+constexpr uint32_t SUBMODE_NORMAL_NOTIFICATION = 2;
+constexpr uint32_t SUBMODE_LIVE_VIEW_NOTIFICATION = 3;
+constexpr uint32_t SUBMODE_AUDIO_PLAYBACK_NORMAL_NOTIFICATION = 4;
+constexpr uint32_t SUBMODE_AVSESSION_AUDIO_PLAYBACK = 5;
+constexpr uint32_t SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION = 6;
+constexpr uint32_t SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION = 7;
+constexpr uint32_t SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION = 8;
+constexpr uint32_t SUBMODE_END = 9;
 
 static const std::string RSS_NAME = "resource_schedule_service";
 }
@@ -903,6 +923,94 @@ HWTEST_F(BgTaskClientUnitTest, SuspendContinuousAudioTask_001, TestSize.Level1)
 {
     int32_t uid = 1;
     EXPECT_EQ(BackgroundTaskMgrHelper::SuspendContinuousAudioTask(uid), ERR_OK);
+}
+
+/**
+ * @tc.name: ContinuousTaskMode_001
+ * @tc.desc: test continuous task mode.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskMode_001, TestSize.Level0)
+{
+    EXPECT_EQ(MODE_DATA_TRANSFER, (int32_t)ContinuousTaskMode::MODE_DATA_TRANSFER);
+    EXPECT_EQ(MODE_SHARE_POSITION, (int32_t)ContinuousTaskMode::MODE_SHARE_POSITION);
+    EXPECT_EQ(MODE_ALLOW_BLUETOOTH_AWARE, (int32_t)ContinuousTaskMode::MODE_ALLOW_BLUETOOTH_AWARE);
+    EXPECT_EQ(MODE_MULTI_DEVICE_CONNECTION, (int32_t)ContinuousTaskMode::MODE_MULTI_DEVICE_CONNECTION);
+    EXPECT_EQ(MODE_ALLOW_WIFI_AWARE, (int32_t)ContinuousTaskMode::MODE_ALLOW_WIFI_AWARE);
+    EXPECT_EQ(MODE_TASK_KEEPING, (int32_t)ContinuousTaskMode::MODE_TASK_KEEPING);
+    EXPECT_EQ(MODE_AV_PLAYBACK_AND_RECORD, (int32_t)ContinuousTaskMode::MODE_AV_PLAYBACK_AND_RECORD);
+    EXPECT_EQ(MODE_END, (int32_t)ContinuousTaskMode::END);
+    ContinuousTaskMode::GetContinuousTaskModeStr(MODE_DATA_TRANSFER);
+    EXPECT_TRUE(ContinuousTaskMode::IsSubModeTypeMatching(SUBMODE_LIVE_VIEW_NOTIFICATION));
+    EXPECT_TRUE(ContinuousTaskMode::IsModeTypeMatching(MODE_SHARE_POSITION));
+}
+
+/**
+ * @tc.name: ContinuousTaskSubmode_001
+ * @tc.desc: test continuous task sub mode.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskSubmode_001, TestSize.Level0)
+{
+    EXPECT_EQ(SUBMODE_CAR_KEY_NORMAL_NOTIFICATION, (int32_t)ContinuousTaskSubmode::SUBMODE_CAR_KEY_NORMAL_NOTIFICATION);
+    EXPECT_EQ(SUBMODE_NORMAL_NOTIFICATION, (int32_t)ContinuousTaskSubmode::SUBMODE_NORMAL_NOTIFICATION);
+    EXPECT_EQ(SUBMODE_LIVE_VIEW_NOTIFICATION, (int32_t)ContinuousTaskSubmode::SUBMODE_LIVE_VIEW_NOTIFICATION);
+    EXPECT_EQ(SUBMODE_AUDIO_PLAYBACK_NORMAL_NOTIFICATION,
+        (int32_t)ContinuousTaskSubmode::SUBMODE_AUDIO_PLAYBACK_NORMAL_NOTIFICATION);
+    EXPECT_EQ(SUBMODE_AVSESSION_AUDIO_PLAYBACK, (int32_t)ContinuousTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK);
+    EXPECT_EQ(SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION,
+        (int32_t)ContinuousTaskSubmode::SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION);
+    EXPECT_EQ(SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION,
+        (int32_t)ContinuousTaskSubmode::SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION);
+    EXPECT_EQ(SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION,
+        (int32_t)ContinuousTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION);
+    EXPECT_EQ(SUBMODE_END, (int32_t)ContinuousTaskSubmode::END);
+    ContinuousTaskSubmode::GetContinuousTaskSubmodeStr(SUBMODE_CAR_KEY_NORMAL_NOTIFICATION);
+}
+
+/**
+ * @tc.name: CreateContinuousTaskRequest_001
+ * @tc.desc: test CreateContinuousTaskRequest interface.
+ * @tc.type: FUNC
+ * @tc.require: issueICT1ZV
+ */
+HWTEST_F(BgTaskClientUnitTest, CreateContinuousTaskRequest_001, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRequestInfo> requestInfo = std::make_shared<ContinuousTaskRequestInfo>();
+    EXPECT_EQ(BackgroundTaskMgrHelper::CreateContinuousTaskRequest(requestInfo), ERR_OK);
+}
+
+/**
+ * @tc.name: ContinuousTaskRequestInfo_001
+ * @tc.desc: test ContinuousTaskRequestInfo.
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskRequestInfo_001, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRequestInfo> info1 = std::make_shared<ContinuousTaskRequestInfo>();
+    std::vector<uint32_t> backgroundModes {1};
+    std::vector<uint32_t> backgroundSubModes {1};
+    std::shared_ptr<ContinuousTaskRequestInfo> info2 = std::make_shared<ContinuousTaskRequestInfo>(
+        backgroundModes, backgroundSubModes, std::make_shared<AbilityRuntime::WantAgent::WantAgent>(), true, 10, true);
+
+    MessageParcel parcel = MessageParcel();
+    info2->Marshalling(parcel);
+    sptr<ContinuousTaskRequestInfo> info3 = ContinuousTaskRequestInfo::Unmarshalling(parcel);
+    info3->GetWantAgent();
+    info3->GetContinuousTaskModes();
+    info3->GetContinuousTaskSubmodes();
+    info3->IsBuildByRequest();
+    info3->GetWantAgent();
+    info3->GetContinuousTaskId();
+    info3->SetContinuousTaskId(1);
+    info3->SetCombinedTaskNotification(false);
+    info3->AddContinuousTaskMode(2);
+    info3->AddContinuousTaskSubMode(2);
+    info3->SetWantAgent(std::make_shared<AbilityRuntime::WantAgent::WantAgent>());
+    EXPECT_EQ(info3->GetContinuousTaskId(), 1);
 }
 }
 }
