@@ -19,6 +19,7 @@
 #include "background_task_subscriber.h"
 #include "efficiency_resource_info.h"
 #include "bgtaskmgr_inner_errors.h"
+#include "continuous_task_request_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -207,6 +208,13 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode SuspendContinuousAudioTask(int32_t uid);
+
+    /**
+     * @brief Request create continuous task.
+     * @param requestInfo app uid.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode CreateContinuousTaskRequest(const std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
