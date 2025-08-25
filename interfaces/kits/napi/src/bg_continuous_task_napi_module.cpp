@@ -32,7 +32,10 @@
 #include "common.h"
 #include "continuous_task_info.h"
 #include "continuous_task_log.h"
+#include "continuous_task_mode.h"
 #include "continuous_task_param.h"
+#include "continuous_task_request_info.h"
+#include "continuous_task_submode.h"
 #include "js_backgroundtask_subscriber.h"
 #include "js_runtime_utils.h"
 
@@ -86,6 +89,12 @@ struct AsyncCallbackInfo : public AsyncWorkData {
     int32_t notificationId {-1}; // out
     int32_t continuousTaskId {-1}; // out
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list; // out
+};
+
+struct CreateContinuousTaskRequestCallbackInfo : public AsyncWorkData {
+    explicit CreateContinuousTaskRequestCallbackInfo(napi_env env) : AsyncWorkData(env) {}
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
+    std::shared_ptr<ContinuousTaskRequestInfo> requestInfo = std::make_shared<ContinuousTaskRequestInfo>();
 };
 
 napi_value WrapVoidToJS(napi_env env)
@@ -1122,6 +1131,152 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     return ret;
 }
 
+void CreateContinuousTaskRequestExecuteCB(napi_env env, void *data)
+{
+    CreateContinuousTaskRequestCallbackInfo *asyncCallbackInfo =
+        static_cast<CreateContinuousTaskRequestCallbackInfo *>(data);
+    if (asyncCallbackInfo == nullptr || asyncCallbackInfo->errCode != ERR_OK) {
+        return;
+    }
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::CreateContinuousTaskRequest(asyncCallbackInfo->requestInfo);
+}
+
+void CreateContinuousTaskRequestPromiseCompletedCB(napi_env env, napi_status status, void *data)
+{
+    CreateContinuousTaskRequestCallbackInfo *asyncCallbackInfo =
+        static_cast<CreateContinuousTaskRequestCallbackInfo *>(data);
+    std::unique_ptr<CreateContinuousTaskRequestCallbackInfo> callbackPtr {asyncCallbackInfo};
+    napi_value result {nullptr};
+    if (asyncCallbackInfo->errCode == ERR_OK) {
+        napi_create_object(env, &result);
+        NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result));
+    } else {
+        std::string errMsg = Common::FindErrMsg(env, asyncCallbackInfo->errCode);
+        int32_t errCodeInfo = Common::FindErrCode(env, asyncCallbackInfo->errCode);
+        result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);
+        NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
+    }
+    callbackPtr.release();
+}
+
+napi_value CreateContinuousTaskRequestPromise(napi_env env,
+    CreateContinuousTaskRequestCallbackInfo *asyncCallbackInfo, bool isThrow)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("param is nullptr");
+        return nullptr;
+    }
+    napi_value resourceName;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    napi_deferred deferred;
+    napi_value promise {nullptr};
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    asyncCallbackInfo->deferred = deferred;
+    NAPI_CALL(env, napi_create_async_work(env,
+        nullptr,
+        resourceName,
+        CreateContinuousTaskRequestExecuteCB,
+        CreateContinuousTaskRequestPromiseCompletedCB,
+        static_cast<void *>(asyncCallbackInfo),
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+    return promise;
+}
+
+napi_value CreateContinuousTaskRequestCheckParam(napi_env env, const napi_value &value,
+    std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo)
+{
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    if (valuetype != napi_object) {
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_REQUESTINFO_NULL_OR_TYPE, true);
+        return nullptr;
+    }
+    if (!Common::GetContinuousTaskRequestInfo(env, value, requestInfo)) {
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_REQUESTINFO_NULL_OR_TYPE, true);
+        return nullptr;
+    }
+    if (requestInfo->IsBuildByRequest() && requestInfo->GetContinuousTaskId() == -1) {
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_INVALID_TASK_ID, true);
+        return nullptr;
+    }
+    std::vector<uint32_t> continuousTaskModes = requestInfo->GetContinuousTaskModes();
+    std::vector<uint32_t> continuousTaskSubmodes = requestInfo->GetContinuousTaskSubmodes();
+    if (continuousTaskModes.size() == 0 || continuousTaskSubmodes.size() == 0) {
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_NULL, true);
+        return nullptr;
+    }
+    if (continuousTaskModes.size() != continuousTaskSubmodes.size()) {
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_LENGTH_MISMATCH, true);
+        return nullptr;
+    }
+    for (uint32_t index = 0; index < continuousTaskSubmodes.size(); index++) {
+        uint32_t subMode = continuousTaskSubmodes[index];
+        if (subMode >= ContinuousTaskSubmode::END) {
+            Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_CROSS_BORDER, true);
+            return nullptr;
+        }
+        if (subMode == ContinuousTaskSubmode::SUBMODE_NORMAL_NOTIFICATION) {
+            if (!ContinuousTaskMode::IsModeTypeMatching(continuousTaskModes[index])) {
+                Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_CROSS_BORDER, true);
+                return nullptr;
+            }
+        } else {
+            if (!ContinuousTaskMode::IsSubModeTypeMatching(subMode)) {
+                Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_CROSS_BORDER, true);
+                return nullptr;
+            }
+        }
+    }
+    return WrapVoidToJS(env);
+}
+
+napi_value CreateContinuousTaskRequest(napi_env env, napi_callback_info info, bool isThrow)
+{
+    if (env == nullptr) {
+        BGTASK_LOGE("env param invaild.");
+        return WrapVoidToJS(env);
+    }
+    CreateContinuousTaskRequestCallbackInfo *asyncCallbackInfo =
+        new (std::nothrow) CreateContinuousTaskRequestCallbackInfo(env);
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo == nullpter");
+        return WrapVoidToJS(env);
+    }
+    std::unique_ptr<CreateContinuousTaskRequestCallbackInfo> callbackPtr {asyncCallbackInfo};
+    size_t argc = ARGC_ONE;
+    napi_value argv[ARGC_ONE] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc > ARGC_ONE || argc < ARGC_ONE) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        callbackPtr.release();
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        return WrapVoidToJS(env);
+    }
+    if (CreateContinuousTaskRequestCheckParam(env, argv[0], asyncCallbackInfo->requestInfo) == nullptr) {
+        callbackPtr.release();
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        return WrapVoidToJS(env);
+    }
+    napi_value ret = CreateContinuousTaskRequestPromise(env, asyncCallbackInfo, isThrow);
+    callbackPtr.release();
+    if (ret == nullptr) {
+        BGTASK_LOGE("ret is nullpter");
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        ret = WrapVoidToJS(env);
+    }
+    return ret;
+}
+
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
 {
     return StartBackgroundRunning(env, info, false);
@@ -1150,6 +1305,11 @@ napi_value StopBackgroundRunningThrow(napi_env env, napi_callback_info info)
 napi_value GetAllContinuousTasksThrow(napi_env env, napi_callback_info info)
 {
     return GetAllContinuousTasks(env, info, true);
+}
+
+napi_value CreateContinuousTaskRequestThrow(napi_env env, napi_callback_info info)
+{
+    return CreateContinuousTaskRequest(env, info, true);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
