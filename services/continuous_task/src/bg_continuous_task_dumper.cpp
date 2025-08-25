@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "background_mode.h"
 #include "bg_continuous_task_dumper.h"
 #include "bg_continuous_task_mgr.h"
 
