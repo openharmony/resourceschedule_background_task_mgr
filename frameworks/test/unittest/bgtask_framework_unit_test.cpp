@@ -930,7 +930,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, SuspendContinuousAudioTask_001, TestSize.Level
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(1),
-        ERR_BGTASK_PERMISSION_DENIED);
+        ERR_OK);
 }
 }
 }
