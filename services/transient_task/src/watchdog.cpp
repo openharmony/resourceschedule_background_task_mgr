@@ -37,13 +37,13 @@ Watchdog::Watchdog(const wptr<BackgroundTaskMgrService>& service, const std::sha
 
 bool Watchdog::AddWatchdog(int32_t requestId, const std::shared_ptr<KeyInfo>& info, int32_t interval)
 {
-    BGTASK_LOGD("AddWatchdog %{public}d", requestId);
+    BGTASK_LOGI("AddWatchdog %{public}d", requestId);
     return SendEvent(requestId, info, interval);
 }
 
 void Watchdog::RemoveWatchdog(int32_t requestId)
 {
-    BGTASK_LOGD("RemoveWatchdog %{public}d", requestId);
+    BGTASK_LOGI("RemoveWatchdog %{public}d", requestId);
     RemoveEvent(requestId);
 }
 

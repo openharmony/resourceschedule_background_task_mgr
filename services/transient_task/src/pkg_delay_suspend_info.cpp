@@ -99,7 +99,7 @@ void PkgDelaySuspendInfo::StartAccounting(const int32_t requestId)
         if (info->GetBaseTime() == 0) {
             info->StartAccounting();
             timerManager_->AddTimer(info->GetRequestId(), info->GetAdvanceCallbackTime());
-            BGTASK_LOGD("StartAccounting pkgname: %{public}s, requestId: %{public}d, pid: %{public}d",
+            BGTASK_LOGI("StartAccounting pkgname: %{public}s, requestId: %{public}d, pid: %{public}d",
                 pkg_.c_str(), info->GetRequestId(), info->GetPid());
         }
     }
@@ -113,7 +113,7 @@ void PkgDelaySuspendInfo::StopAccounting(const int32_t requestId)
         }
         info->StopAccounting();
         timerManager_->RemoveTimer(info->GetRequestId());
-        BGTASK_LOGD("StopAccounting pkgname: %{public}s, requestId: %{public}d, pid: %{public}d",
+        BGTASK_LOGI("StopAccounting pkgname: %{public}s, requestId: %{public}d, pid: %{public}d",
             pkg_.c_str(), info->GetRequestId(), info->GetPid());
     }
 }
@@ -145,7 +145,7 @@ void PkgDelaySuspendInfo::UpdateQuota(bool reset)
     if (reset) {
         quota_ = INIT_QUOTA;
     }
-    BGTASK_LOGD("%{public}s Lastest quota: %{public}d, spendTime: %{public}d, isCounting: %{public}d",
+    BGTASK_LOGI("%{public}s Lastest quota: %{public}d, spendTime: %{public}d, isCounting: %{public}d",
         pkg_.c_str(), quota_, spendTime_, isCounting_);
 }
 

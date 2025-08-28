@@ -122,6 +122,8 @@ void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
         if (it != decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
             auto pkgInfo = it->second;
+            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is foreground applicaion, stop accounting",
+                appStateData.bundleName.c_str(), appStateData.uid);
             pkgInfo->StopAccountingAll();
         }
         auto itBg = decisionMaker_.pkgBgDurationMap_.find(key);
@@ -136,6 +138,8 @@ void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
         }
         auto pkgInfo = it->second;
         if (decisionMaker_.CanStartAccountingLocked(pkgInfo)) {
+            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is background applicaion, start accounting",
+                appStateData.bundleName.c_str(), appStateData.uid);
             pkgInfo->StartAccounting();
         }
     }
@@ -291,7 +295,7 @@ void DecisionMaker::RemoveRequest(const std::shared_ptr<KeyInfo>& key, const int
             DelayedSingleton<BgTransientTaskMgr>::GetInstance()
                 ->HandleTransientTaskSuscriberTask(info, TransientTaskEventType::APP_TASK_END);
         }
-        BGTASK_LOGD("Remove requestId: %{public}d", requestId);
+        BGTASK_LOGI("Remove requestId: %{public}d", requestId);
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "TRANSIENT_TASK_CANCEL",
             HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", key->GetUid(), "APP_PID", key->GetPid(),
             "APP_NAME", key->GetPkg(), "TASKID", requestId);
@@ -460,6 +464,7 @@ void DecisionMaker::HandleScreenOn()
         auto it = pkgDelaySuspendInfoMap_.find(key);
         if (it != pkgDelaySuspendInfoMap_.end()) {
             auto pkgInfo = it->second;
+            BGTASK_LOGI("screen is on and uid: %{public}d is foreground app, stop accounting", fgApp.uid);
             pkgInfo->StopAccountingAll();
         }
     }
@@ -481,6 +486,7 @@ void DecisionMaker::HandleScreenOff()
             continue;
         }
         if (CanStartAccountingLocked(pkgInfo)) {
+            BGTASK_LOGI("screen is off and uid: %{public}d is not freeze, start accounting", pkgInfo->GetUid());
             pkgInfo->StartAccounting();
         }
     }
