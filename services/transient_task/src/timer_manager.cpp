@@ -31,13 +31,13 @@ TimerManager::TimerManager(const wptr<BackgroundTaskMgrService>& service,
 
 bool TimerManager::AddTimer(int32_t requestId, int32_t interval)
 {
-    BGTASK_LOGD("Add request id: %{public}d", requestId);
+    BGTASK_LOGI("Add request id: %{public}d", requestId);
     return SendEvent(requestId, 0, interval);
 }
 
 void TimerManager::RemoveTimer(int32_t requestId)
 {
-    BGTASK_LOGD("Remove request id: %{public}d", requestId);
+    BGTASK_LOGI("Remove request id: %{public}d", requestId);
     return RemoveEvent(requestId);
 }
 
