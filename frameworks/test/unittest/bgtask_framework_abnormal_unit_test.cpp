@@ -233,27 +233,27 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_005
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_INVALID_VALUE);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1, -1), ERR_INVALID_VALUE);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteStringFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1, -1), ERR_INVALID_DATA);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteStringFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteRemoteObjectFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1, -1), ERR_INVALID_DATA);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteRemoteObjectFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1, -1), ERR_INVALID_DATA);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(true);
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1, -1), ERR_INVALID_DATA);
 
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.StopBackgroundRunning("abilityName", nullptr, -1, -1), ERR_INVALID_DATA);
 }
 
 /**
