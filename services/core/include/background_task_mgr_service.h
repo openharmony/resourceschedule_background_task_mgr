@@ -73,7 +73,7 @@ public:
     ErrCode RequestBackgroundRunningForInner(const ContinuousTaskParamForInner &taskParam) override;
     ErrCode RequestGetContinuousTasksByUidForInner(int32_t uid, std::vector<ContinuousTaskInfo> &list) override;
     ErrCode StopBackgroundRunning(const std::string &abilityName, const sptr<IRemoteObject> &abilityToken,
-        int32_t abilityId) override;
+        int32_t abilityId, int32_t continuousTaskId) override;
     ErrCode GetAllContinuousTasks(std::vector<ContinuousTaskInfo> &list) override;
     ErrCode GetAllContinuousTasks(
         std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended) override;

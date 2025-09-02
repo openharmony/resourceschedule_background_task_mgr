@@ -144,7 +144,8 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_005
     EXPECT_EQ(BackgroundTaskMgrService_->UpdateBackgroundRunning(
         taskParam, notificationId, continuousTaskId), ERR_BGTASK_SYS_NOT_READY);
     int32_t abilityId = -1;
-    EXPECT_EQ(BackgroundTaskMgrService_->StopBackgroundRunning("test", nullptr, abilityId), ERR_BGTASK_SYS_NOT_READY);
+    EXPECT_EQ(BackgroundTaskMgrService_->StopBackgroundRunning("test", nullptr, abilityId, continuousTaskId),
+        ERR_BGTASK_SYS_NOT_READY);
 }
 
 /**
