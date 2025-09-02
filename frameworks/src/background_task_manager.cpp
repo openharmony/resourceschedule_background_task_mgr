@@ -190,7 +190,7 @@ ErrCode BackgroundTaskManager::RequestGetContinuousTasksByUidForInner(int32_t ui
 }
 
 ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &abilityName,
-    const sptr<IRemoteObject> &abilityToken, int32_t abilityId)
+    const sptr<IRemoteObject> &abilityToken, int32_t abilityId, int32_t continuousTaskId)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Mgr::RequestStopBackgroundRunning");
@@ -198,7 +198,7 @@ ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &a
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return proxy_->StopBackgroundRunning(abilityName, abilityToken, abilityId);
+    return proxy_->StopBackgroundRunning(abilityName, abilityToken, abilityId, continuousTaskId);
 }
 
 ErrCode BackgroundTaskManager::RequestGetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)

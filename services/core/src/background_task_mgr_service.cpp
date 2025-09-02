@@ -271,7 +271,7 @@ ErrCode BackgroundTaskMgrService::RequestGetContinuousTasksByUidForInner(int32_t
 }
 
 ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abilityName,
-    const sptr<IRemoteObject> &abilityToken, int32_t abilityId)
+    const sptr<IRemoteObject> &abilityToken, int32_t abilityId, int32_t continuousTaskId)
 {
     return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName, abilityId);
 }

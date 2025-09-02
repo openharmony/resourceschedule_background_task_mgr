@@ -34,10 +34,10 @@ ErrCode BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(ContinuousTaskPa
 }
 
 ErrCode BackgroundTaskMgrHelper::RequestStopBackgroundRunning(const std::string &abilityName,
-    const sptr<IRemoteObject> &abilityToken, int32_t abilityId)
+    const sptr<IRemoteObject> &abilityToken, int32_t abilityId, int32_t continuousTaskId)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->
-        RequestStopBackgroundRunning(abilityName, abilityToken, abilityId);
+        RequestStopBackgroundRunning(abilityName, abilityToken, abilityId, continuousTaskId);
 }
 
 ErrCode BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)

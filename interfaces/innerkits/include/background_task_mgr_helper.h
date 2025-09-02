@@ -83,10 +83,12 @@ public:
      * @param abilityName Ability name of the requester ability
      * @param abilityToken Ability token to mark an unique running ability instance
      * @param abilityId Ability identity
+     * @param continuousTaskId continuous task id
      * @return ERR_OK if success, else fail.
      */
     static ErrCode RequestStopBackgroundRunning(const std::string &abilityName,
-        const sptr<IRemoteObject> &abilityToken, int32_t abilityId = -1);
+        const sptr<IRemoteObject> &abilityToken, int32_t abilityId = -1,
+        int32_t continuousTaskId = -1);
 
     /**
      * @brief Subscribes background task event.
