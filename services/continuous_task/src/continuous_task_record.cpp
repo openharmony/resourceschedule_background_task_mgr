@@ -179,6 +179,9 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["abilityId"] = abilityId_;
     root["suspendState"] = suspendState_;
     root["suspendReason"] = suspendReason_;
+    root["isCombinedTaskNotification"] = isCombinedTaskNotification_;
+    root["combinedNotificationTaskId"] = combinedNotificationTaskId_;
+    root["isByRequestObject"] = isByRequestObject_;
     return root.dump(CommonUtils::jsonFormat_);
 }
 
@@ -190,14 +193,17 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["isNewApi"].is_boolean() || !value["isFromWebview"].is_boolean()
         || !value["notificationLabel"].is_string() || !value["isSystem"].is_boolean()
         || !value["continuousTaskId"].is_number_integer() || !value["abilityId"].is_number_integer()
-        || !value["suspendState"].is_boolean() || !value["suspendReason"].is_number_integer();
+        || !value["suspendState"].is_boolean() || !value["suspendReason"].is_number_integer()
+        || !value["isCombinedTaskNotification"].is_boolean() || !value["combinedNotificationTaskId"].is_number_integer()
+        || !value["isByRequestObject"].is_boolean();
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
 {
     if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value, { "bundleName",
         "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel",
-        "isSystem", "continuousTaskId", "abilityId", "suspendState", "suspendReason"})) {
+        "isSystem", "continuousTaskId", "abilityId", "suspendState", "suspendReason", "isCombinedTaskNotification",
+        "combinedNotificationTaskId", "isByRequestObject"})) {
         BGTASK_LOGE("continuoustaskrecord no key");
         return false;
     }
@@ -237,6 +243,11 @@ void ContinuousTaskRecord::SetRecordValue(const nlohmann::json &value)
     this->isSystem_ = value.at("isSystem").get<bool>();
     this->continuousTaskId_ = value.at("continuousTaskId").get<int32_t>();
     this->abilityId_ = value.at("abilityId").get<int32_t>();
+    this->suspendState_ = value.at("suspendState").get<bool>();
+    this->suspendReason_ = value.at("suspendReason").get<int32_t>();
+    this->isCombinedTaskNotification_ = value.at("isCombinedTaskNotification").get<bool>();
+    this->combinedNotificationTaskId_ = value.at("combinedNotificationTaskId").get<int32_t>();
+    this->isByRequestObject_ = value.at("isByRequestObject").get<bool>();
     if (value.contains("isBatchApi") && value["isBatchApi"].is_boolean()) {
         this->isBatchApi_ = value.at("isBatchApi").get<bool>();
     }

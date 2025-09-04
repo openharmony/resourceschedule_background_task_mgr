@@ -39,11 +39,26 @@ public:
         return iter != bgModeIds.end();
     }
 
+    static bool CheckExistNotification(const std::vector<int32_t> &notificaitonIds, const int32_t notificaitonId)
+    {
+        auto iter = std::find(notificaitonIds.begin(), notificaitonIds.end(), notificaitonId);
+        return iter == notificaitonIds.end();
+    }
+
     static bool CheckModesSame(const std::vector<uint32_t> &oldBgModeIds, const std::vector<uint32_t> &newBgModeIds)
     {
         std::set<uint32_t> oldModesSet(oldBgModeIds.begin(), oldBgModeIds.end());
         std::set<uint32_t> newModesSet(newBgModeIds.begin(), newBgModeIds.end());
         return oldModesSet == newModesSet;
+    }
+
+    static std::string ModesToString(const std::vector<uint32_t> &bgmodes)
+    {
+        std::string modeStr;
+        for (const auto &mode : bgmodes) {
+            modeStr += std::to_string(mode);
+        }
+        return modeStr;
     }
 
 public:

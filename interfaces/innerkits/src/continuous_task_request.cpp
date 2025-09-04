@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-#include "continuous_task_request_info.h"
+#include "continuous_task_request.h"
 #include "continuous_task_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 
-ContinuousTaskRequestInfo* ContinuousTaskRequestInfo::Unmarshalling(Parcel& in)
+ContinuousTaskRequest* ContinuousTaskRequest::Unmarshalling(Parcel& in)
 {
-    ContinuousTaskRequestInfo* info = new (std::nothrow) ContinuousTaskRequestInfo();
+    ContinuousTaskRequest* info = new (std::nothrow) ContinuousTaskRequest();
     if (info && !info->ReadFromParcel(in)) {
         BGTASK_LOGE("read from parcel failed");
         delete info;
@@ -30,7 +30,7 @@ ContinuousTaskRequestInfo* ContinuousTaskRequestInfo::Unmarshalling(Parcel& in)
     return info;
 }
 
-bool ContinuousTaskRequestInfo::Marshalling(Parcel& out) const
+bool ContinuousTaskRequest::Marshalling(Parcel& out) const
 {
     if (!out.WriteUInt32Vector(continuousTaskModes_)) {
         BGTASK_LOGE("Failed to write continuousTaskModes");
@@ -66,7 +66,7 @@ bool ContinuousTaskRequestInfo::Marshalling(Parcel& out) const
     return true;
 }
 
-bool ContinuousTaskRequestInfo::ReadFromParcel(Parcel& in)
+bool ContinuousTaskRequest::ReadFromParcel(Parcel& in)
 {
     if (!in.ReadUInt32Vector(&continuousTaskModes_)) {
         BGTASK_LOGE("read parcel continuousTaskModes error");
@@ -100,60 +100,65 @@ bool ContinuousTaskRequestInfo::ReadFromParcel(Parcel& in)
     return true;
 }
 
-std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> ContinuousTaskRequestInfo::GetWantAgent() const
+std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> ContinuousTaskRequest::GetWantAgent() const
 {
     return wantAgent_;
 }
 
-std::vector<uint32_t> ContinuousTaskRequestInfo::GetContinuousTaskModes() const
+std::vector<uint32_t> ContinuousTaskRequest::GetContinuousTaskModes() const
 {
     return continuousTaskModes_;
 }
 
-std::vector<uint32_t> ContinuousTaskRequestInfo::GetContinuousTaskSubmodes() const
+std::vector<uint32_t> ContinuousTaskRequest::GetContinuousTaskSubmodes() const
 {
     return continuousTaskSubmodes_;
 }
 
-bool ContinuousTaskRequestInfo::IsBuildByRequest() const
+bool ContinuousTaskRequest::IsBuildByRequest() const
 {
     return isBuildByRequest_;
 }
 
-void ContinuousTaskRequestInfo::SetIsBuildByRequest(bool isBuildByRequest)
+void ContinuousTaskRequest::SetIsBuildByRequest(bool isBuildByRequest)
 {
     isBuildByRequest_ = isBuildByRequest;
 }
 
-int32_t ContinuousTaskRequestInfo::GetContinuousTaskId() const
+int32_t ContinuousTaskRequest::GetContinuousTaskId() const
 {
     return continuousTaskId_;
 }
 
-void ContinuousTaskRequestInfo::SetContinuousTaskId(const int32_t continuousTaskId)
+void ContinuousTaskRequest::SetContinuousTaskId(const int32_t continuousTaskId)
 {
     continuousTaskId_ = continuousTaskId;
 }
 
-void ContinuousTaskRequestInfo::SetCombinedTaskNotification(const bool combinedTaskNotification)
+void ContinuousTaskRequest::SetCombinedTaskNotification(const bool combinedTaskNotification)
 {
     combinedTaskNotification_ = combinedTaskNotification;
 }
 
-void ContinuousTaskRequestInfo::AddContinuousTaskMode(const uint32_t mode)
+bool ContinuousTaskRequest::IsCombinedTaskNotification() const
 {
-    continuousTaskModes_.push_back(mode);
+    return combinedTaskNotification_;
 }
 
-void ContinuousTaskRequestInfo::AddContinuousTaskSubMode(const int32_t subMode)
-{
-    continuousTaskSubmodes_.push_back(subMode);
-}
-
-void ContinuousTaskRequestInfo::SetWantAgent(
+void ContinuousTaskRequest::SetWantAgent(
     const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent)
 {
     wantAgent_ = wantAgent;
+}
+
+void ContinuousTaskRequest::SetContinuousTaskMode(const std::vector<uint32_t> &continuousTaskMode)
+{
+    continuousTaskModes_ = continuousTaskMode;
+}
+
+void ContinuousTaskRequest::SetContinuousTaskSubMode(const std::vector<uint32_t> &continuousTaskSubMode)
+{
+    continuousTaskSubmodes_ = continuousTaskSubMode;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
