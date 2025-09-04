@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_REQUEST_INFO_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_REQUEST_INFO_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_REQUEST_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_REQUEST_H
 
 #include <memory>
 
@@ -23,10 +23,10 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class ContinuousTaskRequestInfo : public std::enable_shared_from_this<ContinuousTaskRequestInfo>, public Parcelable {
+class ContinuousTaskRequest : public std::enable_shared_from_this<ContinuousTaskRequest>, public Parcelable {
 public:
-    ~ContinuousTaskRequestInfo() = default;
-    ContinuousTaskRequestInfo(const std::vector<uint32_t> &continuousTaskModes = {},
+    ~ContinuousTaskRequest() = default;
+    ContinuousTaskRequest(const std::vector<uint32_t> &continuousTaskModes = {},
         const std::vector<uint32_t> &continuousTaskSubmodes = {},
         const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent = nullptr,
         bool combinedTaskNotification = false, int32_t continuousTaskId = -1, bool isBuildByRequest = false)
@@ -39,7 +39,7 @@ public:
      * @param in Indicates the parcel object for unmarshalling.
      * @return The info continuous task request.
      */
-    static ContinuousTaskRequestInfo* Unmarshalling(Parcel& in);
+    static ContinuousTaskRequest* Unmarshalling(Parcel& in);
 
     /**
      * @brief Marshals a purpose into a parcel.
@@ -93,9 +93,10 @@ public:
 
     void SetContinuousTaskId(const int32_t continuousTaskId);
     void SetCombinedTaskNotification(const bool combinedTaskNotification);
-    void AddContinuousTaskMode(const uint32_t mode);
-    void AddContinuousTaskSubMode(const int32_t subMode);
     void SetWantAgent(const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent);
+    bool IsCombinedTaskNotification() const;
+    void SetContinuousTaskMode(const std::vector<uint32_t> &continuousTaskMode);
+    void SetContinuousTaskSubMode(const std::vector<uint32_t> &continuousTaskSubMode);
 private:
     bool ReadFromParcel(Parcel& in);
 
@@ -108,4 +109,4 @@ private:
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_REQUEST_INFO_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_REQUEST_H

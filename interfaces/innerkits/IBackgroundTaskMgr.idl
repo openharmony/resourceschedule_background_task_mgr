@@ -17,6 +17,7 @@ sequenceable continuous_task_callback_info..OHOS.BackgroundTaskMgr.ContinuousTas
 sequenceable continuous_task_info..OHOS.BackgroundTaskMgr.ContinuousTaskInfo;
 sequenceable continuous_task_param..OHOS.BackgroundTaskMgr.ContinuousTaskParam;
 sequenceable continuous_task_param..OHOS.BackgroundTaskMgr.ContinuousTaskParamForInner;
+sequenceable continuous_task_request..OHOS.BackgroundTaskMgr.ContinuousTaskRequest;
 sequenceable delay_suspend_info..OHOS.BackgroundTaskMgr.DelaySuspendInfo;
 sequenceable efficiency_resource_info..OHOS.BackgroundTaskMgr.EfficiencyResourceInfo;
 sequenceable resource_callback_info..OHOS.BackgroundTaskMgr.ResourceCallbackInfo;

@@ -17,7 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_INCLUDE_BACKGROUND_TASK_MANAGER_H
 
 #include "background_task_subscriber.h"
-#include "continuous_task_request_info.h"
+#include "continuous_task_request.h"
 #include "expired_callback.h"
 #include "ibackground_task_mgr.h"
 #include "iremote_object.h"
@@ -266,13 +266,6 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode SuspendContinuousAudioTask(int32_t uid);
-
-    /**
-     * @brief Request create continuous task.
-     * @param requestInfo app uid.
-     * @return Returns ERR_OK if success, else failure.
-     */
-    ErrCode CreateContinuousTaskRequest(const std::shared_ptr<ContinuousTaskRequestInfo> &requestInfo);
 
 private:
     bool GetBackgroundTaskManagerProxy();

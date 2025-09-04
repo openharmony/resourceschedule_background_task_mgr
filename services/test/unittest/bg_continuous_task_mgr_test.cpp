@@ -50,6 +50,7 @@ static constexpr int32_t TEST_NUM_TWO = 2;
 static constexpr int32_t TEST_NUM_THREE = 3;
 static constexpr uint32_t CONFIGURE_ALL_MODES = 0x1FF;
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
+static constexpr char SEPARATOR[] = "_";
 }
 class BgContinuousTaskMgrTest : public testing::Test {
 public:
@@ -574,20 +575,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_008, TestSize.Level1)
 }
 
 /**
- * @tc.name: BgTaskManagerUnitTest_009
- * @tc.desc: test RemoveContinuousTaskRecord.
- * @tc.type: FUNC
- * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_009, TestSize.Level1)
-{
-    EXPECT_FALSE(bgContinuousTaskMgr_->RemoveContinuousTaskRecord("key"));
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key"] = continuousTaskRecord;
-    EXPECT_TRUE(bgContinuousTaskMgr_->RemoveContinuousTaskRecord("key"));
-}
-
-/**
  * @tc.name: BgTaskManagerUnitTest_010
  * @tc.desc: test StopContinuousTaskByUser.
  * @tc.type: FUNC
@@ -849,9 +836,11 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_035, TestSize.Level1)
     bgContinuousTaskMgr_->HandleStopContinuousTask(1, 0, 0xFF, "");
     EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    std::string mapKey = std::to_string(continuousTaskRecord1->uid_) + SEPARATOR + continuousTaskRecord1->abilityName_ +
+        SEPARATOR + std::to_string(continuousTaskRecord1->abilityId_);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_[mapKey] = continuousTaskRecord1;
     EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 1);
-    bgContinuousTaskMgr_->HandleStopContinuousTask(1, 0, 0, "key1");
+    bgContinuousTaskMgr_->HandleStopContinuousTask(1, 0, 0, mapKey);
     EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
@@ -1441,6 +1430,164 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_058, TestSize.Level1)
     bgContinuousTaskMgr_->HandleSuspendContinuousAudioTask(1);
     bgContinuousTaskMgr_->HandleSuspendContinuousAudioTask(1);
     EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_059
+ * @tc.desc: test CheckCombinedTaskNotifacation.
+ * @tc.type: FUNC
+ * @tc.require: issueICUX92
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_059, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bool sendNotification = true;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord->bgModeId_ = 2;
+    continuousTaskRecord->isByRequestObject_ = true;
+    continuousTaskRecord->bgModeIds_.push_back(continuousTaskRecord->bgModeId_);
+    // 不需要合并
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification), ERR_OK);
+
+    continuousTaskRecord->combinedNotificationTaskId_ = TEST_NUM_ONE;
+    continuousTaskRecord->isCombinedTaskNotification_ = true;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = nullptr;
+    // 需要合并，但没有任务
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+        ERR_BGTASK_CONTINUOUS_TASKID_INVALID);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord2->uid_ = TEST_NUM_ONE + 1;
+    continuousTaskRecord2->bgModeId_ = 2;
+    continuousTaskRecord2->bgModeIds_.push_back(continuousTaskRecord->bgModeId_);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
+    // 需要合并，任务uid不相等
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+        ERR_BGTASK_CONTINUOUS_TASKID_INVALID);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    continuousTaskRecord2->continuousTaskId_ = TEST_NUM_ONE + 1;
+    // 需要合并，任务id不相等
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+        ERR_BGTASK_CONTINUOUS_TASKID_INVALID);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_060
+ * @tc.desc: test CheckCombinedTaskNotifacation.
+ * @tc.type: FUNC
+ * @tc.require: issueICUX92
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_060, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bool sendNotification = true;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord->combinedNotificationTaskId_ = TEST_NUM_ONE;
+    continuousTaskRecord->isCombinedTaskNotification_ = true;
+    continuousTaskRecord->isByRequestObject_ = true;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord2->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord2->continuousTaskId_ = TEST_NUM_ONE;
+    continuousTaskRecord2->isCombinedTaskNotification_ = false;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
+    // 需要合并，任务不支持合并
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+        ERR_BGTASK_CONTINUOUS_NOT_MERGE_COMBINED_FALSE);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    continuousTaskRecord2->isCombinedTaskNotification_ = true;
+    continuousTaskRecord2->notificationId_ = -1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
+    // 需要合并，任务没有通知
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+        ERR_BGTASK_CONTINUOUS_NOT_MERGE_NOTIFICATION_NOT_EXIST);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    continuousTaskRecord->bgModeId_ = 2;
+    continuousTaskRecord->bgModeIds_.clear();
+    continuousTaskRecord->bgModeIds_.push_back(2);
+    continuousTaskRecord2->bgModeId_ = 3;
+    continuousTaskRecord2->bgModeIds_.clear();
+    continuousTaskRecord2->bgModeIds_.push_back(3);
+    continuousTaskRecord2->notificationId_ = 1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
+    // 需要合并，任务主类型不相等
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+        ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    continuousTaskRecord->bgSubModeIds_.clear();
+    continuousTaskRecord->bgSubModeIds_.push_back(2);
+    continuousTaskRecord2->bgSubModeIds_.clear();
+    continuousTaskRecord2->bgSubModeIds_.push_back(3);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
+    // 需要合并，任务子类型不相等
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+        ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_061
+ * @tc.desc: test CheckCombinedTaskNotifacation.
+ * @tc.type: FUNC
+ * @tc.require: issueICUX92
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_061, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bool sendNotification = true;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord->combinedNotificationTaskId_ = TEST_NUM_ONE;
+    continuousTaskRecord->isCombinedTaskNotification_ = true;
+    continuousTaskRecord->bgModeId_ = 1;
+    continuousTaskRecord->bgModeIds_.clear();
+    continuousTaskRecord->bgModeIds_.push_back(1);
+    continuousTaskRecord->bgSubModeIds_.clear();
+    continuousTaskRecord->bgSubModeIds_.push_back(2);
+    continuousTaskRecord->isByRequestObject_ = true;
+
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord2->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord2->continuousTaskId_ = TEST_NUM_ONE;
+    continuousTaskRecord2->isCombinedTaskNotification_ = true;
+    continuousTaskRecord2->bgModeId_ = 1;
+    continuousTaskRecord2->bgModeIds_.clear();
+    continuousTaskRecord2->bgModeIds_.push_back(1);
+    continuousTaskRecord2->bgSubModeIds_.clear();
+    continuousTaskRecord2->bgSubModeIds_.push_back(2);
+    continuousTaskRecord2->notificationId_ = 1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
+    // 需要合并，任务类型包含上传下载，不能合并
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+        ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    continuousTaskRecord->bgModeId_ = 4;
+    continuousTaskRecord->bgModeIds_.clear();
+    continuousTaskRecord->bgModeIds_.push_back(4);
+    continuousTaskRecord->bgSubModeIds_.clear();
+    continuousTaskRecord->bgSubModeIds_.push_back(1);
+
+    continuousTaskRecord2->bgModeId_ = 4;
+    continuousTaskRecord2->bgModeIds_.clear();
+    continuousTaskRecord2->bgModeIds_.push_back(4);
+    continuousTaskRecord2->bgSubModeIds_.clear();
+    continuousTaskRecord2->bgSubModeIds_.push_back(1);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification), ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_062
+ * @tc.desc: start background runnging use api 21 api test.
+ * @tc.type: FUNC
+ * @tc.require: issueICUX92
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_062, TestSize.Level1)
+{
+    EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunning("ability1", 1, 1), ERR_BGTASK_OBJECT_NOT_EXIST);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

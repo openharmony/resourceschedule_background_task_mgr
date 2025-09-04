@@ -29,7 +29,7 @@
 #include "continuous_task_cancel_reason.h"
 #include "continuous_task_mode.h"
 #include "continuous_task_param.h"
-#include "continuous_task_request_info.h"
+#include "continuous_task_request.h"
 #include "continuous_task_submode.h"
 #include "continuous_task_suspend_reason.h"
 #include "delay_suspend_info.h"
@@ -942,8 +942,13 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskMode_001, TestSize.Level0)
     EXPECT_EQ(MODE_AV_PLAYBACK_AND_RECORD, (int32_t)ContinuousTaskMode::MODE_AV_PLAYBACK_AND_RECORD);
     EXPECT_EQ(MODE_END, (int32_t)ContinuousTaskMode::END);
     ContinuousTaskMode::GetContinuousTaskModeStr(MODE_DATA_TRANSFER);
-    EXPECT_TRUE(ContinuousTaskMode::IsSubModeTypeMatching(SUBMODE_LIVE_VIEW_NOTIFICATION));
     EXPECT_TRUE(ContinuousTaskMode::IsModeTypeMatching(MODE_SHARE_POSITION));
+    EXPECT_NE(ContinuousTaskMode::GetSubModeTypeMatching(SUBMODE_LIVE_VIEW_NOTIFICATION),
+        ContinuousTaskMode::END);
+    EXPECT_NE(ContinuousTaskMode::GetV9BackgroundModeByMode(MODE_SHARE_POSITION),
+        BackgroundMode::END);
+    EXPECT_NE(ContinuousTaskMode::GetV9BackgroundModeBySubMode(SUBMODE_LIVE_VIEW_NOTIFICATION),
+        BackgroundMode::END);
 }
 
 /**
@@ -971,34 +976,22 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskSubmode_001, TestSize.Level0)
 }
 
 /**
- * @tc.name: CreateContinuousTaskRequest_001
- * @tc.desc: test CreateContinuousTaskRequest interface.
- * @tc.type: FUNC
- * @tc.require: issueICT1ZV
- */
-HWTEST_F(BgTaskClientUnitTest, CreateContinuousTaskRequest_001, TestSize.Level1)
-{
-    std::shared_ptr<ContinuousTaskRequestInfo> requestInfo = std::make_shared<ContinuousTaskRequestInfo>();
-    EXPECT_EQ(BackgroundTaskMgrHelper::CreateContinuousTaskRequest(requestInfo), ERR_OK);
-}
-
-/**
- * @tc.name: ContinuousTaskRequestInfo_001
- * @tc.desc: test ContinuousTaskRequestInfo.
+ * @tc.name: ContinuousTaskRequest_001
+ * @tc.desc: test ContinuousTaskRequest.
  * @tc.type: FUNC
  * @tc.require: issueIBY0DN
  */
-HWTEST_F(BgTaskClientUnitTest, ContinuousTaskRequestInfo_001, TestSize.Level1)
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskRequest_001, TestSize.Level1)
 {
-    std::shared_ptr<ContinuousTaskRequestInfo> info1 = std::make_shared<ContinuousTaskRequestInfo>();
+    std::shared_ptr<ContinuousTaskRequest> info1 = std::make_shared<ContinuousTaskRequest>();
     std::vector<uint32_t> backgroundModes {1};
     std::vector<uint32_t> backgroundSubModes {1};
-    std::shared_ptr<ContinuousTaskRequestInfo> info2 = std::make_shared<ContinuousTaskRequestInfo>(
+    std::shared_ptr<ContinuousTaskRequest> info2 = std::make_shared<ContinuousTaskRequest>(
         backgroundModes, backgroundSubModes, std::make_shared<AbilityRuntime::WantAgent::WantAgent>(), true, 10, true);
 
     MessageParcel parcel = MessageParcel();
     info2->Marshalling(parcel);
-    sptr<ContinuousTaskRequestInfo> info3 = ContinuousTaskRequestInfo::Unmarshalling(parcel);
+    sptr<ContinuousTaskRequest> info3 = ContinuousTaskRequest::Unmarshalling(parcel);
     info3->GetWantAgent();
     info3->GetContinuousTaskModes();
     info3->GetContinuousTaskSubmodes();
@@ -1007,8 +1000,10 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskRequestInfo_001, TestSize.Level1)
     info3->GetContinuousTaskId();
     info3->SetContinuousTaskId(1);
     info3->SetCombinedTaskNotification(false);
-    info3->AddContinuousTaskMode(2);
-    info3->AddContinuousTaskSubMode(2);
+    std::vector<uint32_t> continuousTaskSubMode {1};
+    std::vector<uint32_t> continuousTaskMode {1};
+    info3->SetContinuousTaskSubMode(continuousTaskSubMode);
+    info3->SetContinuousTaskMode(continuousTaskMode);
     info3->SetWantAgent(std::make_shared<AbilityRuntime::WantAgent::WantAgent>());
     EXPECT_EQ(info3->GetContinuousTaskId(), 1);
 }

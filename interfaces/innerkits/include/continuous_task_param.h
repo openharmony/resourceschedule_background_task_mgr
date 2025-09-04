@@ -36,6 +36,10 @@ struct ContinuousTaskParam : public Parcelable {
     bool isBatchApi_ {false};
     std::vector<uint32_t> bgModeIds_ {};
     int32_t abilityId_ {-1};
+    std::vector<uint32_t> bgSubModeIds_ {};
+    bool isCombinedTaskNotification_ {false};
+    int32_t combinedNotificationTaskId_ {-1};
+    bool isByRequestObject_ {false};
     int32_t notificationId_ {-1}; // out
     int32_t continuousTaskId_ {-1}; // out
 

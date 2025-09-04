@@ -32,8 +32,11 @@
 #include "task_notification_subscriber.h"
 #endif
 #include "continuous_task_info.h"
+#include "continuous_task_mode.h"
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
+#include "continuous_task_request.h"
+#include "continuous_task_submode.h"
 #include "ibackground_task_subscriber.h"
 #include "remote_death_recipient.h"
 #include "system_event_observer.h"
@@ -78,7 +81,7 @@ class BgContinuousTaskMgr : public DelayedSingleton<BgContinuousTaskMgr>,
 public:
     ErrCode StartBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
-    ErrCode StopBackgroundRunning(const std::string &abilityName, int32_t abilityId);
+    ErrCode StopBackgroundRunning(const std::string &abilityName, int32_t abilityId, int32_t continuousTaskId = -1);
     ErrCode GetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
     ErrCode GetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended);
     ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
@@ -114,7 +117,8 @@ private:
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
         const sptr<ContinuousTaskParam> &taskParam);
     ErrCode StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
-    ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName, int32_t abilityId);
+    ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName, int32_t abilityId,
+        int32_t continuousTaskId = -1);
     ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode GetAllContinuousTasksInner(int32_t uid, std::vector<std::shared_ptr<ContinuousTaskInfo>> &list,
         bool includeSuspended = true);
@@ -125,11 +129,12 @@ private:
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
     ErrCode GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid);
     ErrCode AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish = false);
+    ErrCode StopBackgroundRunningByContext(int32_t uid, const std::string &abilityName, int32_t abilityId);
+    ErrCode StopBackgroundRunningByTask(const std::shared_ptr<ContinuousTaskRecord> &task);
     void HandlePersistenceData();
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
-    bool RemoveContinuousTaskRecord(const std::string &mapKey);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t uid);
     uint32_t GetBackgroundModeInfo(int32_t uid, const std::string &abilityName);
@@ -178,6 +183,8 @@ private:
     bool CanNotifyHap(const std::shared_ptr<SubscriberInfo> subscriberInfo,
         const std::shared_ptr<ContinuousTaskCallbackInfo> &callbackInfo);
     bool IsExistCallback(int32_t uid, uint32_t type);
+    ErrCode CheckCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> &record, bool &sendNotification);
+    bool StopContinuousTaskByUserInner(const std::string &key);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};

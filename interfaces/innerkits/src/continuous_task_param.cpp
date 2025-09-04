@@ -93,6 +93,18 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
         BGTASK_LOGE("Failed to read the abilityId");
         return false;
     }
+    if (!parcel.ReadUInt32Vector(&bgSubModeIds_)) {
+        return false;
+    }
+    if (!parcel.ReadBool(isCombinedTaskNotification_)) {
+        return false;
+    }
+    if (!parcel.ReadInt32(combinedNotificationTaskId_)) {
+        return false;
+    }
+    if (!parcel.ReadBool(isByRequestObject_)) {
+        return false;
+    }
     return true;
 }
 
@@ -200,6 +212,18 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
 
     if (!parcel.WriteInt32(abilityId_)) {
         BGTASK_LOGE("Failed to write the abilityId");
+        return false;
+    }
+    if (!parcel.WriteUInt32Vector(bgSubModeIds_)) {
+        return false;
+    }
+    if (!parcel.WriteBool(isCombinedTaskNotification_)) {
+        return false;
+    }
+    if (!parcel.WriteInt32(combinedNotificationTaskId_)) {
+        return false;
+    }
+    if (!parcel.WriteBool(isByRequestObject_)) {
         return false;
     }
     return true;

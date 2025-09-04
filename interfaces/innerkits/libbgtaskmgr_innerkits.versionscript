@@ -21,7 +21,7 @@
     *ContinuousTaskInfo*;
     *ContinuousTaskMode*;
     *ContinuousTaskParam*;
-    *ContinuousTaskRequestInfo*;
+    *ContinuousTaskRequest*;
     *ContinuousTaskSubmode*;
     *ContinuousTaskSuspendReason*;
     *DelaySuspendInfo*;

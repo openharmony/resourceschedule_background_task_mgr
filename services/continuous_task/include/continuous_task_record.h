@@ -91,6 +91,9 @@ private:
     bool suspendState_ {false};
     int32_t suspendReason_ {0};
     int32_t suspendAudioTaskTimes_ {0};
+    bool isCombinedTaskNotification_ {false};
+    int32_t combinedNotificationTaskId_ {-1};
+    bool isByRequestObject_ {false};
     
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;
