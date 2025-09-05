@@ -185,6 +185,9 @@ private:
     bool IsExistCallback(int32_t uid, uint32_t type);
     ErrCode CheckCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> &record, bool &sendNotification);
     bool StopContinuousTaskByUserInner(const std::string &key);
+    ErrCode DetermineMatchCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> recordParam);
+    ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
+        std::string &taskInfoMapKey)
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
