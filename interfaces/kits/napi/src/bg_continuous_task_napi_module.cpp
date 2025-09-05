@@ -742,13 +742,7 @@ napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool i
     napi_is_array(env, value, &isArray);
     napi_value ret {nullptr};
     if (isArray) {
-        if (!UpdateBackgroundRunningCheckParam(env, argv, asyncCallbackInfo, isThrow)) {
-            if (asyncCallbackInfo != nullptr) {
-                delete asyncCallbackInfo;
-                asyncCallbackInfo = nullptr;
-            }
-            return WrapVoidToJS(env);
-        } else {
+        if (UpdateBackgroundRunningCheckParam(env, argv, asyncCallbackInfo, isThrow)) {
             ret = UpdateBackgroundRunningPromise(env, asyncCallbackInfo, isThrow);
         }
     } else {
