@@ -979,7 +979,7 @@ ErrCode BgContinuousTaskMgr::DetermineMatchCombinedTaskNotifacation(std::shared_
             recordParam->notificationLabel_ = record.second->GetNotificationLabel();
             record.second->combinedNotificationTaskId_ = mergeNotificationTaskId;
             return ERR_OK;
-        } 
+        }
     }
     return ret;
 }
