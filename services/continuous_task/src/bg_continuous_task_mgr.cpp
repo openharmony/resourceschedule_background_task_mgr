@@ -924,13 +924,13 @@ ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotifacation(std::shared_ptr<Conti
             return ERR_OK;
         } else if (!recordParam->isCombinedTaskNotification_) {
             BGTASK_LOGE("current task not support merge, uid: %{public}d", recordParam->uid_);
-            return ERR_BGTASK_CONTINUOUS_NOT_MERGE_CURRENT_TASK_COMBINED_FALSE;
+            return ERR_BGTASK_CONTINUOUS_NOT_MERGE_CURRENTTASK_COMBINED_FALSE;
         }
     } else {
         sendNotification = true;
         return ERR_OK;
     }
-    return DetermineMatchCombinedTaskNotifacation(recordParam);
+    return DetermineMatchCombinedTaskNotifacation(recordParam, sendNotification);
 }
 
 ErrCode BgContinuousTaskMgr::DetermineMatchCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> recordParam,
