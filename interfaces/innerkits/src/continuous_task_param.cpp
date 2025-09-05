@@ -21,28 +21,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-ContinuousTaskParam::ContinuousTaskParam(bool isNewApi, uint32_t bgModeId,
-    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent, const std::string &abilityName,
-    const sptr<IRemoteObject> abilityToken, const std::string &appName, bool isBatchApi,
-    const std::vector<uint32_t> &bgModeIds, int32_t abilityId)
-    : isNewApi_(isNewApi), bgModeId_(bgModeId), wantAgent_(wantAgent), abilityName_(abilityName),
-    abilityToken_(abilityToken), appName_(appName), isBatchApi_(isBatchApi), bgModeIds_(bgModeIds),
-    abilityId_(abilityId) {
-    if (isBatchApi_ && bgModeIds_.size() > 0) {
-        auto findNonDataTransfer = [](const auto &target) {
-            return target != BackgroundMode::DATA_TRANSFER;
-        };
-        auto iter = std::find_if(bgModeIds_.begin(), bgModeIds_.end(), findNonDataTransfer);
-        if (iter != bgModeIds_.end()) {
-            bgModeId_ = *iter;
-        } else {
-            bgModeId_ = bgModeIds_[0];
-        }
-    } else {
-        bgModeIds_.push_back(bgModeId);
-    }
-}
-
 bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
 {
     if (!parcel.ReadBool(isNewApi_)) {
@@ -93,16 +71,28 @@ bool ContinuousTaskParam::ReadFromParcel(Parcel &parcel)
         BGTASK_LOGE("Failed to read the abilityId");
         return false;
     }
+    if (!ReadFromParcelNewApi(parcel)) {
+        return false;
+    }
+    return true;
+}
+
+bool ContinuousTaskParam::ReadFromParcelNewApi(Parcel &parcel)
+{
     if (!parcel.ReadUInt32Vector(&bgSubModeIds_)) {
+        BGTASK_LOGE("Failed to read the bgSubModeIds");
         return false;
     }
     if (!parcel.ReadBool(isCombinedTaskNotification_)) {
+        BGTASK_LOGE("Failed to read the isCombinedTaskNotification");
         return false;
     }
     if (!parcel.ReadInt32(combinedNotificationTaskId_)) {
+        BGTASK_LOGE("Failed to read the combinedNotificationTaskId");
         return false;
     }
     if (!parcel.ReadBool(isByRequestObject_)) {
+        BGTASK_LOGE("Failed to read the isByRequestObject");
         return false;
     }
     return true;
@@ -214,20 +204,33 @@ bool ContinuousTaskParam::Marshalling(Parcel &parcel) const
         BGTASK_LOGE("Failed to write the abilityId");
         return false;
     }
-    if (!parcel.WriteUInt32Vector(bgSubModeIds_)) {
-        return false;
-    }
-    if (!parcel.WriteBool(isCombinedTaskNotification_)) {
-        return false;
-    }
-    if (!parcel.WriteInt32(combinedNotificationTaskId_)) {
-        return false;
-    }
-    if (!parcel.WriteBool(isByRequestObject_)) {
+    if (!MarshallingNewApi(parcel)) {
         return false;
     }
     return true;
 }
+
+bool ContinuousTaskParam::MarshallingNewApi(Parcel &parcel) const
+{
+    if (!parcel.WriteUInt32Vector(bgSubModeIds_)) {
+        BGTASK_LOGE("Failed to write the bgSubModeIds");
+        return false;
+    }
+    if (!parcel.WriteBool(isCombinedTaskNotification_)) {
+        BGTASK_LOGE("Failed to write the isCombinedTaskNotification");
+        return false;
+    }
+    if (!parcel.WriteInt32(combinedNotificationTaskId_)) {
+        BGTASK_LOGE("Failed to write the combinedNotificationTaskId");
+        return false;
+    }
+    if (!parcel.WriteBool(isByRequestObject_)) {
+        BGTASK_LOGE("Failed to write the isByRequestObject");
+        return false;
+    }
+    return true;
+}
+
 
 bool ContinuousTaskParamForInner::Marshalling(Parcel &parcel) const
 {
