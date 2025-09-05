@@ -91,6 +91,10 @@ bool ContinuousTaskParam::ReadFromParcelNewApi(Parcel &parcel)
         BGTASK_LOGE("Failed to read the combinedNotificationTaskId");
         return false;
     }
+    if (!parcel.ReadInt32(updateTaskId_)) {
+        BGTASK_LOGE("Failed to read the updateTaskId");
+        return false;
+    }
     if (!parcel.ReadBool(isByRequestObject_)) {
         BGTASK_LOGE("Failed to read the isByRequestObject");
         return false;
@@ -222,6 +226,10 @@ bool ContinuousTaskParam::MarshallingNewApi(Parcel &parcel) const
     }
     if (!parcel.WriteInt32(combinedNotificationTaskId_)) {
         BGTASK_LOGE("Failed to write the combinedNotificationTaskId");
+        return false;
+    }
+    if (!parcel.WriteInt32(updateTaskId_)) {
+        BGTASK_LOGE("Failed to write the updateTaskId");
         return false;
     }
     if (!parcel.WriteBool(isByRequestObject_)) {
