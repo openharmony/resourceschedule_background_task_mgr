@@ -875,7 +875,12 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         SetCachedBundleInfo(continuousTaskRecord->uid_, continuousTaskRecord->userId_,
             continuousTaskRecord->bundleName_, mainAbilityLabel);
     }
+    return StartBackgroundRunningSubmit(continuousTaskRecord, taskInfoMapKey);
+}
 
+ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
+    std::string &taskInfoMapKey)
+{
     ErrCode ret;
     if (continuousTaskRecord->isFromWebview_) {
         ret = CheckBgmodeTypeForInner(continuousTaskRecord->bgModeId_);
@@ -918,22 +923,29 @@ ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotifacation(std::shared_ptr<Conti
             sendNotification = true;
             return ERR_OK;
         } else if (!recordParam->isCombinedTaskNotification_) {
-            BGTASK_LOGE("current continuous task not support merge, uid: %{public}d", recordParam->uid_);
+            BGTASK_LOGE("current task not support merge, uid: %{public}d", recordParam->uid_);
             return ERR_BGTASK_CONTINUOUS_NOT_MERGE_CURRENTTASK_COMBINED_FALSE;
         }
     } else {
         sendNotification = true;
         return ERR_OK;
     }
+    return DetermineMatchCombinedTaskNotifacation(recordParam, sendNotification);
+}
+
+ErrCode BgContinuousTaskMgr::DetermineMatchCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> recordParam,
+    bool &sendNotification)
+{
+    int32_t mergeNotificationTaskId = recordParam->combinedNotificationTaskId_;
     ErrCode ret = ERR_BGTASK_CONTINUOUS_TASKID_INVALID;
     for (const auto &record : continuousTaskInfosMap_) {
         if (!record.second) {
-            BGTASK_LOGE("task is null");
+            BGTASK_LOGE("current task is null");
             continue;
         }
         if (record.second->uid_ != recordParam->uid_) {
-            BGTASK_LOGE("task uid is not equal, task uid: %{public}d, param uid: %{public}d",
-                record.second->uid_, recordParam->uid_);
+            BGTASK_LOGE("current task uid not equal, task uid: %{public}d, param uid: %{public}d", record.second->uid_,
+                recordParam->uid_);
             continue;
         }
         if (record.second->GetContinuousTaskId() != mergeNotificationTaskId) {
@@ -942,37 +954,31 @@ ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotifacation(std::shared_ptr<Conti
             continue;
         }
         if (!record.second->isCombinedTaskNotification_) {
-            ret = ERR_BGTASK_CONTINUOUS_NOT_MERGE_COMBINED_FALSE;
             BGTASK_LOGE("continuous task not support merge, taskId: %{public}d", mergeNotificationTaskId);
-            return ret;
+            return ERR_BGTASK_CONTINUOUS_NOT_MERGE_COMBINED_FALSE;
         }
         if (record.second->GetNotificationId() == -1) {
-            ret = ERR_BGTASK_CONTINUOUS_NOT_MERGE_NOTIFICATION_NOT_EXIST;
             BGTASK_LOGE("continuous task notification not exist, taskId: %{public}d", mergeNotificationTaskId);
-            return ret;
+            return ERR_BGTASK_CONTINUOUS_NOT_MERGE_NOTIFICATION_NOT_EXIST;
         }
         if (!CommonUtils::CheckModesSame(record.second->bgModeIds_, recordParam->bgModeIds_)) {
-            ret = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
             BGTASK_LOGE("continuous task modes mismatch, taskId: %{public}d", mergeNotificationTaskId);
-            return ret;
+            return ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
         }
         if (!CommonUtils::CheckModesSame(record.second->bgSubModeIds_, recordParam->bgSubModeIds_)) {
-            ret = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
             BGTASK_LOGE("continuous task submodes mismatch, taskId: %{public}d", mergeNotificationTaskId);
-            return ret;
+            return ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
         }
         if (CommonUtils::CheckExistMode(recordParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-            ret = ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION;
             BGTASK_LOGE("continuous task mode: DATA_TRANSFER not support merge, taskId: %{public}d",
                 mergeNotificationTaskId);
-            return ret;
+            return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION;
         } else {
-            ret = ERR_OK;
             sendNotification = false;
             recordParam->notificationId_ = record.second->GetNotificationId();
             recordParam->notificationLabel_ = record.second->GetNotificationLabel();
             record.second->combinedNotificationTaskId_ = mergeNotificationTaskId;
-            break;
+            return ERR_OK;
         }
     }
     return ret;

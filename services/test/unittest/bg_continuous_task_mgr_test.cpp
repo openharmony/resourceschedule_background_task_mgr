@@ -243,7 +243,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartAndUpdateBackgroundRunning_001, TestSize.
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
         "ability1", nullptr, "Entry", true, {});
     EXPECT_NE(taskParam1, nullptr);
-    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam1), (int32_t)ERR_BGTASK_INVALID_BGMODE);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam1), (int32_t)ERR_BGTASK_CHECK_TASK_PARAM);
 
     // 2 set configure mode is CONFIGURE_ALL_MODES
     bgContinuousTaskMgr_->cachedBundleInfos_.clear();
