@@ -822,8 +822,7 @@ ErrCode BgContinuousTaskMgr::UpdateTaskNotification(std::shared_ptr<ContinuousTa
     auto oldModes = record->bgModeIds_;
     if (CommonUtils::CheckExistMode(oldModes, BackgroundMode::DATA_TRANSFER) &&
         CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-        BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same mode: DATA_TRANSFER",
-            record->uid_, record->bundleName_.c_str(), record->abilityId_);
+        BGTASK_LOGI("uid: %{public}d have same mode: DATA_TRANSFER", record->uid_);
         return ERR_OK;
     }
     std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
@@ -859,8 +858,7 @@ ErrCode BgContinuousTaskMgr::UpdateTaskNotification(std::shared_ptr<ContinuousTa
     } else {
         std::string notificationText = GetNotificationText(record);
         if (notificationText.empty()) {
-            std::string modeStr = CommonUtils::ModesToString(record->bgModeIds_);
-            BGTASK_LOGE("notificationText is empty, bgmode : %{public}s", modeStr.c_str());
+            BGTASK_LOGE("notificationText is empty, uid: %{public}d", record->uid_);
         } else {
             newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
             return NotificationTools::GetInstance()->RefreshContinuousNotificationWantAndContext(bgTaskUid_,
