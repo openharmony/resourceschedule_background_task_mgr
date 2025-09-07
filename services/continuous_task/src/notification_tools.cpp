@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -178,6 +178,51 @@ WEAK_FUNC void NotificationTools::RefreshContinuousNotifications(
         }
     }
 #endif
+}
+
+WEAK_FUNC ErrCode NotificationTools::RefreshContinuousNotificationWantAndContext(int32_t serviceUid,
+    const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos,
+    const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord, bool updateContent)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
+    ErrCode ret = Notification::NotificationHelper::GetActiveNotifications(notificationRequests);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("refresh task, get all active notification fail!");
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
+    for (Notification::NotificationRequest *var : notificationRequests) {
+        if (!var) {
+            BGTASK_LOGE("NotificationRequest is null!");
+            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+        }
+        std::string label = var->GetLabel();
+        if (newPromptInfos.count(label) == 0 || var->GetCreatorUid() != serviceUid) {
+            continue;
+        }
+        var->SetWantAgent(continuousTaskRecord->GetWantAgent());
+        if (updateContent) {
+            auto &content = var->GetContent();
+            if (!content) {
+                BGTASK_LOGE("content is null!");
+                return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+            }
+            auto const &normalContent = content->GetNotificationContent();
+            if (!normalContent) {
+                BGTASK_LOGE("normalContent is null!");
+                return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+            }
+            normalContent->SetTitle(newPromptInfos.at(label).first);
+            normalContent->SetText(newPromptInfos.at(label).second);
+        }
+        ret = Notification::NotificationHelper::PublishContinuousTaskNotification(*var);
+        if (ret != ERR_OK) {
+            BGTASK_LOGE("refresh notification error, label: %{public}s", label.c_str());
+            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+        }
+    }
+#endif
+    return ERR_OK;
 }
 }
 }
