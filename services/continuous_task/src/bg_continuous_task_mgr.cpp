@@ -2376,11 +2376,12 @@ ErrCode BgContinuousTaskMgr::IsModeSupported(bool &isModeSupported)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
-        return;
+        return ERR_BGTASK_SYS_NOT_READY;
     }
 
     isModeSupported = true;
     BGTASK_LOGD("isModeSupported: %{public}d", isModeSupported);
+    return ERR_OK;
 }
 
 void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
