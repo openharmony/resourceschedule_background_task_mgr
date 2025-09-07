@@ -35,7 +35,7 @@ napi_value ContinuousTaskSuspendReasonInit(napi_env env, napi_value exports);
 napi_value ContinuousTaskModeInit(napi_env env, napi_value exports);
 napi_value ContinuousTaskSubModeInit(napi_env env, napi_value exports);
 napi_value ContinuousTaskRequestInit(napi_env env, napi_value exports);
-napi_value ContinuousTaskRequestConstructor(napi_env env, napi_value exports);
+napi_value ContinuousTaskRequestConstructor(napi_env env, napi_callback_info exports);
 static napi_value InitApi(napi_env env, napi_value exports);
 
 #ifdef __cplusplus
