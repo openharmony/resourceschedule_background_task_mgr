@@ -115,6 +115,10 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. The continuous task not update because of merged."},
     {ERR_BGTASK_CONTINUOUS_NOT_MERGE_CURRENTTASK_COMBINED_FALSE,
         "Continuous Task verification failed. Current continuous task do not support merged."},
+    {ERR_BGTASK_CONTINUOUS_UPDATE_FAIL_SAME_MODE_AND_MERGED,
+        "Continuous Task verification failed. Current continuous task support merged but the modes are inconsistent."},
+    {ERR_BGTASK_CONTINUOUS_UPDATE_NOTIFICATION_FAIL,
+        "Notification verification failed. Current continuous task refresh notification fail."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
