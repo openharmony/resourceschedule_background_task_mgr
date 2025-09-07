@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -107,6 +107,16 @@ bool ContinuousTaskCallbackInfo::GetSuspendState() const
     return suspendState_;
 }
 
+bool ContinuousTaskCallbackInfo::IsByRequestObject() const
+{
+    return isByRequestObject_ ;
+}
+
+void ContinuousTaskCallbackInfo::SetByRequestObject(const bool isByRequestObject)
+{
+    isByRequestObject_ = isByRequestObject;
+}
+
 bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
 {
     WRITE_PARCEL_WITH_RET(parcel, Uint32, typeId_, false);
@@ -123,6 +133,7 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
     WRITE_PARCEL_WITH_RET(parcel, Int32, cancelReason_, false);
     WRITE_PARCEL_WITH_RET(parcel, Bool, suspendState_, false);
     WRITE_PARCEL_WITH_RET(parcel, Int32, suspendReason_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Bool, isByRequestObject_, false);
     return true;
 }
 
@@ -154,6 +165,7 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     READ_PARCEL_WITH_RET(parcel, Int32, cancelReason_, false);
     READ_PARCEL_WITH_RET(parcel, Bool, suspendState_, false);
     READ_PARCEL_WITH_RET(parcel, Int32, suspendReason_, false);
+    READ_PARCEL_WITH_RET(parcel, Bool, isByRequestObject_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr
