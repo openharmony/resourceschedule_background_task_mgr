@@ -546,6 +546,20 @@ ErrCode BackgroundTaskMgrService::SuspendContinuousAudioTask(int32_t uid)
     return ERR_OK;
 }
 
+ErrCode BackgroundTaskMgrService::IsModeSupported(bool &isModeSupported)
+{
+    if (CheckAtomicService()) {
+        pid_t callingPid = IPCSkeleton::GetCallingPid();
+        pid_t callingUid = IPCSkeleton::GetCallingUid();
+        BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail, IsModeSupported not allowed",
+            callingUid, callingPid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+
+    BgContinuousTaskMgr::GetInstance()->IsModeSupported(isModeSupported);
+    return ERR_OK;
+}
+
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();

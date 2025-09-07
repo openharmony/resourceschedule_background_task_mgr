@@ -267,6 +267,13 @@ public:
      */
     ErrCode SuspendContinuousAudioTask(int32_t uid);
 
+    /**
+     * @brief Get is request mode supported.
+     * @param isModeSupported is request mode supported.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode IsModeSupported(bool &isModeSupported);
+
 private:
     bool GetBackgroundTaskManagerProxy();
 

@@ -54,4 +54,5 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void AVSessionNotifyUpdateNotification([in] int uid, [in] int pid, [in] boolean isPublish);
     void SetBgTaskConfig([in] String configData, [in] int sourceType);
     [oneway] void SuspendContinuousAudioTask([in] int uid);
+    void IsModeSupported([out] boolean isModeSupported);
 }
