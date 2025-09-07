@@ -66,12 +66,12 @@ napi_value ContinuousTaskRequestInit(napi_env env, napi_value exports)
     };
     napi_value cons;
     NAPI_CALL(env, napi_define_class(env, "ContinuousTaskRequest", NAPI_AUTO_LENGTH, ContinuousTaskRequestConstructor,
-        nullptr, sizeof(desc) / sizeof(napi_property_descriptor), desc, &cons));
+        nullptr, sizeof(desc) / sizeof(desc[0]), desc, &cons));
     NAPI_CALL(env, napi_set_named_property(env, exports, "ContinuousTaskRequest", cons));
     return exports;
 }
 
-napi_value ContinuousTaskRequestConstructor(napi_env env, napi_value exports)
+napi_value ContinuousTaskRequestConstructor(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr));

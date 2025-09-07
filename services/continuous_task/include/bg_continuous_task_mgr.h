@@ -93,6 +93,7 @@ public:
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid = -1);
     ErrCode AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish = false);
     ErrCode DebugContinuousTaskInner(const sptr<ContinuousTaskParamForInner> &taskParam);
+    ErrCode IsModeSupported(bool &isModeSupported);
     bool StopContinuousTaskByUser(const std::string &mapKey);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
@@ -111,7 +112,6 @@ public:
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void HandleRemoveTaskByMode(uint32_t mode);
-    void IsModeSupported(bool &isModeSupported);
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);

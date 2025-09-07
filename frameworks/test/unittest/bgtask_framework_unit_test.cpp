@@ -927,7 +927,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, SuspendContinuousAudioTask_001, TestSize.Level
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(1),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
-s
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(1),
         ERR_OK);

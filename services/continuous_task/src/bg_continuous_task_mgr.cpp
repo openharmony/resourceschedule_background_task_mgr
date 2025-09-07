@@ -2372,7 +2372,7 @@ void BgContinuousTaskMgr::HandleRemoveTaskByMode(uint32_t mode)
     }
 }
 
-void BgContinuousTaskMgr::IsModeSupported(bool &isModeSupported)
+ErrCode BgContinuousTaskMgr::IsModeSupported(bool &isModeSupported)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
