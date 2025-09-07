@@ -90,7 +90,7 @@ static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
-static constexpr int32_t ILLELG_NOTIFICATION_ID = -2;
+static constexpr int32_t ILLEGAL_NOTIFICATION_ID = -2;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
@@ -1005,7 +1005,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
         }
     }
     bool sendNotification = true;
-    ret = CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification);
+    ret = CheckCombinedTaskNotification(continuousTaskRecord, sendNotification);
     if (ret != ERR_OK) {
         return ret;
     }
@@ -1022,7 +1022,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
     return RefreshTaskRecord();
 }
 
-ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> &recordParam,
+ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotification(std::shared_ptr<ContinuousTaskRecord> &recordParam,
     bool &sendNotification)
 {
     // 无需合并，新申请
@@ -1518,7 +1518,7 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
         return;
     }
     std::string notificationLabel = "default";
-    int32_t notificationId = ILLELG_NOTIFICATION_ID;
+    int32_t notificationId = ILLEGAL_NOTIFICATION_ID;
     std::vector<int32_t> notificationOldIds {};
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
@@ -1530,7 +1530,7 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
         iter->second->suspendState_ = false;
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_ACTIVE);
         if (iter->second->notificationId_ != -1) {
-            if (notificationId == ILLELG_NOTIFICATION_ID ||
+            if (notificationId == ILLEGAL_NOTIFICATION_ID ||
                 CommonUtils::CheckExistNotification(notificationOldIds, iter->second->notificationId_)) {
                 notificationOldIds.push_back(iter->second->notificationId_);
                 SendContinuousTaskNotification(iter->second);
