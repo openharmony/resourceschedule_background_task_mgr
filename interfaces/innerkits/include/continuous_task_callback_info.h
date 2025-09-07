@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,10 +28,11 @@ public:
     ContinuousTaskCallbackInfo();
     ContinuousTaskCallbackInfo(uint32_t typeId, int32_t creatorUid,
         pid_t creatorPid, std::string abilityName, bool isFromWebview = false, bool isBatchApi = false,
-        const std::vector<uint32_t> &typeIds = {}, int32_t abilityId = -1, uint64_t tokenId = 0)
+        const std::vector<uint32_t> &typeIds = {}, int32_t abilityId = -1, uint64_t tokenId = 0,
+        bool isByRequestObject = false)
         : typeId_(typeId), creatorUid_(creatorUid), creatorPid_(creatorPid), abilityName_(abilityName),
           isFromWebview_(isFromWebview), isBatchApi_(isBatchApi), typeIds_(typeIds), abilityId_(abilityId),
-          tokenId_(tokenId) {}
+          tokenId_(tokenId), isByRequestObject_(isByRequestObject) {}
 
     /**
      * @brief Get the id of type.
@@ -153,6 +154,20 @@ public:
     void SetSuspendState(const bool suspendState);
 
     /**
+     * @brief By new api 21 operation.
+     *
+     * @return True if success, else false.
+     */
+    bool IsByRequestObject() const;
+
+    /**
+     * @brief Set the operation new api.
+     *
+     * @param suspendState The by request operation.
+     */
+    void SetByRequestObject(const bool isByRequestObject);
+
+    /**
      * @brief Marshals a purpose into a parcel.
      *
      * @param parcel Indicates the parcel object for marshalling.
@@ -178,6 +193,7 @@ private:
     int32_t cancelReason_ {-1};
     bool suspendState_ {false};
     int32_t suspendReason_ {-1};
+    bool isByRequestObject_ {false};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
