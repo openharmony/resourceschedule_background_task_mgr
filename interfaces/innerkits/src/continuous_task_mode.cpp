@@ -71,7 +71,7 @@ std::string ContinuousTaskMode::GetContinuousTaskModeStr(uint32_t mode)
 {
     auto iter = PARAM_CONTINUOUS_TASK_MODE_STR_MAP.find(mode);
     if (iter != PARAM_CONTINUOUS_TASK_MODE_STR_MAP.end()) {
-        return iter->second.c_str();
+        return iter->second;
     }
     return "default";
 }

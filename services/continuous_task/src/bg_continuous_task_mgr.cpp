@@ -90,7 +90,7 @@ static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
-static constexpr int32_t ILLELG_NOTIFICATION_ID = -2;
+static constexpr int32_t ILLEGAL_NOTIFICATION_ID = -2;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
@@ -776,18 +776,125 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunning(const sptr<ContinuousTaskPa
 
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::UpdateBackgroundRunningInner");
-    std::string taskInfoMapKey = std::to_string(callingUid) + SEPARATOR + taskParam->abilityName_ + SEPARATOR +
-        std::to_string(taskParam->abilityId_);
-    auto self = shared_from_this();
-    handler_->PostSyncTask([self, &taskInfoMapKey, &result, taskParam]() mutable {
-        if (!self) {
-            BGTASK_LOGE("self is null");
-            result = ERR_BGTASK_SERVICE_INNER_ERROR;
-            return;
-        }
-        result = self->UpdateBackgroundRunningInner(taskInfoMapKey, taskParam);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
+    if (taskParam->isByRequestObject_) {
+        // 根据任务id更新
+        handler_->PostSyncTask([this, callingUid, taskParam, &result]() {
+            result = this->UpdateBackgroundRunningByTaskIdInner(callingUid, taskParam);
+            }, AppExecFwk::EventQueue::Priority::HIGH);
+    } else {
+        std::string taskInfoMapKey = std::to_string(callingUid) + SEPARATOR + taskParam->abilityName_ + SEPARATOR +
+            std::to_string(taskParam->abilityId_);
+        auto self = shared_from_this();
+        handler_->PostSyncTask([self, &taskInfoMapKey, &result, taskParam]() mutable {
+            if (!self) {
+                BGTASK_LOGE("self is null");
+                result = ERR_BGTASK_SERVICE_INNER_ERROR;
+                return;
+            }
+            result = self->UpdateBackgroundRunningInner(taskInfoMapKey, taskParam);
+            }, AppExecFwk::EventQueue::Priority::HIGH);
+    }
     return result;
+}
+
+ErrCode BgContinuousTaskMgr::UpdateTaskInfo(std::shared_ptr<ContinuousTaskRecord> record,
+    const sptr<ContinuousTaskParam> &taskParam)
+{
+    ErrCode ret = UpdateTaskNotification(record, taskParam);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    record->isCombinedTaskNotification_ = taskParam->isCombinedTaskNotification_;
+    if (record->suspendState_) {
+        std::string taskInfoMapKey = std::to_string(record->uid_) + SEPARATOR + record->abilityName_ + SEPARATOR +
+            std::to_string(record->abilityId_) + SEPARATOR + CommonUtils::ModesToString(record->bgModeIds_);
+        HandleActiveContinuousTask(record->uid_, record->pid_, taskInfoMapKey);
+    }
+    OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_UPDATE);
+    taskParam->notificationId_ = record->GetNotificationId();
+    taskParam->continuousTaskId_ = record->GetContinuousTaskId();
+    return RefreshTaskRecord();
+}
+
+ErrCode BgContinuousTaskMgr::UpdateTaskNotification(std::shared_ptr<ContinuousTaskRecord> record,
+    const sptr<ContinuousTaskParam> &taskParam)
+{
+    auto oldModes = record->bgModeIds_;
+    if (CommonUtils::CheckExistMode(oldModes, BackgroundMode::DATA_TRANSFER) &&
+        CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+        BGTASK_LOGI("uid: %{public}d have same mode: DATA_TRANSFER", record->uid_);
+        return ERR_OK;
+    }
+    std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
+    if (mainAbilityLabel == "") {
+        BGTASK_LOGE("uid: %{public}d get main ability label or notification text fail.", record->uid_);
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
+    if (!record->isCombinedTaskNotification_) {
+        record->bgModeId_ = taskParam->bgModeId_;
+        record->bgModeIds_ = taskParam->bgModeIds_;
+        record->bgSubModeIds_ = taskParam->bgSubModeIds_;
+    }
+    record->wantAgent_ = taskParam->wantAgent_;
+    if (record->wantAgent_ != nullptr && record->wantAgent_->GetPendingWant() != nullptr) {
+        auto target = record->wantAgent_->GetPendingWant()->GetTarget();
+        auto want = record->wantAgent_->GetPendingWant()->GetWant(target);
+        if (want != nullptr) {
+            std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+            info->bundleName_ = want->GetOperation().GetBundleName();
+            info->abilityName_ = want->GetOperation().GetAbilityName();
+            record->wantAgentInfo_ = info;
+        }
+    }
+    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
+    if (record->isCombinedTaskNotification_) {
+        if (CommonUtils::CheckModesSame(oldModes, taskParam->bgModeIds_)) {
+            newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, ""));
+            return NotificationTools::GetInstance()->RefreshContinuousNotificationWantAndContext(bgTaskUid_,
+                newPromptInfos, record);
+        } else {
+            return ERR_BGTASK_CONTINUOUS_UPDATE_FAIL_SAME_MODE_AND_MERGED;
+        }
+    } else {
+        std::string notificationText = GetNotificationText(record);
+        if (notificationText.empty()) {
+            BGTASK_LOGE("notificationText is empty, uid: %{public}d", record->uid_);
+        } else {
+            newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
+            return NotificationTools::GetInstance()->RefreshContinuousNotificationWantAndContext(bgTaskUid_,
+                newPromptInfos, record, true);
+        }
+    }
+    return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
+    const sptr<ContinuousTaskParam> &taskParam)
+{
+    int32_t continuousTaskId = taskParam->updateTaskId_;
+    if (continuousTaskId < 0) {
+        BGTASK_LOGE("update task fail, taskId: %{public}d", taskParam->updateTaskId_);
+        return ERR_BGTASK_CONTINUOUS_TASKID_INVALID;
+    }
+    auto findTask = [continuousTaskId](const auto &target) {
+        return continuousTaskId == target.second->continuousTaskId_ && target.second->isByRequestObject_;
+    };
+    auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findTask);
+    if (findTaskIter == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGE("uid: %{public}d not have task, taskId: %{public}d", uid, continuousTaskId);
+        return ERR_BGTASK_OBJECT_NOT_EXIST;
+    }
+    auto record = findTaskIter->second;
+    uint32_t configuredBgMode = GetBackgroundModeInfo(uid, record->abilityName_);
+    ErrCode ret = ERR_OK;
+    for (auto it = taskParam->bgModeIds_.begin(); it != taskParam->bgModeIds_.end(); it++) {
+        ret = CheckBgmodeType(configuredBgMode, *it, true, record);
+        if (ret != ERR_OK) {
+            BGTASK_LOGE("CheckBgmodeType error, mode: %{public}u, apply mode: %{public}u.", configuredBgMode, *it);
+            return ret;
+        }
+    }
+    return UpdateTaskInfo(record, taskParam);
 }
 
 ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
@@ -896,7 +1003,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
         }
     }
     bool sendNotification = true;
-    ret = CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification);
+    ret = CheckCombinedTaskNotification(continuousTaskRecord, sendNotification);
     if (ret != ERR_OK) {
         return ret;
     }
@@ -913,7 +1020,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
     return RefreshTaskRecord();
 }
 
-ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> &recordParam,
+ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotification(std::shared_ptr<ContinuousTaskRecord> &recordParam,
     bool &sendNotification)
 {
     // 无需合并，新申请
@@ -1126,8 +1233,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     if (continuousTaskId != -1) {
         // 新街口取消
         auto findTask = [continuousTaskId, uid, abilityName, abilityId](const auto &target) {
-            return continuousTaskId == target.second->continuousTaskId_ && target.second->uid_ == uid &&
-                target.second->abilityName_ == abilityName && target.second->abilityId_ == abilityId;
+            return continuousTaskId == target.second->continuousTaskId_ && target.second->isByRequestObject_;
         };
         auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(),
             findTask);
@@ -1410,7 +1516,7 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
         return;
     }
     std::string notificationLabel = "default";
-    int32_t notificationId = ILLELG_NOTIFICATION_ID;
+    int32_t notificationId = ILLEGAL_NOTIFICATION_ID;
     std::vector<int32_t> notificationOldIds {};
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
@@ -1422,7 +1528,7 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
         iter->second->suspendState_ = false;
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_ACTIVE);
         if (iter->second->notificationId_ != -1) {
-            if (notificationId == ILLELG_NOTIFICATION_ID ||
+            if (notificationId == ILLEGAL_NOTIFICATION_ID ||
                 CommonUtils::CheckExistNotification(notificationOldIds, iter->second->notificationId_)) {
                 notificationOldIds.push_back(iter->second->notificationId_);
                 SendContinuousTaskNotification(iter->second);
@@ -2079,6 +2185,7 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
     continuousTaskCallbackInfo->SetCancelReason(continuousTaskInfo->reason_);
     continuousTaskCallbackInfo->SetSuspendState(continuousTaskInfo->suspendState_);
     continuousTaskCallbackInfo->SetSuspendReason(continuousTaskInfo->suspendReason_);
+    continuousTaskCallbackInfo->SetByRequestObject(continuousTaskInfo->isByRequestObject_);
     NotifySubscribers(changeEventType, continuousTaskCallbackInfo);
     ReportHisysEvent(changeEventType, continuousTaskInfo);
 }

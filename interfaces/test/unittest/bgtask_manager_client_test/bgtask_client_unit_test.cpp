@@ -623,6 +623,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
         new ContinuousTaskCallbackInfo(1, 1, 1, "test"));
     info2->SetContinuousTaskId(1);
     info2->SetCancelReason(1);
+    info2->SetByRequestObject(true);
     Parcel parcel = Parcel();
     info2->Marshalling(parcel);
     sptr<ContinuousTaskCallbackInfo> info3 = sptr<ContinuousTaskCallbackInfo>(
@@ -637,6 +638,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetCancelReason(), 1);
     EXPECT_EQ(info3->GetSuspendState(), false);
     EXPECT_EQ(info3->GetSuspendReason(), -1);
+    EXPECT_EQ(info3->IsByRequestObject(), true);
 }
 
 /**

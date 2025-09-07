@@ -257,7 +257,7 @@ void UpdateBackgroundRunningByRequestExecuteCB(napi_env env, void *data)
         "", true, continuousTaskModes, asyncCallbackInfo->abilityContext->GetAbilityRecordId());
     taskParam.isByRequestObject_ = true;
     taskParam.isCombinedTaskNotification_ = asyncCallbackInfo->request->IsCombinedTaskNotification();
-    taskParam.combinedNotificationTaskId_ = asyncCallbackInfo->request->GetContinuousTaskId();
+    taskParam.updateTaskId_ = asyncCallbackInfo->request->GetContinuousTaskId();
     taskParam.bgSubModeIds_ = asyncCallbackInfo->request->GetContinuousTaskSubmodes();
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam);
     asyncCallbackInfo->bgModes = continuousTaskModes;
@@ -425,7 +425,9 @@ napi_value UpdateBackgroundRunningByRequestPromise(napi_env env, AsyncCallbackIn
         BGTASK_LOGE("param is nullptr");
         return nullptr;
     }
-    if (!CheckBackgroundMode(env, asyncCallbackInfo, isThrow)) {
+    if (asyncCallbackInfo->request->GetContinuousTaskId() < 0) {
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_TASKID_INVALID, true);
+        asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_TASKID_INVALID;
         return nullptr;
     }
     napi_value resourceName;
@@ -746,7 +748,9 @@ napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool i
             ret = UpdateBackgroundRunningPromise(env, asyncCallbackInfo, isThrow);
         }
     } else {
-        BGTASK_LOGE("UpdateBackgroundRunningByRequestPromise");
+        if (StartBackgroundRunningCheckRequest(env, argv, isThrow, asyncCallbackInfo)) {
+            ret = UpdateBackgroundRunningByRequestPromise(env, asyncCallbackInfo, isThrow);
+        }
     }
     callbackPtr.release();
     if (ret == nullptr) {

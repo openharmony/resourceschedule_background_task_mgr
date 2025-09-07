@@ -1434,7 +1434,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_058, TestSize.Level1)
 
 /**
  * @tc.name: BgTaskManagerUnitTest_059
- * @tc.desc: test CheckCombinedTaskNotifacation.
+ * @tc.desc: test CheckCombinedTaskNotification.
  * @tc.type: FUNC
  * @tc.require: issueICUX92
  */
@@ -1448,13 +1448,13 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_059, TestSize.Level1)
     continuousTaskRecord->isByRequestObject_ = true;
     continuousTaskRecord->bgModeIds_.push_back(continuousTaskRecord->bgModeId_);
     // 不需要合并
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification), ERR_OK);
 
     continuousTaskRecord->combinedNotificationTaskId_ = TEST_NUM_ONE;
     continuousTaskRecord->isCombinedTaskNotification_ = true;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = nullptr;
     // 需要合并，但没有任务
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification),
         ERR_BGTASK_CONTINUOUS_TASKID_INVALID);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
@@ -1464,19 +1464,19 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_059, TestSize.Level1)
     continuousTaskRecord2->bgModeIds_.push_back(continuousTaskRecord->bgModeId_);
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
     // 需要合并，任务uid不相等
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification),
         ERR_BGTASK_CONTINUOUS_TASKID_INVALID);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     continuousTaskRecord2->continuousTaskId_ = TEST_NUM_ONE + 1;
     // 需要合并，任务id不相等
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification),
         ERR_BGTASK_CONTINUOUS_TASKID_INVALID);
 }
 
 /**
  * @tc.name: BgTaskManagerUnitTest_060
- * @tc.desc: test CheckCombinedTaskNotifacation.
+ * @tc.desc: test CheckCombinedTaskNotification.
  * @tc.type: FUNC
  * @tc.require: issueICUX92
  */
@@ -1495,14 +1495,14 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_060, TestSize.Level1)
     continuousTaskRecord2->isCombinedTaskNotification_ = false;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
     // 需要合并，任务不支持合并
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification),
         ERR_BGTASK_CONTINUOUS_NOT_MERGE_COMBINED_FALSE);
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     continuousTaskRecord2->isCombinedTaskNotification_ = true;
     continuousTaskRecord2->notificationId_ = -1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
     // 需要合并，任务没有通知
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification),
         ERR_BGTASK_CONTINUOUS_NOT_MERGE_NOTIFICATION_NOT_EXIST);
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     continuousTaskRecord->bgModeId_ = 2;
@@ -1514,7 +1514,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_060, TestSize.Level1)
     continuousTaskRecord2->notificationId_ = 1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
     // 需要合并，任务主类型不相等
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification),
         ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH);
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     continuousTaskRecord->bgSubModeIds_.clear();
@@ -1523,13 +1523,13 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_060, TestSize.Level1)
     continuousTaskRecord2->bgSubModeIds_.push_back(3);
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
     // 需要合并，任务子类型不相等
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification),
         ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH);
 }
 
 /**
  * @tc.name: BgTaskManagerUnitTest_061
- * @tc.desc: test CheckCombinedTaskNotifacation.
+ * @tc.desc: test CheckCombinedTaskNotification.
  * @tc.type: FUNC
  * @tc.require: issueICUX92
  */
@@ -1560,7 +1560,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_061, TestSize.Level1)
     continuousTaskRecord2->notificationId_ = 1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
     // 需要合并，任务类型包含上传下载，不能合并
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification),
         ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
@@ -1576,7 +1576,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_061, TestSize.Level1)
     continuousTaskRecord2->bgSubModeIds_.clear();
     continuousTaskRecord2->bgSubModeIds_.push_back(1);
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotifacation(continuousTaskRecord, sendNotification), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification), ERR_OK);
 }
 
 /**
@@ -1588,6 +1588,164 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_061, TestSize.Level1)
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_062, TestSize.Level1)
 {
     EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunning("ability1", 1, 1), ERR_BGTASK_OBJECT_NOT_EXIST);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_063
+ * @tc.desc: update background runnging use api 21 api test.
+ * @tc.type: FUNC
+ * @tc.require: issueICWHAG
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_063, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 1,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1}, 1);
+    taskParam->isByRequestObject_ = true;
+    taskParam->bgModeId_ = 1;
+    taskParam->updateTaskId_ = -1;
+    taskParam->bgModeIds_.clear();
+    taskParam->bgModeIds_.push_back(1);
+    taskParam->bgSubModeIds_.clear();
+    taskParam->bgSubModeIds_.push_back(3);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    // 更新的任务ID为-1， 非法参数
+    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam), ERR_BGTASK_CONTINUOUS_TASKID_INVALID);
+
+    taskParam->updateTaskId_ = 1;
+    // 更新的任务ID为1， 但没有对应任务
+    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam), ERR_BGTASK_OBJECT_NOT_EXIST);
+
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord->continuousTaskId_ = TEST_NUM_ONE;
+    continuousTaskRecord->isByRequestObject_ = true;
+    continuousTaskRecord->abilityId_ = 1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord;
+    // 更新的任务ID为1， 有对应任务，但传入的任务类型没有配置
+    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam), ERR_BGTASK_INVALID_BGMODE);
+
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+    
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    continuousTaskRecord->bgModeId_ = 1;
+    continuousTaskRecord->bgModeIds_.clear();
+    continuousTaskRecord->bgModeIds_.push_back(1);
+    continuousTaskRecord->bgSubModeIds_.clear();
+    continuousTaskRecord->bgSubModeIds_.push_back(3);
+    continuousTaskRecord->abilityName_ = "ability1";
+    continuousTaskRecord->bundleName_ = "Entry";
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord;
+    // 前后任务包含上传下载，不做更新
+    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam), ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_064
+ * @tc.desc: update background runnging use api 21 api test.
+ * @tc.type: FUNC
+ * @tc.require: issueICWHAG
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_064, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 1,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1}, 1);
+    taskParam->isByRequestObject_ = true;
+    taskParam->bgModeId_ = 1;
+    taskParam->bgModeIds_.clear();
+    taskParam->bgModeIds_.push_back(4);
+    taskParam->bgSubModeIds_.clear();
+    taskParam->bgSubModeIds_.push_back(1);
+    taskParam->updateTaskId_ = 1;
+    
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord->continuousTaskId_ = TEST_NUM_ONE;
+    continuousTaskRecord->isByRequestObject_ = true;
+    continuousTaskRecord->abilityId_ = 1;
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    continuousTaskRecord->bgModeId_ = 4;
+    continuousTaskRecord->bgModeIds_.clear();
+    continuousTaskRecord->bgModeIds_.push_back(4);
+    continuousTaskRecord->bgSubModeIds_.clear();
+    continuousTaskRecord->bgSubModeIds_.push_back(1);
+    continuousTaskRecord->isCombinedTaskNotification_ = false;
+    std::shared_ptr<WantAgentInfo> wantInfo = std::make_shared<WantAgentInfo>();
+    wantInfo->bundleName_ = "wantAgentBundleName";
+    wantInfo->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord->wantAgentInfo_ = wantInfo;
+    continuousTaskRecord->abilityName_ = "ability1";
+    continuousTaskRecord->bundleName_ = "Entry";
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord;
+    // 需要的任务没有合并，更新成功
+    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam), ERR_OK);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    continuousTaskRecord->isCombinedTaskNotification_ = true;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord;
+     // 需要的任务有合并，前后类型一致，更新成功
+    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam), ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_065
+ * @tc.desc: update background runnging use api 21 api test.
+ * @tc.type: FUNC
+ * @tc.require: issueICWHAG
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_065, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 5,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {5}, 1);
+    taskParam->isByRequestObject_ = true;
+    taskParam->bgModeId_ = 5;
+    taskParam->bgModeIds_.clear();
+    taskParam->bgModeIds_.push_back(5);
+    taskParam->bgSubModeIds_.clear();
+    taskParam->bgSubModeIds_.push_back(1);
+    taskParam->updateTaskId_ = 1;
+    
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord->continuousTaskId_ = TEST_NUM_ONE;
+    continuousTaskRecord->isByRequestObject_ = true;
+    continuousTaskRecord->abilityId_ = 1;
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    continuousTaskRecord->bgModeId_ = 4;
+    continuousTaskRecord->bgModeIds_.clear();
+    continuousTaskRecord->bgModeIds_.push_back(4);
+    continuousTaskRecord->bgSubModeIds_.clear();
+    continuousTaskRecord->bgSubModeIds_.push_back(1);
+    continuousTaskRecord->isCombinedTaskNotification_ = true;
+    std::shared_ptr<WantAgentInfo> wantInfo = std::make_shared<WantAgentInfo>();
+    wantInfo->bundleName_ = "wantAgentBundleName";
+    wantInfo->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord->wantAgentInfo_ = wantInfo;
+    continuousTaskRecord->abilityName_ = "ability1";
+    continuousTaskRecord->bundleName_ = "Entry";
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord;
+    // 需要的任务有合并，前后类型不一致，返回失败
+    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam),
+        ERR_BGTASK_CONTINUOUS_UPDATE_FAIL_SAME_MODE_AND_MERGED);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
