@@ -116,6 +116,10 @@ private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
         const sptr<ContinuousTaskParam> &taskParam);
+    ErrCode UpdateTaskInfo(std::shared_ptr<ContinuousTaskRecord> record, const sptr<ContinuousTaskParam> &taskParam);
+    ErrCode UpdateTaskNotification(std::shared_ptr<ContinuousTaskRecord> record,
+        const sptr<ContinuousTaskParam> &taskParam);
+    ErrCode UpdateBackgroundRunningByTaskIdInner(int32_t uid, const sptr<ContinuousTaskParam> &taskParam);
     ErrCode StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName, int32_t abilityId,
         int32_t continuousTaskId = -1);
@@ -183,7 +187,7 @@ private:
     bool CanNotifyHap(const std::shared_ptr<SubscriberInfo> subscriberInfo,
         const std::shared_ptr<ContinuousTaskCallbackInfo> &callbackInfo);
     bool IsExistCallback(int32_t uid, uint32_t type);
-    ErrCode CheckCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> &record, bool &sendNotification);
+    ErrCode CheckCombinedTaskNotification(std::shared_ptr<ContinuousTaskRecord> &record, bool &sendNotification);
     bool StopContinuousTaskByUserInner(const std::string &key);
     ErrCode DetermineMatchCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> recordParam,
         bool &sendNotification);
