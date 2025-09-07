@@ -189,12 +189,12 @@ WEAK_FUNC ErrCode NotificationTools::RefreshContinuousNotificationWantAndContext
     ErrCode ret = Notification::NotificationHelper::GetActiveNotifications(notificationRequests);
     if (ret != ERR_OK) {
         BGTASK_LOGE("refresh task, get all active notification fail!");
-        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+        return ERR_BGTASK_CONTINUOUS_UPDATE_NOTIFICATION_FAIL;
     }
     for (Notification::NotificationRequest *var : notificationRequests) {
         if (!var) {
             BGTASK_LOGE("NotificationRequest is null!");
-            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+            return ERR_BGTASK_CONTINUOUS_UPDATE_NOTIFICATION_FAIL;
         }
         std::string label = var->GetLabel();
         if (newPromptInfos.count(label) == 0 || var->GetCreatorUid() != serviceUid) {
@@ -205,12 +205,12 @@ WEAK_FUNC ErrCode NotificationTools::RefreshContinuousNotificationWantAndContext
             auto &content = var->GetContent();
             if (!content) {
                 BGTASK_LOGE("content is null!");
-                return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+                return ERR_BGTASK_CONTINUOUS_UPDATE_NOTIFICATION_FAIL;
             }
             auto const &normalContent = content->GetNotificationContent();
             if (!normalContent) {
                 BGTASK_LOGE("normalContent is null!");
-                return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+                return ERR_BGTASK_CONTINUOUS_UPDATE_NOTIFICATION_FAIL;
             }
             normalContent->SetTitle(newPromptInfos.at(label).first);
             normalContent->SetText(newPromptInfos.at(label).second);
@@ -218,7 +218,7 @@ WEAK_FUNC ErrCode NotificationTools::RefreshContinuousNotificationWantAndContext
         ret = Notification::NotificationHelper::PublishContinuousTaskNotification(*var);
         if (ret != ERR_OK) {
             BGTASK_LOGE("refresh notification error, label: %{public}s", label.c_str());
-            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+            return ERR_BGTASK_CONTINUOUS_UPDATE_NOTIFICATION_FAIL;
         }
     }
 #endif
