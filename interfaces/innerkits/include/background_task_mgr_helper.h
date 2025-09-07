@@ -211,6 +211,12 @@ public:
      */
     static ErrCode SuspendContinuousAudioTask(int32_t uid);
 
+    /**
+     * @brief Get is request mode supported.
+     * @param isModeSupported is request mode supported.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode IsModeSupported(bool &isModeSupported);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

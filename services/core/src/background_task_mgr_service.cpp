@@ -546,6 +546,12 @@ ErrCode BackgroundTaskMgrService::SuspendContinuousAudioTask(int32_t uid)
     return ERR_OK;
 }
 
+ErrCode BackgroundTaskMgrService::IsModeSupported(bool &isModeSupported)
+{
+    BgContinuousTaskMgr::GetInstance()->IsModeSupported(isModeSupported);
+    return ERR_OK;
+}
+
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();

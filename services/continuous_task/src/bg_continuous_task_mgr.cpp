@@ -2372,6 +2372,17 @@ void BgContinuousTaskMgr::HandleRemoveTaskByMode(uint32_t mode)
     }
 }
 
+void BgContinuousTaskMgr::IsModeSupported(bool &isModeSupported)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+
+    isModeSupported = true;
+    BGTASK_LOGD("isModeSupported: %{public}d", isModeSupported);
+}
+
 void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
     if (!isSysReady_.load()) {

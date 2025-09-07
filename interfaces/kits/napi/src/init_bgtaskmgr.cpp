@@ -59,6 +59,25 @@ napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
     return exports;
 }
 
+napi_value ContinuousTaskRequestInit(napi_env env, napi_value exports)
+{
+    napi_property_descriptor desc[] = {
+        DECLARE_NAPI_FUNCTION("isModeSupported", IsModeSupported),
+    };
+    napi_value cons;
+    NAPI_CALL(env, napi_define_class(env, "ContinuousTaskRequest", NAPI_AUTO_LENGTH, ContinuousTaskRequestConstructor,
+        nullptr, sizeof(desc) / sizeof(napi_property_descriptor), desc, &cons));
+    NAPI_CALL(env, napi_set_named_property(env, exports, "ContinuousTaskRequest", cons));
+    return exports;
+}
+
+napi_value ContinuousTaskRequestConstructor(napi_env env, napi_value exports)
+{
+    napi_value thisVar = nullptr;
+    NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr));
+    return thisVar;
+}
+
 void SetNamedPropertyByInteger(napi_env env, napi_value dstObj, int32_t objName, const char *propName)
 {
     napi_value prop = nullptr;
@@ -253,6 +272,7 @@ static napi_value InitApi(napi_env env, napi_value exports)
     ContinuousTaskSuspendReasonInit(env, exports);
     ContinuousTaskModeInit(env, exports);
     ContinuousTaskSubModeInit(env, exports);
+    ContinuousTaskRequestInit(env, exports);
     return exports;
 }
 

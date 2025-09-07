@@ -927,9 +927,28 @@ HWTEST_F(BgTaskFrameworkUnitTest, SuspendContinuousAudioTask_001, TestSize.Level
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(1),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
-
+s
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(1),
+        ERR_OK);
+}
+
+/**
+ * @tc.name: IsModeSupported_001
+ * @tc.desc: test IsModeSupported.
+ * @tc.type: FUNC
+ * @tc.require: issueICWQV5
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, IsModeSupported_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    bool isModeSupported = false;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->IsModeSupported(isModeSupported),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->IsModeSupported(isModeSupported),
         ERR_OK);
 }
 }

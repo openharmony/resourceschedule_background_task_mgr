@@ -667,5 +667,25 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_020
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
     EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousAudioTask(1), ERR_INVALID_DATA);
 }
+
+/**
+ * @tc.name: BackgroundTaskMgrProxyAbnormalTest_021
+ * @tc.desc: test IsModeSupported.
+ * @tc.type: FUNC
+ * @tc.require: issueICWQV5
+ */
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_021, TestSize.Level2)
+{
+    BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
+    bool isModeSupported = false;
+    EXPECT_EQ(backgroundTaskMgrProxy.IsModeSupported(isModeSupported), ERR_INVALID_VALUE);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.IsModeSupported(isModeSupported), ERR_INVALID_DATA);
+}
+
 }
 }

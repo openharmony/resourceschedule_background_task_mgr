@@ -1384,6 +1384,29 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     return ret;
 }
 
+napi_value IsModeSupported(napi_env env, napi_callback_info info)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::IsModeSupported");
+    if (env == nullptr) {
+        BGTASK_LOGE("env param invaild.");
+        return WrapVoidToJS(env);
+    }
+
+    bool isModeSupported = false;
+    ErrCode errCode = BackgroundTaskMgrHelper::IsModeSupported(isModeSupported);
+    if (errCode != ERR_OK) {
+        BGTASK_LOGE("IsModeSupported failed.");
+        Common::HandleErrCode(env, errCode, true);
+        return nullptr;
+    }
+
+    napi_value ret {nullptr};
+    napi_get_boolean(env, isModeSupported, &ret);
+
+    return ret;
+}
+
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
 {
     return StartBackgroundRunning(env, info, false);
