@@ -680,7 +680,6 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_021
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
     ContinuousTaskParam taskParam = ContinuousTaskParam();
-    bool isModeSupported = false;
     EXPECT_EQ(backgroundTaskMgrProxy.IsModeSupported(taskParam), ERR_INVALID_VALUE);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
