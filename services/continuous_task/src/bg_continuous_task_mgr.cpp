@@ -1232,8 +1232,8 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     BgTaskHiTraceChain traceChain(__func__);
     if (continuousTaskId != -1) {
         // 新街口取消
-        auto findTask = [continuousTaskId, uid, abilityName, abilityId](const auto &target) {
-            return continuousTaskId == target.second->continuousTaskId_ && target.second->isByRequestObject_;
+        auto findTask = [continuousTaskId](const auto &target) {
+            return continuousTaskId == target.second->continuousTaskId_;
         };
         auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(),
             findTask);
@@ -1243,13 +1243,17 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
         }
         return StopBackgroundRunningByTask(findTaskIter->second);
     } else {
-        std::string mapKey = std::to_string(uid) + SEPARATOR + abilityName + SEPARATOR + std::to_string(abilityId);
-        auto iter = continuousTaskInfosMap_.find(mapKey);
-        if (iter == continuousTaskInfosMap_.end()) {
-            BGTASK_LOGD("%{public}s continuous task not exists", mapKey.c_str());
+        auto findTask = [uid, abilityName, abilityId](const auto &target) {
+            return uid == target.second->uid_ && abilityName == target.second->abilityName_
+                && abilityId == target.second->abilityId_;
+        };
+        auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(),
+            findTask);
+        if (findTaskIter == continuousTaskInfosMap_.end()) {
+            BGTASK_LOGE("uid: %{public}d not have task, taskId: %{public}d", uid);
             return ERR_BGTASK_OBJECT_NOT_EXIST;
         }
-        return StopBackgroundRunningByTask(iter->second);
+        return StopBackgroundRunningByContext(uid, abilityName, abilityId);
     }
 }
 
