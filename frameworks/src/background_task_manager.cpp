@@ -472,12 +472,12 @@ ErrCode BackgroundTaskManager::SuspendContinuousAudioTask(int32_t uid)
     return proxy_->SuspendContinuousAudioTask(uid);
 }
 
-ErrCode BackgroundTaskManager::IsModeSupported(bool &isModeSupported)
+ErrCode BackgroundTaskManager::IsModeSupported(ContinuousTaskParam &taskParam)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return proxy_->IsModeSupported(isModeSupported);
+    return proxy_->IsModeSupported(taskParam);
 }
 
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)

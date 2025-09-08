@@ -216,7 +216,7 @@ public:
      * @param isModeSupported is request mode supported.
      * @return Returns ERR_OK if success, else failure.
      */
-    static ErrCode IsModeSupported(bool &isModeSupported);
+    static ErrCode IsModeSupported(ContinuousTaskParam &taskParam);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

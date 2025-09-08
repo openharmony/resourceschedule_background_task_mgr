@@ -2372,14 +2372,14 @@ void BgContinuousTaskMgr::HandleRemoveTaskByMode(uint32_t mode)
     }
 }
 
-ErrCode BgContinuousTaskMgr::IsModeSupported(bool &isModeSupported)
+ErrCode BgContinuousTaskMgr::IsModeSupported(ContinuousTaskParam &taskParam)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
     }
 
-    isModeSupported = true;
+    bool isModeSupported = true;
     BGTASK_LOGD("isModeSupported: %{public}d", isModeSupported);
     return ERR_OK;
 }
