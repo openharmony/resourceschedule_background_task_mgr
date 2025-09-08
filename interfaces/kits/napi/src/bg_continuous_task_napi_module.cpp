@@ -1394,7 +1394,7 @@ napi_value IsModeSupported(napi_env env, napi_callback_info info)
     }
 
     bool isModeSupported = false;
-    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) <AsyncCallbackInfo>(env);
+    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr || asyncCallbackInfo->errCode != ERR_OK ||
         asyncCallbackInfo->request == nullptr) {
         BGTASK_LOGE("input params error");
