@@ -1394,7 +1394,23 @@ napi_value IsModeSupported(napi_env env, napi_callback_info info)
     }
 
     bool isModeSupported = false;
-    ErrCode errCode = BackgroundTaskMgrHelper::IsModeSupported(isModeSupported);
+    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
+    if (asyncCallbackInfo == nullptr || asyncCallbackInfo->errCode != ERR_OK ||
+        asyncCallbackInfo->request == nullptr) {
+        BGTASK_LOGE("input params error");
+        return WrapVoidToJS(env);
+    }
+    Common::TaskModeTypeConversion(asyncCallbackInfo->request);
+    std::vector<uint32_t> continuousTaskModes = asyncCallbackInfo->request->GetContinuousTaskModes();
+    const std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+    ContinuousTaskParam taskParam = ContinuousTaskParam(true, continuousTaskModes[0],
+        asyncCallbackInfo->request->GetWantAgent(), abilityInfo->name, asyncCallbackInfo->abilityContext->GetToken(),
+        "", true, continuousTaskModes, asyncCallbackInfo->abilityContext->GetAbilityRecordId());
+    taskParam.isByRequestObject_ = true;
+    taskParam.isCombinedTaskNotification_ = asyncCallbackInfo->request->IsCombinedTaskNotification();
+    taskParam.combinedNotificationTaskId_ = asyncCallbackInfo->request->GetContinuousTaskId();
+    taskParam.bgSubModeIds_ = asyncCallbackInfo->request->GetContinuousTaskSubmodes();
+    ErrCode errCode = BackgroundTaskMgrHelper::IsModeSupported(taskParam);
     if (errCode != ERR_OK) {
         BGTASK_LOGE("IsModeSupported failed.");
         Common::HandleErrCode(env, errCode, true);

@@ -1018,8 +1018,8 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskRequest_001, TestSize.Level1)
  */
 HWTEST_F(BgTaskClientUnitTest, IsModeSupported_001, TestSize.Level1)
 {
-    bool isModeSupported = false;
-    EXPECT_EQ(BackgroundTaskMgrHelper::IsModeSupported(isModeSupported), ERR_OK);
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    EXPECT_EQ(BackgroundTaskMgrHelper::IsModeSupported(taskParam), ERR_OK);
 }
 }
 }

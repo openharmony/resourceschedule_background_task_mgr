@@ -140,9 +140,9 @@ ErrCode BackgroundTaskMgrHelper::SuspendContinuousAudioTask(int32_t uid)
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousAudioTask(uid);
 }
 
-ErrCode BackgroundTaskMgrHelper::IsModeSupported(bool &isModeSupported)
+ErrCode BackgroundTaskMgrHelper::IsModeSupported(ContinuousTaskParam &taskParam)
 {
-    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->IsModeSupported(isModeSupported);
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->IsModeSupported(taskParam);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

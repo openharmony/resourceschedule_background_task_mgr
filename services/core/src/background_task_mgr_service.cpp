@@ -546,7 +546,7 @@ ErrCode BackgroundTaskMgrService::SuspendContinuousAudioTask(int32_t uid)
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskMgrService::IsModeSupported(bool &isModeSupported)
+ErrCode BackgroundTaskMgrService::IsModeSupported(ContinuousTaskParam &taskParam)
 {
     if (CheckAtomicService()) {
         pid_t callingPid = IPCSkeleton::GetCallingPid();
@@ -556,7 +556,7 @@ ErrCode BackgroundTaskMgrService::IsModeSupported(bool &isModeSupported)
         return ERR_BGTASK_PERMISSION_DENIED;
     }
 
-    BgContinuousTaskMgr::GetInstance()->IsModeSupported(isModeSupported);
+    BgContinuousTaskMgr::GetInstance()->IsModeSupported(taskParam);
     return ERR_OK;
 }
 

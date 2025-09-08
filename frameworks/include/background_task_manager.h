@@ -272,7 +272,7 @@ public:
      * @param isModeSupported is request mode supported.
      * @return Returns ERR_OK if success, else failure.
      */
-    ErrCode IsModeSupported(bool &isModeSupported);
+    ErrCode IsModeSupported(ContinuousTaskParam &taskParam);
 
 private:
     bool GetBackgroundTaskManagerProxy();

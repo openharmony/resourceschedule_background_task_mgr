@@ -679,12 +679,12 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_021
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
-    bool isModeSupported = false;
-    EXPECT_EQ(backgroundTaskMgrProxy.IsModeSupported(isModeSupported), ERR_INVALID_VALUE);
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    EXPECT_EQ(backgroundTaskMgrProxy.IsModeSupported(taskParam), ERR_INVALID_VALUE);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.IsModeSupported(isModeSupported), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.IsModeSupported(taskParam), ERR_INVALID_DATA);
 }
 
 }
