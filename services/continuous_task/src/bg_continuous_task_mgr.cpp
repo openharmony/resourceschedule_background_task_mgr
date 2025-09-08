@@ -1250,7 +1250,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
         auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(),
             findTask);
         if (findTaskIter == continuousTaskInfosMap_.end()) {
-            BGTASK_LOGE("uid: %{public}d not have task, taskId: %{public}d", uid);
+            BGTASK_LOGE("uid: %{public}d not have task", uid);
             return ERR_BGTASK_OBJECT_NOT_EXIST;
         }
         return StopBackgroundRunningByContext(uid, abilityName, abilityId);
