@@ -821,10 +821,10 @@ napi_value StartBackgroundRunningByRequestPromise(napi_env env, AsyncCallbackInf
     return promise;
 }
 
-napi_value StartBackgroundRunningSubmit(napi_env env, napi_value *argv, AsyncCallbackInfo *asyncCallbackInfo,
-    bool isThrow)
+napi_value StartBackgroundRunningSubmit(napi_env env, napi_value *argv, uint32_t argc,
+    AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
 {
-    if (!StartBackgroundRunningCheckRequest(env, argv, isThrow, asyncCallbackInfo)) {
+    if (!StartBackgroundRunningCheckRequest(env, argv, argc, isThrow, asyncCallbackInfo)) {
         return nullptr;
     } else {
         return StartBackgroundRunningByRequestPromise(env, asyncCallbackInfo, isThrow);
