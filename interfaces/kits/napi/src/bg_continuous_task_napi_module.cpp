@@ -670,9 +670,14 @@ bool StartBackgroundRunningCheckModes(napi_env env, bool isThrow, AsyncCallbackI
     return true;
 }
 
-bool StartBackgroundRunningCheckRequest(napi_env env, napi_value *argv, bool isThrow,
+bool StartBackgroundRunningCheckRequest(napi_env env, napi_value *argv, uint32_t argc, bool isThrow, 
     AsyncCallbackInfo *asyncCallbackInfo)
 {
+    if (argc != MAX_UPDATE_BG_RUNNING_PARAMS) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_PARAM_NUMBER_ERR;
+        return false;
+    }
     if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
         BGTASK_LOGE("Get ability context failed");
         Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
@@ -698,9 +703,14 @@ bool StartBackgroundRunningCheckRequest(napi_env env, napi_value *argv, bool isT
     return true;
 }
 
-bool UpdateBackgroundRunningCheckParam(napi_env env, napi_value *argv, AsyncCallbackInfo *asyncCallbackInfo,
-    bool isThrow)
+bool UpdateBackgroundRunningCheckParam(napi_env env, napi_value *argv, uint32_t argc,
+    AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
 {
+    if (argc != MAX_UPDATE_BG_RUNNING_PARAMS) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_PARAM_NUMBER_ERR;
+        return false;
+    }
     // argv[0] : context : AbilityContext
     if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
         BGTASK_LOGE("Get ability context failed");
@@ -744,11 +754,11 @@ napi_value UpdateBackgroundRunning(napi_env env, napi_callback_info info, bool i
     napi_is_array(env, value, &isArray);
     napi_value ret {nullptr};
     if (isArray) {
-        if (UpdateBackgroundRunningCheckParam(env, argv, asyncCallbackInfo, isThrow)) {
+        if (UpdateBackgroundRunningCheckParam(env, argv, argc, asyncCallbackInfo, isThrow)) {
             ret = UpdateBackgroundRunningPromise(env, asyncCallbackInfo, isThrow);
         }
     } else {
-        if (StartBackgroundRunningCheckRequest(env, argv, isThrow, asyncCallbackInfo)) {
+        if (StartBackgroundRunningCheckRequest(env, argv, argc, isThrow, asyncCallbackInfo)) {
             ret = UpdateBackgroundRunningByRequestPromise(env, asyncCallbackInfo, isThrow);
         }
     }
@@ -843,7 +853,7 @@ napi_value StartBackgroundRunning(napi_env env, napi_callback_info info, bool is
     }
     napi_value ret {nullptr};
     if (MAX_START_BG_RUNNING_BY_RQUEST_PARAMS == argc) {
-        ret = StartBackgroundRunningSubmit(env, argv, asyncCallbackInfo, isThrow);
+        ret = StartBackgroundRunningSubmit(env, argv, argc, asyncCallbackInfo, isThrow);
     } else {
         if (!StartBackgroundRunningCheckParamBeforeSubmit(env, argv, MAX_START_BG_RUNNING_PARAMS, isThrow,
             asyncCallbackInfo)) {
@@ -1020,9 +1030,14 @@ napi_value StopBackgroundRunningByTaskIdPromise(napi_env env, AsyncCallbackInfo 
     return promise;
 }
 
-napi_value StopBackgroundRunningBySubmit(napi_env env, napi_value *argv, AsyncCallbackInfo *asyncCallbackInfo,
-    bool isThrow)
+napi_value StopBackgroundRunningBySubmit(napi_env env, napi_value *argv, uint32_t argc,
+    AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
 {
+    if (argc > MAX_STOP_BG_RUNNING_PARAMS) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        asyncCallbackInfo->errCode = ERR_PARAM_NUMBER_ERR;
+        return nullptr;
+    }
     napi_valuetype valueType = napi_undefined;
     napi_value value = argv[1];
     napi_typeof(env, value, &valueType);
@@ -1059,8 +1074,12 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info, bool isT
 
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc > MAX_STOP_BG_RUNNING_PARAMS) {
-        BGTASK_LOGE("wrong param nums");
         Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, isThrow);
+        callbackPtr.release();
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
         return nullptr;
     }
 
@@ -1069,12 +1088,17 @@ napi_value StopBackgroundRunning(napi_env env, napi_callback_info info, bool isT
         BGTASK_LOGE("Get ability context failed");
         Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, isThrow);
         asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
+        callbackPtr.release();
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
         return nullptr;
     }
 
     napi_value ret {nullptr};
     if (argc == MAX_STOP_BG_RUNNING_PARAMS) {
-        ret = StopBackgroundRunningBySubmit(env, argv, asyncCallbackInfo, isThrow);
+        ret = StopBackgroundRunningBySubmit(env, argv, argc, asyncCallbackInfo, isThrow);
     } else {
         ret = StopBackgroundRunningPromise(env, asyncCallbackInfo, isThrow);
     }
