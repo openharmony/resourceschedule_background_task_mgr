@@ -670,7 +670,7 @@ bool StartBackgroundRunningCheckModes(napi_env env, bool isThrow, AsyncCallbackI
     return true;
 }
 
-bool StartBackgroundRunningCheckRequest(napi_env env, napi_value *argv, uint32_t argc, bool isThrow, 
+bool StartBackgroundRunningCheckRequest(napi_env env, napi_value *argv, uint32_t argc, bool isThrow,
     AsyncCallbackInfo *asyncCallbackInfo)
 {
     if (argc != MAX_UPDATE_BG_RUNNING_PARAMS) {
