@@ -676,7 +676,7 @@ bool Common::GetContinuousTaskModesProperty(napi_env env, napi_value object, con
 }
 
 bool Common::GetContinuousTaskModesFromArray(napi_env env, napi_value arrayValue,
-        std::shared_ptr<ContinuousTaskRequest> &request)
+    std::shared_ptr<ContinuousTaskRequest> &request)
 {
     bool boolValue = false;
     napi_is_array(env, arrayValue, &boolValue);

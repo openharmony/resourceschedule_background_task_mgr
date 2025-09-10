@@ -1384,18 +1384,18 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     return ret;
 }
 
-napi_value IsModeSupportedCheckParamBeforeSubmit(napi_env env, size_t argc, napi_value *argv, bool isThrow,
+bool IsModeSupportedCheckParamBeforeSubmit(napi_env env, size_t argc, napi_value *argv, bool isThrow,
     AsyncCallbackInfo *asyncCallbackInfo)
 {
     // Get continuousTaskModes.
-    if (!Common:GetContinuousTaskModesFromArray(env, argv[0], asyncCallbackInfo->request)) {
+    if (!Common::GetContinuousTaskModesFromArray(env, argv[0], asyncCallbackInfo->request)) {
         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE, true);
         asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE;
         return false;
     }
 
     // Get continuousTaskSubmodes.
-    if (!Common:GetContinuousTaskSubmodesFromArray(env, argv[1], asyncCallbackInfo->request)) {
+    if (!Common::GetContinuousTaskSubmodesFromArray(env, argv[1], asyncCallbackInfo->request)) {
         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE, true);
         asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE;
         return false;
