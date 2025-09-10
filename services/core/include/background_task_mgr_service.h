@@ -94,7 +94,7 @@ public:
     ErrCode AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish = false) override;
     ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType) override;
     ErrCode SuspendContinuousAudioTask(int32_t uid) override;
-    ErrCode IsModeSupported(ContinuousTaskParam &taskParam) override;
+    ErrCode IsModeSupported(const ContinuousTaskParam &taskParam) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);

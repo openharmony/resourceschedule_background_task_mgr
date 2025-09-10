@@ -119,6 +119,10 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. Current continuous task support merged but the modes are inconsistent."},
     {ERR_BGTASK_CONTINUOUS_UPDATE_NOTIFICATION_FAIL,
         "Notification verification failed. Current continuous task refresh notification fail."},
+    {ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL,
+        "Continuous Task verification failed. System app not support taskkeeping ACL permission."},
+    {ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM,
+        "Notification verification failed. App has no ACL permission of Taskkeeping."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
@@ -667,16 +671,24 @@ bool Common::GetContinuousTaskModesProperty(napi_env env, napi_value object, con
     if (getNameStatus != napi_ok) {
         return boolValue;
     }
-    napi_is_array(env, value, &boolValue);
+    boolValue = GetContinuousTaskModesFromArray(env, value, request);
+    return boolValue;
+}
+
+bool Common::GetContinuousTaskModesFromArray(napi_env env, napi_value arrayValue,
+    std::shared_ptr<ContinuousTaskRequest> &request)
+{
+    bool boolValue = false;
+    napi_is_array(env, arrayValue, &boolValue);
     if (!boolValue) {
         return boolValue;
     }
     uint32_t length;
-    napi_get_array_length(env, value, &length);
+    napi_get_array_length(env, arrayValue, &length);
     std::vector<uint32_t> continuousTaskModes {};
     for (uint32_t i = 0; i < length; i++) {
         napi_value napiMode;
-        if (napi_get_element(env, value, i, &napiMode) != napi_ok) {
+        if (napi_get_element(env, arrayValue, i, &napiMode) != napi_ok) {
             return false;
         } else {
             int32_t intValue = INVALID_MODE_ID;
@@ -708,16 +720,24 @@ bool Common::GetContinuousTaskSubmodesProperty(napi_env env, napi_value object, 
     if (getNameStatus != napi_ok) {
         return boolValue;
     }
-    napi_is_array(env, value, &boolValue);
+    boolValue = GetContinuousTaskSubmodesFromArray(env, value, request);
+    return boolValue;
+}
+
+bool Common::GetContinuousTaskSubmodesFromArray(napi_env env, napi_value arrayValue,
+    std::shared_ptr<ContinuousTaskRequest> &request)
+{
+    bool boolValue = false;
+    napi_is_array(env, arrayValue, &boolValue);
     if (!boolValue) {
         return boolValue;
     }
     uint32_t length;
-    napi_get_array_length(env, value, &length);
+    napi_get_array_length(env, arrayValue, &length);
     std::vector<uint32_t> continuousTaskSubModes {};
     for (uint32_t i = 0; i < length; i++) {
         napi_value napiSubMode;
-        if (napi_get_element(env, value, i, &napiSubMode) != napi_ok) {
+        if (napi_get_element(env, arrayValue, i, &napiSubMode) != napi_ok) {
             return false;
         } else {
             int32_t intValue = INVALID_MODE_ID;
