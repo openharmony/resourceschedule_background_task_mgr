@@ -93,7 +93,8 @@ public:
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid = -1);
     ErrCode AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish = false);
     ErrCode DebugContinuousTaskInner(const sptr<ContinuousTaskParamForInner> &taskParam);
-    ErrCode IsModeSupported(ContinuousTaskParam &taskParam);
+    ErrCode IsModeSupported(const sptr<ContinuousTaskParam> &taskParam);
+    ErrCode CheckACLPermission(const sptr<ContinuousTaskParam> &taskParam, uint64_t callingTakenId);
     bool StopContinuousTaskByUser(const std::string &mapKey);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);

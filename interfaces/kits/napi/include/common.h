@@ -122,8 +122,14 @@ public:
 
     static bool GetContinuousTaskModesProperty(napi_env env, napi_value object, const std::string &propertyName,
         std::shared_ptr<ContinuousTaskRequest> &request);
+    
+    static bool GetContinuousTaskModesFromArray(napi_env env, napi_value arrayValue,
+        std::shared_ptr<ContinuousTaskRequest> &request);
 
     static bool GetContinuousTaskSubmodesProperty(napi_env env, napi_value object, const std::string &propertyName,
+        std::shared_ptr<ContinuousTaskRequest> &request);
+
+    static bool GetContinuousTaskSubmodesFromArray(napi_env env, napi_value arrayValue,
         std::shared_ptr<ContinuousTaskRequest> &request);
 
     static bool GetWantAgentProperty(napi_env env, napi_value object, const std::string &propertyName,

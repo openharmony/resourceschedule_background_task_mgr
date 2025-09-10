@@ -83,6 +83,7 @@ static constexpr char DUMP_PARAM_CANCEL[] = "--cancel";
 static constexpr char DUMP_PARAM_GET[] = "--get";
 static constexpr char DUMP_INNER_TASK[] = "--inner_task";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
+static constexpr char BGMODE_PERMISSION_SYSTEM[] = "ohos.permission.KEEP_BACKGROUND_RUNNING_SYSTEM";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
@@ -2372,15 +2373,38 @@ void BgContinuousTaskMgr::HandleRemoveTaskByMode(uint32_t mode)
     }
 }
 
-ErrCode BgContinuousTaskMgr::IsModeSupported(ContinuousTaskParam &taskParam)
+ErrCode BgContinuousTaskMgr::IsModeSupported(const sptr<ContinuousTaskParam> &taskParam)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
     }
 
-    bool isModeSupported = true;
-    BGTASK_LOGD("isModeSupported: %{public}d", isModeSupported);
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
+        BGTASK_LOGE("background mode permission is not passed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+    if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+        BGTASK_LOGE("not support system app");
+        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+    }
+    ErrCode result = ERR_OK;
+    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
+
+    handler_->PostSyncTask([this, callingTokenId, taskParam, &result]() {
+        result = this->CheckACLPermission(taskParam, callingTokenId);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    BGTASK_LOGI("isModeSupported: %{public}d", result);
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::CheckACLPermission(const sptr<ContinuousTaskParam> &taskParam, uint64_t callingTakenId)
+{
+    if (CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::TASK_KEEPING) &&
+        !BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTakenId)) {
+        return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
+    }
     return ERR_OK;
 }
 
