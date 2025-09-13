@@ -95,6 +95,7 @@ public:
     ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType) override;
     ErrCode SuspendContinuousAudioTask(int32_t uid) override;
     ErrCode IsModeSupported(const ContinuousTaskParam &taskParam) override;
+    ErrCode SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);

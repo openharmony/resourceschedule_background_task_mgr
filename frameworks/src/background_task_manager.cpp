@@ -480,6 +480,14 @@ ErrCode BackgroundTaskManager::IsModeSupported(ContinuousTaskParam &taskParam)
     return proxy_->IsModeSupported(taskParam);
 }
 
+ErrCode BackgroundTaskManager::SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->SetSupportedTaskKeepingProcesses(processSet);
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 

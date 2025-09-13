@@ -55,4 +55,5 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void SetBgTaskConfig([in] String configData, [in] int sourceType);
     [oneway] void SuspendContinuousAudioTask([in] int uid);
     void IsModeSupported([in] ContinuousTaskParam taskParam);
+    void SetSupportedTaskKeepingProcesses([in] Set<String> processSet);
 }
