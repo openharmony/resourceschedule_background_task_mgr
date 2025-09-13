@@ -357,7 +357,7 @@ static ani_enum_item GetSlotType(ani_env *env)
         return nullptr;
     }
     ani_enum enumType;
-    if (ANI_OK != env->FindEnum("L@ohos/notificationManager/notificationManager/SlotType;", &enumType)) {
+    if (ANI_OK != env->FindEnum("@ohos.notificationManager.notificationManager.SlotType", &enumType)) {
         BGTASK_LOGE("get slotType failed");
         return nullptr;
     }
@@ -377,7 +377,7 @@ static ani_enum_item GetContentType(ani_env *env)
         return nullptr;
     }
     ani_enum enumType;
-    if (ANI_OK != env->FindEnum("L@ohos/notificationManager/notificationManager/ContentType;", &enumType)) {
+    if (ANI_OK != env->FindEnum("@ohos.notificationManager.notificationManager.ContentType", &enumType)) {
         BGTASK_LOGE("get contentType failed");
         return nullptr;
     }
