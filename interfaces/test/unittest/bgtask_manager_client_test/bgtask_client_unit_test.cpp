@@ -1021,5 +1021,17 @@ HWTEST_F(BgTaskClientUnitTest, IsModeSupported_001, TestSize.Level1)
     ContinuousTaskParam taskParam = ContinuousTaskParam();
     EXPECT_EQ(BackgroundTaskMgrHelper::IsModeSupported(taskParam), ERR_OK);
 }
+
+/**
+ * @tc.name: SetSupportedTaskKeepingProcesses_001
+ * @tc.desc: test SetSupportedTaskKeepingProcesses.
+ * @tc.type: FUNC
+ * @tc.require: issueICVQZF
+ */
+HWTEST_F(BgTaskClientUnitTest, SetSupportedTaskKeepingProcesses_001, TestSize.Level1)
+{
+    std::set<std::string> processSet;
+    EXPECT_EQ(BackgroundTaskMgrHelper::SetSupportedTaskKeepingProcesses(processSet), ERR_OK);
+}
 }
 }

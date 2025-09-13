@@ -817,5 +817,19 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_055, TestSize.Level0)
     bgTransientTaskMgr_->keyInfoMap_[1] = keyInfo;
     EXPECT_EQ(bgTransientTaskMgr_->GetAllTransientTasks(remainingQuota, list), ERR_OK);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_056
+ * @tc.desc: test SetSupportedTaskKeepingProcesses.
+ * @tc.type: FUNC
+ * @tc.require: issueICVQZF
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_056, TestSize.Level1)
+{
+    std::set<std::string> processSet;
+    processSet.insert("com.test.app");
+    DelayedSingleton<BgtaskConfig>::GetInstance()->SetSupportedTaskKeepingProcesses(processSet);
+    EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->taskKeepingExemptedQuatoList_.empty(), false);
+}
 }
 }

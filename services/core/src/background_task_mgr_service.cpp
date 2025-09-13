@@ -560,6 +560,15 @@ ErrCode BackgroundTaskMgrService::IsModeSupported(const ContinuousTaskParam &tas
     return BgContinuousTaskMgr::GetInstance()->IsModeSupported(paramPtr);
 }
 
+ErrCode BackgroundTaskMgrService::SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet)
+{
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    DelayedSingleton<BgtaskConfig>::GetInstance()->SetSupportedTaskKeepingProcesses(processSet);
+    return ERR_OK;
+}
+
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();

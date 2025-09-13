@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -200,6 +200,15 @@ int32_t BgtaskConfig::GetTransientTaskExemptedQuato()
 {
     std::lock_guard<std::mutex> lock(configMutex_);
     return transientTaskExemptedQuato_;
+}
+
+void BgtaskConfig::SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet)
+{
+    std::lock_guard<std::mutex> lock(configMutex_);
+    taskKeepingExemptedQuatoList_.insert(processSet.begin(), processSet.end());
+    for (const auto &item : taskKeepingExemptedQuatoList_) {
+        BGTASK_LOGI("taskKeeping Exemption proc: %{public}s", item.c_str());
+    }
 }
 }
 }

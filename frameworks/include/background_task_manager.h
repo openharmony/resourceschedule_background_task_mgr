@@ -274,6 +274,13 @@ public:
      */
     ErrCode IsModeSupported(ContinuousTaskParam &taskParam);
 
+    /**
+     * @brief Set supported taskKeeping processes.
+     * @param processSet process set.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet);
+
 private:
     bool GetBackgroundTaskManagerProxy();
 

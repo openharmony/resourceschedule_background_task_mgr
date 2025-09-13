@@ -144,5 +144,10 @@ ErrCode BackgroundTaskMgrHelper::IsModeSupported(ContinuousTaskParam &taskParam)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->IsModeSupported(taskParam);
 }
+
+ErrCode BackgroundTaskMgrHelper::SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetSupportedTaskKeepingProcesses(processSet);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

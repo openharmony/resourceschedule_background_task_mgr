@@ -217,6 +217,13 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode IsModeSupported(ContinuousTaskParam &taskParam);
+
+    /**
+     * @brief Set supported taskKeeping processes.
+     * @param processSet process set.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
