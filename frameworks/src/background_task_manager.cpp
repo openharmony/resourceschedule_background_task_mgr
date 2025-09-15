@@ -367,7 +367,6 @@ ErrCode BackgroundTaskManager::GetEfficiencyResourcesInfos(std::vector<std::shar
 
 bool BackgroundTaskManager::GetBackgroundTaskManagerProxy()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     if (proxy_ != nullptr) {
         return true;
     }
