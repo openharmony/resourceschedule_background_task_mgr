@@ -555,8 +555,10 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
         return true;
     }
     uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-    if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-        return false;
+    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+    if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId) &&
+        !BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+        return true;
     }
     return false;
 }
