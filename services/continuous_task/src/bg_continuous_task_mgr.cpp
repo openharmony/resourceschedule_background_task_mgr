@@ -398,12 +398,13 @@ std::shared_ptr<Global::Resource::ResourceManager> BgContinuousTaskMgr::GetBundl
         }
     }
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
+    if (resConfig == nullptr) {
+        return nullptr;
+    }
 #ifdef SUPPORT_GRAPHICS
     UErrorCode status = U_ZERO_ERROR;
     icu::Locale locale = icu::Locale::forLanguageTag(Global::I18n::LocaleConfig::GetSystemLanguage(), status);
-    if (resConfig != nullptr) {
-        resConfig->SetLocaleInfo(locale);
-    }
+    resConfig->SetLocaleInfo(locale);
 #endif // SUPPORT_GRAPHICS
     resourceManager->UpdateResConfig(*resConfig);
     return resourceManager;
