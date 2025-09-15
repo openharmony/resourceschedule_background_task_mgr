@@ -556,7 +556,7 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
     }
     uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-        return true;
+        return false;
     }
     return false;
 }
