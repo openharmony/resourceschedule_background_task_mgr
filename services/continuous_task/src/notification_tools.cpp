@@ -20,7 +20,6 @@
 #include "notification_helper.h"
 #endif
 #include "continuous_task_log.h"
-#include "common_utils.h"
 #include "string_wrapper.h"
 
 #ifdef BGTASK_MGR_UNIT_TEST
@@ -56,7 +55,7 @@ void NotificationTools::SetNotificationIdIndex(const int32_t id)
 }
 
 std::string CreateNotificationLabel(int32_t uid, const std::string &abilityName, int32_t abilityId,
-    bool isByRequestObject, const std::vector<uint32_t> &bgModeIds)
+    bool isByRequestObject, const int32_t continuousTaskId)
 {
     std::stringstream stream;
     stream.clear();
@@ -64,7 +63,7 @@ std::string CreateNotificationLabel(int32_t uid, const std::string &abilityName,
     stream << NOTIFICATION_PREFIX << SEPARATOR << uid << SEPARATOR << std::hash<std::string>()(abilityName) <<
         SEPARATOR << abilityId;
     if (isByRequestObject) {
-        stream << SEPARATOR << CommonUtils::ModesToString(bgModeIds);
+        stream << SEPARATOR << continuousTaskId;
     }
     std::string label = stream.str();
     BGTASK_LOGD("notification label: %{public}s", label.c_str());
@@ -96,7 +95,7 @@ WEAK_FUNC ErrCode NotificationTools::PublishNotification(
 
     std::string notificationLabel = CreateNotificationLabel(continuousTaskRecord->uid_,
         continuousTaskRecord->abilityName_, continuousTaskRecord->abilityId_,
-        continuousTaskRecord->isByRequestObject_, continuousTaskRecord->bgModeIds_);
+        continuousTaskRecord->isByRequestObject_, continuousTaskRecord->continuousTaskId_);
 
     Notification::NotificationRequest notificationRequest = Notification::NotificationRequest();
     notificationRequest.SetContent(std::make_shared<Notification::NotificationContent>(liveContent));
