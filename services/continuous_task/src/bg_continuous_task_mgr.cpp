@@ -398,12 +398,13 @@ std::shared_ptr<Global::Resource::ResourceManager> BgContinuousTaskMgr::GetBundl
         }
     }
     std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
+    if (resConfig == nullptr) {
+        return nullptr;
+    }
 #ifdef SUPPORT_GRAPHICS
     UErrorCode status = U_ZERO_ERROR;
     icu::Locale locale = icu::Locale::forLanguageTag(Global::I18n::LocaleConfig::GetSystemLanguage(), status);
-    if (resConfig != nullptr) {
-        resConfig->SetLocaleInfo(locale);
-    }
+    resConfig->SetLocaleInfo(locale);
 #endif // SUPPORT_GRAPHICS
     resourceManager->UpdateResConfig(*resConfig);
     return resourceManager;
@@ -954,7 +955,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
             return ret;
         }
     }
-    if (continuousTaskInfosMap_[taskInfoMapKey]->suspendState_) {
+    if (continuousTaskInfosMap_[taskInfoMapKey] != nullptr && continuousTaskInfosMap_[taskInfoMapKey]->suspendState_) {
         HandleActiveContinuousTask(continuousTaskRecord->uid_, continuousTaskRecord->pid_, taskInfoMapKey);
     }
     OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_UPDATE);
@@ -971,7 +972,8 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         taskInfoMapKey = taskInfoMapKey + SEPARATOR + CommonUtils::ModesToString(continuousTaskRecord->bgModeIds_);
     }
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
-        if (continuousTaskInfosMap_[taskInfoMapKey]->suspendState_) {
+        if (continuousTaskInfosMap_[taskInfoMapKey] != nullptr &&
+                continuousTaskInfosMap_[taskInfoMapKey]->suspendState_) {
             HandleActiveContinuousTask(continuousTaskRecord->uid_, continuousTaskRecord->pid_, taskInfoMapKey);
             return ERR_OK;
         }
@@ -1496,8 +1498,10 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, 
         break;
     }
     // 暂停状态取消长时任务通知
-    NotificationTools::GetInstance()->CancelNotification(continuousTaskInfosMap_[key]->GetNotificationLabel(),
-        continuousTaskInfosMap_[key]->GetNotificationId());
+    if (continuousTaskInfosMap_[key] != nullptr) {
+        NotificationTools::GetInstance()->CancelNotification(continuousTaskInfosMap_[key]->GetNotificationLabel(),
+            continuousTaskInfosMap_[key]->GetNotificationId());
+    }
     // 对SA来说，暂停状态等同于取消
     HandleAppContinuousTaskStop(uid);
 }
