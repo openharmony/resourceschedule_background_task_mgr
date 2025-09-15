@@ -2400,8 +2400,8 @@ ErrCode BgContinuousTaskMgr::IsModeSupported(const sptr<ContinuousTaskParam> &ta
     }
     ErrCode result = ERR_OK;
     uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-
-    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName();
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     handler_->PostSyncTask([this, callingTokenId, taskParam, bundleName, &result]() {
         result = this->CheckTaskkeepingPermission(taskParam, callingTokenId, bundleName);
         }, AppExecFwk::EventQueue::Priority::HIGH);
