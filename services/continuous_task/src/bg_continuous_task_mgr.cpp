@@ -815,9 +815,10 @@ ErrCode BgContinuousTaskMgr::UpdateTaskInfo(std::shared_ptr<ContinuousTaskRecord
     record->isCombinedTaskNotification_ = taskParam->isCombinedTaskNotification_;
     if (record->suspendState_) {
         std::string taskInfoMapKey = std::to_string(record->uid_) + SEPARATOR + record->abilityName_ + SEPARATOR +
-            std::to_string(record->abilityId_) + SEPARATOR + CommonUtils::ModesToString(record->bgModeIds_);
+            std::to_string(record->abilityId_) + SEPARATOR + std::to_string(record->GetContinuousTaskId());
         HandleActiveContinuousTask(record->uid_, record->pid_, taskInfoMapKey);
     }
+    BGTASK_LOGI("update continuous task success, taskId: %{public}d", record->GetContinuousTaskId());
     OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_UPDATE);
     taskParam->notificationId_ = record->GetNotificationId();
     taskParam->continuousTaskId_ = record->GetContinuousTaskId();
@@ -966,10 +967,11 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
+    continuousTaskRecord->continuousTaskId_ = ++continuousTaskIdIndex_;
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
         + continuousTaskRecord->abilityName_ + SEPARATOR + std::to_string(continuousTaskRecord->abilityId_);
     if (continuousTaskRecord->isByRequestObject_) {
-        taskInfoMapKey = taskInfoMapKey + SEPARATOR + CommonUtils::ModesToString(continuousTaskRecord->bgModeIds_);
+        taskInfoMapKey = taskInfoMapKey + SEPARATOR + std::to_string(continuousTaskRecord->continuousTaskId_);
     }
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
         if (continuousTaskInfosMap_[taskInfoMapKey] != nullptr &&
@@ -980,10 +982,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         BGTASK_LOGD("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
-    BGTASK_LOGI("continuous task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d,"
-        " abilityId %{public}d", continuousTaskRecord->bgModeId_,
-        continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
-        continuousTaskRecord->isBatchApi_, continuousTaskRecord->uid_, continuousTaskRecord->abilityId_);
     if (!continuousTaskRecord->isFromWebview_
         && cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
         std::string mainAbilityLabel = GetMainAbilityLabel(continuousTaskRecord->bundleName_,
@@ -1023,7 +1021,11 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
             return ret;
         }
     }
-    continuousTaskRecord->continuousTaskId_ = ++continuousTaskIdIndex_;
+    BGTASK_LOGI("continuous task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d,"
+        " abilityId %{public}d, continuousTaskId: %{public}d", continuousTaskRecord->bgModeId_,
+        continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
+        continuousTaskRecord->isBatchApi_, continuousTaskRecord->uid_, continuousTaskRecord->abilityId_,
+        continuousTaskRecord->continuousTaskId_);
     continuousTaskInfosMap_.emplace(taskInfoMapKey, continuousTaskRecord);
     OnContinuousTaskChanged(continuousTaskRecord, ContinuousTaskEventTriggerType::TASK_START);
     return RefreshTaskRecord();
@@ -1295,22 +1297,20 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningByTask(const std::shared_ptr<C
         BGTASK_LOGE("task is null");
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
-    std::string mapKey = std::to_string(task->uid_) + SEPARATOR + task->abilityName_ + SEPARATOR +
-        std::to_string(task->abilityId_);
-    if (task->isByRequestObject_) {
-        mapKey = mapKey + SEPARATOR + CommonUtils::ModesToString(task->bgModeIds_);
+    int32_t continuousTaskId = task->GetContinuousTaskId();
+    auto findTask = [continuousTaskId](const auto &target) {
+        return continuousTaskId == target.second->continuousTaskId_;
+    };
+    auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findTask);
+    if (findTaskIter == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGE("no have task, taskId: %{public}d", continuousTaskId);
+        return ERR_BGTASK_OBJECT_EXISTS;
     }
-    auto iter = continuousTaskInfosMap_.find(mapKey);
-    if (iter == continuousTaskInfosMap_.end()) {
-        BGTASK_LOGE("not have task, taskKey: %{public}s", mapKey.c_str());
-        return ERR_BGTASK_OBJECT_NOT_EXIST;
-    }
-    auto record = iter->second;
+    auto record = findTaskIter->second;
     OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
     int32_t notificationId = record->GetNotificationId();
-    BGTASK_LOGI("continuous task key: %{public}s stop, continuousTaskId: %{public}d, "
-        "notificationId: %{public}d", mapKey.c_str(), record->GetContinuousTaskId(), notificationId);
-    continuousTaskInfosMap_.erase(mapKey);
+    BGTASK_LOGI("remove continuous task success, taskId: %{public}d", continuousTaskId);
+    continuousTaskInfosMap_.erase(findTaskIter);
     ErrCode result = ERR_OK;
     if (notificationId != -1) {
         std::string notificationLabel = record->GetNotificationLabel();
@@ -1964,10 +1964,27 @@ bool BgContinuousTaskMgr::StopContinuousTaskByUserInner(const std::string &key)
 {
     auto removeTask = continuousTaskInfosMap_.find(key);
     if (removeTask == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGE("can not find key: %{public}s", key.c_str());
         return false;
     }
-    if (StopBackgroundRunningByTask(removeTask->second) == ERR_OK) {
-        return true;
+    int32_t notificationId = removeTask->second->GetNotificationId();
+    if (notificationId != -1) {
+        std::string notificationLabel = removeTask->second->GetNotificationLabel();
+        auto iter = continuousTaskInfosMap_.begin();
+        while (iter != continuousTaskInfosMap_.end()) {
+            if (iter->second->notificationId_ == notificationId &&
+                iter->second->notificationLabel_ == notificationLabel) {
+                auto record = iter->second;
+                record->reason_ = REMOVE_NOTIFICATION_CANCEL;
+                OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
+                BGTASK_LOGE("remove task key: %{public}s, because notification remove", iter->first.c_str());
+                iter = continuousTaskInfosMap_.erase(iter);
+                HandleAppContinuousTaskStop(record->uid_);
+                RefreshTaskRecord();
+            } else {
+                iter++;
+            }
+        }
     }
     return true;
 }
@@ -2001,6 +2018,7 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
             iter++;
         }
     }
+    BGTASK_LOGI("continuous subscriber die, list size is %{public}d", static_cast<int>(bgTaskSubscribers_.size()));
 }
 
 void BgContinuousTaskMgr::OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId)
