@@ -679,8 +679,7 @@ bool Common::GetContinuousTaskModesFromArray(napi_env env, napi_value arrayValue
     std::shared_ptr<ContinuousTaskRequest> &request)
 {
     bool boolValue = false;
-    napi_is_array(env, arrayValue, &boolValue);
-    if (!boolValue) {
+    if (napi_is_array(env, arrayValue, &boolValue) != napi_ok || boolValue == false) {
         return boolValue;
     }
     uint32_t length;
@@ -728,8 +727,7 @@ bool Common::GetContinuousTaskSubmodesFromArray(napi_env env, napi_value arrayVa
     std::shared_ptr<ContinuousTaskRequest> &request)
 {
     bool boolValue = false;
-    napi_is_array(env, arrayValue, &boolValue);
-    if (!boolValue) {
+    if (napi_is_array(env, arrayValue, &boolValue) != napi_ok || boolValue == false) {
         return boolValue;
     }
     uint32_t length;

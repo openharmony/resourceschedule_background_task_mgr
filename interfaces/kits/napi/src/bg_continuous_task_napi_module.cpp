@@ -1475,11 +1475,6 @@ napi_value IsModeSupported(napi_env env, napi_callback_info info)
     napi_value ret {nullptr};
     bool isModeSupported = IsModeSupportedExecuteCB(env, asyncCallbackInfo);
     napi_get_boolean(env, isModeSupported, &ret);
-    callbackPtr.release();
-    if (asyncCallbackInfo != nullptr) {
-        delete asyncCallbackInfo;
-        asyncCallbackInfo = nullptr;
-    }
     return ret;
 }
 
