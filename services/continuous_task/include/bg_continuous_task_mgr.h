@@ -196,6 +196,7 @@ private:
         bool &sendNotification);
     ErrCode StartBackgroundRunningSubmit(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
         std::string &taskInfoMapKey);
+    ErrCode CheckAbilityTaskNum(const std::shared_ptr<ContinuousTaskRecord> record);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
