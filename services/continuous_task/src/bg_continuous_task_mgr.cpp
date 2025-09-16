@@ -104,7 +104,7 @@ static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7259;
 #endif
 static constexpr uint32_t ALL_MODES = 0xFF;
-
+static constexpr uint32_t ABILITY_TASK_MAX_NUM = 10;
 #ifndef HAS_OS_ACCOUNT_PART
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
@@ -963,6 +963,25 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
     taskParam->continuousTaskId_ = continuousTaskRecord->GetContinuousTaskId();
     return RefreshTaskRecord();
+}
+
+ErrCode BgContinuousTaskMgr::CheckAbilityTaskNum(const std::shared_ptr<ContinuousTaskRecord> record)
+{
+    uint32_t taskNum = 0;
+    int32_t abilityId = record->GetAbilityId();
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (!task.second) {
+            continue;
+        }
+        if (task.second->GetAbilityId() == abilityId && task.second->isByRequestObject_) {
+            taskNum = taskNum + 1;
+        }
+    }
+    if (taskNum == ABILITY_TASK_MAX_NUM) {
+        BGTASK_LOGE("abilityId: %{public}d have 10 tasks, can not apply continuous task", abilityId);
+        return ERR_BGTASK_CONTINUOUS_NOT_APPLY_MAX_TASK;
+    }
+    return ERR_OK;
 }
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
