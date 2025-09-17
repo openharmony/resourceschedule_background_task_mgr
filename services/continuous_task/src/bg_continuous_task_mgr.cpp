@@ -2435,30 +2435,35 @@ ErrCode BgContinuousTaskMgr::IsModeSupported(const sptr<ContinuousTaskParam> &ta
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
-    if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId) &&
-        CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::TASK_KEEPING)) {
-        BGTASK_LOGE("not support system app");
-        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
-    }
-    ErrCode result = ERR_OK;
     uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     int32_t callingUid = IPCSkeleton::GetCallingUid();
+    ErrCode result = ERR_OK;
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
-    handler_->PostSyncTask([this, callingTokenId, taskParam, bundleName, &result]() {
-        result = this->CheckTaskkeepingPermission(taskParam, callingTokenId, bundleName);
+    handler_->PostSyncTask([this, callingTokenId, taskParam, bundleName, fullTokenId, &result]() {
+        result = this->CheckTaskkeepingPermission(taskParam, callingTokenId, bundleName, fullTokenId);
         }, AppExecFwk::EventQueue::Priority::HIGH);
     return result;
 }
 
-ErrCode BgContinuousTaskMgr::CheckTaskkeepingPermission(
-    const sptr<ContinuousTaskParam> &taskParam, uint64_t callingTokenId, const std::string &bundleName)
+ErrCode BgContinuousTaskMgr::CheckTaskkeepingPermission(const sptr<ContinuousTaskParam> &taskParam,
+    uint64_t callingTokenId, const std::string &bundleName, uint64_t fullTokenId)
 {
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsTaskKeepingExemptedQuatoApp(bundleName) ||
         SUPPORT_TASK_KEEPING) {
         return ERR_OK;
     }
-    if (CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::TASK_KEEPING) &&
-        !BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+    if (CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::TASK_KEEPING)) {
+        return ERR_OK;
+    }
+    if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+        BGTASK_LOGE("not support system app");
+        if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+            return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+        } else {
+            return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
+        }
+    }
+    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
         BGTASK_LOGW("app have no acl permission");
         return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
     }
