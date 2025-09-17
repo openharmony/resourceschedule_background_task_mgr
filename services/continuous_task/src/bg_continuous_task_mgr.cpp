@@ -812,7 +812,6 @@ ErrCode BgContinuousTaskMgr::UpdateTaskInfo(std::shared_ptr<ContinuousTaskRecord
     if (ret != ERR_OK) {
         return ret;
     }
-    record->isCombinedTaskNotification_ = taskParam->isCombinedTaskNotification_;
     if (record->suspendState_) {
         std::string taskInfoMapKey = std::to_string(record->uid_) + SEPARATOR + record->abilityName_ + SEPARATOR +
             std::to_string(record->abilityId_) + SEPARATOR + std::to_string(record->GetContinuousTaskId());
