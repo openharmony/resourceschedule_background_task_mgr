@@ -1408,33 +1408,16 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     return ret;
 }
 
-bool IsModeSupportedCheckParamBeforeSubmit(napi_env env, size_t argc, napi_value *argv, bool isThrow,
-    AsyncCallbackInfo *asyncCallbackInfo)
-{
-    // Get continuousTaskModes.
-    if (!Common::GetContinuousTaskModesFromArray(env, argv[0], asyncCallbackInfo->request)) {
-        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE, true);
-        asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE;
-        return false;
-    }
-
-    // Get continuousTaskSubmodes.
-    if (!Common::GetContinuousTaskSubmodesFromArray(env, argv[1], asyncCallbackInfo->request)) {
-        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE, true);
-        asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE;
-        return false;
-    }
-    return true;
-}
-
 bool IsModeSupportedExecuteCB(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
 {
-    Common::TaskModeTypeConversion(asyncCallbackInfo->request);
-    std::vector<uint32_t> continuousTaskModes = asyncCallbackInfo->request->GetContinuousTaskModes();
-
-    ContinuousTaskParam taskParam = ContinuousTaskParam(true, continuousTaskModes[0],
+    std::vector<uint32_t> continuousTaskModes {};
+    uint32_t oldMode = 0;
+    for (auto mode : asyncCallbackInfo->request->GetContinuousTaskModes()) {
+        oldMode = ContinuousTaskMode::GetV9BackgroundModeByMode(mode);
+        continuousTaskModes.push_back(oldMode);
+    }
+    ContinuousTaskParam taskParam = ContinuousTaskParam(true, -1,
         nullptr, "", nullptr, "", true, continuousTaskModes, -1);
-    taskParam.bgSubModeIds_ = asyncCallbackInfo->request->GetContinuousTaskSubmodes();
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::IsModeSupported(taskParam);
     if (asyncCallbackInfo->errCode != ERR_OK) {
         BGTASK_LOGE("get isModeSupported failed");
@@ -1458,16 +1441,21 @@ napi_value IsModeSupported(napi_env env, napi_callback_info info)
         return WrapVoidToJS(env);
     }
     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
-
-    size_t argc = MAX_START_BG_RUNNING_BY_RQUEST_PARAMS;
-    napi_value argv[MAX_START_BG_RUNNING_BY_RQUEST_PARAMS] = {nullptr};
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    if (argc != MAX_START_BG_RUNNING_BY_RQUEST_PARAMS) {
-        BGTASK_LOGE("wrong params nums");
+    napi_value jsThis;
+    napi_get_cb_info(env, info, nullptr, nullptr, &jsThis, nullptr);
+    bool hasProperty = false;
+    napi_status status = napi_has_named_property(env, jsThis, "continuousTaskModes", &hasProperty);
+    if (!hasProperty || status != napi_ok) {
+        asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE;
+        BGTASK_LOGE("do not have property continuousTaskModes");
         return WrapVoidToJS(env);
     }
 
-    if (!IsModeSupportedCheckParamBeforeSubmit(env, argc, argv, true, asyncCallbackInfo)) {
+    napi_value continuousTaskModes;
+    status = napi_get_named_property(env, jsThis, "continuousTaskModes", &continuousTaskModes);
+    if (status != napi_ok ||
+        !Common::GetContinuousTaskModesFromArray(env, continuousTaskModes, asyncCallbackInfo->request)) {
+        asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE;
         BGTASK_LOGE("failed to check params");
         return WrapVoidToJS(env);
     }
