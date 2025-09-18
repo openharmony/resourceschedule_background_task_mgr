@@ -204,6 +204,8 @@ WEAK_FUNC ErrCode NotificationTools::RefreshContinuousNotificationWantAndContext
         var->SetWantAgent(continuousTaskRecord->GetWantAgent());
         if (CommonUtils::CheckExistMode(continuousTaskRecord->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
             var->SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
+        } else {
+            var->SetSlotType(Notification::NotificationConstant::SlotType::OTHER);
         }
         if (updateContent) {
             auto &content = var->GetContent();
