@@ -903,7 +903,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
         }
     }
     if (CommonUtils::CheckModeExistOnly(record->bgModeIds_, taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-        BGTASK_LOGE("only task have mode: DATA_TRANSFER, not support update, taskI: %{public}d", continuousTaskId);
+        BGTASK_LOGE("only task have mode: DATA_TRANSFER, not support update, taskId: %{public}d", continuousTaskId);
         return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE;
     }
     return UpdateTaskInfo(record, taskParam);
