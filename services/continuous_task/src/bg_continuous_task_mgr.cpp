@@ -902,6 +902,10 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
             return ret;
         }
     }
+    if (CommonUtils::CheckModeExistOnly(record->bgModeIds_, taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+        BGTASK_LOGE("only task have mode: DATA_TRANSFER, not support update, taskId: %{public}d", continuousTaskId);
+        return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE;
+    }
     return UpdateTaskInfo(record, taskParam);
 }
 
@@ -976,7 +980,7 @@ ErrCode BgContinuousTaskMgr::CheckAbilityTaskNum(const std::shared_ptr<Continuou
             taskNum = taskNum + 1;
         }
     }
-    if (taskNum == ABILITY_TASK_MAX_NUM) {
+    if (taskNum >= ABILITY_TASK_MAX_NUM) {
         BGTASK_LOGE("abilityId: %{public}d have 10 tasks, can not apply continuous task", abilityId);
         return ERR_BGTASK_CONTINUOUS_NOT_APPLY_MAX_TASK;
     }
@@ -990,6 +994,10 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         + continuousTaskRecord->abilityName_ + SEPARATOR + std::to_string(continuousTaskRecord->abilityId_);
     if (continuousTaskRecord->isByRequestObject_) {
         taskInfoMapKey = taskInfoMapKey + SEPARATOR + std::to_string(continuousTaskRecord->continuousTaskId_);
+        ErrCode ret = CheckAbilityTaskNum(continuousTaskRecord);
+        if (ret != ERR_OK) {
+            return ret;
+        }
     }
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
         if (continuousTaskInfosMap_[taskInfoMapKey] != nullptr &&
@@ -1055,6 +1063,12 @@ ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotification(std::shared_ptr<Conti
     // 无需合并，新申请
     int32_t mergeNotificationTaskId = recordParam->combinedNotificationTaskId_;
     if (recordParam->isByRequestObject_) {
+        if (recordParam->isCombinedTaskNotification_ &&
+            CommonUtils::CheckExistMode(recordParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+            BGTASK_LOGE("continuous task mode: DATA_TRANSFER not support merge, taskId: %{public}d",
+                mergeNotificationTaskId);
+            return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION;
+        }
         if (mergeNotificationTaskId == -1) {
             sendNotification = true;
             return ERR_OK;
@@ -1104,11 +1118,6 @@ ErrCode BgContinuousTaskMgr::DetermineMatchCombinedTaskNotifacation(std::shared_
         if (!CommonUtils::CheckModesSame(record.second->bgSubModeIds_, recordParam->bgSubModeIds_)) {
             BGTASK_LOGE("continuous task submodes mismatch, taskId: %{public}d", mergeNotificationTaskId);
             return ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
-        }
-        if (CommonUtils::CheckExistMode(recordParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-            BGTASK_LOGE("continuous task mode: DATA_TRANSFER not support merge, taskId: %{public}d",
-                mergeNotificationTaskId);
-            return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION;
         } else {
             sendNotification = false;
             recordParam->notificationId_ = record.second->GetNotificationId();
@@ -1282,6 +1291,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
             BGTASK_LOGE("uid: %{public}d not have task", uid);
             return ERR_BGTASK_OBJECT_NOT_EXIST;
         }
+        BGTASK_LOGI("uid: %{public}d stop continuous task by interface", uid);
         return StopBackgroundRunningByContext(uid, abilityName, abilityId);
     }
 }
