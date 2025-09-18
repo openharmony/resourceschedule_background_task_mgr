@@ -19,6 +19,8 @@
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 #include "notification_helper.h"
 #endif
+#include "background_mode.h"
+#include "common_utils.h"
 #include "continuous_task_log.h"
 #include "string_wrapper.h"
 
@@ -200,6 +202,9 @@ WEAK_FUNC ErrCode NotificationTools::RefreshContinuousNotificationWantAndContext
             continue;
         }
         var->SetWantAgent(continuousTaskRecord->GetWantAgent());
+        if (CommonUtils::CheckExistMode(continuousTaskRecord->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+            var->SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
+        }
         if (updateContent) {
             auto &content = var->GetContent();
             if (!content) {
