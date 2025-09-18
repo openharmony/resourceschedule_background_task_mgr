@@ -39,15 +39,23 @@ static constexpr uint32_t BLUETOOTH_INTERACTION = 16;
 static constexpr uint32_t BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
+static constexpr uint32_t BGMODE_AUDIO_PLAYBACK_ID = 2;
 static constexpr uint32_t LOCATION_BGMODE_ID = 4;
 static constexpr uint32_t BGMODE_WIFI_INTERACTION_ID = 7;
 static constexpr uint32_t BGMODE_VOIP_ID = 8;
 static constexpr uint32_t BGMODE_TASK_KEEPING_ID = 9;
+static constexpr uint32_t BGMODE_WORKOUT_ID = 10;
 static constexpr uint32_t INVALID_BGMODE_ID = 11;
 static constexpr int32_t DEFAULT_USERID = 100;
 static constexpr int32_t TEST_NUM_ONE = 1;
 static constexpr int32_t TEST_NUM_TWO = 2;
 static constexpr int32_t TEST_NUM_THREE = 3;
+static constexpr uint32_t CALL_KIT_SA_UID = 7022;
+#ifdef FEATURE_PRODUCT_WATCH
+static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
+#else
+static constexpr uint32_t HEALTHSPORT_SA_UID = 7259;
+#endif
 static constexpr uint32_t CONFIGURE_ALL_MODES = 0x1FF;
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 static constexpr char SEPARATOR[] = "_";
@@ -1746,6 +1754,68 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_065, TestSize.Level1)
     // 需要的任务有合并，前后类型不一致，返回失败
     EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam),
         ERR_BGTASK_CONTINUOUS_UPDATE_FAIL_SAME_MODE_AND_MERGED);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_066
+ * @tc.desc: IsModeSupported test.
+ * @tc.type: FUNC
+ * @tc.require: issueICWHAG
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_066, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 5,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {5}, 1);
+    taskParam->bgModeIds_.clear();
+    taskParam->bgModeIds_.push_back(5);
+    taskParam->bgSubModeIds_.clear();
+    taskParam->bgSubModeIds_.push_back(1);
+    EXPECT_EQ(bgContinuousTaskMgr_->IsModeSupported(taskParam), ERR_BGTASK_SYS_NOT_READY);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    // 申请非taskkeeping长时任务
+    EXPECT_EQ(bgContinuousTaskMgr_->IsModeSupported(taskParam), ERR_OK);
+    // 申请taskkeeping长时任务
+    taskParam->bgSubModeIds_.clear();
+    taskParam->bgSubModeIds_.push_back(9);
+    taskParam->bgSubModeIds_.clear();
+    taskParam->bgSubModeIds_.push_back(2);
+    EXPECT_EQ(bgContinuousTaskMgr_->IsModeSupported(taskParam),
+        ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_067
+ * @tc.desc: CheckPermissionForInner test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_067, TestSize.Level1)
+{
+    // 非特权应用申请
+    sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
+        new ContinuousTaskParamForInner(1, 1, true));
+    EXPECT_FALSE(bgContinuousTaskMgr_->CheckPermissionForInner(taskParam, 100));
+    // callkit 申请VOIP
+    taskParam->bgModeId_ = BGMODE_VOIP_ID;
+    EXPECT_TRUE(bgContinuousTaskMgr_->CheckPermissionForInner(taskParam, CALL_KIT_SA_UID));
+    // callkit 申请非VOIP
+    taskParam->bgModeId_ = LOCATION_BGMODE_ID;
+    EXPECT_FALSE(bgContinuousTaskMgr_->CheckPermissionForInner(taskParam, CALL_KIT_SA_UID));
+    // 运动健康申请WORKOUT
+    taskParam->bgModeId_ = BGMODE_WORKOUT_ID;
+    EXPECT_TRUE(bgContinuousTaskMgr_->CheckPermissionForInner(taskParam, HEALTHSPORT_SA_UID));
+    // 运动健康申请非WORKOUT
+    taskParam->bgModeId_ = LOCATION_BGMODE_ID;
+    EXPECT_FALSE(bgContinuousTaskMgr_->CheckPermissionForInner(taskParam, HEALTHSPORT_SA_UID));
+    // webview申请AUDIO_PLAYBACK
+    taskParam->bgModeId_ = BGMODE_AUDIO_PLAYBACK_ID;
+    EXPECT_TRUE(bgContinuousTaskMgr_->CheckPermissionForInner(taskParam, 1));
+    // webview申请非AUDIO_PLAYBACK
+    taskParam->bgModeId_ = LOCATION_BGMODE_ID;
+    EXPECT_FALSE(bgContinuousTaskMgr_->CheckPermissionForInner(taskParam, 1));
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

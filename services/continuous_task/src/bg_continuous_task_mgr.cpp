@@ -628,7 +628,7 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     // webview sdk申请长时任务，上下文在应用。callkit sa 申请长时时，上下文在sa;
-    if (callingUid != VOIP_SA_UID && callingUid != HEALTHSPORT_SA_UID && callingUid != taskParam->uid_) {
+    if (!CheckPermissionForInner(taskParam, callingUid)) {
         BGTASK_LOGE("continuous task param uid %{public}d is invalid, real %{public}d", taskParam->uid_, callingUid);
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
@@ -637,6 +637,21 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
         return StartBackgroundRunningForInner(taskParam);
     }
     return StopBackgroundRunningForInner(taskParam);
+}
+
+bool BgContinuousTaskMgr::CheckPermissionForInner(
+    const sptr<ContinuousTaskParamForInner> &taskParam, int32_t callingUid)
+{
+    if (callingUid == VOIP_SA_UID && taskParam->bgModeId_ == BackgroundMode::VOIP) {
+        return true;
+    }
+    if (callingUid == HEALTHSPORT_SA_UID && taskParam->bgModeId_ == BackgroundMode::WORKOUT) {
+        return true;
+    }
+    if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
+        return true;
+    }
+    return false;
 }
 
 ErrCode BgContinuousTaskMgr::RequestGetContinuousTasksByUidForInner(int32_t uid,
@@ -2453,7 +2468,7 @@ ErrCode BgContinuousTaskMgr::CheckTaskkeepingPermission(const sptr<ContinuousTas
         SUPPORT_TASK_KEEPING) {
         return ERR_OK;
     }
-    if (CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::TASK_KEEPING)) {
+    if (!CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::TASK_KEEPING)) {
         return ERR_OK;
     }
     if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {

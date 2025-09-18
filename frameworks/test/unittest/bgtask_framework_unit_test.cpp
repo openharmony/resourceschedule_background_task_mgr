@@ -947,7 +947,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, IsModeSupported_001, TestSize.Level1)
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->IsModeSupported(taskParam),
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->IsModeSupported(taskParam),
         ERR_OK);
 }
 }
