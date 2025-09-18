@@ -886,8 +886,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
     }
     if (taskParam->isCombinedTaskNotification_ &&
         CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-        BGTASK_LOGE("continuous task mode: DATA_TRANSFER not support merge, taskId: %{public}d",
-            mergeNotificationTaskId);
+        BGTASK_LOGE("continuous task mode: DATA_TRANSFER not support merge, taskId: %{public}d", continuousTaskId);
         return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION;
     }
     auto findTask = [continuousTaskId](const auto &target) {
