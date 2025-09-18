@@ -61,6 +61,20 @@ public:
         return modeStr;
     }
 
+    static bool CheckModeExistOnly(const std::vector<uint32_t> &oldBgModeIds,
+        const std::vector<uint32_t> &newBgModeIds, uint32_t bgMode)
+    {
+        auto iterOld = std::find(oldBgModeIds.begin(), oldBgModeIds.end(), bgMode);
+        auto iterNew = std::find(newBgModeIds.begin(), newBgModeIds.end(), bgMode);
+        if (iterOld != oldBgModeIds.end() && iterNew == newBgModeIds.end()) {
+            return true;
+        }
+        if (iterOld == oldBgModeIds.end() && iterNew != newBgModeIds.end()) {
+            return true;
+        }
+        return false;
+    }
+
 public:
     static constexpr int32_t jsonFormat_ = 4;
 };
