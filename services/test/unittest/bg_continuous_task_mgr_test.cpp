@@ -1778,8 +1778,8 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_066, TestSize.Level1)
     // 申请非taskkeeping长时任务
     EXPECT_EQ(bgContinuousTaskMgr_->IsModeSupported(taskParam), ERR_OK);
     // 申请taskkeeping长时任务
-    taskParam->bgSubModeIds_.clear();
-    taskParam->bgSubModeIds_.push_back(9);
+    taskParam->bgModeIds_.clear();
+    taskParam->bgModeIds_.push_back(9);
     taskParam->bgSubModeIds_.clear();
     taskParam->bgSubModeIds_.push_back(2);
     EXPECT_EQ(bgContinuousTaskMgr_->IsModeSupported(taskParam),
