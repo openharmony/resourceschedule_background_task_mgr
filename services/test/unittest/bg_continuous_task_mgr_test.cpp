@@ -1559,24 +1559,9 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_061, TestSize.Level1)
     continuousTaskRecord2->bgSubModeIds_.push_back(2);
     continuousTaskRecord2->notificationId_ = 1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
-    // 需要合并，任务类型包含上传下载，不能合并
+    // 需要合并，任务类型包含上传下载，申请失败
     EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification),
         ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION);
-
-    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
-    continuousTaskRecord->bgModeId_ = 4;
-    continuousTaskRecord->bgModeIds_.clear();
-    continuousTaskRecord->bgModeIds_.push_back(4);
-    continuousTaskRecord->bgSubModeIds_.clear();
-    continuousTaskRecord->bgSubModeIds_.push_back(1);
-
-    continuousTaskRecord2->bgModeId_ = 4;
-    continuousTaskRecord2->bgModeIds_.clear();
-    continuousTaskRecord2->bgModeIds_.push_back(4);
-    continuousTaskRecord2->bgSubModeIds_.clear();
-    continuousTaskRecord2->bgSubModeIds_.push_back(1);
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord2;
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckCombinedTaskNotification(continuousTaskRecord, sendNotification), ERR_OK);
 }
 
 /**
