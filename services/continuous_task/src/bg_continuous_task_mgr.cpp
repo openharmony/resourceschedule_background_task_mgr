@@ -884,11 +884,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
         BGTASK_LOGE("update task fail, taskId: %{public}d", taskParam->updateTaskId_);
         return ERR_BGTASK_CONTINUOUS_TASKID_INVALID;
     }
-    if (taskParam->isCombinedTaskNotification_ &&
-        CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-        BGTASK_LOGE("continuous task mode: DATA_TRANSFER not support merge, taskId: %{public}d", continuousTaskId);
-        return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION;
-    }
     auto findTask = [continuousTaskId](const auto &target) {
         return continuousTaskId == target.second->continuousTaskId_ && target.second->isByRequestObject_;
     };
@@ -906,6 +901,10 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
             BGTASK_LOGE("CheckBgmodeType error, mode: %{public}u, apply mode: %{public}u.", configuredBgMode, *it);
             return ret;
         }
+    }
+    if (CommonUtils::CheckModeExistOnly(record->bgModeIds_, taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+        BGTASK_LOGE("only task have mode: DATA_TRANSFER, not support update, taskI: %{public}d", continuousTaskId);
+        return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE;
     }
     return UpdateTaskInfo(record, taskParam);
 }
@@ -1292,6 +1291,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
             BGTASK_LOGE("uid: %{public}d not have task", uid);
             return ERR_BGTASK_OBJECT_NOT_EXIST;
         }
+        BGTASK_LOGI("uid: %{public}d stop continuous task by interface", uid);
         return StopBackgroundRunningByContext(uid, abilityName, abilityId);
     }
 }
