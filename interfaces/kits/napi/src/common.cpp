@@ -124,7 +124,8 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM,
         "Notification verification failed. App has no ACL permission of Taskkeeping."},
     {ERR_BGTASK_CONTINUOUS_NOT_APPLY_MAX_TASK,
-        "Continuous Task verification failed. The current ability has already applied for 10 tasks and cannot apply."},
+        "Continuous Task verification failed. "
+        "The current ability to apply for continuous tasks has exceeded the maximum limit."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
