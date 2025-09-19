@@ -83,6 +83,12 @@ ohos_unittest("bgtask_unit_test") {
     external_deps += [ "distributed_notification_service:ans_innerkits" ]
   }
 
+  if (target_platform == "phone") {
+    defines = [ "FEATURE_PRODUCT_PHONE" ]
+  } else if (target_platform == "watch") {
+    defines = [ "FEATURE_PRODUCT_WATCH" ]
+  }
+
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
 }
