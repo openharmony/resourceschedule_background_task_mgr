@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_SUBMODE_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_SUBMODE_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_TASK_SUBMODE_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_TASK_SUBMODE_H
 
 #include <string>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class ContinuousTaskSubmode {
+class BackgroundTaskSubmode {
 public:
-    virtual ~ContinuousTaskSubmode() = default;
+    virtual ~BackgroundTaskSubmode() = default;
     enum Type : uint32_t {
         SUBMODE_CAR_KEY_NORMAL_NOTIFICATION = 1,
         SUBMODE_NORMAL_NOTIFICATION,
@@ -35,8 +35,8 @@ public:
         END,
     };
 
-    static std::string GetContinuousTaskSubmodeStr(uint32_t mode);
+    static std::string GetBackgroundTaskSubmodeStr(uint32_t mode);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_CONTINUOUS_TASK_SUBMODE_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_TASK_SUBMODE_H

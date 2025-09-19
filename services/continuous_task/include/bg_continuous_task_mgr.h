@@ -32,11 +32,11 @@
 #include "task_notification_subscriber.h"
 #endif
 #include "continuous_task_info.h"
-#include "continuous_task_mode.h"
+#include "background_task_mode.h"
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
 #include "continuous_task_request.h"
-#include "continuous_task_submode.h"
+#include "background_task_submode.h"
 #include "ibackground_task_subscriber.h"
 #include "remote_death_recipient.h"
 #include "system_event_observer.h"

@@ -26,11 +26,11 @@ namespace BackgroundTaskMgr {
 class ContinuousTaskRequest : public std::enable_shared_from_this<ContinuousTaskRequest>, public Parcelable {
 public:
     ~ContinuousTaskRequest() = default;
-    ContinuousTaskRequest(const std::vector<uint32_t> &continuousTaskModes = {},
-        const std::vector<uint32_t> &continuousTaskSubmodes = {},
+    ContinuousTaskRequest(const std::vector<uint32_t> &backgroundTaskModes = {},
+        const std::vector<uint32_t> &backgroundTaskSubmodes = {},
         const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent = nullptr,
         bool combinedTaskNotification = false, int32_t continuousTaskId = -1, bool isBuildByRequest = false)
-        : continuousTaskModes_(continuousTaskModes), continuousTaskSubmodes_(continuousTaskSubmodes),
+        : backgroundTaskModes_(backgroundTaskModes), backgroundTaskSubmodes_(backgroundTaskSubmodes),
         wantAgent_(wantAgent), combinedTaskNotification_(combinedTaskNotification),
         continuousTaskId_(continuousTaskId), isBuildByRequest_(isBuildByRequest) {}
     /**
@@ -57,18 +57,18 @@ public:
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> GetWantAgent() const;
 
     /**
-     * @brief Get ContinuousTaskModes.
+     * @brief Get BackgroundTaskModes.
      *
-     * @return ContinuousTaskModes.
+     * @return BackgroundTaskModes.
      */
-    std::vector<uint32_t> GetContinuousTaskModes() const;
+    std::vector<uint32_t> GetBackgroundTaskModes() const;
 
     /**
-     * @brief Get ContinuousTaskSubmodes.
+     * @brief Get BackgroundTaskSubmodes.
      *
-     * @return ContinuousTaskSubmodes.
+     * @return BackgroundTaskSubmodes.
      */
-    std::vector<uint32_t> GetContinuousTaskSubmodes() const;
+    std::vector<uint32_t> GetBackgroundTaskSubmodes() const;
 
     /**
      * @brief IsBuildByRequest.
@@ -95,13 +95,13 @@ public:
     void SetCombinedTaskNotification(const bool combinedTaskNotification);
     void SetWantAgent(const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent);
     bool IsCombinedTaskNotification() const;
-    void SetContinuousTaskMode(const std::vector<uint32_t> &continuousTaskMode);
-    void SetContinuousTaskSubMode(const std::vector<uint32_t> &continuousTaskSubMode);
+    void SetBackgroundTaskMode(const std::vector<uint32_t> &backgroundTaskMode);
+    void SetBackgroundTaskSubMode(const std::vector<uint32_t> &backgroundTaskSubMode);
 private:
     bool ReadFromParcel(Parcel& in);
 
-    std::vector<uint32_t> continuousTaskModes_ {};
-    std::vector<uint32_t> continuousTaskSubmodes_ {};
+    std::vector<uint32_t> backgroundTaskModes_ {};
+    std::vector<uint32_t> backgroundTaskSubmodes_ {};
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
     bool combinedTaskNotification_ {false};
     int32_t continuousTaskId_ {-1};

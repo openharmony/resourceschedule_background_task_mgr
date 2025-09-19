@@ -32,12 +32,12 @@ ContinuousTaskRequest* ContinuousTaskRequest::Unmarshalling(Parcel& in)
 
 bool ContinuousTaskRequest::Marshalling(Parcel& out) const
 {
-    if (!out.WriteUInt32Vector(continuousTaskModes_)) {
-        BGTASK_LOGE("Failed to write continuousTaskModes");
+    if (!out.WriteUInt32Vector(backgroundTaskModes_)) {
+        BGTASK_LOGE("Failed to write backgroundTaskModes");
         return false;
     }
-    if (!out.WriteUInt32Vector(continuousTaskSubmodes_)) {
-        BGTASK_LOGE("Failed to write continuousTaskSubmodes");
+    if (!out.WriteUInt32Vector(backgroundTaskSubmodes_)) {
+        BGTASK_LOGE("Failed to write backgroundTaskSubmodes");
         return false;
     }
     bool valid = wantAgent_ != nullptr;
@@ -68,12 +68,12 @@ bool ContinuousTaskRequest::Marshalling(Parcel& out) const
 
 bool ContinuousTaskRequest::ReadFromParcel(Parcel& in)
 {
-    if (!in.ReadUInt32Vector(&continuousTaskModes_)) {
-        BGTASK_LOGE("read parcel continuousTaskModes error");
+    if (!in.ReadUInt32Vector(&backgroundTaskModes_)) {
+        BGTASK_LOGE("read parcel backgroundTaskModes error");
         return false;
     }
-    if (!in.ReadUInt32Vector(&continuousTaskSubmodes_)) {
-        BGTASK_LOGE("read parcel continuousTaskSubmodes error");
+    if (!in.ReadUInt32Vector(&backgroundTaskSubmodes_)) {
+        BGTASK_LOGE("read parcel backgroundTaskSubmodes error");
         return false;
     }
     bool valid = in.ReadBool();
@@ -105,14 +105,14 @@ std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> ContinuousTaskRequest::Get
     return wantAgent_;
 }
 
-std::vector<uint32_t> ContinuousTaskRequest::GetContinuousTaskModes() const
+std::vector<uint32_t> ContinuousTaskRequest::GetBackgroundTaskModes() const
 {
-    return continuousTaskModes_;
+    return backgroundTaskModes_;
 }
 
-std::vector<uint32_t> ContinuousTaskRequest::GetContinuousTaskSubmodes() const
+std::vector<uint32_t> ContinuousTaskRequest::GetBackgroundTaskSubmodes() const
 {
-    return continuousTaskSubmodes_;
+    return backgroundTaskSubmodes_;
 }
 
 bool ContinuousTaskRequest::IsBuildByRequest() const
@@ -151,14 +151,14 @@ void ContinuousTaskRequest::SetWantAgent(
     wantAgent_ = wantAgent;
 }
 
-void ContinuousTaskRequest::SetContinuousTaskMode(const std::vector<uint32_t> &continuousTaskMode)
+void ContinuousTaskRequest::SetBackgroundTaskMode(const std::vector<uint32_t> &backgroundTaskMode)
 {
-    continuousTaskModes_ = continuousTaskMode;
+    backgroundTaskModes_ = backgroundTaskMode;
 }
 
-void ContinuousTaskRequest::SetContinuousTaskSubMode(const std::vector<uint32_t> &continuousTaskSubMode)
+void ContinuousTaskRequest::SetBackgroundTaskSubMode(const std::vector<uint32_t> &backgroundTaskSubMode)
 {
-    continuousTaskSubmodes_ = continuousTaskSubMode;
+    backgroundTaskSubmodes_ = backgroundTaskSubMode;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
