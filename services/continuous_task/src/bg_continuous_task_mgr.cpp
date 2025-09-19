@@ -1923,7 +1923,7 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
         stream << "\t\tsuspendState: " << (iter->second->suspendState_ ? "true" : "false") << "\n";
         stream << "\t\tisFromWebview: " << (iter->second->IsFromWebview() ? "true" : "false") << "\n";
         stream << "\t\tisFromNewApi: " << (iter->second->IsNewApi() ? "true" : "false") << "\n";
-        stream << "\t\tbackgroundMode: " << g_backgroundTaskModeName[GetBgModeNameIndex(
+        stream << "\t\tbackgroundMode: " << g_continuousTaskModeName[GetBgModeNameIndex(
             iter->second->GetBgModeId(), iter->second->IsNewApi())] << "\n";
         stream << "\t\tisBatchApi: " << (iter->second->isBatchApi_ ? "true" : "false") << "\n";
         stream << "\t\tbackgroundModes: " << iter->second->ToString(iter->second->bgModeIds_) << "\n";

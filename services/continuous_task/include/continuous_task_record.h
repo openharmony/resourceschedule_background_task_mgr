@@ -23,7 +23,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-extern const char *g_backgroundTaskModeName[11];
+extern const char *g_continuousTaskModeName[11];
 
 // stop task reason
 enum : int32_t {
