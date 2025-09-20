@@ -1524,7 +1524,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, 
     }
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
-        if (iter->second->GetUid() != uid) {
+        if (iter->second->GetUid() != uid || iter->first != key) {
             ++iter;
             continue;
         }
@@ -1598,7 +1598,6 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
             }
         }
         RefreshTaskRecord();
-        break;
     }
 }
 
