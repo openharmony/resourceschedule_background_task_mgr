@@ -18,8 +18,8 @@
 #include "background_mode.h"
 #include "background_sub_mode.h"
 #include "cancel_suspend_delay.h"
-#include "continuous_task_mode.h"
-#include "continuous_task_submode.h"
+#include "background_task_mode.h"
+#include "background_task_submode.h"
 #include "transient_task_log.h"
 
 namespace OHOS {
@@ -90,15 +90,15 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. "
         "The continuousRequestInfo cannot be null and its type must be continuousRequestInfo object."},
     {ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY,
-        "Continuous Task verification failed. The continuousTaskModes or continuousTaskSubmodes cannot be empty."},
+        "Continuous Task verification failed. The backgroundTaskModes or backgroundTaskSubmodes cannot be empty."},
     {ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_LENGTH_MISMATCH,
         "Continuous Task verification failed. "
-        "The length of the continuousTaskModes does not match the length of the continuousTaskSubmodes."},
+        "The length of the backgroundTaskModes does not match the length of the backgroundTaskSubmodes."},
     {ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_CROSS_BORDER,
-        "Continuous Task verification failed. The continuousTaskModes or continuousTaskSubmodes are out of scope."},
+        "Continuous Task verification failed. The backgroundTaskModes or backgroundTaskSubmodes are out of scope."},
     {ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH,
         "Continuous Task verification failed. "
-        "The sequence of continuousTaskModes does not match the continuousTaskSubmodes."},
+        "The sequence of backgroundTaskModes does not match the backgroundTaskSubmodes."},
     {ERR_BGTASK_CONTINUOUS_NOT_UPDATE_BY_OLD_INTERFACE,
         "Continuous Task verification failed. "
         "This task is requested through a new interface, and update operations are not permitted via this interface."},
@@ -106,7 +106,7 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. The continuous task Id is invalid."},
     {ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION,
         "Continuous Task verification failed. "
-        "This continuous task mode: DATA_TRANSFER type do not support merged notification."},
+        "This background task mode: DATA_TRANSFER type do not support merged notification."},
     {ERR_BGTASK_CONTINUOUS_NOT_MERGE_NOTIFICATION_NOT_EXIST,
         "Continuous Task verification failed. This continuous task notification does not exist and cannot be merged."},
     {ERR_BGTASK_CONTINUOUS_NOT_MERGE_COMBINED_FALSE,
@@ -127,7 +127,7 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. "
         "The current ability to apply for continuous tasks has exceeded the maximum limit."},
     {ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE,
-        "Continuous Task verification failed. The continuous task mode: DATA_TRANSFER type do not support update."},
+        "Continuous Task verification failed. The background task mode: DATA_TRANSFER type do not support update."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
@@ -636,13 +636,13 @@ napi_value Common::GetNapiEfficiencyResourcesInfo(const napi_env &env,
 bool Common::GetContinuousTaskRequest(napi_env env, napi_value objValue,
     std::shared_ptr<ContinuousTaskRequest> &request)
 {
-    // Get continuousTaskModes.
-    if (!GetContinuousTaskModesProperty(env, objValue, "continuousTaskModes", request)) {
+    // Get backgroundTaskModes.
+    if (!GetBackgroundTaskModesProperty(env, objValue, "backgroundTaskModes", request)) {
         return false;
     }
 
-    // Get continuousTaskSubmodes.
-    if (!GetContinuousTaskSubmodesProperty(env, objValue, "continuousTaskSubmodes", request)) {
+    // Get backgroundTaskSubmodes.
+    if (!GetBackgroundTaskSubmodesProperty(env, objValue, "backgroundTaskSubmodes", request)) {
         return false;
     }
 
@@ -667,7 +667,7 @@ bool Common::GetContinuousTaskRequest(napi_env env, napi_value objValue,
     return true;
 }
 
-bool Common::GetContinuousTaskModesProperty(napi_env env, napi_value object, const std::string &propertyName,
+bool Common::GetBackgroundTaskModesProperty(napi_env env, napi_value object, const std::string &propertyName,
     std::shared_ptr<ContinuousTaskRequest> &request)
 {
     bool boolValue = false;
@@ -676,11 +676,11 @@ bool Common::GetContinuousTaskModesProperty(napi_env env, napi_value object, con
     if (getNameStatus != napi_ok) {
         return boolValue;
     }
-    boolValue = GetContinuousTaskModesFromArray(env, value, request);
+    boolValue = GetBackgroundTaskModesFromArray(env, value, request);
     return boolValue;
 }
 
-bool Common::GetContinuousTaskModesFromArray(napi_env env, napi_value arrayValue,
+bool Common::GetBackgroundTaskModesFromArray(napi_env env, napi_value arrayValue,
     std::shared_ptr<ContinuousTaskRequest> &request)
 {
     bool boolValue = false;
@@ -689,7 +689,7 @@ bool Common::GetContinuousTaskModesFromArray(napi_env env, napi_value arrayValue
     }
     uint32_t length;
     napi_get_array_length(env, arrayValue, &length);
-    std::vector<uint32_t> continuousTaskModes {};
+    std::vector<uint32_t> backgroundTaskModes {};
     for (uint32_t i = 0; i < length; i++) {
         napi_value napiMode;
         if (napi_get_element(env, arrayValue, i, &napiMode) != napi_ok) {
@@ -708,14 +708,14 @@ bool Common::GetContinuousTaskModesFromArray(napi_env env, napi_value arrayValue
                 return false;
             }
             uint32_t mode = static_cast<uint32_t>(intValue);
-            continuousTaskModes.push_back(mode);
+            backgroundTaskModes.push_back(mode);
         }
     }
-    request->SetContinuousTaskMode(continuousTaskModes);
+    request->SetBackgroundTaskMode(backgroundTaskModes);
     return boolValue;
 }
 
-bool Common::GetContinuousTaskSubmodesProperty(napi_env env, napi_value object, const std::string &propertyName,
+bool Common::GetBackgroundTaskSubmodesProperty(napi_env env, napi_value object, const std::string &propertyName,
     std::shared_ptr<ContinuousTaskRequest> &request)
 {
     bool boolValue = false;
@@ -724,11 +724,11 @@ bool Common::GetContinuousTaskSubmodesProperty(napi_env env, napi_value object, 
     if (getNameStatus != napi_ok) {
         return boolValue;
     }
-    boolValue = GetContinuousTaskSubmodesFromArray(env, value, request);
+    boolValue = GetBackgroundTaskSubmodesFromArray(env, value, request);
     return boolValue;
 }
 
-bool Common::GetContinuousTaskSubmodesFromArray(napi_env env, napi_value arrayValue,
+bool Common::GetBackgroundTaskSubmodesFromArray(napi_env env, napi_value arrayValue,
     std::shared_ptr<ContinuousTaskRequest> &request)
 {
     bool boolValue = false;
@@ -737,7 +737,7 @@ bool Common::GetContinuousTaskSubmodesFromArray(napi_env env, napi_value arrayVa
     }
     uint32_t length;
     napi_get_array_length(env, arrayValue, &length);
-    std::vector<uint32_t> continuousTaskSubModes {};
+    std::vector<uint32_t> backgroundTaskSubModes {};
     for (uint32_t i = 0; i < length; i++) {
         napi_value napiSubMode;
         if (napi_get_element(env, arrayValue, i, &napiSubMode) != napi_ok) {
@@ -756,10 +756,10 @@ bool Common::GetContinuousTaskSubmodesFromArray(napi_env env, napi_value arrayVa
                 return false;
             }
             uint32_t subMode = static_cast<uint32_t>(intValue);
-            continuousTaskSubModes.push_back(subMode);
+            backgroundTaskSubModes.push_back(subMode);
         }
     }
-    request->SetContinuousTaskSubMode(continuousTaskSubModes);
+    request->SetBackgroundTaskSubMode(backgroundTaskSubModes);
     return boolValue;
 }
 
@@ -826,23 +826,23 @@ void Common::TaskModeTypeConversion(std::shared_ptr<ContinuousTaskRequest> &requ
     if (request == nullptr) {
         return;
     }
-    std::vector<uint32_t> continuousTaskSubModes = request->GetContinuousTaskSubmodes();
-    std::vector<uint32_t> continuousTaskModes = request->GetContinuousTaskModes();
+    std::vector<uint32_t> backgroundTaskSubModes = request->GetBackgroundTaskSubmodes();
+    std::vector<uint32_t> backgroundTaskModes = request->GetBackgroundTaskModes();
     std::vector<uint32_t> modes {};
     std::vector<uint32_t> subModes {};
-    for (uint32_t index = 0; index < continuousTaskSubModes.size(); index++) {
-        uint32_t subMode = continuousTaskSubModes[index];
+    for (uint32_t index = 0; index < backgroundTaskSubModes.size(); index++) {
+        uint32_t subMode = backgroundTaskSubModes[index];
         subModes.push_back(subMode);
         uint32_t mode = 0;
-        if (subMode == ContinuousTaskSubmode::SUBMODE_NORMAL_NOTIFICATION) {
-            mode = ContinuousTaskMode::GetV9BackgroundModeByMode(continuousTaskModes[index]);
+        if (subMode == BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION) {
+            mode = BackgroundTaskMode::GetV9BackgroundModeByMode(backgroundTaskModes[index]);
         } else {
-            mode = ContinuousTaskMode::GetV9BackgroundModeBySubMode(subMode);
+            mode = BackgroundTaskMode::GetV9BackgroundModeBySubMode(subMode);
         }
         modes.push_back(mode);
     }
-    request->SetContinuousTaskMode(modes);
-    request->SetContinuousTaskSubMode(subModes);
+    request->SetBackgroundTaskMode(modes);
+    request->SetBackgroundTaskSubMode(subModes);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

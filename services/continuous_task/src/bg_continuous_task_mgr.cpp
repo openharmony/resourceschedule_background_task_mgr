@@ -938,7 +938,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     auto continuousTaskRecord = iter->second;
     auto oldModes = continuousTaskRecord->bgModeIds_;
 
-    BGTASK_LOGI("continuous task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d,"
+    BGTASK_LOGI("background task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d,"
         " abilityId %{public}d", continuousTaskRecord->bgModeId_,
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
         continuousTaskRecord->ToString(taskParam->bgModeIds_).c_str(),
@@ -1062,7 +1062,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
             return ret;
         }
     }
-    BGTASK_LOGI("continuous task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d,"
+    BGTASK_LOGI("background task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d,"
         " abilityId %{public}d, continuousTaskId: %{public}d", continuousTaskRecord->bgModeId_,
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
         continuousTaskRecord->isBatchApi_, continuousTaskRecord->uid_, continuousTaskRecord->abilityId_,
@@ -1080,7 +1080,7 @@ ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotification(std::shared_ptr<Conti
     if (recordParam->isByRequestObject_) {
         if (recordParam->isCombinedTaskNotification_ &&
             CommonUtils::CheckExistMode(recordParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-            BGTASK_LOGE("continuous task mode: DATA_TRANSFER not support merge, taskId: %{public}d",
+            BGTASK_LOGE("background task mode: DATA_TRANSFER not support merge, taskId: %{public}d",
                 mergeNotificationTaskId);
             return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION;
         }
@@ -1127,11 +1127,11 @@ ErrCode BgContinuousTaskMgr::DetermineMatchCombinedTaskNotifacation(std::shared_
             return ERR_BGTASK_CONTINUOUS_NOT_MERGE_NOTIFICATION_NOT_EXIST;
         }
         if (!CommonUtils::CheckModesSame(record.second->bgModeIds_, recordParam->bgModeIds_)) {
-            BGTASK_LOGE("continuous task modes mismatch, taskId: %{public}d", mergeNotificationTaskId);
+            BGTASK_LOGE("background task modes mismatch, taskId: %{public}d", mergeNotificationTaskId);
             return ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
         }
         if (!CommonUtils::CheckModesSame(record.second->bgSubModeIds_, recordParam->bgSubModeIds_)) {
-            BGTASK_LOGE("continuous task submodes mismatch, taskId: %{public}d", mergeNotificationTaskId);
+            BGTASK_LOGE("background task submodes mismatch, taskId: %{public}d", mergeNotificationTaskId);
             return ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
         } else {
             sendNotification = false;
@@ -1187,7 +1187,7 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
     auto iter = avSessionNotification_.find(continuousTaskRecord->uid_);
     bool isPublish = (iter != avSessionNotification_.end()) ? iter->second : false;
     bool isPublishAvsession = isPublish || (CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_,
-        ContinuousTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK) && continuousTaskRecord->isByRequestObject_);
+        BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK) && continuousTaskRecord->isByRequestObject_);
     if (continuousTaskRecord->bgModeIds_.size() == 1 &&
         continuousTaskRecord->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
         if (isPublishAvsession) {
@@ -1206,7 +1206,7 @@ ErrCode BgContinuousTaskMgr::CheckNotificationText(std::string &notificationText
     BGTASK_LOGD("AVSession Notification isPublish: %{public}d", isPublish);
     // 子类型带有avsession,不发通知
     bool isPublishAvsession = isPublish || (CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_,
-        ContinuousTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK) && continuousTaskRecord->isByRequestObject_);
+        BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK) && continuousTaskRecord->isByRequestObject_);
     for (auto mode : continuousTaskRecord->bgModeIds_) {
         if ((mode == BackgroundMode::AUDIO_PLAYBACK && isPublishAvsession) || ((mode == BackgroundMode::VOIP ||
             mode == BackgroundMode::AUDIO_RECORDING) && continuousTaskRecord->IsSystem())) {
@@ -1799,7 +1799,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
 
     // 子类型包含avsession，不发通知
     if (!isPublish &&
-        CommonUtils::CheckExistMode(record->bgSubModeIds_, ContinuousTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK)) {
+        CommonUtils::CheckExistMode(record->bgSubModeIds_, BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK)) {
         return ERR_OK;
     }
 

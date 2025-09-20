@@ -19,10 +19,10 @@
     *BackgroundTaskSubscriber*;
     *ContinuousTaskCallbackInfo*;
     *ContinuousTaskInfo*;
-    *ContinuousTaskMode*;
+    *BackgroundTaskMode*;
     *ContinuousTaskParam*;
     *ContinuousTaskRequest*;
-    *ContinuousTaskSubmode*;
+    *BackgroundTaskSubmode*;
     *ContinuousTaskSuspendReason*;
     *DelaySuspendInfo*;
     *EfficiencyResourceInfo*;
