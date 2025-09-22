@@ -101,6 +101,7 @@ public:
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
     void OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId);
     void OnAppStopped(int32_t uid);
+    void OnAppStateChanged(int32_t uid);
     void OnRemoteSubscriberDied(const wptr<IRemoteObject> &object);
     bool Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
     void InitNecessaryState();
@@ -139,6 +140,7 @@ private:
     ErrCode StopBackgroundRunningByContext(int32_t uid, const std::string &abilityName, int32_t abilityId);
     ErrCode StopBackgroundRunningByTask(const std::shared_ptr<ContinuousTaskRecord> &task);
     void HandlePersistenceData();
+    void RestoreApplyRecord();
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
@@ -198,6 +200,7 @@ private:
         std::string &taskInfoMapKey);
     ErrCode CheckAbilityTaskNum(const std::shared_ptr<ContinuousTaskRecord> record);
     bool CheckPermissionForInner(const sptr<ContinuousTaskParamForInner> &taskParam, int32_t callingUid);
+    ErrCode AllowApplyContinuousTask(const std::shared_ptr<ContinuousTaskRecord> record);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
@@ -214,6 +217,7 @@ private:
     std::list<std::shared_ptr<SubscriberInfo>> bgTaskSubscribers_ {};
     sptr<RemoteDeathRecipient> susriberDeathRecipient_ {nullptr};
     std::unordered_map<int32_t, CachedBundleInfo> cachedBundleInfos_ {};
+    std::unordered_map<int32_t, std::vector<uint32_t>> applyTaskOnForeground {};
     std::vector<std::string> continuousTaskText_ {};
     std::vector<std::string> continuousTaskSubText_ {};
     int32_t continuousTaskIdIndex_ = 0;
