@@ -20,6 +20,96 @@
 #include "continuous_task_record.h"
 #include "bgtaskmgr_inner_errors.h"
 
+void BgContinuousTaskMgr::OnAppStateChanged(int32_t uid)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+    applyTaskOnForeground.erase(uid);
+    std::vector<uint32_t> appliedModeIds {};
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (!task.second) {
+            continue;
+        }
+        if (task.second->GetUid() == uid) {
+            std::vector<uint32_t> bgModeIds = task.second->bgModeIds_;
+            for (const auto &mode : bgModeIds) {
+                if (!std::count(appliedModeIds.begin(), appliedModeIds.end(), mode)) {
+                    appliedModeIds.push_back(mode);
+                }
+            }
+        }
+    }
+    applyTaskOnForeground.emplace(uid, appliedModeIds);
+    std::string modeStr = CommonUtils::ModesToString(appliedModeIds);
+    BGTASK_LOGD("uid: %{public}d to background, continuous modes: %{public}s", uid, modeStr.c_str());
+}
+
+ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<ContinuousTaskRecord> record)
+{
+    if (!record->isByRequestObject_) {
+        return ERR_OK;
+    }
+    // 申请数量是否超过10个
+    ErrCode ret = CheckAbilityTaskNum(record);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    // 需要豁免的情况
+    if (record->IsFromWebview()) {
+        return ERR_OK;
+    }
+    // 应用退后台前已申请过的类型，外加播音类型
+    std::vector<uint32_t> checkBgModeIds {};
+    int32_t uid = record->GetUid();
+    if (applyTaskOnForeground.find(uid) != applyTaskOnForeground.end()) {
+        checkBgModeIds = applyTaskOnForeground.at(uid);
+    }
+    checkBgModeIds.push_back(BackgroundMode::AUDIO_PLAYBACK);
+    if (CommonUtils::CheckApplyMode(record->bgModeIds_, checkBgModeIds)) {
+        return ERR_OK;
+    }
+    // 应用在前台
+    std::string bundleName = record->GetBundleName();
+    bool isForeApp = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsFrontApp(bundleName, uid);
+    if (isForeApp) {
+        return ERR_OK;
+    }
+    BGTASK_LOGE("uid: %{public}d, bundleName: %{public}s check allow apply continuous task fail.",
+        uid, bundleName.c_str());
+    return ERR_BGTASK_CONTINUOUS_NOT_APPLY_ONBACKGROUND;
+}
+
+void BgContinuousTaskMgr::RestoreApplyRecord()
+{
+    applyTaskOnForeground.clear();
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (!task.second) {
+            continue;
+        }
+        int32_t uid = task.second->GetUid();
+        std::vector<uint32_t> bgModeIds = task.second->bgModeIds_;
+        if (applyTaskOnForeground.find(uid) == applyTaskOnForeground.end()) {
+            std::string modeStr = CommonUtils::ModesToString(bgModeIds);
+            BGTASK_LOGI("uid: %{public}d restore apply record, continuous modes: %{public}s", uid, modeStr.c_str());
+            applyTaskOnForeground.emplace(uid, bgModeIds);
+        } else {
+            std::vector<uint32_t> appliedModeIds = applyTaskOnForeground.at(uid);
+            applyTaskOnForeground.erase(uid);
+            for (const auto &mode : bgModeIds) {
+                if (!std::count(appliedModeIds.begin(), appliedModeIds.end(), mode)) {
+                    appliedModeIds.push_back(mode);
+                }
+            }
+            std::string modeStr = CommonUtils::ModesToString(appliedModeIds);
+            BGTASK_LOGI("uid: %{public}d restore apply record, continuous modes: %{public}s", uid, modeStr.c_str());
+            applyTaskOnForeground.emplace(uid, appliedModeIds);
+        }
+    }
+}
+
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class NotificationTools : public DelayedSingleton<NotificationTools> {
