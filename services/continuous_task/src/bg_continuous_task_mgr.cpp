@@ -1046,20 +1046,20 @@ ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<Cont
     if (record->IsFromWebview()) {
         return ERR_OK;
     }
-    // 应用在前台
-    int32_t uid = record->GetUid();
-    std::string bundleName = record->GetBundleName();
-    bool isForeApp = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsFrontApp(bundleName, uid);
-    if (isForeApp) {
-        return ERR_OK;
-    }
     // 应用退后台前已申请过的类型，外加播音类型
+    int32_t uid = record->GetUid();
     std::vector<uint32_t> checkBgModeIds {};
     if (applyTaskOnForeground_.find(uid) != applyTaskOnForeground_.end()) {
         checkBgModeIds = applyTaskOnForeground_.at(uid);
     }
     checkBgModeIds.push_back(BackgroundMode::AUDIO_PLAYBACK);
     if (CommonUtils::CheckApplyMode(record->bgModeIds_, checkBgModeIds)) {
+        return ERR_OK;
+    }
+    // 应用在前台
+    std::string bundleName = record->GetBundleName();
+    bool isForeApp = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsFrontApp(bundleName, uid);
+    if (isForeApp) {
         return ERR_OK;
     }
     BGTASK_LOGE("uid: %{public}d, bundleName: %{public}s check allow apply continuous task fail.",
