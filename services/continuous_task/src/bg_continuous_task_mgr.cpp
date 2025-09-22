@@ -230,6 +230,11 @@ void BgContinuousTaskMgr::HandlePersistenceData()
 
 void BgContinuousTaskMgr::RestoreApplyRecord()
 {
+    appOnForeground_.clear();
+    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetFrontApp(appOnForeground_);
+    for (const auto &uid : appOnForeground_) {
+        BGTASK_LOGI("restore apply record, uid: %{public}d on front", uid);
+    }
     applyTaskOnForeground_.clear();
     for (const auto &task : continuousTaskInfosMap_) {
         if (!task.second) {
@@ -1042,12 +1047,12 @@ ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<Cont
     if (ret != ERR_OK) {
         return ret;
     }
-    // 需要豁免的情况
-    if (record->IsFromWebview()) {
+    // 需要豁免的情况：inner接口或应用在前台
+    int32_t uid = record->GetUid();
+    if (record->IsFromWebview() || appOnForeground_.count(uid) > 0) {
         return ERR_OK;
     }
     // 应用退后台前已申请过的类型，外加播音类型
-    int32_t uid = record->GetUid();
     std::vector<uint32_t> checkBgModeIds {};
     if (applyTaskOnForeground_.find(uid) != applyTaskOnForeground_.end()) {
         checkBgModeIds = applyTaskOnForeground_.at(uid);
@@ -1056,10 +1061,10 @@ ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<Cont
     if (CommonUtils::CheckApplyMode(record->bgModeIds_, checkBgModeIds)) {
         return ERR_OK;
     }
-    // 应用在前台
-    std::string bundleName = record->GetBundleName();
-    bool isForeApp = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsFrontApp(bundleName, uid);
-    if (isForeApp) {
+    // 查询前台应用
+    std::set<int32_t> frontAppList {};
+    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetFrontApp(frontAppList);
+    if (frontAppList.count(uid) > 0) {
         return ERR_OK;
     }
     BGTASK_LOGE("uid: %{public}d, bundleName: %{public}s check allow apply continuous task fail.",
@@ -2170,17 +2175,22 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
     }
 }
 
-void BgContinuousTaskMgr::OnAppStateChanged(int32_t uid)
+void BgContinuousTaskMgr::OnAppStateChanged(int32_t uid, int32_t state)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
     }
+    if (state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND)) {
+        appOnForeground_.insert(uid);
+        return;
+    }
+    appOnForeground_.erase(uid);
+    applyTaskOnForeground_.erase(uid);
     if (continuousTaskInfosMap_.empty()) {
         BGTASK_LOGD("continuousTaskInfosMap is empty");
         return;
     }
-    applyTaskOnForeground_.erase(uid);
     std::vector<uint32_t> appliedModeIds {};
     for (const auto &task : continuousTaskInfosMap_) {
         if (!task.second || task.second->GetUid() != uid) {
