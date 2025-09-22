@@ -75,6 +75,18 @@ public:
         return false;
     }
 
+    static bool CheckApplyMode(const std::vector<uint32_t> &applyBgModeIds,
+        const std::vector<uint32_t> &checkBgModeIds)
+    {
+        for (const auto &mode : applyBgModeIds) {
+            auto iter = std::find(checkBgModeIds.begin(), checkBgModeIds.end(), mode);
+            if (iter == checkBgModeIds.end()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 public:
     static constexpr int32_t jsonFormat_ = 4;
 };
