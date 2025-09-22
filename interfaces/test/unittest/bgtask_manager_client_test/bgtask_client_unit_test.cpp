@@ -96,7 +96,7 @@ constexpr uint32_t MODE_LOCATION = 4;
 constexpr uint32_t MODE_BLUETOOTH_INTERACTION = 5;
 constexpr uint32_t MODE_MULTI_DEVICE_CONNECTION = 6;
 constexpr uint32_t MODE_ALLOW_WIFI_AWARE = 7;
-constexpr uint32_t MODE_VOIP = 7;
+constexpr uint32_t MODE_VOIP = 8;
 constexpr uint32_t MODE_TASK_KEEPING = 9;
 constexpr uint32_t MODE_AV_PLAYBACK_AND_RECORD = 10;
 constexpr uint32_t MODE_END = 11;
@@ -940,7 +940,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskMode_001, TestSize.Level0)
 {
     EXPECT_EQ(MODE_DATA_TRANSFER, (int32_t)BackgroundTaskMode::MODE_DATA_TRANSFER);
     EXPECT_EQ(MODE_AUDIO_PLAYBACK, (int32_t)BackgroundTaskMode::MODE_AUDIO_PLAYBACK);
-    EXPECT_EQ(MODE_AUDIO_RECORDING, (int32_t)BackgroundTaskMode::MODE_AUDIO_PLAYBACK);
+    EXPECT_EQ(MODE_AUDIO_RECORDING, (int32_t)BackgroundTaskMode::MODE_AUDIO_RECORDING);
     EXPECT_EQ(MODE_LOCATION, (int32_t)BackgroundTaskMode::MODE_LOCATION);
     EXPECT_EQ(MODE_BLUETOOTH_INTERACTION, (int32_t)BackgroundTaskMode::MODE_BLUETOOTH_INTERACTION);
     EXPECT_EQ(MODE_MULTI_DEVICE_CONNECTION, (int32_t)BackgroundTaskMode::MODE_MULTI_DEVICE_CONNECTION);
