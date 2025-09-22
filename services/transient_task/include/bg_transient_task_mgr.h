@@ -80,8 +80,8 @@ public:
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void HandleSuspendManagerDie();
     void OnAppCacheStateChanged(int32_t uid, int32_t pid, const std::string &bundleName);
-    bool IsFrontApp(const std::string &bundleName, int32_t uid);
     std::set<int32_t>& GetTransientPauseUid();
+    void GetFrontApp(std::set<int32_t> &frontAppList);
 
 private:
     ErrCode IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
