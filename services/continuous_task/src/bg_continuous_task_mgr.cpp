@@ -2176,6 +2176,10 @@ void BgContinuousTaskMgr::OnAppStateChanged(int32_t uid)
         BGTASK_LOGW("manager is not ready");
         return;
     }
+    if (continuousTaskInfosMap_.empty()) {
+        BGTASK_LOGD("continuousTaskInfosMap is empty");
+        return;
+    }
     applyTaskOnForeground.erase(uid);
     std::vector<uint32_t> appliedModeIds {};
     for (const auto &task : continuousTaskInfosMap_) {
