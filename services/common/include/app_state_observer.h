@@ -28,6 +28,7 @@ public:
     void OnProcessDied(const AppExecFwk::ProcessData &processData) override;
     void OnAppStopped(const AppExecFwk::AppStateData &appStateData) override;
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
+    void OnAppStateChanged(const AppExecFwk::AppStateData &appStateData) override;
 
 private:
     bool ValidateAppStateData(const AppExecFwk::AppStateData &appStateData);
