@@ -101,7 +101,7 @@ public:
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
     void OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId);
     void OnAppStopped(int32_t uid);
-    void OnAppStateChanged(int32_t uid);
+    void OnAppStateChanged(int32_t uid, int32_t state);
     void OnRemoteSubscriberDied(const wptr<IRemoteObject> &object);
     bool Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner);
     void InitNecessaryState();
