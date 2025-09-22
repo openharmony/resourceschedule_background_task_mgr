@@ -218,6 +218,7 @@ private:
     sptr<RemoteDeathRecipient> susriberDeathRecipient_ {nullptr};
     std::unordered_map<int32_t, CachedBundleInfo> cachedBundleInfos_ {};
     std::unordered_map<int32_t, std::vector<uint32_t>> applyTaskOnForeground_ {};
+    std::set<int32_t> appOnForeground_ {};
     std::vector<std::string> continuousTaskText_ {};
     std::vector<std::string> continuousTaskSubText_ {};
     int32_t continuousTaskIdIndex_ = 0;
