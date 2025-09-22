@@ -21,6 +21,7 @@
 #include <fcntl.h>
 
 #include "app_mgr_client.h"
+#include "app_mgr_constants.h"
 #include "bundle_constants.h"
 #include "bundle_manager_helper.h"
 #include "common_event_support.h"
