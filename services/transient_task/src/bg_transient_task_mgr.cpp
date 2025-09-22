@@ -905,5 +905,10 @@ std::set<int32_t>& BgTransientTaskMgr::GetTransientPauseUid()
 {
     return transientPauseUid_;
 }
+
+bool BgTransientTaskMgr::IsFrontApp(const std::string &bundleName, int32_t uid)
+{
+    return decisionMaker_->IsFrontApp(bundleName, uid);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
