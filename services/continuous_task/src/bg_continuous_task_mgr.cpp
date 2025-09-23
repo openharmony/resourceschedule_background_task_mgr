@@ -1068,6 +1068,7 @@ ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<Cont
     if (frontAppList.count(uid) > 0) {
         return ERR_OK;
     }
+    std::string bundleName = record->GetBundleName();
     BGTASK_LOGE("uid: %{public}d, bundleName: %{public}s check allow apply continuous task fail.",
         uid, bundleName.c_str());
     return ERR_BGTASK_CONTINUOUS_NOT_APPLY_ONBACKGROUND;
