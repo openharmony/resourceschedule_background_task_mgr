@@ -128,6 +128,8 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "The current ability to apply for continuous tasks has exceeded the maximum limit."},
     {ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE,
         "Continuous Task verification failed. The background task mode: DATA_TRANSFER type do not support update."},
+    {ERR_BGTASK_CONTINUOUS_NOT_APPLY_ONBACKGROUND,
+        "Continuous Task verification failed. The continuous task are not allowed to be applied on background."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

@@ -905,5 +905,10 @@ std::set<int32_t>& BgTransientTaskMgr::GetTransientPauseUid()
 {
     return transientPauseUid_;
 }
+
+void BgTransientTaskMgr::GetFrontApp(std::set<int32_t> &frontAppList)
+{
+    decisionMaker_->GetFrontApp(frontAppList);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

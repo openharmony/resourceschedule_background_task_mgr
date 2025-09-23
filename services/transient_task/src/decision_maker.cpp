@@ -450,6 +450,20 @@ void DecisionMaker::OnInputEvent(const EventInfo& eventInfo)
     }
 }
 
+void DecisionMaker::GetFrontApp(std::set<int32_t> &frontAppList)
+{
+    lock_guard<mutex> lock(lock_);
+    if (!GetAppMgrProxy()) {
+        BGTASK_LOGE("GetAppMgrProxy failed");
+        return;
+    }
+    vector<AppExecFwk::AppStateData> fgAppList;
+    appMgrProxy_->GetForegroundApplications(fgAppList);
+    for (auto fgApp : fgAppList) {
+        frontAppList.insert(fgApp.uid);
+    }
+}
+
 void DecisionMaker::HandleScreenOn()
 {
     lock_guard<mutex> lock(lock_);

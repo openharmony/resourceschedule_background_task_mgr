@@ -21,6 +21,7 @@
 #include <fcntl.h>
 
 #include "app_mgr_client.h"
+#include "app_mgr_constants.h"
 #include "bundle_constants.h"
 #include "bundle_manager_helper.h"
 #include "common_event_support.h"
@@ -55,6 +56,7 @@
 #include "background_sub_mode.h"
 #include "continuous_task_suspend_reason.h"
 #include "bg_continuous_task_dumper.h"
+#include "bg_transient_task_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -224,6 +226,40 @@ void BgContinuousTaskMgr::HandlePersistenceData()
     appMgrClient->GetAllRunningProcesses(allAppProcessInfos);
     CheckPersistenceData(allAppProcessInfos);
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
+    RestoreApplyRecord();
+}
+
+void BgContinuousTaskMgr::RestoreApplyRecord()
+{
+    appOnForeground_.clear();
+    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetFrontApp(appOnForeground_);
+    for (const auto &uid : appOnForeground_) {
+        BGTASK_LOGI("restore apply record, uid: %{public}d on front", uid);
+    }
+    applyTaskOnForeground_.clear();
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (!task.second) {
+            continue;
+        }
+        int32_t uid = task.second->GetUid();
+        std::vector<uint32_t> bgModeIds = task.second->bgModeIds_;
+        if (applyTaskOnForeground_.find(uid) == applyTaskOnForeground_.end()) {
+            std::string modeStr = CommonUtils::ModesToString(bgModeIds);
+            BGTASK_LOGI("uid: %{public}d restore apply record, continuous modes: %{public}s", uid, modeStr.c_str());
+            applyTaskOnForeground_.emplace(uid, bgModeIds);
+            continue;
+        }
+        std::vector<uint32_t> appliedModeIds = applyTaskOnForeground_.at(uid);
+        applyTaskOnForeground_.erase(uid);
+        for (const auto &mode : bgModeIds) {
+            if (!std::count(appliedModeIds.begin(), appliedModeIds.end(), mode)) {
+                appliedModeIds.push_back(mode);
+            }
+        }
+        std::string modeStr = CommonUtils::ModesToString(appliedModeIds);
+        BGTASK_LOGI("uid: %{public}d restore apply record, continuous modes: %{public}s", uid, modeStr.c_str());
+        applyTaskOnForeground_.emplace(uid, appliedModeIds);
+    }
 }
 
 bool BgContinuousTaskMgr::CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses,
@@ -1002,17 +1038,53 @@ ErrCode BgContinuousTaskMgr::CheckAbilityTaskNum(const std::shared_ptr<Continuou
     return ERR_OK;
 }
 
+ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<ContinuousTaskRecord> record)
+{
+    if (!record->isByRequestObject_) {
+        return ERR_OK;
+    }
+    // 申请数量是否超过10个
+    ErrCode ret = CheckAbilityTaskNum(record);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    // 需要豁免的情况：inner接口或应用在前台
+    int32_t uid = record->GetUid();
+    if (record->IsFromWebview() || appOnForeground_.count(uid) > 0) {
+        return ERR_OK;
+    }
+    // 应用退后台前已申请过的类型，外加播音类型
+    std::vector<uint32_t> checkBgModeIds {};
+    if (applyTaskOnForeground_.find(uid) != applyTaskOnForeground_.end()) {
+        checkBgModeIds = applyTaskOnForeground_.at(uid);
+    }
+    checkBgModeIds.push_back(BackgroundMode::AUDIO_PLAYBACK);
+    if (CommonUtils::CheckApplyMode(record->bgModeIds_, checkBgModeIds)) {
+        return ERR_OK;
+    }
+    // 查询前台应用
+    std::set<int32_t> frontAppList {};
+    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetFrontApp(frontAppList);
+    if (frontAppList.count(uid) > 0) {
+        return ERR_OK;
+    }
+    std::string bundleName = record->GetBundleName();
+    BGTASK_LOGE("uid: %{public}d, bundleName: %{public}s check allow apply continuous task fail.",
+        uid, bundleName.c_str());
+    return ERR_BGTASK_CONTINUOUS_NOT_APPLY_ONBACKGROUND;
+}
+
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
+    ErrCode ret = AllowApplyContinuousTask(continuousTaskRecord);
+    if (ret != ERR_OK) {
+        return ret;
+    }
     continuousTaskRecord->continuousTaskId_ = ++continuousTaskIdIndex_;
     std::string taskInfoMapKey = std::to_string(continuousTaskRecord->uid_) + SEPARATOR
         + continuousTaskRecord->abilityName_ + SEPARATOR + std::to_string(continuousTaskRecord->abilityId_);
     if (continuousTaskRecord->isByRequestObject_) {
         taskInfoMapKey = taskInfoMapKey + SEPARATOR + std::to_string(continuousTaskRecord->continuousTaskId_);
-        ErrCode ret = CheckAbilityTaskNum(continuousTaskRecord);
-        if (ret != ERR_OK) {
-            return ret;
-        }
     }
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
         if (continuousTaskInfosMap_[taskInfoMapKey] != nullptr &&
@@ -2103,6 +2175,39 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
             iter++;
         }
     }
+}
+
+void BgContinuousTaskMgr::OnAppStateChanged(int32_t uid, int32_t state)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+    if (state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND)) {
+        appOnForeground_.insert(uid);
+        return;
+    }
+    appOnForeground_.erase(uid);
+    applyTaskOnForeground_.erase(uid);
+    if (continuousTaskInfosMap_.empty()) {
+        BGTASK_LOGD("continuousTaskInfosMap is empty");
+        return;
+    }
+    std::vector<uint32_t> appliedModeIds {};
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (!task.second || task.second->GetUid() != uid) {
+            continue;
+        }
+        std::vector<uint32_t> bgModeIds = task.second->bgModeIds_;
+        for (const auto &mode : bgModeIds) {
+            if (!std::count(appliedModeIds.begin(), appliedModeIds.end(), mode)) {
+                appliedModeIds.push_back(mode);
+            }
+        }
+    }
+    applyTaskOnForeground_.emplace(uid, appliedModeIds);
+    std::string modeStr = CommonUtils::ModesToString(appliedModeIds);
+    BGTASK_LOGD("uid: %{public}d to background, continuous modes: %{public}s", uid, modeStr.c_str());
 }
 
 uint32_t BgContinuousTaskMgr::GetModeNumByTypeIds(const std::vector<uint32_t> &typeIds)
