@@ -37,8 +37,12 @@ const std::string TASK_ON_APP_STATE_CHANGED = "OnAppStateChanged";
 
 void AppStateObserver::OnAppStateChanged(const AppExecFwk::AppStateData &appStateData)
 {
-    if (appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND) ||
-        appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND)) {
+    if (appStateData.state != static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND) &&
+        appStateData.state != static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND)) {
+        return;
+    }
+    if (!handler_) {
+        BGTASK_LOGE("handler_ null");
         return;
     }
     int32_t uid = appStateData.uid;
@@ -46,10 +50,6 @@ void AppStateObserver::OnAppStateChanged(const AppExecFwk::AppStateData &appStat
     auto task = [uid, state]() {
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAppStateChanged(uid, state);
     };
-    if (!handler_) {
-        BGTASK_LOGE("handler_ null");
-        return;
-    }
     handler_->PostTask(task, TASK_ON_APP_STATE_CHANGED);
 }
 
