@@ -201,7 +201,8 @@ ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const ContinuousTaskPar
 {
     if (CheckAtomicService()) {
         for (const auto mode : taskParam.bgModeIds_) {
-            if (mode != BackgroundMode::AUDIO_PLAYBACK && mode != BackgroundMode::MULTI_DEVICE_CONNECTION) {
+            if (mode != BackgroundMode::AUDIO_PLAYBACK && mode != BackgroundMode::MULTI_DEVICE_CONNECTION &&
+                mode != BackgroundMode::LOCATION) {
                 pid_t callingPid = IPCSkeleton::GetCallingPid();
                 pid_t callingUid = IPCSkeleton::GetCallingUid();
                 BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail,"
@@ -224,7 +225,8 @@ ErrCode BackgroundTaskMgrService::UpdateBackgroundRunning(const ContinuousTaskPa
 {
     if (CheckAtomicService()) {
         for (const auto mode : taskParam.bgModeIds_) {
-            if (mode != BackgroundMode::AUDIO_PLAYBACK && mode != BackgroundMode::MULTI_DEVICE_CONNECTION) {
+            if (mode != BackgroundMode::AUDIO_PLAYBACK && mode != BackgroundMode::MULTI_DEVICE_CONNECTION &&
+                mode != BackgroundMode::LOCATION) {
                 pid_t callingPid = IPCSkeleton::GetCallingPid();
                 pid_t callingUid = IPCSkeleton::GetCallingUid();
                 BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail,"
