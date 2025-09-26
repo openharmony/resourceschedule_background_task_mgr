@@ -37,7 +37,7 @@ std::shared_ptr<AppMgrHelper> AppMgrHelper::GetInstance()
     return DelayedSingleton<AppMgrHelper>::GetInstance();
 }
 
-bool WEAK_FUNC AppMgrHelper::GetAllRunningProcesses(std::vector<AppExecFwk::RunningProcessInfo>& allAppProcessInfos)
+bool AppMgrHelper::GetAllRunningProcesses(std::vector<AppExecFwk::RunningProcessInfo>& allAppProcessInfos)
 {
     std::lock_guard<std::mutex> lock(connectMutex_);
     if (!Connect()) {
@@ -50,7 +50,7 @@ bool WEAK_FUNC AppMgrHelper::GetAllRunningProcesses(std::vector<AppExecFwk::Runn
     return true;
 }
 
-bool WEAK_FUNC AppMgrHelper::GetForegroundApplications(std::vector<AppExecFwk::AppStateData> &fgApps)
+bool AppMgrHelper::GetForegroundApplications(std::vector<AppExecFwk::AppStateData> &fgApps)
 {
     std::lock_guard<std::mutex> lock(connectMutex_);
     if (!Connect()) {
@@ -62,7 +62,7 @@ bool WEAK_FUNC AppMgrHelper::GetForegroundApplications(std::vector<AppExecFwk::A
     return true;
 }
 
-bool WEAK_FUNC AppMgrHelper::SubscribeConfigurationObserver(const sptr<AppExecFwk::IConfigurationObserver> &observer)
+bool AppMgrHelper::SubscribeConfigurationObserver(const sptr<AppExecFwk::IConfigurationObserver> &observer)
 {
     std::lock_guard<std::mutex> lock(connectMutex_);
     if (!Connect()) {
@@ -76,7 +76,7 @@ bool WEAK_FUNC AppMgrHelper::SubscribeConfigurationObserver(const sptr<AppExecFw
     return true;
 }
 
-bool WEAK_FUNC AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
+bool AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
 {
     std::lock_guard<std::mutex> lock(connectMutex_);
     if (!Connect()) {
@@ -90,7 +90,7 @@ bool WEAK_FUNC AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicati
     return true;
 }
 
-bool WEAK_FUNC AppMgrHelper::UnsubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
+bool AppMgrHelper::UnsubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
 {
     std::lock_guard<std::mutex> lock(connectMutex_);
     if (!Connect()) {
@@ -102,7 +102,7 @@ bool WEAK_FUNC AppMgrHelper::UnsubscribeObserver(const sptr<AppExecFwk::IApplica
     return true;
 }
 
-bool WEAK_FUNC AppMgrHelper::Connect()
+bool AppMgrHelper::Connect()
 {
     if (appMgrProxy_ != nullptr) {
         return true;
