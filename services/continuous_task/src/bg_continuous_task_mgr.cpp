@@ -403,8 +403,12 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterConfigurat
 {
     configChangeObserver_ = sptr<AppExecFwk::IConfigurationObserver>(
         new (std::nothrow) ConfigChangeObserver(handler_, shared_from_this()));
+    if (!configChangeObserver_) {
+        BGTASK_LOGE("configChangeObserver is null.");
+        return false;
+    }
     if (!AppMgrHelper::GetInstance()->SubscribeConfigurationObserver(configChangeObserver_)) {
-        BGTASK_LOGE("SubscribeConfigurationObserver error");
+        BGTASK_LOGE("SubscribeConfigurationObserver error.");
         return false;
     }
     return true;
