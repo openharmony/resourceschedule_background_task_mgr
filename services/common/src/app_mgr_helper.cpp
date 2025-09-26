@@ -20,22 +20,9 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-AppMgrHelper::AppMgrHelper()
-{
-    appMgrProxyDeathRecipient_ = new (std::nothrow) RemoteDeathRecipient(
-        [this](const wptr<IRemoteObject> &object) { this->OnRemoteDied(object); });
-}
+AppMgrHelper::AppMgrHelper() {}
 
-AppMgrHelper::~AppMgrHelper()
-{
-    std::lock_guard<std::mutex> lock(connectMutex_);
-    Disconnect();
-}
-
-std::shared_ptr<AppMgrHelper> AppMgrHelper::GetInstance()
-{
-    return DelayedSingleton<AppMgrHelper>::GetInstance();
-}
+AppMgrHelper::~AppMgrHelper() {}
 
 bool AppMgrHelper::GetAllRunningProcesses(std::vector<AppExecFwk::RunningProcessInfo>& allAppProcessInfos)
 {
@@ -127,20 +114,6 @@ bool AppMgrHelper::Connect()
         return false;
     }
     return true;
-}
-
-void AppMgrHelper::Disconnect()
-{
-    if (appMgrProxy_ != nullptr && appMgrProxy_->AsObject() != nullptr) {
-        appMgrProxy_->AsObject()->RemoveDeathRecipient(appMgrProxyDeathRecipient_);
-        appMgrProxy_ = nullptr;
-    }
-}
-
-void AppMgrHelper::OnRemoteDied(const wptr<IRemoteObject> &object)
-{
-    std::lock_guard<std::mutex> lock(connectMutex_);
-    Disconnect();
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
