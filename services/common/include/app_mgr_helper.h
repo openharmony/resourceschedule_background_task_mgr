@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,11 +30,8 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class AppMgrHelper {
-DECLARE_DELAYED_SINGLETON(AppMgrHelper);
+class AppMgrHelper : public DelayedSingleton<AppMgrHelper> {
 public:
-    static std::shared_ptr<AppMgrHelper> GetInstance();
-
     /**
      * @brief Get the All Running Processes info.
      *
@@ -68,13 +65,12 @@ public:
 
 private:
     bool Connect();
-    void Disconnect();
-    void OnRemoteDied(const wptr<IRemoteObject> &object);
 
 private:
     sptr<AppExecFwk::IAppMgr> appMgrProxy_ {nullptr};
     std::mutex connectMutex_ {};
     sptr<RemoteDeathRecipient> appMgrProxyDeathRecipient_ = nullptr;
+    DECLARE_DELAYED_SINGLETON(AppMgrHelper);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
