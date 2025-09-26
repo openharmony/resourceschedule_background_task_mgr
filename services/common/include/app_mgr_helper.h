@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,58 +12,135 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_APP_MGR_HELPER_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_APP_MGR_HELPER_H
+#include "app_mgr_helper.h"
 
-#ifdef BGTASK_MGR_UNIT_TEST
-#define WEAK_FUNC __attribute__((weak))
-#else
-#define WEAK_FUNC
-#endif
-
-#include "app_mgr_interface.h"
-#include "app_mgr_proxy.h"
-#include "ipc_skeleton.h"
-#include "iremote_object.h"
-#include "remote_death_recipient.h"
-#include "singleton.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
+#include "continuous_task_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class AppMgrHelper {
-DECLARE_DELAYED_SINGLETON(AppMgrHelper);
-public:
-    static std::shared_ptr<AppMgrHelper> GetInstance();
+AppMgrHelper::AppMgrHelper()
+{
+    appMgrProxyDeathRecipient_ = new (std::nothrow) RemoteDeathRecipient(
+        [this](const wptr<IRemoteObject> &object) { this->OnRemoteDied(object); });
+}
 
-    /**
-     * Get Foreground Applications.
-     */
-    bool GetForegroundApplications(std::vector<AppExecFwk::AppStateData> &fgApps);
+AppMgrHelper::~AppMgrHelper()
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    Disconnect();
+}
 
-    /**
-     * @brief Subscribe AppStateObserver.
-     *
-     * @param observer app state observer.
-     * @return true if subscribe successfully.
-     */
-    bool SubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer);
+std::shared_ptr<AppMgrHelper> AppMgrHelper::GetInstance()
+{
+    return DelayedSingleton<AppMgrHelper>::GetInstance();
+}
 
-    /**
-     * @brief Unubscribe AppStateObserver.
-     *
-     * @param observer app state observer.
-     * @return true if unsubscribe successfully.
-     */
-    bool UnsubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer);
+bool WEAK_FUNC AppMgrHelper::GetAllRunningProcesses(std::vector<AppExecFwk::RunningProcessInfo>& allAppProcessInfos)
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    if (!Connect()) {
+        return false;
+    }
+    if (appMgrProxy_->GetAllRunningProcesses(allAppProcessInfos) != ERR_OK) {
+        BGTASK_LOGE("failed to get all running process.");
+        return false;
+    }
+    return true;
+}
 
-private:
-    bool Connect();
+bool WEAK_FUNC AppMgrHelper::GetForegroundApplications(std::vector<AppExecFwk::AppStateData> &fgApps)
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    if (!Connect()) {
+        return false;
+    }
+    if (appMgrProxy_->GetForegroundApplications(fgApps) != ERR_OK) {
+        return false;
+    }
+    return true;
+}
 
-private:
-    sptr<AppExecFwk::IAppMgr> appMgrProxy_ {nullptr};
-    std::mutex connectMutex_ {};
-};
+bool WEAK_FUNC AppMgrHelper::SubscribeConfigurationObserver(const sptr<AppExecFwk::IConfigurationObserver> &observer)
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    if (!Connect()) {
+        return false;
+    }
+    int32_t res = appMgrProxy_->RegisterConfigurationObserver(observer);
+    if (res != ERR_OK) {
+        BGTASK_LOGE("failed to register configuration state observer, ret: %{public}d", res);
+        return false;
+    }
+    return true;
+}
+
+bool WEAK_FUNC AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    if (!Connect()) {
+        return false;
+    }
+    int32_t res = appMgrProxy_->RegisterApplicationStateObserver(observer);
+    if (res != ERR_OK) {
+        BGTASK_LOGE("failed to register application state observer, ret: %{public}d", res);
+        return false;
+    }
+    return true;
+}
+
+bool WEAK_FUNC AppMgrHelper::UnsubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    if (!Connect()) {
+        return false;
+    }
+    if (appMgrProxy_->UnregisterApplicationStateObserver(observer) != ERR_OK) {
+        return false;
+    }
+    return true;
+}
+
+bool WEAK_FUNC AppMgrHelper::Connect()
+{
+    if (appMgrProxy_ != nullptr) {
+        return true;
+    }
+
+    sptr<ISystemAbilityManager> systemAbilityManager =
+        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityManager == nullptr) {
+        BGTASK_LOGE("failed to get SystemAbilityManager");
+        return false;
+    }
+
+    sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(APP_MGR_SERVICE_ID);
+    if (remoteObject == nullptr) {
+        BGTASK_LOGE("failed to get App Manager Service");
+        return false;
+    }
+
+    appMgrProxy_ = iface_cast<AppExecFwk::IAppMgr>(remoteObject);
+    if (!appMgrProxy_ || !appMgrProxy_->AsObject()) {
+        BGTASK_LOGE("failed to get app mgr proxy");
+        return false;
+    }
+    return true;
+}
+
+void AppMgrHelper::Disconnect()
+{
+    if (appMgrProxy_ != nullptr && appMgrProxy_->AsObject() != nullptr) {
+        appMgrProxy_->AsObject()->RemoveDeathRecipient(appMgrProxyDeathRecipient_);
+        appMgrProxy_ = nullptr;
+    }
+}
+
+void AppMgrHelper::OnRemoteDied(const wptr<IRemoteObject> &object)
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    Disconnect();
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_APP_MGR_HELPER_H
