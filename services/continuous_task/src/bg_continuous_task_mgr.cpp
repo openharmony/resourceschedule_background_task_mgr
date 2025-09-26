@@ -217,13 +217,11 @@ void BgContinuousTaskMgr::HandlePersistenceData()
 {
     BGTASK_LOGI("service restart, restore data");
     DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreTaskRecord(continuousTaskInfosMap_);
-    auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos;
-    if (appMgrClient->ConnectAppMgrService() != ERR_OK) {
-        BGTASK_LOGW("connect to app mgr service failed");
+    if (!AppMgrHelper::GetInstance()->GetAllRunningProcesses(allAppProcessInfos)) {
+        BGTASK_LOGE("get all running process fail.");
         return;
     }
-    appMgrClient->GetAllRunningProcesses(allAppProcessInfos);
     CheckPersistenceData(allAppProcessInfos);
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
     RestoreApplyRecord();
@@ -380,12 +378,6 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterAppStateOb
         BGTASK_LOGE("appStateObserver_ null");
         return false;
     }
-    auto res = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance()->
-        RegisterApplicationStateObserver(appStateObserver_);
-    if (res != ERR_OK) {
-        BGTASK_LOGE("RegisterApplicationStateObserver error");
-        return false;
-    }
     if (!AppMgrHelper::GetInstance()->SubscribeObserver(appStateObserver_)) {
         BGTASK_LOGE("RegisterApplicationStateObserver error");
         return false;
@@ -399,12 +391,6 @@ void BgContinuousTaskMgr::UnregisterAppStateObserver()
     if (!appStateObserver_) {
         return;
     }
-    auto res = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance()->
-        UnregisterApplicationStateObserver(appStateObserver_);
-    if (res != ERR_OK) {
-        BGTASK_LOGE("UnregisterApplicationStateObserver error");
-        return;
-    }
     if (!AppMgrHelper::GetInstance()->UnsubscribeObserver(appStateObserver_)) {
         BGTASK_LOGE("UnregisterApplicationStateObserver error");
         return false;
@@ -415,14 +401,10 @@ void BgContinuousTaskMgr::UnregisterAppStateObserver()
 
 __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterConfigurationObserver()
 {
-    auto appMgrClient = std::make_shared<AppExecFwk::AppMgrClient>();
-    if (appMgrClient->ConnectAppMgrService() != ERR_OK) {
-        BGTASK_LOGW("connect to app mgr service failed");
-        return false;
-    }
     configChangeObserver_ = sptr<AppExecFwk::IConfigurationObserver>(
         new (std::nothrow) ConfigChangeObserver(handler_, shared_from_this()));
-    if (appMgrClient->RegisterConfigurationObserver(configChangeObserver_) != ERR_OK) {
+    if (!AppMgrHelper::GetInstance()->SubscribeConfigurationObserver(configChangeObserver_)) {
+        BGTASK_LOGE("SubscribeConfigurationObserver error");
         return false;
     }
     return true;
