@@ -393,7 +393,7 @@ void BgContinuousTaskMgr::UnregisterAppStateObserver()
     }
     if (!AppMgrHelper::GetInstance()->UnsubscribeObserver(appStateObserver_)) {
         BGTASK_LOGE("UnregisterApplicationStateObserver error");
-        return false;
+        return;
     }
     appStateObserver_ = nullptr;
     BGTASK_LOGI("UnregisterApplicationStateObserver ok");
