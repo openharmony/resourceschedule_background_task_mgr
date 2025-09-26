@@ -237,7 +237,7 @@ void BgContinuousTaskMgr::RestoreApplyRecord()
     }
     for (const auto &appStateData : fgApps) {
         appOnForeground_.insert(appStateData.uid);
-        BGTASK_LOGI("restore apply record, uid: %{public}d on front", uid);
+        BGTASK_LOGI("restore apply record, uid: %{public}d on front", appStateData.uid);
     }
     applyTaskOnForeground_.clear();
     for (const auto &task : continuousTaskInfosMap_) {
