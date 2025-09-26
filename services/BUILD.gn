@@ -26,6 +26,7 @@ config("bgtaskmgr_service_public_config") {
 }
 
 BgTaskMgrServicecSrc = [
+  "common/src/app_mgr_helper.cpp",
   "common/src/app_state_observer.cpp",
   "common/src/bgtask_config.cpp",
   "common/src/bgtask_hitrace_chain.cpp",
