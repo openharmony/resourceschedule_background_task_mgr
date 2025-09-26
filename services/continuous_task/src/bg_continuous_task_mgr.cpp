@@ -21,6 +21,7 @@
 #include <fcntl.h>
 
 #include "app_mgr_client.h"
+#include "app_mgr_helper.h"
 #include "app_mgr_constants.h"
 #include "bundle_constants.h"
 #include "bundle_manager_helper.h"
@@ -56,7 +57,6 @@
 #include "background_sub_mode.h"
 #include "continuous_task_suspend_reason.h"
 #include "bg_continuous_task_dumper.h"
-#include "bg_transient_task_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -232,8 +232,13 @@ void BgContinuousTaskMgr::HandlePersistenceData()
 void BgContinuousTaskMgr::RestoreApplyRecord()
 {
     appOnForeground_.clear();
-    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetFrontApp(appOnForeground_);
-    for (const auto &uid : appOnForeground_) {
+    std::vector<AppExecFwk::AppStateData> fgApps;
+    if (!AppMgrHelper::GetInstance()->GetForegroundApplications(fgApps)) {
+        BGTASK_LOGE("get foreground app fail.");
+        return;
+    }
+    for (const auto &appStateData : fgApps) {
+        appOnForeground_.insert(appStateData.uid);
         BGTASK_LOGI("restore apply record, uid: %{public}d on front", uid);
     }
     applyTaskOnForeground_.clear();
@@ -381,6 +386,10 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterAppStateOb
         BGTASK_LOGE("RegisterApplicationStateObserver error");
         return false;
     }
+    if (!AppMgrHelper::GetInstance()->SubscribeObserver(appStateObserver_)) {
+        BGTASK_LOGE("RegisterApplicationStateObserver error");
+        return false;
+    }
     appStateObserver_->SetEventHandler(handler_);
     return true;
 }
@@ -395,6 +404,10 @@ void BgContinuousTaskMgr::UnregisterAppStateObserver()
     if (res != ERR_OK) {
         BGTASK_LOGE("UnregisterApplicationStateObserver error");
         return;
+    }
+    if (!AppMgrHelper::GetInstance()->UnsubscribeObserver(appStateObserver_)) {
+        BGTASK_LOGE("UnregisterApplicationStateObserver error");
+        return false;
     }
     appStateObserver_ = nullptr;
     BGTASK_LOGI("UnregisterApplicationStateObserver ok");
@@ -1064,9 +1077,13 @@ ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<Cont
     }
     // 查询前台应用
     std::set<int32_t> frontAppList {};
-    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->GetFrontApp(frontAppList);
-    if (frontAppList.count(uid) > 0) {
-        return ERR_OK;
+    std::vector<AppExecFwk::AppStateData> fgApps;
+    if (AppMgrHelper::GetInstance()->GetForegroundApplications(fgApps)) {
+        for (const auto &appStateData : fgApps) {
+            if (appStateData.uid == uid) {
+                return ERR_OK;
+            }
+        }
     }
     std::string bundleName = record->GetBundleName();
     BGTASK_LOGE("uid: %{public}d, bundleName: %{public}s check allow apply continuous task fail.",
