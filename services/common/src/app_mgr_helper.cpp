@@ -20,17 +20,34 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-namespace {
-static constexpr int32_t OBSERVER_EXITS = 22;
+AppMgrHelper::AppMgrHelper()
+{
+    appMgrProxyDeathRecipient_ = new (std::nothrow) RemoteDeathRecipient(
+        [this](const wptr<IRemoteObject> &object) { this->OnRemoteDied(object); });
 }
 
-AppMgrHelper::AppMgrHelper() {}
-
-AppMgrHelper::~AppMgrHelper() {}
+AppMgrHelper::~AppMgrHelper()
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    Disconnect();
+}
 
 std::shared_ptr<AppMgrHelper> AppMgrHelper::GetInstance()
 {
     return DelayedSingleton<AppMgrHelper>::GetInstance();
+}
+
+bool WEAK_FUNC AppMgrHelper::GetAllRunningProcesses(std::vector<AppExecFwk::RunningProcessInfo>& allAppProcessInfos)
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    if (!Connect()) {
+        return false;
+    }
+    if (appMgrProxy_->GetAllRunningProcesses(allAppProcessInfos) != ERR_OK) {
+        BGTASK_LOGE("failed to get all running process.");
+        return false;
+    }
+    return true;
 }
 
 bool WEAK_FUNC AppMgrHelper::GetForegroundApplications(std::vector<AppExecFwk::AppStateData> &fgApps)
@@ -45,6 +62,20 @@ bool WEAK_FUNC AppMgrHelper::GetForegroundApplications(std::vector<AppExecFwk::A
     return true;
 }
 
+bool WEAK_FUNC AppMgrHelper::SubscribeConfigurationObserver(const sptr<AppExecFwk::IConfigurationObserver> &observer)
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    if (!Connect()) {
+        return false;
+    }
+    int32_t res = appMgrProxy_->RegisterConfigurationObserver(observer);
+    if (res != ERR_OK) {
+        BGTASK_LOGE("failed to register configuration state observer, ret: %{public}d", res);
+        return false;
+    }
+    return true;
+}
+
 bool WEAK_FUNC AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicationStateObserver> &observer)
 {
     std::lock_guard<std::mutex> lock(connectMutex_);
@@ -52,10 +83,6 @@ bool WEAK_FUNC AppMgrHelper::SubscribeObserver(const sptr<AppExecFwk::IApplicati
         return false;
     }
     int32_t res = appMgrProxy_->RegisterApplicationStateObserver(observer);
-    if (res == OBSERVER_EXITS) {
-        BGTASK_LOGE("observer exit");
-        return true;
-    }
     if (res != ERR_OK) {
         BGTASK_LOGE("failed to register application state observer, ret: %{public}d", res);
         return false;
@@ -100,6 +127,20 @@ bool WEAK_FUNC AppMgrHelper::Connect()
         return false;
     }
     return true;
+}
+
+void AppMgrHelper::Disconnect()
+{
+    if (appMgrProxy_ != nullptr && appMgrProxy_->AsObject() != nullptr) {
+        appMgrProxy_->AsObject()->RemoveDeathRecipient(appMgrProxyDeathRecipient_);
+        appMgrProxy_ = nullptr;
+    }
+}
+
+void AppMgrHelper::OnRemoteDied(const wptr<IRemoteObject> &object)
+{
+    std::lock_guard<std::mutex> lock(connectMutex_);
+    Disconnect();
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
