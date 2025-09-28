@@ -62,6 +62,8 @@ public:
     std::string ToString(std::vector<uint32_t> &bgmodes);
     bool IsSystem() const;
     int32_t GetSuspendAudioTaskTimes() const;
+    std::string GetSubNotificationLabel() const;
+    int32_t GetSubNotificationId() const;
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
@@ -78,6 +80,8 @@ private:
     bool isFromWebview_ {false};
     std::string notificationLabel_ {""};
     int32_t notificationId_ {-1};
+    std::string subNotificationLabel_ {""};
+    int32_t subNotificationId_ {-1};
     std::shared_ptr<WantAgentInfo> wantAgentInfo_ {nullptr};
     std::string appName_ {""};
     uint64_t fullTokenId_ {0};
