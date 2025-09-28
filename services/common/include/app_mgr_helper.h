@@ -69,7 +69,6 @@ private:
 private:
     sptr<AppExecFwk::IAppMgr> appMgrProxy_ {nullptr};
     std::mutex connectMutex_ {};
-    sptr<RemoteDeathRecipient> appMgrProxyDeathRecipient_ = nullptr;
     DECLARE_DELAYED_SINGLETON(AppMgrHelper);
 };
 }  // namespace BackgroundTaskMgr
