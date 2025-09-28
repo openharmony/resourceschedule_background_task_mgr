@@ -321,14 +321,14 @@ WEAK_FUNC ErrCode NotificationTools::PublishSubNotification(const std::shared_pt
     notificationRequest.SetUpdateByOwnerAllowed(true);
     notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
     notificationRequest.SetLabel(notificationLabel);
-    if (subRecord->GetNotificationId() == -1) {
+    if (mainRecord->GetSubNotificationId() == -1) {
         notificationRequest.SetNotificationId(++notificationIdIndex_);
     } else {
-        notificationRequest.SetNotificationId(subRecord->GetNotificationId());
+        notificationRequest.SetNotificationId(mainRecord->GetSubNotificationId());
     }
     if (Notification::NotificationHelper::PublishNotification(notificationRequest) != ERR_OK) {
         BGTASK_LOGE("publish notification error, %{public}s, %{public}d", notificationLabel.c_str(),
-            subRecord->notificationId_);
+            notificationIdIndex_);
         return ERR_BGTASK_NOTIFICATION_ERR;
     }
     mainRecord->subNotificationLabel_ = notificationLabel;
