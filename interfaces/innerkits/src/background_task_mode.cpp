@@ -23,12 +23,16 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 const std::unordered_map<uint32_t, std::string> PARAM_BACKGROUND_TASK_MODE_STR_MAP = {
     {BackgroundTaskMode::MODE_DATA_TRANSFER, "modeDataTransfer"},
-    {BackgroundTaskMode::MODE_LOCATION, "modeSharePosition"},
-    {BackgroundTaskMode::MODE_BLUETOOTH_INTERACTION, "modeAllowBluetoothAware"},
+    {BackgroundTaskMode::MODE_AUDIO_PLAYBACK, "modeAudioPlayback"},
+    {BackgroundTaskMode::MODE_AUDIO_RECORDING, "modeAudioRecording"},
+    {BackgroundTaskMode::MODE_LOCATION, "modeLocation"},
+    {BackgroundTaskMode::MODE_BLUETOOTH_INTERACTION, "modeBluetoothInteraction"},
     {BackgroundTaskMode::MODE_MULTI_DEVICE_CONNECTION, "modeMultiDeviceConnection"},
     {BackgroundTaskMode::MODE_ALLOW_WIFI_AWARE, "modeAllowWifiAware"},
+    {BackgroundTaskMode::MODE_VOIP, "modeVoip"},
     {BackgroundTaskMode::MODE_TASK_KEEPING, "modeTaskKeeping"},
     {BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD, "modeAVPlaybackAndRecord"},
+    {BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING, "modeSpecialScenarioProcessing"},
     {BackgroundTaskMode::END, "end"}
 };
 
@@ -39,7 +43,11 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_BACKGROUND_TASK_MODE_CORRESPO
         BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD},
     {BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK, BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD},
     {BackgroundTaskSubmode::SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION, BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD},
-    {BackgroundTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION, BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD}
+    {BackgroundTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION, BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD},
+    {BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION,
+        BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING},
+    {BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION,
+        BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING},
 };
 
 const std::unordered_map<uint32_t, uint32_t> PARAM_BACKGROUND_TASK_SUBMODE_CORRESPONDENCE_MODE = {
@@ -62,6 +70,7 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_V9MODE_CORRES
     {BackgroundTaskMode::MODE_ALLOW_WIFI_AWARE, BackgroundMode::WIFI_INTERACTION},
     {BackgroundTaskMode::MODE_VOIP, BackgroundMode::VOIP},
     {BackgroundTaskMode::MODE_TASK_KEEPING, BackgroundMode::TASK_KEEPING},
+    {BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING, BackgroundMode::SPECIAL_SCENARIO_PROCESSING},
 };
 
 const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_V9MODE_CORRESPONDENCE_V21SUBMODE = {
@@ -71,6 +80,8 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_V9MODE_CORRES
     {BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK, BackgroundMode::AUDIO_PLAYBACK},
     {BackgroundTaskSubmode::SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION, BackgroundMode::AUDIO_RECORDING},
     {BackgroundTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION, BackgroundMode::VOIP},
+    {BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION, BackgroundMode::SPECIAL_SCENARIO_PROCESSING},
+    {BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION, BackgroundMode::SPECIAL_SCENARIO_PROCESSING},
 };
 
 std::string BackgroundTaskMode::GetBackgroundTaskModeStr(uint32_t mode)

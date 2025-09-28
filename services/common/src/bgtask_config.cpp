@@ -210,5 +210,14 @@ void BgtaskConfig::SetSupportedTaskKeepingProcesses(const std::set<std::string> 
         BGTASK_LOGI("taskKeeping Exemption proc: %{public}s", item.c_str());
     }
 }
+
+void BgtaskConfig::SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet)
+{
+    std::lock_guard<std::mutex> lock(configMutex_);
+    maliciousAppBlocklist_.insert(maliciousAppSet.begin(), maliciousAppSet.end());
+    for (const auto &item : maliciousAppBlocklist_) {
+        BGTASK_LOGI("malicious app blocklist proc: %{public}s", item.c_str());
+    }
+}
 }
 }

@@ -281,7 +281,7 @@ ErrCode BackgroundTaskMgrService::RequestGetContinuousTasksByUidForInner(int32_t
 ErrCode BackgroundTaskMgrService::StopBackgroundRunning(const std::string &abilityName,
     const sptr<IRemoteObject> &abilityToken, int32_t abilityId, int32_t continuousTaskId)
 {
-    return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName, abilityId);
+    return BgContinuousTaskMgr::GetInstance()->StopBackgroundRunning(abilityName, abilityId, continuousTaskId);
 }
 
 ErrCode BackgroundTaskMgrService::GetAllContinuousTasks(std::vector<ContinuousTaskInfo> &list)
@@ -568,6 +568,15 @@ ErrCode BackgroundTaskMgrService::SetSupportedTaskKeepingProcesses(const std::se
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     DelayedSingleton<BgtaskConfig>::GetInstance()->SetSupportedTaskKeepingProcesses(processSet);
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrService::SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet)
+{
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    DelayedSingleton<BgtaskConfig>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet);
     return ERR_OK;
 }
 

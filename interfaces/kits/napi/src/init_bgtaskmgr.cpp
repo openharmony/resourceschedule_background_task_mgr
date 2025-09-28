@@ -229,6 +229,8 @@ napi_value BackgroundTaskModeInit(napi_env env, napi_value exports)
         BackgroundTaskMode::MODE_TASK_KEEPING), "MODE_TASK_KEEPING");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD), "MODE_AV_PLAYBACK_AND_RECORD");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING), "MODE_SPECIAL_SCENARIO_PROCESSING");
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("BackgroundTaskMode", obj),
     };
@@ -254,9 +256,16 @@ napi_value BackgroundTaskSubModeInit(napi_env env, napi_value exports)
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         BackgroundTaskSubmode::SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION), "SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
-        BackgroundTaskSubmode::SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION), "SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION");
+        BackgroundTaskSubmode::SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION),
+        "SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         BackgroundTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION), "SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION),
+        "SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION),
+        "SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION");
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("BackgroundTaskSubmode", obj),
     };

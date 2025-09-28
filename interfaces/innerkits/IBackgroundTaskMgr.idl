@@ -56,4 +56,5 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     [oneway] void SuspendContinuousAudioTask([in] int uid);
     void IsModeSupported([in] ContinuousTaskParam taskParam);
     void SetSupportedTaskKeepingProcesses([in] Set<String> processSet);
+    [oneway] void SetMaliciousAppConfig([in] Set<String> maliciousAppSet);
 }

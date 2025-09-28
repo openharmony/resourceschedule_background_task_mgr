@@ -56,7 +56,8 @@ constexpr int32_t WIFI_INTERACTION_ID = 7;
 constexpr int32_t VOIP_ID = 8;
 constexpr int32_t TASK_KEEPING_ID = 9;
 constexpr int32_t WORKOUT = 10;
-constexpr int32_t END = 11;
+constexpr int32_t SPECIAL_SCENARIO_PROCESSING = 11;
+constexpr int32_t END = 12;
 constexpr int32_t SLEEP_TIME = 500;
 constexpr int32_t RSS_UID = 1096;
 constexpr uint32_t CPU_TYPE = 1;
@@ -99,7 +100,8 @@ constexpr uint32_t MODE_ALLOW_WIFI_AWARE = 7;
 constexpr uint32_t MODE_VOIP = 8;
 constexpr uint32_t MODE_TASK_KEEPING = 9;
 constexpr uint32_t MODE_AV_PLAYBACK_AND_RECORD = 10;
-constexpr uint32_t MODE_END = 11;
+constexpr uint32_t MODE_SPECIAL_SCENARIO_PROCESSING = 11;
+constexpr uint32_t MODE_END = 12;
 constexpr uint32_t SUBMODE_CAR_KEY_NORMAL_NOTIFICATION = 1;
 constexpr uint32_t SUBMODE_NORMAL_NOTIFICATION = 2;
 constexpr uint32_t SUBMODE_LIVE_VIEW_NOTIFICATION = 3;
@@ -108,7 +110,9 @@ constexpr uint32_t SUBMODE_AVSESSION_AUDIO_PLAYBACK = 5;
 constexpr uint32_t SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION = 6;
 constexpr uint32_t SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION = 7;
 constexpr uint32_t SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION = 8;
-constexpr uint32_t SUBMODE_END = 9;
+constexpr uint32_t SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION = 9;
+constexpr uint32_t SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION = 10;
+constexpr uint32_t SUBMODE_END = 11;
 
 static const std::string RSS_NAME = "resource_schedule_service";
 }
@@ -279,6 +283,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundMode_001, TestSize.Level0)
     EXPECT_EQ(VOIP_ID, (int32_t)BackgroundMode::VOIP);
     EXPECT_EQ(TASK_KEEPING_ID, (int32_t)BackgroundMode::TASK_KEEPING);
     EXPECT_EQ(WORKOUT, (int32_t)BackgroundMode::WORKOUT);
+    EXPECT_EQ(SPECIAL_SCENARIO_PROCESSING, (int32_t)BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     EXPECT_EQ(END, (int32_t)BackgroundMode::END);
 }
 
@@ -948,6 +953,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskMode_001, TestSize.Level0)
     EXPECT_EQ(MODE_VOIP, (int32_t)BackgroundTaskMode::MODE_VOIP);
     EXPECT_EQ(MODE_TASK_KEEPING, (int32_t)BackgroundTaskMode::MODE_TASK_KEEPING);
     EXPECT_EQ(MODE_AV_PLAYBACK_AND_RECORD, (int32_t)BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD);
+    EXPECT_EQ(MODE_SPECIAL_SCENARIO_PROCESSING, (int32_t)BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
     EXPECT_EQ(MODE_END, (int32_t)BackgroundTaskMode::END);
     BackgroundTaskMode::GetBackgroundTaskModeStr(MODE_DATA_TRANSFER);
     EXPECT_TRUE(BackgroundTaskMode::IsModeTypeMatching(MODE_AUDIO_PLAYBACK));
@@ -986,6 +992,10 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubmode_001, TestSize.Level0)
         (int32_t)BackgroundTaskSubmode::SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION);
     EXPECT_EQ(SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION,
         (int32_t)BackgroundTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION);
+    EXPECT_EQ(SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION,
+        (int32_t)BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
+    EXPECT_EQ(SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION,
+        (int32_t)BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION);
     EXPECT_EQ(SUBMODE_END, (int32_t)BackgroundTaskSubmode::END);
     BackgroundTaskSubmode::GetBackgroundTaskSubmodeStr(SUBMODE_CAR_KEY_NORMAL_NOTIFICATION);
 }
@@ -1045,6 +1055,18 @@ HWTEST_F(BgTaskClientUnitTest, SetSupportedTaskKeepingProcesses_001, TestSize.Le
 {
     std::set<std::string> processSet;
     EXPECT_EQ(BackgroundTaskMgrHelper::SetSupportedTaskKeepingProcesses(processSet), ERR_OK);
+}
+
+/**
+ * @tc.name: SetMaliciousAppConfig_001
+ * @tc.desc: test SetMaliciousAppConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, SetMaliciousAppConfig_001, TestSize.Level1)
+{
+    std::set<std::string> maliciousAppSet;
+    EXPECT_EQ(BackgroundTaskMgrHelper::SetMaliciousAppConfig(maliciousAppSet), ERR_OK);
 }
 }
 }

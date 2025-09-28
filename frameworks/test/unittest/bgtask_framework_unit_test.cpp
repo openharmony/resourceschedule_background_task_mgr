@@ -950,5 +950,43 @@ HWTEST_F(BgTaskFrameworkUnitTest, IsModeSupported_001, TestSize.Level1)
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->IsModeSupported(taskParam),
         ERR_OK);
 }
+
+/**
+ * @tc.name: SetSupportedTaskKeepingProcesses_001
+ * @tc.desc: test SetSupportedTaskKeepingProcesses.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, SetSupportedTaskKeepingProcesses_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::set<std::string> processSet;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetSupportedTaskKeepingProcesses(processSet),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetSupportedTaskKeepingProcesses(processSet),
+        ERR_OK);
+}
+
+/**
+ * @tc.name: SetMaliciousAppConfig_001
+ * @tc.desc: test SetMaliciousAppConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, SetMaliciousAppConfig_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::set<std::string> maliciousAppSet;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet),
+        ERR_OK);
+}
 }
 }

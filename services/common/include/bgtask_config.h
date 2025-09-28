@@ -33,6 +33,7 @@ public:
     int32_t GetTransientTaskExemptedQuato();
     bool AddExemptedQuatoData(const std::string &configData, int32_t sourceType);
     void SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet);
+    void SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet);
 
 private:
     void LoadConfigFile();
@@ -44,11 +45,8 @@ private:
     bool isInit_ = false;
     std::set<std::string> transientTaskExemptedQuatoList_ {};
     std::set<std::string> transientTaskCloudExemptedQuatoList_ {};
-    std::set<std::string> taskKeepingExemptedQuatoList_ = {
-        {"com.sankuai.hmeituan.itakeawaybiz"},
-        {"cn.wps.mobileoffice.hap.ent"},
-        {"com.estrongs.hm.pop"},
-    };
+    std::set<std::string> taskKeepingExemptedQuatoList_ = {};
+    std::set<std::string> maliciousAppBlocklist_ {};
     int32_t transientTaskExemptedQuato_ = 10 * 1000; // 10s
     std::mutex configMutex_;
 };

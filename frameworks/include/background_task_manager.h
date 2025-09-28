@@ -281,6 +281,13 @@ public:
      */
     ErrCode SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet);
 
+    /**
+     * @brief Set malicious app blocklist.
+     * @param maliciousAppSet malicious app set.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet);
+
 private:
     bool GetBackgroundTaskManagerProxy();
 

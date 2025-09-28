@@ -831,5 +831,19 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_056, TestSize.Level1)
     DelayedSingleton<BgtaskConfig>::GetInstance()->SetSupportedTaskKeepingProcesses(processSet);
     EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->taskKeepingExemptedQuatoList_.empty(), false);
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_057
+ * @tc.desc: test SetMaliciousAppConfig.
+ * @tc.type: FUNC
+ * @tc.require: issueICVQZF
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_057, TestSize.Level1)
+{
+    std::set<std::string> maliciousAppSet;
+    maliciousAppSet.insert("com.test.app");
+    DelayedSingleton<BgtaskConfig>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet);
+    EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.empty(), false);
+}
 }
 }
