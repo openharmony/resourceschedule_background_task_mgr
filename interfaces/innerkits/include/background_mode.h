@@ -25,15 +25,16 @@ public:
     virtual ~BackgroundMode() = default;
     enum Type : uint32_t {
         DATA_TRANSFER = 1,
-        AUDIO_PLAYBACK,
-        AUDIO_RECORDING,
-        LOCATION,
-        BLUETOOTH_INTERACTION,
-        MULTI_DEVICE_CONNECTION,
-        WIFI_INTERACTION,
-        VOIP,
-        TASK_KEEPING,
-        WORKOUT,
+        AUDIO_PLAYBACK = 2,
+        AUDIO_RECORDING = 3,
+        LOCATION = 4,
+        BLUETOOTH_INTERACTION = 5,
+        MULTI_DEVICE_CONNECTION = 6,
+        WIFI_INTERACTION = 7,
+        VOIP = 8,
+        TASK_KEEPING = 9,
+        WORKOUT = 10,
+        SPECIAL_SCENARIO_PROCESSING = 11,
         END,
     };
 

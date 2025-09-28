@@ -130,6 +130,10 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. The background task mode: DATA_TRANSFER type do not support update."},
     {ERR_BGTASK_CONTINUOUS_NOT_APPLY_ONBACKGROUND,
         "Continuous Task verification failed. The continuous task are not allowed to be applied on background."},
+    {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION,
+        "Continuous Task verification failed. Special scenario processing only allowed one application."},
+    {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFILICTS_WITH_OTHER_TASK,
+        "Continuous Task verification failed. Special scenario processing cannot coexist with other continuous task."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

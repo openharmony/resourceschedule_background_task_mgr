@@ -224,6 +224,13 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet);
+
+    /**
+     * @brief Set malicious app blocklist.
+     * @param maliciousAppSet malicious app set.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

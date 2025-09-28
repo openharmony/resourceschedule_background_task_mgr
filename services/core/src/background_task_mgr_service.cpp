@@ -571,6 +571,15 @@ ErrCode BackgroundTaskMgrService::SetSupportedTaskKeepingProcesses(const std::se
     return ERR_OK;
 }
 
+ErrCode BackgroundTaskMgrService::SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet)
+{
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    DelayedSingleton<BgtaskConfig>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet);
+    return ERR_OK;
+}
+
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();

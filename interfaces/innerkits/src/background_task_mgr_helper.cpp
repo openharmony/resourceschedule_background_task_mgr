@@ -149,5 +149,10 @@ ErrCode BackgroundTaskMgrHelper::SetSupportedTaskKeepingProcesses(const std::set
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetSupportedTaskKeepingProcesses(processSet);
 }
+
+ErrCode BackgroundTaskMgrHelper::SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
