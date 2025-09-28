@@ -34,6 +34,12 @@ public:
     ErrCode RefreshContinuousNotificationWantAndContext(int32_t serviceUid,
         const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos,
         const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord, bool updateContent = false);
+    ErrCode PublishSubNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
+        const std::string &appName, const std::string &prompt, int32_t serviceUid,
+        std::shared_ptr<ContinuousTaskRecord> mainRecord);
+    ErrCode PublishMainNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
+        const std::string &appName, const std::string &prompt, int32_t serviceUid,
+        std::shared_ptr<ContinuousTaskRecord> mainRecord);
 
 private:
     static int32_t notificationIdIndex_;
