@@ -841,9 +841,9 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_056, TestSize.Level1)
 HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_057, TestSize.Level1)
 {
     std::set<std::string> maliciousAppSet;
-    processSet.insert("com.test.app");
+    maliciousAppSet.insert("com.test.app");
     DelayedSingleton<BgtaskConfig>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet);
-    EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->taskKeepingExemptedQuatoList_.empty(), false);
+    EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.empty(), false);
 }
 }
 }

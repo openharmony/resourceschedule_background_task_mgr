@@ -953,7 +953,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskMode_001, TestSize.Level0)
     EXPECT_EQ(MODE_VOIP, (int32_t)BackgroundTaskMode::MODE_VOIP);
     EXPECT_EQ(MODE_TASK_KEEPING, (int32_t)BackgroundTaskMode::MODE_TASK_KEEPING);
     EXPECT_EQ(MODE_AV_PLAYBACK_AND_RECORD, (int32_t)BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD);
-    EXPECT_EQ(SPECIAL_SCENARIO_PROCESSING, (int32_t)BackgroundTaskMode::SPECIAL_SCENARIO_PROCESSING);
+    EXPECT_EQ(MODE_SPECIAL_SCENARIO_PROCESSING, (int32_t)BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
     EXPECT_EQ(MODE_END, (int32_t)BackgroundTaskMode::END);
     BackgroundTaskMode::GetBackgroundTaskModeStr(MODE_DATA_TRANSFER);
     EXPECT_TRUE(BackgroundTaskMode::IsModeTypeMatching(MODE_AUDIO_PLAYBACK));

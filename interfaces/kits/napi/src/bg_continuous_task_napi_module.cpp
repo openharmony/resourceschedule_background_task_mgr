@@ -656,8 +656,8 @@ bool StartBackgroundRunningCheckModes(napi_env env, bool isThrow, AsyncCallbackI
     }
     // 特殊场景处理类型长时任务与其他类型长时任务互斥
     if (specialModeSize == MAX_TASK_NUMS && backgroundTaskModes.size() > MAX_TASK_NUMS) {
-        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFILICTS_WITH_OTHER_TASK, true);
-        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFILICTS_WITH_OTHER_TASK;
+        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK, true);
+        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
         return false;
     }
     for (uint32_t index = 0; index < backgroundTaskSubmodes.size(); index++) {

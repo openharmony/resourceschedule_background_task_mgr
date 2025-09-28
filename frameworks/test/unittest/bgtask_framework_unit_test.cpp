@@ -955,7 +955,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, IsModeSupported_001, TestSize.Level1)
  * @tc.name: SetSupportedTaskKeepingProcesses_001
  * @tc.desc: test SetSupportedTaskKeepingProcesses.
  * @tc.type: FUNC
- * @tc.require: issueICWQV5
+ * @tc.require:
  */
 HWTEST_F(BgTaskFrameworkUnitTest, SetSupportedTaskKeepingProcesses_001, TestSize.Level1)
 {
@@ -974,11 +974,11 @@ HWTEST_F(BgTaskFrameworkUnitTest, SetSupportedTaskKeepingProcesses_001, TestSize
  * @tc.name: SetMaliciousAppConfig_001
  * @tc.desc: test SetMaliciousAppConfig.
  * @tc.type: FUNC
- * @tc.require: issueICWQV5
+ * @tc.require:
  */
 HWTEST_F(BgTaskFrameworkUnitTest, SetMaliciousAppConfig_001, TestSize.Level1)
 {
-    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nsllptr;
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::set<std::string> maliciousAppSet;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet),

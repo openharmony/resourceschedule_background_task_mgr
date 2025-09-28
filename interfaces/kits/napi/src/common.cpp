@@ -132,7 +132,7 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. The continuous task are not allowed to be applied on background."},
     {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION,
         "Continuous Task verification failed. Special scenario processing only allowed one application."},
-    {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFILICTS_WITH_OTHER_TASK,
+    {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK,
         "Continuous Task verification failed. Special scenario processing cannot coexist with other continuous task."},
 };
 
@@ -805,7 +805,7 @@ int32_t Common::GetIntProperty(napi_env env, napi_value object, const std::strin
     napi_typeof(env, value, &valueType);
     if (valueType != napi_undefined && valueType == napi_number) {
         napi_get_value_int32(env, value, &intValue);
-    } else if (valueType != napi_number) {
+    } else {
         intValue = -1;
     }
     return intValue;
