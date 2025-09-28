@@ -52,7 +52,6 @@ public:
     bool IsFrontApp(const string& pkgName, int32_t uid);
     void ResetAppMgrProxy();
     vector<int32_t> GetRequestIdListByKey(const std::shared_ptr<KeyInfo>& key);
-    void GetFrontApp(std::set<int32_t> &frontAppList);
 
 private:
     class ApplicationStateObserver : public AppExecFwk::ApplicationStateObserverStub {

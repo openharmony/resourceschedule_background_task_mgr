@@ -81,7 +81,6 @@ public:
     void HandleSuspendManagerDie();
     void OnAppCacheStateChanged(int32_t uid, int32_t pid, const std::string &bundleName);
     std::set<int32_t>& GetTransientPauseUid();
-    void GetFrontApp(std::set<int32_t> &frontAppList);
 
 private:
     ErrCode IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
