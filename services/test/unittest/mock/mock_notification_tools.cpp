@@ -39,5 +39,18 @@ ErrCode NotificationTools::RefreshContinuousNotificationWantAndContext(int32_t s
 {
     return ERR_OK;
 }
+
+ErrCode NotificationTools::PublishSubNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
+    const std::string &appName, const std::string &prompt, int32_t serviceUid,
+    std::shared_ptr<ContinuousTaskRecord> mainRecord)
+{
+    return ERR_OK;
+}
+ErrCode NotificationTools::PublishMainNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
+    const std::string &appName, const std::string &prompt, int32_t serviceUid,
+    std::shared_ptr<ContinuousTaskRecord> mainRecord)
+{
+    return ERR_OK;
+}
 }
 }

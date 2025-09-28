@@ -32,7 +32,7 @@ static constexpr uint32_t LABEL_BGMODE_PREFIX_POS = 0;
 static constexpr uint32_t LABEL_APP_UID_POS = 1;
 static constexpr uint32_t LABEL_SIZE = 5;
 static constexpr uint32_t LABEL_ABILITYID_INDEX = 3;
-static constexpr uint32_t LABEL_MODE_INDEX = 4;
+static constexpr uint32_t LABEL_TASKID_INDEX = 4;
 }
 
 std::shared_ptr<BgContinuousTaskMgr> TaskNotificationSubscriber::continuousTaskMgr_
@@ -64,7 +64,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
     std::vector<std::string> labelSplits = StringSplit(notificationLabel, LABEL_SPLITER);
 
     if (labelSplits.empty() || labelSplits[LABEL_BGMODE_PREFIX_POS] != NOTIFICATION_PREFIX
-        || labelSplits.size() > LABEL_SIZE || labelSplits.size() < LABEL_SIZE - 1) {
+        || labelSplits.size() > LABEL_SIZE + 1 || labelSplits.size() < LABEL_SIZE - 1) {
         BGTASK_LOGW("callback notification label is invalid");
         return;
     }
@@ -85,10 +85,14 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
     std::string abilityName = AAFwk::String::Unbox(AAFwk::IString::Query(extraInfo->GetParam("abilityName")));
     std::string taskInfoMapKey = labelSplits[LABEL_APP_UID_POS] + LABEL_SPLITER + abilityName +
         LABEL_SPLITER + labelSplits[LABEL_ABILITYID_INDEX];
-    if (labelSplits.size() == LABEL_SIZE) {
-        taskInfoMapKey = taskInfoMapKey + LABEL_SPLITER + labelSplits[LABEL_MODE_INDEX];
+    if (labelSplits.size() == LABEL_SIZE || labelSplits.size() == LABEL_SIZE + 1) {
+        taskInfoMapKey = taskInfoMapKey + LABEL_SPLITER + labelSplits[LABEL_TASKID_INDEX];
     }
-    if (continuousTaskMgr_->StopContinuousTaskByUser(taskInfoMapKey)) {
+    bool isSubNotification = false;
+    if (labelSplits.size() == LABEL_SIZE + 1) {
+        isSubNotification = true;
+    }
+    if (continuousTaskMgr_->StopContinuousTaskByUser(taskInfoMapKey, isSubNotification)) {
         BGTASK_LOGI("remove continuous task record Key: %{public}s", taskInfoMapKey.c_str());
     }
 }

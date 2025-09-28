@@ -106,6 +106,16 @@ int32_t ContinuousTaskRecord::GetNotificationId() const
     return notificationId_;
 }
 
+std::string ContinuousTaskRecord::GetSubNotificationLabel() const
+{
+    return subNotificationLabel_;
+}
+
+int32_t ContinuousTaskRecord::GetSubNotificationId() const
+{
+    return subNotificationId_;
+}
+
 int32_t ContinuousTaskRecord::GetContinuousTaskId() const
 {
     return continuousTaskId_;
@@ -182,6 +192,8 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["isCombinedTaskNotification"] = isCombinedTaskNotification_;
     root["combinedNotificationTaskId"] = combinedNotificationTaskId_;
     root["isByRequestObject"] = isByRequestObject_;
+    root["subNotificationLabel"] = subNotificationLabel_;
+    root["subNotificationId"] = subNotificationId_;
     return root.dump(CommonUtils::jsonFormat_);
 }
 
@@ -195,7 +207,8 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["continuousTaskId"].is_number_integer() || !value["abilityId"].is_number_integer()
         || !value["suspendState"].is_boolean() || !value["suspendReason"].is_number_integer()
         || !value["isCombinedTaskNotification"].is_boolean() || !value["combinedNotificationTaskId"].is_number_integer()
-        || !value["isByRequestObject"].is_boolean();
+        || !value["isByRequestObject"].is_boolean() || !value["subNotificationLabel"].is_string()
+        || !value["subNotificationId"].is_number_integer();
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
@@ -203,7 +216,7 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
     if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value, { "bundleName",
         "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel",
         "isSystem", "continuousTaskId", "abilityId", "suspendState", "suspendReason", "isCombinedTaskNotification",
-        "combinedNotificationTaskId", "isByRequestObject"})) {
+        "combinedNotificationTaskId", "isByRequestObject", "subNotificationLabel", "subNotificationId"})) {
         BGTASK_LOGE("continuoustaskrecord no key");
         return false;
     }
@@ -248,6 +261,8 @@ void ContinuousTaskRecord::SetRecordValue(const nlohmann::json &value)
     this->isCombinedTaskNotification_ = value.at("isCombinedTaskNotification").get<bool>();
     this->combinedNotificationTaskId_ = value.at("combinedNotificationTaskId").get<int32_t>();
     this->isByRequestObject_ = value.at("isByRequestObject").get<bool>();
+    this->subNotificationLabel_ = value.at("subNotificationLabel").get<std::string>();
+    this->subNotificationId_ = value.at("subNotificationId").get<int32_t>();
     if (value.contains("isBatchApi") && value["isBatchApi"].is_boolean()) {
         this->isBatchApi_ = value.at("isBatchApi").get<bool>();
     }

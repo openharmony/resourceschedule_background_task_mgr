@@ -223,5 +223,120 @@ WEAK_FUNC ErrCode NotificationTools::RefreshContinuousNotificationWantAndContext
 #endif
     return ERR_OK;
 }
+
+std::string CreateSubNotificationLabel(int32_t uid, const std::string &abilityName, int32_t abilityId,
+    const int32_t continuousTaskId, int32_t pid)
+{
+    std::stringstream stream;
+    stream.clear();
+    stream.str("");
+    stream << NOTIFICATION_PREFIX << SEPARATOR << uid << SEPARATOR << std::hash<std::string>()(abilityName) <<
+        SEPARATOR << abilityId << SEPARATOR << continuousTaskId << SEPARATOR << pid;
+    std::string label = stream.str();
+    BGTASK_LOGD("sub notification label: %{public}s", label.c_str());
+    return label;
+}
+
+WEAK_FUNC ErrCode NotificationTools::PublishMainNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
+    const std::string &appName, const std::string &prompt, int32_t serviceUid,
+    std::shared_ptr<ContinuousTaskRecord> mainRecord)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    std::shared_ptr<Notification::NotificationLocalLiveViewContent> liveContent =
+        std::make_shared<Notification::NotificationLocalLiveViewContent>();
+    liveContent->SetTitle(appName);
+    liveContent->SetText(prompt);
+    liveContent->SetType(TYPE_CODE_DATA_TANSFER);
+
+    std::shared_ptr<AAFwk::WantParams> extraInfo = std::make_shared<AAFwk::WantParams>();
+    extraInfo->SetParam("abilityName", AAFwk::String::Box(subRecord->abilityName_));
+
+    std::string notificationLabel = CreateNotificationLabel(subRecord->uid_,
+        subRecord->abilityName_, subRecord->abilityId_,
+        subRecord->isByRequestObject_, subRecord->continuousTaskId_);
+
+    Notification::NotificationRequest notificationRequest = Notification::NotificationRequest();
+    notificationRequest.SetContent(std::make_shared<Notification::NotificationContent>(liveContent));
+    notificationRequest.SetAdditionalData(extraInfo);
+    notificationRequest.SetWantAgent(subRecord->wantAgent_);
+    notificationRequest.SetCreatorUid(serviceUid);
+    notificationRequest.SetOwnerUid(subRecord->GetUid());
+    notificationRequest.SetInProgress(true);
+    notificationRequest.SetIsAgentNotification(true);
+    notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
+    notificationRequest.SetUpdateByOwnerAllowed(true);
+    notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
+    notificationRequest.SetLabel(notificationLabel);
+    if (mainRecord->GetNotificationId() == -1) {
+        notificationRequest.SetNotificationId(++notificationIdIndex_);
+    } else {
+        notificationRequest.SetNotificationId(mainRecord->GetNotificationId());
+    }
+    if (Notification::NotificationHelper::PublishNotification(notificationRequest) != ERR_OK) {
+        BGTASK_LOGE("publish notification error, %{public}s, %{public}d", notificationLabel.c_str(),
+            mainRecord->notificationId_);
+        return ERR_BGTASK_NOTIFICATION_ERR;
+    }
+    mainRecord->notificationLabel_ = notificationLabel;
+    if (mainRecord->GetNotificationId() == -1) {
+        mainRecord->notificationId_ = notificationIdIndex_;
+    }
+#endif
+    return ERR_OK;
+}
+
+WEAK_FUNC ErrCode NotificationTools::PublishSubNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
+    const std::string &appName, const std::string &prompt, int32_t serviceUid,
+    std::shared_ptr<ContinuousTaskRecord> mainRecord)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    std::shared_ptr<Notification::NotificationLocalLiveViewContent> liveContent
+        = std::make_shared<Notification::NotificationLocalLiveViewContent>();
+    liveContent->SetTitle(appName);
+    liveContent->SetText(prompt);
+    if (std::find(subRecord->bgModeIds_.begin(), subRecord->bgModeIds_.end(),
+        BACKGROUND_MODE_AUDIO_RECORDING) != subRecord->bgModeIds_.end()) {
+        liveContent->SetType(TYPE_CODE_AUDIO_RECORDING);
+    } else if (std::find(subRecord->bgModeIds_.begin(), subRecord->bgModeIds_.end(),
+        BACKGROUND_MODE_VOIP) != subRecord->bgModeIds_.end()) {
+        liveContent->SetType(TYPE_CODE_VOIP);
+    }
+
+    std::shared_ptr<AAFwk::WantParams> extraInfo = std::make_shared<AAFwk::WantParams>();
+    extraInfo->SetParam("abilityName", AAFwk::String::Box(subRecord->abilityName_));
+
+    std::string notificationLabel = CreateSubNotificationLabel(subRecord->uid_,
+        subRecord->abilityName_, subRecord->abilityId_,
+        subRecord->continuousTaskId_, subRecord->pid_);
+
+    Notification::NotificationRequest notificationRequest = Notification::NotificationRequest();
+    notificationRequest.SetContent(std::make_shared<Notification::NotificationContent>(liveContent));
+    notificationRequest.SetAdditionalData(extraInfo);
+    notificationRequest.SetWantAgent(subRecord->wantAgent_);
+    notificationRequest.SetCreatorUid(serviceUid);
+    notificationRequest.SetOwnerUid(subRecord->GetUid());
+    notificationRequest.SetInProgress(true);
+    notificationRequest.SetIsAgentNotification(true);
+    notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
+    notificationRequest.SetUpdateByOwnerAllowed(true);
+    notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
+    notificationRequest.SetLabel(notificationLabel);
+    if (mainRecord->GetSubNotificationId() == -1) {
+        notificationRequest.SetNotificationId(++notificationIdIndex_);
+    } else {
+        notificationRequest.SetNotificationId(mainRecord->GetSubNotificationId());
+    }
+    if (Notification::NotificationHelper::PublishNotification(notificationRequest) != ERR_OK) {
+        BGTASK_LOGE("publish notification error, %{public}s, %{public}d", notificationLabel.c_str(),
+            notificationIdIndex_);
+        return ERR_BGTASK_NOTIFICATION_ERR;
+    }
+    mainRecord->subNotificationLabel_ = notificationLabel;
+    if (mainRecord->GetSubNotificationId() == -1) {
+        mainRecord->subNotificationId_ = notificationIdIndex_;
+    }
+#endif
+    return ERR_OK;
+}
 }
 }

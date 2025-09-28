@@ -1802,5 +1802,20 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_067, TestSize.Level1)
     taskParam->bgModeId_ = LOCATION_BGMODE_ID;
     EXPECT_FALSE(bgContinuousTaskMgr_->CheckPermissionForInner(taskParam, 1));
 }
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_068
+ * @tc.desc: ContinuousTaskRecord test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_068, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->subNotificationId_ = 1;
+    continuousTaskRecord->subNotificationLabel_ = "test";
+    EXPECT_EQ(continuousTaskRecord->GetSubNotificationId(), 1);
+    EXPECT_EQ(continuousTaskRecord->GetSubNotificationLabel(), "test");
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

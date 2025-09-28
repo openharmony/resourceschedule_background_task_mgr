@@ -96,7 +96,7 @@ public:
     ErrCode IsModeSupported(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode CheckTaskkeepingPermission(const sptr<ContinuousTaskParam> &taskParam,
         uint64_t callingTokenId, const std::string &bundleName, uint64_t fullTokenId);
-    bool StopContinuousTaskByUser(const std::string &mapKey);
+    bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
     void OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId);
@@ -159,6 +159,7 @@ private:
     void HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
     void HandleSuspendContinuousAudioTask(int32_t uid);
     void HandleActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
+    void HandleActiveNotification(std::shared_ptr<ContinuousTaskRecord> record);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);
@@ -193,7 +194,7 @@ private:
         const std::shared_ptr<ContinuousTaskCallbackInfo> &callbackInfo);
     bool IsExistCallback(int32_t uid, uint32_t type);
     ErrCode CheckCombinedTaskNotification(std::shared_ptr<ContinuousTaskRecord> &record, bool &sendNotification);
-    bool StopContinuousTaskByUserInner(const std::string &key);
+    bool StopContinuousTaskByUserInner(const std::string &key, bool isSubNotification);
     ErrCode DetermineMatchCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> recordParam,
         bool &sendNotification);
     ErrCode StartBackgroundRunningSubmit(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
@@ -201,6 +202,9 @@ private:
     ErrCode CheckAbilityTaskNum(const std::shared_ptr<ContinuousTaskRecord> record);
     bool CheckPermissionForInner(const sptr<ContinuousTaskParamForInner> &taskParam, int32_t callingUid);
     ErrCode AllowApplyContinuousTask(const std::shared_ptr<ContinuousTaskRecord> record);
+    ErrCode SendLiveViewAndOtherNotification(std::shared_ptr<ContinuousTaskRecord> record);
+    ErrCode SendNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
+        std::shared_ptr<ContinuousTaskRecord> record, const std::string &appName, bool isSubNotification);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
