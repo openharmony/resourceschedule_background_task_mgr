@@ -31,7 +31,7 @@ public:
         SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED,
         SYSTEM_SUSPEND_USED_ILLEGALLY,
         SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING,
-        SYSTEM_SUSPEND_VOIP_LOAD_WARNING,
+        SYSTEM_SUSPEND_VOIP_NOT_USED,
     };
 
     static uint32_t GetSuspendReasonValue(const uint32_t mode);
