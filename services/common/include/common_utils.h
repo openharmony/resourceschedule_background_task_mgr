@@ -66,10 +66,7 @@ public:
     {
         auto iterOld = std::find(oldBgModeIds.begin(), oldBgModeIds.end(), bgMode);
         auto iterNew = std::find(newBgModeIds.begin(), newBgModeIds.end(), bgMode);
-        if (iterOld != oldBgModeIds.end() && iterNew == newBgModeIds.end()) {
-            return true;
-        }
-        if (iterOld == oldBgModeIds.end() && iterNew != newBgModeIds.end()) {
+        if (iterOld != oldBgModeIds.end() || iterNew != newBgModeIds.end()) {
             return true;
         }
         return false;
