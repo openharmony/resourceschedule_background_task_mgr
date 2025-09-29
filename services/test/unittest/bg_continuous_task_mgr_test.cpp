@@ -1634,8 +1634,8 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_063, TestSize.Level1)
     continuousTaskRecord->abilityName_ = "ability1";
     continuousTaskRecord->bundleName_ = "Entry";
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord;
-    // 前后任务包含上传下载，不做更新
-    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam), ERR_OK);
+    // 前后任务包含上传下载，更新失败
+    EXPECT_EQ(bgContinuousTaskMgr_->UpdateBackgroundRunning(taskParam), ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE);
 }
 
 /**
@@ -1647,15 +1647,15 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_063, TestSize.Level1)
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_064, TestSize.Level1)
 {
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 1,
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 4,
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
-        "ability1", nullptr, "Entry", true, {1}, 1);
+        "ability1", nullptr, "Entry", true, {4}, 1);
     taskParam->isByRequestObject_ = true;
-    taskParam->bgModeId_ = 1;
+    taskParam->bgModeId_ = 4;
     taskParam->bgModeIds_.clear();
     taskParam->bgModeIds_.push_back(4);
     taskParam->bgSubModeIds_.clear();
-    taskParam->bgSubModeIds_.push_back(1);
+    taskParam->bgSubModeIds_.push_back(2);
     taskParam->updateTaskId_ = 1;
     
     bgContinuousTaskMgr_->cachedBundleInfos_.clear();
@@ -1673,7 +1673,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_064, TestSize.Level1)
     continuousTaskRecord->bgModeIds_.clear();
     continuousTaskRecord->bgModeIds_.push_back(4);
     continuousTaskRecord->bgSubModeIds_.clear();
-    continuousTaskRecord->bgSubModeIds_.push_back(1);
+    continuousTaskRecord->bgSubModeIds_.push_back(2);
     continuousTaskRecord->isCombinedTaskNotification_ = false;
     std::shared_ptr<WantAgentInfo> wantInfo = std::make_shared<WantAgentInfo>();
     wantInfo->bundleName_ = "wantAgentBundleName";
@@ -1709,7 +1709,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_065, TestSize.Level1)
     taskParam->bgModeIds_.clear();
     taskParam->bgModeIds_.push_back(5);
     taskParam->bgSubModeIds_.clear();
-    taskParam->bgSubModeIds_.push_back(1);
+    taskParam->bgSubModeIds_.push_back(2);
     taskParam->updateTaskId_ = 1;
     
     bgContinuousTaskMgr_->cachedBundleInfos_.clear();
@@ -1727,7 +1727,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_065, TestSize.Level1)
     continuousTaskRecord->bgModeIds_.clear();
     continuousTaskRecord->bgModeIds_.push_back(4);
     continuousTaskRecord->bgSubModeIds_.clear();
-    continuousTaskRecord->bgSubModeIds_.push_back(1);
+    continuousTaskRecord->bgSubModeIds_.push_back(2);
     continuousTaskRecord->isCombinedTaskNotification_ = true;
     std::shared_ptr<WantAgentInfo> wantInfo = std::make_shared<WantAgentInfo>();
     wantInfo->bundleName_ = "wantAgentBundleName";

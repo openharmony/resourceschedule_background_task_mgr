@@ -878,11 +878,6 @@ ErrCode BgContinuousTaskMgr::UpdateTaskNotification(std::shared_ptr<ContinuousTa
     const sptr<ContinuousTaskParam> &taskParam)
 {
     auto oldModes = record->bgModeIds_;
-    if (CommonUtils::CheckExistMode(oldModes, BackgroundMode::DATA_TRANSFER) &&
-        CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-        BGTASK_LOGI("uid: %{public}d have same mode: DATA_TRANSFER", record->uid_);
-        return ERR_OK;
-    }
     std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
     if (mainAbilityLabel == "") {
         BGTASK_LOGE("uid: %{public}d get main ability label or notification text fail.", record->uid_);
@@ -952,8 +947,9 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
             return ret;
         }
     }
-    if (CommonUtils::CheckModeExistOnly(record->bgModeIds_, taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-        BGTASK_LOGE("only task have mode: DATA_TRANSFER, not support update, taskId: %{public}d", continuousTaskId);
+    if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER) ||
+        CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+        BGTASK_LOGE("have mode: DATA_TRANSFER, not support update, taskId: %{public}d", continuousTaskId);
         return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE;
     }
     return UpdateTaskInfo(record, taskParam);
