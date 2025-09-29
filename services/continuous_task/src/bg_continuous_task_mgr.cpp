@@ -947,7 +947,8 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
             return ret;
         }
     }
-    if (CommonUtils::CheckModeExistOnly(record->bgModeIds_, taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+    if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER) ||
+        CommonUtils::CheckExistMode(taskParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
         BGTASK_LOGE("have mode: DATA_TRANSFER, not support update, taskId: %{public}d", continuousTaskId);
         return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE;
     }
