@@ -615,7 +615,6 @@ ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(uint32_t &authResult)
     return ERR_OK;
 }
 
-
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
