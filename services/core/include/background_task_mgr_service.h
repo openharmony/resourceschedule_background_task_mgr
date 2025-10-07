@@ -97,6 +97,8 @@ public:
     ErrCode IsModeSupported(const ContinuousTaskParam &taskParam) override;
     ErrCode SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet) override;
     ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet) override;
+    ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam) override;
+    ErrCode CheckSpecialScenarioAuth(uint32_t &authResult) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);

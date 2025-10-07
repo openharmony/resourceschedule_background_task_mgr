@@ -580,6 +580,41 @@ ErrCode BackgroundTaskMgrService::SetMaliciousAppConfig(const std::set<std::stri
     return ERR_OK;
 }
 
+ErrCode BackgroundTaskMgrService::RequestAuthFromUser(const ContinuousTaskParam &taskParam)
+{
+    if (CheckAtomicService()) {
+        pid_t callingPid = IPCSkeleton::GetCallingPid();
+        pid_t callingUid = IPCSkeleton::GetCallingUid();
+        BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail, IsModeSupported not allowed",
+            callingUid, callingPid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
+    auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
+    return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(uint32_t &authResult)
+{
+    if (CheckAtomicService()) {
+        pid_t callingPid = IPCSkeleton::GetCallingPid();
+        pid_t callingUid = IPCSkeleton::GetCallingUid();
+        BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail, IsModeSupported not allowed",
+            callingUid, callingPid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
+    auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return ERR_OK;
+}
+
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
