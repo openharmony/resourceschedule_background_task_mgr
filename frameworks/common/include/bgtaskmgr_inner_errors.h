@@ -18,6 +18,7 @@
 
 #include "errors.h"
 #include <map>
+#include <string_ex.h>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -124,7 +125,7 @@ enum ParamErr: int32_t {
     ERR_ISPROCESS_NULL_OR_TYPE_ERR,
 };
 
-const std::unordered_map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
+const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_PERMISSION_DENIED, "Permission denied."},
     {ERR_BGTASK_NOT_SYSTEM_APP,
         "System API verification failed. Only system application can apply."},
@@ -231,7 +232,7 @@ const std::unordered_map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. Special scenario processing cannot coexist with other continuous task."},
 };
 
-const std::unordered_map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
+const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
     {ERR_PARAM_NUMBER_ERR, "The number of arguments is wrong."},
     {ERR_REASON_NULL_OR_TYPE_ERR, "The reason cannot be null and its type must be string."},
     {ERR_CALLBACK_NULL_OR_TYPE_ERR, "The callback cannot be null and its type must be function."},
