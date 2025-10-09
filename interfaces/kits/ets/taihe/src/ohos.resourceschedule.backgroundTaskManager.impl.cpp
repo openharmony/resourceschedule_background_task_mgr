@@ -301,7 +301,8 @@ void StopBackgroundRunningSync(uintptr_t context)
     }
 }
 
-void StartBackgroundRunningSync(uintptr_t context, BackgroundMode bgMode, uintptr_t wantAgent)
+void StartBackgroundRunningSync(uintptr_t context,
+    ::ohos::resourceschedule::backgroundTaskManager::BackgroundMode bgMode, uintptr_t wantAgent)
 {
     auto env = taihe::get_env();
     std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
