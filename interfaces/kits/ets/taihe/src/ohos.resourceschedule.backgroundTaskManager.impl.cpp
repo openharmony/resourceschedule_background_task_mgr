@@ -189,7 +189,10 @@ ani_status GetWantAgent(ani_env *env, const ani_object &value,
 bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uintptr_t context)
 {
     if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo is nullpter");
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        asyncCallbackInfo->errCode = ERR_BGTASK_CHECK_TASK_PARAM;
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return false;
     }
     if (GetAbilityContext(env, reinterpret_cast<ani_object>(context), asyncCallbackInfo->abilityContext) != ANI_OK) {
@@ -202,7 +205,7 @@ bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uin
 
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     if (info == nullptr) {
-        BGTASK_LOGE("ability info is null");
+        BGTASK_LOGE("ability info is nullptr");
         asyncCallbackInfo->errCode = ERR_ABILITY_INFO_EMPTY;
         set_business_error(
             Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
@@ -223,7 +226,10 @@ bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uin
 ani_status GetModes(ani_env *env, const array_view<string> &bgModes, ContinuousTaskCallbackInfo *asyncCallbackInfo)
 {
     if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo is nullpter");
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        asyncCallbackInfo->errCode = ERR_BGTASK_CHECK_TASK_PARAM;
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
         return ANI_ERROR;
     }
     if (bgModes.size() == 0) {
@@ -256,7 +262,7 @@ ani_status GetModes(ani_env *env, const array_view<string> &bgModes, ContinuousT
 bool CheckBackgroundMode(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo)
 {
     if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo is nullpter");
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
         return false;
     }
     if (!asyncCallbackInfo->isBatchApi) {
