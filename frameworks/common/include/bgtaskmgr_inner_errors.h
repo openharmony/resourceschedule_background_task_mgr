@@ -231,6 +231,7 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. Special scenario processing only allowed one application."},
     {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK,
         "Continuous Task verification failed. Special scenario processing cannot coexist with other continuous task."},
+    {ERR_BGTASK_GET_APP_INDEX_FAIL, "Continuous Task verification failed. Unable to obtain the app index."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
