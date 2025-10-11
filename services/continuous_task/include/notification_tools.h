@@ -19,6 +19,7 @@
 #include "singleton.h"
 #include "continuous_task_record.h"
 #include "bgtaskmgr_inner_errors.h"
+#include "banner_notification_record.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
