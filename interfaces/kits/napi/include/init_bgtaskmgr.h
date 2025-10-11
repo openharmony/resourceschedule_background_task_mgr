@@ -35,6 +35,7 @@ napi_value ContinuousTaskSuspendReasonInit(napi_env env, napi_value exports);
 napi_value BackgroundTaskModeInit(napi_env env, napi_value exports);
 napi_value BackgroundTaskSubModeInit(napi_env env, napi_value exports);
 napi_value ContinuousTaskRequestInit(napi_env env, napi_value exports);
+napi_value UserAuthResultInit(napi_env env, napi_value exports);
 napi_value ContinuousTaskRequestConstructor(napi_env env, napi_callback_info exports);
 static napi_value InitApi(napi_env env, napi_value exports);
 
