@@ -77,6 +77,26 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_allow_time",
+            "value":"本次允许"
+        },
+        {
+            "name":"btn_allow_allowed",
+            "value":"始终允许"
+        },
+        {
+            "name":"text_notification_allow_background_activity",
+            "value":"允许“%s”执行应用后台长时活动？"
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_media_process",
+            "value":"正在运行媒体处理任务，删除通知后任务将停止"
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_video_broadcast",
+            "value":"正在运行视频投播任务，删除通知后任务将停止"
         }
     ]
 }
