@@ -496,6 +496,22 @@ ErrCode BackgroundTaskManager::SetMaliciousAppConfig(const std::set<std::string>
     return proxy_->SetMaliciousAppConfig(maliciousAppSet);
 }
 
+ErrCode BackgroundTaskManager::RequestAuthFromUser(const ContinuousTaskParam &taskParam)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->RequestAuthFromUser(taskParam);
+}
+
+ErrCode BackgroundTaskManager::CheckSpecialScenarioAuth(uint32_t &authResult)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->CheckSpecialScenarioAuth(authResult);
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 
