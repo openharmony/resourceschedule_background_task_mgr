@@ -521,6 +521,8 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterSysCommEve
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_ADDED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
+    // 注册横幅通知的点击事件
+    matchingSkills.AddEvent(BGTASK_BANNER_NOTIFICATION_ACTION_NAME);
     EventFwk::CommonEventSubscribeInfo commonEventSubscribeInfo(matchingSkills);
     systemEventListener_ = std::make_shared<SystemEventObserver>(commonEventSubscribeInfo);
     if (systemEventListener_ != nullptr) {
@@ -2225,6 +2227,34 @@ bool BgContinuousTaskMgr::StopContinuousTaskByUserInner(const std::string &key, 
     return true;
 }
 
+bool BgContinuousTaskMgr::StopBannerContinuousTaskByUser(const std::string &label)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return false;
+    }
+    bool result = true;
+    handler_->PostSyncTask([this, label, &result]() {
+        result = StopBannerContinuousTaskByUserInner(label);
+    });
+    return result;
+}
+
+bool BgContinuousTaskMgr::StopBannerContinuousTaskByUserInner(const std::string &label)
+{
+    if (bannerNotificationRecord_.find(label) != bannerNotificationRecord_.end()) {
+        auto iter = bannerNotificationRecord_.at(label);
+        // 已经被授权过了，所以通知删除，不取消授权记录
+        if (iter->GetAuthResult() != UserAuthResult::GRANTED_ONCE &&
+            iter->GetAuthResult() != UserAuthResult::GRANTED_ALWAYS) {
+            bannerNotificationRecord_.erase(label);
+        } else {
+            BGTASK_LOGI("alread auth not remove record, label key: %{public}s", label.c_str());
+        }
+    }
+    return true;
+}
+
 void BgContinuousTaskMgr::OnRemoteSubscriberDied(const wptr<IRemoteObject> &object)
 {
     if (!isSysReady_.load()) {
@@ -2492,6 +2522,9 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
     continuousTaskCallbackInfo->SetSuspendState(continuousTaskInfo->suspendState_);
     continuousTaskCallbackInfo->SetSuspendReason(continuousTaskInfo->suspendReason_);
     continuousTaskCallbackInfo->SetByRequestObject(continuousTaskInfo->isByRequestObject_);
+    continuousTaskCallbackInfo->SetBundleName(continuousTaskInfo->bundleName_);
+    continuousTaskCallbackInfo->SetUserId(continuousTaskInfo->userId_);
+    continuousTaskCallbackInfo->SetAppIndex(continuousTaskInfo->appIndex_);
     NotifySubscribers(changeEventType, continuousTaskCallbackInfo);
     ReportHisysEvent(changeEventType, continuousTaskInfo);
 }
