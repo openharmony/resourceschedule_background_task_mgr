@@ -1095,7 +1095,7 @@ HWTEST_F(BgTaskClientUnitTest, UserAuthResult_001, TestSize.Level1)
     EXPECT_EQ(DENIED, (int32_t)UserAuthResult::DENIED);
     EXPECT_EQ(GRANTED_ONCE, (int32_t)UserAuthResult::GRANTED_ONCE);
     EXPECT_EQ(GRANTED_ALWAYS, (int32_t)UserAuthResult::GRANTED_ALWAYS);
-    EXPECT_EQ(AUTH_END, (int32_t)UserAuthResult::AUTH_END);
+    EXPECT_EQ(AUTH_END, (int32_t)UserAuthResult::END);
 }
 }
 }
