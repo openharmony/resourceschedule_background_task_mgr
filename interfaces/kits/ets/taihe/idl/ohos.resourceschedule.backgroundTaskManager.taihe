@@ -132,3 +132,7 @@ function StartBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque,
 @gen_promise("updateBackgroundRunning")
 function UpdateBackgroundRunningSync(
   context: @sts_type("BaseContext") Opaque, bgModes: Array<String>): ContinuousTaskNotification;
+
+enum BackgroundSubMode11 : i32 {
+  CAR_KEY = 1
+}
