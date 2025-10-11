@@ -23,7 +23,10 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-extern const char *g_continuousTaskModeName[11];
+namespace {
+    static constexpr uint32_t CONTINUOUS_TASK_MODE_LENGTH = 12;
+}
+extern const char *g_continuousTaskModeName[CONTINUOUS_TASK_MODE_LENGTH];
 
 // stop task reason
 enum : int32_t {
@@ -64,6 +67,7 @@ public:
     int32_t GetSuspendAudioTaskTimes() const;
     std::string GetSubNotificationLabel() const;
     int32_t GetSubNotificationId() const;
+    int32_t GetAppIndex() const;
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
@@ -98,6 +102,7 @@ private:
     bool isCombinedTaskNotification_ {false};
     int32_t combinedNotificationTaskId_ {-1};
     bool isByRequestObject_ {false};
+    int32_t appIndex_ {-1};
     
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;
