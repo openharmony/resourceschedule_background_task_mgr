@@ -87,7 +87,7 @@
             "value":"始终允许"
         },
         {
-            "name":"text_notification_allow_background_activity",
+            "name":"text_notification_allow_background_keepalive",
             "value":"允许“%s”执行应用后台长时活动？"
         },
         {
