@@ -87,8 +87,8 @@
             "value":"Always allowed"
         },
         {
-            "name":"text_notification_allow_background_activity",
-            "value":"Allow “%s” to perform background tasks activities for the app?"
+            "name":"text_notification_allow_background_keepalive",
+            "value":"Allow “%s” to perform background tasks keepalive for the app?"
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
