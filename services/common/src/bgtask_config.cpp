@@ -25,6 +25,7 @@ const std::string CONFIG_JSON_INDEX_TOP = "params";
 const std::string CONFIG_JSON_INDEX_SUSPEND_SECOND = "param";
 const std::string TRANSIENT_ERR_DELAYED_FROZEN_LIST = "transient_err_delayed_frozen_list";
 const std::string CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST = "continuous_task_keeping_exemption_list";
+const std::string MALICIOUS_APP_BLOCKLIST = "malicious_app_blocklist";
 const std::string TRANSIENT_EXEMPTED_QUOTA = "transient_exempted_quota";
 const std::string TRANSIENT_ERR_DELAYED_FROZEN_TIME = "transient_err_delayed_frozen_time";
 }
@@ -124,9 +125,16 @@ bool BgtaskConfig::SetCloudConfigParam(const nlohmann::json &jsonObj)
     }
     nlohmann::json params = jsonObj[CONFIG_JSON_INDEX_TOP];
     std::lock_guard<std::mutex> lock(configMutex_);
-    if (params.contains(TRANSIENT_ERR_DELAYED_FROZEN_LIST) &&
-        params[TRANSIENT_ERR_DELAYED_FROZEN_LIST].is_array()) {
-        nlohmann::json appArray = params[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
+    SetTransientTaskParam(params);
+    SetContinuousTaskParam(params);
+    return true;
+}
+
+void BgtaskConfig::SetTransientTaskParam(const nlohmann::json &jsonObj)
+{
+    if (jsonObj.contains(TRANSIENT_ERR_DELAYED_FROZEN_LIST) &&
+        jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST].is_array()) {
+        nlohmann::json appArray = jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
         transientTaskCloudExemptedQuatoList_.clear();
         for (const auto &app : appArray) {
             transientTaskCloudExemptedQuatoList_.insert(app);
@@ -135,24 +143,11 @@ bool BgtaskConfig::SetCloudConfigParam(const nlohmann::json &jsonObj)
             BGTASK_LOGI("transientTaskCloudExemptedQuatoList appName: %{public}s", appName.c_str());
         }
     } else {
-        BGTASK_LOGE("no key %{public}s", TRANSIENT_ERR_DELAYED_FROZEN_LIST.c_str());
+        BGTASK_LOGW("no key %{public}s", TRANSIENT_ERR_DELAYED_FROZEN_LIST.c_str());
     }
-    if (params.contains(CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST) &&
-        params[CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST].is_array()) {
-        nlohmann::json appArrayTaskKeeping = params[CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST];
-        taskKeepingExemptedQuatoList_.clear();
-        for (const auto &app : appArrayTaskKeeping) {
-            taskKeepingExemptedQuatoList_.insert(app);
-        }
-        for (const auto &appName : taskKeepingExemptedQuatoList_) {
-            BGTASK_LOGI("taskKeepingExemptedQuatoList_ appName: %{public}s", appName.c_str());
-        }
-    } else {
-        BGTASK_LOGE("no key %{public}s", CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST.c_str());
-    }
-    if (params.contains(CONFIG_JSON_INDEX_SUSPEND_SECOND) &&
-        params[CONFIG_JSON_INDEX_SUSPEND_SECOND].is_object()) {
-        nlohmann::json param = params[CONFIG_JSON_INDEX_SUSPEND_SECOND];
+    if (jsonObj.contains(CONFIG_JSON_INDEX_SUSPEND_SECOND) &&
+        jsonObj[CONFIG_JSON_INDEX_SUSPEND_SECOND].is_object()) {
+        nlohmann::json param = jsonObj[CONFIG_JSON_INDEX_SUSPEND_SECOND];
         if (param.contains(TRANSIENT_EXEMPTED_QUOTA) &&
             !param[TRANSIENT_EXEMPTED_QUOTA].is_number_integer()) {
             transientTaskExemptedQuato_ = param[TRANSIENT_EXEMPTED_QUOTA].get<int>();
@@ -161,9 +156,38 @@ bool BgtaskConfig::SetCloudConfigParam(const nlohmann::json &jsonObj)
             BGTASK_LOGE("no key %{public}s", TRANSIENT_EXEMPTED_QUOTA.c_str());
         }
     } else {
-        BGTASK_LOGE("no key %{public}s", CONFIG_JSON_INDEX_SUSPEND_SECOND.c_str());
+        BGTASK_LOGW("no key %{public}s", CONFIG_JSON_INDEX_SUSPEND_SECOND.c_str());
     }
-    return true;
+}
+
+void BgtaskConfig::SetContinuousTaskParam(const nlohmann::json &jsonObj)
+{
+    if (jsonObj.contains(CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST) &&
+        jsonObj[CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST].is_array()) {
+        nlohmann::json appArrayTaskKeeping = jsonObj[CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST];
+        taskKeepingExemptedQuatoList_.clear();
+        for (const auto &app : appArrayTaskKeeping) {
+            taskKeepingExemptedQuatoList_.insert(app);
+        }
+        for (const auto &appName : taskKeepingExemptedQuatoList_) {
+            BGTASK_LOGI("taskKeepingExemptedQuatoList_ appName: %{public}s", appName.c_str());
+        }
+    } else {
+        BGTASK_LOGW("no key %{public}s", CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST.c_str());
+    } 
+    if (jsonObj.contains(MALICIOUS_APP_BLOCKLIST) &&
+        jsonObj[MALICIOUS_APP_BLOCKLIST].is_array()) {
+        nlohmann::json appArrayMalicious = jsonObj[MALICIOUS_APP_BLOCKLIST];
+        maliciousAppBlocklist_.clear();
+        for (const auto &app : appArrayMalicious) {
+            maliciousAppBlocklist_.insert(app);
+        }
+        for (const auto &appName : maliciousAppBlocklist_) {
+            BGTASK_LOGI("maliciousAppBlocklist_ appName: %{public}s", appName.c_str());
+        }
+    } else {
+        BGTASK_LOGW("no key %{public}s", MALICIOUS_APP_BLOCKLIST.c_str());
+    }
 }
 
 void BgtaskConfig::ParseTransientTaskExemptedQuato(const nlohmann::json &jsonObj)
@@ -218,6 +242,12 @@ void BgtaskConfig::SetMaliciousAppConfig(const std::set<std::string> &maliciousA
     for (const auto &item : maliciousAppBlocklist_) {
         BGTASK_LOGI("malicious app blocklist proc: %{public}s", item.c_str());
     }
+}
+
+bool BgtaskConfig::IsMaliciousAppConfig(const std::string &bundleName)
+{
+    std::lock_guard<std::mutex> lock(configMutex_);
+    return maliciousAppBlocklist_.count(bundleName) > 0;
 }
 }
 }
