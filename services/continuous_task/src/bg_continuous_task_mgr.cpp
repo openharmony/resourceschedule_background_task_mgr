@@ -87,7 +87,7 @@ static const char *g_btnBannerNotification[] = {
 };
 
 static const char *g_textBannerNotification[] = {
-    "text_notification_allow_background_activity",
+    "text_notification_allow_background_keepalive",
 };
 
 static constexpr char SEPARATOR[] = "_";
@@ -632,7 +632,8 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
 
 ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTaskRecord> record)
 {
-    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, record->callingTokenId_)) {
+    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
+    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
         return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
     }
     if (record->isSystem_) {
@@ -2690,7 +2691,7 @@ std::string BgContinuousTaskMgr::GetNotificationText(const std::shared_ptr<Conti
             mode == BackgroundMode::AUDIO_RECORDING) && record->IsSystem())) {
             continue;
         }
-        if (mode == BackgroundMode::BLUETOOTH_INTERACTION || mode == BackgroundMode::SPECIAL_SCENARIO_PROCESSING)
+        if (mode == BackgroundMode::BLUETOOTH_INTERACTION || mode == BackgroundMode::SPECIAL_SCENARIO_PROCESSING) {
             CheckSpecialNotificationText(notificationText, record, mode);
             continue;
         }
