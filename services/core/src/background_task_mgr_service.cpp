@@ -595,7 +595,7 @@ ErrCode BackgroundTaskMgrService::RequestAuthFromUser(const ContinuousTaskParam 
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
-    return ERR_OK;
+    return BgContinuousTaskMgr::GetInstance()->RequestAuthFromUser(paramPtr);
 }
 
 ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(uint32_t &authResult)
@@ -612,6 +612,11 @@ ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(uint32_t &authResult)
     if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
         return ERR_BGTASK_PERMISSION_DENIED;
     }
+    return BgContinuousTaskMgr::GetInstance()->CheckSpecialScenarioAuth(authResult);
+}
+
+ErrCode BackgroundTaskMgrService::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)
+{
     return ERR_OK;
 }
 
