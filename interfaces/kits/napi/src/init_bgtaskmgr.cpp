@@ -30,6 +30,7 @@
 #include "efficiency_resources_operation.h"
 #include "resource_type.h"
 #include "common.h"
+#include "user_auth_result.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -63,6 +64,8 @@ napi_value ContinuousTaskRequestInit(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_FUNCTION("isModeSupported", IsModeSupported),
+        DECLARE_NAPI_FUNCTION("requestAuthFromUser", RequestAuthFromUser),
+        DECLARE_NAPI_FUNCTION("checkSpecialScenarioAuth", CheckSpecialScenarioAuth),
     };
     napi_value cons;
     NAPI_CALL(env, napi_define_class(env, "ContinuousTaskRequest", NAPI_AUTO_LENGTH, ContinuousTaskRequestConstructor,
@@ -275,6 +278,22 @@ napi_value BackgroundTaskSubModeInit(napi_env env, napi_value exports)
     return exports;
 }
 
+napi_value UserAuthResultInit(napi_env env, napi_value exports)
+{
+    napi_value obj = nullptr;
+    napi_create_object(env, &obj);
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(UserAuthResult::NOT_SUPPORTED), "NOT_SUPPORTED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(UserAuthResult::NOT_DETERMINED), "NOT_DETERMINED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(UserAuthResult::DENIED), "DENIED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(UserAuthResult::GRANTED_ONCE), "GRANTED_ONCE");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(UserAuthResult::GRANTED_ALWAYS), "GRANTED_ALWAYS");
+    napi_property_descriptor exportFuncs[] = {
+        DECLARE_NAPI_PROPERTY("UserAuthResult", obj),
+    };
+    napi_define_properties(env, exports, sizeof(exportFuncs) / sizeof(*exportFuncs), exportFuncs);
+    return exports;
+}
+
 /*
  * Module export function
  */
@@ -290,6 +309,7 @@ static napi_value InitApi(napi_env env, napi_value exports)
     BackgroundTaskModeInit(env, exports);
     BackgroundTaskSubModeInit(env, exports);
     ContinuousTaskRequestInit(env, exports);
+    UserAuthResultInit(env, exports);
     return exports;
 }
 
