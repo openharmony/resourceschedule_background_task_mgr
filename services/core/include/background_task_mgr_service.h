@@ -99,6 +99,7 @@ public:
     ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet) override;
     ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam) override;
     ErrCode CheckSpecialScenarioAuth(uint32_t &authResult) override;
+    ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);

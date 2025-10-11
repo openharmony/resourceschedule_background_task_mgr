@@ -40,6 +40,7 @@
 #include "resource_type.h"
 #include "token_setproc.h"
 #include "transient_task_app_info.h"
+#include "user_auth_result.h"
 
 using namespace testing::ext;
 
@@ -113,6 +114,12 @@ constexpr uint32_t SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION = 8;
 constexpr uint32_t SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION = 9;
 constexpr uint32_t SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION = 10;
 constexpr uint32_t SUBMODE_END = 11;
+constexpr uint32_t NOT_SUPPORTED = 0;
+constexpr uint32_t NOT_DETERMINED = 1;
+constexpr uint32_t DENIED = 2;
+constexpr uint32_t GRANTED_ONCE = 3;
+constexpr uint32_t GRANTED_ALWAYS = 4;
+constexpr uint32_t AUTH_END = 5;
 
 static const std::string RSS_NAME = "resource_schedule_service";
 }
@@ -632,6 +639,9 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     info2->SetContinuousTaskId(1);
     info2->SetCancelReason(1);
     info2->SetByRequestObject(true);
+    info2->SetBundleName("bundleName");
+    info2->SetUserId(1);
+    info2->SetAppIndex(1);
     Parcel parcel = Parcel();
     info2->Marshalling(parcel);
     sptr<ContinuousTaskCallbackInfo> info3 = sptr<ContinuousTaskCallbackInfo>(
@@ -647,6 +657,9 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetSuspendState(), false);
     EXPECT_EQ(info3->GetSuspendReason(), -1);
     EXPECT_EQ(info3->IsByRequestObject(), true);
+    EXPECT_EQ(info3->GetBundleName(), "bundleName");
+    EXPECT_EQ(info3->GetUserId(), 1);
+    EXPECT_EQ(info3->GetAppIndex(), 1);
 }
 
 /**
@@ -1067,6 +1080,22 @@ HWTEST_F(BgTaskClientUnitTest, SetMaliciousAppConfig_001, TestSize.Level1)
 {
     std::set<std::string> maliciousAppSet;
     EXPECT_EQ(BackgroundTaskMgrHelper::SetMaliciousAppConfig(maliciousAppSet), ERR_OK);
+}
+
+/**
+ * @tc.name: UserAuthResult_001
+ * @tc.desc: test UserAuthResult.
+ * @tc.type: FUNC
+ * @tc.require: 752
+ */
+HWTEST_F(BgTaskClientUnitTest, UserAuthResult_001, TestSize.Level1)
+{
+    EXPECT_EQ(NOT_SUPPORTED, (int32_t)UserAuthResult::NOT_SUPPORTED);
+    EXPECT_EQ(NOT_DETERMINED, (int32_t)UserAuthResult::NOT_DETERMINED);
+    EXPECT_EQ(DENIED, (int32_t)UserAuthResult::DENIED);
+    EXPECT_EQ(GRANTED_ONCE, (int32_t)UserAuthResult::GRANTED_ONCE);
+    EXPECT_EQ(GRANTED_ALWAYS, (int32_t)UserAuthResult::GRANTED_ALWAYS);
+    EXPECT_EQ(AUTH_END, (int32_t)UserAuthResult::END);
 }
 }
 }

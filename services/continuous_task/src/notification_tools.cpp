@@ -18,9 +18,12 @@
 #include <sstream>
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 #include "notification_helper.h"
+#include "want_agent_helper.h"
 #endif
 #include "continuous_task_log.h"
 #include "string_wrapper.h"
+#include "common_utils.h"
+#include "int_wrapper.h"
 
 #ifdef BGTASK_MGR_UNIT_TEST
 #define WEAK_FUNC __attribute__((weak))
@@ -41,6 +44,7 @@ constexpr int PUBLISH_DELAY_TIME = 3;
 constexpr int TYPE_CODE_VOIP = 0;
 constexpr int TYPE_CODE_AUDIO_RECORDING = 7;
 constexpr int TYPE_CODE_DATA_TANSFER = 8;
+constexpr int BANNER_NOTIFICATION_CONTROL_FLAG = 1 << 9;
 #endif
 }
 
@@ -337,6 +341,140 @@ WEAK_FUNC ErrCode NotificationTools::PublishSubNotification(const std::shared_pt
     }
 #endif
     return ERR_OK;
+}
+
+std::shared_ptr<Notification::NotificationNormalContent> CreateNotificationNormalContent(
+    const std::string &appName, const std::string &prompt)
+{
+    std::shared_ptr<Notification::NotificationNormalContent> normalContent =
+        std::make_shared<Notification::NotificationNormalContent>();
+    normalContent->SetTitle(appName);
+    normalContent->SetText(prompt);
+    return normalContent;
+}
+
+bool SetActionButton(const std::shared_ptr<BannerNotificationRecord> &bannerNotification,
+    const std::string& buttonName, Notification::NotificationRequest& notificationRequest,
+    const int32_t btnTypeValue, const std::string &label)
+{
+    auto want = std::make_shared<AAFwk::Want>();
+    want->SetAction(BGTASK_BANNER_NOTIFICATION_ACTION_NAME);
+
+    std::shared_ptr<OHOS::AAFwk::WantParams> wantParams = std::make_shared<OHOS::AAFwk::WantParams>();
+    wantParams->SetParam(BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_BTN, AAFwk::Integer::Box(btnTypeValue));
+    int32_t uid = bannerNotification->GetUid();
+    wantParams->SetParam(BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_UID, AAFwk::Integer::Box(uid));
+    wantParams->SetParam(BGTASK_BANNER_NOTIFICATION_ACTION_LABEL, AAFwk::String::Box(label));
+
+    want->SetParams(*wantParams);
+    std::vector<std::shared_ptr<AAFwk::Want>> wants;
+    wants.push_back(want);
+ 
+    std::vector<AbilityRuntime::WantAgent::WantAgentConstant::Flags> flags;
+    flags.push_back(AbilityRuntime::WantAgent::WantAgentConstant::Flags::CONSTANT_FLAG);
+ 
+    AbilityRuntime::WantAgent::WantAgentInfo wantAgentInfo(
+        0, AbilityRuntime::WantAgent::WantAgentConstant::OperationType::SEND_COMMON_EVENT,
+        flags, wants, wantParams
+    );
+    auto wantAgentDeal = AbilityRuntime::WantAgent::WantAgentHelper::GetWantAgent(wantAgentInfo);
+    std::shared_ptr<Notification::NotificationActionButton> actionButtonDeal =
+        Notification::NotificationActionButton::Create(nullptr, buttonName, wantAgentDeal);
+    if (actionButtonDeal == nullptr) {
+        BGTASK_LOGE("get notification actionButton nullptr");
+        return false;
+    }
+    notificationRequest.AddActionButton(actionButtonDeal);
+    return true;
+}
+
+std::string NotificationTools::CreateBannerNotificationLabel(const std::string &bundleName, int32_t userId,
+    int32_t appIndex)
+{
+    std::stringstream stream;
+    stream.clear();
+    stream.str("");
+    stream << BANNER_NOTIFICATION_PREFIX << SEPARATOR << userId << SEPARATOR << appIndex << SEPARATOR << bundleName;
+    std::string label = stream.str();
+    BGTASK_LOGD("banner notification label: %{public}s", label.c_str());
+    return label;
+}
+
+WEAK_FUNC ErrCode NotificationTools::PublishBannerNotification(
+    std::shared_ptr<BannerNotificationRecord> bannerNotification,
+    const std::string &prompt, int32_t serviceUid,
+    const std::vector<std::string> &bannerNotificaitonBtn)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    Notification::NotificationRequest notificationRequest;
+    notificationRequest.SetCreatorUid(serviceUid);
+    int32_t pid = getpid();
+    notificationRequest.SetCreatorPid(pid);
+    int32_t userId = bannerNotification->GetUserId();
+    notificationRequest.SetCreatorUserId(userId);
+    notificationRequest.SetTapDismissed(false);
+    notificationRequest.SetSlotType(OHOS::Notification::NotificationConstant::SlotType::SOCIAL_COMMUNICATION);
+    int32_t uid = bannerNotification->GetUid();
+    notificationRequest.SetOwnerUid(uid);
+    notificationRequest.SetNotificationId(++notificationIdIndex_);
+    notificationRequest.SetNotificationControlFlags(BANNER_NOTIFICATION_CONTROL_FLAG);
+    notificationRequest.SetBadgeIconStyle(Notification::NotificationRequest::BadgeStyle::LITTLE);
+    notificationRequest.SetInProgress(true);
+    std::string bannerNotificationLabel = CreateBannerNotificationLabel(bannerNotification->GetBundleName(),
+        userId, bannerNotification->GetAppIndex());
+    notificationRequest.SetLabel(bannerNotificationLabel);
+    std::string appName = bannerNotification->GetAppName();
+    std::shared_ptr<Notification::NotificationContent> content =
+        std::make_shared<Notification::NotificationContent>(CreateNotificationNormalContent(appName, prompt));
+    notificationRequest.SetContent(content);
+
+    std::string allowTimeBtnName = bannerNotificaitonBtn.at(BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME);
+    if (!SetActionButton(bannerNotification, allowTimeBtnName, notificationRequest,
+        BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME, bannerNotificationLabel)) {
+        BGTASK_LOGE("create banner notification action button fail");
+        return ERR_BGTASK_NOTIFICATION_ERR;
+    }
+    std::string allowAllowed = bannerNotificaitonBtn.at(BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED);
+    if (!SetActionButton(bannerNotification, allowAllowed, notificationRequest,
+        BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED, bannerNotificationLabel)) {
+        BGTASK_LOGE("create banner notification action button fail");
+        return ERR_BGTASK_NOTIFICATION_ERR;
+    }
+    ErrCode ret = Notification::NotificationHelper::PublishNotification(notificationRequest);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("publish banner notificaiton, errcode: %{public}d", ret);
+        return ERR_BGTASK_NOTIFICATION_ERR;
+    }
+    bannerNotification->SetNotificationId(notificationIdIndex_);
+    bannerNotification->SetNotificationLabel(bannerNotificationLabel);
+#endif
+    return ERR_OK;
+}
+
+WEAK_FUNC void NotificationTools::RefreshBannerNotifications(
+    const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos, int32_t serviceUid)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
+    ErrCode ret = Notification::NotificationHelper::GetActiveNotifications(notificationRequests);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("get all active notification fail!");
+        return;
+    }
+    for (const Notification::NotificationRequest *var : notificationRequests) {
+        std::string label = var->GetLabel();
+        if (newPromptInfos.count(label) == 0 || var->GetCreatorUid() != serviceUid) {
+            continue;
+        }
+        auto &content = var->GetContent();
+        auto const &normalContent = content->GetNotificationContent();
+        normalContent->SetTitle(newPromptInfos.at(label).first);
+        normalContent->SetText(newPromptInfos.at(label).second);
+        if (Notification::NotificationHelper::PublishNotification(*var) != ERR_OK) {
+            BGTASK_LOGE("refresh notification error");
+        }
+    }
+#endif
 }
 }
 }

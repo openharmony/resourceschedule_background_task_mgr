@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,7 @@
 
 #include "bundle_constants.h"
 #include "common_event_support.h"
-
+#include "common_utils.h"
 #include "bg_continuous_task_mgr.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_log.h"
@@ -28,6 +28,7 @@ namespace BackgroundTaskMgr {
 namespace {
 const std::string TASK_ON_BUNDLEINFO_CHANGED = "OnBundleInfoChanged";
 const std::string TASK_ON_OS_ACCOUNT_CHANGED = "OnOsAccountChanged";
+const std::string TASK_ON_BANNER_NOTIFICATION_ACTION_BUTTON_CLICK = "OnBannerNotificationActionButtonClick";
 }
 
 SystemEventObserver::SystemEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo)
@@ -90,6 +91,11 @@ void SystemEventObserver::OnReceiveEventContinuousTask(const EventFwk::CommonEve
         handler->PostTask(task, TASK_ON_OS_ACCOUNT_CHANGED);
         return;
     }
+    // 长时任务横幅通知点击事件
+    if (action == BGTASK_BANNER_NOTIFICATION_ACTION_NAME) {
+        OnBannerNotificationActionButtonClick(handler, bgContinuousTaskMgr, eventData);
+        return;
+    }
     std::string bundleName = want.GetElement().GetBundleName();
     int32_t uid = want.GetIntParam(AppExecFwk::Constants::UID, -1);
     BGTASK_LOGI("get common event action = %{public}s, bundleName = %{public}s, uid = %{public}d",
@@ -109,6 +115,27 @@ void SystemEventObserver::OnReceiveEventEfficiencyRes(const EventFwk::CommonEven
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
         DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveAppRecord(uid, bundleName, true);
     }
+}
+
+void SystemEventObserver::OnBannerNotificationActionButtonClick(
+    const std::shared_ptr<AppExecFwk::EventHandler> &handler,
+    const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr,
+    const EventFwk::CommonEventData &eventData)
+{
+    AAFwk::Want want = eventData.GetWant();
+    int32_t buttonType = want.GetIntParam(BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_BTN, -1);
+    int32_t uid = want.GetIntParam(BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_UID, -1);
+    std::string label = want.GetStringParam(BGTASK_BANNER_NOTIFICATION_ACTION_LABEL);
+    if (buttonType == -1 || uid == -1 || label == "") {
+        BGTASK_LOGE("OnBannerNotificationActionButtonClick get param fail.");
+        return;
+    }
+    BGTASK_LOGI("banner notification onclick, buttonType: %{public}d, uid: %{public}d, label: %{public}s",
+        buttonType, uid, label.c_str());
+    auto task = [bgContinuousTaskMgr, buttonType, uid, label]() {
+        bgContinuousTaskMgr->OnBannerNotificationActionButtonClick(buttonType, uid, label);
+    };
+    handler->PostTask(task, TASK_ON_BANNER_NOTIFICATION_ACTION_BUTTON_CLICK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

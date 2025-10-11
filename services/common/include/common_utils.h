@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,20 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+namespace {
+    static constexpr uint32_t NOTIFICATION_TEXT_MEDIA_PROCESS_INDEX = 1;
+    static constexpr uint32_t NOTIFICATION_TEXT_VIDEO_BROADCAST_INDEX = 2;
+    static constexpr char BANNER_NOTIFICATION_PREFIX[] = "bgbanner";
+    // 横幅通知-本次允许按钮
+    static constexpr int32_t BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME = 0;
+    // 横幅通知-始终允许按钮
+    static constexpr int32_t BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED = 1;
+    // 横幅通知-按钮公共事件
+    static constexpr char BGTASK_BANNER_NOTIFICATION_ACTION_NAME[] = "bgtask_banner_notification_action_name";
+    static constexpr char BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_BTN[] = "bgtask_banner_notificaiton_action_param_btn";
+    static constexpr char BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_UID[] = "bgtask_banner_notificaiton_action_param_uid";
+    static constexpr char BGTASK_BANNER_NOTIFICATION_ACTION_LABEL[] = "bgtask_banner_notificaiton_action_label";
+}
 class CommonUtils {
 public:
     static bool CheckJsonValue(const nlohmann::json &value, std::initializer_list<std::string> params)

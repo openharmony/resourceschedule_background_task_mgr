@@ -77,6 +77,26 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"btn_allow_time",
+            "value":"Allow this time only"
+        },
+        {
+            "name":"btn_allow_allowed",
+            "value":"Always allowed"
+        },
+        {
+            "name":"text_notification_allow_background_keepalive",
+            "value":"Allow “%s” to perform background tasks keepalive for the app?"
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_media_process",
+            "value":"A media process task is in progress. Closing this notification will end it."
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_video_broadcast",
+            "value":"A video broadcast task is in progress. Closing this notification will end it."
         }
     ]
 }

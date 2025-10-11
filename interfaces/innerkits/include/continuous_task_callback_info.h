@@ -168,6 +168,48 @@ public:
     void SetByRequestObject(const bool isByRequestObject);
 
     /**
+     * @brief Get the bundle name.
+     *
+     * @return The bundleName.
+     */
+    std::string GetBundleName() const;
+
+    /**
+     * @brief Get the userId.
+     *
+     * @return The userId.
+     */
+    int32_t GetUserId() const;
+
+    /**
+     * @brief Get the app index.
+     *
+     * @return The appIndex.
+     */
+    int32_t GetAppIndex() const;
+
+    /**
+     * @brief Set the bundle name.
+     *
+     * @param bundleName The bundle name.
+     */
+    void SetBundleName(const std::string &bundleName);
+
+    /**
+     * @brief Set the userId.
+     *
+     * @param userId The userId.
+     */
+    void SetUserId(int32_t userId);
+
+    /**
+     * @brief Set the app index.
+     *
+     * @param appIndex The appIndex.
+     */
+    void SetAppIndex(int32_t appIndex);
+
+    /**
      * @brief Marshals a purpose into a parcel.
      *
      * @param parcel Indicates the parcel object for marshalling.
@@ -194,6 +236,9 @@ private:
     bool suspendState_ {false};
     int32_t suspendReason_ {-1};
     bool isByRequestObject_ {false};
+    std::string bundleName_ {""};
+    int32_t userId_ {0};
+    int32_t appIndex_ {-1};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

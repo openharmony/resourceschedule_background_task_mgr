@@ -19,6 +19,7 @@
 #include "singleton.h"
 #include "continuous_task_record.h"
 #include "bgtaskmgr_inner_errors.h"
+#include "banner_notification_record.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -40,6 +41,13 @@ public:
     ErrCode PublishMainNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
         const std::string &appName, const std::string &prompt, int32_t serviceUid,
         std::shared_ptr<ContinuousTaskRecord> mainRecord);
+    ErrCode PublishBannerNotification(std::shared_ptr<BannerNotificationRecord> bannerNotification,
+        const std::string &prompt, int32_t serviceUid,
+        const std::vector<std::string> &bannerNotificaitonBtn);
+    void RefreshBannerNotifications(const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos,
+        int32_t serviceUid);
+    std::string CreateBannerNotificationLabel(const std::string &bundleName, int32_t userId,
+        int32_t appIndex);
 
 private:
     static int32_t notificationIdIndex_;

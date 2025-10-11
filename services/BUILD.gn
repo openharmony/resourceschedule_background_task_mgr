@@ -35,6 +35,7 @@ BgTaskMgrServicecSrc = [
   "common/src/report_hisysevent_data.cpp",
   "common/src/system_event_observer.cpp",
   "common/src/time_provider.cpp",
+  "continuous_task/src/banner_notification_record.cpp",
   "continuous_task/src/bg_continuous_task_dumper.cpp",
   "continuous_task/src/bg_continuous_task_mgr.cpp",
   "continuous_task/src/config_change_observer.cpp",

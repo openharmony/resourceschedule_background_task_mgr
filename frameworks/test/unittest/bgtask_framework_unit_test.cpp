@@ -988,5 +988,43 @@ HWTEST_F(BgTaskFrameworkUnitTest, SetMaliciousAppConfig_001, TestSize.Level1)
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet),
         ERR_OK);
 }
+
+/**
+ * @tc.name: RequestAuthFromUser_001
+ * @tc.desc: test RequestAuthFromUser.
+ * @tc.type: FUNC
+ * @tc.require: 752
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, RequestAuthFromUser_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestAuthFromUser(taskParam),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestAuthFromUser(taskParam),
+        ERR_OK);
+}
+
+/**
+ * @tc.name: CheckSpecialScenarioAuth_001
+ * @tc.desc: test CheckSpecialScenarioAuth.
+ * @tc.type: FUNC
+ * @tc.require: 752
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    uint32_t authResult = -1;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(authResult),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(authResult),
+        ERR_OK);
+}
 }
 }

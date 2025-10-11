@@ -686,6 +686,5 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_021
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
     EXPECT_EQ(backgroundTaskMgrProxy.IsModeSupported(taskParam), ERR_INVALID_DATA);
 }
-
 }
 }

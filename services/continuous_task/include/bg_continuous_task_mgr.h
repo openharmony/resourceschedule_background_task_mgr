@@ -42,6 +42,7 @@
 #include "system_event_observer.h"
 #include "config_change_observer.h"
 #include "want.h"
+#include "banner_notification_record.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -96,7 +97,10 @@ public:
     ErrCode IsModeSupported(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode CheckTaskkeepingPermission(const sptr<ContinuousTaskParam> &taskParam,
         uint64_t callingTokenId, const std::string &bundleName, uint64_t fullTokenId);
+    ErrCode RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam);
+    ErrCode CheckSpecialScenarioAuth(uint32_t &authResult);
     bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false);
+    bool StopBannerContinuousTaskByUser(const std::string &label);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
     void OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId);
@@ -115,6 +119,8 @@ public:
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void HandleRemoveTaskByMode(uint32_t mode);
+    void OnBannerNotificationActionButtonClick(const int32_t buttonType, const int32_t uid,
+        const std::string &label);
 
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
@@ -154,6 +160,7 @@ private:
     void UnregisterAppStateObserver();
     bool RegisterConfigurationObserver();
     bool GetNotificationPrompt();
+    bool FormatBannerNotificationContext(const std::string &appName, std::string &bannerContent);
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
@@ -166,12 +173,15 @@ private:
     ErrCode CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi,
         const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord);
     bool AllowUseTaskKeeping(const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord);
+    ErrCode AllowUseSpecial(const std::shared_ptr<ContinuousTaskRecord> record);
     ErrCode CheckBgmodeTypeForInner(uint32_t requestedBgModeId);
     void InitRecordParam(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
         const sptr<ContinuousTaskParam> &taskParam, int32_t userId);
     ErrCode CheckSubMode(const std::shared_ptr<AAFwk::Want> want, std::shared_ptr<ContinuousTaskRecord> record);
     ErrCode CheckNotificationText(std::string &notificationText,
         const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord);
+    ErrCode CheckSpecialNotificationText(std::string &notificationText,
+        const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord, uint32_t mode);
     int32_t RefreshTaskRecord();
     void HandleAppContinuousTaskStop(int32_t uid);
     bool checkPidCondition(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t pid);
@@ -195,6 +205,7 @@ private:
     bool IsExistCallback(int32_t uid, uint32_t type);
     ErrCode CheckCombinedTaskNotification(std::shared_ptr<ContinuousTaskRecord> &record, bool &sendNotification);
     bool StopContinuousTaskByUserInner(const std::string &key, bool isSubNotification);
+    bool StopBannerContinuousTaskByUserInner(const std::string &label);
     ErrCode DetermineMatchCombinedTaskNotifacation(std::shared_ptr<ContinuousTaskRecord> recordParam,
         bool &sendNotification);
     ErrCode StartBackgroundRunningSubmit(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
@@ -205,6 +216,11 @@ private:
     ErrCode SendLiveViewAndOtherNotification(std::shared_ptr<ContinuousTaskRecord> record);
     ErrCode SendNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
         std::shared_ptr<ContinuousTaskRecord> record, const std::string &appName, bool isSubNotification);
+    ErrCode SendBannerNotification(std::shared_ptr<ContinuousTaskRecord> record);
+    void OnBannerNotificationActionButtonClickInner(const int32_t buttonType, const int32_t uid,
+        const std::string &label);
+    void CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
+        int32_t userId, int32_t appIndex);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
@@ -222,9 +238,11 @@ private:
     sptr<RemoteDeathRecipient> susriberDeathRecipient_ {nullptr};
     std::unordered_map<int32_t, CachedBundleInfo> cachedBundleInfos_ {};
     std::unordered_map<int32_t, std::vector<uint32_t>> applyTaskOnForeground_ {};
+    std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> bannerNotificationRecord_ {};
     std::set<int32_t> appOnForeground_ {};
     std::vector<std::string> continuousTaskText_ {};
     std::vector<std::string> continuousTaskSubText_ {};
+    std::vector<std::string> bannerNotificaitonBtn_ {};
     int32_t continuousTaskIdIndex_ = 0;
 
     DECLARE_DELAYED_SINGLETON(BgContinuousTaskMgr);
