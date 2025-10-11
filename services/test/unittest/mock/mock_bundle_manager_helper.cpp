@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -95,6 +95,7 @@ bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const App
     abilityInfo.backgroundModes = ALL_NEED_CHECK_BGMODE;
     bundleInfo.abilityInfos.emplace_back(abilityInfo);
     bundleInfo.name = TEST_DEFAULT_BUNDLE;
+    bundleInfo.appIndex = 1;
     return true;
 }
 
