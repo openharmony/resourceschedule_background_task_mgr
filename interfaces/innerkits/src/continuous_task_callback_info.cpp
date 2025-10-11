@@ -112,9 +112,39 @@ bool ContinuousTaskCallbackInfo::IsByRequestObject() const
     return isByRequestObject_ ;
 }
 
+std::string ContinuousTaskCallbackInfo::GetBundleName() const
+{
+    return bundleName_;
+}
+
+int32_t ContinuousTaskCallbackInfo::GetUserId() const
+{
+    return userId_;
+}
+
+int32_t ContinuousTaskCallbackInfo::GetAppIndex() const
+{
+    return appIndex_;
+}
+
 void ContinuousTaskCallbackInfo::SetByRequestObject(const bool isByRequestObject)
 {
     isByRequestObject_ = isByRequestObject;
+}
+
+void ContinuousTaskCallbackInfo::SetBundleName(const std::string &bundleName)
+{
+    bundleName_ = bundleName;
+}
+
+void ContinuousTaskCallbackInfo::SetUserId(int32_t userId)
+{
+    userId_ = userId;
+}
+
+void ContinuousTaskCallbackInfo::SetAppIndex(int32_t appIndex)
+{
+    appIndex_ = appIndex;
 }
 
 bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
@@ -134,6 +164,10 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
     WRITE_PARCEL_WITH_RET(parcel, Bool, suspendState_, false);
     WRITE_PARCEL_WITH_RET(parcel, Int32, suspendReason_, false);
     WRITE_PARCEL_WITH_RET(parcel, Bool, isByRequestObject_, false);
+    std::u16string u16BundleName = Str8ToStr16(bundleName_);
+    WRITE_PARCEL_WITH_RET(parcel, String16, u16BundleName, false);
+    WRITE_PARCEL_WITH_RET(parcel, Int32, userId_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Int32, appIndex_, false);
     return true;
 }
 
@@ -166,6 +200,11 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     READ_PARCEL_WITH_RET(parcel, Bool, suspendState_, false);
     READ_PARCEL_WITH_RET(parcel, Int32, suspendReason_, false);
     READ_PARCEL_WITH_RET(parcel, Bool, isByRequestObject_, false);
+    std::u16string u16BundleName;
+    READ_PARCEL_WITH_RET(parcel, String16, u16BundleName, false);
+    bundleName_ = Str16ToStr8(u16BundleName);
+    READ_PARCEL_WITH_RET(parcel, Int32, userId_, false);
+    READ_PARCEL_WITH_RET(parcel, Int32, appIndex_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr
