@@ -33,6 +33,7 @@
     *BackgroundTaskManager*;
     *BgTaskMgrLogWrapper*;
     *BackgroundTaskMgrProxy*;
+    *UserAuthResult*;
   local:
     *;
 };
