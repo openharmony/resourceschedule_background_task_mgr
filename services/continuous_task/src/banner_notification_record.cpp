@@ -102,6 +102,147 @@ void BannerNotificationRecord::SetAppIndex(int32_t appIndex)
     appIndex_ = appIndex;
 }
 
+static const char *g_taskPromptResNamesSubMode[] = {
+    "ohos_bgsubmode_prompt_car_key",
+    "ohos_bgsubmode_prompt_media_process",
+    "ohos_bgsubmode_prompt_video_broadcast",
+};
+
+static const char *g_btnBannerNotification[] = {
+    "btn_allow_time",
+    "btn_allow_allowed",
+};
+
+static const char *g_textBannerNotification[] = {
+    "text_notification_allow_background_activity",
+};
+
+if (recordedBgMode == BGMODE_SPECIAL_SCENARIO_PROCESSING) {
+            ErrCode ret = AllowUseSpecial(continuousTaskRecord);
+            if (ret != ERR_OK) {
+                return ret;
+            }
+        }
+
+
+ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTaskRecord> record)
+{
+    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, record->callingTokenId_)) {
+        return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
+    }
+    if (record->isSystem_) {
+        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+    }
+    AppExecFwk::BundleInfo bundleInfo;
+    if (BundleManagerHelper::GetInstance()->GetBundleInfo(record->bundleName_,
+        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, record->userId_)) {
+        record->appIndex_ = bundleInfo.appIndex;
+    } else {
+        return ERR_BGTASK_GET_APP_INDEX_FAIL;
+    }
+    return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::CheckNotificationText(std::string &notificationText,
+    const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord)
+{
+    auto iter = avSessionNotification_.find(continuousTaskRecord->uid_);
+    bool isPublish = (iter != avSessionNotification_.end()) ? iter->second : false;
+    BGTASK_LOGD("AVSession Notification isPublish: %{public}d", isPublish);
+    // 子类型带有avsession,不发通知
+    bool isPublishAvsession = isPublish || (CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_,
+        BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK) && continuousTaskRecord->isByRequestObject_);
+    for (auto mode : continuousTaskRecord->bgModeIds_) {
+        if ((mode == BackgroundMode::AUDIO_PLAYBACK && isPublishAvsession) || ((mode == BackgroundMode::VOIP ||
+            mode == BackgroundMode::AUDIO_RECORDING) && continuousTaskRecord->IsSystem())) {
+            continue;
+        }
+        BGTASK_LOGD("mode %{public}d", mode);
+        if (mode == BackgroundMode::SPECIAL_SCENARIO_PROCESSING || mode == BackgroundMode::BLUETOOTH_INTERACTION) {
+            ErrCode ret = CheckSpecialNotificationText(notificationText, continuousTaskRecord, mode);
+            if (ret != ERR_OK) {
+                BGTASK_LOGE("check special notification fail.");
+                return ret;
+            }
+            continue;
+        }
+        uint32_t index = GetBgModeNameIndex(mode, continuousTaskRecord->isNewApi_);
+        if (index < continuousTaskText_.size()) {
+            notificationText += continuousTaskText_.at(index);
+            notificationText += "\n";
+        } else {
+            BGTASK_LOGI("index is invalid");
+            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+        }
+    }
+    return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::CheckSpecialNotificationText(std::string &notificationText,
+    const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord, uint32_t mode)
+{
+    if (continuousTaskSubText_.empty()) {
+        BGTASK_LOGE("get subMode notification prompt info failed, continuousTaskSubText_ is empty");
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
+    if (mode == BackgroundMode::BLUETOOTH_INTERACTION &&
+        CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_, BackgroundSubMode::CAR_KEY)) {
+        uint32_t index = BackgroundSubMode::CAR_KEY - 1;
+        if (index < continuousTaskSubText_.size()) {
+            notificationText += continuousTaskSubText_.at(index);
+            notificationText += "\n";
+            return ERR_OK;
+        }
+    }
+    if (CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_,
+        BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION)) {
+        if (NOTIFICATION_TEXT_MEDIA_PROCESS_INDEX < continuousTaskSubText_.size()) {
+            notificationText += continuousTaskSubText_.at(NOTIFICATION_TEXT_MEDIA_PROCESS_INDEX);
+            notificationText += "\n";
+            return ERR_OK;
+        }
+    }
+    if (CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_,
+        BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION)) {
+        if (NOTIFICATION_TEXT_VIDEO_BROADCAST_INDEX < continuousTaskSubText_.size()) {
+            notificationText += continuousTaskSubText_.at(NOTIFICATION_TEXT_VIDEO_BROADCAST_INDEX);
+            notificationText += "\n";
+            return ERR_OK;
+        }
+    }
+    BGTASK_LOGE("sub index is invalid");
+    return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+}
+
+std::string btnText {""};
+    for (std::string name : g_btnBannerNotification) {
+        resourceManager->GetStringByName(name.c_str(), btnText);
+        if (btnText.empty()) {
+            BGTASK_LOGE("get banner notification btn text failed!");
+            return false;
+        }
+        BGTASK_LOGI("get btn text: %{public}s", btnText.c_str());
+        bannerNotificaitonBtn_.push_back(btnText);
+    }
+
+// 语言切换，刷新横幅通知
+    std::map<std::string, std::pair<std::string, std::string>> newBannerPromptInfos;
+    for (const auto &iter : bannerNotificationRecord_) {
+        std::string bannerNotificationText {""};
+        std::string appName = iter.second->GetAppName();
+        int32_t uid = iter.second->GetUid();
+        if (!FormatBannerNotificationContext(appName, bannerNotificationText)) {
+            BGTASK_LOGE("get banner notification text fail, uid: %{public}d", uid);
+            continue;
+        }
+        std::string bannerNotificationLabel = iter.second->GetNotificationLabel();
+        BGTASK_LOGI("bannerNotificationLabel: %{public}s, mainAbilityLabel: %{public}s, "
+            "notificationText: %{public}s,", bannerNotificationLabel.c_str(), appName.c_str(),
+            bannerNotificationText.c_str());
+        newBannerPromptInfos.emplace(bannerNotificationLabel, std::make_pair(appName, bannerNotificationText));
+    }
+    NotificationTools::GetInstance()->RefreshBannerNotifications(newBannerPromptInfos, bgTaskUid_);
+
 ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam)
 {
     if (!isSysReady_.load()) {
