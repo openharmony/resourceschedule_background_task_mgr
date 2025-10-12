@@ -512,6 +512,14 @@ ErrCode BackgroundTaskManager::CheckSpecialScenarioAuth(uint32_t &authResult)
     return proxy_->CheckSpecialScenarioAuth(authResult);
 }
 
+ErrCode BackgroundTaskManager::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->CheckTaskAuthResult(bundleName, userId, appIndex);
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 
