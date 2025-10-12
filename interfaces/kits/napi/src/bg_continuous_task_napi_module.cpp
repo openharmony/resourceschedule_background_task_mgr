@@ -1475,7 +1475,10 @@ napi_value IsModeSupported(napi_env env, napi_callback_info info)
         BGTASK_LOGE("failed to check params");
         return WrapVoidToJS(env);
     }
-
+    if (!CheckRequestAuthFromUserParam(env, asyncCallbackInfo)) {
+        BGTASK_LOGE("check request auth params fail.");
+        return WrapVoidToJS(env);
+    }
     napi_value ret {nullptr};
     bool isModeSupported = IsModeSupportedExecuteCB(env, asyncCallbackInfo);
     napi_get_boolean(env, isModeSupported, &ret);
