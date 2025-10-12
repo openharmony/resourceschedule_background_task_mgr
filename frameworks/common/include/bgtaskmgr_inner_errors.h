@@ -71,7 +71,7 @@ enum : int32_t {
     ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION,
     ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK,
     ERR_BGTASK_GET_APP_INDEX_FAIL,
-    ERR_BGTASK_APP_DETECTED_MALICIOUS_ACTIVITY,
+    ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR,
     ERR_BGTASK_NOTIFICATION_VERIFY_FAILED = 980000601,
     ERR_BGTASK_NOTIFICATION_ERR,
     ERR_BGTASK_CHECK_TASK_PARAM,
@@ -233,8 +233,8 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK,
         "Continuous Task verification failed. Special scenario processing cannot coexist with other continuous task."},
     {ERR_BGTASK_GET_APP_INDEX_FAIL, "Continuous Task verification failed. Unable to obtain the app index."},
-    {ERR_BGTASK_APP_DETECTED_MALICIOUS_ACTIVITY, "Continuous Task verification failed. "
-        "The current app has detected malicious activity and is prohibited from applying."},
+    {ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR, "Continuous Task verification failed. "
+        "The current app has detected malicious behavior and is prohibited from applying."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

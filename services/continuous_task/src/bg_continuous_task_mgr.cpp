@@ -647,7 +647,7 @@ ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTas
         return ERR_BGTASK_GET_APP_INDEX_FAIL;
     }
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
-        return ERR_BGTASK_APP_DETECTED_MALICIOUS_ACTIVITY;
+        return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
     }
     return ERR_OK;
 }
