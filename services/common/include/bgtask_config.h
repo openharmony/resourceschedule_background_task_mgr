@@ -30,6 +30,7 @@ public:
     void Init();
     bool IsTransientTaskExemptedQuatoApp(const std::string &bundleName);
     bool IsTaskKeepingExemptedQuatoApp(const std::string &bundleName);
+    bool IsMaliciousAppConfig(const std::string &bundleName);
     int32_t GetTransientTaskExemptedQuato();
     bool AddExemptedQuatoData(const std::string &configData, int32_t sourceType);
     void SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet);
@@ -40,6 +41,8 @@ private:
     void ParseTransientTaskExemptedQuatoList(const nlohmann::json &jsonObj);
     void ParseTransientTaskExemptedQuato(const nlohmann::json &jsonObj);
     bool SetCloudConfigParam(const nlohmann::json &jsonObj);
+    void SetTransientTaskParam(const nlohmann::json &jsonObj);
+    void SetContinuousTaskParam(const nlohmann::json &jsonObj);
 
 private:
     bool isInit_ = false;
