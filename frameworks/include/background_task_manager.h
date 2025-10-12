@@ -301,6 +301,15 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode CheckSpecialScenarioAuth(uint32_t &authResult);
+
+    /**
+     * @brief taskdetection check auth.
+     * @param bundleName bundle name.
+     * @param userId userId.
+     * @param appIndex app index.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
 private:
     bool GetBackgroundTaskManagerProxy();
 
