@@ -646,6 +646,9 @@ ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTas
     } else {
         return ERR_BGTASK_GET_APP_INDEX_FAIL;
     }
+    if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
+        return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
+    }
     return ERR_OK;
 }
 
@@ -2731,14 +2734,13 @@ ErrCode BgContinuousTaskMgr::IsModeSupported(const sptr<ContinuousTaskParam> &ta
         return ERR_BGTASK_SYS_NOT_READY;
     }
 
-    if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
-        BGTASK_LOGE("background mode permission is not passed");
-        return ERR_BGTASK_PERMISSION_DENIED;
+    ErrCode result = CheckSpecialModePermission(taskParam);
+    if (result != ERR_OK) {
+        return result;
     }
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
     uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     int32_t callingUid = IPCSkeleton::GetCallingUid();
-    ErrCode result = ERR_OK;
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     handler_->PostSyncTask([this, callingTokenId, taskParam, bundleName, fullTokenId, &result]() {
         result = this->CheckTaskkeepingPermission(taskParam, callingTokenId, bundleName, fullTokenId);
@@ -2879,16 +2881,8 @@ ErrCode BgContinuousTaskMgr::SendLiveViewAndOtherNotification(std::shared_ptr<Co
     return ERR_OK;
 }
 
-ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam)
+ErrCode BgContinuousTaskMgr::CheckSpecialModePermission(const sptr<ContinuousTaskParam> &taskParam)
 {
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return ERR_BGTASK_SYS_NOT_READY;
-    }
-    if (!taskParam) {
-        BGTASK_LOGE("continuous task param is null!");
-        return ERR_BGTASK_CHECK_TASK_PARAM;
-    }
     int32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
         BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     if (specialModeSize > 1) {
@@ -2900,6 +2894,23 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    if (!taskParam) {
+        BGTASK_LOGE("continuous task param is null!");
+        return ERR_BGTASK_CHECK_TASK_PARAM;
+    }
+    ErrCode ret = CheckSpecialModePermission(taskParam);
+    if (ret != ERR_OK) {
+        return ret;
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     int32_t userId = -1;
@@ -2919,7 +2930,6 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     if (continuousTaskRecord->isSystem_) {
         return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
     }
-    ErrCode ret = ERR_OK;
     handler_->PostSyncTask([this, &continuousTaskRecord, &ret]() {
         ret = this->SendBannerNotification(continuousTaskRecord);
         }, AppExecFwk::EventQueue::Priority::HIGH);

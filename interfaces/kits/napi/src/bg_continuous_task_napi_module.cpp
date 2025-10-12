@@ -1424,6 +1424,29 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     return ret;
 }
 
+bool CheckRequestAuthFromUserParam(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
+{
+    std::vector<uint32_t> backgroundTaskModes = asyncCallbackInfo->request->GetBackgroundTaskModes();
+    if (backgroundTaskModes.size() == 0) {
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY, true);
+        asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY;
+        return false;
+    }
+    int32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
+        BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
+    if (specialModeSize > MAX_TASK_NUMS) {
+        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION, true);
+        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
+        return false;
+    }
+    if (specialModeSize == MAX_TASK_NUMS && backgroundTaskModes.size() > MAX_TASK_NUMS) {
+        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK, true);
+        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
+        return false;
+    }
+    return true;
+}
+
 bool IsModeSupportedExecuteCB(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
 {
     std::vector<uint32_t> backgroundTaskModes {};
@@ -1475,7 +1498,10 @@ napi_value IsModeSupported(napi_env env, napi_callback_info info)
         BGTASK_LOGE("failed to check params");
         return WrapVoidToJS(env);
     }
-
+    if (!CheckRequestAuthFromUserParam(env, asyncCallbackInfo)) {
+        BGTASK_LOGE("check request auth params fail.");
+        return WrapVoidToJS(env);
+    }
     napi_value ret {nullptr};
     bool isModeSupported = IsModeSupportedExecuteCB(env, asyncCallbackInfo);
     napi_get_boolean(env, isModeSupported, &ret);
@@ -1535,29 +1561,6 @@ napi_value RequestAuthFromUserPromise(napi_env env, AsyncCallbackInfo *asyncCall
         &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     return promise;
-}
-
-bool CheckRequestAuthFromUserParam(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
-{
-    std::vector<uint32_t> backgroundTaskModes = asyncCallbackInfo->request->GetBackgroundTaskModes();
-    if (backgroundTaskModes.size() == 0) {
-        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY, true);
-        asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY;
-        return false;
-    }
-    int32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
-        BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
-    if (specialModeSize > MAX_TASK_NUMS) {
-        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION, true);
-        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
-        return false;
-    }
-    if (specialModeSize == MAX_TASK_NUMS && backgroundTaskModes.size() > MAX_TASK_NUMS) {
-        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK, true);
-        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
-        return false;
-    }
-    return true;
 }
 
 napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)

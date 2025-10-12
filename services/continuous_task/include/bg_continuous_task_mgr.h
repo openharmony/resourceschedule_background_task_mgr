@@ -222,6 +222,7 @@ private:
         const std::string &label);
     void CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
         int32_t userId, int32_t appIndex);
+    ErrCode CheckSpecialModePermission(const sptr<ContinuousTaskParam> &taskParam);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
