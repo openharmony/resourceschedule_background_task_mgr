@@ -617,7 +617,11 @@ ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(uint32_t &authResult)
 
 ErrCode BackgroundTaskMgrService::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)
 {
-    return ERR_OK;
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
+        BGTASK_LOGW("CheckTaskAuthResult not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return BgContinuousTaskMgr::GetInstance()->CheckTaskAuthResult(bundleName, userId, appIndex);
 }
 
 bool BackgroundTaskMgrService::CheckAtomicService()
