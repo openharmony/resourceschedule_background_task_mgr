@@ -99,6 +99,7 @@ public:
         uint64_t callingTokenId, const std::string &bundleName, uint64_t fullTokenId);
     ErrCode RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode CheckSpecialScenarioAuth(uint32_t &authResult);
+    ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
     bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false);
     bool StopBannerContinuousTaskByUser(const std::string &label);
     void OnAccountsStateChanged(int32_t id);
