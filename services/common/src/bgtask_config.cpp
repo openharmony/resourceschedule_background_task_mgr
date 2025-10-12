@@ -174,7 +174,7 @@ void BgtaskConfig::SetContinuousTaskParam(const nlohmann::json &jsonObj)
         }
     } else {
         BGTASK_LOGW("no key %{public}s", CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST.c_str());
-    } 
+    }
     if (jsonObj.contains(MALICIOUS_APP_BLOCKLIST) &&
         jsonObj[MALICIOUS_APP_BLOCKLIST].is_array()) {
         nlohmann::json appArrayMalicious = jsonObj[MALICIOUS_APP_BLOCKLIST];
