@@ -3025,6 +3025,22 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
     return ERR_OK;
 }
 
+ErrCode BgContinuousTaskMgr::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    uint32_t authResult = 0;
+    handler_->PostSyncTask([this, &authResult, bundleName, userId, appIndex]() {
+        this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    if (authResult == UserAuthResult::GRANTED_ONCE || authResult == UserAuthResult::GRANTED_ALWAYS) {
+        return ERR_OK;
+    }
+    return -1;
+}
+
 void BgContinuousTaskMgr::CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
     int32_t userId, int32_t appIndex)
 {

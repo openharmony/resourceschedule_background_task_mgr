@@ -164,5 +164,10 @@ ErrCode BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(uint32_t &authResult)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(authResult);
 }
+
+ErrCode BackgroundTaskMgrHelper::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckTaskAuthResult(bundleName, userId, appIndex);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
