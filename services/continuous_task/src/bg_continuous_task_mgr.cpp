@@ -2923,7 +2923,8 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         "", callingUid, callingPid, taskParam->bgModeId_, true, taskParam->bgModeIds_);
     InitRecordParam(continuousTaskRecord, taskParam, userId);
-    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingUid)) {
+    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
+    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
         return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
     }
     if (continuousTaskRecord->isSystem_) {
