@@ -51,10 +51,12 @@ taihe_shared_library("background_task_manager_ani") {
     "include",
   ]
   sources += [
+    "src/ani_backgroundtask_subscriber.cpp",
     "src/ani_constructor.cpp",
-    "src/ohos.resourceschedule.backgroundTaskManager.impl.cpp",
+    "src/ani_task.cpp",
     "src/callback_instance.cpp",
     "src/common.cpp",
+    "src/ohos.resourceschedule.backgroundTaskManager.impl.cpp",
   ]
   deps = [
     ":run_taihe",
@@ -66,9 +68,13 @@ taihe_shared_library("background_task_manager_ani") {
     "ability_runtime:abilitykit_native",
     "ability_runtime:ani_base_context",
     "ability_runtime:ani_wantagent_common",
+    "ability_runtime:runtime",
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
+    "common_event_service:cesfwk_innerkits",
     "hilog:libhilog",
+    "ipc:ipc_core",
+    "samgr:samgr_proxy",
   ]
 }
 

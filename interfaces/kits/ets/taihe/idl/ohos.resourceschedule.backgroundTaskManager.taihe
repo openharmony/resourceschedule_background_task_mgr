@@ -49,6 +49,58 @@ struct ContinuousTaskNotification {
   continuousTaskId: Optional<i32>;
 }
 
+struct TransientTaskInfo {
+  remainingQuota: i32;
+  transientTasks: Array<DelaySuspendInfo>;
+}
+
+struct ContinuousTaskInfo {
+  abilityName: String;
+  uid: i32;
+  pid: i32;
+  isFromWebView: bool;
+  backgroundModes: Array<String>;
+  backgroundSubModes: Array<String>;
+  notificationId: i32;
+  continuousTaskId: i32;
+  abilityId: i32;
+  wantAgentBundleName: String;
+  wantAgentAbilityName: String;
+  suspendState: bool;
+}
+
+struct EfficiencyResourcesInfo {
+  resourceTypes: i32;
+  timeout: i32;
+  isPersistent: bool;
+  isForProcess: bool;
+  reason: String;
+  uid: i32;
+  pid: i32;
+}
+
+struct ContinuousTaskSuspendInfo {
+  continuousTaskId: i32;
+  suspendState: bool;
+  suspendReason: ContinuousTaskSuspendReason;
+}
+
+struct ContinuousTaskActiveInfo {
+  id: i32;
+}
+
+enum ContinuousTaskSuspendReason : i32 {
+  SYSTEM_SUSPEND_DATA_TRANSFER_LOW_SPEED = 4,
+  SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_USE_AVSESSION = 5,
+  SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_RUNNING = 6,
+  SYSTEM_SUSPEND_AUDIO_RECORDING_NOT_RUNNING = 7,
+  SYSTEM_SUSPEND_LOCATION_NOT_USED = 8,
+  SYSTEM_SUSPEND_BLUETOOTH_NOT_USED = 9,
+  SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED = 10,
+  SYSTEM_SUSPEND_USED_ILLEGALLY = 11,
+  SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING = 12,
+}
+
 enum BackgroundMode : i32 {
   DATA_TRANSFER = 1,
   AUDIO_PLAYBACK = 2,
@@ -119,12 +171,6 @@ function ApplyEfficiencyResources(request: EfficiencyResourcesRequest): void;
 
 function ResetAllEfficiencyResources(): void;
 
-@on_off("continuousTaskCancel")
-function OnContinuousTaskCancel(callback: (data: ContinuousTaskCancelInfo) => void): void;
-
-@on_off("continuousTaskCancel")
-function OffContinuousTaskCancel(callback: Optional<(data: ContinuousTaskCancelInfo) => void>): void;
-
 @gen_promise("startBackgroundRunning")
 function StartBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque,
   bgModes: Array<String>, wantAgent: @sts_type("WantAgent") Opaque): ContinuousTaskNotification;
@@ -133,6 +179,26 @@ function StartBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque,
 function UpdateBackgroundRunningSync(
   context: @sts_type("BaseContext") Opaque, bgModes: Array<String>): ContinuousTaskNotification;
 
-enum BackgroundSubMode11 : i32 {
-  CAR_KEY = 1
-}
+@gen_promise("getTransientTaskInfo")
+function GetTransientTaskInfoSync(): TransientTaskInfo;
+
+@gen_promise("getAllContinuousTasks")
+function GetAllContinuousTasksSync(context: @sts_type("BaseContext") Opaque): Array<ContinuousTaskInfo>;
+
+@gen_promise("getAllContinuousTasks")
+function GetAllContinuousTasksSync2(context: @sts_type("BaseContext") Opaque, includeSuspended: bool): Array<ContinuousTaskInfo>;
+
+@gen_promise("getAllEfficiencyResources")
+function GetAllEfficiencyResourcesSync(): Array<EfficiencyResourcesInfo>;
+
+function OnContinuousTaskCancel(callback: (data: ContinuousTaskCancelInfo) => void): void;
+
+function OffContinuousTaskCancel(callback: Optional<(data: ContinuousTaskCancelInfo) => void>): void;
+
+function OnContinuousTaskSuspend(callback: (data: ContinuousTaskSuspendInfo) => void): void;
+
+function OffContinuousTaskSuspend(callback: Optional<(data: ContinuousTaskSuspendInfo) => void>): void;
+
+function OnContinuousTaskActive(callback: (data: ContinuousTaskActiveInfo) => void): void;
+
+function OffContinuousTaskActive(callback: Optional<(data: ContinuousTaskActiveInfo) => void>): void;
