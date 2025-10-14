@@ -621,10 +621,8 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsTaskKeepingExemptedQuatoApp(bundleName)) {
         return true;
     }
-    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
-    if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId) &&
-        !BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+    if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM,
+        continuousTaskRecord->callingTokenId_) && !continuousTaskRecord->isSystem_) {
         return true;
     }
     return false;
@@ -632,8 +630,7 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
 
 ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTaskRecord> record)
 {
-    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, record->callingTokenId_)) {
         return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
     }
     if (record->isSystem_) {
@@ -849,11 +846,13 @@ void BgContinuousTaskMgr::InitRecordParam(std::shared_ptr<ContinuousTaskRecord> 
     const sptr<ContinuousTaskParam> &taskParam, int32_t userId)
 {
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     continuousTaskRecord->wantAgent_ = taskParam->wantAgent_;
     continuousTaskRecord->userId_ = userId;
     continuousTaskRecord->isNewApi_ = taskParam->isNewApi_;
     continuousTaskRecord->appName_ = taskParam->appName_;
     continuousTaskRecord->fullTokenId_ = fullTokenId;
+    continuousTaskRecord->callingTokenId_ = callingTokenId;
     continuousTaskRecord->isSystem_ = BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId);
     continuousTaskRecord->bgSubModeIds_ = taskParam->bgSubModeIds_;
     continuousTaskRecord->isCombinedTaskNotification_ = taskParam->isCombinedTaskNotification_;
@@ -1441,7 +1440,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
 {
     BgTaskHiTraceChain traceChain(__func__);
     if (continuousTaskId != -1) {
-        // 新街口取消
+        // 新接口取消
         auto findTask = [continuousTaskId](const auto &target) {
             return continuousTaskId == target.second->continuousTaskId_;
         };
@@ -2924,7 +2923,8 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         "", callingUid, callingPid, taskParam->bgModeId_, true, taskParam->bgModeIds_);
     InitRecordParam(continuousTaskRecord, taskParam, userId);
-    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingUid)) {
+    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
+    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
         return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
     }
     if (continuousTaskRecord->isSystem_) {
