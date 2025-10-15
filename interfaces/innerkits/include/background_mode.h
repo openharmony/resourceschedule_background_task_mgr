@@ -34,7 +34,7 @@ public:
         VOIP = 8,
         TASK_KEEPING = 9,
         WORKOUT = 10,
-        SPECIAL_SCENARIO_PROCESSING = 11,
+        SPECIAL_SCENARIO_PROCESSING = 12,
         END,
     };
 
