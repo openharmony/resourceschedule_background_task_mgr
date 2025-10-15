@@ -2915,7 +2915,7 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     if (ret != ERR_OK) {
         return ret;
     }
-    int32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
+    uint32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
         BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     if (specialModeSize == 0) {
         BGTASK_LOGE("not have bgmode: special scenario process");
