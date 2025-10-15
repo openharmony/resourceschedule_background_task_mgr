@@ -547,7 +547,7 @@ static ani_enum_item GetContentType(ani_env *env)
 }
 
 ::array<taihe::string> GetAniBackgroundSubModes(const std::vector<uint32_t> &subModes)
-{  
+{
     if (subModes.empty()) {
         return taihe::array<taihe::string>(nullptr, 0);
     }
@@ -600,7 +600,7 @@ array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> GetAl
 }
 
 array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> GetAllContinuousTasksSync2(
-    uintptr_t context, bool includeSuspended) 
+    uintptr_t context, bool includeSuspended)
 {
     auto env = taihe::get_env();
     std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
