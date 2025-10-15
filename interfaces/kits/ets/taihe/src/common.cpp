@@ -26,14 +26,14 @@ std::string Common::FindErrMsg(const int32_t errCode)
     }
     auto iter = SA_ERRCODE_MSG_MAP.find(errCode);
     if (iter != SA_ERRCODE_MSG_MAP.end()) {
-        std::string errMessage = "BussinessError ";
+        std::string errMessage = "BusinessError ";
         int32_t errCodeInfo = FindErrCode(errCode);
         errMessage.append(std::to_string(errCodeInfo)).append(": ").append(iter->second);
         return errMessage;
     }
     iter = PARAM_ERRCODE_MSG_MAP.find(errCode);
     if (iter != PARAM_ERRCODE_MSG_MAP.end()) {
-        std::string errMessage = "BussinessError 401: Parameter error. ";
+        std::string errMessage = "BusinessError 401: Parameter error. ";
         errMessage.append(iter->second);
         return errMessage;
     }

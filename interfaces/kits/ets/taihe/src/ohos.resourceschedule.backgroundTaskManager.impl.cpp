@@ -27,6 +27,9 @@
 #include "ability.h"
 #include "ani_common_want_agent.h"
 #include "common.h"
+#include "ani_backgroundtask_subscriber.h"
+#include "background_mode.h"
+#include "background_sub_mode.h"
 
 using namespace taihe;
 using namespace OHOS;
@@ -39,10 +42,17 @@ std::map<int32_t, std::shared_ptr<Callback>> callbackInstances_;
 std::mutex callbackLock_;
 static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
+static std::shared_ptr<BackgroundTaskMgr::AniBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
+std::mutex backgroundTaskSubscriberMutex_;
 
 struct TransientTaskCallbackInfo {
     int32_t requestId = 0;
     int32_t delayTime = 0;
+};
+
+struct AllTransientTasksCallbackInfo {
+    int32_t remainingQuota = 0; // out
+    std::vector<std::shared_ptr<BackgroundTaskMgr::DelaySuspendInfo>> list {}; // out
 };
 
 struct ContinuousTaskCallbackInfo {
@@ -55,6 +65,11 @@ struct ContinuousTaskCallbackInfo {
     int32_t continuousTaskId {-1}; // out
     bool isCallback = false;
     int32_t errCode = 0;
+    std::vector<std::shared_ptr<BackgroundTaskMgr::ContinuousTaskInfo>> list; // out
+};
+
+struct AllEfficiencyResourcesCallbackInfo {
+    std::vector<std::shared_ptr<EfficiencyResourceInfo>> efficiencyResourceInfoList;    // out
 };
 
 static std::vector<std::string> g_backgroundModes = {
@@ -73,7 +88,7 @@ void CancelSuspendDelay(int32_t requestId)
 {
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->CancelSuspendDelay(requestId);
     if (errCode != ERR_OK) {
-        BGTASK_LOGE("CancelSuspendDelay falied errCode: %{public}d", Common::FindErrCode(errCode));
+        BGTASK_LOGE("CancelSuspendDelay failed errCode: %{public}d", Common::FindErrCode(errCode));
         set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
     std::lock_guard<std::mutex> lock(callbackLock_);
@@ -90,7 +105,7 @@ int32_t GetRemainingDelayTimeSync(int32_t requestId)
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         GetRemainingDelayTime(callbackInfo.requestId, callbackInfo.delayTime);
     if (errCode) {
-        BGTASK_LOGE("GetRemainingDelayTime falied errCode: %{public}d", Common::FindErrCode(errCode));
+        BGTASK_LOGE("GetRemainingDelayTime failed errCode: %{public}d", Common::FindErrCode(errCode));
         set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
     return callbackInfo.delayTime;
@@ -109,7 +124,7 @@ int32_t GetRemainingDelayTimeSync(int32_t requestId)
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestSuspendDelay(reasonU16, *callbackPtr, delaySuspendInfo);
     if (errCode) {
-        BGTASK_LOGE("DelaySuspendInfo falied errCode: %{public}d", Common::FindErrCode(errCode));
+        BGTASK_LOGE("DelaySuspendInfo failed errCode: %{public}d", Common::FindErrCode(errCode));
         set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
 
@@ -135,7 +150,7 @@ void ApplyEfficiencyResources(EfficiencyResourcesRequest const& request)
     };
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(resourceInfo);
     if (errCode) {
-        BGTASK_LOGE("ApplyEfficiencyResources falied errCode: %{public}d", Common::FindErrCode(errCode));
+        BGTASK_LOGE("ApplyEfficiencyResources failed errCode: %{public}d", Common::FindErrCode(errCode));
         set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
 }
@@ -144,7 +159,7 @@ void ResetAllEfficiencyResources()
 {
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ResetAllEfficiencyResources();
     if (errCode) {
-        BGTASK_LOGE("ResetAllEfficiencyResources falied errCode: %{public}d", Common::FindErrCode(errCode));
+        BGTASK_LOGE("ResetAllEfficiencyResources failed errCode: %{public}d", Common::FindErrCode(errCode));
         set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
 }
@@ -190,9 +205,8 @@ bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uin
 {
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo is nullptr");
-        asyncCallbackInfo->errCode = ERR_BGTASK_CHECK_TASK_PARAM;
         set_business_error(
-            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
         return false;
     }
     if (GetAbilityContext(env, reinterpret_cast<ani_object>(context), asyncCallbackInfo->abilityContext) != ANI_OK) {
@@ -227,9 +241,8 @@ ani_status GetModes(ani_env *env, const array_view<string> &bgModes, ContinuousT
 {
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo is nullptr");
-        asyncCallbackInfo->errCode = ERR_BGTASK_CHECK_TASK_PARAM;
         set_business_error(
-            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
         return ANI_ERROR;
     }
     if (bgModes.size() == 0) {
@@ -263,6 +276,8 @@ bool CheckBackgroundMode(ani_env *env, ContinuousTaskCallbackInfo *asyncCallback
 {
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        set_business_error(
+            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
         return false;
     }
     if (!asyncCallbackInfo->isBatchApi) {
@@ -345,16 +360,6 @@ void StartBackgroundRunningSync(uintptr_t context,
         set_business_error(
             Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
     }
-}
-
-void OnContinuousTaskCancel(callback_view<void(ContinuousTaskCancelInfo const&)> callback)
-{
-    TH_THROW(std::runtime_error, "OnContinuousTaskCancel not implemented");
-}
-
-void OffContinuousTaskCancel(optional_view<callback<void(ContinuousTaskCancelInfo const&)>> callback)
-{
-    TH_THROW(std::runtime_error, "OffContinuousTaskCancel not implemented");
 }
 
 static ani_enum_item GetSlotType(ani_env *env)
@@ -491,6 +496,322 @@ static ani_enum_item GetContentType(ani_env *env)
     notification.continuousTaskId = optional<int32_t>(std::in_place, taskParam.continuousTaskId_);
     return notification;
 }
+
+::ohos::resourceschedule::backgroundTaskManager::TransientTaskInfo GetTransientTaskInfoSync()
+{
+    ::ohos::resourceschedule::backgroundTaskManager::TransientTaskInfo resultInfo{
+        .remainingQuota = 0,
+        .transientTasks = {},
+    };
+    std::unique_ptr<AllTransientTasksCallbackInfo> asyncCallbackInfo =
+        std::make_unique<AllTransientTasksCallbackInfo>();
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("input params error");
+        return resultInfo;
+    }
+    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllTransientTasks(
+        asyncCallbackInfo->remainingQuota, asyncCallbackInfo->list);
+    if (errCode) {
+        BGTASK_LOGE("transientTaskInfo failed errCode: %{public}d", Common::FindErrCode(errCode));
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
+    }
+    std::vector<::ohos::resourceschedule::backgroundTaskManager::DelaySuspendInfo> aniInfoList;
+    for (const auto& info : asyncCallbackInfo->list) {
+        ::ohos::resourceschedule::backgroundTaskManager::DelaySuspendInfo aniInfo{
+            .requestId = info->GetRequestId(),
+            .actualDelayTime = info->GetActualDelayTime(),
+        };
+        aniInfoList.push_back(aniInfo);
+    }
+    auto aniTransientTasks = array<::ohos::resourceschedule::backgroundTaskManager::DelaySuspendInfo>{copy_data_t{},
+        aniInfoList.data(), aniInfoList.size()};
+    resultInfo.remainingQuota = asyncCallbackInfo->remainingQuota;
+    resultInfo.transientTasks = aniTransientTasks;
+    return resultInfo;
+}
+
+::array<taihe::string> GetAniBackgroundModes(const std::vector<uint32_t> &modes)
+{
+    if (modes.empty()) {
+        return taihe::array<taihe::string>(nullptr, 0);
+    }
+    std::vector<taihe::string> aniModes;
+    for (auto &iter : modes) {
+        if (iter < BackgroundTaskMgr::BackgroundMode::END) {
+            std::string modeStr = BackgroundTaskMgr::BackgroundMode::GetBackgroundModeStr(iter);
+            aniModes.push_back(taihe::string(modeStr));
+        }
+    }
+    array<taihe::string> modesArr(aniModes);
+    return modesArr;
+}
+
+::array<taihe::string> GetAniBackgroundSubModes(const std::vector<uint32_t> &subModes)
+{
+    if (subModes.empty()) {
+        return taihe::array<taihe::string>(nullptr, 0);
+    }
+    std::vector<taihe::string> aniModes;
+    for (auto &iter : subModes) {
+        if (iter < BackgroundTaskMgr::BackgroundSubMode::END) {
+            std::string subModeStr = BackgroundTaskMgr::BackgroundSubMode::GetBackgroundSubModeStr(iter);
+            aniModes.push_back(taihe::string(subModeStr));
+        }
+    }
+    array<taihe::string> subModesArr(aniModes);
+    return subModesArr;
+}
+
+array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> GetAllContinuousTasksSync(uintptr_t context)
+{
+    auto env = taihe::get_env();
+    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
+    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
+        BGTASK_LOGE("check param failed");
+        return {};
+    }
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(asyncCallbackInfo->list);
+    if (asyncCallbackInfo->errCode) {
+        BGTASK_LOGE("GetAllContinuousTasks fail errCode: %{public}d", Common::FindErrCode(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return {};
+    }
+    std::vector<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> aniInfoList;
+    for (const auto& info : asyncCallbackInfo->list) {
+        ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo aniInfo{
+            .abilityName = info->GetAbilityName(),
+            .uid = info->GetUid(),
+            .pid = info->GetPid(),
+            .isFromWebView = info->IsFromWebView(),
+            .backgroundModes = GetAniBackgroundModes(info->GetBackgroundModes()),
+            .backgroundSubModes = GetAniBackgroundSubModes(info->GetBackgroundSubModes()),
+            .notificationId = info->GetNotificationId(),
+            .continuousTaskId = info->GetContinuousTaskId(),
+            .abilityId = info->GetAbilityId(),
+            .wantAgentBundleName = info->GetWantAgentBundleName(),
+            .wantAgentAbilityName = info->GetWantAgentAbilityName(),
+            .suspendState = false,
+        };
+        aniInfoList.push_back(aniInfo);
+    }
+    return array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo>{copy_data_t{},
+        aniInfoList.data(), aniInfoList.size()};
+}
+
+array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> GetAllContinuousTasksSync2(
+    uintptr_t context, bool includeSuspended)
+{
+    auto env = taihe::get_env();
+    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
+    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
+        BGTASK_LOGE("check param failed");
+        return {};
+    }
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestGetAllContinuousTasks(
+        asyncCallbackInfo->list, includeSuspended);
+    if (asyncCallbackInfo->errCode) {
+        BGTASK_LOGE("GetAllContinuousTasks fail errCode: %{public}d", Common::FindErrCode(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return {};
+    }
+    std::vector<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> aniInfoList;
+    for (const auto& info : asyncCallbackInfo->list) {
+        ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo aniInfo{
+            .abilityName = info->GetAbilityName(),
+            .uid = info->GetUid(),
+            .pid = info->GetPid(),
+            .isFromWebView = info->IsFromWebView(),
+            .backgroundModes = GetAniBackgroundModes(info->GetBackgroundModes()),
+            .backgroundSubModes = GetAniBackgroundSubModes(info->GetBackgroundSubModes()),
+            .notificationId = info->GetNotificationId(),
+            .continuousTaskId = info->GetContinuousTaskId(),
+            .abilityId = info->GetAbilityId(),
+            .wantAgentBundleName = info->GetWantAgentBundleName(),
+            .wantAgentAbilityName = info->GetWantAgentAbilityName(),
+            .suspendState = info->GetSuspendState(),
+        };
+        aniInfoList.push_back(aniInfo);
+    }
+    return array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo>{copy_data_t{},
+        aniInfoList.data(), aniInfoList.size()};
+}
+
+array<::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesInfo> GetAllEfficiencyResourcesSync()
+{
+    std::unique_ptr<AllEfficiencyResourcesCallbackInfo> asyncCallbackInfo =
+        std::make_unique<AllEfficiencyResourcesCallbackInfo>();
+    if (asyncCallbackInfo.get() == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        set_business_error(
+            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
+        return {};
+    }
+    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        GetAllEfficiencyResources(asyncCallbackInfo->efficiencyResourceInfoList);
+    if (errCode) {
+        BGTASK_LOGE("GetAllEfficiencyResourcesSync failed errCode: %{public}d", Common::FindErrCode(errCode));
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
+        return {};
+    }
+    std::vector<::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesInfo> aniInfoList;
+    for (const auto& info : asyncCallbackInfo->efficiencyResourceInfoList) {
+        ::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesInfo aniInfo{
+            .resourceTypes = info->GetResourceNumber(),
+            .timeout = info->GetTimeOut(),
+            .isPersistent = info->IsPersist(),
+            .isForProcess = info->IsProcess(),
+            .reason = info->GetReason(),
+            .uid = info->GetUid(),
+            .pid = info->GetPid(),
+        };
+        aniInfoList.push_back(aniInfo);
+    }
+    return array<::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesInfo>{copy_data_t{},
+        aniInfoList.data(), aniInfoList.size()};
+}
+
+bool SubscribeBackgroundTask(ani_env *env)
+{
+    if (backgroundTaskSubscriber_ == nullptr) {
+        backgroundTaskSubscriber_ = std::make_shared<BackgroundTaskMgr::AniBackgroundTaskSubscriber>();
+        if (backgroundTaskSubscriber_ == nullptr) {
+            BGTASK_LOGE("ret is nullptr");
+            set_business_error(Common::FindErrCode(ERR_BGTASK_SERVICE_INNER_ERROR),
+                Common::FindErrMsg(ERR_BGTASK_SERVICE_INNER_ERROR));
+            return false;
+        }
+    }
+    ErrCode errCode = BackgroundTaskMgrHelper::SubscribeBackgroundTask(*backgroundTaskSubscriber_);
+    if (errCode != ERR_OK) {
+        BGTASK_LOGE("SubscribeBackgroundTask failed: %{public}d, msg: %{public}s",
+            errCode, (Common::FindErrMsg(errCode)).c_str());
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
+        return false;
+    }
+    return true;
+}
+
+void UnSubscribeBackgroundTask(ani_env *env)
+{
+    if (!backgroundTaskSubscriber_->IsEmpty()) {
+        return;
+    }
+    ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);
+    if (errCode != ERR_OK) {
+        BGTASK_LOGE("UnsubscribeBackgroundTask failed.");
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
+        return;
+    }
+    backgroundTaskSubscriber_->UnSubscriberBgtaskSaStatusChange();
+    backgroundTaskSubscriber_ = nullptr;
+}
+
+void OnContinuousTaskCancel(callback_view<void(ContinuousTaskCancelInfo const& data)> callback)
+{
+    auto env = taihe::get_env();
+    std::shared_ptr<taihe::callback<void(const ContinuousTaskCancelInfo&)>> taiheCallback =
+        std::make_shared<taihe::callback<void(const ContinuousTaskCancelInfo&)>>(callback);
+    if (!taiheCallback) {
+        BGTASK_LOGE("taiheCallback is invalid");
+        return;
+    }
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
+    if (!SubscribeBackgroundTask(env)) {
+        return;
+    }
+    backgroundTaskSubscriber_->AddCancelObserverObject("continuousTaskCancel", taiheCallback);
+    backgroundTaskSubscriber_->SubscriberBgtaskSaStatusChange();
+}
+
+void OffContinuousTaskCancel(optional_view<callback<void(ContinuousTaskCancelInfo const& data)>> callback)
+{
+    auto env = taihe::get_env();
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
+    if (!backgroundTaskSubscriber_) {
+        BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
+        return;
+    }
+    if (!callback.has_value()) {
+        backgroundTaskSubscriber_->RemoveJsObserverObjects("continuousTaskCancel");
+    } else {
+        std::shared_ptr<taihe::callback<void(const ContinuousTaskCancelInfo&)>> taiheCallback(
+            new taihe::callback<void(const ContinuousTaskCancelInfo&)>(callback.value()));
+        backgroundTaskSubscriber_->RemoveCancelObserverObject("continuousTaskCancel", taiheCallback);
+    }
+    UnSubscribeBackgroundTask(env);
+}
+
+void OnContinuousTaskSuspend(::taihe::callback_view<void(ContinuousTaskSuspendInfo const& data)> callback)
+{
+    auto env = taihe::get_env();
+    std::shared_ptr<taihe::callback<void(const ContinuousTaskSuspendInfo&)>> taiheCallback =
+        std::make_shared<taihe::callback<void(const ContinuousTaskSuspendInfo&)>>(callback);
+    if (!taiheCallback) {
+        BGTASK_LOGE("taiheCallback is invalid");
+        return;
+    }
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
+    if (!SubscribeBackgroundTask(env)) {
+        return;
+    }
+    backgroundTaskSubscriber_->AddSuspendObserverObject("continuousTaskSuspend", taiheCallback);
+    backgroundTaskSubscriber_->SubscriberBgtaskSaStatusChange();
+}
+
+void OffContinuousTaskSuspend(optional_view<callback<void(ContinuousTaskSuspendInfo const& data)>> callback)
+{
+    auto env = taihe::get_env();
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
+    if (!backgroundTaskSubscriber_) {
+        BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
+        return;
+    }
+    if (!callback.has_value()) {
+        backgroundTaskSubscriber_->RemoveJsObserverObjects("continuousTaskSuspend");
+    } else {
+        std::shared_ptr<taihe::callback<void(const ContinuousTaskSuspendInfo&)>> taiheCallback(
+            new taihe::callback<void(const ContinuousTaskSuspendInfo&)>(callback.value()));
+        backgroundTaskSubscriber_->RemoveSuspendObserverObject("continuousTaskSuspend", taiheCallback);
+    }
+    UnSubscribeBackgroundTask(env);
+}
+
+void OnContinuousTaskActive(::taihe::callback_view<void(ContinuousTaskActiveInfo const& data)> callback)
+{
+    auto env = taihe::get_env();
+    std::shared_ptr<taihe::callback<void(const ContinuousTaskActiveInfo&)>> taiheCallback =
+        std::make_shared<taihe::callback<void(const ContinuousTaskActiveInfo&)>>(callback);
+    if (!taiheCallback) {
+        BGTASK_LOGE("taiheCallback is invalid.");
+        return;
+    }
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
+    if (!SubscribeBackgroundTask(env)) {
+        return;
+    }
+    backgroundTaskSubscriber_->AddActiveObserverObject("continuousTaskActive", taiheCallback);
+    backgroundTaskSubscriber_->SubscriberBgtaskSaStatusChange();
+}
+
+void OffContinuousTaskActive(optional_view<callback<void(ContinuousTaskActiveInfo const& data)>> callback)
+{
+    auto env = taihe::get_env();
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
+    if (!backgroundTaskSubscriber_) {
+        BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
+        return;
+    }
+    if (!callback.has_value()) {
+        backgroundTaskSubscriber_->RemoveJsObserverObjects("continuousTaskActive");
+    } else {
+        std::shared_ptr<taihe::callback<void(const ContinuousTaskActiveInfo&)>> taiheCallback(
+            new taihe::callback<void(const ContinuousTaskActiveInfo&)>(callback.value()));
+        backgroundTaskSubscriber_->RemoveActiveObserverObject("continuousTaskActive", taiheCallback);
+    }
+    UnSubscribeBackgroundTask(env);
+}
 } // namespace
 
 // Since these macros are auto-generate, lint will cause false positive.
@@ -502,8 +823,16 @@ TH_EXPORT_CPP_API_StartBackgroundRunningSync(StartBackgroundRunningSync);
 TH_EXPORT_CPP_API_StopBackgroundRunningSync(StopBackgroundRunningSync);
 TH_EXPORT_CPP_API_ApplyEfficiencyResources(ApplyEfficiencyResources);
 TH_EXPORT_CPP_API_ResetAllEfficiencyResources(ResetAllEfficiencyResources);
-TH_EXPORT_CPP_API_OnContinuousTaskCancel(OnContinuousTaskCancel);
-TH_EXPORT_CPP_API_OffContinuousTaskCancel(OffContinuousTaskCancel);
 TH_EXPORT_CPP_API_StartBackgroundRunningSync2(StartBackgroundRunningSync2);
 TH_EXPORT_CPP_API_UpdateBackgroundRunningSync(UpdateBackgroundRunningSync);
+TH_EXPORT_CPP_API_GetTransientTaskInfoSync(GetTransientTaskInfoSync);
+TH_EXPORT_CPP_API_GetAllContinuousTasksSync(GetAllContinuousTasksSync);
+TH_EXPORT_CPP_API_GetAllContinuousTasksSync2(GetAllContinuousTasksSync2);
+TH_EXPORT_CPP_API_GetAllEfficiencyResourcesSync(GetAllEfficiencyResourcesSync);
+TH_EXPORT_CPP_API_OnContinuousTaskCancel(OnContinuousTaskCancel);
+TH_EXPORT_CPP_API_OffContinuousTaskCancel(OffContinuousTaskCancel);
+TH_EXPORT_CPP_API_OnContinuousTaskSuspend(OnContinuousTaskSuspend);
+TH_EXPORT_CPP_API_OffContinuousTaskSuspend(OffContinuousTaskSuspend);
+TH_EXPORT_CPP_API_OnContinuousTaskActive(OnContinuousTaskActive);
+TH_EXPORT_CPP_API_OffContinuousTaskActive(OffContinuousTaskActive);
 // NOLINTEND
