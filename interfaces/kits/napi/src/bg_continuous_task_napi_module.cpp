@@ -650,7 +650,7 @@ bool StartBackgroundRunningCheckModes(napi_env env, bool isThrow, AsyncCallbackI
     uint32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
         BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
     // 特殊场景处理长时任务类型单次最多允许申请一个
-    if (pecialModeSize > MAX_TASK_NUMS) {
+    if (specialModeSize > MAX_TASK_NUMS) {
         Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION, true);
         asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
         return false;
