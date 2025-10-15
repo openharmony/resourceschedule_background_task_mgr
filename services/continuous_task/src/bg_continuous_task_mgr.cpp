@@ -2695,7 +2695,7 @@ std::string BgContinuousTaskMgr::GetNotificationText(const std::shared_ptr<Conti
             continue;
         }
         if (mode == BackgroundMode::SPECIAL_SCENARIO_PROCESSING || (mode == BackgroundMode::BLUETOOTH_INTERACTION &&
-            CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_, BackgroundSubMode::CAR_KEY))) {
+            CommonUtils::CheckExistMode(record->bgSubModeIds_, BackgroundSubMode::CAR_KEY))) {
             CheckSpecialNotificationText(notificationText, record, mode);
             continue;
         }
