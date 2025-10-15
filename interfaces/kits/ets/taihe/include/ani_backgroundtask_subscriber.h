@@ -46,13 +46,13 @@ public:
     std::shared_ptr<callback<void(const ContinuousTaskCancelInfo&)>> GetCancelObserverObject(
         const std::string& cbType, std::shared_ptr<callback<void(const ContinuousTaskCancelInfo&)>> taiheCallback);
     void RemoveCancelObserverObject(const std::string& cbType,
-        std::shared_ptr<callback<void(const ContinuousTaskCancelInfo&)>> taiheCallback);    
+        std::shared_ptr<callback<void(const ContinuousTaskCancelInfo&)>> taiheCallback);
     void AddSuspendObserverObject(const std::string& cbType,
         std::shared_ptr<callback<void(const ContinuousTaskSuspendInfo&)>> taiheCallback);
     std::shared_ptr<callback<void(const ContinuousTaskSuspendInfo&)>>GetSuspendObserverObject(
         const std::string& cbType, std::shared_ptr<callback<void(const ContinuousTaskSuspendInfo&)>> taiheCallback);
     void RemoveSuspendObserverObject(const std::string& cbType,
-        std::shared_ptr<callback<void(const ContinuousTaskSuspendInfo&)>> taiheCallback);   
+        std::shared_ptr<callback<void(const ContinuousTaskSuspendInfo&)>> taiheCallback);
     void AddActiveObserverObject(const std::string& cbType,
         std::shared_ptr<callback<void(const ContinuousTaskActiveInfo&)>> taiheCallback);
     std::shared_ptr<callback<void(const ContinuousTaskActiveInfo&)>> GetActiveObserverObject(

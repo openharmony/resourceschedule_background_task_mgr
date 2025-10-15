@@ -497,7 +497,7 @@ static ani_enum_item GetContentType(ani_env *env)
     return notification;
 }
 
-::ohos::resourceschedule::backgroundTaskManager::TransientTaskInfo GetTransientTaskInfoSync() 
+::ohos::resourceschedule::backgroundTaskManager::TransientTaskInfo GetTransientTaskInfoSync()
 {
     ::ohos::resourceschedule::backgroundTaskManager::TransientTaskInfo resultInfo{
         .remainingQuota = 0,
@@ -531,7 +531,7 @@ static ani_enum_item GetContentType(ani_env *env)
 }
 
 ::array<taihe::string> GetAniBackgroundModes(const std::vector<uint32_t> &modes)
-{  
+{
     if (modes.empty()) {
         return taihe::array<taihe::string>(nullptr, 0);
     }
@@ -541,7 +541,6 @@ static ani_enum_item GetContentType(ani_env *env)
             std::string modeStr = BackgroundTaskMgr::BackgroundMode::GetBackgroundModeStr(iter);
             aniModes.push_back(taihe::string(modeStr));
         }
-        
     }
     array<taihe::string> modesArr(aniModes);
     return modesArr;
@@ -563,7 +562,7 @@ static ani_enum_item GetContentType(ani_env *env)
     return subModesArr;
 }
 
-array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> GetAllContinuousTasksSync(uintptr_t context) 
+array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> GetAllContinuousTasksSync(uintptr_t context)
 {
     auto env = taihe::get_env();
     std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
@@ -639,7 +638,7 @@ array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> GetAl
         aniInfoList.data(), aniInfoList.size()};
 }
 
-array<::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesInfo> GetAllEfficiencyResourcesSync() 
+array<::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesInfo> GetAllEfficiencyResourcesSync()
 {
     std::unique_ptr<AllEfficiencyResourcesCallbackInfo> asyncCallbackInfo =
         std::make_unique<AllEfficiencyResourcesCallbackInfo>();
