@@ -1341,7 +1341,8 @@ ErrCode BgContinuousTaskMgr::CheckNotificationText(std::string &notificationText
             continue;
         }
         BGTASK_LOGD("mode %{public}d", mode);
-        if (mode == BackgroundMode::SPECIAL_SCENARIO_PROCESSING || mode == BackgroundMode::BLUETOOTH_INTERACTION) {
+        if (mode == BackgroundMode::SPECIAL_SCENARIO_PROCESSING || (mode == BackgroundMode::BLUETOOTH_INTERACTION &&
+            CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_, BackgroundSubMode::CAR_KEY))) {
             ErrCode ret = CheckSpecialNotificationText(notificationText, continuousTaskRecord, mode);
             if (ret != ERR_OK) {
                 BGTASK_LOGE("check special notification fail.");
@@ -2693,7 +2694,8 @@ std::string BgContinuousTaskMgr::GetNotificationText(const std::shared_ptr<Conti
             mode == BackgroundMode::AUDIO_RECORDING) && record->IsSystem())) {
             continue;
         }
-        if (mode == BackgroundMode::BLUETOOTH_INTERACTION || mode == BackgroundMode::SPECIAL_SCENARIO_PROCESSING) {
+        if (mode == BackgroundMode::SPECIAL_SCENARIO_PROCESSING || (mode == BackgroundMode::BLUETOOTH_INTERACTION &&
+            CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_, BackgroundSubMode::CAR_KEY))) {
             CheckSpecialNotificationText(notificationText, record, mode);
             continue;
         }
