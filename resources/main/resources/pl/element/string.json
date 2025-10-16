@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Uruchomione jest zadanie obliczania.",
+            "value":"Trwa przetwarzanie zadania. Zamknięcie tego powiadomienia je zakończy.",
             "attr":{
                 "priority":"translate"
             }
