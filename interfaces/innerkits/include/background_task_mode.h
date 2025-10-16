@@ -33,7 +33,7 @@ public:
         MODE_ALLOW_WIFI_AWARE = 7,
         MODE_VOIP = 8,
         MODE_TASK_KEEPING = 9,
-        MODE_AV_PLAYBACK_AND_RECORD = 10,
+        MODE_AV_PLAYBACK_AND_RECORD = 11,
         MODE_SPECIAL_SCENARIO_PROCESSING = 12,
         END,
     };
