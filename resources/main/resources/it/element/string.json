@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"È in esecuzione un'attività di calcolo.",
+            "value":"È in corso un'attività di calcolo. Se chiudi questa notifica, verrà terminata.",
             "attr":{
                 "priority":"translate"
             }
