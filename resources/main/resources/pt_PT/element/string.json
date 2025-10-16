@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Está a decorrer uma tarefa de computação.",
+            "value":"Está a decorrer uma tarefa de computação. Fechar esta notificação irá terminá-la.",
             "attr":{
                 "priority":"translate"
             }
