@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Eine Rechenaufgabe wird ausgeführt.",
+            "value":"Eine Rechenaufgabe wird ausgeführt. Durch das Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
                 "priority":"translate"
             }
