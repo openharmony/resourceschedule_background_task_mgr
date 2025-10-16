@@ -102,7 +102,7 @@ static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.re
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
-static constexpr uint32_t BGMODE_SPECIAL_SCENARIO_PROCESSING = 1024;
+static constexpr uint32_t BGMODE_SPECIAL_SCENARIO_PROCESSING = 2048;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
@@ -3024,7 +3024,8 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
 #else // HAS_OS_ACCOUNT_PART
     GetOsAccountIdFromUid(callingUid, userId);
 #endif // HAS_OS_ACCOUNT_PART
-    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingUid)) {
+    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
+    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
         return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
     }
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
