@@ -451,8 +451,9 @@ WEAK_FUNC ErrCode NotificationTools::PublishBannerNotification(
     return ERR_OK;
 }
 
-WEAK_FUNC void NotificationTools::RefreshBannerNotifications(
-    const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos, int32_t serviceUid)
+WEAK_FUNC void NotificationTools::RefreshBannerNotifications(const std::vector<std::string> &bannerNotificaitonBtn,
+    const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos,
+    const std::shared_ptr<BannerNotificationRecord> bannerNotification, int32_t serviceUid)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
@@ -461,7 +462,7 @@ WEAK_FUNC void NotificationTools::RefreshBannerNotifications(
         BGTASK_LOGE("get all active notification fail!");
         return;
     }
-    for (const Notification::NotificationRequest *var : notificationRequests) {
+    for (Notification::NotificationRequest *var : notificationRequests) {
         std::string label = var->GetLabel();
         if (newPromptInfos.count(label) == 0 || var->GetCreatorUid() != serviceUid) {
             continue;
@@ -470,6 +471,19 @@ WEAK_FUNC void NotificationTools::RefreshBannerNotifications(
         auto const &normalContent = content->GetNotificationContent();
         normalContent->SetTitle(newPromptInfos.at(label).first);
         normalContent->SetText(newPromptInfos.at(label).second);
+        var->ClearActionButtons();
+        std::string allowTimeBtnName = bannerNotificaitonBtn.at(BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME);
+        if (!SetActionButton(bannerNotification, allowTimeBtnName, *var,
+            BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME, label)) {
+            BGTASK_LOGE("create banner notification action button fail");
+            return;
+        }
+        std::string allowAllowed = bannerNotificaitonBtn.at(BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED);
+        if (!SetActionButton(bannerNotification, allowAllowed, *var,
+            BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED, label)) {
+            BGTASK_LOGE("create banner notification action button fail");
+            return;
+        }
         if (Notification::NotificationHelper::PublishNotification(*var) != ERR_OK) {
             BGTASK_LOGE("refresh notification error");
         }

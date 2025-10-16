@@ -463,6 +463,7 @@ bool BgContinuousTaskMgr::GetNotificationPrompt()
     BgTaskHiTraceChain traceChain(__func__);
     continuousTaskText_.clear();
     continuousTaskSubText_.clear();
+    bannerNotificaitonBtn_.clear();
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(BG_TASK_RES_BUNDLE_NAME,
         AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo)) {
@@ -2665,7 +2666,6 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
     }
     NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
     // 语言切换，刷新横幅通知
-    std::map<std::string, std::pair<std::string, std::string>> newBannerPromptInfos;
     for (const auto &iter : bannerNotificationRecord_) {
         std::string bannerNotificationText {""};
         std::string appName = iter.second->GetAppName();
@@ -2678,9 +2678,11 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
         BGTASK_LOGI("bannerNotificationLabel: %{public}s, mainAbilityLabel: %{public}s, "
             "notificationText: %{public}s,", bannerNotificationLabel.c_str(), appName.c_str(),
             bannerNotificationText.c_str());
+        std::map<std::string, std::pair<std::string, std::string>> newBannerPromptInfos;
         newBannerPromptInfos.emplace(bannerNotificationLabel, std::make_pair(appName, bannerNotificationText));
+        NotificationTools::GetInstance()->RefreshBannerNotifications(bannerNotificaitonBtn_, newBannerPromptInfos,
+            iter.second, bgTaskUid_);
     }
-    NotificationTools::GetInstance()->RefreshBannerNotifications(newBannerPromptInfos, bgTaskUid_);
 }
 
 std::string BgContinuousTaskMgr::GetNotificationText(const std::shared_ptr<ContinuousTaskRecord> record)
@@ -2884,7 +2886,7 @@ ErrCode BgContinuousTaskMgr::SendLiveViewAndOtherNotification(std::shared_ptr<Co
 
 ErrCode BgContinuousTaskMgr::CheckSpecialModePermission(const sptr<ContinuousTaskParam> &taskParam)
 {
-    int32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
+    uint32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
         BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     if (specialModeSize > 1) {
         return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
@@ -2912,6 +2914,12 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     ErrCode ret = CheckSpecialModePermission(taskParam);
     if (ret != ERR_OK) {
         return ret;
+    }
+    uint32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
+        BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    if (specialModeSize == 0) {
+        BGTASK_LOGE("not have bgmode: special scenario process");
+        return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY;
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     int32_t userId = -1;
@@ -3095,6 +3103,10 @@ void BgContinuousTaskMgr::OnBannerNotificationActionButtonClickInner(const int32
     } else if (buttonType == BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED) {
         BGTASK_LOGI("user click allow allowed, uid: %{public}d", uid);
         iter->SetAuthResult(UserAuthResult::GRANTED_ALWAYS);
+    }
+    // 点击授权按钮后，取消通知
+    if (iter->GetNotificationId() != -1) {
+        NotificationTools::GetInstance()->CancelNotification(iter->GetNotificationLabel(), iter->GetNotificationId());
     }
 }
 }  // namespace BackgroundTaskMgr
