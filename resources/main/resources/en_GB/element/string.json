@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"A computing task is running.",
+            "value":"A computing task is in progress. Closing this notification will end it.",
             "attr":{
                 "priority":"translate"
             }
