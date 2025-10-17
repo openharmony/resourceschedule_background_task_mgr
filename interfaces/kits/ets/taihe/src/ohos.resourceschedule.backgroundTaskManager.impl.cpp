@@ -702,7 +702,7 @@ void UnSubscribeBackgroundTask(ani_env *env, uint32_t flag = 0)
     if (!backgroundTaskSubscriber_->IsEmpty()) {
         return;
     }
-    backgroundTaskSubscriber_->SetFlag(flag, flase);
+    backgroundTaskSubscriber_->SetFlag(flag, false);
     ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);
     if (errCode != ERR_OK) {
         BGTASK_LOGE("UnsubscribeBackgroundTask failed.");
