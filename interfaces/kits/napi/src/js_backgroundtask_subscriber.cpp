@@ -393,6 +393,7 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType
  
     auto observer = GetObserverObject(cbType, jsObserverObject);
     if (observer != nullptr) {
+        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
         jsObserverObjectMap_[cbType].erase(observer);
     }
 }
