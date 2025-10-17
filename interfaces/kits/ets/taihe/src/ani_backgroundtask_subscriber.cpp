@@ -168,7 +168,7 @@ void AniBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
     auto& jsObserverObjectSet_ = iter->second;
     for (auto &item : jsObserverObjectSet_) {
         ContinuousTaskCancelInfo aniCallBack{
-            .reason = static_cast<ContinuousTaskCancelReason::key_t>(continuousTaskCallbackInfo->GetCancelReason()),
+            .reason = ContinuousTaskCancelReason::from_value(continuousTaskCallbackInfo->GetCancelReason()),
             .id = continuousTaskCallbackInfo->GetContinuousTaskId(),
         };
         (*item)(aniCallBack);
@@ -212,7 +212,7 @@ void AniBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
         ContinuousTaskSuspendInfo aniCallBack{
             .continuousTaskId = continuousTaskCallbackInfo->GetContinuousTaskId(),
             .suspendState = continuousTaskCallbackInfo->GetSuspendState(),
-            .suspendReason = static_cast<ContinuousTaskSuspendReason::key_t>(
+            .suspendReason = ContinuousTaskSuspendReason::from_value(
                 continuousTaskCallbackInfo->GetSuspendReason()),
         };
         (*item)(aniCallBack);
