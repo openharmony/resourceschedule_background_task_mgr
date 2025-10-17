@@ -719,6 +719,7 @@ void OnContinuousTaskCancel(callback_view<void(ContinuousTaskCancelInfo const& d
     std::shared_ptr<taihe::callback<void(const ContinuousTaskCancelInfo&)>> taiheCallback =
         std::make_shared<taihe::callback<void(const ContinuousTaskCancelInfo&)>>(callback);
     if (!taiheCallback) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("taiheCallback is invalid");
         return;
     }
@@ -735,6 +736,7 @@ void OffContinuousTaskCancel(optional_view<callback<void(ContinuousTaskCancelInf
     auto env = taihe::get_env();
     std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!backgroundTaskSubscriber_) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return;
     }
@@ -754,6 +756,7 @@ void OnContinuousTaskSuspend(::taihe::callback_view<void(ContinuousTaskSuspendIn
     std::shared_ptr<taihe::callback<void(const ContinuousTaskSuspendInfo&)>> taiheCallback =
         std::make_shared<taihe::callback<void(const ContinuousTaskSuspendInfo&)>>(callback);
     if (!taiheCallback) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("taiheCallback is invalid");
         return;
     }
@@ -770,6 +773,7 @@ void OffContinuousTaskSuspend(optional_view<callback<void(ContinuousTaskSuspendI
     auto env = taihe::get_env();
     std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!backgroundTaskSubscriber_) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return;
     }
@@ -789,6 +793,7 @@ void OnContinuousTaskActive(::taihe::callback_view<void(ContinuousTaskActiveInfo
     std::shared_ptr<taihe::callback<void(const ContinuousTaskActiveInfo&)>> taiheCallback =
         std::make_shared<taihe::callback<void(const ContinuousTaskActiveInfo&)>>(callback);
     if (!taiheCallback) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("taiheCallback is invalid.");
         return;
     }
@@ -805,6 +810,7 @@ void OffContinuousTaskActive(optional_view<callback<void(ContinuousTaskActiveInf
     auto env = taihe::get_env();
     std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!backgroundTaskSubscriber_) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return;
     }
