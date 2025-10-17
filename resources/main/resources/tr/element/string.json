@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Bir bilgi işlem görevi çalışıyor.",
+            "value":"Bilgi işlem görevi devam ediyor. Bu bildirim kapatıldığında sonlandırılacaktır.",
             "attr":{
                 "priority":"translate"
             }

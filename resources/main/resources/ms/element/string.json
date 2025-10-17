@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Tugas pengkomputeran sedang berjalan.",
+            "value":"Tugas pengkomputeran sedang dijalankan. Menutup pemberitahuan ini akan menamatkannya.",
             "attr":{
                 "priority":"translate"
             }
