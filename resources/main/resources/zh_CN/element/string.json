@@ -84,7 +84,10 @@
         },
         {
             "name":"btn_allow_allowed",
-            "value":"始终允许"
+            "value":"始终允许",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"text_notification_allow_background_keepalive",

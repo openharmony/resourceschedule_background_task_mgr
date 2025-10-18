@@ -69,6 +69,13 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"btn_allow_allowed",
+            "value":"Всегда разрешать",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

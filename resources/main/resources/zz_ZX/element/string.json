@@ -39,6 +39,34 @@
         {
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"[TS_1039903]_Automatic car key functions will not work if you close this card."
+        },
+        {
+            "name":"btn_allow_time",
+            "value":"[TS_1135554]_Allow this time only"
+        },
+        {
+            "name":"btn_allow_allowed",
+            "value":"[TS_1135551]_Always allow"
+        },
+        {
+            "name":"text_notification_allow_background_keepalive",
+            "value":"[TS_1135553]_Allow “%s” to perform background tasks keepalive for the app?"
+        },
+        {
+            "name":"ohos_app_name",
+            "value":"[TS_972418]_Continuous task notification prompt resource"
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_media_process",
+            "value":"[TS_1135550]_A media process task is in progress. Closing this notification will end it."
+        },
+        {
+            "name":"ohos_bgmode_prompt_default_value",
+            "value":"[TS_972419]_Running continuous task"
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_video_broadcast",
+            "value":"[TS_1135552]_A video broadcast task is in progress. Closing this notification will end it."
         }
     ]
 }

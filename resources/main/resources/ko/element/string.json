@@ -69,6 +69,13 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"btn_allow_allowed",
+            "value":"항상 허용",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
