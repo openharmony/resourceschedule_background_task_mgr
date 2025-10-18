@@ -69,6 +69,13 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"btn_allow_allowed",
+            "value":"ནམ་ཡང་ཆོག་པ་",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

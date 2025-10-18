@@ -69,6 +69,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_allow_allowed",
+            "value":"Toujours autoriser",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
