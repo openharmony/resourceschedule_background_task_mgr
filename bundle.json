@@ -50,6 +50,7 @@
           "samgr",
           "c_utils",
           "distributed_notification_service",
+          "hicollie",
           "hisysevent",
           "hiview",
           "i18n",
