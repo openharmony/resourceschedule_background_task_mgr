@@ -355,7 +355,12 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTa
         }
         return ERR_OK;
     }
+    int32_t timeoutId = HiviewDFX::XCollie::GetInstance().SetTimer("GetContinuousTaskAppsTimeout", CHECK_TIMEOUT,
+        [](void *) {
+            BGTASK_LOGE("BackgroundTaskMgrService::GetContinuousTaskApps Timeout:%{public}d", CHECK_TIMEOUT);
+        }, nullptr, HiviewDFX::XCOLLIE_FLAG_DEFAULT);
     ErrCode result = BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(resultList);
+    HiviewDFX::XCollie::GetInstance().CancelTimer(timeoutId);
     if (result == ERR_OK) {
         for (const auto& ptr : resultList) {
             if (ptr != nullptr) {
