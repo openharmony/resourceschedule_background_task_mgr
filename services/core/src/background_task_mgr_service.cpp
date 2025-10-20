@@ -28,6 +28,8 @@
 #include "file_ex.h"
 #include "ipc_skeleton.h"
 #include "string_ex.h"
+#include "xcollie/xcollie.h"
+#include "xcollie/xcollie_define.h"
 
 #include "bgtaskmgr_log_wrapper.h"
 #include <parameters.h>
@@ -37,6 +39,7 @@ namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
 static constexpr int32_t RESOURCE_SCHEDULE_SERVICE_UID = 1096;
+static constexpr uint32_t CHECK_TIMEOUT = 10;
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
@@ -355,7 +358,12 @@ ErrCode BackgroundTaskMgrService::GetContinuousTaskApps(std::vector<ContinuousTa
         }
         return ERR_OK;
     }
+    int32_t timeoutId = HiviewDFX::XCollie::GetInstance().SetTimer("GetContinuousTaskAppsTimeout", CHECK_TIMEOUT,
+        [](void *) {
+            BGTASK_LOGE("BackgroundTaskMgrService::GetContinuousTaskApps Timeout:%{public}d", CHECK_TIMEOUT);
+        }, nullptr, HiviewDFX::XCOLLIE_FLAG_DEFAULT);
     ErrCode result = BgContinuousTaskMgr::GetInstance()->GetContinuousTaskApps(resultList);
+    HiviewDFX::XCollie::GetInstance().CancelTimer(timeoutId);
     if (result == ERR_OK) {
         for (const auto& ptr : resultList) {
             if (ptr != nullptr) {
