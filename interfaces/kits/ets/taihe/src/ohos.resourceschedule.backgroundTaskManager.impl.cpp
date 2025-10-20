@@ -42,6 +42,9 @@ std::map<int32_t, std::shared_ptr<Callback>> callbackInstances_;
 std::mutex callbackLock_;
 static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
+static constexpr uint32_t CONTINUOUS_TASK_CANCEL = 1 << 0;
+static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 1 << 1;
+static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
 static std::shared_ptr<BackgroundTaskMgr::AniBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
 std::mutex backgroundTaskSubscriberMutex_;
 
@@ -672,7 +675,7 @@ array<::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesInfo> 
         aniInfoList.data(), aniInfoList.size()};
 }
 
-bool SubscribeBackgroundTask(ani_env *env)
+bool SubscribeBackgroundTask(ani_env *env, uint32_t flag = 0)
 {
     if (backgroundTaskSubscriber_ == nullptr) {
         backgroundTaskSubscriber_ = std::make_shared<BackgroundTaskMgr::AniBackgroundTaskSubscriber>();
@@ -683,6 +686,7 @@ bool SubscribeBackgroundTask(ani_env *env)
             return false;
         }
     }
+    backgroundTaskSubscriber_->SetFlag(flag, true);
     ErrCode errCode = BackgroundTaskMgrHelper::SubscribeBackgroundTask(*backgroundTaskSubscriber_);
     if (errCode != ERR_OK) {
         BGTASK_LOGE("SubscribeBackgroundTask failed: %{public}d, msg: %{public}s",
@@ -693,11 +697,12 @@ bool SubscribeBackgroundTask(ani_env *env)
     return true;
 }
 
-void UnSubscribeBackgroundTask(ani_env *env)
+void UnSubscribeBackgroundTask(ani_env *env, uint32_t flag = 0)
 {
     if (!backgroundTaskSubscriber_->IsEmpty()) {
         return;
     }
+    backgroundTaskSubscriber_->SetFlag(flag, false);
     ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);
     if (errCode != ERR_OK) {
         BGTASK_LOGE("UnsubscribeBackgroundTask failed.");
@@ -714,11 +719,12 @@ void OnContinuousTaskCancel(callback_view<void(ContinuousTaskCancelInfo const& d
     std::shared_ptr<taihe::callback<void(const ContinuousTaskCancelInfo&)>> taiheCallback =
         std::make_shared<taihe::callback<void(const ContinuousTaskCancelInfo&)>>(callback);
     if (!taiheCallback) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("taiheCallback is invalid");
         return;
     }
     std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
-    if (!SubscribeBackgroundTask(env)) {
+    if (!SubscribeBackgroundTask(env, CONTINUOUS_TASK_CANCEL)) {
         return;
     }
     backgroundTaskSubscriber_->AddCancelObserverObject("continuousTaskCancel", taiheCallback);
@@ -730,6 +736,7 @@ void OffContinuousTaskCancel(optional_view<callback<void(ContinuousTaskCancelInf
     auto env = taihe::get_env();
     std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!backgroundTaskSubscriber_) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return;
     }
@@ -740,7 +747,7 @@ void OffContinuousTaskCancel(optional_view<callback<void(ContinuousTaskCancelInf
             new taihe::callback<void(const ContinuousTaskCancelInfo&)>(callback.value()));
         backgroundTaskSubscriber_->RemoveCancelObserverObject("continuousTaskCancel", taiheCallback);
     }
-    UnSubscribeBackgroundTask(env);
+    UnSubscribeBackgroundTask(env, CONTINUOUS_TASK_CANCEL);
 }
 
 void OnContinuousTaskSuspend(::taihe::callback_view<void(ContinuousTaskSuspendInfo const& data)> callback)
@@ -749,11 +756,12 @@ void OnContinuousTaskSuspend(::taihe::callback_view<void(ContinuousTaskSuspendIn
     std::shared_ptr<taihe::callback<void(const ContinuousTaskSuspendInfo&)>> taiheCallback =
         std::make_shared<taihe::callback<void(const ContinuousTaskSuspendInfo&)>>(callback);
     if (!taiheCallback) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("taiheCallback is invalid");
         return;
     }
     std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
-    if (!SubscribeBackgroundTask(env)) {
+    if (!SubscribeBackgroundTask(env, CONTINUOUS_TASK_SUSPEND)) {
         return;
     }
     backgroundTaskSubscriber_->AddSuspendObserverObject("continuousTaskSuspend", taiheCallback);
@@ -765,6 +773,7 @@ void OffContinuousTaskSuspend(optional_view<callback<void(ContinuousTaskSuspendI
     auto env = taihe::get_env();
     std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!backgroundTaskSubscriber_) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return;
     }
@@ -775,7 +784,7 @@ void OffContinuousTaskSuspend(optional_view<callback<void(ContinuousTaskSuspendI
             new taihe::callback<void(const ContinuousTaskSuspendInfo&)>(callback.value()));
         backgroundTaskSubscriber_->RemoveSuspendObserverObject("continuousTaskSuspend", taiheCallback);
     }
-    UnSubscribeBackgroundTask(env);
+    UnSubscribeBackgroundTask(env, CONTINUOUS_TASK_SUSPEND);
 }
 
 void OnContinuousTaskActive(::taihe::callback_view<void(ContinuousTaskActiveInfo const& data)> callback)
@@ -784,11 +793,12 @@ void OnContinuousTaskActive(::taihe::callback_view<void(ContinuousTaskActiveInfo
     std::shared_ptr<taihe::callback<void(const ContinuousTaskActiveInfo&)>> taiheCallback =
         std::make_shared<taihe::callback<void(const ContinuousTaskActiveInfo&)>>(callback);
     if (!taiheCallback) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("taiheCallback is invalid.");
         return;
     }
     std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
-    if (!SubscribeBackgroundTask(env)) {
+    if (!SubscribeBackgroundTask(env, CONTINUOUS_TASK_ACTIVE)) {
         return;
     }
     backgroundTaskSubscriber_->AddActiveObserverObject("continuousTaskActive", taiheCallback);
@@ -800,6 +810,7 @@ void OffContinuousTaskActive(optional_view<callback<void(ContinuousTaskActiveInf
     auto env = taihe::get_env();
     std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!backgroundTaskSubscriber_) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM), Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
         BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return;
     }
@@ -810,7 +821,7 @@ void OffContinuousTaskActive(optional_view<callback<void(ContinuousTaskActiveInf
             new taihe::callback<void(const ContinuousTaskActiveInfo&)>(callback.value()));
         backgroundTaskSubscriber_->RemoveActiveObserverObject("continuousTaskActive", taiheCallback);
     }
-    UnSubscribeBackgroundTask(env);
+    UnSubscribeBackgroundTask(env, CONTINUOUS_TASK_ACTIVE);
 }
 } // namespace
 
