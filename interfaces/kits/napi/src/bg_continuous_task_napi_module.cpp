@@ -52,6 +52,7 @@ static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
 static constexpr int32_t SYSTEM_LIVE_CONTENT_TYPE = 8;
 static constexpr int32_t SLOT_TYPE = 4;
+static constexpr int32_t MAX_TASK_NUMS = 1;
 static constexpr uint32_t ARGC_ONE = 1;
 static constexpr uint32_t ARGC_TWO = 2;
 static constexpr uint32_t INDEX_ZERO = 0;
@@ -59,7 +60,6 @@ static constexpr uint32_t INDEX_ONE = 1;
 static constexpr uint32_t CONTINUOUS_TASK_CANCEL = 1 << 0;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 1 << 1;
 static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
-static constexpr uint32_t MAX_TASK_NUMS = 1;
 static std::shared_ptr<JsBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
 static std::vector<std::string> g_backgroundModes = {
     "dataTransfer",
@@ -647,7 +647,7 @@ bool StartBackgroundRunningCheckModes(napi_env env, bool isThrow, AsyncCallbackI
         asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_LENGTH_MISMATCH;
         return false;
     }
-    uint32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
+    int32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
         BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
     // 特殊场景处理长时任务类型单次最多允许申请一个
     if (specialModeSize > MAX_TASK_NUMS) {
@@ -1432,7 +1432,7 @@ bool CheckRequestAuthFromUserParam(napi_env env, AsyncCallbackInfo *asyncCallbac
         asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY;
         return false;
     }
-    uint32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
+    int32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
         BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
     if (specialModeSize == 0) {
         Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY, true);
