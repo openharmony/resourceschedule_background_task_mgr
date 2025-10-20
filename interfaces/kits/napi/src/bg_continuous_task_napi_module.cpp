@@ -52,6 +52,7 @@ static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
 static constexpr int32_t SYSTEM_LIVE_CONTENT_TYPE = 8;
 static constexpr int32_t SLOT_TYPE = 4;
+static constexpr int32_t MAX_TASK_NUMS = 1;
 static constexpr uint32_t ARGC_ONE = 1;
 static constexpr uint32_t ARGC_TWO = 2;
 static constexpr uint32_t INDEX_ZERO = 0;
@@ -649,13 +650,13 @@ bool StartBackgroundRunningCheckModes(napi_env env, bool isThrow, AsyncCallbackI
     int32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
         BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
     // 特殊场景处理长时任务类型单次最多允许申请一个
-    if (specialModeSize > 1) {
+    if (specialModeSize > MAX_TASK_NUMS) {
         Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION, true);
         asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
         return false;
     }
     // 特殊场景处理长时任务类型与其他长时任务类型互斥
-    if (specialModeSize == 1 && backgroundTaskModes.size() > 1) {
+    if (specialModeSize == MAX_TASK_NUMS && backgroundTaskModes.size() > MAX_TASK_NUMS) {
         Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK, true);
         asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
         return false;
@@ -1438,12 +1439,12 @@ bool CheckRequestAuthFromUserParam(napi_env env, AsyncCallbackInfo *asyncCallbac
         asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY;
         return false;
     }
-    if (specialModeSize > 1) {
+    if (specialModeSize > MAX_TASK_NUMS) {
         Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION, true);
         asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
         return false;
     }
-    if (specialModeSize == 1 && backgroundTaskModes.size() > 1) {
+    if (specialModeSize == MAX_TASK_NUMS && backgroundTaskModes.size() > MAX_TASK_NUMS) {
         Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK, true);
         asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
         return false;
@@ -1480,12 +1481,12 @@ bool CheckSpecialModeSupported(napi_env env, AsyncCallbackInfo *asyncCallbackInf
     }
     int32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
         BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
-    if (specialModeSize > 1) {
+    if (specialModeSize > MAX_TASK_NUMS) {
         Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION, true);
         asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
         return false;
     }
-    if (specialModeSize == 1 && backgroundTaskModes.size() > 1) {
+    if (specialModeSize == MAX_TASK_NUMS && backgroundTaskModes.size() > MAX_TASK_NUMS) {
         Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK, true);
         asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
         return false;
