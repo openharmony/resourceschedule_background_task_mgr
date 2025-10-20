@@ -102,6 +102,7 @@ class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {};
 class TestExpiredCallbackStub : public ExpiredCallbackStub {
 public:
     ErrCode OnExpired() override {return ERR_OK;}
+    ErrCode OnExpiredAuth(int32_t authResult) override {return ERR_OK;}
 };
 
 /**

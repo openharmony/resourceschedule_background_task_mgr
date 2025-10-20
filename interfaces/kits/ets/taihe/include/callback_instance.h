@@ -29,6 +29,7 @@ public:
     Callback();
     ~Callback() override;
     void OnExpired() override;
+    void OnExpiredAuth(int32_t authResult) override;
     void SetCallbackInfo(
         callback_view<void(::ohos::resourceschedule::backgroundTaskManager::UndefinedType const&)> callback);
 

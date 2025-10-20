@@ -291,9 +291,12 @@ public:
     /**
      * @brief request mode MODE_SPECIAL_SCENARIO_PROCESSING auth.
      * @param taskParam Request params.
+     * @param callback Called back to notify the application.
+     * @param notificationId Notification id.
      * @return Returns ERR_OK if success, else failure.
      */
-    ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam);
+    ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam, const ExpiredCallback &callback,
+        int32_t &notificationId);
 
     /**
      * @brief check mode MODE_SPECIAL_SCENARIO_PROCESSING auth.

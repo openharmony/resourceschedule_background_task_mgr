@@ -122,6 +122,8 @@ void Callback::OnExpired()
     LOGI("OnExpired end");
 }
 
+void Callback::OnExpiredAuth(int32_t authResult) {}
+
 void Callback::SetCallbackInfo(void (*callback)())
 {
     ffiCallback_ = callback;

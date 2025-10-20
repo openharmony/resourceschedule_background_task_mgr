@@ -70,6 +70,7 @@ public:
 class TestExpiredCallback : public ExpiredCallback {
 public:
     void OnExpired() override {}
+    void OnExpiredAuth(int32_t authResult) override {}
 };
 
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {};
@@ -103,6 +104,7 @@ class TestBackgroundTaskSubscriberStub : public BackgroundTaskSubscriberStub {
 class TestExpiredCallbackStub : public ExpiredCallbackStub {
 public:
     ErrCode OnExpired() override {return ERR_OK;}
+    ErrCode OnExpiredAuth(int32_t authResult) override {return ERR_OK;}
 };
 
 /**
@@ -769,7 +771,9 @@ HWTEST_F(BgTaskFrameworkUnitTest, ExpiredCallbackProxyTest_001, TestSize.Level1)
     ExpiredCallbackProxy proxy1 = ExpiredCallbackProxy(nullptr);
     ExpiredCallbackProxy proxy2 = ExpiredCallbackProxy(expiredCallbackStub->AsObject());
     proxy1.OnExpired();
+    proxy1.OnExpiredAuth(1);
     proxy2.OnExpired();
+    proxy2.OnExpiredAuth(1);
     EXPECT_NE(expiredCallbackStub, nullptr);
 }
 
@@ -1000,9 +1004,12 @@ HWTEST_F(BgTaskFrameworkUnitTest, RequestAuthFromUser_001, TestSize.Level1)
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     ContinuousTaskParam taskParam = ContinuousTaskParam();
+    int32_t notificationId = 1;
+    auto expiredCallback = std::make_shared<TestExpiredCallback>(); 
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestAuthFromUser(taskParam),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
+    expiredCallback->Init();
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestAuthFromUser(taskParam),
         ERR_OK);

@@ -155,11 +155,6 @@ ErrCode BackgroundTaskMgrHelper::SetMaliciousAppConfig(const std::set<std::strin
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet);
 }
 
-ErrCode BackgroundTaskMgrHelper::RequestAuthFromUser(const ContinuousTaskParam &taskParam)
-{
-    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestAuthFromUser(taskParam);
-}
-
 ErrCode BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(uint32_t &authResult)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(authResult);

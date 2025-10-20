@@ -57,7 +57,7 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void IsModeSupported([in] ContinuousTaskParam taskParam);
     void SetSupportedTaskKeepingProcesses([in] Set<String> processSet);
     [oneway] void SetMaliciousAppConfig([in] Set<String> maliciousAppSet);
-    void RequestAuthFromUser([in] ContinuousTaskParam taskParam);
+    void RequestAuthFromUser([in] ContinuousTaskParam taskParam, [in] IExpiredCallback expiredCallback, [out] int notificationId);
     void CheckSpecialScenarioAuth([out] unsigned int authResult);
     void CheckTaskAuthResult([in] String bundleName, [in] int userId, [in] int appIndex);
 }

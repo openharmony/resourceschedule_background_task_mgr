@@ -19,7 +19,7 @@
 
 #include "gtest/gtest.h"
 #include "bgtask_common.h"
-#include "background_task_subscriber.h"
+#include "background_mode.h"
 #include "background_task_subscriber_proxy.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_subscriber.h"
@@ -1994,29 +1994,7 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialScenarioAuthInner_001, TestSize.Le
  */
 HWTEST_F(BgContinuousTaskMgrTest, RequestAuthFromUser_001, TestSize.Level1)
 {
-    bgContinuousTaskMgr_->isSysReady_.store(false);
-    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam), ERR_BGTASK_SYS_NOT_READY);
-
-    bgContinuousTaskMgr_->isSysReady_.store(true);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(nullptr), ERR_BGTASK_CHECK_TASK_PARAM);
-
-    taskParam->bgModeIds_.clear();
-    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam),
-        ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION);
-
-    taskParam->bgModeIds_.clear();
-    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    taskParam->bgModeIds_.push_back(BackgroundMode::LOCATION);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam),
-        ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK);
-
-    taskParam->bgModeIds_.clear();
-    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam),
-        ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
+    
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

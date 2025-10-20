@@ -134,6 +134,8 @@ public:
 
     static bool GetWantAgentProperty(napi_env env, napi_value object, const std::string &propertyName,
         std::shared_ptr<ContinuousTaskRequest> &request);
+
+    static void SetAuthCallback(const napi_env &env, const napi_ref &callbackIn, int32_t authResult);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
