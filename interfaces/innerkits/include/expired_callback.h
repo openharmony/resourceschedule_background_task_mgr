@@ -58,7 +58,7 @@ private:
          */
         ErrCode OnExpired() override;
 
-        ErrCode OnExpiredAuth() override;
+        ErrCode OnExpiredAuth(int32_t authResult) override;
 
     public:
         std::weak_ptr<ExpiredCallback> callback_;
