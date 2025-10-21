@@ -496,7 +496,7 @@ ErrCode BackgroundTaskManager::SetMaliciousAppConfig(const std::set<std::string>
     return proxy_->SetMaliciousAppConfig(maliciousAppSet);
 }
 
-ErrCode BackgroundTaskManager::ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam,
+ErrCode BackgroundTaskManager::RequestAuthFromUser(const ContinuousTaskParam &taskParam,
     const ExpiredCallback &callback, int32_t &notificationId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
