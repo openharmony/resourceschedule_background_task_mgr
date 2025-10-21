@@ -1006,13 +1006,13 @@ HWTEST_F(BgTaskFrameworkUnitTest, RequestAuthFromUser_001, TestSize.Level1)
     ContinuousTaskParam taskParam = ContinuousTaskParam();
     int32_t notificationId = 1;
     auto expiredCallback = std::make_shared<TestExpiredCallback>(); 
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestAuthFromUser(taskParam),
-        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestAuthFromUser(taskParam,
+        *expiredCallback, notificationId), ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
     expiredCallback->Init();
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestAuthFromUser(taskParam),
-        ERR_OK);
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestAuthFromUser(taskParam,
+        *expiredCallback, notificationId), ERR_OK);
 }
 
 /**
