@@ -20,7 +20,6 @@
 #include "gtest/gtest.h"
 #include "bgtask_common.h"
 #include "background_mode.h"
-#include "background_mode.h"
 #include "background_task_subscriber_proxy.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_subscriber.h"
