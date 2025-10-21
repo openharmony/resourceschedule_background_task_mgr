@@ -69,7 +69,7 @@ void AuthCallbackInstance::DeleteNapiRef()
     }
 }
 
-void AuthCallbackInstance::OnExpired() {}
+__attribute__((no_sanitize("cfi"))) void AuthCallbackInstance::OnExpired() {}
 
 __attribute__((no_sanitize("cfi"))) void AuthCallbackInstance::OnExpiredAuth(int32_t authResult)
 {
