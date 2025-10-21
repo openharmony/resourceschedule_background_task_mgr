@@ -114,7 +114,7 @@ __attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpired()
     }
 }
 
-void CallbackInstance::OnExpiredAuth(int32_t authResult) {}
+__attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpiredAuth(int32_t authResult) {}
 
 void CallbackInstance::SetCallbackInfo(const napi_env &env, const napi_ref &ref)
 {
