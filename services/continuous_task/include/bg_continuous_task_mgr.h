@@ -262,7 +262,7 @@ public:
     explicit AuthExpiredCallbackDeathRecipient(const wptr<BackgroundTaskMgrService> &service);
     ~AuthExpiredCallbackDeathRecipient() override;
     DISALLOW_COPY_AND_MOVE(AuthExpiredCallbackDeathRecipient);
-    void OnRemoteDied(const wptr<IRemoteObject> &remote>) override;
+    void OnRemoteDied(const wptr<IRemoteObject> &remote) override;
 
 private:
     wptr<BackgroundTaskMgrService> service_;
