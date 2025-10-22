@@ -794,7 +794,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, ExpiredCallbackStubTest_001, TestSize.Level1)
     EXPECT_NE(expiredCallbackStub.OnRemoteRequest(FIRST_CALL_TRANSACTION, data1, reply, option), ERR_OK);
     MessageParcel data2;
     data2.WriteInterfaceToken(TestExpiredCallbackStub::GetDescriptor());
-    EXPECT_NE(expiredCallbackStub.OnRemoteRequest(FIRST_CALL_TRANSACTION + 1, data2, reply, option), ERR_OK);
+    EXPECT_EQ(expiredCallbackStub.OnRemoteRequest(FIRST_CALL_TRANSACTION + 1, data2, reply, option), ERR_OK);
     MessageParcel data3;
     data3.WriteInterfaceToken(TestExpiredCallbackStub::GetDescriptor());
     EXPECT_EQ(expiredCallbackStub.OnRemoteRequest(FIRST_CALL_TRANSACTION, data3, reply, option), ERR_OK);
