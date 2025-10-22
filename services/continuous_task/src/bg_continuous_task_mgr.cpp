@@ -3155,10 +3155,6 @@ AuthExpiredCallbackDeathRecipient::~AuthExpiredCallbackDeathRecipient() {}
 
 void AuthExpiredCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return;
-    }
     auto service = service_.promote();
     if (service == nullptr) {
         BGTASK_LOGE("expired callback died, BackgroundTaskMgrService dead.");
@@ -3178,11 +3174,11 @@ void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeath(const wptr<IRemoteObjec
         return;
     }
     handler_->PostSyncTask([this, remote]() {
-        this->HandleAuthExpiredCallbackDeathInnre(remote);
+        this->HandleAuthExpiredCallbackDeathInner(remote);
         }, AppExecFwk::EventQueue::Priority::HIGH);
 }
 
-void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeathInnre(const wptr<IRemoteObject> &remote)
+void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeathInner(const wptr<IRemoteObject> &remote)
 {
     auto findCallback = [&remote](const auto& callbackMap) {
         return callbackMap.second->AsObject() == remote;

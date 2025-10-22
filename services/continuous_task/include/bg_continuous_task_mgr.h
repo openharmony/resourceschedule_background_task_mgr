@@ -266,7 +266,7 @@ public:
 
 private:
     wptr<BackgroundTaskMgrService> service_;
-};
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_BG_CONTINUOUS_TASK_MGR_H
