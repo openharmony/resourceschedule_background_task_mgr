@@ -33,6 +33,8 @@ const char *g_continuousTaskModeName[CONTINUOUS_TASK_MODE_LENGTH] = {
     "voip",
     "taskKeeping",
     "workout",
+    "default",
+    "avPlaybackAndRecord",
     "specialScenarioProcessing",
     "default",
 };

@@ -25,6 +25,7 @@
 #include "continuous_task_suspend_reason.h"
 #include "get_all_transient_tasks.h"
 #include "get_remaining_delay_time.h"
+#include "request_auth_from_user.h"
 #include "request_suspend_delay.h"
 #include "transient_task_log.h"
 #include "efficiency_resources_operation.h"

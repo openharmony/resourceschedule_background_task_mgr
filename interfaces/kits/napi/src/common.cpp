@@ -127,6 +127,19 @@ void Common::SetCallback(
         napi_call_function(env, undefined, callback, ASYNC_CALLBACK_PARAM_NUM, &results[0], &resultout));
 }
 
+void Common::SetAuthCallback(const napi_env &env, const napi_ref &callbackIn, int32_t authResult)
+{
+    napi_value undefined = nullptr;
+    napi_get_undefined(env, &undefined);
+    napi_value callback = nullptr;
+    napi_value resultout = nullptr;
+    napi_value result = nullptr;
+    napi_create_int32(env, authResult, &result);
+    napi_get_reference_value(env, callbackIn, &callback);
+    NAPI_CALL_RETURN_VOID(env,
+        napi_call_function(env, undefined, callback, EXPIRE_CALLBACK_PARAM_NUM, &result, &resultout));
+}
+
 napi_value Common::SetPromise(
     const napi_env &env, const AsyncWorkData &info, const napi_value &result)
 {

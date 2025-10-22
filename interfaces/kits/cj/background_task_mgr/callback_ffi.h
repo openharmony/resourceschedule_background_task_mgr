@@ -32,6 +32,8 @@ public:
 
     void OnExpired() override;
 
+    void OnExpiredAuth(int32_t authResult) override;
+
     void SetCallbackInfo(void (*callback)());
 
 private:

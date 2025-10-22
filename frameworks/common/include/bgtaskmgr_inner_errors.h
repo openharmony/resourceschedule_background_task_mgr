@@ -73,6 +73,8 @@ enum : int32_t {
     ERR_BGTASK_GET_APP_INDEX_FAIL,
     ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR,
     ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY,
+    ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR,
+    ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS,
     ERR_BGTASK_NOTIFICATION_VERIFY_FAILED = 980000601,
     ERR_BGTASK_NOTIFICATION_ERR,
     ERR_BGTASK_CHECK_TASK_PARAM,
@@ -238,6 +240,9 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "The current app has detected malicious behavior and is prohibited from applying."},
     {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY, "Continuous Task verification failed. "
         "The background task mode: DATA_TRANMODE_SPECIAL_SCENARIO_PROCESSINGSFER type is empty."},
+    {ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, "Continuous Task verification failed. "
+        "The callback cannot be null and its type must be function."},
+    {ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS, "Continuous Task verification failed. The callback already exists."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

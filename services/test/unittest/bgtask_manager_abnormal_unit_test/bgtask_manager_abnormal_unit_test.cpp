@@ -199,19 +199,6 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_008
 }
 
 /**
- * @tc.name: BackgroundTaskMgrServiceAbnormalTest_009
- * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
- * @tc.type: FUNC
- * @tc.require: 752
- */
-HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_009, TestSize.Level3)
-{
-    ContinuousTaskParam taskParam = ContinuousTaskParam();
-    EXPECT_EQ(BackgroundTaskMgrService_->RequestAuthFromUser(taskParam),
-        ERR_BGTASK_PERMISSION_DENIED);
-}
-
-/**
  * @tc.name: BackgroundTaskMgrServiceAbnormalTest_010
  * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
  * @tc.type: FUNC

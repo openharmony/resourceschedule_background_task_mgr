@@ -19,7 +19,7 @@
 
 #include "gtest/gtest.h"
 #include "bgtask_common.h"
-#include "background_task_subscriber.h"
+#include "background_mode.h"
 #include "background_task_subscriber_proxy.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_subscriber.h"
@@ -28,6 +28,8 @@
 #include "want_agent.h"
 #include "user_auth_result.h"
 #include "common_utils.h"
+#include "expired_callback_proxy.h"
+#include "expired_callback_stub.h"
 
 using namespace testing::ext;
 
@@ -110,6 +112,12 @@ public:
 
     void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo>
         &continuousTaskCallbackInfo) override {}
+};
+
+class TestExpiredCallbackStub : public ExpiredCallbackStub {
+public:
+    ErrCode OnExpired() override {return ERR_OK;}
+    ErrCode OnExpiredAuth(int32_t authResult) override {return ERR_OK;}
 };
 
 /**
@@ -1995,27 +2003,39 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialScenarioAuthInner_001, TestSize.Le
 HWTEST_F(BgContinuousTaskMgrTest, RequestAuthFromUser_001, TestSize.Level1)
 {
     bgContinuousTaskMgr_->isSysReady_.store(false);
-    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam), ERR_BGTASK_SYS_NOT_READY);
+    int32_t notificationId = 0;
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(nullptr, nullptr, notificationId), ERR_BGTASK_SYS_NOT_READY);
 
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(nullptr), ERR_BGTASK_CHECK_TASK_PARAM);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(nullptr, nullptr, notificationId),
+        ERR_BGTASK_CHECK_TASK_PARAM);
 
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, nullptr, notificationId),
+        ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR);
+
+    sptr<TestExpiredCallbackStub> expiredCallbackStub = sptr<TestExpiredCallbackStub>(new TestExpiredCallbackStub());
+    sptr<ExpiredCallbackProxy> proxy = sptr<ExpiredCallbackProxy>(
+        new ExpiredCallbackProxy(expiredCallbackStub->AsObject()));
     taskParam->bgModeIds_.clear();
     taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam),
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
         ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION);
 
     taskParam->bgModeIds_.clear();
     taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     taskParam->bgModeIds_.push_back(BackgroundMode::LOCATION);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam),
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
         ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK);
 
     taskParam->bgModeIds_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
+        ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY);
+
+    taskParam->bgModeIds_.clear();
     taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam),
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
         ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
 }
 }  // namespace BackgroundTaskMgr

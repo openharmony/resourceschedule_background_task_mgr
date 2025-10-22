@@ -57,6 +57,7 @@ public:
 class TestExpiredCallback : public ExpiredCallback {
 public:
     void OnExpired() override {}
+    void OnExpiredAuth(int32_t authResult) override {}
 };
 
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {};
@@ -90,6 +91,7 @@ class TestBackgroundTaskSubscriberStub : public BackgroundTaskSubscriberStub {
 class TestExpiredCallbackStub : public ExpiredCallbackStub {
 public:
     ErrCode OnExpired() override {return ERR_OK;}
+    ErrCode OnExpiredAuth(int32_t authResult) override {return ERR_OK;}
 };
 
 /**

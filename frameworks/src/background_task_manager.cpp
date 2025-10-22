@@ -496,12 +496,19 @@ ErrCode BackgroundTaskManager::SetMaliciousAppConfig(const std::set<std::string>
     return proxy_->SetMaliciousAppConfig(maliciousAppSet);
 }
 
-ErrCode BackgroundTaskManager::RequestAuthFromUser(const ContinuousTaskParam &taskParam)
+ErrCode BackgroundTaskManager::RequestAuthFromUser(const ContinuousTaskParam &taskParam,
+    const ExpiredCallback &callback, int32_t &notificationId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return proxy_->RequestAuthFromUser(taskParam);
+    sptr<ExpiredCallback::ExpiredCallbackImpl> callbackSptr = callback.GetImpl();
+    if (callbackSptr == nullptr) {
+        BGTASK_LOGE("callbackSptr is nullptr");
+        return ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR;
+    }
+
+    return proxy_->RequestAuthFromUser(taskParam, callbackSptr, notificationId);
 }
 
 ErrCode BackgroundTaskManager::CheckSpecialScenarioAuth(uint32_t &authResult)

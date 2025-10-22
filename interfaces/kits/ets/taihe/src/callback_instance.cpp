@@ -38,6 +38,8 @@ void Callback::OnExpired()
     callbackInstances_.erase(findCallback);
 }
 
+void Callback::OnExpiredAuth(int32_t authResult) {}
+
 void Callback::SetCallbackInfo(
     callback_view<void(::ohos::resourceschedule::backgroundTaskManager::UndefinedType const&)> callback)
 {

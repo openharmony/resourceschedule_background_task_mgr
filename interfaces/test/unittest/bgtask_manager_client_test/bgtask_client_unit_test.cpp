@@ -270,6 +270,11 @@ public:
     {
         BgTaskClientUnitTest::expiredCallbackRet_ = "OnExpired";
     }
+
+    void OnExpiredAuth(int32_t authResult) override
+    {
+        BgTaskClientUnitTest::expiredCallbackRet_ = "OnExpiredAuth";
+    }
 };
 
 /**
@@ -776,6 +781,8 @@ HWTEST_F(BgTaskClientUnitTest, ExpiredCallback_001, TestSize.Level1)
     auto expiredCallbackImpl = std::make_shared<ExpiredCallback::ExpiredCallbackImpl>(expiredCallback);
     expiredCallbackImpl->OnExpired();
     EXPECT_EQ(expiredCallbackRet_, "OnExpired");
+    expiredCallbackImpl->OnExpiredAuth(1);
+    EXPECT_EQ(expiredCallbackRet_, "OnExpiredAuth");
 }
 
 /**

@@ -15,4 +15,5 @@
 
 interface OHOS.BackgroundTaskMgr.IExpiredCallback {
     [oneway, ipccode 0x00000001] void OnExpired();
+    [oneway] void OnExpiredAuth([in] int authResult);
 }

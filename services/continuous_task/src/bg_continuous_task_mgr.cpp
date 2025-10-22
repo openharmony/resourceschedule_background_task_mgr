@@ -146,6 +146,8 @@ bool BgContinuousTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& r
         BGTASK_LOGE("BgContinuousTaskMgr handler create failed!");
         return false;
     }
+    authCallbackDeathRecipient_ = new (std::nothrow)
+        AuthExpiredCallbackDeathRecipient(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
     std::string identity = IPCSkeleton::ResetCallingIdentity();
     bgTaskUid_ = IPCSkeleton::GetCallingUid();
     BGTASK_LOGI("BgContinuousTaskMgr service uid is: %{public}d", bgTaskUid_);
@@ -2901,7 +2903,8 @@ ErrCode BgContinuousTaskMgr::CheckSpecialModePermission(const sptr<ContinuousTas
     return ERR_OK;
 }
 
-ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam)
+ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam,
+    const sptr<IExpiredCallback>& callback, int32_t &notificationId)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
@@ -2911,11 +2914,15 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
         BGTASK_LOGE("continuous task param is null!");
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
+    if (callback == nullptr) {
+        BGTASK_LOGE("callback is nullptr");
+        return ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR;
+    }
     ErrCode ret = CheckSpecialModePermission(taskParam);
     if (ret != ERR_OK) {
         return ret;
     }
-    int32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
+    uint32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
         BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     if (specialModeSize == 0) {
         BGTASK_LOGE("not have bgmode: special scenario process");
@@ -2940,14 +2947,23 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     if (continuousTaskRecord->isSystem_) {
         return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
     }
-    handler_->PostSyncTask([this, &continuousTaskRecord, &ret]() {
-        ret = this->SendBannerNotification(continuousTaskRecord);
+    handler_->PostSyncTask([this, continuousTaskRecord, callback, &notificationId, &ret]() {
+        ret = this->SendBannerNotification(continuousTaskRecord, callback, notificationId);
         }, AppExecFwk::EventQueue::Priority::HIGH);
     return ret;
 }
 
-ErrCode BgContinuousTaskMgr::SendBannerNotification(std::shared_ptr<ContinuousTaskRecord> record)
+ErrCode BgContinuousTaskMgr::SendBannerNotification(std::shared_ptr<ContinuousTaskRecord> record,
+    const sptr<IExpiredCallback>& callback, int32_t &notificationId)
 {
+    auto findCallback = [&callback](const auto& callbackMap) {
+        return callback->AsObject() == callbackMap.second->AsObject();
+    };
+    auto callbackIter = find_if(expiredCallbackMap_.begin(), expiredCallbackMap_.end(), findCallback);
+    if (callbackIter != expiredCallbackMap_.end()) {
+        BGTASK_LOGI("request auth form user, callback is already exists.");
+        return ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS;
+    }
     std::string appName = GetMainAbilityLabel(record->bundleName_, record->userId_);
     if (appName == "") {
         BGTASK_LOGE("get main ability label fail.");
@@ -2974,6 +2990,12 @@ ErrCode BgContinuousTaskMgr::SendBannerNotification(std::shared_ptr<ContinuousTa
         bgTaskUid_, bannerNotificaitonBtn_);
     if (ret == ERR_OK) {
         // 横幅通知发送成功，保存
+        notificationId = bannerNotification->GetNotificationId();
+        auto remote = callback->AsObject();
+        expiredCallbackMap_[notificationId] = callback;
+        if (authCallbackDeathRecipient_ != nullptr) {
+            (void)remote->AddDeathRecipient(authCallbackDeathRecipient_);
+        }
         std::string key = bannerNotification->GetNotificationLabel();
         BGTASK_LOGI("send banner notification, label key: %{public}s", key.c_str());
         bannerNotificationRecord_.erase(key);
@@ -3106,8 +3128,80 @@ void BgContinuousTaskMgr::OnBannerNotificationActionButtonClickInner(const int32
         iter->SetAuthResult(UserAuthResult::GRANTED_ALWAYS);
     }
     // 点击授权按钮后，取消通知
-    if (iter->GetNotificationId() != -1) {
+    int32_t notificatinId = iter->GetNotificationId();
+    if (notificatinId != -1) {
         NotificationTools::GetInstance()->CancelNotification(iter->GetNotificationLabel(), iter->GetNotificationId());
+    }
+    // 触发回调
+    auto callbackIter = expiredCallbackMap_.find(notificatinId);
+    if (callbackIter != expiredCallbackMap_.end()) {
+        BGTASK_LOGE("click banner notificationId: %{public}d, trigger callback.", notificatinId);
+        uint32_t authResult = iter->GetAuthResult();
+        callbackIter->second->OnExpiredAuth(authResult);
+        auto remote = callbackIter->second->AsObject();
+        if (remote != nullptr) {
+            remote->RemoveDeathRecipient(authCallbackDeathRecipient_);
+        }
+        expiredCallbackMap_.erase(callbackIter);
+    } else {
+        BGTASK_LOGE("request expired, callback not found.");
+    }
+}
+
+AuthExpiredCallbackDeathRecipient::AuthExpiredCallbackDeathRecipient(const wptr<BackgroundTaskMgrService>& service)
+    : service_(service) {}
+
+AuthExpiredCallbackDeathRecipient::~AuthExpiredCallbackDeathRecipient() {}
+
+void AuthExpiredCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
+{
+    auto service = service_.promote();
+    if (service == nullptr) {
+        BGTASK_LOGE("expired callback died, BackgroundTaskMgrService dead.");
+        return;
+    }
+    service->HandleExpiredCallbackDeath(remote);
+}
+
+void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeath(const wptr<IRemoteObject> &remote)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+    if (remote == nullptr) {
+        BGTASK_LOGE("expiredCallback death, remote in callback is null.");
+        return;
+    }
+    handler_->PostSyncTask([this, remote]() {
+        this->HandleAuthExpiredCallbackDeathInner(remote);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+}
+
+void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeathInner(const wptr<IRemoteObject> &remote)
+{
+    auto findCallback = [&remote](const auto& callbackMap) {
+        return callbackMap.second->AsObject() == remote;
+    };
+    auto callbackIter = find_if(expiredCallbackMap_.begin(), expiredCallbackMap_.end(), findCallback);
+    if (callbackIter == expiredCallbackMap_.end()) {
+        BGTASK_LOGE("expiredCallback death, remote in callback not found.");
+        return;
+    }
+    int32_t notificationId = callbackIter->first;
+    BGTASK_LOGI("expiredCallback death, remote callback notificationId: %{public}d.", notificationId);
+    expiredCallbackMap_.erase(callbackIter);
+    if (notificationId != -1) {
+        auto findRecord = [notificationId](const auto &target) {
+            return notificationId == target.second->GetNotificationId();
+        };
+        auto findRecordIter = find_if(bannerNotificationRecord_.begin(), bannerNotificationRecord_.end(), findRecord);
+        if (findRecordIter == bannerNotificationRecord_.end()) {
+            BGTASK_LOGE("notificationId: %{public}d not have record", notificationId);
+            return;
+        }
+        std::string notificationLabel = findRecordIter->second->GetNotificationLabel();
+        NotificationTools::GetInstance()->CancelNotification(notificationLabel, notificationId);
     }
 }
 }  // namespace BackgroundTaskMgr

@@ -233,13 +233,6 @@ public:
     static ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet);
 
     /**
-     * @brief request mode MODE_SPECIAL_SCENARIO_PROCESSING auth.
-     * @param taskParam Request params.
-     * @return Returns ERR_OK if success, else failure.
-     */
-    static ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam);
-
-    /**
      * @brief check mode MODE_SPECIAL_SCENARIO_PROCESSING auth.
      * @param authResult auth result.
      * @return Returns ERR_OK if success, else failure.

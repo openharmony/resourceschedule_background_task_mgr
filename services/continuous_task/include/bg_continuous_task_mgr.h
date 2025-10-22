@@ -43,6 +43,7 @@
 #include "config_change_observer.h"
 #include "want.h"
 #include "banner_notification_record.h"
+#include "iexpired_callback.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -52,6 +53,7 @@ namespace {
 }
 class BackgroundTaskMgrService;
 class DataStorageHelper;
+class AuthExpiredCallbackDeathRecipient;
 
 enum class ContinuousTaskEventTriggerType: uint32_t {
     TASK_START,
@@ -97,7 +99,8 @@ public:
     ErrCode IsModeSupported(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode CheckTaskkeepingPermission(const sptr<ContinuousTaskParam> &taskParam,
         uint64_t callingTokenId, const std::string &bundleName, uint64_t fullTokenId);
-    ErrCode RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam);
+    ErrCode RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam, const sptr<IExpiredCallback> &callback,
+        int32_t &notificationId);
     ErrCode CheckSpecialScenarioAuth(uint32_t &authResult);
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
     bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false);
@@ -122,7 +125,7 @@ public:
     void HandleRemoveTaskByMode(uint32_t mode);
     void OnBannerNotificationActionButtonClick(const int32_t buttonType, const int32_t uid,
         const std::string &label);
-
+    void HandleAuthExpiredCallbackDeath(const wptr<IRemoteObject> &remote);
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
@@ -217,12 +220,14 @@ private:
     ErrCode SendLiveViewAndOtherNotification(std::shared_ptr<ContinuousTaskRecord> record);
     ErrCode SendNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
         std::shared_ptr<ContinuousTaskRecord> record, const std::string &appName, bool isSubNotification);
-    ErrCode SendBannerNotification(std::shared_ptr<ContinuousTaskRecord> record);
+    ErrCode SendBannerNotification(std::shared_ptr<ContinuousTaskRecord> record, const sptr<IExpiredCallback> &callback,
+        int32_t &notificationId);
     void OnBannerNotificationActionButtonClickInner(const int32_t buttonType, const int32_t uid,
         const std::string &label);
     void CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
         int32_t userId, int32_t appIndex);
     ErrCode CheckSpecialModePermission(const sptr<ContinuousTaskParam> &taskParam);
+    void HandleAuthExpiredCallbackDeathInner(const wptr<IRemoteObject> &remote);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
@@ -245,9 +250,22 @@ private:
     std::vector<std::string> continuousTaskText_ {};
     std::vector<std::string> continuousTaskSubText_ {};
     std::vector<std::string> bannerNotificaitonBtn_ {};
+    sptr<AuthExpiredCallbackDeathRecipient> authCallbackDeathRecipient_ {nullptr};
+    std::map<int32_t, sptr<IExpiredCallback>> expiredCallbackMap_;
     int32_t continuousTaskIdIndex_ = 0;
 
     DECLARE_DELAYED_SINGLETON(BgContinuousTaskMgr);
+};
+
+class AuthExpiredCallbackDeathRecipient final : public IRemoteObject::DeathRecipient {
+public:
+    explicit AuthExpiredCallbackDeathRecipient(const wptr<BackgroundTaskMgrService> &service);
+    ~AuthExpiredCallbackDeathRecipient() override;
+    DISALLOW_COPY_AND_MOVE(AuthExpiredCallbackDeathRecipient);
+    void OnRemoteDied(const wptr<IRemoteObject> &remote) override;
+
+private:
+    wptr<BackgroundTaskMgrService> service_;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

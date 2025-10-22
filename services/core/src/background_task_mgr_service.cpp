@@ -588,7 +588,8 @@ ErrCode BackgroundTaskMgrService::SetMaliciousAppConfig(const std::set<std::stri
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskMgrService::RequestAuthFromUser(const ContinuousTaskParam &taskParam)
+ErrCode BackgroundTaskMgrService::RequestAuthFromUser(const ContinuousTaskParam &taskParam,
+    const sptr<IExpiredCallback> &callback, int32_t &notificationId)
 {
     if (CheckAtomicService()) {
         pid_t callingPid = IPCSkeleton::GetCallingPid();
@@ -603,7 +604,7 @@ ErrCode BackgroundTaskMgrService::RequestAuthFromUser(const ContinuousTaskParam 
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
-    return BgContinuousTaskMgr::GetInstance()->RequestAuthFromUser(paramPtr);
+    return BgContinuousTaskMgr::GetInstance()->RequestAuthFromUser(paramPtr, callback, notificationId);
 }
 
 ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(uint32_t &authResult)
