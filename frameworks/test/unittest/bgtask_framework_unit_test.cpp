@@ -1005,7 +1005,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, RequestAuthFromUser_001, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     ContinuousTaskParam taskParam = ContinuousTaskParam();
     int32_t notificationId = 1;
-    auto expiredCallback = std::make_shared<TestExpiredCallback>(); 
+    auto expiredCallback = std::make_shared<TestExpiredCallback>();
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestAuthFromUser(taskParam,
         *expiredCallback, notificationId), ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
