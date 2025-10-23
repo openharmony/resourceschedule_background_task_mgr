@@ -210,7 +210,7 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
     taskParam.isByRequestObject_ = true;
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestAuthFromUser(taskParam, *callback, notificationId);
-    if (notificatinId == -1) {
+    if (notificationId == -1) {
         Common::HandleParamErr(env, ERR_BGTASK_NOTIFICATION_ERR, true);
         return Common::NapiGetNull(env);
     }

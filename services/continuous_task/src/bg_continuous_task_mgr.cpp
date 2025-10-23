@@ -1220,7 +1220,6 @@ ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotification(std::shared_ptr<Conti
                     mergeNotificationTaskId);
                 return ERR_BGTASK_CONTINUOUS_SPECIAL_SCENARIO_PROCESSING_NOT_MERGE_NOTIFICATION;
             }
-            
         }
         if (mergeNotificationTaskId == -1) {
             sendNotification = true;
