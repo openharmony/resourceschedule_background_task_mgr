@@ -633,6 +633,43 @@ bool StartBackgroundRunningCheckParamBeforeSubmit(napi_env env, napi_value *argv
     return true;
 }
 
+bool CheckSpecialModeParma(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
+{
+    std::vector<uint32_t> backgroundTaskModes = asyncCallbackInfo->request->GetBackgroundTaskModes();
+    int32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
+        BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
+    // 数据传输与特殊场景，不支持通知合并
+    if (asyncCallbackInfo->request->IsCombinedTaskNotification()) {
+        if (specialModeSize > 0) {
+            Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_SPECIAL_SCENARIO_PROCESSING_NOT_MERGE_NOTIFICATION, true);
+            asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_SPECIAL_SCENARIO_PROCESSING_NOT_MERGE_NOTIFICATION;
+            BGTASK_LOGE("background task mode: SPECIAL_SCENARIO_PROCESSING not support merge.");
+            return false;
+        }
+        int32_t dataTransferSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
+            BackgroundTaskMode::MODE_DATA_TRANSFER);
+        if (dataTransferSize > 0) {
+            Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION, true);
+            asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION;
+            BGTASK_LOGE("background task mode: DATA_TRANSFER not support merge.");
+            return false;
+        }
+    }
+    // 特殊场景处理长时任务类型单次最多允许申请一个
+    if (specialModeSize > MAX_TASK_NUMS) {
+        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION, true);
+        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
+        return false;
+    }
+    // 特殊场景处理长时任务类型与其他长时任务类型互斥
+    if (specialModeSize == MAX_TASK_NUMS && backgroundTaskModes.size() > MAX_TASK_NUMS) {
+        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK, true);
+        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
+        return false;
+    }
+    return true;
+}
+
 bool StartBackgroundRunningCheckModes(napi_env env, bool isThrow, AsyncCallbackInfo *asyncCallbackInfo)
 {
     std::vector<uint32_t> backgroundTaskModes = asyncCallbackInfo->request->GetBackgroundTaskModes();
@@ -647,18 +684,7 @@ bool StartBackgroundRunningCheckModes(napi_env env, bool isThrow, AsyncCallbackI
         asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_LENGTH_MISMATCH;
         return false;
     }
-    int32_t specialModeSize = std::count(backgroundTaskModes.begin(), backgroundTaskModes.end(),
-        BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
-    // 特殊场景处理长时任务类型单次最多允许申请一个
-    if (specialModeSize > MAX_TASK_NUMS) {
-        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION, true);
-        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
-        return false;
-    }
-    // 特殊场景处理长时任务类型与其他长时任务类型互斥
-    if (specialModeSize == MAX_TASK_NUMS && backgroundTaskModes.size() > MAX_TASK_NUMS) {
-        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK, true);
-        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
+    if (!CheckSpecialModeParma(env, asyncCallbackInfo)) {
         return false;
     }
     for (uint32_t index = 0; index < backgroundTaskSubmodes.size(); index++) {
