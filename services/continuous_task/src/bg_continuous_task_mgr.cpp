@@ -1209,11 +1209,18 @@ ErrCode BgContinuousTaskMgr::CheckCombinedTaskNotification(std::shared_ptr<Conti
     // 无需合并，新申请
     int32_t mergeNotificationTaskId = recordParam->combinedNotificationTaskId_;
     if (recordParam->isByRequestObject_) {
-        if (recordParam->isCombinedTaskNotification_ &&
-            CommonUtils::CheckExistMode(recordParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-            BGTASK_LOGE("background task mode: DATA_TRANSFER not support merge, taskId: %{public}d",
-                mergeNotificationTaskId);
-            return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION;
+        if (recordParam->isCombinedTaskNotification_) {
+            if (CommonUtils::CheckExistMode(recordParam->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+                BGTASK_LOGE("background task mode: DATA_TRANSFER not support merge, taskId: %{public}d",
+                    mergeNotificationTaskId);
+                return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION;
+            }
+            if (CommonUtils::CheckExistMode(recordParam->bgModeIds_, BackgroundMode::SPECIAL_SCENARIO_PROCESSING)) {
+                BGTASK_LOGE("background task mode: SPECIAL_SCENARIO_PROCESSING not support merge, taskId: %{public}d",
+                    mergeNotificationTaskId);
+                return ERR_BGTASK_CONTINUOUS_SPECIAL_SCENARIO_PROCESSING_NOT_MERGE_NOTIFICATION;
+            }
+            
         }
         if (mergeNotificationTaskId == -1) {
             sendNotification = true;

@@ -58,6 +58,7 @@ enum : int32_t {
     ERR_BGTASK_CONTINUOUS_NOT_UPDATE_BY_OLD_INTERFACE,
     ERR_BGTASK_CONTINUOUS_TASKID_INVALID,
     ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_MERGE_NOTIFICATION,
+    ERR_BGTASK_CONTINUOUS_SPECIAL_SCENARIO_PROCESSING_NOT_MERGE_NOTIFICATION,
     ERR_BGTASK_CONTINUOUS_NOT_MERGE_NOTIFICATION_NOT_EXIST,
     ERR_BGTASK_CONTINUOUS_NOT_MERGE_COMBINED_FALSE,
     ERR_BGTASK_CONTINUOUS_NOT_UPDATE_BECAUSE_MERGE,
@@ -243,6 +244,8 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, "Continuous Task verification failed. "
         "The callback cannot be null and its type must be function."},
     {ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS, "Continuous Task verification failed. The callback already exists."},
+    {ERR_BGTASK_CONTINUOUS_SPECIAL_SCENARIO_PROCESSING_NOT_MERGE_NOTIFICATION, "Continuous Task verification failed. "
+        "This background task mode: SPECIAL_SCENARIO_PROCESSING type do not support merged notification."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
