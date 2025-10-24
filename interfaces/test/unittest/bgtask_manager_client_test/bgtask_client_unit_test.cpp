@@ -1113,8 +1113,8 @@ HWTEST_F(BgTaskClientUnitTest, UserAuthResult_001, TestSize.Level1)
  */
 HWTEST_F(BgTaskClientUnitTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
 {
-    int32_t authResult = -1;
-    EXPECT_EQ(BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(authResult), ERR_OK);
+    uint32_t authResult = 0;
+    EXPECT_EQ(BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(authResult), ERR_BGTASK_PERMISSION_DENIED);
 }
 
 /**
@@ -1128,7 +1128,7 @@ HWTEST_F(BgTaskClientUnitTest, CheckTaskAuthResult_001, TestSize.Level1)
     std::string bundleName = "bundleName";
     int32_t userId = 100;
     int32_t appIndex = 0;
-    EXPECT_EQ(BackgroundTaskMgrHelper::CheckTaskAuthResult(bundleName, userId, appIndex), ERR_OK);
+    EXPECT_EQ(BackgroundTaskMgrHelper::CheckTaskAuthResult(bundleName, userId, appIndex), -1);
 }
 }
 }
