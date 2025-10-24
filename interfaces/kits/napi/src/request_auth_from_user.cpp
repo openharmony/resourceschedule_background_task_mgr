@@ -73,7 +73,7 @@ __attribute__((no_sanitize("cfi"))) void AuthCallbackInstance::OnExpired() {}
 
 __attribute__((no_sanitize("cfi"))) void AuthCallbackInstance::OnExpiredAuth(int32_t authResult)
 {
-    BGTASK_LOGE("OnExpiredAuth authresult: %{public}d", authResult);
+    BGTASK_LOGI("OnExpiredAuth authresult: %{public}d", authResult);
     std::lock_guard<std::mutex> lock(authCallbackLock_);
     auto findCallback = std::find_if(authCallbackInstances_.begin(), authCallbackInstances_.end(),
         [&](const auto& callbackInstance) { return callbackInstance.second.get() == this; }
@@ -210,12 +210,15 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
     taskParam.isByRequestObject_ = true;
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestAuthFromUser(taskParam, *callback, notificationId);
+    if (notificationId == -1) {
+        Common::HandleParamErr(env, ERR_BGTASK_NOTIFICATION_ERR, true);
+        return Common::NapiGetNull(env);
+    }
     Common::HandleErrCode(env, errCode, true);
     {
         std::lock_guard<std::mutex> lock(authCallbackLock_);
         authCallbackInstances_[notificationId] = callback;
     }
-
     napi_value result = nullptr;
     napi_create_int32(env, 0, &result);
     return result;
