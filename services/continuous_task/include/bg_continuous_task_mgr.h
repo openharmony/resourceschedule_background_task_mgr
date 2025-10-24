@@ -226,6 +226,7 @@ private:
         const std::string &label);
     void CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
         int32_t userId, int32_t appIndex);
+    ErrCode CheckModeSupportedPermission(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode CheckSpecialModePermission(const sptr<ContinuousTaskParam> &taskParam);
     void HandleAuthExpiredCallbackDeathInner(const wptr<IRemoteObject> &remote);
 private:
