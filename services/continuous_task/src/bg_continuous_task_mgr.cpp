@@ -2911,7 +2911,7 @@ ErrCode BgContinuousTaskMgr::SendLiveViewAndOtherNotification(std::shared_ptr<Co
 
 ErrCode BgContinuousTaskMgr::CheckSpecialModePermission(const sptr<ContinuousTaskParam> &taskParam)
 {
-    std::vector<uint32_t> backgroundTaskModesValue = taskParam->bgModeId_;
+    std::vector<uint32_t> backgroundTaskModesValue = taskParam->bgModeIds_;
     std::vector<uint32_t> backgroundTaskSubModesValue = taskParam->bgSubModeIds_;
     if (backgroundTaskModesValue.size() == 0 || backgroundTaskSubModesValue.size() == 0) {
         return ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY;
@@ -2929,7 +2929,8 @@ ErrCode BgContinuousTaskMgr::CheckSpecialModePermission(const sptr<ContinuousTas
         return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
     }
     for (const auto &subMode : backgroundTaskSubModesValue) {
-        if (BackgroundTaskMode::GetSubModeTypeMatching(subMode) != BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING) {
+        if (BackgroundTaskMode::GetSubModeTypeMatching(subMode) !=
+            BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING) {
             return ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
         }
     }
