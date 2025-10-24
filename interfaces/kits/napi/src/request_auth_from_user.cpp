@@ -130,6 +130,44 @@ napi_value GetExpiredCallback(
     return Common::NapiGetNull(env);
 }
 
+bool CheckReqestParam(napi_env env, const std::shared_ptr<ContinuousTaskRequest> request)
+{
+    std::vector<uint32_t> backgroundTaskModesValue = request->GetBackgroundTaskModes();
+    std::vector<uint32_t> backgroundTaskSubModesValue = request->GetBackgroundTaskSubmodes();
+    if (backgroundTaskModesValue.size() == 0 || backgroundTaskSubModesValue.size() == 0) {
+        BGTASK_LOGE("backgroundTaskModes or backgroundTaskSubModes is empty.");
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY, true);
+        return false;
+    }
+    uint32_t specialModeSize = std::count(backgroundTaskModesValue.begin(), backgroundTaskModesValue.end(),
+        BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
+    if (specialModeSize == 0) {
+        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY, true);
+        BGTASK_LOGE("mode: SPECIAL_SCENARIO_PROCESSING is empty.");
+        return false;
+    }
+    if (specialModeSize > 1) {
+        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION, true);
+        BGTASK_LOGE("mode: SPECIAL_SCENARIO_PROCESSING quantity exceeds one.");
+        return false;
+    }
+    if (specialModeSize == 1 && backgroundTaskModesValue.size() > 1) {
+        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK, true);
+        BGTASK_LOGE("request auth cannot have other background mode. except SPECIAL_SCENARIO_PROCESSING.");
+        return false;
+    }
+    // 主类型与子类型是否匹配
+    for (const auto &subMode : backgroundTaskSubModesValue) {
+        if (BackgroundTaskMode::GetSubModeTypeMatching(subMode)
+            != BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING) {
+            Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH, true);
+            BGTASK_LOGE("background task submodes mismatch. mode: SPECIAL_SCENARIO_PROCESSING.");
+            return false;
+        }
+    }
+    return true;
+}
+
 bool CheckRequestAuthFromUserParam(napi_env env, napi_callback_info info,
     std::shared_ptr<ContinuousTaskRequest> request)
 {
@@ -142,31 +180,29 @@ bool CheckRequestAuthFromUserParam(napi_env env, napi_callback_info info,
         BGTASK_LOGE("do not have property backgroundTaskModes");
         return false;
     }
+    status = napi_has_named_property(env, jsThis, "backgroundTaskSubmodes", &hasProperty);
+    if (!hasProperty || status != napi_ok) {
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE, true);
+        BGTASK_LOGE("do not have property backgroundTaskSubmodes");
+        return false;
+    }
     napi_value backgroundTaskModes;
     status = napi_get_named_property(env, jsThis, "backgroundTaskModes", &backgroundTaskModes);
     if (status != napi_ok ||
         !Common::GetBackgroundTaskModesFromArray(env, backgroundTaskModes, request)) {
         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE, true);
-        BGTASK_LOGE("failed to check params");
+        BGTASK_LOGE("failed to format backgroundTaskModes params");
         return false;
     }
-    std::vector<uint32_t> backgroundTaskModesValue = request->GetBackgroundTaskModes();
-    if (backgroundTaskModesValue.size() == 0) {
-        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY, true);
+    napi_value backgroundTaskSubModes;
+    status = napi_get_named_property(env, jsThis, "backgroundTaskSubmodes", &backgroundTaskSubModes);
+    if (status != napi_ok ||
+        !Common::GetBackgroundTaskSubmodesFromArray(env, backgroundTaskSubModes, request)) {
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE, true);
+        BGTASK_LOGE("failed to format backgroundTaskSubmodes params");
         return false;
     }
-    uint32_t specialModeSize = std::count(backgroundTaskModesValue.begin(), backgroundTaskModesValue.end(),
-        BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
-    if (specialModeSize == 0) {
-        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY, true);
-        return false;
-    }
-    if (specialModeSize > 1) {
-        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION, true);
-        return false;
-    }
-    if (specialModeSize == 1 && backgroundTaskModesValue.size() > 1) {
-        Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK, true);
+    if (!CheckReqestParam(env, request)) {
         return false;
     }
     return true;
