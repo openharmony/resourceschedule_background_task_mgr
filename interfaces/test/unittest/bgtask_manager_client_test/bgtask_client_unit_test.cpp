@@ -1104,5 +1104,31 @@ HWTEST_F(BgTaskClientUnitTest, UserAuthResult_001, TestSize.Level1)
     EXPECT_EQ(GRANTED_ALWAYS, (int32_t)UserAuthResult::GRANTED_ALWAYS);
     EXPECT_EQ(AUTH_END, (int32_t)UserAuthResult::END);
 }
+
+/**
+ * @tc.name: CheckSpecialScenarioAuth_001
+ * @tc.desc: test CheckSpecialScenarioAuth.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
+{
+    int32_t authResult = -1;
+    EXPECT_EQ(BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(authResult), ERR_OK);
+}
+
+/**
+ * @tc.name: CheckTaskAuthResult_001
+ * @tc.desc: test CheckTaskAuthResult.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, CheckTaskAuthResult_001, TestSize.Level1)
+{
+    std::string bundleName = "bundleName";
+    int32_t userId = 100;
+    int32_t appIndex = 0;
+    EXPECT_EQ(BackgroundTaskMgrHelper::CheckTaskAuthResult(bundleName, userId, appIndex), ERR_OK);
+}
 }
 }
