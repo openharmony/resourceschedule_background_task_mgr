@@ -244,6 +244,7 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, backgroundTaskModesValue[0],
         nullptr, "", nullptr, "", true, backgroundTaskModesValue, -1);
     taskParam.isByRequestObject_ = true;
+    taskParam.bgSubModeIds_ = request->GetBackgroundTaskSubmodes();
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestAuthFromUser(taskParam, *callback, notificationId);
     if (notificationId == -1) {
