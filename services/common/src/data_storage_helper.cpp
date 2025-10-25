@@ -33,8 +33,10 @@ namespace BackgroundTaskMgr {
 namespace {
 static constexpr char TASK_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/running_task";
 static const std::string RESOURCE_RECORD_FILE_PATH = "/data/service/el1/public/background_task_mgr/resource_record";
+static constexpr char AUTH_RECORD_FILE_PATH[] = "/data/service/el1/public/background_task_mgr/auth_record";
 static const std::string APP_RESOURCE_RECORD = "appResourceRecord";
 static const std::string PROCESS_RESOURCE_RECORD = "processResourceRecord";
+static const std::string AUTH_RECORD = "authRecord";
 const std::string PARAM = "param";
 const std::string FAST_FROZEN = "fast_frozen";
 const std::string ENABLE = "enable";
@@ -91,6 +93,24 @@ ErrCode DataStorageHelper::RestoreTaskRecord(std::unordered_map<std::string,
     return ERR_OK;
 }
 
+ErrCode DataStorageHelper::RestoreAuthRecord(std::unordered_map<std::string,
+    std::shared_ptr<BannerNotificationRecord>> &authRecord)
+{
+    nlohmann::json root;
+    if (ParseJsonValueFromFile(root, AUTH_RECORD_FILE_PATH) != ERR_OK) {
+        BGTASK_LOGE("bannerNotification parse json value from file fail.");
+        return ERR_BGTASK_DATA_STORAGE_ERR;
+    }
+    for (auto iter = root.begin(); iter != root.end(); iter++) {
+        nlohmann::json recordJson = iter.value();
+        std::shared_ptr<BannerNotificationRecord> record = std::make_shared<BannerNotificationRecord>();
+        if (record->ParseFromJson(recordJson)) {
+            authRecord.emplace(iter.key(), record);
+        }
+    }
+    return ERR_OK;
+}
+
 ErrCode DataStorageHelper::RefreshResourceRecord(const ResourceRecordMap &appRecord,
     const ResourceRecordMap &processRecord)
 {
@@ -113,6 +133,35 @@ ErrCode DataStorageHelper::RefreshResourceRecord(const ResourceRecordMap &appRec
         }
     }
     return SaveJsonValueToFile(record, RESOURCE_RECORD_FILE_PATH);
+}
+
+ErrCode DataStorageHelper::RefreshAuthRecord(
+    const std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> &authRecord)
+{
+    nlohmann::json root;
+    for (const auto &iter : authRecord) {
+        auto record = iter.second;
+        std::string data = record->ParseToJsonStr();
+        nlohmann::json recordJson = nlohmann::json::parse(data, nullptr, false);;
+        if (!recordJson.is_discarded()) {
+            root[iter.first] = recordJson;
+        }
+    }
+    if (access(AUTH_RECORD_FILE_PATH, F_OK) == ERR_OK) {
+        BGTASK_LOGD("the file: %{private}s already exists.", AUTH_RECORD_FILE_PATH);
+    } else {
+        FILE *file = fopen(AUTH_RECORD_FILE_PATH, "w+");
+        if (file == nullptr) {
+            BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
+            return ERR_BGTASK_CREATE_FILE_ERR;
+        }
+        int closeResult = fclose(file);
+        if (closeResult < 0) {
+            BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
+            return ERR_BGTASK_CREATE_FILE_ERR;
+        }
+    }
+    return SaveJsonValueToFile(root.dump(CommonUtils::jsonFormat_), AUTH_RECORD_FILE_PATH);
 }
 
 ErrCode DataStorageHelper::RestoreResourceRecord(ResourceRecordMap &appRecord,
