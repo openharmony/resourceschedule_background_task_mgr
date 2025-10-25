@@ -106,53 +106,21 @@ void BannerNotificationRecord::SetAppIndex(int32_t appIndex)
 
 void BannerNotificationRecord::SetRecordValue(const nlohmann::json &value)
 {
-    if (value.contains("bundleName") && value["bundleName"].is_string()) {
-        this->bundleName_ = value.at("bundleName").get<std::string>();
-    } else {
-        BGTASK_LOGE("no hava key: bundleName, or bunleName is not string type.");
-    }
-    if (value.contains("uid") && value["uid"].is_number_integer()) {
-        this->uid_ = value.at("uid").get<int32_t>();
-    } else {
-        BGTASK_LOGE("no hava key: uid, or uid is not number type.");
-    }
-    if (value.contains("notificationId") && value["notificationId"].is_number_integer()) {
-        this->notificationId_ = value.at("notificationId").get<int32_t>();
-    } else {
-        BGTASK_LOGE("no hava key: notificationId, or notificationId is not number type.");
-    }
-    if (value.contains("notificationLabel") && value["notificationLabel"].is_string()) {
-        this->notificationLabel_ = value.at("notificationLabel").get<std::string>();
-    } else {
-        BGTASK_LOGE("no hava key: notificationLabel, or notificationLabel is not string type.");
-    }
-    if (value.contains("appName") && value["appName"].is_string()) {
-        this->appName_ = value.at("appName").get<std::string>();
-    } else {
-        BGTASK_LOGE("no hava key: appName, or appName is not string type.");
-    }
-    if (value.contains("authResult") && value["authResult"].is_number_integer()) {
-        this->authResult_ = value.at("authResult").get<int32_t>();
-    } else {
-        BGTASK_LOGE("no hava key: authResult, or authResult is not number type.");
-    }
-    if (value.contains("userId") && value["userId"].is_number_integer()) {
-        this->userId_ = value.at("userId").get<int32_t>();
-    } else {
-        BGTASK_LOGE("no hava key: userId, or userId is not number type.");
-    }
-    if (value.contains("appIndex") && value["appIndex"].is_number_integer()) {
-        this->appIndex_ = value.at("appIndex").get<int32_t>();
-    } else {
-        BGTASK_LOGE("no hava key: appIndex, or appIndex is not number type.");
-    }
+    this->bundleName_ = value.at("bundleName").get<std::string>();
+    this->uid_ = value.at("uid").get<int32_t>();
+    this->notificationId_ = value.at("notificationId").get<int32_t>();
+    this->notificationLabel_ = value.at("notificationLabel").get<std::string>();
+    this->appName_ = value.at("appName").get<std::string>();
+    this->authResult_ = value.at("authResult").get<int32_t>();
+    this->userId_ = value.at("userId").get<int32_t>();
+    this->appIndex_ = value.at("appIndex").get<int32_t>();
 }
 
 bool CheckRecodKey(const nlohmann::json &value)
 {
     return !value["bundleName"].is_string() || !value["uid"].is_number_integer()
         || !value["notificationId"].is_number_integer() || !value["notificationLabel"].is_string()
-        || !value["appName"].is_string() || !value["authResult"].is_number_integer() 
+        || !value["appName"].is_string() || !value["authResult"].is_number_integer()
         || !value["userId"].is_number_integer() || !value["appIndex"].is_number_integer();
 }
 

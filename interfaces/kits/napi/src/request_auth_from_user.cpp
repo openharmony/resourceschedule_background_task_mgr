@@ -217,7 +217,6 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
 #endif
     std::shared_ptr<ContinuousTaskRequest> request = std::make_shared<ContinuousTaskRequest>();
     if (!CheckRequestAuthFromUserParam(env, info, request)) {
-        BGTASK_LOGE("check request auth params fail.");
         return Common::NapiGetNull(env);
     }
     size_t argc = REQUEST_AUTH_FORM_USER_PARAMS;
