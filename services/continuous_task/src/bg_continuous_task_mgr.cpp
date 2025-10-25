@@ -2738,6 +2738,23 @@ void BgContinuousTaskMgr::HandleRemoveTaskByMode(uint32_t mode)
     }
 }
 
+ErrCode BgContinuousTaskMgr::CheckModeSupportedPermission(const sptr<ContinuousTaskParam> &taskParam)
+{
+    int32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
+        BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    if (specialModeSize > 1) {
+        return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
+    }
+    if (specialModeSize == 1 && taskParam->bgModeIds_.size() > 1) {
+        return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
+    }
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
+        BGTASK_LOGE("background mode permission is not passed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return ERR_OK;
+}
+
 ErrCode BgContinuousTaskMgr::IsModeSupported(const sptr<ContinuousTaskParam> &taskParam)
 {
     if (!isSysReady_.load()) {
@@ -2745,7 +2762,7 @@ ErrCode BgContinuousTaskMgr::IsModeSupported(const sptr<ContinuousTaskParam> &ta
         return ERR_BGTASK_SYS_NOT_READY;
     }
 
-    ErrCode result = CheckSpecialModePermission(taskParam);
+    ErrCode result = CheckModeSupportedPermission(taskParam);
     if (result != ERR_OK) {
         return result;
     }
@@ -2894,13 +2911,28 @@ ErrCode BgContinuousTaskMgr::SendLiveViewAndOtherNotification(std::shared_ptr<Co
 
 ErrCode BgContinuousTaskMgr::CheckSpecialModePermission(const sptr<ContinuousTaskParam> &taskParam)
 {
+    std::vector<uint32_t> backgroundTaskModesValue = taskParam->bgModeIds_;
+    std::vector<uint32_t> backgroundTaskSubModesValue = taskParam->bgSubModeIds_;
+    if (backgroundTaskModesValue.size() == 0 || backgroundTaskSubModesValue.size() == 0) {
+        return ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY;
+    }
     int32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
         BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    if (specialModeSize == 0) {
+        BGTASK_LOGE("not have bgmode: special scenario process");
+        return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY;
+    }
     if (specialModeSize > 1) {
         return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
     }
     if (specialModeSize == 1 && taskParam->bgModeIds_.size() > 1) {
         return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
+    }
+    for (const auto &subMode : backgroundTaskSubModesValue) {
+        if (BackgroundTaskMode::GetSubModeTypeMatching(subMode) !=
+            BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING) {
+            return ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
+        }
     }
     if (!BundleManagerHelper::GetInstance()->CheckPermission(BGMODE_PERMISSION)) {
         BGTASK_LOGE("background mode permission is not passed");
@@ -2927,12 +2959,6 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     ErrCode ret = CheckSpecialModePermission(taskParam);
     if (ret != ERR_OK) {
         return ret;
-    }
-    uint32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
-        BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    if (specialModeSize == 0) {
-        BGTASK_LOGE("not have bgmode: special scenario process");
-        return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY;
     }
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     int32_t userId = -1;

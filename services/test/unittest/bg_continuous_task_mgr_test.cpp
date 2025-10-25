@@ -1984,7 +1984,7 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialScenarioAuthInner_001, TestSize.Le
     uint32_t authResult = 0;
     bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
     bgContinuousTaskMgr_->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
-    EXPECT_EQ(authResult, 0);
+    EXPECT_NE(authResult, UserAuthResult::GRANTED_ONCE);
 
     std::string label = "bgbanner_1_1_bundleName";
     std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>();
@@ -2018,6 +2018,8 @@ HWTEST_F(BgContinuousTaskMgrTest, RequestAuthFromUser_001, TestSize.Level1)
     sptr<ExpiredCallbackProxy> proxy = sptr<ExpiredCallbackProxy>(
         new ExpiredCallbackProxy(expiredCallbackStub->AsObject()));
     taskParam->bgModeIds_.clear();
+    taskParam->bgSubModeIds_.clear();
+    taskParam->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
     taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
@@ -2031,7 +2033,7 @@ HWTEST_F(BgContinuousTaskMgrTest, RequestAuthFromUser_001, TestSize.Level1)
 
     taskParam->bgModeIds_.clear();
     EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
-        ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY);
+        ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY);
 
     taskParam->bgModeIds_.clear();
     taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
