@@ -34,6 +34,9 @@ public:
     bool ParseFastSuspendDozeTime(const std::string &FilePath, int &time);
     std::string GetConfigFileAbsolutePath(const std::string &relativePath);
     int32_t ParseJsonValueFromFile(nlohmann::json &value, const std::string &filePath);
+    ErrCode RestoreAuthRecord(std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> &authRecord);
+    ErrCode RefreshAuthRecord(
+        const std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> &authRecord);
 
 private:
     int32_t SaveJsonValueToFile(const std::string &value, const std::string &filePath);

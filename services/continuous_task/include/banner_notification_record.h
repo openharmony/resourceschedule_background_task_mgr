@@ -18,6 +18,7 @@
 
 #include "parcel.h"
 #include "user_auth_result.h"
+#include "nlohmann/json.hpp"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -42,8 +43,12 @@ public:
     void SetAuthResult(int32_t authResult);
     void SetUserId(int32_t userId);
     void SetAppIndex(int32_t appIndex);
+    std::string ParseToJsonStr();
+    bool ParseFromJson(const nlohmann::json &value);
 
 private:
+    void SetRecordValue(const nlohmann::json &value);
+
     std::string bundleName_ {""};
     int32_t uid_ {0};
     int32_t notificationId_ {-1};

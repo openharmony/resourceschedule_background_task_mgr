@@ -139,7 +139,7 @@ bool CheckReqestParam(napi_env env, const std::shared_ptr<ContinuousTaskRequest>
         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY, true);
         return false;
     }
-    uint32_t specialModeSize = std::count(backgroundTaskModesValue.begin(), backgroundTaskModesValue.end(),
+    int32_t specialModeSize = std::count(backgroundTaskModesValue.begin(), backgroundTaskModesValue.end(),
         BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
     if (specialModeSize == 0) {
         Common::HandleErrCode(env, ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY, true);
@@ -217,7 +217,6 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
 #endif
     std::shared_ptr<ContinuousTaskRequest> request = std::make_shared<ContinuousTaskRequest>();
     if (!CheckRequestAuthFromUserParam(env, info, request)) {
-        BGTASK_LOGE("check request auth params fail.");
         return Common::NapiGetNull(env);
     }
     size_t argc = REQUEST_AUTH_FORM_USER_PARAMS;
@@ -244,6 +243,7 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, backgroundTaskModesValue[0],
         nullptr, "", nullptr, "", true, backgroundTaskModesValue, -1);
     taskParam.isByRequestObject_ = true;
+    taskParam.bgSubModeIds_ = request->GetBackgroundTaskSubmodes();
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestAuthFromUser(taskParam, *callback, notificationId);
     if (notificationId == -1) {

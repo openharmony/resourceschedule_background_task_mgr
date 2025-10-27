@@ -14,6 +14,8 @@
  */
 
 #include "banner_notification_record.h"
+#include "common_utils.h"
+#include "continuous_task_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -100,6 +102,55 @@ void BannerNotificationRecord::SetUserId(int32_t userId)
 void BannerNotificationRecord::SetAppIndex(int32_t appIndex)
 {
     appIndex_ = appIndex;
+}
+
+void BannerNotificationRecord::SetRecordValue(const nlohmann::json &value)
+{
+    this->bundleName_ = value.at("bundleName").get<std::string>();
+    this->uid_ = value.at("uid").get<int32_t>();
+    this->notificationId_ = value.at("notificationId").get<int32_t>();
+    this->notificationLabel_ = value.at("notificationLabel").get<std::string>();
+    this->appName_ = value.at("appName").get<std::string>();
+    this->authResult_ = value.at("authResult").get<int32_t>();
+    this->userId_ = value.at("userId").get<int32_t>();
+    this->appIndex_ = value.at("appIndex").get<int32_t>();
+}
+
+bool CheckRecodKey(const nlohmann::json &value)
+{
+    return !value["bundleName"].is_string() || !value["uid"].is_number_integer()
+        || !value["notificationId"].is_number_integer() || !value["notificationLabel"].is_string()
+        || !value["appName"].is_string() || !value["authResult"].is_number_integer()
+        || !value["userId"].is_number_integer() || !value["appIndex"].is_number_integer();
+}
+
+bool BannerNotificationRecord::ParseFromJson(const nlohmann::json &value)
+{
+    if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value, { "bundleName",
+        "uid", "notificationId", "notificationLabel", "appName", "authResult", "userId", "appIndex"})) {
+        BGTASK_LOGE("bannerNotificationRecord no key.");
+        return false;
+    }
+    if (CheckRecodKey(value)) {
+        BGTASK_LOGE("bannerNotificationRecord parse from json fail.");
+        return false;
+    }
+    SetRecordValue(value);
+    return true;
+}
+
+std::string BannerNotificationRecord::ParseToJsonStr()
+{
+    nlohmann::json root;
+    root["bundleName"] = bundleName_;
+    root["uid"] = uid_;
+    root["notificationId"] = notificationId_;
+    root["notificationLabel"] = notificationLabel_;
+    root["appName"] = appName_;
+    root["authResult"] = authResult_;
+    root["userId"] = userId_;
+    root["appIndex"] = appIndex_;
+    return root.dump(CommonUtils::jsonFormat_);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

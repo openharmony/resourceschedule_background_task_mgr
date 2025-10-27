@@ -240,6 +240,8 @@ void BgContinuousTaskMgr::HandlePersistenceData()
     CheckPersistenceData(allAppProcessInfos);
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap_);
     RestoreApplyRecord();
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreAuthRecord(bannerNotificationRecord_);
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshAuthRecord(bannerNotificationRecord_);
 }
 
 void BgContinuousTaskMgr::RestoreApplyRecord()
@@ -2261,6 +2263,7 @@ bool BgContinuousTaskMgr::StopBannerContinuousTaskByUserInner(const std::string 
         if (iter->GetAuthResult() != UserAuthResult::GRANTED_ONCE &&
             iter->GetAuthResult() != UserAuthResult::GRANTED_ALWAYS) {
             bannerNotificationRecord_.erase(label);
+            RefreshAuthRecord();
         } else {
             BGTASK_LOGI("alread auth not remove record, label key: %{public}s", label.c_str());
         }
@@ -2914,15 +2917,17 @@ ErrCode BgContinuousTaskMgr::CheckSpecialModePermission(const sptr<ContinuousTas
     std::vector<uint32_t> backgroundTaskModesValue = taskParam->bgModeIds_;
     std::vector<uint32_t> backgroundTaskSubModesValue = taskParam->bgSubModeIds_;
     if (backgroundTaskModesValue.size() == 0 || backgroundTaskSubModesValue.size() == 0) {
+        BGTASK_LOGE("backgroundTaskModesValue or backgroundTaskSubModesValue is empty.");
         return ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY;
     }
     int32_t specialModeSize = std::count(taskParam->bgModeIds_.begin(), taskParam->bgModeIds_.end(),
         BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     if (specialModeSize == 0) {
-        BGTASK_LOGE("not have bgmode: special scenario process");
+        BGTASK_LOGE("not have bgmode: special scenario process.");
         return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY;
     }
     if (specialModeSize > 1) {
+        BGTASK_LOGE("mode: special scenario process must have only one.");
         return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
     }
     if (specialModeSize == 1 && taskParam->bgModeIds_.size() > 1) {
@@ -3020,20 +3025,21 @@ ErrCode BgContinuousTaskMgr::SendBannerNotification(std::shared_ptr<ContinuousTa
     bannerNotification->SetAppIndex(bundleInfo.appIndex);
     ErrCode ret = NotificationTools::GetInstance()->PublishBannerNotification(bannerNotification, bannerContent,
         bgTaskUid_, bannerNotificaitonBtn_);
-    if (ret == ERR_OK) {
-        // 横幅通知发送成功，保存
-        notificationId = bannerNotification->GetNotificationId();
-        auto remote = callback->AsObject();
-        expiredCallbackMap_[notificationId] = callback;
-        if (authCallbackDeathRecipient_ != nullptr) {
-            (void)remote->AddDeathRecipient(authCallbackDeathRecipient_);
-        }
-        std::string key = bannerNotification->GetNotificationLabel();
-        BGTASK_LOGI("send banner notification, label key: %{public}s", key.c_str());
-        bannerNotificationRecord_.erase(key);
-        bannerNotificationRecord_.emplace(key, bannerNotification);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("uid: %{public}d send banner notification fail.", record->uid_);
+        return ret;
     }
-    return ret;
+    notificationId = bannerNotification->GetNotificationId();
+    auto remote = callback->AsObject();
+    expiredCallbackMap_[notificationId] = callback;
+    if (authCallbackDeathRecipient_ != nullptr) {
+        (void)remote->AddDeathRecipient(authCallbackDeathRecipient_);
+    }
+    std::string key = bannerNotification->GetNotificationLabel();
+    BGTASK_LOGI("send banner notification, label key: %{public}s", key.c_str());
+    bannerNotificationRecord_.erase(key);
+    bannerNotificationRecord_.emplace(key, bannerNotification);
+    return RefreshAuthRecord();
 }
 
 bool BgContinuousTaskMgr::FormatBannerNotificationContext(const std::string &appName,
@@ -3159,6 +3165,7 @@ void BgContinuousTaskMgr::OnBannerNotificationActionButtonClickInner(const int32
         BGTASK_LOGI("user click allow allowed, uid: %{public}d", uid);
         iter->SetAuthResult(UserAuthResult::GRANTED_ALWAYS);
     }
+    RefreshAuthRecord();
     // 点击授权按钮后，取消通知
     int32_t notificatinId = iter->GetNotificationId();
     if (notificatinId != -1) {
@@ -3168,7 +3175,7 @@ void BgContinuousTaskMgr::OnBannerNotificationActionButtonClickInner(const int32
     auto callbackIter = expiredCallbackMap_.find(notificatinId);
     if (callbackIter != expiredCallbackMap_.end()) {
         BGTASK_LOGE("click banner notificationId: %{public}d, trigger callback.", notificatinId);
-        uint32_t authResult = iter->GetAuthResult();
+        int32_t authResult = iter->GetAuthResult();
         callbackIter->second->OnExpiredAuth(authResult);
         auto remote = callbackIter->second->AsObject();
         if (remote != nullptr) {
@@ -3234,7 +3241,19 @@ void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeathInner(const wptr<IRemote
         }
         std::string notificationLabel = findRecordIter->second->GetNotificationLabel();
         NotificationTools::GetInstance()->CancelNotification(notificationLabel, notificationId);
+        bannerNotificationRecord_.erase(findRecordIter);
+        RefreshAuthRecord();
     }
+}
+
+ErrCode BgContinuousTaskMgr::RefreshAuthRecord()
+{
+    int32_t ret = DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshAuthRecord(bannerNotificationRecord_);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("refresh auth data failed.");
+        return ret;
+    }
+    return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
