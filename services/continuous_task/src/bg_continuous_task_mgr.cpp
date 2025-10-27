@@ -3175,7 +3175,7 @@ void BgContinuousTaskMgr::OnBannerNotificationActionButtonClickInner(const int32
     auto callbackIter = expiredCallbackMap_.find(notificatinId);
     if (callbackIter != expiredCallbackMap_.end()) {
         BGTASK_LOGE("click banner notificationId: %{public}d, trigger callback.", notificatinId);
-        uint32_t authResult = iter->GetAuthResult();
+        int32_t authResult = iter->GetAuthResult();
         callbackIter->second->OnExpiredAuth(authResult);
         auto remote = callbackIter->second->AsObject();
         if (remote != nullptr) {
