@@ -61,14 +61,15 @@ private:
         void OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData) override;
         void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
         {}
-        void OnExtensionStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
-        {}
+        void OnExtensionStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override;
         void OnProcessCreated(const AppExecFwk::ProcessData &processData) override
         {}
         void OnProcessDied(const AppExecFwk::ProcessData &processData) override
         {}
 
     private:
+        void HandleStateChange(const std::string &bundleName, int32_t uid, bool isForeground, bool isBackground);
+
         DecisionMaker &decisionMaker_;
     };
 

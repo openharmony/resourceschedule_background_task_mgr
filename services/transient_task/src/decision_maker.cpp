@@ -111,26 +111,50 @@ void DecisionMaker::AppMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>
     decisionMaker_.GetAppMgrProxy();
 }
 
+void DecisionMaker::ApplicationStateObserver::OnExtensionStateChanged(
+    const AppExecFwk::AbilityStateData &abilityStateData)
+{
+    bool isForeground =
+        abilityStateData.abilityState == static_cast<int32_t>(AppExecFwk::ExtensionState::EXTENSION_STATE_FOREGROUND);
+    bool isBackground =
+        abilityStateData.abilityState == static_cast<int32_t>(AppExecFwk::ExtensionState::EXTENSION_STATE_BACKGROUND);
+    if (isForeground || isBackground) {
+        HandleStateChange(abilityStateData.bundleName, abilityStateData.uid, isForeground, isBackground);
+    }
+}
+
 void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
     const AppExecFwk::AppStateData &appStateData)
 {
-    lock_guard<mutex> lock(decisionMaker_.lock_);
+    bool isForeground =
+        appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND) ||
+        appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS);
+    bool isBackground =
+        appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND);
+    if (isForeground || isBackground) {
+        HandleStateChange(appStateData.bundleName, appStateData.uid, isForeground, isBackground);
+    }
+}
 
-    auto key = std::make_shared<KeyInfo>(appStateData.bundleName, appStateData.uid);
-    if (appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND) ||
-        appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS)) {
+void DecisionMaker::ApplicationStateObserver::HandleStateChange(
+    const std::string &bundleName, int32_t uid, bool isForeground, bool isBackground)
+{
+    lock_guard<mutex> lock(decisionMaker_.lock_);
+    auto key = std::make_shared<KeyInfo>(bundleName, uid);
+
+    if (isForeground) {
         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
         if (it != decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
             auto pkgInfo = it->second;
-            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is foreground applicaion, stop accounting",
-                appStateData.bundleName.c_str(), appStateData.uid);
+            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is foreground, stop accounting",
+                bundleName.c_str(), uid);
             pkgInfo->StopAccountingAll();
         }
         auto itBg = decisionMaker_.pkgBgDurationMap_.find(key);
         if (itBg != decisionMaker_.pkgBgDurationMap_.end()) {
             decisionMaker_.pkgBgDurationMap_.erase(itBg);
         }
-    } else if (appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND)) {
+    } else if (isBackground) {
         decisionMaker_.pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
         if (it == decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
@@ -138,8 +162,8 @@ void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
         }
         auto pkgInfo = it->second;
         if (decisionMaker_.CanStartAccountingLocked(pkgInfo)) {
-            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is background applicaion, start accounting",
-                appStateData.bundleName.c_str(), appStateData.uid);
+            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is background, start accounting",
+                bundleName.c_str(), uid);
             pkgInfo->StartAccounting();
         }
     }

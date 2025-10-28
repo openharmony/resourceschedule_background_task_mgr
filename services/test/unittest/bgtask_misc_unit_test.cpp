@@ -847,5 +847,45 @@ HWTEST_F(BgTaskMiscUnitTest, SystemEventObserver_001, TestSize.Level2)
     systemEventListener->OnReceiveEventEfficiencyRes(eventData2);
     EXPECT_TRUE(true);
 }
+
+/**
+ * @tc.name: OnExtensionStateChanged_001
+ * @tc.desc: test ApplicationStateObserver class.
+ * @tc.type: FUNC
+ * @tc.require: https://gitcode.com/openharmony/resourceschedule_background_task_mgr/issues/776
+ */
+HWTEST_F(BgTaskMiscUnitTest, OnExtensionStateChanged_001, TestSize.Level2)
+{
+    auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
+    auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
+    auto timerManager =
+        std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
+    auto applicationStateObserver = sptr<DecisionMaker::ApplicationStateObserver>(
+        new (std::nothrow) DecisionMaker::ApplicationStateObserver(*decisionMaker));
+
+    AppExecFwk::AbilityStateData abilityStateData;
+    abilityStateData.uid = 1;
+    abilityStateData.bundleName = "bundleName1";
+    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::ExtensionState::EXTENSION_STATE_FOREGROUND);
+    applicationStateObserver->OnExtensionStateChanged(abilityStateData);
+
+    auto keyInfo1 = std::make_shared<KeyInfo>("bundleName1", 1);
+    auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", 1, timerManager);
+    auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1);
+    pkgDelaySuspendInfo->requestList_.push_back(delayInfo);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
+    auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
+    decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
+    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::ExtensionState::EXTENSION_STATE_FOREGROUND);
+    applicationStateObserver->OnExtensionStateChanged(abilityStateData);
+
+    decisionMaker->pkgDelaySuspendInfoMap_.clear();
+    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::ExtensionState::EXTENSION_STATE_BACKGROUND);
+    applicationStateObserver->OnExtensionStateChanged(abilityStateData);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
+    applicationStateObserver->OnExtensionStateChanged(abilityStateData);
+    EXPECT_EQ((int32_t)decisionMaker->pkgDelaySuspendInfoMap_.size(), 1);
+}
 }
 }
