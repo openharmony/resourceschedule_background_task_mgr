@@ -76,6 +76,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_allow_time",
+            "value":"Izinkan kali ini saja",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"text_notification_allow_background_keepalive",
+            "value":"Izinkan %s menjalankan aktivitas berdurasi panjang di latar belakang?",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_media_process",
+            "value":"Tugas pemrosesan media sedang berlangsung. Menutup notifikasi ini akan mengakhiri tugas tersebut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_video_broadcast",
+            "value":"Tugas penyiaran video sedang berlangsung. Menutup notifikasi ini akan mengakhiri tugas tersebut.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
