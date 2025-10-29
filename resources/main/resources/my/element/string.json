@@ -76,6 +76,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_allow_time",
+            "value":"ဤတစ်ကြိမ်အတွက်သာ ခွင့်ပြုမည်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"text_notification_allow_background_keepalive",
+            "value":"နောက်ခံတွင် ရေရှည်ဆောင်ရွက်မှု လုပ်ငန်းများကို လုပ်ရန် %s အား ခွင့်ပြုမည်လား။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_media_process",
+            "value":"မီဒီယာ စီမံလုပ်ဆောင်ရေးအလုပ် လုပ်နေဆဲ။ ဤအသိပေးချက်ကို ပိတ်လျှင် ၎င်းကို အဆုံးသတ်လိုက်ပါမည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_video_broadcast",
+            "value":"ဗီဒီယို ထုတ်လွှင့်ပြသမှုအလုပ် လုပ်နေဆဲ။ ဤအသိပေးချက်ကို ပိတ်လျှင် ၎င်းကို အဆုံးသတ်လိုက်ပါမည်။",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
