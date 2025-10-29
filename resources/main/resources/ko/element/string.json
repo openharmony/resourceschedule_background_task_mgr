@@ -76,6 +76,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_allow_time",
+            "value":"이번만 허용",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"text_notification_allow_background_keepalive",
+            "value":"%s 앱이 백그라운드에서 활동을 오래 실행하도록 허용하시겠습니까?",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_media_process",
+            "value":"미디어 처리 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_video_broadcast",
+            "value":"비디오 방송 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

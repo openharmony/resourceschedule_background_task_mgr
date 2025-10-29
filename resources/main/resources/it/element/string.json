@@ -76,6 +76,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_allow_time",
+            "value":"Consenti solo questa volta",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"text_notification_allow_background_keepalive",
+            "value":"Vuoi consentire a %s l'esecuzione di attività di lunga durata in background?",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_media_process",
+            "value":"È in corso un'attività di elaborazione dei contenuti multimediali. Chiudendo questa notifica, l'attività verrà terminata.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_video_broadcast",
+            "value":"È in corso un'attività di trasmissione video. Chiudendo questa notifica, l'attività verrà terminata.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

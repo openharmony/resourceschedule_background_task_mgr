@@ -76,6 +76,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_allow_time",
+            "value":"ອະນຸຍາດຄັ້ງນີ້ເທົ່ານັ້ນ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"text_notification_allow_background_keepalive",
+            "value":"ອະນຸຍາດໃຫ້ %s ເຮັດກິດຈະກຳທີ່ດຳເນີນການຍາວນານໃນພື້ນຫຼັງບໍ?",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_media_process",
+            "value":"ໜ້າວຽກການປະມວນຜົນມີເດຍພວມດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_video_broadcast",
+            "value":"ໜ້າວຽກການອອກອາກາດວິດີໂອພວມດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
