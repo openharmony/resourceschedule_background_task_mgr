@@ -76,6 +76,27 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"text_notification_allow_background_keepalive",
+            "value":"هل تسمح لتطبيق %s بتنفيذ أنشطة طويلة المدى في الخلفية؟",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_media_process",
+            "value":"جارٍ تنفيذ مهمة معالجة وسائط. سيؤدي إغلاق هذا الإشعار إلى إنهائها.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_video_broadcast",
+            "value":"جارٍ تنفيذ مهمة بث فيديو. سيؤدي إغلاق هذا الإشعار إلى إنهائها.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
