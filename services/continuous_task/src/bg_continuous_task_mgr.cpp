@@ -1009,7 +1009,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
         BGTASK_LOGE("have mode: DATA_TRANSFER, not support update, taskId: %{public}d", continuousTaskId);
         return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE;
     }
-    if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::SPECIAL_SCENARIO_PROCESSING) ||
+    if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::SPECIAL_SCENARIO_PROCESSING) &&
         taskParam->isCombinedTaskNotification_) {
         BGTASK_LOGE("have mode: SPECIAL_SCENARIO_PROCESSING, not support merge, taskId: %{public}d",
             continuousTaskId);
