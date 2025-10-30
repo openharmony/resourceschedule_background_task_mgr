@@ -118,7 +118,8 @@ void DecisionMaker::ApplicationStateObserver::OnExtensionStateChanged(
         abilityStateData.abilityState == static_cast<int32_t>(AppExecFwk::ExtensionState::EXTENSION_STATE_FOREGROUND);
     bool isBackground =
         abilityStateData.abilityState == static_cast<int32_t>(AppExecFwk::ExtensionState::EXTENSION_STATE_BACKGROUND);
-    if (isForeground || isBackground) {
+    if (abilityStateData.extensionAbilityType ==
+        static_cast<int32_t>(AppExecFwk::ExtensionAbilityType::SYS_COMMON_UI) && (isForeground || isBackground)) {
         HandleStateChange(abilityStateData.bundleName, abilityStateData.uid, isForeground, isBackground);
     }
 }
