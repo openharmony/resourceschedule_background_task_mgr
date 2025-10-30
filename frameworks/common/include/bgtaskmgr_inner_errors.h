@@ -240,12 +240,12 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR, "Continuous Task verification failed. "
         "The current app has detected malicious behavior and is prohibited from applying."},
     {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY, "Continuous Task verification failed. "
-        "The background task mode: DATA_TRANMODE_SPECIAL_SCENARIO_PROCESSINGSFER type is empty."},
+        "The background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type is empty."},
     {ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, "Continuous Task verification failed. "
         "The callback cannot be null and its type must be function."},
     {ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS, "Continuous Task verification failed. The callback already exists."},
     {ERR_BGTASK_CONTINUOUS_SPECIAL_SCENARIO_PROCESSING_NOT_MERGE_NOTIFICATION, "Continuous Task verification failed. "
-        "This background task mode: SPECIAL_SCENARIO_PROCESSING type do not support merged notification."},
+        "This background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type do not support merged notification."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
