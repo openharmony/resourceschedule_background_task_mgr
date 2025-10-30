@@ -29,6 +29,7 @@ ohos_unittest("bgtask_unit_test") {
     cfi = true
     cfi_cross_dso = true
     debug = false
+    blocklist = "${bgtaskmgr_services_path}/test/unittest/cfi_blocklist.txt"
   }
 
   cflags_cc = []
