@@ -633,6 +633,15 @@ ErrCode BackgroundTaskMgrService::CheckTaskAuthResult(const std::string &bundleN
     return BgContinuousTaskMgr::GetInstance()->CheckTaskAuthResult(bundleName, userId, appIndex);
 }
 
+ErrCode BackgroundTaskMgrService::EnableContinuousTaskRequest(int32_t uid, bool isEnable)
+{
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
+        BGTASK_LOGW("EnableContinuousTaskRequest not allowed");
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return BgContinuousTaskMgr::GetInstance()->EnableContinuousTaskRequest(uid, isEnable);
+}
+
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();

@@ -527,6 +527,14 @@ ErrCode BackgroundTaskManager::CheckTaskAuthResult(const std::string &bundleName
     return proxy_->CheckTaskAuthResult(bundleName, userId, appIndex);
 }
 
+ErrCode BackgroundTaskManager::EnableContinuousTaskRequest(int32_t uid, bool isEnable)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->EnableContinuousTaskRequest(uid, isEnable);
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 

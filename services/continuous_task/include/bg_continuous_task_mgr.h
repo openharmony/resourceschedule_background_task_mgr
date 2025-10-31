@@ -103,6 +103,7 @@ public:
         int32_t &notificationId);
     ErrCode CheckSpecialScenarioAuth(uint32_t &authResult);
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
+    ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
     bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false);
     bool StopBannerContinuousTaskByUser(const std::string &label);
     void OnAccountsStateChanged(int32_t id);
@@ -255,6 +256,7 @@ private:
     sptr<AuthExpiredCallbackDeathRecipient> authCallbackDeathRecipient_ {nullptr};
     std::map<int32_t, sptr<IExpiredCallback>> expiredCallbackMap_;
     int32_t continuousTaskIdIndex_ = 0;
+    std::unordered_set<int32_t> disableRequestUidList_ {};
 
     DECLARE_DELAYED_SINGLETON(BgContinuousTaskMgr);
 };

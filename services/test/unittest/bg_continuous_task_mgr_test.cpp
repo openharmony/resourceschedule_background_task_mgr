@@ -201,7 +201,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
         "ability1", nullptr, "Entry", true, {1, 2, 3}, 1);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam1), (int32_t)ERR_OK);
-    
+
     taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
     EXPECT_EQ(taskSize, 1);
 
@@ -218,7 +218,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
         std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
         "ability1", nullptr, "Entry", true, {1, 2, 3}, 2);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam2), (int32_t)ERR_OK);
-    
+
     taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
     EXPECT_EQ(taskSize, 2);
 
@@ -228,7 +228,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunning_003, TestSize.Level1)
         "ability1", nullptr, "Entry", true, {1, 2, 3}, 2);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam3),
         (int32_t)ERR_BGTASK_OBJECT_EXISTS);
-    
+
     taskSize = bgContinuousTaskMgr_->continuousTaskInfosMap_.size();
     EXPECT_EQ(taskSize, 2);
 
@@ -440,7 +440,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_003, TestSize.Level1)
     continuousTaskRecord->bundleName_ = "false-test";
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_SPECIAL_SCENARIO_PROCESSING,
         BGMODE_SPECIAL_SCENARIO_PROCESSING_ID, true, continuousTaskRecord), ERR_BGTASK_GET_APP_INDEX_FAIL);
-    
+
     continuousTaskRecord->bundleName_ = "bundleName";
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_SPECIAL_SCENARIO_PROCESSING,
         BGMODE_SPECIAL_SCENARIO_PROCESSING_ID, true, continuousTaskRecord), ERR_OK);
@@ -1058,7 +1058,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_047, TestSize.Level1)
 
     continuousTaskRecord->bgModeIds_.push_back(1);
     EXPECT_NE(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
-    
+
     continuousTaskRecord->bgSubModeIds_.push_back(1);
     EXPECT_NE(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
 }
@@ -1117,7 +1117,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_049, TestSize.Level1)
 
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
     EXPECT_EQ(bgContinuousTaskMgr_->CheckNotificationText(notificationText, record), ERR_OK);
-    
+
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
     EXPECT_EQ(bgContinuousTaskMgr_->CheckNotificationText(notificationText, record), ERR_OK);
 
@@ -1670,7 +1670,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_063, TestSize.Level1)
     info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
     info.appName_ = "Entry";
     bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
-    
+
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     continuousTaskRecord->bgModeId_ = 1;
     continuousTaskRecord->bgModeIds_.clear();
@@ -1703,7 +1703,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_064, TestSize.Level1)
     taskParam->bgSubModeIds_.clear();
     taskParam->bgSubModeIds_.push_back(2);
     taskParam->updateTaskId_ = 1;
-    
+
     bgContinuousTaskMgr_->cachedBundleInfos_.clear();
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord->uid_ = TEST_NUM_ONE;
@@ -1757,7 +1757,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_065, TestSize.Level1)
     taskParam->bgSubModeIds_.clear();
     taskParam->bgSubModeIds_.push_back(2);
     taskParam->updateTaskId_ = 1;
-    
+
     bgContinuousTaskMgr_->cachedBundleInfos_.clear();
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord->uid_ = TEST_NUM_ONE;
@@ -2039,6 +2039,35 @@ HWTEST_F(BgContinuousTaskMgrTest, RequestAuthFromUser_001, TestSize.Level1)
     taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
         ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
+}
+
+/**
+ * @tc.name: ATC_EnableContinuousTaskRequest_001
+ * @tc.desc: EnableContinuousTaskRequest test.
+ * @tc.type: FUNC
+ * @tc.require: 781
+ */
+HWTEST_F(BgContinuousTaskMgrTest, ATC_EnableContinuousTaskRequest_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    ErrCode result = bgContinuousTaskMgr_->EnableContinuousTaskRequest(123, true);
+    EXPECT_EQ(result, ERR_BGTASK_SYS_NOT_READY);
+}
+
+/**
+ * @tc.name: ATC_EnableContinuousTaskRequest_002
+ * @tc.desc: EnableContinuousTaskRequest test.
+ * @tc.type: FUNC
+ * @tc.require: 781
+ */
+HWTEST_F(BgContinuousTaskMgrTest, ATC_EnableContinuousTaskRequest_002, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    ErrCode result = bgContinuousTaskMgr_->EnableContinuousTaskRequest(123, true);
+    EXPECT_EQ(result, ERR_OK);
+
+    result = bgContinuousTaskMgr_->EnableContinuousTaskRequest(123, false);
+    EXPECT_EQ(result, ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

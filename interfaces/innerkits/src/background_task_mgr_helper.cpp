@@ -164,5 +164,10 @@ ErrCode BackgroundTaskMgrHelper::CheckTaskAuthResult(const std::string &bundleNa
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckTaskAuthResult(bundleName, userId, appIndex);
 }
+
+ErrCode BackgroundTaskMgrHelper::EnableContinuousTaskRequest(int32_t uid, bool isEnable)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->EnableContinuousTaskRequest(uid, isEnable);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

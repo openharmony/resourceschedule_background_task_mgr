@@ -130,6 +130,14 @@ static void GetOsAccountIdFromUid(int32_t uid, int32_t &osAccountId)
 #endif // HAS_OS_ACCOUNT_PART
 }
 
+#define GET_DISABLE_REQUEST_RESULT_RETURN(uid)                                                  \
+    do {                                                                                        \
+        if (disableRequestUidList_.count(uid) > 0) {                                            \
+            BGTASK_LOGE("uid: %{public}d is disable request", uid);                             \
+            return ERR_BGTASK_MALICIOUS_CONTINUOUSTASK;                                         \
+        }                                                                                       \
+    } while (0)
+
 BgContinuousTaskMgr::BgContinuousTaskMgr() {}
 
 BgContinuousTaskMgr::~BgContinuousTaskMgr() {}
@@ -981,6 +989,7 @@ ErrCode BgContinuousTaskMgr::UpdateTaskNotification(std::shared_ptr<ContinuousTa
 ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
     const sptr<ContinuousTaskParam> &taskParam)
 {
+    GET_DISABLE_REQUEST_RESULT_RETURN(uid);
     int32_t continuousTaskId = taskParam->updateTaskId_;
     if (continuousTaskId < 0) {
         BGTASK_LOGE("update task fail, taskId: %{public}d", taskParam->updateTaskId_);
@@ -1021,8 +1030,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
 ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
     const sptr<ContinuousTaskParam> &taskParam)
 {
-    ErrCode ret;
-
     auto iter = continuousTaskInfosMap_.find(taskInfoMapKey);
     if (iter == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("continuous task is not exist: %{public}s, use start befor update", taskInfoMapKey.c_str());
@@ -1030,6 +1037,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     }
 
     auto continuousTaskRecord = iter->second;
+    GET_DISABLE_REQUEST_RESULT_RETURN(continuousTaskRecord->GetUid());
     auto oldModes = continuousTaskRecord->bgModeIds_;
 
     BGTASK_LOGI("background task mode %{public}d, old modes: %{public}s, new modes %{public}s, isBatchApi %{public}d,"
@@ -1047,7 +1055,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     }
     uint32_t configuredBgMode = GetBackgroundModeInfo(continuousTaskRecord->uid_, continuousTaskRecord->abilityName_);
     for (auto it =  taskParam->bgModeIds_.begin(); it != taskParam->bgModeIds_.end(); it++) {
-        ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord);
+        ErrCode ret = CheckBgmodeType(configuredBgMode, *it, true, continuousTaskRecord);
         if (ret != ERR_OK) {
             BGTASK_LOGE("CheckBgmodeType error, mode: %{public}u, apply mode: %{public}u.", configuredBgMode, *it);
             return ret;
@@ -1063,7 +1071,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
         BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s, abilityId: %{public}d have same mode: DATA_TRANSFER",
             continuousTaskRecord->uid_, continuousTaskRecord->bundleName_.c_str(), continuousTaskRecord->abilityId_);
     } else {
-        ret = SendContinuousTaskNotification(continuousTaskRecord);
+        ErrCode ret = SendContinuousTaskNotification(continuousTaskRecord);
         if (ret != ERR_OK) {
             return ret;
         }
@@ -1138,6 +1146,7 @@ ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<Cont
 
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord)
 {
+    GET_DISABLE_REQUEST_RESULT_RETURN(continuousTaskRecord->GetUid());
     ErrCode ret = AllowApplyContinuousTask(continuousTaskRecord);
     if (ret != ERR_OK) {
         return ret;
@@ -3126,6 +3135,24 @@ ErrCode BgContinuousTaskMgr::CheckTaskAuthResult(const std::string &bundleName, 
         return ERR_OK;
     }
     return -1;
+}
+
+ErrCode BgContinuousTaskMgr::EnableContinuousTaskRequest(int32_t uid, bool isEnable)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    handler_->PostSyncTask([this, uid, isEnable]() {
+            if (isEnable) {
+                disableRequestUidList_.erase(uid);
+            } else {
+                disableRequestUidList_.insert(uid);
+            }
+            BGTASK_LOGI("EnableContinuousTaskRequest uid: %{public}d, isEnable: %{public}d", uid, isEnable);
+        }, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+
+    return ERR_OK;
 }
 
 void BgContinuousTaskMgr::CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
