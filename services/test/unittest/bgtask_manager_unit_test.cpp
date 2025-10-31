@@ -537,7 +537,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_043, TestSize.Level1)
         bundleName = SCB_BUNDLE_NAME;
         uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
     }
-    EXPECT_NE(bgTransientTaskMgr_->PauseTransientTaskTimeForInner(uid), ERR_OK);
+    EXPECT_EQ(bgTransientTaskMgr_->PauseTransientTaskTimeForInner(uid), ERR_OK);
 }
 
 /**
@@ -564,7 +564,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_044, TestSize.Level1)
         bundleName = SCB_BUNDLE_NAME;
         uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
     }
-    EXPECT_NE(bgTransientTaskMgr_->StartTransientTaskTimeForInner(uid), ERR_OK);
+    EXPECT_EQ(bgTransientTaskMgr_->StartTransientTaskTimeForInner(uid), ERR_OK);
 }
 
 /**

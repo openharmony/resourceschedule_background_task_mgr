@@ -65,7 +65,6 @@ private:
         void OnExtensionStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
         {}
         void OnProcessStateChanged(const AppExecFwk::ProcessData &processData) override;
-        void OnAppStateChanged(const AppExecFwk::AppStateData &appStateData) override;
         void OnProcessCreated(const AppExecFwk::ProcessData &processData) override
         {}
         void OnProcessDied(const AppExecFwk::ProcessData &processData) override

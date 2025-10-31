@@ -652,50 +652,6 @@ HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_002, TestSize.Level2)
 }
 
 /**
- * @tc.name: DecisionMakerTest_003
- * @tc.desc: test Watchdog class.
- * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_003, TestSize.Level2)
-{
-    auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
-    auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
-    auto timerManager =
-        std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
-    auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
-    auto applicationStateObserver = sptr<DecisionMaker::ApplicationStateObserver>(
-        new (std::nothrow) DecisionMaker::ApplicationStateObserver(*decisionMaker));
-
-    AppExecFwk::AppStateData appStateData;
-    appStateData.uid = 1;
-    appStateData.bundleName = "bundleName1";
-    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND);
-    applicationStateObserver->OnAppStateChanged(appStateData);
-    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS);
-    applicationStateObserver->OnAppStateChanged(appStateData);
-
-    auto keyInfo1 = std::make_shared<KeyInfo>("bundleName1", 1);
-    auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", 1, timerManager);
-    auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1);
-    pkgDelaySuspendInfo->requestList_.push_back(delayInfo);
-    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
-    auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
-    decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
-    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND);
-    applicationStateObserver->OnAppStateChanged(appStateData);
-    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS);
-    applicationStateObserver->OnAppStateChanged(appStateData);
-
-    decisionMaker->pkgDelaySuspendInfoMap_.clear();
-    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND);
-    applicationStateObserver->OnAppStateChanged(appStateData);
-    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
-    applicationStateObserver->OnAppStateChanged(appStateData);
-    EXPECT_EQ((int32_t)decisionMaker->pkgDelaySuspendInfoMap_.size(), 1);
-}
-
-/**
  * @tc.name: DecisionMakerTest_004
  * @tc.desc: test PauseTransientTaskTimeForInner.
  * @tc.type: FUNC

@@ -113,25 +113,12 @@ void DecisionMaker::AppMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>
 
 void DecisionMaker::ApplicationStateObserver::OnProcessStateChanged(const AppExecFwk::ProcessData &processData)
 {
-    bool isForeground = processData.state == AppExecFwk::AppProcessState::APP_STATE_FOREGROUND;
+    bool isForeground = processData.state == AppExecFwk::AppProcessState::APP_STATE_FOREGROUND ||
+        processData.state == AppExecFwk::AppProcessState::APP_STATE_FOCUS;
     bool isBackground = processData.state == AppExecFwk::AppProcessState::APP_STATE_BACKGROUND;
     decisionMaker_.UpdateForegroundUidPidMap(processData.uid, processData.pid, isForeground);
-    if (processData.extensionType == AppExecFwk::ExtensionAbilityType::SYS_COMMON_UI &&
-        (isForeground || isBackground)) {
-        HandleStateChange(processData.bundleName, processData.uid, isForeground, isBackground);
-    }
-}
-
-void DecisionMaker::ApplicationStateObserver::OnAppStateChanged(const AppExecFwk::AppStateData &appStateData)
-{
-    bool isForeground =
-        appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND) ||
-        appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS);
-    bool isBackground =
-        appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND);
-    decisionMaker_.UpdateForegroundUidPidMap(appStateData.uid, appStateData.pid, isForeground);
     if (isForeground || isBackground) {
-        HandleStateChange(appStateData.bundleName, appStateData.uid, isForeground, isBackground);
+        HandleStateChange(processData.bundleName, processData.uid, isForeground, isBackground);
     }
 }
 
@@ -168,7 +155,6 @@ void DecisionMaker::ApplicationStateObserver::HandleStateChange(
             decisionMaker_.pkgBgDurationMap_.erase(itBg);
         }
     } else if (isBackground) {
-        decisionMaker_.pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
         if (it == decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
             return;
@@ -417,7 +403,12 @@ bool DecisionMaker::CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspe
     }
 
     lock_guard<recursive_mutex> lock(recMutex_);
-    return foregroundUidPidMap_.count(pkgInfo->GetUid()) == 0;
+    bool isForeground = foregroundUidPidMap_.count(pkgInfo->GetUid()) == 0;
+    if (isForeground) {
+        auto key = std::make_shared<KeyInfo>(pkgInfo->GetPkg(), pkgInfo->GetUid());
+        pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
+    }
+    return isForeground;
 }
 
 int32_t DecisionMaker::GetDelayTime()
