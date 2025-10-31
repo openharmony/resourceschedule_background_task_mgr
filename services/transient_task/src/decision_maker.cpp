@@ -164,7 +164,7 @@ void DecisionMaker::ApplicationStateObserver::HandleStateChange(
             BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is background, start accounting",
                 bundleName.c_str(), uid);
             pkgInfo->StartAccounting();
-            pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
+            decisionMaker_.pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
         }
     }
 }
