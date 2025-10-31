@@ -671,9 +671,9 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_003, TestSize.Level2)
     appStateData.uid = 1;
     appStateData.bundleName = "bundleName1";
     appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND);
-    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+    applicationStateObserver->OnAppStateChanged(appStateData);
     appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS);
-    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+    applicationStateObserver->OnAppStateChanged(appStateData);
 
     auto keyInfo1 = std::make_shared<KeyInfo>("bundleName1", 1);
     auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", 1, timerManager);
@@ -683,15 +683,15 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_003, TestSize.Level2)
     auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
     decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
     appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND);
-    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+    applicationStateObserver->OnAppStateChanged(appStateData);
     appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS);
-    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+    applicationStateObserver->OnAppStateChanged(appStateData);
 
     decisionMaker->pkgDelaySuspendInfoMap_.clear();
     appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND);
-    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+    applicationStateObserver->OnAppStateChanged(appStateData);
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
-    applicationStateObserver->OnForegroundApplicationChanged(appStateData);
+    applicationStateObserver->OnAppStateChanged(appStateData);
     EXPECT_EQ((int32_t)decisionMaker->pkgDelaySuspendInfoMap_.size(), 1);
 }
 
@@ -756,6 +756,7 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_005, TestSize.Level2)
     auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1);
     pkgDelaySuspendInfo->requestList_.push_back(delayInfo);
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
+    decisionMaker->foregroundUidPidMap_.clear();
     EXPECT_EQ(decisionMaker->StartTransientTaskTimeForInner(uid, name), ERR_OK);
 }
 
@@ -849,12 +850,12 @@ HWTEST_F(BgTaskMiscUnitTest, SystemEventObserver_001, TestSize.Level2)
 }
 
 /**
- * @tc.name: OnExtensionStateChanged_001
+ * @tc.name: OnProcessStateChanged_001
  * @tc.desc: test ApplicationStateObserver class.
  * @tc.type: FUNC
  * @tc.require: https://gitcode.com/openharmony/resourceschedule_background_task_mgr/issues/776
  */
-HWTEST_F(BgTaskMiscUnitTest, OnExtensionStateChanged_001, TestSize.Level2)
+HWTEST_F(BgTaskMiscUnitTest, OnProcessStateChanged_001, TestSize.Level2)
 {
     auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
     auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
@@ -864,11 +865,11 @@ HWTEST_F(BgTaskMiscUnitTest, OnExtensionStateChanged_001, TestSize.Level2)
     auto applicationStateObserver = sptr<DecisionMaker::ApplicationStateObserver>(
         new (std::nothrow) DecisionMaker::ApplicationStateObserver(*decisionMaker));
 
-    AppExecFwk::AbilityStateData abilityStateData;
-    abilityStateData.uid = 1;
-    abilityStateData.bundleName = "bundleName1";
-    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::ExtensionState::EXTENSION_STATE_FOREGROUND);
-    applicationStateObserver->OnExtensionStateChanged(abilityStateData);
+    AppExecFwk::ProcessData processData;
+    processData.uid = 1;
+    processData.bundleName = "bundleName1";
+    processData.state = AppExecFwk::AppProcessState::APP_STATE_FOREGROUND;
+    applicationStateObserver->OnProcessStateChanged(processData);
 
     auto keyInfo1 = std::make_shared<KeyInfo>("bundleName1", 1);
     auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", 1, timerManager);
@@ -877,14 +878,14 @@ HWTEST_F(BgTaskMiscUnitTest, OnExtensionStateChanged_001, TestSize.Level2)
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
     auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
     decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
-    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::ExtensionState::EXTENSION_STATE_FOREGROUND);
-    applicationStateObserver->OnExtensionStateChanged(abilityStateData);
+    processData.state = AppExecFwk::AppProcessState::APP_STATE_FOREGROUND;
+    applicationStateObserver->OnProcessStateChanged(processData);
 
     decisionMaker->pkgDelaySuspendInfoMap_.clear();
-    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::ExtensionState::EXTENSION_STATE_BACKGROUND);
-    applicationStateObserver->OnExtensionStateChanged(abilityStateData);
+    processData.state = AppExecFwk::AppProcessState::APP_STATE_BACKGROUND;
+    applicationStateObserver->OnProcessStateChanged(processData);
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
-    applicationStateObserver->OnExtensionStateChanged(abilityStateData);
+    applicationStateObserver->OnProcessStateChanged(processData);
     EXPECT_EQ((int32_t)decisionMaker->pkgDelaySuspendInfoMap_.size(), 1);
 }
 }

@@ -58,10 +58,14 @@ private:
     public:
         explicit ApplicationStateObserver(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
         ~ApplicationStateObserver() override {}
-        void OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData) override;
+        void OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData) override
+        {}
         void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
         {}
-        void OnExtensionStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override;
+        void OnExtensionStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
+        {}
+        void OnProcessStateChanged(const AppExecFwk::ProcessData &processData) override;
+        void OnAppStateChanged(const AppExecFwk::AppStateData &appStateData) override;
         void OnProcessCreated(const AppExecFwk::ProcessData &processData) override
         {}
         void OnProcessDied(const AppExecFwk::ProcessData &processData) override
@@ -102,6 +106,7 @@ private:
     int GetAllowRequestTime();
     ErrCode CheckQuotaTime(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo, const std::string &name,
         int32_t uid, const std::shared_ptr<KeyInfo>& key, bool& needSetTime);
+    void UpdateForegroundUidPidMap(int32_t uid, int32_t pid, bool isForeground);
 
     const int32_t initRequestId_ = 1;
     int32_t requestId_ {initRequestId_};
@@ -115,6 +120,8 @@ private:
     sptr<AppExecFwk::IAppMgr> appMgrProxy_ {nullptr};
     sptr<AppMgrDeathRecipient> recipient_;
     sptr<ApplicationStateObserver> observer_ {nullptr};
+    std::recursive_mutex recMutex_;
+    std::map<int32_t, std::set<int32_t>> foregroundUidPidMap_;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
