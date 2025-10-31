@@ -164,6 +164,7 @@ void DecisionMaker::ApplicationStateObserver::HandleStateChange(
             BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is background, start accounting",
                 bundleName.c_str(), uid);
             pkgInfo->StartAccounting();
+            pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
         }
     }
 }
@@ -403,12 +404,7 @@ bool DecisionMaker::CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspe
     }
 
     lock_guard<recursive_mutex> lock(recMutex_);
-    bool isForeground = foregroundUidPidMap_.count(pkgInfo->GetUid()) == 0;
-    if (isForeground) {
-        auto key = std::make_shared<KeyInfo>(pkgInfo->GetPkg(), pkgInfo->GetUid());
-        pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
-    }
-    return isForeground;
+    return foregroundUidPidMap_.count(pkgInfo->GetUid()) == 0;
 }
 
 int32_t DecisionMaker::GetDelayTime()
