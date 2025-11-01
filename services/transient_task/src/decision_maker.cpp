@@ -111,36 +111,60 @@ void DecisionMaker::AppMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>
     decisionMaker_.GetAppMgrProxy();
 }
 
-void DecisionMaker::ApplicationStateObserver::OnForegroundApplicationChanged(
-    const AppExecFwk::AppStateData &appStateData)
+void DecisionMaker::ApplicationStateObserver::OnProcessStateChanged(const AppExecFwk::ProcessData &processData)
+{
+    bool isForeground = processData.state == AppExecFwk::AppProcessState::APP_STATE_FOREGROUND ||
+        processData.state == AppExecFwk::AppProcessState::APP_STATE_FOCUS;
+    bool isBackground = processData.state == AppExecFwk::AppProcessState::APP_STATE_BACKGROUND;
+    decisionMaker_.UpdateForegroundUidPidMap(processData.uid, processData.pid, isForeground);
+    if (isForeground || isBackground) {
+        HandleStateChange(processData.bundleName, processData.uid, isForeground, isBackground);
+    }
+}
+
+void DecisionMaker::UpdateForegroundUidPidMap(int32_t uid, int32_t pid, bool isForeground)
+{
+    lock_guard<recursive_mutex> lock(recMutex_);
+    set<int32_t>& pids = foregroundUidPidMap_[uid];
+    if (isForeground) {
+        pids.insert(pid);
+    } else {
+        pids.erase(pid);
+        if (pids.empty()) {
+            foregroundUidPidMap_.erase(uid);
+        }
+    }
+}
+
+void DecisionMaker::ApplicationStateObserver::HandleStateChange(
+    const std::string &bundleName, int32_t uid, bool isForeground, bool isBackground)
 {
     lock_guard<mutex> lock(decisionMaker_.lock_);
+    auto key = std::make_shared<KeyInfo>(bundleName, uid);
 
-    auto key = std::make_shared<KeyInfo>(appStateData.bundleName, appStateData.uid);
-    if (appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND) ||
-        appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOCUS)) {
+    if (isForeground) {
         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
         if (it != decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
             auto pkgInfo = it->second;
-            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is foreground applicaion, stop accounting",
-                appStateData.bundleName.c_str(), appStateData.uid);
+            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is foreground, stop accounting",
+                bundleName.c_str(), uid);
             pkgInfo->StopAccountingAll();
         }
         auto itBg = decisionMaker_.pkgBgDurationMap_.find(key);
         if (itBg != decisionMaker_.pkgBgDurationMap_.end()) {
             decisionMaker_.pkgBgDurationMap_.erase(itBg);
         }
-    } else if (appStateData.state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND)) {
-        decisionMaker_.pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
+    } else if (isBackground) {
         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
         if (it == decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
             return;
         }
         auto pkgInfo = it->second;
         if (decisionMaker_.CanStartAccountingLocked(pkgInfo)) {
-            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is background applicaion, start accounting",
-                appStateData.bundleName.c_str(), appStateData.uid);
+            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is background, start accounting",
+                bundleName.c_str(), uid);
             pkgInfo->StartAccounting();
+            decisionMaker_.pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
         }
     }
 }
@@ -379,18 +403,8 @@ bool DecisionMaker::CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspe
         return true;
     }
 
-    if (!GetAppMgrProxy()) {
-        BGTASK_LOGE("GetAppMgrProxy failed");
-        return false;
-    }
-    vector<AppExecFwk::AppStateData> fgAppList;
-    appMgrProxy_->GetForegroundApplications(fgAppList);
-    for (auto fgApp : fgAppList) {
-        if (fgApp.bundleName == pkgInfo->GetPkg() && fgApp.uid == pkgInfo->GetUid()) {
-            return false;
-        }
-    }
-    return true;
+    lock_guard<recursive_mutex> lock(recMutex_);
+    return foregroundUidPidMap_.count(pkgInfo->GetUid()) == 0;
 }
 
 int32_t DecisionMaker::GetDelayTime()
