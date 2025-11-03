@@ -60,4 +60,5 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void RequestAuthFromUser([in] ContinuousTaskParam taskParam, [in] IExpiredCallback expiredCallback, [out] int notificationId);
     void CheckSpecialScenarioAuth([out] unsigned int authResult);
     void CheckTaskAuthResult([in] String bundleName, [in] int userId, [in] int appIndex);
+    void EnableContinuousTaskRequest([in] int uid, [in] boolean isEnable);
 }

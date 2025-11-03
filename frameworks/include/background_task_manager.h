@@ -313,6 +313,14 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
+
+    /**
+     * @brief enable continuous task request.
+     * @param uid uid.
+     * @param isEnable isEnable.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
 private:
     bool GetBackgroundTaskManagerProxy();
 

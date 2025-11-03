@@ -112,7 +112,7 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list);
-    
+
     /**
      * @brief Pause transient task time by uid for inner ability.
      * @param uid app uid.
@@ -247,6 +247,14 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
+
+    /**
+     * @brief enable continuous task request.
+     * @param uid uid.
+     * @param isEnable isEnable.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
