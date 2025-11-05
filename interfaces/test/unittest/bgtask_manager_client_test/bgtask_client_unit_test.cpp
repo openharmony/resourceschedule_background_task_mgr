@@ -1135,7 +1135,7 @@ HWTEST_F(BgTaskClientUnitTest, CheckTaskAuthResult_001, TestSize.Level1)
  * @tc.name: EnableContinuousTaskRequest_001
  * @tc.desc: test EnableContinuousTaskRequest.
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: 783
  */
 HWTEST_F(BgTaskClientUnitTest, EnableContinuousTaskRequest_001, TestSize.Level1)
 {
