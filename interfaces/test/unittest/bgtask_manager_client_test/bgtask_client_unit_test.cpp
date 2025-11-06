@@ -1130,5 +1130,19 @@ HWTEST_F(BgTaskClientUnitTest, CheckTaskAuthResult_001, TestSize.Level1)
     int32_t appIndex = 0;
     EXPECT_EQ(BackgroundTaskMgrHelper::CheckTaskAuthResult(bundleName, userId, appIndex), -1);
 }
+
+/**
+ * @tc.name: EnableContinuousTaskRequest_001
+ * @tc.desc: test EnableContinuousTaskRequest.
+ * @tc.type: FUNC
+ * @tc.require: 783
+ */
+HWTEST_F(BgTaskClientUnitTest, EnableContinuousTaskRequest_001, TestSize.Level1)
+{
+    std::string bundleName = "bundleName";
+    int32_t uid = 100;
+    bool isEnable = true;
+    EXPECT_EQ(BackgroundTaskMgrHelper::EnableContinuousTaskRequest(uid, isEnable), 0);
+}
 }
 }
