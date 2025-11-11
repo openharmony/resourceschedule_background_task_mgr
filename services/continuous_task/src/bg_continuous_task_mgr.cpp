@@ -2999,6 +2999,11 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     if (continuousTaskRecord->isSystem_) {
         return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
     }
+#ifdef SUPPORT_AUTH
+#else
+    BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
+    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+#endif
     handler_->PostSyncTask([this, continuousTaskRecord, callback, &notificationId, &ret]() {
         ret = this->SendBannerNotification(continuousTaskRecord, callback, notificationId);
         }, AppExecFwk::EventQueue::Priority::HIGH);
@@ -3114,6 +3119,11 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
         BGTASK_LOGE("get bundle info: %{public}s failure!", bundleName.c_str());
         return ERR_BGTASK_GET_APP_INDEX_FAIL;
     }
+#ifdef SUPPORT_AUTH
+#else
+    BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
+    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+#endif    
     int32_t appIndex = bundleInfo.appIndex;
     handler_->PostSyncTask([this, &authResult, bundleName, userId, appIndex]() {
         this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
