@@ -2279,8 +2279,7 @@ bool BgContinuousTaskMgr::StopBannerContinuousTaskByUserInner(const std::string 
     if (bannerNotificationRecord_.find(label) != bannerNotificationRecord_.end()) {
         auto iter = bannerNotificationRecord_.at(label);
         // 已经被授权过了，所以通知删除，不取消授权记录
-        if (iter->GetAuthResult() != UserAuthResult::GRANTED_ONCE &&
-            iter->GetAuthResult() != UserAuthResult::GRANTED_ALWAYS) {
+        if (iter->GetAuthResult() == UserAuthResult::NOT_DETERMINED) {
             bannerNotificationRecord_.erase(label);
             RefreshAuthRecord();
         } else {
@@ -3180,15 +3179,12 @@ void BgContinuousTaskMgr::CheckSpecialScenarioAuthInner(uint32_t &authResult, co
 {
     std::string key = NotificationTools::GetInstance()->CreateBannerNotificationLabel(bundleName, userId, appIndex);
     BGTASK_LOGI("check auth result, label key: %{public}s", key.c_str());
-    authResult = UserAuthResult::NOT_SUPPORTED;
     if (bannerNotificationRecord_.find(key) == bannerNotificationRecord_.end()) {
         return;
     }
     auto iter = bannerNotificationRecord_.at(key);
     int32_t auth = iter->GetAuthResult();
-    if (auth != UserAuthResult::NOT_SUPPORTED) {
-        authResult = static_cast<uint32_t>(auth);
-    }
+    authResult = static_cast<uint32_t>(auth);
 }
 
 void BgContinuousTaskMgr::OnBannerNotificationActionButtonClick(const int32_t buttonType,

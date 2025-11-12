@@ -250,7 +250,7 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "This background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type do not support merged notification."},
     {ERR_BGTASK_MALICIOUS_CONTINUOUSTASK, "Malicious long-running tasks are not allowed to continue applying."},
     {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE, "Continuous Task verification failed. "
-        "The background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type do not support this device."},
+        "The background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type do not support current device."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
