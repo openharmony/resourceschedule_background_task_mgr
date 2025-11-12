@@ -3123,7 +3123,7 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
 #else
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
-#endif    
+#endif
     int32_t appIndex = bundleInfo.appIndex;
     handler_->PostSyncTask([this, &authResult, bundleName, userId, appIndex]() {
         this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
