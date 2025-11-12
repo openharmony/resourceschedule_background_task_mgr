@@ -659,6 +659,10 @@ ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTas
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
         return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
     }
+#ifdef SUPPORT_AUTH
+#else
+    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+#endif
     return ERR_OK;
 }
 
@@ -2815,6 +2819,12 @@ ErrCode BgContinuousTaskMgr::CheckTaskkeepingPermission(const sptr<ContinuousTas
     if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
         BGTASK_LOGW("app have no acl permission");
         return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
+    }
+    if (CheckModeSupportedPermission(taskParam) == ERR_OK) {
+#ifdef SUPPORT_AUTH
+#else
+        return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+#endif
     }
     BGTASK_LOGI("app have acl permission");
     return ERR_OK;
