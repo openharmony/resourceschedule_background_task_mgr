@@ -2278,7 +2278,8 @@ bool BgContinuousTaskMgr::StopBannerContinuousTaskByUserInner(const std::string 
     if (bannerNotificationRecord_.find(label) != bannerNotificationRecord_.end()) {
         auto iter = bannerNotificationRecord_.at(label);
         // 已经被授权过了，所以通知删除，不取消授权记录
-        if (iter->GetAuthResult() == UserAuthResult::NOT_DETERMINED) {
+        if (iter->GetAuthResult() != UserAuthResult::GRANTED_ONCE &&
+            iter->GetAuthResult() != UserAuthResult::GRANTED_ALWAYS) {
             bannerNotificationRecord_.erase(label);
             RefreshAuthRecord();
         } else {
