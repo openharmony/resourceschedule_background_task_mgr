@@ -659,6 +659,9 @@ ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTas
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
         return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
     }
+#ifndef SUPPORT_AUTH
+    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+#endif
     return ERR_OK;
 }
 
@@ -2816,6 +2819,11 @@ ErrCode BgContinuousTaskMgr::CheckTaskkeepingPermission(const sptr<ContinuousTas
         BGTASK_LOGW("app have no acl permission");
         return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
     }
+    if (CheckModeSupportedPermission(taskParam) == ERR_OK) {
+#ifndef SUPPORT_AUTH
+    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+#endif
+    }
     BGTASK_LOGI("app have acl permission");
     return ERR_OK;
 }
@@ -2999,6 +3007,10 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     if (continuousTaskRecord->isSystem_) {
         return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
     }
+#ifndef SUPPORT_AUTH
+    BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
+    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+#endif
     handler_->PostSyncTask([this, continuousTaskRecord, callback, &notificationId, &ret]() {
         ret = this->SendBannerNotification(continuousTaskRecord, callback, notificationId);
         }, AppExecFwk::EventQueue::Priority::HIGH);
@@ -3114,6 +3126,10 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
         BGTASK_LOGE("get bundle info: %{public}s failure!", bundleName.c_str());
         return ERR_BGTASK_GET_APP_INDEX_FAIL;
     }
+#ifndef SUPPORT_AUTH
+    BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
+    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+#endif
     int32_t appIndex = bundleInfo.appIndex;
     handler_->PostSyncTask([this, &authResult, bundleName, userId, appIndex]() {
         this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
@@ -3160,15 +3176,12 @@ void BgContinuousTaskMgr::CheckSpecialScenarioAuthInner(uint32_t &authResult, co
 {
     std::string key = NotificationTools::GetInstance()->CreateBannerNotificationLabel(bundleName, userId, appIndex);
     BGTASK_LOGI("check auth result, label key: %{public}s", key.c_str());
-    authResult = UserAuthResult::NOT_SUPPORTED;
     if (bannerNotificationRecord_.find(key) == bannerNotificationRecord_.end()) {
         return;
     }
     auto iter = bannerNotificationRecord_.at(key);
     int32_t auth = iter->GetAuthResult();
-    if (auth != UserAuthResult::NOT_SUPPORTED) {
-        authResult = static_cast<uint32_t>(auth);
-    }
+    authResult = static_cast<uint32_t>(auth);
 }
 
 void BgContinuousTaskMgr::OnBannerNotificationActionButtonClick(const int32_t buttonType,

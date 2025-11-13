@@ -77,6 +77,7 @@ enum : int32_t {
     ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR,
     ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS,
     ERR_BGTASK_MALICIOUS_CONTINUOUSTASK,
+    ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE,
     ERR_BGTASK_NOTIFICATION_VERIFY_FAILED = 980000601,
     ERR_BGTASK_NOTIFICATION_ERR,
     ERR_BGTASK_CHECK_TASK_PARAM,
@@ -248,6 +249,8 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_CONTINUOUS_SPECIAL_SCENARIO_PROCESSING_NOT_MERGE_NOTIFICATION, "Continuous Task verification failed. "
         "This background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type do not support merged notification."},
     {ERR_BGTASK_MALICIOUS_CONTINUOUSTASK, "Malicious long-running tasks are not allowed to continue applying."},
+    {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE, "Continuous Task verification failed. "
+        "The background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type do not support current device."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

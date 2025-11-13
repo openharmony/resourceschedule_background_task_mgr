@@ -91,9 +91,14 @@ ohos_unittest("bgtask_unit_test") {
   }
 
   if (target_platform == "phone") {
+    cflags_cc += [ "-DSUPPORT_AUTH" ]
     defines = [ "FEATURE_PRODUCT_PHONE" ]
   } else if (target_platform == "watch") {
     defines = [ "FEATURE_PRODUCT_WATCH" ]
+  } else if (target_platform == "pc") {
+    cflags_cc += [ "-DSUPPORT_AUTH" ]
+  } else if (target_platform == "tablet") {
+    cflags_cc += [ "-DSUPPORT_AUTH" ]
   }
 
   subsystem_name = "resourceschedule"

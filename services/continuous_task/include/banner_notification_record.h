@@ -54,7 +54,7 @@ private:
     int32_t notificationId_ {-1};
     std::string notificationLabel_ {""};
     std::string appName_ {""};
-    int32_t authResult_ {UserAuthResult::NOT_SUPPORTED};
+    int32_t authResult_ {UserAuthResult::NOT_DETERMINED};
     int32_t userId_ {0};
     int32_t appIndex_ {-1};
 };
