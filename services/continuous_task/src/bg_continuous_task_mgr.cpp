@@ -659,8 +659,7 @@ ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTas
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
         return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
     }
-#ifdef SUPPORT_AUTH
-#else
+#ifndef SUPPORT_AUTH
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
     return ERR_OK;
@@ -2820,9 +2819,8 @@ ErrCode BgContinuousTaskMgr::CheckTaskkeepingPermission(const sptr<ContinuousTas
         return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
     }
     if (CheckModeSupportedPermission(taskParam) == ERR_OK) {
-#ifdef SUPPORT_AUTH
-#else
-        return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+#ifndef SUPPORT_AUTH
+    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
     }
     BGTASK_LOGI("app have acl permission");
@@ -3008,8 +3006,7 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     if (continuousTaskRecord->isSystem_) {
         return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
     }
-#ifdef SUPPORT_AUTH
-#else
+#ifndef SUPPORT_AUTH
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
@@ -3128,8 +3125,7 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
         BGTASK_LOGE("get bundle info: %{public}s failure!", bundleName.c_str());
         return ERR_BGTASK_GET_APP_INDEX_FAIL;
     }
-#ifdef SUPPORT_AUTH
-#else
+#ifndef SUPPORT_AUTH
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
