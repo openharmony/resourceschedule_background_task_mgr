@@ -3017,8 +3017,8 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     return ret;
 }
 
-ErrCode BgContinuousTaskMgr::SendBannerNotification(std::shared_ptr<ContinuousTaskRecord> record,
-    const sptr<IExpiredCallback>& callback, int32_t &notificationId)
+ErrCode BgContinuousTaskMgr::CheckSendBannerNotificationParam(std::shared_ptr<ContinuousTaskRecord> record,
+    const sptr<IExpiredCallback>& callback)
 {
     auto findCallback = [&callback](const auto& callbackMap) {
         return callback->AsObject() == callbackMap.second->AsObject();
@@ -3028,29 +3028,48 @@ ErrCode BgContinuousTaskMgr::SendBannerNotification(std::shared_ptr<ContinuousTa
         BGTASK_LOGI("request auth form user, callback is already exists.");
         return ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS;
     }
-    std::string appName = GetMainAbilityLabel(record->bundleName_, record->userId_);
-    if (appName == "") {
-        BGTASK_LOGE("get main ability label fail.");
-        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
-    }
-    std::string bannerContent {""};
-    if (!FormatBannerNotificationContext(appName, bannerContent)) {
-        BGTASK_LOGE("bannerContent is empty");
-        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
-    }
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(record->bundleName_,
         AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, record->userId_)) {
         BGTASK_LOGE("get bundle info: %{public}s failure!", record->bundleName_.c_str());
         return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
     }
+    record->appIndex_ = bundleInfo.appIndex;
+    std::string authKey = NotificationTools::GetInstance()->CreateBannerNotificationLabel(record->bundleName_,
+        record->userId_, record->appIndex_);
+    auto iter = bannerNotificationRecord_.find(authKey);
+    if (iter != bannerNotificationRecord_.end()) {
+        BGTASK_LOGE("bundleName: %{public}s has banner notification or authorized!", record->bundleName_.c_str());
+        return ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED;
+    }
+    std::string appName = GetMainAbilityLabel(record->bundleName_, record->userId_);
+    if (appName == "") {
+        BGTASK_LOGE("get main ability label fail.");
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
+    record->appName_ = appName;
+    return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::SendBannerNotification(std::shared_ptr<ContinuousTaskRecord> record,
+    const sptr<IExpiredCallback>& callback, int32_t &notificationId)
+{
+    ErrCode ret = CheckSendBannerNotificationParam(record, callback);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    std::string bannerContent {""};
+    if (!FormatBannerNotificationContext(record->appName_, bannerContent)) {
+        BGTASK_LOGE("bannerContent is empty");
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
     std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>();
-    bannerNotification->SetAppName(appName);
+    bannerNotification->SetAppName(record->appName_);
     bannerNotification->SetBundleName(record->bundleName_);
     bannerNotification->SetUid(record->uid_);
     bannerNotification->SetUserId(record->userId_);
-    bannerNotification->SetAppIndex(bundleInfo.appIndex);
-    ErrCode ret = NotificationTools::GetInstance()->PublishBannerNotification(bannerNotification, bannerContent,
+    bannerNotification->SetAppIndex(record->appIndex_);
+    ret = NotificationTools::GetInstance()->PublishBannerNotification(bannerNotification, bannerContent,
         bgTaskUid_, bannerNotificaitonBtn_);
     if (ret != ERR_OK) {
         BGTASK_LOGE("uid: %{public}d send banner notification fail.", record->uid_);
@@ -3064,7 +3083,6 @@ ErrCode BgContinuousTaskMgr::SendBannerNotification(std::shared_ptr<ContinuousTa
     }
     std::string key = bannerNotification->GetNotificationLabel();
     BGTASK_LOGI("send banner notification, label key: %{public}s", key.c_str());
-    bannerNotificationRecord_.erase(key);
     bannerNotificationRecord_.emplace(key, bannerNotification);
     return RefreshAuthRecord();
 }
