@@ -2576,6 +2576,15 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REPLACED) {
         cachedBundleInfos_.erase(uid);
+        auto iterAuth = bannerNotificationRecord_.begin()
+        while (iterAuth != bannerNotificationRecord_.end()) {
+            if (iterAuth->second->GetUid() != uid || iterAuth->second->GetBundleName() != bundleName) {
+                iterAuth++;
+                continue;
+            }
+            BGTASK_LOGI("bundleName: %{public}s, uid: %{public}d remove auth record.", bundleName.c_str(), uid);
+            iterAuth = bannerNotificationRecord_.erase(iterAuth);
+        }
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED) {
         cachedBundleInfos_.erase(uid);
         auto iter = continuousTaskInfosMap_.begin();
