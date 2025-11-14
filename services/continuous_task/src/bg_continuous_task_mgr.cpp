@@ -2576,7 +2576,7 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REPLACED) {
         cachedBundleInfos_.erase(uid);
-        auto iterAuth = bannerNotificationRecord_.begin()
+        auto iterAuth = bannerNotificationRecord_.begin();
         while (iterAuth != bannerNotificationRecord_.end()) {
             if (iterAuth->second->GetUid() != uid || iterAuth->second->GetBundleName() != bundleName) {
                 iterAuth++;
