@@ -3158,10 +3158,11 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
     int32_t appIndex = bundleInfo.appIndex;
-    handler_->PostSyncTask([this, &authResult, bundleName, userId, appIndex]() {
-        this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
+    ErrCode ret = ERR_OK;
+    handler_->PostSyncTask([this, &authResult, bundleName, userId, appIndex, &ret]() {
+        ret = this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
         }, AppExecFwk::EventQueue::Priority::HIGH);
-    return ERR_OK;
+    return ret;
 }
 
 ErrCode BgContinuousTaskMgr::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)
@@ -3198,17 +3199,18 @@ ErrCode BgContinuousTaskMgr::EnableContinuousTaskRequest(int32_t uid, bool isEna
     return ERR_OK;
 }
 
-void BgContinuousTaskMgr::CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
+ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
     int32_t userId, int32_t appIndex)
 {
     std::string key = NotificationTools::GetInstance()->CreateBannerNotificationLabel(bundleName, userId, appIndex);
     BGTASK_LOGI("check auth result, label key: %{public}s", key.c_str());
     if (bannerNotificationRecord_.find(key) == bannerNotificationRecord_.end()) {
-        return;
+        return ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD;
     }
     auto iter = bannerNotificationRecord_.at(key);
     int32_t auth = iter->GetAuthResult();
     authResult = static_cast<uint32_t>(auth);
+    return ERR_OK;
 }
 
 void BgContinuousTaskMgr::OnBannerNotificationActionButtonClick(const int32_t buttonType,

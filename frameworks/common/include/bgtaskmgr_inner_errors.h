@@ -79,6 +79,7 @@ enum : int32_t {
     ERR_BGTASK_MALICIOUS_CONTINUOUSTASK,
     ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE,
     ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED,
+    ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD,
     ERR_BGTASK_NOTIFICATION_VERIFY_FAILED = 980000601,
     ERR_BGTASK_NOTIFICATION_ERR,
     ERR_BGTASK_CHECK_TASK_PARAM,
@@ -253,7 +254,9 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE, "Continuous Task verification failed. "
         "The background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type do not support current device."},
     {ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED,
-        "Notification verification failed. Current application has banner notification or authorized"},
+        "Notification verification failed. Current application has banner notification or authorized."},
+    {ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD,
+        "Continuous Task verification failed. Current application not apply auth record."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
