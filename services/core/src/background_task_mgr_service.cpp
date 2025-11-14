@@ -435,6 +435,7 @@ void BackgroundTaskMgrService::HandleRequestExpired(const int32_t requestId)
 void BackgroundTaskMgrService::HandleExpiredCallbackDeath(const wptr<IRemoteObject>& remote)
 {
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->HandleExpiredCallbackDeath(remote);
+    DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->HandleAuthExpiredCallbackDeath(remote);
 }
 
 void BackgroundTaskMgrService::HandleSubscriberDeath(const wptr<IRemoteObject>& remote)

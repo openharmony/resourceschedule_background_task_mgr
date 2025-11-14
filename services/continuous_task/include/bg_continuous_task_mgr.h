@@ -221,11 +221,13 @@ private:
     ErrCode SendLiveViewAndOtherNotification(std::shared_ptr<ContinuousTaskRecord> record);
     ErrCode SendNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
         std::shared_ptr<ContinuousTaskRecord> record, const std::string &appName, bool isSubNotification);
+    ErrCode CheckSendBannerNotificationParam(std::shared_ptr<ContinuousTaskRecord> record,
+        const sptr<IExpiredCallback>& callback);
     ErrCode SendBannerNotification(std::shared_ptr<ContinuousTaskRecord> record, const sptr<IExpiredCallback> &callback,
         int32_t &notificationId);
     void OnBannerNotificationActionButtonClickInner(const int32_t buttonType, const int32_t uid,
         const std::string &label);
-    void CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
+    ErrCode CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
         int32_t userId, int32_t appIndex);
     ErrCode CheckModeSupportedPermission(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode CheckSpecialModePermission(const sptr<ContinuousTaskParam> &taskParam);
