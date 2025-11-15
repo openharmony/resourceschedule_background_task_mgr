@@ -261,8 +261,8 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Continuous Task verification failed. Current application not apply auth record."},
     {ERR_BGTASK_CONTINUOUS_AUTH_NOT_PERMITTED,
         "Continuous Task verification failed. Current authorization is not permitted."},
-    {ERR_BGTASK_CONTINUOUS_AUTH_TURN_OFF,
-        "Continuous Task verification failed. Current request authorization switch has been turned off by user."},
+    {ERR_BGTASK_CONTINUOUS_NOT_DEPLOY_SPECIAL_SCENARIO_PROCESSING, "Continuous Task verification failed. "
+        "The application not deploy backgroundMode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

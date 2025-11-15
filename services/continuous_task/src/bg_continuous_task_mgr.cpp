@@ -3061,8 +3061,8 @@ ErrCode BgContinuousTaskMgr::CheckSendBannerNotificationParam(std::shared_ptr<Co
     auto iter = bannerNotificationRecord_.find(authKey);
     if (iter != bannerNotificationRecord_.end()) {
         if (iter->second->GetAuthResult() == static_cast<uint32_t>(UserAuthResult::NOT_SUPPORTED)) {
-            BGTASK_LOGE("bundleName: %{public}s request auth has been turn off.", record->bundleName_.c_str());
-            return ERR_BGTASK_CONTINUOUS_AUTH_TURN_OFF;
+            BGTASK_LOGE("bundleName: %{public}s module.json not deploy special type.", record->bundleName_.c_str());
+            return ERR_BGTASK_CONTINUOUS_NOT_DEPLOY_SPECIAL_SCENARIO_PROCESSING;
         }
         BGTASK_LOGE("bundleName: %{public}s has banner notification or authorized.", record->bundleName_.c_str());
         return ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED;
@@ -3189,7 +3189,7 @@ ErrCode BgContinuousTaskMgr::CheckTaskAuthResult(const std::string &bundleName, 
     }
     ErrCode ret = ERR_OK;
     handler_->PostSyncTask([this, &ret, bundleName, userId, appIndex]() {
-        ret = this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
+        ret = this->CheckSpecialScenarioAuthInner(bundleName, userId, appIndex);
         }, AppExecFwk::EventQueue::Priority::HIGH);
     return ret;
 }
