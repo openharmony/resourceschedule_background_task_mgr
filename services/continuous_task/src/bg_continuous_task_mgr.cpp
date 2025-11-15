@@ -3189,7 +3189,7 @@ ErrCode BgContinuousTaskMgr::CheckTaskAuthResult(const std::string &bundleName, 
     }
     ErrCode ret = ERR_OK;
     handler_->PostSyncTask([this, &ret, bundleName, userId, appIndex]() {
-        ret = this->CheckSpecialScenarioAuthInner(bundleName, userId, appIndex);
+        ret = this->CheckTaskAuthResultInner(bundleName, userId, appIndex);
         }, AppExecFwk::EventQueue::Priority::HIGH);
     return ret;
 }
