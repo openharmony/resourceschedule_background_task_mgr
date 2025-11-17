@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+sequenceable background_task_state_info..OHOS.BackgroundTaskMgr.BackgroundTaskStateInfo;
 sequenceable continuous_task_callback_info..OHOS.BackgroundTaskMgr.ContinuousTaskCallbackInfo;
 sequenceable continuous_task_info..OHOS.BackgroundTaskMgr.ContinuousTaskInfo;
 sequenceable continuous_task_param..OHOS.BackgroundTaskMgr.ContinuousTaskParam;
@@ -61,4 +62,6 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void CheckSpecialScenarioAuth([out] unsigned int authResult);
     void CheckTaskAuthResult([in] String bundleName, [in] int userId, [in] int appIndex);
     void EnableContinuousTaskRequest([in] int uid, [in] boolean isEnable);
+    void SetBackgroundTaskState([in] BackgroundTaskStateInfo taskParam);
+    void GetBackgroundTaskState([in] BackgroundTaskStateInfo taskParam, [out] unsigned int authResult);
 }
