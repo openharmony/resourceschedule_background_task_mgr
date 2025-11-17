@@ -668,8 +668,8 @@ ErrCode BackgroundTaskMgrService::SetBackgroundTaskState(const BackgroundTaskSta
         BGTASK_LOGE("uid %{public}d is not system hap, SetBackgroundTaskState not allowed", callingUid);
         return ERR_BGTASK_NOT_SYSTEM_APP;
     }
-    std::shared_ptr<BackgroundTaskStateInfo> taskState = std::make_shared<BackgroundTaskStateInfo>(taskParam.GetUserId(),
-        taskParam.GetBundleName(), taskParam.GetAppIndex(), taskParam.GetUserAuthResult());
+    std::shared_ptr<BackgroundTaskStateInfo> taskState = std::make_shared<BackgroundTaskStateInfo>(
+        taskParam.GetUserId(), taskParam.GetBundleName(), taskParam.GetAppIndex(), taskParam.GetUserAuthResult());
     return BgContinuousTaskMgr::GetInstance()->SetBackgroundTaskState(taskState);
 }
 
@@ -697,8 +697,8 @@ ErrCode BackgroundTaskMgrService::GetBackgroundTaskState(const BackgroundTaskSta
         BGTASK_LOGE("uid %{public}d is not system hap, GetBackgroundTaskState not allowed", callingUid);
         return ERR_BGTASK_NOT_SYSTEM_APP;
     }
-    std::shared_ptr<BackgroundTaskStateInfo> taskState = std::make_shared<BackgroundTaskStateInfo>(taskParam.GetUserId(),
-        taskParam.GetBundleName(), taskParam.GetAppIndex());
+    std::shared_ptr<BackgroundTaskStateInfo> taskState = std::make_shared<BackgroundTaskStateInfo>(
+        taskParam.GetUserId(), taskParam.GetBundleName(), taskParam.GetAppIndex());
     return BgContinuousTaskMgr::GetInstance()->GetBackgroundTaskState(taskState, authResult);
 }
 
