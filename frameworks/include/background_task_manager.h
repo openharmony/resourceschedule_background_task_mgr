@@ -23,6 +23,7 @@
 #include "iremote_object.h"
 #include "want_agent.h"
 #include "efficiency_resource_info.h"
+#include "background_task_state_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
