@@ -2278,8 +2278,8 @@ bool BgContinuousTaskMgr::StopBannerContinuousTaskByUserInner(const std::string 
     if (bannerNotificationRecord_.find(label) != bannerNotificationRecord_.end()) {
         auto iter = bannerNotificationRecord_.at(label);
         // 已经被授权过了，所以通知删除，不取消授权记录
-        if (iter->GetAuthResult() != UserAuthResult::GRANTED_ONCE &&
-            iter->GetAuthResult() != UserAuthResult::GRANTED_ALWAYS) {
+        if (iter->GetAuthResult() != static_cast<int32_t>(UserAuthResult::GRANTED_ONCE) &&
+            iter->GetAuthResult() != static_cast<int32_t>(UserAuthResult::GRANTED_ALWAYS)) {
             bannerNotificationRecord_.erase(label);
             RefreshAuthRecord();
         } else {
@@ -3060,7 +3060,7 @@ ErrCode BgContinuousTaskMgr::CheckSendBannerNotificationParam(std::shared_ptr<Co
         record->userId_, record->appIndex_);
     auto iter = bannerNotificationRecord_.find(authKey);
     if (iter != bannerNotificationRecord_.end()) {
-        if (iter->second->GetAuthResult() == static_cast<uint32_t>(UserAuthResult::NOT_SUPPORTED)) {
+        if (iter->second->GetAuthResult() == static_cast<int32_t>(UserAuthResult::NOT_SUPPORTED)) {
             BGTASK_LOGE("bundleName: %{public}s module.json not deploy special type.", record->bundleName_.c_str());
             return ERR_BGTASK_CONTINUOUS_NOT_DEPLOY_SPECIAL_SCENARIO_PROCESSING;
         }
@@ -3202,8 +3202,8 @@ ErrCode BgContinuousTaskMgr::CheckTaskAuthResultInner(const std::string &bundleN
     }
     auto iter = bannerNotificationRecord_.at(key);
     int32_t auth = iter->GetAuthResult();
-    if (auth == static_cast<uint32_t>(UserAuthResult::GRANTED_ONCE) ||
-        auth == static_cast<uint32_t>(UserAuthResult::GRANTED_ALWAYS)) {
+    if (auth == static_cast<int32_t>(UserAuthResult::GRANTED_ONCE) ||
+        auth == static_cast<int32_t>(UserAuthResult::GRANTED_ALWAYS)) {
         return ERR_OK;
     }
     return ERR_BGTASK_CONTINUOUS_AUTH_NOT_PERMITTED;
