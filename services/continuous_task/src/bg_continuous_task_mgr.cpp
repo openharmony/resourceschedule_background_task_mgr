@@ -2278,8 +2278,8 @@ bool BgContinuousTaskMgr::StopBannerContinuousTaskByUserInner(const std::string 
     if (bannerNotificationRecord_.find(label) != bannerNotificationRecord_.end()) {
         auto iter = bannerNotificationRecord_.at(label);
         // 已经被授权过了，所以通知删除，不取消授权记录
-        if (iter->GetAuthResult() != UserAuthResult::GRANTED_ONCE &&
-            iter->GetAuthResult() != UserAuthResult::GRANTED_ALWAYS) {
+        if (iter->GetAuthResult() != static_cast<int32_t>(UserAuthResult::GRANTED_ONCE) &&
+            iter->GetAuthResult() != static_cast<int32_t>(UserAuthResult::GRANTED_ALWAYS)) {
             bannerNotificationRecord_.erase(label);
             RefreshAuthRecord();
         } else {
@@ -2363,6 +2363,17 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
         } else {
             iter++;
         }
+    }
+    auto iterAuth = bannerNotificationRecord_.begin();
+    while (iterAuth != bannerNotificationRecord_.end()) {
+        if (iterAuth->second->GetUid() != uid ||
+            iterAuth->second->GetAuthResult() != static_cast<int32_t>(UserAuthResult::GRANTED_ONCE)) {
+            iterAuth++;
+            continue;
+        }
+        BGTASK_LOGI("uid: %{public}d app stop, remove allow once time auth record.", uid);
+        iterAuth = bannerNotificationRecord_.erase(iterAuth);
+        RefreshAuthRecord();
     }
 }
 
@@ -2584,6 +2595,7 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
             }
             BGTASK_LOGI("bundleName: %{public}s, uid: %{public}d remove auth record.", bundleName.c_str(), uid);
             iterAuth = bannerNotificationRecord_.erase(iterAuth);
+            RefreshAuthRecord();
         }
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED) {
         cachedBundleInfos_.erase(uid);
@@ -3048,7 +3060,11 @@ ErrCode BgContinuousTaskMgr::CheckSendBannerNotificationParam(std::shared_ptr<Co
         record->userId_, record->appIndex_);
     auto iter = bannerNotificationRecord_.find(authKey);
     if (iter != bannerNotificationRecord_.end()) {
-        BGTASK_LOGE("bundleName: %{public}s has banner notification or authorized!", record->bundleName_.c_str());
+        if (iter->second->GetAuthResult() == static_cast<int32_t>(UserAuthResult::NOT_SUPPORTED)) {
+            BGTASK_LOGE("bundleName: %{public}s module.json not deploy special type.", record->bundleName_.c_str());
+            return ERR_BGTASK_CONTINUOUS_NOT_DEPLOY_SPECIAL_SCENARIO_PROCESSING;
+        }
+        BGTASK_LOGE("bundleName: %{public}s has banner notification or authorized.", record->bundleName_.c_str());
         return ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED;
     }
     std::string appName = GetMainAbilityLabel(record->bundleName_, record->userId_);
@@ -3171,14 +3187,26 @@ ErrCode BgContinuousTaskMgr::CheckTaskAuthResult(const std::string &bundleName, 
         BGTASK_LOGW("manager is not ready");
         return ERR_BGTASK_SYS_NOT_READY;
     }
-    uint32_t authResult = 0;
-    handler_->PostSyncTask([this, &authResult, bundleName, userId, appIndex]() {
-        this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
+    ErrCode ret = ERR_OK;
+    handler_->PostSyncTask([this, &ret, bundleName, userId, appIndex]() {
+        ret = this->CheckTaskAuthResultInner(bundleName, userId, appIndex);
         }, AppExecFwk::EventQueue::Priority::HIGH);
-    if (authResult == UserAuthResult::GRANTED_ONCE || authResult == UserAuthResult::GRANTED_ALWAYS) {
+    return ret;
+}
+
+ErrCode BgContinuousTaskMgr::CheckTaskAuthResultInner(const std::string &bundleName, int32_t userId, int32_t appIndex)
+{
+    std::string key = NotificationTools::GetInstance()->CreateBannerNotificationLabel(bundleName, userId, appIndex);
+    if (bannerNotificationRecord_.find(key) == bannerNotificationRecord_.end()) {
+        return ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD;
+    }
+    auto iter = bannerNotificationRecord_.at(key);
+    int32_t auth = iter->GetAuthResult();
+    if (auth == static_cast<int32_t>(UserAuthResult::GRANTED_ONCE) ||
+        auth == static_cast<int32_t>(UserAuthResult::GRANTED_ALWAYS)) {
         return ERR_OK;
     }
-    return -1;
+    return ERR_BGTASK_CONTINUOUS_AUTH_NOT_PERMITTED;
 }
 
 ErrCode BgContinuousTaskMgr::EnableContinuousTaskRequest(int32_t uid, bool isEnable)

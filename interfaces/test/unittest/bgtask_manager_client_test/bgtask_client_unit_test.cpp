@@ -1128,7 +1128,8 @@ HWTEST_F(BgTaskClientUnitTest, CheckTaskAuthResult_001, TestSize.Level1)
     std::string bundleName = "bundleName";
     int32_t userId = 100;
     int32_t appIndex = 0;
-    EXPECT_EQ(BackgroundTaskMgrHelper::CheckTaskAuthResult(bundleName, userId, appIndex), -1);
+    EXPECT_EQ(BackgroundTaskMgrHelper::CheckTaskAuthResult(bundleName, userId, appIndex),
+        ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD);
 }
 
 /**

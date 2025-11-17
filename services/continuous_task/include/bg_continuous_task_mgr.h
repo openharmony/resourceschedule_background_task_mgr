@@ -233,6 +233,7 @@ private:
     ErrCode CheckSpecialModePermission(const sptr<ContinuousTaskParam> &taskParam);
     void HandleAuthExpiredCallbackDeathInner(const wptr<IRemoteObject> &remote);
     ErrCode RefreshAuthRecord();
+    ErrCode CheckTaskAuthResultInner(const std::string &bundleName, int32_t userId, int32_t appIndex);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
