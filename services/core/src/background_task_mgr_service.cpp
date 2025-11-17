@@ -41,6 +41,8 @@ static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
 static constexpr int32_t RESOURCE_SCHEDULE_SERVICE_UID = 1096;
 static constexpr uint32_t CHECK_TIMEOUT = 10;
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
+static constexpr char SET_BACKGROUND_TASK_STATE_PERMISSION[] = "ohos.permission.SET_BACKGROUND_TASK_STATE";
+static constexpr char GET_BACKGROUND_TASK_INFO_PERMISSION[] = "ohos.permission.GET_BACKGROUND_TASK_INFO";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
@@ -641,6 +643,63 @@ ErrCode BackgroundTaskMgrService::EnableContinuousTaskRequest(int32_t uid, bool 
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     return BgContinuousTaskMgr::GetInstance()->EnableContinuousTaskRequest(uid, isEnable);
+}
+
+ErrCode BackgroundTaskMgrService::SetBackgroundTaskState(const BackgroundTaskStateInfo &taskParam)
+{
+    pid_t callingUid = IPCSkeleton::GetCallingUid();
+    if (CheckAtomicService()) {
+        pid_t callingPid = IPCSkeleton::GetCallingPid();
+        BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail, SetBackgroundTaskState not allowed",
+            callingUid, callingPid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
+    auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        BGTASK_LOGE("uid %{public}d is not hap, SetBackgroundTaskState not allowed", callingUid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(SET_BACKGROUND_TASK_STATE_PERMISSION)) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+        BGTASK_LOGE("uid %{public}d is not system hap, SetBackgroundTaskState not allowed", callingUid);
+        return ERR_BGTASK_NOT_SYSTEM_APP;
+    }
+    std::shared_ptr<BackgroundTaskStateInfo> taskState = std::make_shared<BackgroundTaskStateInfo>(taskParam.GetUserId(),
+        taskParam.GetBundleName(), taskParam.GetAppIndex(), taskParam.GetUserAuthResult());
+    return BgContinuousTaskMgr::GetInstance()->SetBackgroundTaskState(taskState);
+}
+
+ErrCode BackgroundTaskMgrService::GetBackgroundTaskState(const BackgroundTaskStateInfo &taskParam,
+    uint32_t &authResult)
+{
+    pid_t callingUid = IPCSkeleton::GetCallingUid();
+    if (CheckAtomicService()) {
+        pid_t callingPid = IPCSkeleton::GetCallingPid();
+        BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail, GetBackgroundTaskState not allowed",
+            callingUid, callingPid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
+    auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        BGTASK_LOGE("uid %{public}d is not hap, GetBackgroundTaskState not allowed", callingUid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(GET_BACKGROUND_TASK_INFO_PERMISSION)) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+        BGTASK_LOGE("uid %{public}d is not system hap, GetBackgroundTaskState not allowed", callingUid);
+        return ERR_BGTASK_NOT_SYSTEM_APP;
+    }
+    std::shared_ptr<BackgroundTaskStateInfo> taskState = std::make_shared<BackgroundTaskStateInfo>(taskParam.GetUserId(),
+        taskParam.GetBundleName(), taskParam.GetAppIndex());
+    return BgContinuousTaskMgr::GetInstance()->GetBackgroundTaskState(taskState, authResult);
 }
 
 bool BackgroundTaskMgrService::CheckAtomicService()
