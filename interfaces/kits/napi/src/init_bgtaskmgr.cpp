@@ -272,6 +272,8 @@ napi_value BackgroundTaskSubModeInit(napi_env env, napi_value exports)
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION),
         "SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        BackgroundTaskSubmode::SUBMODE_WORKOUT_NORMAL_NOTIFICATION), "SUBMODE_WORKOUT_NORMAL_NOTIFICATION");
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("BackgroundTaskSubmode", obj),
     };

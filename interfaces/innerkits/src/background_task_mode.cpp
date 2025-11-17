@@ -48,6 +48,7 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_BACKGROUND_TASK_MODE_CORRESPO
         BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING},
     {BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION,
         BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING},
+    {BackgroundTaskSubmode::SUBMODE_WORKOUT_NORMAL_NOTIFICATION, BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING},
 };
 
 const std::unordered_map<uint32_t, uint32_t> PARAM_BACKGROUND_TASK_SUBMODE_CORRESPONDENCE_MODE = {
@@ -82,6 +83,7 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_V9MODE_CORRES
     {BackgroundTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION, BackgroundMode::VOIP},
     {BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION, BackgroundMode::SPECIAL_SCENARIO_PROCESSING},
     {BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION, BackgroundMode::SPECIAL_SCENARIO_PROCESSING},
+    {BackgroundTaskSubmode::SUBMODE_WORKOUT_NORMAL_NOTIFICATION, BackgroundMode::SPECIAL_SCENARIO_PROCESSING},
 };
 
 std::string BackgroundTaskMode::GetBackgroundTaskModeStr(uint32_t mode)
