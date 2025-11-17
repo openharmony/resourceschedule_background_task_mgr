@@ -321,6 +321,21 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
+
+    /**
+     * @brief set background task state.
+     * @param taskState param task.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
+
+    /**
+     * @brief get background task state.
+     * @param taskState param task.
+     * @param authResult auth result.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
 private:
     bool GetBackgroundTaskManagerProxy();
 
