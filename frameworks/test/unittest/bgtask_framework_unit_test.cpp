@@ -20,6 +20,7 @@
 #include "gtest/gtest.h"
 
 #include "background_task_manager.h"
+#include "background_task_state_info.h"
 #include "background_task_subscriber.h"
 #include "background_task_subscriber_stub.h"
 #include "background_task_subscriber_proxy.h"
@@ -1031,6 +1032,44 @@ HWTEST_F(BgTaskFrameworkUnitTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(authResult),
+        ERR_OK);
+}
+
+/**
+ * @tc.name: SetBackgroundTaskState_001
+ * @tc.desc: test SetBackgroundTaskState.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, SetBackgroundTaskState_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::shared_ptr<BackgroundTaskStateInfo> taskParam = std::make_shared<BackgroundTaskStateInfo>();
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBackgroundTaskState(taskParam),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBackgroundTaskState(taskParam),
+        ERR_OK);
+}
+
+/**
+ * @tc.name: GetBackgroundTaskState_001
+ * @tc.desc: test GetBackgroundTaskState.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, GetBackgroundTaskState_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::shared_ptr<BackgroundTaskStateInfo> taskParam = std::make_shared<BackgroundTaskStateInfo>();
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(taskParam),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(taskParam),
         ERR_OK);
 }
 }
