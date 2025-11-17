@@ -2069,5 +2069,92 @@ HWTEST_F(BgContinuousTaskMgrTest, ATC_EnableContinuousTaskRequest_002, TestSize.
     result = bgContinuousTaskMgr_->EnableContinuousTaskRequest(123, false);
     EXPECT_EQ(result, ERR_OK);
 }
+
+/**
+ * @tc.name: SetBackgroundTaskState_001
+ * @tc.desc: SetBackgroundTaskState test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SetBackgroundTaskState_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    EXPECT_EQ(bgContinuousTaskMgr_->SetBackgroundTaskState(nullptr), ERR_BGTASK_SYS_NOT_READY);
+
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->SetBackgroundTaskState(nullptr), ERR_BGTASK_CHECK_TASK_PARAM);
+    // userId参数非法
+    std::shared_ptr<BackgroundTaskStateInfo> taskParam = std::make_shared<BackgroundTaskStateInfo>();
+    taskParam->SetUserId(-1);
+    EXPECT_EQ(bgContinuousTaskMgr_->SetBackgroundTaskState(taskParam),
+        ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID);
+    // appIndex参数非法
+    taskParam->SetUserId(100);
+    taskParam->SetAppIndex(-1);
+    EXPECT_EQ(bgContinuousTaskMgr_->SetBackgroundTaskState(taskParam),
+        ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID);
+    // bundleName参数非法
+    taskParam->SetAppIndex(0);
+    taskParam->SetBundleName("");
+    EXPECT_EQ(bgContinuousTaskMgr_->SetBackgroundTaskState(taskParam),
+        ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID);
+    // 权限参数非法
+    taskParam->SetBundleName("bundleName");
+    taskParam->SetUserAuthResult(-1);
+    EXPECT_EQ(bgContinuousTaskMgr_->SetBackgroundTaskState(taskParam),
+        ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID);
+    taskParam->SetUserAuthResult(static_cast<int32_t>(UserAuthResult::END));
+    EXPECT_EQ(bgContinuousTaskMgr_->SetBackgroundTaskState(taskParam),
+        ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID);
+    // 无记录时，添加
+    taskParam->SetUserAuthResult(static_cast<int32_t>(UserAuthResult::GRANTED_ONCE));
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    bgContinuousTaskMgr_->SetBackgroundTaskState(taskParam);
+    EXPECT_FALSE(bgContinuousTaskMgr_->bannerNotificationRecord_.empty());
+    // 有记录时更新
+    taskParam->SetUserAuthResult(static_cast<int32_t>(UserAuthResult::GRANTED_ALWAYS));
+    EXPECT_EQ(bgContinuousTaskMgr_->SetBackgroundTaskState(taskParam), ERR_OK);
+}
+
+/**
+ * @tc.name: GetBackgroundTaskState_001
+ * @tc.desc: GetBackgroundTaskState test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, GetBackgroundTaskState_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    uint32_t authResult = 0;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundTaskState(nullptr, authResult), ERR_BGTASK_SYS_NOT_READY);
+
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundTaskState(nullptr, authResult), ERR_BGTASK_CHECK_TASK_PARAM);
+    // userId参数非法
+    std::shared_ptr<BackgroundTaskStateInfo> taskParam = std::make_shared<BackgroundTaskStateInfo>();
+    taskParam->SetUserId(-1);
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundTaskState(taskParam, authResult),
+        ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID);
+    // appIndex参数非法
+    taskParam->SetUserId(100);
+    taskParam->SetAppIndex(-1);
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundTaskState(taskParam, authResult),
+        ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID);
+    // bundleName参数非法
+    taskParam->SetAppIndex(0);
+    taskParam->SetBundleName("");
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundTaskState(taskParam, authResult),
+        ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID);
+    // 无对应记录时
+    taskParam->SetBundleName("bundleName");
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundTaskState(taskParam, authResult),
+        ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD);
+    // 有记录时更新
+    taskParam->SetUserAuthResult(static_cast<int32_t>(UserAuthResult::GRANTED_ALWAYS));
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    bgContinuousTaskMgr_->SetBackgroundTaskState(taskParam);
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundTaskState(taskParam, authResult), ERR_OK);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
