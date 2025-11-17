@@ -20,6 +20,7 @@
 #include "efficiency_resource_info.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_request.h"
+#include "background_task_state_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
