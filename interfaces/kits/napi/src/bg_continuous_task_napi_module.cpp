@@ -38,6 +38,7 @@
 #include "background_task_submode.h"
 #include "js_backgroundtask_subscriber.h"
 #include "js_runtime_utils.h"
+#include "background_task_state_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -47,6 +48,8 @@ static constexpr uint32_t MAX_START_BG_RUNNING_BY_RQUEST_PARAMS = 2;
 static constexpr uint32_t MAX_STOP_BG_RUNNING_PARAMS = 2;
 static constexpr uint32_t MAX_UPDATE_BG_RUNNING_PARAMS = 2;
 static constexpr uint32_t MAX_GET_ALL_CONTINUOUSTASK_PARAMS = 2;
+static constexpr uint32_t MAX_GET_BACKGROUND_TASK_STATE = 1;
+static constexpr uint32_t MAX_SET_BACKGROUND_TASK_STATE = 1;
 static constexpr uint32_t CALLBACK_RESULT_PARAMS_NUM = 2;
 static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
@@ -94,6 +97,12 @@ struct AsyncCallbackInfo : public AsyncWorkData {
     int32_t continuousTaskId {-1}; // out
     uint32_t authResult {0}; // out
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list; // out
+};
+
+struct AsyncCallbackTaskStateInfo : public AsyncWorkData {
+    explicit AsyncCallbackTaskStateInfo(napi_env env) : AsyncWorkData(env) {}
+    std::shared_ptr<BackgroundTaskStateInfo> taskState = std::make_shared<BackgroundTaskStateInfo>();
+    uint32_t authResult {0}; // out
 };
 
 napi_value WrapVoidToJS(napi_env env)
@@ -1611,6 +1620,90 @@ napi_value CheckSpecialScenarioAuth(napi_env env, napi_callback_info info)
         ret = WrapVoidToJS(env);
     }
     return ret;
+}
+
+napi_value SetBackgroundTaskState(napi_env env, napi_callback_info info)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::SetBackgroundTaskState");
+    size_t argc = MAX_SET_BACKGROUND_TASK_STATE;
+    napi_value argv[MAX_SET_BACKGROUND_TASK_STATE] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc != MAX_SET_BACKGROUND_TASK_STATE) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
+        return WrapVoidToJS(env);
+    }
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
+    if (valuetype != napi_object) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
+        return WrapVoidToJS(env);
+    }
+    AsyncCallbackTaskStateInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackTaskStateInfo(env);
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo params error.");
+        return WrapVoidToJS(env);
+    }
+    if (!Common::GetBackgroundTaskStateParam(env, argv[0], asyncCallbackInfo->taskState, true)) {
+        BGTASK_LOGE("get background task state error.");
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID, true);
+        return WrapVoidToJS(env);
+    }
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::SetBackgroundTaskState(asyncCallbackInfo->taskState);
+    if (asyncCallbackInfo->errCode != ERR_OK) {
+        Common::HandleErrCode(env, asyncCallbackInfo->errCode, true);
+    }
+    if (asyncCallbackInfo != nullptr) {
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+    }
+    return WrapVoidToJS(env);
+}
+
+napi_value GetBackgroundTaskState(napi_env env, napi_callback_info info)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::GetBackgroundTaskState");
+    size_t argc = MAX_GET_BACKGROUND_TASK_STATE;
+    napi_value argv[MAX_GET_BACKGROUND_TASK_STATE] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc != MAX_GET_BACKGROUND_TASK_STATE) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
+        return WrapVoidToJS(env);
+    }
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
+    if (valuetype != napi_object) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
+        return WrapVoidToJS(env);
+    }
+    AsyncCallbackTaskStateInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackTaskStateInfo(env);
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo params error.");
+        return WrapVoidToJS(env);
+    }
+    if (!Common::GetBackgroundTaskStateParam(env, argv[0], asyncCallbackInfo->taskState)) {
+        BGTASK_LOGE("get background task state error.");
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID, true);
+        return WrapVoidToJS(env);
+    }
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::GetBackgroundTaskState(asyncCallbackInfo->taskState);
+    if (asyncCallbackInfo->errCode != ERR_OK) {
+        Common::HandleErrCode(env, asyncCallbackInfo->errCode, true);
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        return WrapVoidToJS(env);
+    } else {
+        napi_value result = nullptr;
+        napi_create_int32(env, asyncCallbackInfo->taskState->GetUserAuthResult(), &result);
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        return result;
+    }
 }
 
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
