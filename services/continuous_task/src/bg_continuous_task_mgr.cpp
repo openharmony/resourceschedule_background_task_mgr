@@ -3419,7 +3419,7 @@ ErrCode BgContinuousTaskMgr::GetBackgroundTaskState(std::shared_ptr<BackgroundTa
         return ERR_BGTASK_SYS_NOT_READY;
     }
     if (!taskParam) {
-        BGTASK_LOGE("SetBackgroundTaskState task param is null!");
+        BGTASK_LOGE("GetBackgroundTaskState task param is null!");
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
     if (taskParam->GetUserId() == -1 || taskParam->GetAppIndex() == -1 || taskParam->GetBundleName() == "") {

@@ -42,7 +42,6 @@ static constexpr int32_t RESOURCE_SCHEDULE_SERVICE_UID = 1096;
 static constexpr uint32_t CHECK_TIMEOUT = 10;
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char SET_BACKGROUND_TASK_STATE_PERMISSION[] = "ohos.permission.SET_BACKGROUND_TASK_STATE";
-static constexpr char GET_BACKGROUND_TASK_INFO_PERMISSION[] = "ohos.permission.GET_BACKGROUND_TASK_INFO";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
@@ -689,7 +688,7 @@ ErrCode BackgroundTaskMgrService::GetBackgroundTaskState(const BackgroundTaskSta
         BGTASK_LOGE("uid %{public}d is not hap, GetBackgroundTaskState not allowed", callingUid);
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    if (!BundleManagerHelper::GetInstance()->CheckPermission(GET_BACKGROUND_TASK_INFO_PERMISSION)) {
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(SET_BACKGROUND_TASK_STATE_PERMISSION)) {
         return ERR_BGTASK_PERMISSION_DENIED;
     }
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();

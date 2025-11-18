@@ -540,6 +540,9 @@ ErrCode BackgroundTaskManager::SetBackgroundTaskState(std::shared_ptr<Background
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
+    if (!taskParam) {
+        return ERR_BGTASK_CHECK_TASK_PARAM;
+    }
     return proxy_->SetBackgroundTaskState(*taskParam.get());
 }
 
@@ -548,6 +551,9 @@ ErrCode BackgroundTaskManager::GetBackgroundTaskState(std::shared_ptr<Background
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
+    if (!taskParam) {
+        return ERR_BGTASK_CHECK_TASK_PARAM;
+    }
     uint32_t authResult = 0;
     ErrCode ret = proxy_->GetBackgroundTaskState(*taskParam.get(), authResult);
     if (ret != ERR_OK) {

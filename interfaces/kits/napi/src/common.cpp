@@ -760,29 +760,18 @@ bool Common::GetBackgroundTaskStateParam(napi_env &env, const napi_value &objVal
         return false;
     }
     if (inculdeAurh) {
-        napi_value value = nullptr;
-        napi_status getNameStatus = napi_get_named_property(env, objValue, "authResult", &value);
-        if (getNameStatus != napi_ok) {
+        int32_t authResult = GetIntProperty(env, objValue, "authResult");
+        if (authResult == -1 || authResult >= static_cast<int32_t>(UserAuthResult::END) ||
+            authResult < static_cast<int32_t>(UserAuthResult::NOT_SUPPORTED)) {
             return false;
-        }
-        napi_valuetype valueType = napi_undefined;
-        napi_typeof(env, value, &valueType);
-        if (valueType != napi_undefined && valueType == napi_number) {
-            int32_t intValue = INVALID_MODE_ID;
-            napi_get_value_int32(env, value, &intValue);
-            if (intValue >= static_cast<int32_t>(UserAuthResult::END) ||
-                intValue < static_cast<int32_t>(UserAuthResult::NOT_SUPPORTED)) {
-                return false;
-            }
-            taskState->SetBundleName(bundleName);
         } else {
-            return false;
+            taskState->SetUserAuthResult(authResult);
         }
     }
     return true;
 }
 
-std::string Common::GetStrValue(napi_env &env, const napi_value &objValue, const std::string &propertyName)
+std::string Common::GetStrValue(const napi_env &env, const napi_value &objValue, const std::string &propertyName)
 {
     napi_value value = nullptr;
     napi_status getNameStatus = napi_get_named_property(env, objValue, propertyName.c_str(), &value);

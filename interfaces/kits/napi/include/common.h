@@ -90,7 +90,7 @@ public:
 
     static napi_value GetStringValue(const napi_env &env, const napi_value &value, std::string &result);
 
-    static std::string GetStrValue(napi_env &env, const napi_value &objValue, const std::string &propertyName);
+    static std::string GetStrValue(const napi_env &env, const napi_value &objValue, const std::string &propertyName);
 
     static void HandleErrCode(const napi_env &env, int32_t errCode, bool isThrow);
 
