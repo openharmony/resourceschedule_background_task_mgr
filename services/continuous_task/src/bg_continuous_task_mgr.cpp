@@ -3358,5 +3358,100 @@ ErrCode BgContinuousTaskMgr::RefreshAuthRecord()
     }
     return ERR_OK;
 }
+
+ErrCode BgContinuousTaskMgr::SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    if (!taskParam) {
+        BGTASK_LOGE("SetBackgroundTaskState task param is null!");
+        return ERR_BGTASK_CHECK_TASK_PARAM;
+    }
+    if (taskParam->GetUserId() == -1 || taskParam->GetAppIndex() == -1 || taskParam->GetBundleName() == "" ||
+        taskParam->GetUserAuthResult() >= static_cast<int32_t>(UserAuthResult::END) ||
+        taskParam->GetUserAuthResult() < static_cast<int32_t>(UserAuthResult::NOT_SUPPORTED)) {
+        BGTASK_LOGE("SetBackgroundTaskState task param is invaild!");
+        return ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID;
+    }
+    ErrCode result = ERR_OK;
+    handler_->PostSyncTask([this, taskParam, &result]() {
+        result = this->SetBackgroundTaskStateInner(taskParam);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::SetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam)
+{
+    int32_t userId = taskParam->GetUserId();
+    std::string bundleName = taskParam->GetBundleName();
+    int32_t appIndex = taskParam->GetAppIndex();
+    int32_t authResult = taskParam->GetUserAuthResult();
+    auto findRecord = [userId, bundleName, appIndex](const auto &target) {
+        return userId == target.second->GetUserId() && appIndex == target.second->GetAppIndex() &&
+            bundleName == target.second->GetBundleName();
+    };
+    auto findRecordIter = find_if(bannerNotificationRecord_.begin(), bannerNotificationRecord_.end(), findRecord);
+    if (findRecordIter == bannerNotificationRecord_.end()) {
+        // 不存在，新增:例如直接在设置里关闭了权限开关
+        std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>();
+        bannerNotification->SetBundleName(bundleName);
+        bannerNotification->SetUserId(userId);
+        bannerNotification->SetAppIndex(appIndex);
+        bannerNotification->SetAuthResult(authResult);
+        std::string key = NotificationTools::GetInstance()->CreateBannerNotificationLabel(bundleName,
+            userId, appIndex);
+        bannerNotificationRecord_.emplace(key, bannerNotification);
+    } else {
+        // 存在记录，直接更新
+        findRecordIter->second->SetAuthResult(authResult);
+    }
+    RefreshAuthRecord();
+    return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam,
+    uint32_t &authResult)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    if (!taskParam) {
+        BGTASK_LOGE("GetBackgroundTaskState task param is null!");
+        return ERR_BGTASK_CHECK_TASK_PARAM;
+    }
+    if (taskParam->GetUserId() == -1 || taskParam->GetAppIndex() == -1 || taskParam->GetBundleName() == "") {
+        BGTASK_LOGE("GetBackgroundTaskState task param is invaild!");
+        return ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID;
+    }
+    ErrCode result = ERR_OK;
+    handler_->PostSyncTask([this, taskParam, &result, &authResult]() {
+        result = this->GetBackgroundTaskStateInner(taskParam, authResult);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::GetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam,
+    uint32_t &authResult)
+{
+    int32_t userId = taskParam->GetUserId();
+    std::string bundleName = taskParam->GetBundleName();
+    int32_t appIndex = taskParam->GetAppIndex();
+    BGTASK_LOGI("GetBackgroundTaskStateInner bundleName: %{public}s, appIndex: %{public}d",
+        bundleName.c_str(), appIndex);
+    auto findRecord = [userId, bundleName, appIndex](const auto &target) {
+        return userId == target.second->GetUserId() && appIndex == target.second->GetAppIndex() &&
+            bundleName == target.second->GetBundleName();
+    };
+    auto findRecordIter = find_if(bannerNotificationRecord_.begin(), bannerNotificationRecord_.end(), findRecord);
+    if (findRecordIter == bannerNotificationRecord_.end()) {
+        return ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD;
+    } else {
+        authResult = findRecordIter->second->GetAuthResult();
+    }
+    return ERR_OK;
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

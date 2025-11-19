@@ -20,6 +20,7 @@
 #include "efficiency_resource_info.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_request.h"
+#include "background_task_state_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -255,6 +256,20 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
+
+    /**
+     * @brief set background task state.
+     * @param taskParam param task.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
+
+    /**
+     * @brief get background task state.
+     * @param taskParam param task.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

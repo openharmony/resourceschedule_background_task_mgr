@@ -28,6 +28,7 @@
 #include "delay_suspend_info.h"
 #include "efficiency_resource_info.h"
 #include "js_runtime_utils.h"
+#include "background_task_state_info.h"
 
 #define BGTASK_NAPI_CALL_BASE(env, theCall, retVal) \
     do {                                     \
@@ -89,6 +90,8 @@ public:
 
     static napi_value GetStringValue(const napi_env &env, const napi_value &value, std::string &result);
 
+    static std::string GetStrValue(const napi_env &env, const napi_value &objValue, const std::string &propertyName);
+
     static void HandleErrCode(const napi_env &env, int32_t errCode, bool isThrow);
 
     static bool HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow);
@@ -136,6 +139,9 @@ public:
         std::shared_ptr<ContinuousTaskRequest> &request);
 
     static void SetAuthCallback(const napi_env &env, const napi_ref &callbackIn, int32_t authResult);
+
+    static bool GetBackgroundTaskStateParam(napi_env &env, const napi_value &objValue,
+        std::shared_ptr<BackgroundTaskStateInfo> taskState, bool includeAuth = false);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

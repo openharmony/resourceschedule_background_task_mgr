@@ -169,5 +169,15 @@ ErrCode BackgroundTaskMgrHelper::EnableContinuousTaskRequest(int32_t uid, bool i
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->EnableContinuousTaskRequest(uid, isEnable);
 }
+
+ErrCode BackgroundTaskMgrHelper::SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBackgroundTaskState(taskParam);
+}
+
+ErrCode BackgroundTaskMgrHelper::GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(taskParam);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

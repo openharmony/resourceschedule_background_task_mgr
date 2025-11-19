@@ -44,6 +44,7 @@
 #include "want.h"
 #include "banner_notification_record.h"
 #include "iexpired_callback.h"
+#include "background_task_state_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -104,6 +105,9 @@ public:
     ErrCode CheckSpecialScenarioAuth(uint32_t &authResult);
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
+    ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
+    ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
+
     bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false);
     bool StopBannerContinuousTaskByUser(const std::string &label);
     void OnAccountsStateChanged(int32_t id);
@@ -234,6 +238,8 @@ private:
     void HandleAuthExpiredCallbackDeathInner(const wptr<IRemoteObject> &remote);
     ErrCode RefreshAuthRecord();
     ErrCode CheckTaskAuthResultInner(const std::string &bundleName, int32_t userId, int32_t appIndex);
+    ErrCode SetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
+    ErrCode GetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};

@@ -82,6 +82,7 @@ enum : int32_t {
     ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD,
     ERR_BGTASK_CONTINUOUS_AUTH_NOT_PERMITTED,
     ERR_BGTASK_CONTINUOUS_NOT_DEPLOY_SPECIAL_SCENARIO_PROCESSING,
+    ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID,
     ERR_BGTASK_NOTIFICATION_VERIFY_FAILED = 980000601,
     ERR_BGTASK_NOTIFICATION_ERR,
     ERR_BGTASK_CHECK_TASK_PARAM,
@@ -246,15 +247,15 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR, "Continuous Task verification failed. "
         "The current app has detected malicious behavior and is prohibited from applying."},
     {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY, "Continuous Task verification failed. "
-        "The background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type is empty."},
+        "The background task mode: MODE_SPECIAL_SCENARIO_PROCESSING type is empty."},
     {ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, "Continuous Task verification failed. "
         "The callback cannot be null and its type must be function."},
     {ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS, "Continuous Task verification failed. The callback already exists."},
     {ERR_BGTASK_CONTINUOUS_SPECIAL_SCENARIO_PROCESSING_NOT_MERGE_NOTIFICATION, "Continuous Task verification failed. "
-        "This background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type do not support merged notification."},
+        "This background task mode: MODE_SPECIAL_SCENARIO_PROCESSING type do not support merged notification."},
     {ERR_BGTASK_MALICIOUS_CONTINUOUSTASK, "Malicious long-running tasks are not allowed to continue applying."},
     {ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE, "Continuous Task verification failed. "
-        "The background task mode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER type do not support current device."},
+        "The background task mode: MODE_SPECIAL_SCENARIO_PROCESSING type do not support current device."},
     {ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED,
         "Continuous Task verification failed. Current application has banner notification or authorized."},
     {ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD,
@@ -262,7 +263,9 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_CONTINUOUS_AUTH_NOT_PERMITTED,
         "Continuous Task verification failed. Current authorization is not permitted."},
     {ERR_BGTASK_CONTINUOUS_NOT_DEPLOY_SPECIAL_SCENARIO_PROCESSING, "Continuous Task verification failed. "
-        "The application not deploy backgroundMode: MODE_SPECIAL_SCENARIO_PROCESSINGSFER."},
+        "The application not deploy backgroundMode: MODE_SPECIAL_SCENARIO_PROCESSING."},
+    {ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID, "Continuous Task verification failed. "
+        "The background task state param is invalid."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

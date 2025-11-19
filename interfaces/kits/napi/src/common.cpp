@@ -21,6 +21,7 @@
 #include "background_task_mode.h"
 #include "background_task_submode.h"
 #include "transient_task_log.h"
+#include "user_auth_result.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -735,6 +736,59 @@ void Common::TaskModeTypeConversion(std::shared_ptr<ContinuousTaskRequest> &requ
     }
     request->SetBackgroundTaskMode(modes);
     request->SetBackgroundTaskSubMode(subModes);
+}
+
+bool Common::GetBackgroundTaskStateParam(napi_env &env, const napi_value &objValue,
+    std::shared_ptr<BackgroundTaskStateInfo> taskState, bool inculdeAurh)
+{
+    int32_t userId = GetIntProperty(env, objValue, "userId");
+    if (userId != -1) {
+        taskState->SetUserId(userId);
+    } else {
+        return false;
+    }
+    int32_t appIndex = GetIntProperty(env, objValue, "appIndex");
+    if (appIndex != -1) {
+        taskState->SetAppIndex(appIndex);
+    } else {
+        return false;
+    }
+    std::string bundleName = GetStrValue(env, objValue, "bundleName");
+    if (bundleName != "") {
+        taskState->SetBundleName(bundleName);
+    } else {
+        return false;
+    }
+    if (inculdeAurh) {
+        int32_t authResult = GetIntProperty(env, objValue, "authResult");
+        if (authResult == -1 || authResult >= static_cast<int32_t>(UserAuthResult::END) ||
+            authResult < static_cast<int32_t>(UserAuthResult::NOT_SUPPORTED)) {
+            return false;
+        } else {
+            taskState->SetUserAuthResult(authResult);
+        }
+    }
+    return true;
+}
+
+std::string Common::GetStrValue(const napi_env &env, const napi_value &objValue, const std::string &propertyName)
+{
+    napi_value value = nullptr;
+    napi_status getNameStatus = napi_get_named_property(env, objValue, propertyName.c_str(), &value);
+    if (getNameStatus != napi_ok) {
+        return "";
+    }
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, value, &valueType);
+    if (valueType != napi_undefined && valueType == napi_string) {
+        char str[STR_MAX_SIZE] = {0};
+        size_t strLen = 0;
+        napi_status status = napi_get_value_string_utf8(env, value, str, STR_MAX_SIZE - 1, &strLen);
+        if (status == napi_ok) {
+            return std::string(str);
+        }
+    }
+    return "";
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

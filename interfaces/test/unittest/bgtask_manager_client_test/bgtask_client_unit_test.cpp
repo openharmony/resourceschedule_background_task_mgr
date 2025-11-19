@@ -28,6 +28,7 @@
 #include "continuous_task_callback_info.h"
 #include "continuous_task_cancel_reason.h"
 #include "background_task_mode.h"
+#include "background_task_state_info.h"
 #include "continuous_task_param.h"
 #include "continuous_task_request.h"
 #include "background_task_submode.h"
@@ -1144,6 +1145,54 @@ HWTEST_F(BgTaskClientUnitTest, EnableContinuousTaskRequest_001, TestSize.Level1)
     int32_t uid = 100;
     bool isEnable = true;
     EXPECT_EQ(BackgroundTaskMgrHelper::EnableContinuousTaskRequest(uid, isEnable), 0);
+}
+
+/**
+ * @tc.name: BackgroundTaskStateInfo_001
+ * @tc.desc: test BackgroundTaskStateInfo.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, BackgroundTaskStateInfo_001, TestSize.Level1)
+{
+    std::shared_ptr<BackgroundTaskStateInfo> info1 = std::make_shared<BackgroundTaskStateInfo>();
+    std::shared_ptr<BackgroundTaskStateInfo> info2 = std::make_shared<BackgroundTaskStateInfo>(
+        1, "bundleName", 1, 1);
+    info1->SetUserId(2);
+    info1->SetBundleName("bundleName2");
+    info1->SetAppIndex(2);
+    info1->SetUserAuthResult(2);
+    MessageParcel parcel = MessageParcel();
+    info2->Marshalling(parcel);
+    sptr<BackgroundTaskStateInfo> info3 = BackgroundTaskStateInfo::Unmarshalling(parcel);
+    EXPECT_EQ(info3->GetUserId(), 1);
+    EXPECT_EQ(info3->GetBundleName(), "bundleName");
+    EXPECT_EQ(info3->GetAppIndex(), 1);
+    EXPECT_EQ(info3->GetUserAuthResult(), 1);
+}
+
+/**
+ * @tc.name: SetBackgroundTaskState_001
+ * @tc.desc: test SetBackgroundTaskState.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, SetBackgroundTaskState_001, TestSize.Level1)
+{
+    std::shared_ptr<BackgroundTaskStateInfo> taskParam = std::make_shared<BackgroundTaskStateInfo>();
+    EXPECT_EQ(BackgroundTaskMgrHelper::SetBackgroundTaskState(taskParam), ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: GetBackgroundTaskState_001
+ * @tc.desc: test GetBackgroundTaskState.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, GetBackgroundTaskState_001, TestSize.Level1)
+{
+    std::shared_ptr<BackgroundTaskStateInfo> taskParam = std::make_shared<BackgroundTaskStateInfo>();
+    EXPECT_EQ(BackgroundTaskMgrHelper::GetBackgroundTaskState(taskParam), ERR_BGTASK_PERMISSION_DENIED);
 }
 }
 }
