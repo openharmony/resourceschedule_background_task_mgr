@@ -112,8 +112,6 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "samgr:samgr_proxy",
   ]
 
-  public_external_deps = [ "json:nlohmann_json_static" ]
-
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
   innerapi_tags = [ "platformsdk" ]
