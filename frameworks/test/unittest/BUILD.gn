@@ -45,6 +45,7 @@ ohos_unittest("bgtask_framework_unit_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_base:want",
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
@@ -88,6 +89,7 @@ ohos_unittest("bgtask_framework_abnormal_unit_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_base:want",
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
