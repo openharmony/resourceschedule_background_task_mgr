@@ -3449,7 +3449,7 @@ ErrCode BgContinuousTaskMgr::GetBackgroundTaskStateInner(std::shared_ptr<Backgro
     if (findRecordIter == bannerNotificationRecord_.end()) {
         return ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD;
     } else {
-        authResult = findRecordIter->second->GetAuthResult();
+        authResult = static_cast<uint32_t>(findRecordIter->second->GetAuthResult());
     }
     return ERR_OK;
 }
