@@ -1646,6 +1646,8 @@ napi_value SetBackgroundTaskState(napi_env env, napi_callback_info info)
     }
     if (!Common::GetBackgroundTaskStateParam(env, argv[0], asyncCallbackInfo->taskState, true)) {
         BGTASK_LOGE("get background task state error.");
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID, true);
         return WrapVoidToJS(env);
     }
@@ -1684,6 +1686,8 @@ napi_value GetBackgroundTaskState(napi_env env, napi_callback_info info)
     }
     if (!Common::GetBackgroundTaskStateParam(env, argv[0], asyncCallbackInfo->taskState)) {
         BGTASK_LOGE("get background task state error.");
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID, true);
         return WrapVoidToJS(env);
     }
