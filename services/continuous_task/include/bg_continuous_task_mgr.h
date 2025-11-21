@@ -131,6 +131,13 @@ public:
     void OnBannerNotificationActionButtonClick(const int32_t buttonType, const int32_t uid,
         const std::string &label);
     void HandleAuthExpiredCallbackDeath(const wptr<IRemoteObject> &remote);
+    void SetLiveViewInfo(int32_t uid, bool isLiveViewPublish, const std::string &eventName);
+    bool CheckLiveViewInfoModes(std::shared_ptr<ContinuousTaskRecord> record);
+    bool CheckLiveViewInfo(std::shared_ptr<ContinuousTaskRecord> record);
+    void CancelBgTaskNotification(int32_t uid);
+    void SendNotificationByLiveViewCancel(int32_t uid);
+    void SendNotificationByLiveViewCancelInner(int32_t uid);
+    void CancelBgTaskNotificationInner(int32_t uid);
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
@@ -246,6 +253,8 @@ private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
     std::unordered_map<int32_t, bool> avSessionNotification_ {};
+    std::mutex liveViewInfoMutex_;
+    std::unordered_map<int32_t, std::unordered_set<std::string>> liveViewInfo_ {};
 
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};

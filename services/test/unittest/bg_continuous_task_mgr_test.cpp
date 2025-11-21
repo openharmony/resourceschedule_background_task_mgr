@@ -2156,5 +2156,101 @@ HWTEST_F(BgContinuousTaskMgrTest, GetBackgroundTaskState_001, TestSize.Level1)
     bgContinuousTaskMgr_->SetBackgroundTaskState(taskParam);
     EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundTaskState(taskParam, authResult), ERR_OK);
 }
+
+/**
+ * @tc.name: SetLiveViewInfo_001
+ * @tc.desc: SetLiveViewInfo test.
+ * @tc.type: FUNC
+ * @tc.require: 788
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SetLiveViewInfo_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    int32_t uid = 1;
+    bgContinuousTaskMgr_->SetLiveViewInfo(uid, true, "NAVIGATION");
+    EXPECT_EQ(bgContinuousTaskMgr_->liveViewInfo_.count(uid), 1);
+
+    bgContinuousTaskMgr_->SetLiveViewInfo(uid, false, "NAVIGATION");
+    EXPECT_EQ(bgContinuousTaskMgr_->liveViewInfo_.count(uid), 0);
+}
+/**
+ * @tc.name: CheckLiveViewInfo_001
+ * @tc.desc: CheckLiveViewInfo test.
+ * @tc.type: FUNC
+ * @tc.require: 788
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CheckLiveViewInfo_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    int32_t uid = 1;
+    bgContinuousTaskMgr_->SetLiveViewInfo(uid, true, "EVENTNAME");
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->uid_ = uid;
+    EXPECT_FALSE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+
+    bgContinuousTaskMgr_->SetLiveViewInfo(uid, true, "NAVIGATION");
+    uid = 2;
+    record->uid_ = uid;
+    EXPECT_FALSE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+
+    uid = 1;
+    record->uid_ = uid;
+    record->bgModeId_ = 4;
+    record->bgModeIds_.clear();
+    record->bgModeIds_.push_back(4);
+    EXPECT_TRUE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+    record->bgModeIds_.push_back(2);
+    EXPECT_TRUE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+    record->bgModeIds_.push_back(3);
+    EXPECT_FALSE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+}
+
+/**
+ * @tc.name: CancelBgTaskNotification_001
+ * @tc.desc: CancelBgTaskNotification test.
+ * @tc.type: FUNC
+ * @tc.require: 788
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CancelBgTaskNotification_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    int32_t uid = 1;
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+
+    bgContinuousTaskMgr_->CancelBgTaskNotification(uid);
+
+    record->uid_ = uid;
+    record->notificationId_ = -1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = record;
+    bgContinuousTaskMgr_->CancelBgTaskNotification(uid);
+    EXPECT_EQ(record->GetNotificationId(), -1);
+
+    record->notificationId_ = 1;
+    record->bgModeId_ = 4;
+    record->bgModeIds_.push_back(4);
+    record->bgModeIds_.push_back(3);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = record;
+    bgContinuousTaskMgr_->CancelBgTaskNotification(uid);
+    EXPECT_EQ(record->GetNotificationId(), 1);
+}
+
+/**
+ * @tc.name: SendNotificationByLiveViewCancel_001
+ * @tc.desc: SendNotificationByLiveViewCancel test.
+ * @tc.type: FUNC
+ * @tc.require: 788
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SendNotificationByLiveViewCancel_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    int32_t uid = 1;
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+
+    bgContinuousTaskMgr_->SendNotificationByLiveViewCancel(uid);
+    record->uid_ = uid;
+    record->notificationId_ = -1;
+    bgContinuousTaskMgr_->SendNotificationByLiveViewCancel(uid);
+    EXPECT_EQ(record->GetNotificationId(), -1);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

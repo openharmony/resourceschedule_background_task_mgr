@@ -87,6 +87,20 @@ public:
         return true;
     }
 
+    static bool CheckExistOtherMode(
+        const std::vector<uint32_t> &bgModeIds, uint32_t bgMode, const std::set<uint32_t> &liveViewTypes)
+    {
+        std::set<uint32_t> taskTypesSet(bgModeIds.begin(), bgModeIds.end());
+        std::set<uint32_t> otherTypes = liveViewTypes;
+        otherTypes.erase(bgMode);
+        for (const auto& type : otherTypes) {
+            if (taskTypesSet.find(type) != taskTypesSet.end()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 public:
     static constexpr int32_t jsonFormat_ = 4;
 };
