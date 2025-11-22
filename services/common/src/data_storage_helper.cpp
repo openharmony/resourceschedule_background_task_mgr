@@ -43,8 +43,8 @@ const std::string PARAM = "param";
 const std::string FAST_FROZEN = "fast_frozen";
 const std::string ENABLE = "enable";
 const std::string DOZE_TIME = "doze_time";
-const int32_t EXTENSION_SUCCESS_CODE = 0;
-const int32_t EXTENSION_ERROR_CODE = 13500099;
+constexpr int32_t EXTENSION_SUCCESS_CODE = 0;
+constexpr int32_t EXTENSION_ERROR_CODE = 13500099;
 }
 
 DataStorageHelper::DataStorageHelper() {}

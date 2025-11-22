@@ -2320,8 +2320,11 @@ HWTEST_F(BgContinuousTaskMgrTest, OnRestore_001, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->bannerNotificationRecord_.size(), 2);
     auto notification1 = bgContinuousTaskMgr_->bannerNotificationRecord_[label1];
     EXPECT_EQ(notification1->GetAuthResult(), UserAuthResult::GRANTED_ONCE);
+    EXPECT_EQ(notification1->GetBundleName(), "bundleName1");
+    EXPECT_EQ(notification1->GetUserId(), 100);
     auto notification2 = bgContinuousTaskMgr_->bannerNotificationRecord_[label2];
     EXPECT_EQ(notification2->GetAuthResult(), UserAuthResult::GRANTED_ALWAYS);
+    EXPECT_EQ(notification2->GetUserId(), 200);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
