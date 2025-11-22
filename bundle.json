@@ -46,6 +46,7 @@
           "napi",
           "os_account",
           "resource_management",
+          "resource_schedule_service",
           "safwk",
           "samgr",
           "c_utils",

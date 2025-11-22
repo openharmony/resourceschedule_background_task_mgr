@@ -16,6 +16,8 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_DATA_STORAGE_HELPER_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_DATA_STORAGE_HELPER_H
 
+#include <unique_fd.h>
+
 #include "singleton.h"
 #include "nlohmann/json.hpp"
 
@@ -37,6 +39,9 @@ public:
     ErrCode RestoreAuthRecord(std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> &authRecord);
     ErrCode RefreshAuthRecord(
         const std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> &authRecord);
+    ErrCode OnBackup(MessageParcel& data, MessageParcel& reply);
+    ErrCode OnRestore(MessageParcel& data, MessageParcel& reply,
+        std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>>& allRecord);
 
 private:
     int32_t SaveJsonValueToFile(const std::string &value, const std::string &filePath);
@@ -51,6 +56,8 @@ private:
         nlohmann::json &appRecord, nlohmann::json &processRecord);
     void ReportUserDataSizeEvent();
     DECLARE_DELAYED_SINGLETON(DataStorageHelper);
+    std::string SetReplyCode(int32_t replyCode);
+    bool GetAuthRecord(UniqueFd &fd);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

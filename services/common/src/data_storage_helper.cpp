@@ -15,9 +15,12 @@
 #include "data_storage_helper.h"
 
 #include <fcntl.h>
+#include <file_ex.h>
 #include <fstream>
 #include <unistd.h>
+#include <securec.h>
 #include <sstream>
+#include <sys/sendfile.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
 
@@ -26,7 +29,6 @@
 #include "config_policy_utils.h"
 #include "directory_ex.h"
 #include "hisysevent.h"
-#include <file_ex.h>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -41,6 +43,8 @@ const std::string PARAM = "param";
 const std::string FAST_FROZEN = "fast_frozen";
 const std::string ENABLE = "enable";
 const std::string DOZE_TIME = "doze_time";
+const int32_t EXTENSION_SUCCESS_CODE = 0;
+const int32_t EXTENSION_ERROR_CODE = 13500099;
 }
 
 DataStorageHelper::DataStorageHelper() {}
@@ -97,6 +101,7 @@ ErrCode DataStorageHelper::RestoreAuthRecord(std::unordered_map<std::string,
     std::shared_ptr<BannerNotificationRecord>> &authRecord)
 {
     nlohmann::json root;
+    BGTASK_LOGI("RestoreAuthRecord start");
     if (ParseJsonValueFromFile(root, AUTH_RECORD_FILE_PATH) != ERR_OK) {
         BGTASK_LOGE("bannerNotification parse json value from file fail.");
         return ERR_BGTASK_DATA_STORAGE_ERR;
@@ -162,6 +167,82 @@ ErrCode DataStorageHelper::RefreshAuthRecord(
         }
     }
     return SaveJsonValueToFile(root.dump(CommonUtils::jsonFormat_), AUTH_RECORD_FILE_PATH);
+}
+
+ErrCode DataStorageHelper::OnBackup(MessageParcel& data, MessageParcel& reply)
+{
+    UniqueFd fd(-1);
+    std::string replyCode = SetReplyCode(EXTENSION_SUCCESS_CODE);
+
+    fd = UniqueFd(open(AUTH_RECORD_FILE_PATH, O_RDONLY));
+    if (fd.Get() < 0) {
+        BGTASK_LOGE("OnBackup open fail.");
+        replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
+    }
+    if ((!reply.WriteFileDescriptor(fd)) || (!reply.WriteString(replyCode))) {
+        close(fd.Release());
+        BGTASK_LOGE("OnBackup fail: reply write fail!");
+        return ERR_INVALID_OPERATION;
+    }
+    close(fd.Release());
+    BGTASK_LOGI("OnBackup success!");
+    return ERR_OK;
+}
+
+ErrCode DataStorageHelper::OnRestore(MessageParcel& data, MessageParcel& reply,
+    std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>>& allRecord)
+{
+    std::string replyCode = SetReplyCode(EXTENSION_SUCCESS_CODE);
+    UniqueFd srcFd(data.ReadFileDescriptor());
+    if (!GetAuthRecord(srcFd)) {
+        replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
+    }
+    if (reply.WriteString(replyCode) == false) {
+        BGTASK_LOGE("OnRestore fail: reply write fail!");
+        return ERR_INVALID_OPERATION;
+    }
+    ErrCode ret = RestoreAuthRecord(allRecord);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    BGTASK_LOGI("OnRestore success!");
+    return ERR_OK;
+}
+
+bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
+{
+    struct stat statBuf;
+    if (fd.Get() < 0 || fstat(fd.Get(), &statBuf) < 0) {
+        BGTASK_LOGE("OnRestore fail: ReadFileDescriptor or fstat fail");
+        return false;
+    }
+    int destFd = open(AUTH_RECORD_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+    if (destFd < 0) {
+        BGTASK_LOGE("OnRestore open file fail.");
+        return false;
+    }
+    if (sendfile(destFd, fd.Get(), nullptr, statBuf.st_size) < 0) {
+        BGTASK_LOGE("OnRestore srcFd sendfile(size: %{public}d) to destFd fail.", static_cast<int>(statBuf.st_size));
+        close(destFd);
+        return false;
+    }
+    close(destFd);
+    return true;
+}
+
+std::string DataStorageHelper::SetReplyCode(int32_t replyCode)
+{
+    nlohmann::json root;
+    nlohmann::json resultInfo;
+    nlohmann::json errorInfo;
+
+    errorInfo["type"] = "AuthRecord";
+    errorInfo["errorCode"] = std::to_string(replyCode);
+    errorInfo["errorInfo"] = "";
+
+    resultInfo.push_back(errorInfo);
+    root["resultInfo"] = resultInfo;
+    return root.dump();
 }
 
 ErrCode DataStorageHelper::RestoreResourceRecord(ResourceRecordMap &appRecord,

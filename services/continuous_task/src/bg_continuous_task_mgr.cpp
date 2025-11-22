@@ -3557,5 +3557,57 @@ void BgContinuousTaskMgr::SendNotificationByLiveViewCancel(int32_t uid)
         this->SendNotificationByLiveViewCancelInner(uid);
         }, AppExecFwk::EventQueue::Priority::HIGH);
 }
+
+ErrCode BgContinuousTaskMgr::OnBackup(MessageParcel& data, MessageParcel& reply)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Service::OnBackup");
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    DumpAuthRecordInfo(bannerNotificationRecord_);
+    return DelayedSingleton<DataStorageHelper>::GetInstance()->OnBackup(data, reply);
+}
+
+ErrCode BgContinuousTaskMgr::OnRestore(MessageParcel& data, MessageParcel& reply)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Service::OnRestore");
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    ErrCode ret;
+    std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> allRecord;
+    handler_->PostSyncTask([this, &data, &reply, &allRecord, &ret]() {
+        ret = DelayedSingleton<DataStorageHelper>::GetInstance()->OnRestore(data, reply, allRecord);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    bannerNotificationRecord_ = allRecord;
+    DumpAuthRecordInfo(bannerNotificationRecord_);
+    return ret;
+}
+
+void BgContinuousTaskMgr::DumpAuthRecordInfo(
+    std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> allRecord)
+{
+    std::stringstream stream;
+    if (allRecord.empty) {
+        BGTASK_LOGI("allRecord is empty");
+        return;
+    }
+    uint32_t index = 1;
+    for (const auto &iter : allRecord) {
+        auto record = iter.second;
+        stream.str("");
+        stream.clear();
+        stream << "authRecordInfo:bundleName:" << record->GetBundleName() << ", ";
+        stream << "userId:" << record->GetUserId() << ", ";
+        stream << "authResult:" << record->GetBundleName() << ", ";
+        stream << "\n";
+        index++;
+        BGTASK_LOGI("%{public}s", stream.str().c_str());
+    }
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

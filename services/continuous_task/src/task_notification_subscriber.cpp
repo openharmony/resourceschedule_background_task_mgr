@@ -24,6 +24,8 @@
 #include "string_wrapper.h"
 #include "notification_content.h"
 #include "int_wrapper.h"
+#include "res_type.h"
+#include "res_sched_client.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {

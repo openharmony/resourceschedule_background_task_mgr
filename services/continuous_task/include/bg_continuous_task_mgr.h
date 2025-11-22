@@ -138,6 +138,8 @@ public:
     void SendNotificationByLiveViewCancel(int32_t uid);
     void SendNotificationByLiveViewCancelInner(int32_t uid);
     void CancelBgTaskNotificationInner(int32_t uid);
+    ErrCode OnBackup(MessageParcel& data, MessageParcel& reply);
+    ErrCode OnRestore(MessageParcel& data, MessageParcel& reply);
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
@@ -162,10 +164,12 @@ private:
     ErrCode StopBackgroundRunningByContext(int32_t uid, const std::string &abilityName, int32_t abilityId);
     ErrCode StopBackgroundRunningByTask(const std::shared_ptr<ContinuousTaskRecord> &task);
     void HandlePersistenceData();
+    void HandleOnExtensionRestore();
     void RestoreApplyRecord();
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
+    void DumpAuthRecordInfo(std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> allRecord)
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t uid);
     uint32_t GetBackgroundModeInfo(int32_t uid, const std::string &abilityName);
