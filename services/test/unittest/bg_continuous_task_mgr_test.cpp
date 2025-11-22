@@ -2290,10 +2290,10 @@ HWTEST_F(BgContinuousTaskMgrTest, OnRestore_001, TestSize.Level1)
     MessageParcel data;
     MessageParcel reply;
     bgContinuousTaskMgr_->isSysReady_.store(false);
-    EXPECT_EQ(bgContinuousTaskMgr_->OnBackup(data, reply), ERR_BGTASK_SYS_NOT_READY);
+    EXPECT_EQ(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_BGTASK_SYS_NOT_READY);
 
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    EXPECT_EQ(bgContinuousTaskMgr_->OnBackup(data, reply), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
     bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
     // 构造备份数据
     std::shared_ptr<BannerNotificationRecord> bannerNotification1 = std::make_shared<BannerNotificationRecord>();
@@ -2302,8 +2302,8 @@ HWTEST_F(BgContinuousTaskMgrTest, OnRestore_001, TestSize.Level1)
     bannerNotification1->SetAuthResult(UserAuthResult::GRANTED_ONCE);
     std::string label1 = "notificationLabel1";
     std::shared_ptr<BannerNotificationRecord> bannerNotification2 = std::make_shared<BannerNotificationRecord>();
-    bannerNotification2->SetBundleName("bundleName1");
-    bannerNotification2->SetUserId(100);
+    bannerNotification2->SetBundleName("bundleName2");
+    bannerNotification2->SetUserId(200);
     bannerNotification2->SetAuthResult(UserAuthResult::GRANTED_ALWAYS);
     std::string label2 = "notificationLabel2";
     bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label1, bannerNotification1);
@@ -2313,8 +2313,9 @@ HWTEST_F(BgContinuousTaskMgrTest, OnRestore_001, TestSize.Level1)
     bgContinuousTaskMgr_->RefreshAuthRecord();
     // 数据备份
     EXPECT_EQ(bgContinuousTaskMgr_->OnBackup(data, reply), ERR_OK);
+    // 清除数据缓存
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
     // 数据恢复
-    EXPECT_EQ(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->bannerNotificationRecord_.size(), 2);
     auto notification1 = bgContinuousTaskMgr_->bannerNotificationRecord_[label1];

@@ -194,10 +194,11 @@ ErrCode DataStorageHelper::OnRestore(MessageParcel& data, MessageParcel& reply,
 {
     std::string replyCode = SetReplyCode(EXTENSION_SUCCESS_CODE);
     UniqueFd srcFd(data.ReadFileDescriptor());
-    if (!GetAuthRecord(srcFd)) {
+    bool getAuthRet = GetAuthRecord(srcFd);
+    if (!getAuthRet) {
         replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
     }
-    if (reply.WriteString(replyCode) == false) {
+    if (reply.WriteString(replyCode) == false || !getAuthRet) {
         BGTASK_LOGE("OnRestore fail: reply write fail!");
         return ERR_INVALID_OPERATION;
     }

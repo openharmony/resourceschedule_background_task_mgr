@@ -169,7 +169,7 @@ private:
     void CheckPersistenceData(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses);
     void DumpAllTaskInfo(std::vector<std::string> &dumpInfo);
     void DumpCancelTask(const std::vector<std::string> &dumpOption, bool cleanAll);
-    void DumpAuthRecordInfo(std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> allRecord)
+    void DumpAuthRecordInfo(std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>>& allRecord);
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t uid);
     uint32_t GetBackgroundModeInfo(int32_t uid, const std::string &abilityName);

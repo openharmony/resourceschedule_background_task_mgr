@@ -3589,10 +3589,10 @@ ErrCode BgContinuousTaskMgr::OnRestore(MessageParcel& data, MessageParcel& reply
 }
 
 void BgContinuousTaskMgr::DumpAuthRecordInfo(
-    std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> allRecord)
+    std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>>& allRecord)
 {
     std::stringstream stream;
-    if (allRecord.empty) {
+    if (allRecord.empty()) {
         BGTASK_LOGI("allRecord is empty");
         return;
     }
@@ -3603,7 +3603,7 @@ void BgContinuousTaskMgr::DumpAuthRecordInfo(
         stream.clear();
         stream << "authRecordInfo:bundleName:" << record->GetBundleName() << ", ";
         stream << "userId:" << record->GetUserId() << ", ";
-        stream << "authResult:" << record->GetBundleName() << ", ";
+        stream << "authResult:" << record->GetAuthResult();
         stream << "\n";
         index++;
         BGTASK_LOGI("%{public}s", stream.str().c_str());

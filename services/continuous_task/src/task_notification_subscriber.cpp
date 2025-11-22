@@ -78,7 +78,6 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         std::unordered_map<std::string, std::string> payload;
         payload["uid"] = std::to_string(creatorUid);
         payload["eventName"] = eventName;
-        uint32_t type = ResourceSchedule::ResType::RES_TYPE_DEVICE_IDLE;
         ResourceSchedule::ResSchedClient::GetInstance().ReportData(ResourceSchedule::ResType::RES_TYPE_LIVE_VIEW_EVENT,
             ResourceSchedule::ResType::LiveViewState::LIVE_VIEW_EXIT, payload);
     }
