@@ -75,6 +75,12 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
             continuousTaskMgr_->SetLiveViewInfo(creatorUid, false, eventName);
             continuousTaskMgr_->SendNotificationByLiveViewCancel(creatorUid);
         }
+        std::unordered_map<std::string, std::string> payload;
+        payload["uid"] = std::to_string(creatorUid);
+        payload["eventName"] = eventName;
+        uint32_t type = ResourceSchedule::ResType::RES_TYPE_DEVICE_IDLE;
+        ResourceSchedule::ResSchedClient::GetInstance().ReportData(ResourceSchedule::ResType::RES_TYPE_LIVE_VIEW_EVENT,
+            ResourceSchedule::ResType::LiveViewState::LIVE_VIEW_EXIT, payload);
     }
 }
 
@@ -103,6 +109,14 @@ void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::
         continuousTaskMgr_->SetLiveViewInfo(creatorUid, true, eventName);
         continuousTaskMgr_->CancelBgTaskNotification(creatorUid);
     }
+    std::unordered_map<std::string, std::string> payload;
+    payload["uid"] = std::to_string(creatorUid);
+    payload["eventName"] = eventName;
+    uint32_t type = ResourceSchedule::ResType::RES_TYPE_LIVE_VIEW_EVENT;
+    int32_t value = capsuleStatus == CAPSULE_STATUS_ACTIVE ?
+        ResourceSchedule::ResType::LiveViewState::LIVE_VIEW_ENTER :
+        ResourceSchedule::ResType::LiveViewState::LIVE_VIEW_EXIT;
+    ResourceSchedule::ResSchedClient::GetInstance().ReportData(type, value, payload);
 }
 
 void TaskNotificationSubscriber::OnUpdate(
