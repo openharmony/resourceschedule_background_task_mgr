@@ -58,6 +58,7 @@ public:
     void OnStart() final;
     void OnStop() final;
     void SetReady(uint32_t flag);
+    int32_t OnExtension(const std::string& extension, MessageParcel& data, MessageParcel& reply) override;
 
     ErrCode RequestSuspendDelay(const std::string& reason,
         const sptr<IExpiredCallback>& callback, DelaySuspendInfo &delayInfo) override;

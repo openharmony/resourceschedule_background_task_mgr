@@ -44,6 +44,8 @@ static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUN
 static constexpr char SET_BACKGROUND_TASK_STATE_PERMISSION[] = "ohos.permission.SET_BACKGROUND_TASK_STATE";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
+static constexpr char EXTENSION_BACKUP[] = "backup";
+static constexpr char EXTENSION_RESTORE[] = "restore";
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
 }
@@ -91,6 +93,20 @@ void BackgroundTaskMgrService::SetReady(uint32_t flag)
     }
     state_ = ServiceRunningState::STATE_RUNNING;
     BGTASK_LOGI("background task manager service start succeed!");
+}
+
+int32_t BackgroundTaskMgrService::OnExtension(const std::string& extension, MessageParcel& data, MessageParcel& reply)
+{
+    BgTaskHiTraceChain traceChain(__func__);
+    BGTASK_LOGI("extension is %{public}s", extension.c_str());
+    if (extension == EXTENSION_BACKUP) {
+        // 业务备份
+        return BgContinuousTaskMgr::GetInstance()->OnBackup(data, reply);
+    } else if (extension == EXTENSION_RESTORE) {
+        // 业务恢复
+        return BgContinuousTaskMgr::GetInstance()->OnRestore(data, reply);
+    }
+    return 0;
 }
 
 void BackgroundTaskMgrService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
