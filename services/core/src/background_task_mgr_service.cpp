@@ -44,8 +44,8 @@ static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUN
 static constexpr char SET_BACKGROUND_TASK_STATE_PERMISSION[] = "ohos.permission.SET_BACKGROUND_TASK_STATE";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
-const std::string EXTENSION_BACKUP = "backup";
-const std::string EXTENSION_RESTORE = "restore";
+static constexpr char EXTENSION_BACKUP[] = "backup";
+static constexpr char EXTENSION_RESTORE[] = "restore";
 const bool REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get());
 }

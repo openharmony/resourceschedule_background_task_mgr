@@ -3579,11 +3579,10 @@ ErrCode BgContinuousTaskMgr::OnRestore(MessageParcel& data, MessageParcel& reply
         return ERR_BGTASK_SYS_NOT_READY;
     }
     ErrCode ret;
-    std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> allRecord;
-    handler_->PostSyncTask([this, &data, &reply, &allRecord, &ret]() {
-        ret = DelayedSingleton<DataStorageHelper>::GetInstance()->OnRestore(data, reply, allRecord);
+    handler_->PostSyncTask([this, &data, &reply, &ret]() {
+        ret = DelayedSingleton<DataStorageHelper>::GetInstance()->OnRestore(
+            data, reply, this->bannerNotificationRecord_);
         }, AppExecFwk::EventQueue::Priority::HIGH);
-    bannerNotificationRecord_ = allRecord;
     DumpAuthRecordInfo(bannerNotificationRecord_);
     return ret;
 }
