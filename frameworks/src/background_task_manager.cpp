@@ -563,6 +563,18 @@ ErrCode BackgroundTaskManager::GetBackgroundTaskState(std::shared_ptr<Background
     return ERR_OK;
 }
 
+ErrCode BackgroundTaskManager::GetAllContinuousTasksBySystem(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Mgr::GetAllContinuousTasksBySystem");
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    ErrCode result = proxy_->GetAllContinuousTasksBySystem(list);
+    return result;
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 

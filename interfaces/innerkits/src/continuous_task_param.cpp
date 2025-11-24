@@ -99,6 +99,10 @@ bool ContinuousTaskParam::ReadFromParcelNewApi(Parcel &parcel)
         BGTASK_LOGE("Failed to read the isByRequestObject");
         return false;
     }
+    if (!parcel.ReadInt32(appIndex_)) {
+        BGTASK_LOGE("Failed to read the appIndex");
+        return false;
+    }
     return true;
 }
 
@@ -234,6 +238,10 @@ bool ContinuousTaskParam::MarshallingNewApi(Parcel &parcel) const
     }
     if (!parcel.WriteBool(isByRequestObject_)) {
         BGTASK_LOGE("Failed to write the isByRequestObject");
+        return false;
+    }
+    if (!parcel.WriteInt32(appIndex_)) {
+        BGTASK_LOGE("Failed to write the appIndex_");
         return false;
     }
     return true;

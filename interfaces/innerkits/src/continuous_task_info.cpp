@@ -79,6 +79,26 @@ bool ContinuousTaskInfo::GetSuspendState() const
     return suspendState_;
 }
 
+void ContinuousTaskInfo::SetBundleName(const std::string &bundleName)
+{
+    bundleName_ = bundleName;
+}
+
+std::string ContinuousTaskInfo::GetBundleName() const
+{
+    return bundleName_;
+}
+
+void ContinuousTaskInfo::SetAppIndex(int32_t appIndex)
+{
+    appIndex_ = appIndex;
+}
+
+int32_t ContinuousTaskInfo::GetAppIndex() const
+{
+    return appIndex_;
+}
+
 std::string ContinuousTaskInfo::ToString(const std::vector<uint32_t> &modes) const
 {
     std::string result;
@@ -109,6 +129,8 @@ bool ContinuousTaskInfo::Marshalling(Parcel& out) const
     WRITE_PARCEL_WITH_RET(out, String, wantAgentBundleName_, false);
     WRITE_PARCEL_WITH_RET(out, String, wantAgentAbilityName_, false);
     WRITE_PARCEL_WITH_RET(out, Bool, suspendState_, false);
+    WRITE_PARCEL_WITH_RET(out, String, bundleName_, false);
+    WRITE_PARCEL_WITH_RET(out, Int32, appIndex_, false);
     return true;
 }
 
@@ -143,6 +165,8 @@ bool ContinuousTaskInfo::ReadFromParcel(Parcel& in)
     READ_PARCEL_WITH_RET(in, String, wantAgentBundleName_, false);
     READ_PARCEL_WITH_RET(in, String, wantAgentAbilityName_, false);
     READ_PARCEL_WITH_RET(in, Bool, suspendState_, false);
+    READ_PARCEL_WITH_RET(in, String, bundleName_, false);
+    READ_PARCEL_WITH_RET(in, Int32, appIndex_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr

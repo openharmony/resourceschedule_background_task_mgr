@@ -102,7 +102,7 @@ public:
 
     static napi_value GetBooleanValue(const napi_env &env, const napi_value &value, bool &result);
 
-    static napi_value GetNapiContinuousTaskInfo(napi_env env,
+    static napi_value GetNapiContinuousTaskInfo(napi_env &env,
         const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo);
 
     static napi_value NapiSetBgTaskMode(napi_env env, napi_value napiInfo,

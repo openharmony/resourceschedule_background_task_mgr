@@ -42,6 +42,7 @@ static constexpr int32_t RESOURCE_SCHEDULE_SERVICE_UID = 1096;
 static constexpr uint32_t CHECK_TIMEOUT = 10;
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char SET_BACKGROUND_TASK_STATE_PERMISSION[] = "ohos.permission.SET_BACKGROUND_TASK_STATE";
+static constexpr char GET_BACKGROUND_TASK_INFO_PERMISSION[] = "ohos.permission.GET_BACKGROUND_TASK_INFO";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const std::string BGTASK_SERVICE_NAME = "BgtaskMgrService";
 static constexpr char EXTENSION_BACKUP[] = "backup";
@@ -715,6 +716,33 @@ ErrCode BackgroundTaskMgrService::GetBackgroundTaskState(const BackgroundTaskSta
     std::shared_ptr<BackgroundTaskStateInfo> taskState = std::make_shared<BackgroundTaskStateInfo>(
         taskParam.GetUserId(), taskParam.GetBundleName(), taskParam.GetAppIndex());
     return BgContinuousTaskMgr::GetInstance()->GetBackgroundTaskState(taskState, authResult);
+}
+
+ErrCode BackgroundTaskMgrService::GetAllContinuousTasksBySystem(
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    pid_t callingUid = IPCSkeleton::GetCallingUid();
+    if (CheckAtomicService()) {
+        pid_t callingPid = IPCSkeleton::GetCallingPid();
+        BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail, GetAllContinuousTasksBySystem"
+            " not allowed", callingUid, callingPid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
+    auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        BGTASK_LOGE("uid %{public}d is not hap, GetAllContinuousTasksBySystem not allowed", callingUid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    if (!BundleManagerHelper::GetInstance()->CheckPermission(GET_BACKGROUND_TASK_INFO_PERMISSION)) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+    if (!BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+        BGTASK_LOGE("uid %{public}d is not system hap, GetAllContinuousTasksBySystem not allowed", callingUid);
+        return ERR_BGTASK_NOT_SYSTEM_APP;
+    }
+    return BgContinuousTaskMgr::GetInstance()->GetAllContinuousTasksBySystem(list);
 }
 
 bool BackgroundTaskMgrService::CheckAtomicService()

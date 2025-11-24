@@ -87,6 +87,7 @@ public:
     ErrCode UpdateBackgroundRunning(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode StopBackgroundRunning(const std::string &abilityName, int32_t abilityId, int32_t continuousTaskId = -1);
     ErrCode GetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
+    ErrCode GetAllContinuousTasksBySystem(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
     ErrCode GetAllContinuousTasks(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended);
     ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode RequestGetContinuousTasksByUidForInner(int32_t uid,
@@ -153,7 +154,7 @@ private:
         int32_t continuousTaskId = -1);
     ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode GetAllContinuousTasksInner(int32_t uid, std::vector<std::shared_ptr<ContinuousTaskInfo>> &list,
-        bool includeSuspended = true);
+        bool includeSuspended = true, bool exemptUid = false);
     ErrCode CheckIsSysReadyAndPermission(int32_t callingUid);
     ErrCode AddSubscriberInner(const std::shared_ptr<SubscriberInfo> subscriberInfo);
     ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);

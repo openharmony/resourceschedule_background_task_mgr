@@ -132,6 +132,11 @@ public:
      */
     bool GetSuspendState() const;
 
+    void SetBundleName(const std::string &bundleName);
+    std::string GetBundleName() const;
+    void SetAppIndex(int32_t appIndex);
+    int32_t GetAppIndex() const;
+
     std::string ToString(const std::vector<uint32_t> &modes) const;
 
 private:
@@ -149,6 +154,8 @@ private:
     std::string wantAgentBundleName_ {""};
     std::string wantAgentAbilityName_ {""};
     bool suspendState_ {false};
+    std::string bundleName_ {""};
+    int32_t appIndex_ {-1};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

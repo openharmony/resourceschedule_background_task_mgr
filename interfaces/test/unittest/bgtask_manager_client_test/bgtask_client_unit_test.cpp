@@ -874,7 +874,8 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskInfo_001, TestSize.Level1)
     std::shared_ptr<ContinuousTaskInfo> info2 = std::make_shared<ContinuousTaskInfo>(
         "abilityName", 1, 1, false, backgroundModes, backgroundSubModes, 1, 1, 1, "wantAgentBundleName",
         "wantAgentAbilityName");
-
+    info2->SetBundleName("bundleName");
+    info2->SetAppIndex(1);
     MessageParcel parcel = MessageParcel();
     info2->Marshalling(parcel);
     sptr<ContinuousTaskInfo> info3 = ContinuousTaskInfo::Unmarshalling(parcel);
@@ -890,6 +891,8 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetBackgroundModes().size(), 1);
     EXPECT_EQ(info3->GetBackgroundSubModes().size(), 1);
     EXPECT_NE(info3->ToString(backgroundModes), "");
+    EXPECT_EQ(info3->GetAppIndex(), 1);
+    EXPECT_EQ(info3->GetBundleName(), "bundleName");
 }
 
 /**
@@ -1193,6 +1196,18 @@ HWTEST_F(BgTaskClientUnitTest, GetBackgroundTaskState_001, TestSize.Level1)
 {
     std::shared_ptr<BackgroundTaskStateInfo> taskParam = std::make_shared<BackgroundTaskStateInfo>();
     EXPECT_EQ(BackgroundTaskMgrHelper::GetBackgroundTaskState(taskParam), ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: GetAllContinuousTasksBySystem_001
+ * @tc.desc: test GetAllContinuousTasksBySystem.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, GetAllContinuousTasksBySystem_001, TestSize.Level1)
+{
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    EXPECT_EQ(BackgroundTaskMgrHelper::GetAllContinuousTasksBySystem(list), ERR_BGTASK_PERMISSION_DENIED);
 }
 }
 }

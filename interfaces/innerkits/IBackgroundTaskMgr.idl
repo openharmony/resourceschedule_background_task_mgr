@@ -64,4 +64,5 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void EnableContinuousTaskRequest([in] int uid, [in] boolean isEnable);
     void SetBackgroundTaskState([in] BackgroundTaskStateInfo taskParam);
     void GetBackgroundTaskState([in] BackgroundTaskStateInfo taskParam, [out] unsigned int authResult);
+    void GetAllContinuousTasksBySystem([out] sharedptr<ContinuousTaskInfo>[] list);
 }
