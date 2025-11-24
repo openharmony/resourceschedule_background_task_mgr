@@ -48,6 +48,8 @@
 #include "time_provider.h"
 #include "timer_manager.h"
 #include "watchdog.h"
+#include "notification_content.h"
+#include "int_wrapper.h"
 
 using namespace testing::ext;
 
@@ -843,6 +845,92 @@ HWTEST_F(BgTaskMiscUnitTest, OnProcessStateChanged_001, TestSize.Level2)
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
     applicationStateObserver->OnProcessStateChanged(processData);
     EXPECT_EQ((int32_t)decisionMaker->pkgDelaySuspendInfoMap_.size(), 1);
+}
+
+/**
+ * @tc.name: TaskNotificationSubscriber_003
+ * @tc.desc: test TaskNotificationSubscriber class.
+ * @tc.type: FUNC
+ * @tc.require: 800
+ */
+HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_003, TestSize.Level2)
+{
+    auto subscriber = std::make_shared<TaskNotificationSubscriber>();
+    subscriber->OnConsumed(nullptr, nullptr);
+    auto notificationMap = std::make_shared<Notification::NotificationSortingMap>();
+    auto notificationRequest = sptr<Notification::NotificationRequest>(new Notification::NotificationRequest());
+    auto notification = std::make_shared<Notification::Notification>(notificationRequest);
+    subscriber->OnConsumed(notification, notificationMap);
+    BgContinuousTaskMgr::GetInstance()->bgTaskUid_ = BGTASKMGR_UID;
+
+    notification->request_->creatorUid_ = BGTASKMGR_UID;
+    subscriber->OnConsumed(notification, notificationMap);
+
+    notification->request_->creatorUid_ = 1;
+    notification->request_->notificationContentType_ = Notification::NotificationContent::Type::BASIC_TEXT;
+    subscriber->OnConsumed(notification, notificationMap);
+
+    notification->request_->notificationContentType_ = Notification::NotificationContent::Type::LIVE_VIEW;
+    subscriber->OnConsumed(notification, notificationMap);
+    EXPECT_TRUE(true);
+}
+
+/**
+ * @tc.name: TaskNotificationSubscriber_004
+ * @tc.desc: test TaskNotificationSubscriber class.
+ * @tc.type: FUNC
+ * @tc.require: 800
+ */
+HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_004, TestSize.Level2)
+{
+    auto subscriber = std::make_shared<TaskNotificationSubscriber>();
+    subscriber->OnCanceled(nullptr, nullptr, 1);
+    auto notificationMap = std::make_shared<Notification::NotificationSortingMap>();
+    auto notificationRequest = sptr<Notification::NotificationRequest>(new Notification::NotificationRequest());
+    auto notification = std::make_shared<Notification::Notification>(notificationRequest);
+    subscriber->OnCanceled(notification, notificationMap, 1);
+    BgContinuousTaskMgr::GetInstance()->bgTaskUid_ = BGTASKMGR_UID;
+
+    notification->request_->creatorUid_ = BGTASKMGR_UID;
+    subscriber->OnCanceled(notification, notificationMap,
+        Notification::NotificationConstant::TRIGGER_TEN_MINUTES_REASON_DELETE);
+
+    notification->request_->creatorUid_ = 1;
+    notification->request_->ownerUid_ = 1;
+    notification->request_->notificationContentType_ = Notification::NotificationContent::Type::BASIC_TEXT;
+    subscriber->OnCanceled(notification, notificationMap, 1);
+
+    notification->request_->notificationContentType_ = Notification::NotificationContent::Type::LIVE_VIEW;
+    subscriber->OnCanceled(notification, notificationMap, 1);
+    EXPECT_TRUE(true);
+}
+
+/**
+ * @tc.name: TaskNotificationSubscriber_005
+ * @tc.desc: test TaskNotificationSubscriber class.
+ * @tc.type: FUNC
+ * @tc.require: 800
+ */
+HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_005, TestSize.Level2)
+{
+    auto subscriber = std::make_shared<TaskNotificationSubscriber>();
+    auto notificationMap = std::make_shared<Notification::NotificationSortingMap>();
+    auto notificationRequest = sptr<Notification::NotificationRequest>(new Notification::NotificationRequest());
+    auto notification = std::make_shared<Notification::Notification>(notificationRequest);
+
+    notification->request_->creatorUid_ = 1;
+    notification->request_->ownerUid_ = 1;
+    notification->request_->notificationContentType_ = Notification::NotificationContent::Type::LIVE_VIEW;
+    std::shared_ptr<AAFwk::WantParams> extraInfo = std::make_shared<AAFwk::WantParams>();
+    extraInfo->SetParam("event", AAFwk::String::Box("NAVIGATION"));
+    extraInfo->SetParam("CapsuleData.status", AAFwk::Integer::Box(1));
+    auto liveViewContent = std::make_shared<Notification::NotificationLiveViewContent>();
+    liveViewContent->SetExtraInfo(extraInfo);
+    auto content = std::make_shared<Notification::NotificationContent>(liveViewContent);
+    notification->request_->SetContent(content);
+    subscriber->OnConsumed(notification, notificationMap);
+    subscriber->OnCanceled(notification, notificationMap, 1);
+    EXPECT_TRUE(true);
 }
 }
 }
