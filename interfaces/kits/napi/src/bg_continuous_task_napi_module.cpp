@@ -1747,6 +1747,29 @@ void ObtainAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status
     callbackPtr.release();
 }
 
+napi_value ObtainAllContinuousTasksPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("param is nullptr");
+        return nullptr;
+    }
+    napi_value resourceName;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    napi_deferred deferred;
+    napi_value promise {nullptr};
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    asyncCallbackInfo->deferred = deferred;
+    NAPI_CALL(env, napi_create_async_work(env,
+        nullptr,
+        resourceName,
+        ObtainAllContinuousTasksExecuteCB,
+        ObtainAllContinuousTasksPromiseCompletedCB,
+        static_cast<void *>(asyncCallbackInfo),
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+    return promise;
+}
+
 napi_value ObtainAllContinuousTasks(napi_env env, napi_callback_info info)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
@@ -1773,29 +1796,6 @@ napi_value ObtainAllContinuousTasks(napi_env env, napi_callback_info info)
         ret = WrapVoidToJS(env);
     }
     return ret;
-}
-
-napi_value ObtainAllContinuousTasksPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
-{
-    if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("param is nullptr");
-        return nullptr;
-    }
-    napi_value resourceName;
-    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
-    napi_deferred deferred;
-    napi_value promise {nullptr};
-    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
-    asyncCallbackInfo->deferred = deferred;
-    NAPI_CALL(env, napi_create_async_work(env,
-        nullptr,
-        resourceName,
-        ObtainAllContinuousTasksExecuteCB,
-        ObtainAllContinuousTasksPromiseCompletedCB,
-        static_cast<void *>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-    return promise;
 }
 
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
