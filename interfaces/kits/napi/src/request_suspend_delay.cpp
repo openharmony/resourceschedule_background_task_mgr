@@ -62,7 +62,8 @@ void CallbackInstance::DeleteNapiRef()
     auto task = [dataWorker]() {
         napi_delete_reference(dataWorker->env, dataWorker->ref);
     };
-    if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high)) {
+    if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high,
+        "DeleteNapiRefTransientTask")) {
         BGTASK_LOGE("DeleteNapiRef: Failed to SendEvent");
         dataWorker = nullptr;
     }
@@ -107,7 +108,7 @@ __attribute__((no_sanitize("cfi"))) void CallbackInstance::OnExpired()
             callbackInstances_.erase(findCallback);
         }
     };
-    if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high)) {
+    if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high, "OnExpired")) {
         BGTASK_LOGE("OnExpired: Failed to SendEvent");
         dataWorker = nullptr;
         callbackInstances_.erase(findCallback);
