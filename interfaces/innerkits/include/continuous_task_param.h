@@ -41,6 +41,7 @@ struct ContinuousTaskParam : public Parcelable {
     int32_t combinedNotificationTaskId_ {-1};
     int32_t updateTaskId_ {-1};
     bool isByRequestObject_ {false};
+    int32_t appIndex_ {-1};
     int32_t notificationId_ {-1}; // out
     int32_t continuousTaskId_ {-1}; // out
 

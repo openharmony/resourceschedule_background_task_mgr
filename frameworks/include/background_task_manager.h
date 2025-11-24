@@ -336,6 +336,14 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
+
+    /**
+     * @brief get all continuous task info by system.
+     *
+     * @param list continuous task info list.
+     * @return ERR_OK if success, else fail.
+     */
+    ErrCode GetAllContinuousTasksBySystem(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
 private:
     bool GetBackgroundTaskManagerProxy();
 

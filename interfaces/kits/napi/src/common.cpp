@@ -396,7 +396,35 @@ napi_value Common::NapiSetBgTaskMode(napi_env env, napi_value napiInfo,
     return napiInfo;
 }
 
-napi_value Common::GetNapiContinuousTaskInfo(napi_env env,
+bool FormatContinuousTaskInfo(napi_env &env, napi_value &napiInfo,
+    const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo)
+{
+    // bundleName
+    napi_value napiBundleName = nullptr;
+    napi_status state = napi_create_string_utf8(env, continuousTaskInfo->GetBundleName().c_str(),
+        continuousTaskInfo->GetBundleName().length(), &napiBundleName);
+    if (state != napi_ok) {
+        return false;
+    }
+    state = napi_set_named_property(env, napiInfo, "bundleName", napiBundleName);
+    if (state != napi_ok) {
+        return false;
+    }
+
+    // appIndex
+    napi_value napiAppIndex = nullptr;
+    state = napi_create_int32(env, continuousTaskInfo->GetAppIndex(), &napiAppIndex);
+    if (state != napi_ok) {
+        return false;
+    }
+    state = napi_set_named_property(env, napiInfo, "appIndex", napiAppIndex);
+    if (state != napi_ok) {
+        return false;
+    }
+    return true;
+}
+
+napi_value Common::GetNapiContinuousTaskInfo(napi_env &env,
     const std::shared_ptr<ContinuousTaskInfo> &continuousTaskInfo)
 {
     if (continuousTaskInfo == nullptr) {
@@ -463,6 +491,10 @@ napi_value Common::GetNapiContinuousTaskInfo(napi_env env,
     napi_value napiSuspendState = nullptr;
     NAPI_CALL(env, napi_get_boolean(env, continuousTaskInfo->GetSuspendState(), &napiSuspendState));
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "suspendState", napiSuspendState));
+
+    if (!FormatContinuousTaskInfo(env, napiInfo, continuousTaskInfo)) {
+        return NapiGetNull(env);
+    }
     return napiInfo;
 }
 

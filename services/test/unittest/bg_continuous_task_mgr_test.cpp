@@ -2254,6 +2254,47 @@ HWTEST_F(BgContinuousTaskMgrTest, SendNotificationByLiveViewCancel_001, TestSize
 }
 
 /**
+ * @tc.name: GetAllContinuousTasksBySystem_001
+ * @tc.desc: test GetAllContinuousTasksBySystem interface.
+ * @tc.type: FUNC
+ * @tc.require: issueIBY0DN
+ */
+HWTEST_F(BgContinuousTaskMgrTest, GetAllContinuousTasksBySystem_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasksBySystem(list), ERR_BGTASK_SYS_NOT_READY);
+
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasksBySystem(list), ERR_OK);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = nullptr;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasksBySystem(list), ERR_OK);
+    EXPECT_TRUE(list.empty());
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->abilityName_ = "abilityName";
+    continuousTaskRecord1->uid_ = 1;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_TWO;
+    continuousTaskRecord1->bgModeIds_.push_back(TEST_NUM_TWO);
+    continuousTaskRecord1->bgSubModeIds_.push_back(TEST_NUM_TWO);
+    continuousTaskRecord1->notificationId_ = 1;
+    continuousTaskRecord1->continuousTaskId_ = 1;
+    continuousTaskRecord1->abilityId_ = 1;
+    std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+    info->bundleName_ = "wantAgentBundleName";
+    info->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord1->wantAgentInfo_ = info;
+    continuousTaskRecord1->appIndex_ = 1;
+    continuousTaskRecord1->bundleName_ = "bundlenName";
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTasksBySystem(list), ERR_OK);
+    EXPECT_FALSE(list.empty());
+}
+
+/**
  * @tc.name: OnBackup_001
  * @tc.desc: OnBackup test.
  * @tc.type: FUNC

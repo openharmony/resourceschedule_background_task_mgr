@@ -179,5 +179,10 @@ ErrCode BackgroundTaskMgrHelper::GetBackgroundTaskState(std::shared_ptr<Backgrou
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(taskParam);
 }
+
+ErrCode BackgroundTaskMgrHelper::GetAllContinuousTasksBySystem(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTasksBySystem(list);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

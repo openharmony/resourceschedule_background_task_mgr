@@ -1072,5 +1072,24 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetBackgroundTaskState_001, TestSize.Level1)
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(taskParam),
         ERR_OK);
 }
+
+/**
+ * @tc.name: GetAllContinuousTasksBySystem_001
+ * @tc.desc: test GetAllContinuousTasksBySystem.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, GetAllContinuousTasksBySystem_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTasksBySystem(list),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+
+    SystemAbilityManagerClient::GetInstance().action_ = "";
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTasksBySystem(list),
+        ERR_OK);
+}
 }
 }

@@ -1710,6 +1710,94 @@ napi_value GetBackgroundTaskState(napi_env env, napi_callback_info info)
     }
 }
 
+void ObtainAllContinuousTasksExecuteCB(napi_env env, void *data)
+{
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("input params error");
+        return;
+    }
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::GetAllContinuousTasksBySystem(asyncCallbackInfo->list);
+}
+
+void ObtainAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status, void *data)
+{
+    AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
+    std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
+    napi_value result {nullptr};
+    if (asyncCallbackInfo->errCode == ERR_OK) {
+        if (asyncCallbackInfo->list.size() > 0) {
+            NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
+            uint32_t count = 0;
+            for (const auto &continuoustTaskInfo : asyncCallbackInfo->list) {
+                napi_value napiWork = Common::GetNapiContinuousTaskInfo(env, continuoustTaskInfo);
+                NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, count, napiWork));
+                count++;
+            }
+        } else {
+            NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
+        }
+        NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result));
+    } else {
+        std::string errMsg = Common::FindErrMsg(env, asyncCallbackInfo->errCode);
+        int32_t errCodeInfo = Common::FindErrCode(env, asyncCallbackInfo->errCode);
+        result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);
+        NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
+    }
+    callbackPtr.release();
+}
+
+napi_value ObtainAllContinuousTasks(napi_env env, napi_callback_info info)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::ObtainAllContinuousTasks");
+    if (env == nullptr) {
+        BGTASK_LOGE("env param invaild.");
+        return WrapVoidToJS(env);
+    }
+    ReportXPowerJsStackSysEventByType(env, "OBTAIN_ALL_CONTINUOUS_TASK");
+    AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo == nullpter");
+        return WrapVoidToJS(env);
+    }
+    std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
+    napi_value ret = ObtainAllContinuousTasksPromise(env, asyncCallbackInfo);
+    callbackPtr.release();
+    if (ret == nullptr) {
+        BGTASK_LOGE("ret is nullpter");
+        if (asyncCallbackInfo != nullptr) {
+            delete asyncCallbackInfo;
+            asyncCallbackInfo = nullptr;
+        }
+        ret = WrapVoidToJS(env);
+    }
+    return ret;
+}
+
+napi_value ObtainAllContinuousTasksPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("param is nullptr");
+        return nullptr;
+    }
+    napi_value resourceName;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    napi_deferred deferred;
+    napi_value promise {nullptr};
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+    asyncCallbackInfo->deferred = deferred;
+    NAPI_CALL(env, napi_create_async_work(env,
+        nullptr,
+        resourceName,
+        ObtainAllContinuousTasksExecuteCB,
+        ObtainAllContinuousTasksPromiseCompletedCB,
+        static_cast<void *>(asyncCallbackInfo),
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+    return promise;
+}
+
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
 {
     return StartBackgroundRunning(env, info, false);
