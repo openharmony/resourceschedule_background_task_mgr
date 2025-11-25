@@ -25,7 +25,6 @@ group("service_group_background_task_mgr_all") {
     deps = [
       "${bgtaskmgr_root_path}/resources:bgtaskmgr_resources",
       "${bgtaskmgr_root_path}/sa_profile:bgtaskmgr_sa_profile",
-      "${bgtaskmgr_root_path}/sa_profile:bgtaskmgr_service_init",
       "${bgtaskmgr_root_path}/services:bgtaskmgr_service",
     ]
   }

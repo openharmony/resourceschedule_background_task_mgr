@@ -61,7 +61,7 @@ extern void SetGetAllActiveNotificationsFlag(int32_t flag);
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t SLEEP_TIME = 500;
-static constexpr int32_t BGTASKMGR_UID = 3051;
+static constexpr int32_t BGTASKMGR_UID = 1096;
 static constexpr int32_t TEST_NUM_ONE = 1;
 static constexpr int32_t TEST_NUM_TWO = 2;
 static constexpr int32_t MIN_ALLOW_QUOTA_TIME = 10 * MSEC_PER_SEC; // 10s

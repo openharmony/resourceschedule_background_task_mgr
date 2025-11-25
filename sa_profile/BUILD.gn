@@ -14,13 +14,6 @@
 import("//build/ohos.gni")
 import("//build/ohos/sa_profile/sa_profile.gni")
 
-ohos_prebuilt_etc("bgtaskmgr_service_init") {
-  source = "etc/bgtaskmgr_service.cfg"
-  relative_install_dir = "init"
-  subsystem_name = "resourceschedule"
-  part_name = "background_task_mgr"
-}
-
 ohos_sa_profile("bgtaskmgr_sa_profile") {
   sources = [ "1903.json" ]
 
