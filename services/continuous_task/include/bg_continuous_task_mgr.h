@@ -217,6 +217,9 @@ private:
     uint32_t GetModeNumByTypeIds(const std::vector<uint32_t> &typeIds);
     void NotifySubscribers(ContinuousTaskEventTriggerType changeEventType,
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void NotifySubscribersTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void NotifySubscribersTaskUpdate(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void NotifySubscribersTaskCancel(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void NotifySubscribersTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void NotifySubscribersTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void ReportHisysEvent(ContinuousTaskEventTriggerType changeEventType,
