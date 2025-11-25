@@ -15,6 +15,7 @@
  
 #include "js_backgroundtask_subscriber.h"
 #include "continuous_task_log.h"
+#include "common.h"
 #include "js_runtime_utils.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
@@ -127,6 +128,112 @@ void JsBackgroundTaskSubscriber::UnSubscriberBgtaskSaStatusChange()
     }
     jsSaListner_ = nullptr;
 }
+
+void JsBackgroundTaskSubscriber::OnContinuousTaskStart(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    BGTASK_LOGI("OnContinuousTaskStart abilityname %{public}s continuousTaskId %{public}d",
+        continuousTaskCallbackInfo->GetAbilityName().c_str(),
+        continuousTaskCallbackInfo->GetContinuousTaskId());
+    std::unique_ptr<NapiAsyncTask::CompleteCallback> complete = std::make_unique<NapiAsyncTask::CompleteCallback>(
+        [self = weak_from_this(), continuousTaskCallbackInfo](napi_env env, NapiAsyncTask &task, int32_t status) {
+            auto jsObserver = self.lock();
+            if (jsObserver == nullptr) {
+                BGTASK_LOGE("null observer");
+                return;
+            }
+            BGTASK_LOGI("OnContinuousTaskStart js thread %{public}s",
+                continuousTaskCallbackInfo->GetAbilityName().c_str());
+            jsObserver->HandleOnContinuousTaskStart(continuousTaskCallbackInfo);
+        });
+    napi_ref callback = nullptr;
+    NapiAsyncTask::Schedule("JsBackgroundTaskSubscriber::OnContinuousTaskStart", env_,
+        std::make_unique<NapiAsyncTask>(callback, nullptr, std::move(complete)));
+}
+
+void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStart(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    BGTASK_LOGI("HandleOnContinuousTaskStart called");
+    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    auto iter = jsObserverObjectMap_.find("subscribeContinuousTaskState");
+    if (iter == jsObserverObjectMap_.end()) {
+        BGTASK_LOGW("null callback Type");
+        return;
+    }
+    std::set<std::shared_ptr<NativeReference>> jsObserverObjectSet_ = iter->second;
+    for (auto &item : jsObserverObjectSet_) {
+        napi_value jsCallbackObj = item->GetNapiValue();
+        napi_value callFunction;
+        napi_get_named_property(env_, jsCallbackObj, "onContinuousTaskStart", &callFunction);
+        napi_value jsContinuousTaskStateInfo = Common::GetNapiCallBackInfo(env_, continuousTaskCallbackInfo);
+        if (jsContinuousTaskStateInfo == nullptr) {
+            BGTASK_LOGE("GetNapiCallBackInfo fail.");
+            return;
+        }
+        napi_value argv[1] = { jsContinuousTaskStateInfo };
+        napi_value callResult = nullptr;
+        napi_value undefined = nullptr;
+        napi_get_undefined(env_, &undefined);
+        napi_status status = napi_call_function(env_, undefined, callFunction, 1, argv, &callResult);
+        if (status != napi_ok) {
+            BGTASK_LOGE("call onContinuousTaskStart func failed %{public}d.", status);
+        }
+    }
+}
+
+void JsBackgroundTaskSubscriber::OnContinuousTaskUpdate(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    BGTASK_LOGI("OnContinuousTaskUpdate abilityname %{public}s continuousTaskId %{public}d",
+        continuousTaskCallbackInfo->GetAbilityName().c_str(),
+        continuousTaskCallbackInfo->GetContinuousTaskId());
+    std::unique_ptr<NapiAsyncTask::CompleteCallback> complete = std::make_unique<NapiAsyncTask::CompleteCallback>(
+        [self = weak_from_this(), continuousTaskCallbackInfo](napi_env env, NapiAsyncTask &task, int32_t status) {
+            auto jsObserver = self.lock();
+            if (jsObserver == nullptr) {
+                BGTASK_LOGE("null observer");
+                return;
+            }
+            BGTASK_LOGI("OnContinuousTaskUpdate js thread %{public}s",
+                continuousTaskCallbackInfo->GetAbilityName().c_str());
+            jsObserver->HandleOnContinuousTaskUpdate(continuousTaskCallbackInfo);
+        });
+    napi_ref callback = nullptr;
+    NapiAsyncTask::Schedule("JsBackgroundTaskSubscriber::OnContinuousTaskUpdate", env_,
+        std::make_unique<NapiAsyncTask>(callback, nullptr, std::move(complete)));
+}
+
+void JsBackgroundTaskSubscriber::HandleOnContinuousTaskUpdate(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    BGTASK_LOGI("HandleOnContinuousTaskUpdate called");
+    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    auto iter = jsObserverObjectMap_.find("subscribeContinuousTaskState");
+    if (iter == jsObserverObjectMap_.end()) {
+        BGTASK_LOGW("null callback Type");
+        return;
+    }
+    std::set<std::shared_ptr<NativeReference>> jsObserverObjectSet_ = iter->second;
+    for (auto &item : jsObserverObjectSet_) {
+        napi_value jsCallbackObj = item->GetNapiValue();
+        napi_value callFunction;
+        napi_get_named_property(env_, jsCallbackObj, "onContinuousTaskUpdate", &callFunction);
+        napi_value jsContinuousTaskStateInfo = Common::GetNapiCallBackInfo(env_, continuousTaskCallbackInfo);
+        if (jsContinuousTaskStateInfo == nullptr) {
+            BGTASK_LOGE("GetNapiCallBackInfo fail.");
+            return;
+        }
+        napi_value argv[1] = { jsContinuousTaskStateInfo };
+        napi_value callResult = nullptr;
+        napi_value undefined = nullptr;
+        napi_get_undefined(env_, &undefined);
+        napi_status status = napi_call_function(env_, undefined, callFunction, 1, argv, &callResult);
+        if (status != napi_ok) {
+            BGTASK_LOGE("call onContinuousTaskUpdate func failed %{public}d.", status);
+        }
+    }
+}
  
 void JsBackgroundTaskSubscriber::OnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
@@ -150,12 +257,42 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskStop(
     NapiAsyncTask::Schedule("JsBackgroundTaskSubscriber::OnContinuousTaskStop", env_,
         std::make_unique<NapiAsyncTask>(callback, nullptr, std::move(complete)));
 }
+
+void JsBackgroundTaskSubscriber::HandleSubscribeOnContinuousTaskStop(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    auto iter = jsObserverObjectMap_.find("subscribeContinuousTaskState");
+    std::set<std::shared_ptr<NativeReference>> jsObserverObjectSet_ = iter->second;
+    for (auto &item : jsObserverObjectSet_) {
+        napi_value jsCallbackObj = item->GetNapiValue();
+        napi_value callFunction;
+        napi_get_named_property(env_, jsCallbackObj, "onContinuousTaskStop", &callFunction);
+        napi_value jsContinuousTaskStateInfo = Common::GetNapiCallBackInfo(env_, continuousTaskCallbackInfo);
+        if (jsContinuousTaskStateInfo == nullptr) {
+            BGTASK_LOGE("GetNapiCallBackInfo fail.");
+            return;
+        }
+        napi_value argv[1] = { jsContinuousTaskStateInfo };
+        napi_value callResult = nullptr;
+        napi_value undefined = nullptr;
+        napi_get_undefined(env_, &undefined);
+        napi_status status = napi_call_function(env_, undefined, callFunction, 1, argv, &callResult);
+        if (status != napi_ok) {
+            BGTASK_LOGE("call onContinuousTaskStop func failed %{public}d.", status);
+        }
+    }
+}
  
 void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("HandleOnContinuousTaskStop called");
     std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    auto iterSubscribe = jsObserverObjectMap_.find("subscribeContinuousTaskState");
+    if (iterSubscribe != jsObserverObjectMap_.end()) {
+        HandleSubscribeOnContinuousTaskStop(continuousTaskCallbackInfo);
+        return;
+    }
     auto iter = jsObserverObjectMap_.find("continuousTaskCancel");
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type");
