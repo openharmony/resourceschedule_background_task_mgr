@@ -921,7 +921,7 @@ void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> 
             std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>
                 (iter->second->GetUid(), iter->second->GetPid(), iter->second->GetResourceNumber(),
                 iter->second->GetBundleName());
-            callbackInfo->SetCpuLevel(iter->second->GetCpuLevel());    
+            callbackInfo->SetCpuLevel(iter->second->GetCpuLevel());
             subscriberMgr_->OnResourceChanged(callbackInfo, type);
         }
         infoMap.clear();
@@ -951,7 +951,7 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
 {
     BGTASK_LOGD("resource record key: %{public}d, resource record size(): %{public}d",
         mapKey, static_cast<int32_t>(infoMap.size()));
-    uint32_t cleanResource = resourcecallbackInfo->GetResourceNumber();    
+    uint32_t cleanResource = resourcecallbackInfo->GetResourceNumber();
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end() || (iter->second->resourceNumber_ & cleanResource) == 0) {
         BGTASK_LOGD("remove single resource record failure, no matched task: %{public}d", mapKey);
@@ -964,7 +964,7 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
         iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
 
     // update cpuLevel from current request
-    callbackInfo->SetCpuLevel(resourcecallbackInfo->GetCpuLevel());    
+    callbackInfo->SetCpuLevel(resourcecallbackInfo->GetCpuLevel());
 
     // update the left quota of cpu efficiency resource when reset
     UpdateQuotaIfCpuReset(type, callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
@@ -1177,20 +1177,20 @@ ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyR
     if ((resourceInfo->GetResourceNumber() & ResourceType::CPU) != ResourceType::CPU) {
         // not include cpu resource type, need to set cpuLevel default
         resourceInfo->SetCpuLevel(static_cast<int32_t>(EfficiencyResourcesCpuLevel::Type::DEFAULT));
-        BGTASK_LOGI("%{public}s: resourceNumber %{public}u is not contains CPU, request cpuLevel %{public}d, need set" 
+        BGTASK_LOGI("%{public}s: resourceNumber %{public}u is not contains CPU, request cpuLevel %{public}d, need set"
             "cpuLevel to default -1", __func__, resourceInfo->GetResourceNumber(), resourceInfo->GetCpuLevel());
         return ERR_OK;
     }
 
     // compatible with default scene, app not set cpuLevel
     if (resourceInfo->GetCpuLevel() == static_cast<int32_t>(EfficiencyResourcesCpuLevel::Type::DEFAULT)) {
-        BGTASK_LOGI("%{public}s: default scene, app not set cpuLevel", __func__);     
-        return ERR_OK;   
+        BGTASK_LOGI("%{public}s: default scene, app not set cpuLevel", __func__);
+        return ERR_OK;
     }
 
     // check whether in ccm
     if (!DelayedSingleton<BgtaskConfig>::GetInstance()->CheckRequestCpuLevelBundleNameConfigured(bundleName)) {
-        BGTASK_LOGE("%{public}s: bundle name %{public}s not configured", __func__, bundleName.c_str());     
+        BGTASK_LOGE("%{public}s: bundle name %{public}s not configured", __func__, bundleName.c_str());
         return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_NOT_ALLOW_APPLY;
     }
 

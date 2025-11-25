@@ -267,6 +267,7 @@ void BgtaskConfig::LoadBgTaskConfigFile()
         BGTASK_LOGE("LoadBgTaskConfigFile failed");
         return;
     }
+
     ParseCpuEfficiencyResourceApplyBundleInfos(jsonObj);
 }
 
@@ -315,7 +316,8 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
         bgTaskConfigFileInfo_.AddCpuLevelConfigInfo({bundleName, appSignatures, cpuLevel});
     }
     for (const auto &[bundleName, info] : bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap()) {
-        BGTASK_LOGI("%{public}s: bundleName %{public}s, cpuLevel %{public}d", __func__, bundleName.c_str(), info.cpuLevel);
+        BGTASK_LOGI("%{public}s: bundleName %{public}s, cpuLevel %{public}d", __func__, bundleName.c_str(),
+            info.cpuLevel);
     }
 }
 
