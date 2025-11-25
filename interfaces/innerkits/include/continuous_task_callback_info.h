@@ -209,6 +209,22 @@ public:
      */
     void SetAppIndex(int32_t appIndex);
 
+    void SetBackgroundSubModes(const std::vector<uint32_t> &backgroundSubModes);
+
+    void SetNotificationId(int32_t notificationId);
+
+    void SetWantAgentBundleName(const std::string &wantAgentBundleName);
+
+    void SetWantAgentAbilityName(const std::string &wantAgentAbilityName);
+
+    std::vector<uint32_t> GetBackgroundSubModes() const;
+
+    int32_t GetNotificationId() const;
+
+    std::string GetWantAgentBundleName() const;
+
+    std::string GetWantAgentAbilityName() const;
+
     /**
      * @brief Marshals a purpose into a parcel.
      *
@@ -239,6 +255,10 @@ private:
     std::string bundleName_ {""};
     int32_t userId_ {0};
     int32_t appIndex_ {-1};
+    std::vector<uint32_t> backgroundSubModes_ {};
+    int32_t notificationId_ {-1};
+    std::string wantAgentBundleName_ {""};
+    std::string wantAgentAbilityName_ {""};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
