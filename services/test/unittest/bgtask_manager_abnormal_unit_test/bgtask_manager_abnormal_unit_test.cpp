@@ -207,7 +207,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_008
 HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_010, TestSize.Level3)
 {
     uint32_t authResult = -1;
-    EXPECT_EQ(BackgroundTaskMgrService_->CheckSpecialScenarioAuth(authResult),
+    EXPECT_EQ(BackgroundTaskMgrService_->CheckSpecialScenarioAuth(0, authResult),
         ERR_BGTASK_PERMISSION_DENIED);
 }
 }  // namespace BackgroundTaskMgr
