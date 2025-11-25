@@ -28,6 +28,12 @@ class JsBackgroundTaskSubscriber : public OHOS::BackgroundTaskMgr::BackgroundTas
 public:
     explicit JsBackgroundTaskSubscriber(napi_env env);
     virtual ~JsBackgroundTaskSubscriber();
+    void OnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+    void HandleOnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void OnContinuousTaskUpdate(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
+    void HandleOnContinuousTaskUpdate(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void HandleSubscribeOnContinuousTaskStop(
+        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
     void HandleOnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void OnContinuousTaskSuspend(
