@@ -657,13 +657,6 @@ ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTas
     if (record->isSystem_) {
         return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
     }
-    AppExecFwk::BundleInfo bundleInfo;
-    if (BundleManagerHelper::GetInstance()->GetBundleInfo(record->bundleName_,
-        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, record->userId_)) {
-        record->appIndex_ = bundleInfo.appIndex;
-    } else {
-        return ERR_BGTASK_GET_APP_INDEX_FAIL;
-    }
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
         return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
     }
@@ -882,6 +875,7 @@ void BgContinuousTaskMgr::InitRecordParam(std::shared_ptr<ContinuousTaskRecord> 
     continuousTaskRecord->isCombinedTaskNotification_ = taskParam->isCombinedTaskNotification_;
     continuousTaskRecord->combinedNotificationTaskId_ = taskParam->combinedNotificationTaskId_;
     continuousTaskRecord->isByRequestObject_ = taskParam->isByRequestObject_;
+    continuousTaskRecord->appIndex_ = taskParam->appIndex_;
 }
 
 ErrCode BgContinuousTaskMgr::CheckSubMode(const std::shared_ptr<AAFwk::Want> want,
@@ -3061,13 +3055,6 @@ ErrCode BgContinuousTaskMgr::CheckSendBannerNotificationParam(std::shared_ptr<Co
         BGTASK_LOGI("request auth form user, callback is already exists.");
         return ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS;
     }
-    AppExecFwk::BundleInfo bundleInfo;
-    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(record->bundleName_,
-        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, record->userId_)) {
-        BGTASK_LOGE("get bundle info: %{public}s failure!", record->bundleName_.c_str());
-        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
-    }
-    record->appIndex_ = bundleInfo.appIndex;
     std::string authKey = NotificationTools::GetInstance()->CreateBannerNotificationLabel(record->bundleName_,
         record->userId_, record->appIndex_);
     auto iter = bannerNotificationRecord_.find(authKey);
@@ -3149,7 +3136,7 @@ bool BgContinuousTaskMgr::FormatBannerNotificationContext(const std::string &app
     return true;
 }
 
-ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
+ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
@@ -3174,18 +3161,11 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
     if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
         return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
     }
-    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
-    AppExecFwk::BundleInfo bundleInfo;
-    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
-        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId)) {
-        BGTASK_LOGE("get bundle info: %{public}s failure!", bundleName.c_str());
-        return ERR_BGTASK_GET_APP_INDEX_FAIL;
-    }
 #ifndef SUPPORT_AUTH
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
-    int32_t appIndex = bundleInfo.appIndex;
+    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     ErrCode ret = ERR_OK;
     handler_->PostSyncTask([this, &authResult, bundleName, userId, appIndex, &ret]() {
         ret = this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);

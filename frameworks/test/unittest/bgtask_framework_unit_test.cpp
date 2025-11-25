@@ -1027,11 +1027,11 @@ HWTEST_F(BgTaskFrameworkUnitTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     uint32_t authResult = -1;
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(authResult),
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(0, authResult),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(authResult),
+    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(0, authResult),
         ERR_OK);
 }
 
