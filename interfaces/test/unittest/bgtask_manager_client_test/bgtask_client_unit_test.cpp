@@ -648,6 +648,8 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     info2->SetBundleName("bundleName");
     info2->SetUserId(1);
     info2->SetAppIndex(1);
+    info2->SetSuspendReason(-1);
+    info2->SetSuspendState(false);
     Parcel parcel = Parcel();
     info2->Marshalling(parcel);
     sptr<ContinuousTaskCallbackInfo> info3 = sptr<ContinuousTaskCallbackInfo>(
