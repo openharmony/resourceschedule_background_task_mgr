@@ -113,6 +113,11 @@ enum : int32_t {
     ERR_BGTASK_DATA_STORAGE_ERR,
     ERR_BGTASK_SERVICE_INNER_ERROR,
     ERR_BGTASK_INVALID_PROCESS_NAME,
+    ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_INVALID,
+    ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_NOT_ALLOW_APPLY,
+    ERR_BGTASK_EFFICIENCY_RESOURCES_INVALID_BUNDLE_INFO,
+    ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_APP_SIGNATURES_INVALID,
+    ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_TOO_LARGE,
     ERR_BGTASK_RESOURCES_PARCELABLE_FAILED = 1870000201,
     ERR_BGTASK_RESOURCES_SYS_NOT_READY = 1870000401,
     ERR_BGTASK_RESOURCES_SERVICE_NOT_CONNECTED,
@@ -266,6 +271,16 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "The application not deploy backgroundMode: MODE_SPECIAL_SCENARIO_PROCESSING."},
     {ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID, "Continuous Task verification failed. "
         "The background task state param is invalid."},
+    {ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_INVALID,"Caller information verification failed for an energy"
+        " resource request. The cpuLevel cannot be null and must be a valid value."},
+    {ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_NOT_ALLOW_APPLY, "Apply cpu efficiency resources failed. "
+        "Not allow apply cpuLevel."},
+    {ERR_BGTASK_EFFICIENCY_RESOURCES_INVALID_BUNDLE_INFO, "Apply cpu efficiency resources failed. "
+        "Cannot get application info."},
+    {ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_APP_SIGNATURES_INVALID, "Apply cpu efficiency resources failed. "
+        "Application signatures invalid."},
+    {ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_TOO_LARGE, "Apply cpu efficiency resources failed. "
+        "The cpuLevel value exceeds the max allowed by current application."},
 };
 
 const std::map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

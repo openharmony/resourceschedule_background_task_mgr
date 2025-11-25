@@ -99,7 +99,8 @@ private:
     void ResetTimeOutResource(int32_t mapKey, bool isProcess);
     bool RemoveTargetResourceRecord(std::unordered_map<int32_t,
         std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey,
-        uint32_t cleanResource, EfficiencyResourcesEventType type, CancelReason cancelType);
+        const std::shared_ptr<ResourceCallbackInfo> &resourcecallbackInfo,
+        EfficiencyResourcesEventType type, CancelReason cancelType);
     bool GetBundleNamesForUid(int32_t uid, std::string &bundleName);
     bool IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &bundleName);
     void EraseRecordIf(ResourceRecordMap &infoMap, const std::function<bool(ResourceRecordPair)> &fun);
@@ -132,6 +133,8 @@ private:
         const sptr<EfficiencyResourceInfo> &resourceInfo,
         const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
         EfficiencyResourcesEventType type);
+    ErrCode CheckIfCanApplyCpuLevel(const sptr<EfficiencyResourceInfo> &resourceInfo, const std::string &bundleName,
+        pid_t uid);
 
 private:
     std::atomic<bool> isSysReady_ {false};

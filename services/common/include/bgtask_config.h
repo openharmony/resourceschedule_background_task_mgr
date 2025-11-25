@@ -19,6 +19,7 @@
 #include <set>
 #include <mutex>
 
+#include "bg_task_config_file_info.h"
 #include "config_data_source_type.h"
 #include "singleton.h"
 #include "nlohmann/json.hpp"
@@ -36,6 +37,11 @@ public:
     void SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet);
     void SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet);
 
+    bool CheckRequestCpuLevelBundleNameConfigured(const std::string &bundleName);
+    bool CheckRequestCpuLevelAppSignatures(const std::string &bundleName, const std::string &appId,
+        const std::string &appIdentifier);
+    bool CheckRequestCpuLevel(const std::string &bundleName, int32_t cpuLevel);
+
 private:
     void LoadConfigFile();
     void ParseTransientTaskExemptedQuatoList(const nlohmann::json &jsonObj);
@@ -43,6 +49,9 @@ private:
     bool SetCloudConfigParam(const nlohmann::json &jsonObj);
     void SetTransientTaskParam(const nlohmann::json &jsonObj);
     void SetContinuousTaskParam(const nlohmann::json &jsonObj);
+
+    void LoadBgTaskConfigFile();
+    void ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::json &jsonObj);
 
 private:
     bool isInit_ = false;
@@ -52,6 +61,8 @@ private:
     std::set<std::string> maliciousAppBlocklist_ {};
     int32_t transientTaskExemptedQuato_ = 10 * 1000; // 10s
     std::mutex configMutex_;
+
+    BgTaskConfigFileInfo bgTaskConfigFileInfo_ {};
 };
 }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,8 @@
 #include <string>
 
 #include "parcel.h"
+
+#include "efficiency_resources_cpu_level.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -104,11 +106,33 @@ public:
     {
         resourceNumber_ = resourceNumber;
     }
+
+    /**
+     * @brief Get the cpuLevel_.
+     *
+     * @return The level of the CPU.
+     */
+    inline int32_t GetCpuLevel()
+    {
+        return cpuLevel_;
+    }
+
+    /**
+     * @brief Set the cpuLevel_.
+     *
+     * @param cpuLevel The value used to set the CPU level.
+     */
+    inline void SetCpuLevel(int32_t cpuLevel)
+    {
+        cpuLevel_ = static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel);
+    }
+
 private:
     int32_t uid_ {0};
     int32_t pid_ {0};
     uint32_t resourceNumber_ {0};
     std::string bundleName_ {""};
+    EfficiencyResourcesCpuLevel::Type cpuLevel_ {EfficiencyResourcesCpuLevel::DEFAULT};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
