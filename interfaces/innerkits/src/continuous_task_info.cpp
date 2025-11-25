@@ -79,6 +79,11 @@ bool ContinuousTaskInfo::GetSuspendState() const
     return suspendState_;
 }
 
+void ContinuousTaskInfo::SetSuspendState(bool suspendState)
+{
+    suspendState_ = suspendState;
+}
+
 void ContinuousTaskInfo::SetBundleName(const std::string &bundleName)
 {
     bundleName_ = bundleName;
