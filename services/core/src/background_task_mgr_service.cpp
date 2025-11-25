@@ -25,6 +25,7 @@
 #include "bundle_constants.h"
 #include "common_event_manager.h"
 #include "common_event_support.h"
+#include "common_utils.h"
 #include "file_ex.h"
 #include "ipc_skeleton.h"
 #include "string_ex.h"
@@ -401,6 +402,16 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
     if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
         BGTASK_LOGW("SubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    // 系统应用通过系统API接口注册
+    if (isHap && flag == SUBSCRIBER_BACKGROUND_TASK_STATE) {
+        if (CheckAtomicService()) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
+        uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+        if (!BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+            return ERR_BGTASK_NOT_SYSTEM_APP;
+        }
     }
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
