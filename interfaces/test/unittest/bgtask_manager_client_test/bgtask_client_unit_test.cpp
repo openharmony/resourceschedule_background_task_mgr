@@ -648,6 +648,11 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     info2->SetBundleName("bundleName");
     info2->SetUserId(1);
     info2->SetAppIndex(1);
+    std::vector<uint32_t> backgroundSubModes {1};
+    info2->SetBackgroundSubModes(backgroundSubModes);
+    info2->SetNotificationId(1);
+    info2->SetWantAgentBundleName("wantAgentBundleName");
+    info2->SetWantAgentAbilityName("wantAgentAbilityName");
     Parcel parcel = Parcel();
     info2->Marshalling(parcel);
     sptr<ContinuousTaskCallbackInfo> info3 = sptr<ContinuousTaskCallbackInfo>(
@@ -666,6 +671,10 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetBundleName(), "bundleName");
     EXPECT_EQ(info3->GetUserId(), 1);
     EXPECT_EQ(info3->GetAppIndex(), 1);
+    EXPECT_EQ(info3->GetBackgroundSubModes().size(), 1);
+    EXPECT_EQ(info3->GetNotificationId(), 1);
+    EXPECT_EQ(info3->GetWantAgentBundleName(), "wantAgentBundleName");
+    EXPECT_EQ(info3->GetWantAgentAbilityName(), "wantAgentAbilityName");
 }
 
 /**
@@ -876,6 +885,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskInfo_001, TestSize.Level1)
         "wantAgentAbilityName");
     info2->SetBundleName("bundleName");
     info2->SetAppIndex(1);
+    info2->SetSuspendState(true);
     MessageParcel parcel = MessageParcel();
     info2->Marshalling(parcel);
     sptr<ContinuousTaskInfo> info3 = ContinuousTaskInfo::Unmarshalling(parcel);
@@ -893,6 +903,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskInfo_001, TestSize.Level1)
     EXPECT_NE(info3->ToString(backgroundModes), "");
     EXPECT_EQ(info3->GetAppIndex(), 1);
     EXPECT_EQ(info3->GetBundleName(), "bundleName");
+    EXPECT_EQ(info3->GetSuspendState(), true);
 }
 
 /**
