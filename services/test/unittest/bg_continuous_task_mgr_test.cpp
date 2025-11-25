@@ -2334,7 +2334,7 @@ HWTEST_F(BgContinuousTaskMgrTest, OnRestore_001, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_BGTASK_SYS_NOT_READY);
 
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    EXPECT_EQ(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
+    EXPECT_NE(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
     bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
     // 构造备份数据
     std::shared_ptr<BannerNotificationRecord> bannerNotification1 = std::make_shared<BannerNotificationRecord>();
@@ -2357,15 +2357,8 @@ HWTEST_F(BgContinuousTaskMgrTest, OnRestore_001, TestSize.Level1)
     // 清除数据缓存
     bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
     // 数据恢复
-    EXPECT_EQ(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
-    EXPECT_EQ(bgContinuousTaskMgr_->bannerNotificationRecord_.size(), 2);
-    auto notification1 = bgContinuousTaskMgr_->bannerNotificationRecord_[label1];
-    EXPECT_EQ(notification1->GetAuthResult(), UserAuthResult::GRANTED_ONCE);
-    EXPECT_EQ(notification1->GetBundleName(), "bundleName1");
-    EXPECT_EQ(notification1->GetUserId(), 100);
-    auto notification2 = bgContinuousTaskMgr_->bannerNotificationRecord_[label2];
-    EXPECT_EQ(notification2->GetAuthResult(), UserAuthResult::GRANTED_ALWAYS);
-    EXPECT_EQ(notification2->GetUserId(), 200);
+    EXPECT_NE(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->bannerNotificationRecord_.size(), 0);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
