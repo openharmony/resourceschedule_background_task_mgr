@@ -2449,36 +2449,15 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
         BGTASK_LOGD("continuousTaskCallbackInfo is null");
         return;
     }
-    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     switch (changeEventType) {
         case ContinuousTaskEventTriggerType::TASK_START:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-                BGTASK_LOGD("continuous task start callback trigger");
-                if (!(*iter)->isHap_ && (*iter)->subscriber_) {
-                    (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
-                }
-            }
+            NotifySubscribersTaskStart(continuousTaskCallbackInfo);
             break;
         case ContinuousTaskEventTriggerType::TASK_UPDATE:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-                BGTASK_LOGD("continuous task update callback trigger");
-                if (!(*iter)->isHap_ && (*iter)->subscriber_) {
-                    (*iter)->subscriber_->OnContinuousTaskUpdate(taskCallbackInfoRef);
-                }
-            }
+            NotifySubscribersTaskUpdate(continuousTaskCallbackInfo);
             break;
         case ContinuousTaskEventTriggerType::TASK_CANCEL:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-                BGTASK_LOGD("continuous task stop callback trigger");
-                if (!(*iter)->isHap_ && (*iter)->subscriber_) {
-                    // notify all sa
-                    (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
-                } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo) && (*iter)->subscriber_) {
-                    // notify self hap
-                    BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify cancel", (*iter)->uid_);
-                    (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
-                }
-            }
+            NotifySubscribersTaskCancel(continuousTaskCallbackInfo);
             break;
         case ContinuousTaskEventTriggerType::TASK_SUSPEND:
             NotifySubscribersTaskSuspend(continuousTaskCallbackInfo);
@@ -2489,6 +2468,53 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
         default:
             BGTASK_LOGE("unknow ContinuousTaskEventTriggerType: %{public}d", changeEventType);
             break;
+    }
+}
+
+void BgContinuousTaskMgr::NotifySubscribersTaskStart(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        BGTASK_LOGD("continuous task start callback trigger");
+        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
+            (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+            (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
+        }
+    }
+}
+
+void BgContinuousTaskMgr::NotifySubscribersTaskUpdate(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        BGTASK_LOGD("continuous task update callback trigger");
+        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
+            (*iter)->subscriber_->OnContinuousTaskUpdate(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+            (*iter)->subscriber_->OnContinuousTaskUpdate(taskCallbackInfoRef);
+        }
+    }
+}
+
+void BgContinuousTaskMgr::NotifySubscribersTaskCancel(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        BGTASK_LOGD("continuous task stop callback trigger");
+        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
+            // notify all sa
+            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+        } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo) && (*iter)->subscriber_) {
+            // notify self hap
+            BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify cancel", (*iter)->uid_);
+            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+        }
     }
 }
 
@@ -2508,6 +2534,8 @@ void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(
                 "suspendState: %{public}d", (*iter)->uid_, taskCallbackInfoRef.GetSuspendReason(),
                 taskCallbackInfoRef.GetSuspendState());
             (*iter)->subscriber_->OnContinuousTaskSuspend(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
         }
     }
 }
@@ -2526,6 +2554,8 @@ void BgContinuousTaskMgr::NotifySubscribersTaskActive(
             // 回调通知应用长时任务激活
             BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify active", (*iter)->uid_);
             (*iter)->subscriber_->OnContinuousTaskActive(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+            (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
         }
     }
 }

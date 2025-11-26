@@ -34,6 +34,8 @@ namespace {
     static constexpr char BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_BTN[] = "bgtask_banner_notificaiton_action_param_btn";
     static constexpr char BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_UID[] = "bgtask_banner_notificaiton_action_param_uid";
     static constexpr char BGTASK_BANNER_NOTIFICATION_ACTION_LABEL[] = "bgtask_banner_notificaiton_action_label";
+    // 系统API 注册subscriber回调
+    static constexpr uint32_t SUBSCRIBER_BACKGROUND_TASK_STATE = 1 << 3;
 }
 class CommonUtils {
 public:

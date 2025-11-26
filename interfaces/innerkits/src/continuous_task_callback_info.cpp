@@ -147,6 +147,49 @@ void ContinuousTaskCallbackInfo::SetAppIndex(int32_t appIndex)
     appIndex_ = appIndex;
 }
 
+void ContinuousTaskCallbackInfo::SetBackgroundSubModes(
+    const std::vector<uint32_t> &backgroundSubModes)
+{
+    backgroundSubModes_ = backgroundSubModes;
+}
+
+void ContinuousTaskCallbackInfo::SetNotificationId(int32_t notificationId)
+{
+    notificationId_ = notificationId;
+}
+
+void ContinuousTaskCallbackInfo::SetWantAgentBundleName(
+    const std::string &wantAgentBundleName)
+{
+    wantAgentBundleName_ = wantAgentBundleName;
+}
+
+void ContinuousTaskCallbackInfo::SetWantAgentAbilityName(
+    const std::string &wantAgentAbilityName)
+{
+    wantAgentAbilityName_ = wantAgentAbilityName;
+}
+
+std::vector<uint32_t> ContinuousTaskCallbackInfo::GetBackgroundSubModes() const
+{
+    return backgroundSubModes_;
+}
+
+int32_t ContinuousTaskCallbackInfo::GetNotificationId() const
+{
+    return notificationId_;
+}
+
+std::string ContinuousTaskCallbackInfo::GetWantAgentBundleName() const
+{
+    return wantAgentBundleName_;
+}
+
+std::string ContinuousTaskCallbackInfo::GetWantAgentAbilityName() const
+{
+    return wantAgentAbilityName_;
+}
+
 bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
 {
     WRITE_PARCEL_WITH_RET(parcel, Uint32, typeId_, false);
@@ -168,6 +211,12 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
     WRITE_PARCEL_WITH_RET(parcel, String16, u16BundleName, false);
     WRITE_PARCEL_WITH_RET(parcel, Int32, userId_, false);
     WRITE_PARCEL_WITH_RET(parcel, Int32, appIndex_, false);
+    WRITE_PARCEL_WITH_RET(parcel, UInt32Vector, backgroundSubModes_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Int32, notificationId_, false);
+    std::u16string u16WantAgentBundleName = Str8ToStr16(wantAgentBundleName_);
+    WRITE_PARCEL_WITH_RET(parcel, String16, u16WantAgentBundleName, false);
+    std::u16string u16WantAgentAbilityName_ = Str8ToStr16(wantAgentAbilityName_);
+    WRITE_PARCEL_WITH_RET(parcel, String16, u16WantAgentAbilityName_, false);
     return true;
 }
 
@@ -205,6 +254,14 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     bundleName_ = Str16ToStr8(u16BundleName);
     READ_PARCEL_WITH_RET(parcel, Int32, userId_, false);
     READ_PARCEL_WITH_RET(parcel, Int32, appIndex_, false);
+    READ_PARCEL_WITH_RET(parcel, UInt32Vector, (&backgroundSubModes_), false);
+    READ_PARCEL_WITH_RET(parcel, Int32, notificationId_, false);
+    std::u16string u16WantAgentBundleName;
+    READ_PARCEL_WITH_RET(parcel, String16, u16WantAgentBundleName, false);
+    wantAgentBundleName_ = Str16ToStr8(u16WantAgentBundleName);
+    std::u16string u16WantAgentAbilityName;
+    READ_PARCEL_WITH_RET(parcel, String16, u16WantAgentAbilityName, false);
+    wantAgentAbilityName_ = Str16ToStr8(u16WantAgentAbilityName);
     return true;
 }
 }  // namespace BackgroundTaskMgr
