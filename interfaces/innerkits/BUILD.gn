@@ -105,6 +105,7 @@ ohos_shared_library("bgtaskmgr_innerkits") {
   external_deps = [
     "ability_base:configuration",
     "ability_runtime:wantagent_innerkits",
+    "bundle_framework:appexecfwk_base",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "hilog:libhilog",
@@ -139,6 +140,7 @@ ohos_source_set("background_task_mgr_stub") {
   external_deps = [
     "ability_base:configuration",
     "ability_runtime:wantagent_innerkits",
+    "bundle_framework:appexecfwk_base",
     "c_utils:utils",
     "hilog:libhilog",
     "ipc:ipc_core",
@@ -166,6 +168,7 @@ ohos_source_set("background_task_mgr_proxy") {
   external_deps = [
     "ability_base:configuration",
     "ability_runtime:wantagent_innerkits",
+    "bundle_framework:appexecfwk_base",
     "c_utils:utils",
     "hilog:libhilog",
     "ipc:ipc_core",
