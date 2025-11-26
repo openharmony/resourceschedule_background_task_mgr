@@ -27,7 +27,7 @@ namespace BackgroundTaskMgr {
 struct CpuLevelConfigInfo {
     std::string bundleName {""};
     std::vector<std::string> appSignatures {};
-    int32_t cpuLevel = static_cast<int32_t>(EfficiencyResourcesCpuLevel::Type::DEFAULT);
+    int32_t cpuLevel = static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT);
 
     CpuLevelConfigInfo() = default;
 

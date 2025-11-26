@@ -37,7 +37,7 @@ bool ResourceCallbackInfo::ReadFromParcel(Parcel& in)
     READ_PARCEL_WITH_RET(in, Int32, pid_, false);
     READ_PARCEL_WITH_RET(in, Uint32, resourceNumber_, false);
     READ_PARCEL_WITH_RET(in, String, bundleName_, false);
-    int32_t cpuLevel = static_cast<int32_t>(EfficiencyResourcesCpuLevel::Type::DEFAULT);
+    int32_t cpuLevel = static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT);
     READ_PARCEL_WITH_RET(in, Int32, cpuLevel, false);
     cpuLevel_ = static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel);
     return true;

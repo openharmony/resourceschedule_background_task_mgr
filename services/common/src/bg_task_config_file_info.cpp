@@ -32,17 +32,18 @@ bool BgTaskConfigFileInfo::AddCpuLevelConfigInfo(const CpuLevelConfigInfo &cpuLe
 
 bool BgTaskConfigFileInfo::CheckCpuLevel(const std::string &bundleName, int32_t cpuLevel)
 {
-    if (!CheckBundleName(bundleName)) {
+    auto iter = allowApplyCpuBundleInfoMap_.find(bundleName);
+    if (iter == allowApplyCpuBundleInfoMap_.end()) {
         BGTASK_LOGE("%{public}s bundle name %{public}s not configured", __func__, bundleName.c_str());
         return false;
     }
 
-    if (cpuLevel <= static_cast<int32_t>(allowApplyCpuBundleInfoMap_[bundleName].cpuLevel)) {
+    if (cpuLevel <= static_cast<int32_t>(iter->second.cpuLevel)) {
         return true;
     }
 
     BGTASK_LOGE("%{public}s bundle name %{public}s cpuLevel invalid, cpuLevel: req %{public}d, config %{public}d",
-        __func__, bundleName.c_str(), cpuLevel, allowApplyCpuBundleInfoMap_[bundleName].cpuLevel);
+        __func__, bundleName.c_str(), cpuLevel, iter->second.cpuLevel);
     return false;
 }
 
@@ -54,13 +55,13 @@ bool BgTaskConfigFileInfo::CheckBundleName(const std::string &bundleName)
 bool BgTaskConfigFileInfo::CheckAppSignatures(const std::string &bundleName, const std::string &appId,
     const std::string &appIdentifier)
 {
-    if (!CheckBundleName(bundleName)) {
+    auto iter = allowApplyCpuBundleInfoMap_.find(bundleName);
+    if (iter == allowApplyCpuBundleInfoMap_.end()) {
         BGTASK_LOGE("%{public}s bundle name %{public}s not configured", __func__, bundleName.c_str());
         return false;
     }
 
-    const CpuLevelConfigInfo cpuLevelConfigInfo = allowApplyCpuBundleInfoMap_[bundleName];
-    const std::vector<std::string> &appSignatures = cpuLevelConfigInfo.appSignatures;
+    const std::vector<std::string> &appSignatures = iter->second.appSignatures;
     if (std::find(appSignatures.begin(), appSignatures.end(), appId) == appSignatures.end() &&
         std::find(appSignatures.begin(), appSignatures.end(), appIdentifier) == appSignatures.end()) {
         BGTASK_LOGE("%{public}s bundle name %{public}s signatures info invalid", __func__, bundleName.c_str());

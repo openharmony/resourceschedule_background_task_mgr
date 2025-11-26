@@ -555,6 +555,12 @@ napi_value Common::GetNapiEfficiencyResourcesInfo(const napi_env &env,
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "uid", napiUid));
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "pid", napiPid));
 
+    if (efficiencyResourceInfo->GetCpuLevel() != static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT)) {
+        napi_value napiCpuLevel = nullptr;
+        NAPI_CALL(env, napi_create_int32(env, efficiencyResourceInfo->GetCpuLevel(), &napiCpuLevel));
+        NAPI_CALL(env, napi_set_named_property(env, napiInfo, "cpuLevel", napiCpuLevel));
+    }
+
     return napiInfo;
 }
 

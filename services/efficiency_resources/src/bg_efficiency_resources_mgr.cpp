@@ -1134,6 +1134,9 @@ void BgEfficiencyResourcesMgr::GetAllEfficiencyResourcesInner(const ResourceReco
                 recordIter->timeOut_, recordIter->reason_, recordIter->isPersist_, isProcess);
             appInfo->SetPid(pid);
             appInfo->SetUid(uid);
+            if (iter->second->GetCpuLevel() != static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT)) {
+                appInfo->SetCpuLevel(iter->second->GetCpuLevel());
+            }
             resourceInfoList.push_back(appInfo);
         }
     }
@@ -1176,15 +1179,16 @@ ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyR
 {
     if ((resourceInfo->GetResourceNumber() & ResourceType::CPU) != ResourceType::CPU) {
         // not include cpu resource type, need to set cpuLevel default
-        resourceInfo->SetCpuLevel(static_cast<int32_t>(EfficiencyResourcesCpuLevel::Type::DEFAULT));
+        resourceInfo->SetCpuLevel(static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT));
         BGTASK_LOGI("%{public}s: resourceNumber %{public}u is not contains CPU, request cpuLevel %{public}d, need set"
             "cpuLevel to default -1", __func__, resourceInfo->GetResourceNumber(), resourceInfo->GetCpuLevel());
         return ERR_OK;
     }
 
     // compatible with default scene, app not set cpuLevel
-    if (resourceInfo->GetCpuLevel() == static_cast<int32_t>(EfficiencyResourcesCpuLevel::Type::DEFAULT)) {
-        BGTASK_LOGI("%{public}s: default scene, app not set cpuLevel", __func__);
+    if (resourceInfo->GetCpuLevel() <= static_cast<int32_t>(EfficiencyResourcesCpuLevel::SMALL_CPU)) {
+        BGTASK_LOGI("%{public}s: default scene, app not set cpuLevel: %{public}d", __func__,
+            resourceInfo->GetCpuLevel());
         return ERR_OK;
     }
 

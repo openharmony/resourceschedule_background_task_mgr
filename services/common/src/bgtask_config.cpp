@@ -267,7 +267,6 @@ void BgtaskConfig::LoadBgTaskConfigFile()
         BGTASK_LOGE("LoadBgTaskConfigFile failed");
         return;
     }
-
     ParseCpuEfficiencyResourceApplyBundleInfos(jsonObj);
 }
 
@@ -323,17 +322,20 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
 
 bool BgtaskConfig::CheckRequestCpuLevelBundleNameConfigured(const std::string &bundleName)
 {
+    std::lock_guard<std::mutex> lock(configMutex_);
     return bgTaskConfigFileInfo_.CheckBundleName(bundleName);
 }
 
 bool BgtaskConfig::CheckRequestCpuLevelAppSignatures(const std::string &bundleName, const std::string &appId,
     const std::string &appIdentifier)
 {
+    std::lock_guard<std::mutex> lock(configMutex_);
     return bgTaskConfigFileInfo_.CheckAppSignatures(bundleName, appId, appIdentifier);
 }
 
 bool BgtaskConfig::CheckRequestCpuLevel(const std::string &bundleName, int32_t cpuLevel)
 {
+    std::lock_guard<std::mutex> lock(configMutex_);
     return bgTaskConfigFileInfo_.CheckCpuLevel(bundleName, cpuLevel);
 }
 }
