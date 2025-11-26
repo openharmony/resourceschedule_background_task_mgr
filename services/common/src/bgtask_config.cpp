@@ -262,7 +262,6 @@ void BgtaskConfig::LoadBgTaskConfigFile()
     nlohmann::json jsonObj;
     std::string absolutePath = DelayedSingleton<DataStorageHelper>::GetInstance()->
         GetConfigFileAbsolutePath(BACKGROUND_TASK_CONFIG_FILE);
-
     if (DelayedSingleton<DataStorageHelper>::GetInstance()->ParseJsonValueFromFile(jsonObj, absolutePath) != 0) {
         BGTASK_LOGE("LoadBgTaskConfigFile failed");
         return;
