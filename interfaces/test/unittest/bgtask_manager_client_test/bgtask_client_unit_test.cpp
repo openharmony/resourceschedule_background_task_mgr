@@ -649,7 +649,6 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     info2->SetUserId(1);
     info2->SetAppIndex(1);
     info2->SetSuspendReason(-1);
-    info2->SetBackgroundSubModes(backgroundSubModes);
     info2->SetSuspendState(false);
     std::vector<uint32_t> backgroundSubModes {1};
     info2->SetBackgroundSubModes(backgroundSubModes);
