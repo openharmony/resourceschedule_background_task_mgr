@@ -221,7 +221,11 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_011
 {
     BackgroundTaskMgrService_->dependsReady_ = 7;
     uint32_t flag = 1;
-    int32_t delayTime = 1;
+    BackgroundTaskMgrService_->SetReady(flag);
+    BackgroundTaskMgrService_->dependsReady_ = 0;
+    BackgroundTaskMgrService_->SetReady(flag);
+    BackgroundTaskMgrService_->dependsReady_ = 3;
+    flag = 4;
     BackgroundTaskMgrService_->SetReady(flag);
     EXPECT_TRUE(true);
 }
@@ -241,7 +245,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_012
     std::u16string descriptor = u"test";
     EXPECT_NE(BackgroundTaskMgrService_->OnExtension(extension, data, reply), ERR_OK);
 
-    std::string extension = "restore";
+    extension = "restore";
     EXPECT_NE(BackgroundTaskMgrService_->OnExtension(extension, data, reply), ERR_OK);
 }
 
@@ -312,8 +316,8 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_015
     uint32_t authResult = 1;
     BackgroundTaskStateInfo stateInfo = BackgroundTaskStateInfo();
     EXPECT_EQ(BackgroundTaskMgrService_->CheckSpecialScenarioAuth(authResult), ERR_BGTASK_PERMISSION_DENIED);
-    EXPECT_EQ(BackgroundTaskMgrService_->SetBackgroundTaskState(taskParam), ERR_BGTASK_PERMISSION_DENIED);
-    EXPECT_EQ(BackgroundTaskMgrService_->GetBackgroundTaskState(taskParam, authResult), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->SetBackgroundTaskState(stateInfo), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->GetBackgroundTaskState(stateInfo, authResult), ERR_BGTASK_PERMISSION_DENIED);
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
     EXPECT_EQ(BackgroundTaskMgrService_->GetAllContinuousTasksBySystem(list), ERR_BGTASK_PERMISSION_DENIED);
 }
