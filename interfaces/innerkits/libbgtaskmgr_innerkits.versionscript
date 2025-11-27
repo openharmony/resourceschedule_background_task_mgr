@@ -35,6 +35,7 @@
     *BackgroundTaskMgrProxy*;
     *UserAuthResult*;
     *BackgroundTaskStateInfo*;
+    *EfficiencyResourcesCpuLevel*;
   local:
     *;
 };
