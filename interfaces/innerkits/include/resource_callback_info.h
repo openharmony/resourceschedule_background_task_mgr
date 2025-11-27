@@ -122,10 +122,7 @@ public:
      *
      * @param cpuLevel The value used to set the CPU level.
      */
-    inline void SetCpuLevel(int32_t cpuLevel)
-    {
-        cpuLevel_ = static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel);
-    }
+    void SetCpuLevel(int32_t cpuLevel);
 
 private:
     int32_t uid_ {0};

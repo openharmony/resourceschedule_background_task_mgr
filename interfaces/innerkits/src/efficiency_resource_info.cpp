@@ -59,5 +59,11 @@ bool EfficiencyResourceInfo::ReadFromParcel(Parcel& in)
     cpuLevel_ = static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel);
     return true;
 }
+
+void EfficiencyResourceInfo::SetCpuLevel(int32_t cpuLevel)
+{
+    cpuLevel_ = EfficiencyResourcesCpuLevel::IsCpuLevelValid(cpuLevel) ?
+        static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel) : EfficiencyResourcesCpuLevel::DEFAULT;
+}
 }
 }

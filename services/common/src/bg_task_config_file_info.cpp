@@ -62,15 +62,17 @@ bool BgTaskConfigFileInfo::CheckAppSignatures(const std::string &bundleName, con
     }
 
     const std::vector<std::string> &appSignatures = iter->second.appSignatures;
-    if (std::find(appSignatures.begin(), appSignatures.end(), appId) == appSignatures.end() &&
-        std::find(appSignatures.begin(), appSignatures.end(), appIdentifier) == appSignatures.end()) {
+    const bool isValid = std::any_of(appSignatures.begin(), appSignatures.end(), [&](const std::string &sign) {
+        return sign == appId || sign == appIdentifier;
+    });
+    if (!isValid) {
         BGTASK_LOGE("%{public}s bundle name %{public}s signatures info invalid", __func__, bundleName.c_str());
         return false;
     }
     return true;
 }
 
-std::unordered_map<std::string, CpuLevelConfigInfo> BgTaskConfigFileInfo::GetAllowApplyCpuBundleInfoMap()
+std::unordered_map<std::string, CpuLevelConfigInfo>& BgTaskConfigFileInfo::GetAllowApplyCpuBundleInfoMap()
 {
     return allowApplyCpuBundleInfoMap_;
 }

@@ -35,5 +35,11 @@ std::string EfficiencyResourcesCpuLevel::GetEfficiencyResourcesCpuLevelStr(int32
     }
     return "default";
 }
+
+bool EfficiencyResourcesCpuLevel::IsCpuLevelValid(int32_t cpuLevel)
+{
+    return cpuLevel >= static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT) &&
+        cpuLevel < static_cast<int32_t>(EfficiencyResourcesCpuLevel::END);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

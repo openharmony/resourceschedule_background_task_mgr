@@ -173,10 +173,7 @@ public:
      *
      * @param cpuLevel The cpuLevel of app.
      */
-    inline void SetCpuLevel(int32_t cpuLevel)
-    {
-        cpuLevel_ = static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel);
-    }
+    void SetCpuLevel(int32_t cpuLevel);
 
     /**
      * @brief Get the cpuLevel.

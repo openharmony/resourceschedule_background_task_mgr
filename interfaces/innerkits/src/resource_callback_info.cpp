@@ -53,5 +53,11 @@ ResourceCallbackInfo* ResourceCallbackInfo::Unmarshalling(Parcel& in)
     }
     return resourceInfo;
 }
+
+void ResourceCallbackInfo::SetCpuLevel(int32_t cpuLevel)
+{
+    cpuLevel_ = EfficiencyResourcesCpuLevel::IsCpuLevelValid(cpuLevel) ?
+        static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel) : EfficiencyResourcesCpuLevel::DEFAULT;
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

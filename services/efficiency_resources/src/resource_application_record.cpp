@@ -63,7 +63,8 @@ int32_t ResourceApplicationRecord::GetCpuLevel() const
 
 void ResourceApplicationRecord::SetCpuLevel(int32_t cpuLevel)
 {
-    cpuLevel_ = static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel);
+    cpuLevel_ = EfficiencyResourcesCpuLevel::IsCpuLevelValid(cpuLevel) ?
+        static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel) : EfficiencyResourcesCpuLevel::DEFAULT;
 }
 
 std::string ResourceApplicationRecord::ParseToJsonStr()

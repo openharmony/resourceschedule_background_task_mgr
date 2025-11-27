@@ -32,6 +32,7 @@ public:
     };
 
     static std::string GetEfficiencyResourcesCpuLevelStr(int32_t level);
+    static bool IsCpuLevelValid(int32_t cpuLevel);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
