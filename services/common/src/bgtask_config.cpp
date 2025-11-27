@@ -28,6 +28,12 @@ const std::string CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST = "continuous_task_keepi
 const std::string MALICIOUS_APP_BLOCKLIST = "malicious_app_blocklist";
 const std::string TRANSIENT_EXEMPTED_QUOTA = "transient_exempted_quota";
 const std::string TRANSIENT_ERR_DELAYED_FROZEN_TIME = "transient_err_delayed_frozen_time";
+
+const std::string BACKGROUND_TASK_CONFIG_FILE = "etc/backgroundtask/config.json";
+const std::string CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS = "cpu_efficiency_resource_allow_apply_bundle_infos";
+const std::string ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME = "bundleName";
+const std::string ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES = "appSignatures";
+const std::string ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL = "cpuLevel";
 }
 
 void BgtaskConfig::Init()
@@ -38,6 +44,7 @@ void BgtaskConfig::Init()
     }
 
     LoadConfigFile();
+    LoadBgTaskConfigFile();
     isInit_ = true;
 }
 
@@ -248,6 +255,87 @@ bool BgtaskConfig::IsMaliciousAppConfig(const std::string &bundleName)
 {
     std::lock_guard<std::mutex> lock(configMutex_);
     return maliciousAppBlocklist_.count(bundleName) > 0;
+}
+
+void BgtaskConfig::LoadBgTaskConfigFile()
+{
+    nlohmann::json jsonObj;
+    std::string absolutePath = DelayedSingleton<DataStorageHelper>::GetInstance()->
+        GetConfigFileAbsolutePath(BACKGROUND_TASK_CONFIG_FILE);
+    if (DelayedSingleton<DataStorageHelper>::GetInstance()->ParseJsonValueFromFile(jsonObj, absolutePath) != 0) {
+        BGTASK_LOGE("LoadBgTaskConfigFile failed");
+        return;
+    }
+    ParseCpuEfficiencyResourceApplyBundleInfos(jsonObj);
+}
+
+void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::json &jsonObj)
+{
+    if (jsonObj.is_null() || jsonObj.empty()) {
+        BGTASK_LOGE("%{public}s jsonObj null", __func__);
+        return;
+    }
+    if (!jsonObj.contains(CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS) ||
+        !jsonObj[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS].is_array()) {
+        BGTASK_LOGE("no key %{public}s", CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS.c_str());
+        return;
+    }
+
+    nlohmann::json allowApplyCpuLevelBundleInfos = jsonObj[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS];
+    std::lock_guard<std::mutex> lock(configMutex_);
+    for (const auto &bundleInfoJsonObj : allowApplyCpuLevelBundleInfos) {
+        if (!bundleInfoJsonObj.contains(ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME) ||
+            !bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME].is_string()) {
+            BGTASK_LOGE("prop %{public}s invalid", ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME.c_str());
+            continue;
+        }
+        if (!bundleInfoJsonObj.contains(ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL) ||
+            !bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL].is_number_integer()) {
+            BGTASK_LOGE("prop %{public}s invalid", ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL.c_str());
+            continue;
+        }
+        if (!bundleInfoJsonObj.contains(ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES) ||
+            !bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES].is_array()) {
+            BGTASK_LOGE("prop %{public}s invalid", ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES.c_str());
+            continue;
+        }
+
+        std::vector<std::string> appSignatures;
+        nlohmann::json signArrayJsonObj = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES];
+        for (const auto &appSign : signArrayJsonObj) {
+            if (!appSign.is_string()) {
+                BGTASK_LOGE("prop %{public}s value invalid", ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES.c_str());
+                continue;
+            }
+            appSignatures.push_back(appSign.get<std::string>());
+        }
+        std::string bundleName = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME].get<std::string>();
+        int32_t cpuLevel = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL].get<int32_t>();
+        bgTaskConfigFileInfo_.AddCpuLevelConfigInfo({bundleName, appSignatures, cpuLevel});
+    }
+    for (const auto &[bundleName, info] : bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap()) {
+        BGTASK_LOGI("%{public}s: bundleName %{public}s, cpuLevel %{public}d", __func__, bundleName.c_str(),
+            info.cpuLevel);
+    }
+}
+
+bool BgtaskConfig::CheckRequestCpuLevelBundleNameConfigured(const std::string &bundleName)
+{
+    std::lock_guard<std::mutex> lock(configMutex_);
+    return bgTaskConfigFileInfo_.CheckBundleName(bundleName);
+}
+
+bool BgtaskConfig::CheckRequestCpuLevelAppSignatures(const std::string &bundleName, const std::string &appId,
+    const std::string &appIdentifier)
+{
+    std::lock_guard<std::mutex> lock(configMutex_);
+    return bgTaskConfigFileInfo_.CheckAppSignatures(bundleName, appId, appIdentifier);
+}
+
+bool BgtaskConfig::CheckRequestCpuLevel(const std::string &bundleName, int32_t cpuLevel)
+{
+    std::lock_guard<std::mutex> lock(configMutex_);
+    return bgTaskConfigFileInfo_.CheckCpuLevel(bundleName, cpuLevel);
 }
 }
 }

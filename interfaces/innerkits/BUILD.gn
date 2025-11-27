@@ -75,6 +75,7 @@ ohos_shared_library("bgtaskmgr_innerkits") {
     "src/resource_callback_info.cpp",
     "src/resource_type.cpp",
     "src/transient_task_app_info.cpp",
+    "src/efficiency_resources_cpu_level.cpp",
   ]
 
   output_values = get_target_outputs(":background_task_mgr_interface")

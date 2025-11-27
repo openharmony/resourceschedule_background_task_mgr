@@ -27,6 +27,7 @@ bool ResourceCallbackInfo::Marshalling(Parcel& out) const
     WRITE_PARCEL_WITH_RET(out, Int32, pid_, false);
     WRITE_PARCEL_WITH_RET(out, Uint32, resourceNumber_, false);
     WRITE_PARCEL_WITH_RET(out, String, bundleName_, false);
+    WRITE_PARCEL_WITH_RET(out, Int32, static_cast<int32_t>(cpuLevel_), false);
     return true;
 }
 
@@ -36,6 +37,9 @@ bool ResourceCallbackInfo::ReadFromParcel(Parcel& in)
     READ_PARCEL_WITH_RET(in, Int32, pid_, false);
     READ_PARCEL_WITH_RET(in, Uint32, resourceNumber_, false);
     READ_PARCEL_WITH_RET(in, String, bundleName_, false);
+    int32_t cpuLevel = static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT);
+    READ_PARCEL_WITH_RET(in, Int32, cpuLevel, false);
+    cpuLevel_ = static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel);
     return true;
 }
 
