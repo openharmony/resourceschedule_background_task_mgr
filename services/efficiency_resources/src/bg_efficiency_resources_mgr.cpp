@@ -1177,9 +1177,6 @@ void BgEfficiencyResourcesMgr::ReportHisysEvent(EfficiencyResourceEventTriggerTy
 ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyResourceInfo> &resourceInfo,
     const std::string &bundleName, pid_t uid)
 {
-    BGTASK_LOGI("%{public}s: current not control, bundleName %{public}s, cpuLevel: %{public}d", __func__,
-        bundleName.c_str(), resourceInfo->GetCpuLevel());
-#ifdef CPU_LEVEL_NEED_CONTROL
     if ((resourceInfo->GetResourceNumber() & ResourceType::CPU) != ResourceType::CPU) {
         // not include cpu resource type, need to set cpuLevel default
         resourceInfo->SetCpuLevel(static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT));
@@ -1189,9 +1186,9 @@ ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyR
     }
 
     // compatible with default scene, app not set cpuLevel
-    if (resourceInfo->GetCpuLevel() <= static_cast<int32_t>(EfficiencyResourcesCpuLevel::SMALL_CPU)) {
-        BGTASK_LOGI("%{public}s: default scene, app not set cpuLevel: %{public}d", __func__,
-            resourceInfo->GetCpuLevel());
+    if (resourceInfo->GetCpuLevel() == static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT)) {
+        BGTASK_LOGI("%{public}s: default scene, app bundleName %{public}s not set cpuLevel: %{public}d", __func__,
+            bundleName.c_str(), resourceInfo->GetCpuLevel());
         return ERR_OK;
     }
 
@@ -1218,7 +1215,6 @@ ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyR
         BGTASK_LOGE("%{public}s: %{public}s CheckRequestCpuLevel failed", __func__, bundleName.c_str());
         return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_TOO_LARGE;
     }
-#endif
     return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr
