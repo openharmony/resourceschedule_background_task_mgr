@@ -31,7 +31,7 @@ std::string EfficiencyResourcesCpuLevel::GetEfficiencyResourcesCpuLevelStr(int32
 {
     auto iter = PARAM_EFFICIENCY_RESOURCES_CPU_LEVEL_STR_MAP.find(level);
     if (iter != PARAM_EFFICIENCY_RESOURCES_CPU_LEVEL_STR_MAP.end()) {
-        return iter->second.c_str();
+        return iter->second;
     }
     return "default";
 }

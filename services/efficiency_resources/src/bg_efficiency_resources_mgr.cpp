@@ -1177,6 +1177,9 @@ void BgEfficiencyResourcesMgr::ReportHisysEvent(EfficiencyResourceEventTriggerTy
 ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyResourceInfo> &resourceInfo,
     const std::string &bundleName, pid_t uid)
 {
+    BGTASK_LOGI("%{public}s: current not control, bundleName %{public}s, cpuLevel: %{public}d", __func__,
+        bundleName.c_str(), resourceInfo->GetCpuLevel());
+#ifdef CPU_LEVEL_NEED_CONTROL
     if ((resourceInfo->GetResourceNumber() & ResourceType::CPU) != ResourceType::CPU) {
         // not include cpu resource type, need to set cpuLevel default
         resourceInfo->SetCpuLevel(static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT));
@@ -1194,7 +1197,7 @@ ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyR
 
     // check whether in ccm
     if (!DelayedSingleton<BgtaskConfig>::GetInstance()->CheckRequestCpuLevelBundleNameConfigured(bundleName)) {
-        BGTASK_LOGE("%{public}s: bundle name %{public}s not configured", __func__, bundleName.c_str());
+        BGTASK_LOGE("%{public}s: bundleName %{public}s not configured", __func__, bundleName.c_str());
         return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_NOT_ALLOW_APPLY;
     }
 
@@ -1215,6 +1218,7 @@ ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyR
         BGTASK_LOGE("%{public}s: %{public}s CheckRequestCpuLevel failed", __func__, bundleName.c_str());
         return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_TOO_LARGE;
     }
+#endif
     return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr
