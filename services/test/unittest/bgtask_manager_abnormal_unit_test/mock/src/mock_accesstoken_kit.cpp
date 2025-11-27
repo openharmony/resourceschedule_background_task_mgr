@@ -23,6 +23,11 @@ ATokenTypeEnum AccessTokenKit::GetTokenTypeFlag(AccessTokenID tokenID)
 {
     return TOKEN_INVALID;
 }
+
+bool AccessTokenKit::IsAtomicServiceByFullTokenID(uint64_t tokenID)
+{
+    return true;
+}
 } // namespace AccessToken
 } // namespace Security
 } // namespace OHOS

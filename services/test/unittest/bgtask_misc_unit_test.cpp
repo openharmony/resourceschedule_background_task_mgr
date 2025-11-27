@@ -932,5 +932,109 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_005, TestSize.Level2)
     subscriber->OnCanceled(notification, notificationMap, 1);
     EXPECT_TRUE(true);
 }
+
+/**
+ * @tc.name: NotificationToolsTest_002
+ * @tc.desc: test NotificationTools class.
+ * @tc.type: FUNC
+ * @tc.require: 809
+ */
+HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_002, TestSize.Level2)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    auto taskRecord = std::make_shared<ContinuousTaskRecord>();
+    NotificationTools::GetInstance()->PublishNotification(taskRecord, "appName", "prompt", 1);
+    SetPublishContinuousTaskNotificationFlag(0);
+    SetGetAllActiveNotificationsFlag(TEST_NUM_ONE);
+    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
+    newPromptInfos.emplace("label", std::make_pair<std::string, std::string>("test1", "test2"));
+    SetPublishContinuousTaskNotificationFlag(1);
+    EXPECT_EQ(NotificationTools::GetInstance()->RefreshContinuousNotificationWantAndContext(
+        0, newPromptInfos, taskRecord, false), ERR_BGTASK_CONTINUOUS_UPDATE_NOTIFICATION_FAIL);
+    SetGetAllActiveNotificationsFlag(TEST_NUM_TWO);
+    EXPECT_EQ(NotificationTools::GetInstance()->RefreshContinuousNotificationWantAndContext(
+        0, newPromptInfos, taskRecord, true), ERR_BGTASK_CONTINUOUS_UPDATE_NOTIFICATION_FAIL);
+#endif
+}
+
+/**
+ * @tc.name: NotificationToolsTest_003
+ * @tc.desc: test NotificationTools class.
+ * @tc.type: FUNC
+ * @tc.require: 809
+ */
+HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_003, TestSize.Level2)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    auto subRecord = std::make_shared<ContinuousTaskRecord>();
+    auto mainRecord = std::make_shared<ContinuousTaskRecord>();
+    subRecord->abilityName_ = "abilityName";
+    subRecord->uid_ = 1;
+    subRecord->abilityId_ = 1;
+    subRecord->isByRequestObject_ = false;
+    subRecord->continuousTaskId_ = 0;
+    subRecord->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
+    mainRecord->notificationId_ = -1;
+    EXPECT_EQ(NotificationTools::GetInstance()->PublishMainNotification(
+        subRecord, "appName", "prompt", 1, mainRecord), ERR_BGTASK_NOTIFICATION_ERR);
+    mainRecord->notificationId_ = 1;
+    EXPECT_EQ(NotificationTools::GetInstance()->PublishMainNotification(
+        subRecord, "appName", "prompt", 1, mainRecord), ERR_BGTASK_NOTIFICATION_ERR);
+#endif
+}
+
+/**
+ * @tc.name: NotificationToolsTest_004
+ * @tc.desc: test NotificationTools class.
+ * @tc.type: FUNC
+ * @tc.require: 809
+ */
+HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_004, TestSize.Level2)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    auto subRecord = std::make_shared<ContinuousTaskRecord>();
+    auto mainRecord = std::make_shared<ContinuousTaskRecord>();
+    subRecord->abilityName_ = "abilityName";
+    subRecord->uid_ = 1;
+    subRecord->abilityId_ = 1;
+    subRecord->isByRequestObject_ = false;
+    subRecord->continuousTaskId_ = 0;
+    subRecord->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
+    mainRecord->notificationId_ = -1;
+    EXPECT_EQ(NotificationTools::GetInstance()->PublishSubNotification(
+        subRecord, "appName", "prompt", 1, mainRecord), ERR_BGTASK_NOTIFICATION_ERR);
+    mainRecord->notificationId_ = 1;
+    EXPECT_EQ(NotificationTools::GetInstance()->PublishSubNotification(
+        subRecord, "appName", "prompt", 1, mainRecord), ERR_BGTASK_NOTIFICATION_ERR);
+#endif
+}
+
+/**
+ * @tc.name: NotificationToolsTest_005
+ * @tc.desc: test NotificationTools class.
+ * @tc.type: FUNC
+ * @tc.require: 809
+ */
+HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_005, TestSize.Level2)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    auto bannerNotification = std::make_shared<BannerNotificationRecord>();
+    bannerNotification->bundleName_ = "bundleName";
+    bannerNotification->appName_ = "appName";
+    bannerNotification->uid_ = 1;
+    bannerNotification->notificationId_ = -1;
+    bannerNotification->appIndex_ = 0;
+    std::vector<std::string> bannerNotificaitonBtn;
+    bannerNotificaitonBtn.push_back("banner1");
+    bannerNotificaitonBtn.push_back("banner2");
+    EXPECT_EQ(NotificationTools::GetInstance()->PublishBannerNotification(
+        bannerNotification, "prompt", 0, bannerNotificaitonBtn), ERR_BGTASK_NOTIFICATION_ERR);
+    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
+    newPromptInfos.emplace("label", std::make_pair<std::string, std::string>("test1", "test2"));
+    NotificationTools::GetInstance()->RefreshBannerNotifications(
+        bannerNotificaitonBtn, newPromptInfos, bannerNotification, 0);
+    EXPECT_TRUE(true);
+#endif
+}
 }
 }
