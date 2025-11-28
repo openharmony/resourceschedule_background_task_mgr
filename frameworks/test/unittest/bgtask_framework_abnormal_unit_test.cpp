@@ -297,25 +297,25 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_006
 HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_007, TestSize.Level2)
 {
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
-    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(nullptr), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(nullptr, 0), ERR_INVALID_DATA);
 
     sptr<TestBackgroundTaskSubscriberStub> subscribe =
         sptr<TestBackgroundTaskSubscriberStub>(new TestBackgroundTaskSubscriberStub());
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(subscribe), ERR_INVALID_VALUE);
+    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(subscribe, 0), ERR_INVALID_VALUE);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteRemoteObjectFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(subscribe), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(subscribe, 0), ERR_INVALID_DATA);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteRemoteObjectFlag(true);
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
-    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(subscribe), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(subscribe, 0), ERR_INVALID_DATA);
 
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(subscribe), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.UnsubscribeBackgroundTask(subscribe, 0), ERR_INVALID_DATA);
 }
 
 /**

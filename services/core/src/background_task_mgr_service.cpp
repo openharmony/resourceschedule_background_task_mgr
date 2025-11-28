@@ -412,6 +412,9 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
         if (!BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
             return ERR_BGTASK_NOT_SYSTEM_APP;
         }
+        if (!BundleManagerHelper::GetInstance()->CheckPermission(GET_BACKGROUND_TASK_INFO_PERMISSION)) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
     }
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
@@ -433,13 +436,26 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
+ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber,
+    uint32_t flag)
 {
     BgTaskHiTraceChain traceChain(__func__);
     bool isHap = false;
     if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
         BGTASK_LOGW("UnsubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    if (isHap && flag == SUBSCRIBER_BACKGROUND_TASK_STATE) {
+        if (CheckAtomicService()) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
+        uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+        if (!BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+            return ERR_BGTASK_NOT_SYSTEM_APP;
+        }
+        if (!BundleManagerHelper::GetInstance()->CheckPermission(GET_BACKGROUND_TASK_INFO_PERMISSION)) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
     }
     if (BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) != ERR_OK) {
         BGTASK_LOGE("continuous task unsubscribe background task failed");

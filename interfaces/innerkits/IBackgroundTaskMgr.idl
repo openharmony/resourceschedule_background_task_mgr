@@ -38,7 +38,7 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void GetAllContinuousTasks([out] ContinuousTaskInfo[] list);
     void GetAllContinuousTasks([out] sharedptr<ContinuousTaskInfo>[] list, [in] boolean includeSuspended);
     void SubscribeBackgroundTask([in] IBackgroundTaskSubscriber subscriber, [in] unsigned int flag);
-    void UnsubscribeBackgroundTask([in] IBackgroundTaskSubscriber subscriber);
+    void UnsubscribeBackgroundTask([in] IBackgroundTaskSubscriber subscriber, [in] unsigned int flag);
     void GetTransientTaskApps([out] TransientTaskAppInfo[] list);
     void GetContinuousTaskApps([out] ContinuousTaskCallbackInfo[] list);
     void ApplyEfficiencyResources([in] EfficiencyResourceInfo resourceInfo);
