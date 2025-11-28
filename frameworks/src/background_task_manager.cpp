@@ -197,7 +197,8 @@ ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &a
 
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
-
+    BGTASK_LOGI("requestStopBackgroundRunning abilityName: %{public}s, abilityId: %{public}d, "\
+        "continuousTaskId: %{public}d.", abilityName.c_str(), abilityId, continuousTaskId);
     return proxy_->StopBackgroundRunning(abilityName, abilityToken, abilityId, continuousTaskId);
 }
 
