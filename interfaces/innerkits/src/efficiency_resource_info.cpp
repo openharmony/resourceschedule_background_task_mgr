@@ -29,6 +29,7 @@ bool EfficiencyResourceInfo::Marshalling(Parcel& out) const
     WRITE_PARCEL_WITH_RET(out, Bool, isProcess_, false);
     WRITE_PARCEL_WITH_RET(out, Int32, uid_, false);
     WRITE_PARCEL_WITH_RET(out, Int32, pid_, false);
+    WRITE_PARCEL_WITH_RET(out, Int32, static_cast<int32_t>(cpuLevel_), false);
     return true;
 }
 
@@ -53,7 +54,16 @@ bool EfficiencyResourceInfo::ReadFromParcel(Parcel& in)
     READ_PARCEL_WITH_RET(in, Bool, isProcess_, false);
     READ_PARCEL_WITH_RET(in, Int32, uid_, false);
     READ_PARCEL_WITH_RET(in, Int32, pid_, false);
+    int32_t cpuLevel = static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT);
+    READ_PARCEL_WITH_RET(in, Int32, cpuLevel, false);
+    cpuLevel_ = static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel);
     return true;
+}
+
+void EfficiencyResourceInfo::SetCpuLevel(int32_t cpuLevel)
+{
+    cpuLevel_ = EfficiencyResourcesCpuLevel::IsCpuLevelValid(cpuLevel) ?
+        static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel) : EfficiencyResourcesCpuLevel::DEFAULT;
 }
 }
 }

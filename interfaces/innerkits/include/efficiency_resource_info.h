@@ -20,6 +20,9 @@
 #include <memory>
 
 #include "parcel.h"
+
+#include "efficiency_resources_cpu_level.h"
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class EfficiencyResourceInfo : public Parcelable {
@@ -165,6 +168,23 @@ public:
         return uid_;
     }
 
+    /**
+     * @brief Set the cpuLevel.
+     *
+     * @param cpuLevel The cpuLevel of app.
+     */
+    void SetCpuLevel(int32_t cpuLevel);
+
+    /**
+     * @brief Get the cpuLevel.
+     *
+     * @return the cpuLevel.
+     */
+    inline int32_t GetCpuLevel() const
+    {
+        return cpuLevel_;
+    }
+
 private:
     bool ReadFromParcel(Parcel& in);
 
@@ -176,6 +196,7 @@ private:
     bool isProcess_ {false};
     int32_t uid_ {-1};
     int32_t pid_ {-1};
+    EfficiencyResourcesCpuLevel::Type cpuLevel_ {EfficiencyResourcesCpuLevel::DEFAULT};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

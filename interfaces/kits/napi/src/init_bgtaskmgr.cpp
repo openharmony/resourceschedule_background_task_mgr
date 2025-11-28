@@ -32,6 +32,7 @@
 #include "resource_type.h"
 #include "common.h"
 #include "user_auth_result.h"
+#include "efficiency_resources_cpu_level.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -55,6 +56,8 @@ napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("setBackgroundTaskState", SetBackgroundTaskState),
         DECLARE_NAPI_FUNCTION("getBackgroundTaskState", GetBackgroundTaskState),
         DECLARE_NAPI_FUNCTION("obtainAllContinuousTasks", ObtainAllContinuousTasks),
+        DECLARE_NAPI_FUNCTION("subscribeContinuousTaskState", SubscribeContinuousTaskState),
+        DECLARE_NAPI_FUNCTION("unsubscribeContinuousTaskState", UnSubscribeContinuousTaskState),
         DECLARE_NAPI_FUNCTION("on", OnOnContinuousTaskCallback),
         DECLARE_NAPI_FUNCTION("off", OffOnContinuousTaskCallback),
     };
@@ -133,11 +136,16 @@ napi_value BackgroundModeInit(napi_env env, napi_value exports)
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(BackgroundSubMode::CAR_KEY), "CAR_KEY");
     SetNamedPropertyByString(env, obj, BG_TASK_SUB_MODE_TYPE, "SUB_MODE");
 
+    SetNamedPropertyByInteger(env, obj, static_cast<int32_t>(EfficiencyResourcesCpuLevel::SMALL_CPU), "SMALL_CPU");
+    SetNamedPropertyByInteger(env, obj, static_cast<int32_t>(EfficiencyResourcesCpuLevel::MEDIUM_CPU), "MEDIUM_CPU");
+    SetNamedPropertyByInteger(env, obj, static_cast<int32_t>(EfficiencyResourcesCpuLevel::LARGE_CPU), "LARGE_CPU");
+
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("BackgroundMode", obj),
         DECLARE_NAPI_PROPERTY("ResourceType", obj),
         DECLARE_NAPI_PROPERTY("BackgroundSubMode", obj),
         DECLARE_NAPI_PROPERTY("BackgroundModeType", obj),
+        DECLARE_NAPI_PROPERTY("EfficiencyResourcesCpuLevel", obj),
     };
 
     napi_define_properties(env, exports, sizeof(exportFuncs) / sizeof(*exportFuncs), exportFuncs);

@@ -22,6 +22,7 @@
 #include "iremote_object.h"
 #include "parcel.h"
 #include "nlohmann/json.hpp"
+#include "efficiency_resources_cpu_level.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -54,11 +55,14 @@ public:
     void ParseToJson(nlohmann::json &root);
     std::string ParseToJsonStr();
     bool ParseFromJson(const nlohmann::json& value);
+    int32_t GetCpuLevel() const;
+    void SetCpuLevel(int32_t cpuLevel);
 
 private:
     int32_t uid_ {0};
     int32_t pid_ {0};
     uint32_t resourceNumber_ {0};
+    EfficiencyResourcesCpuLevel::Type cpuLevel_ {EfficiencyResourcesCpuLevel::DEFAULT};
     std::string bundleName_ {""};
     std::list<PersistTime> resourceUnitList_ {};
 

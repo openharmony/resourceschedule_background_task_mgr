@@ -56,6 +56,17 @@ std::list<PersistTime>& ResourceApplicationRecord::GetResourceUnitList()
     return resourceUnitList_;
 }
 
+int32_t ResourceApplicationRecord::GetCpuLevel() const
+{
+    return cpuLevel_;
+}
+
+void ResourceApplicationRecord::SetCpuLevel(int32_t cpuLevel)
+{
+    cpuLevel_ = EfficiencyResourcesCpuLevel::IsCpuLevelValid(cpuLevel) ?
+        static_cast<EfficiencyResourcesCpuLevel::Type>(cpuLevel) : EfficiencyResourcesCpuLevel::DEFAULT;
+}
+
 std::string ResourceApplicationRecord::ParseToJsonStr()
 {
     nlohmann::json root;
@@ -69,6 +80,7 @@ void ResourceApplicationRecord::ParseToJson(nlohmann::json &root)
     root["uid"] = uid_;
     root["pid"] = pid_;
     root["resourceNumber"] = resourceNumber_;
+    root["cpuLevel"] = cpuLevel_;
 
     if (!resourceUnitList_.empty()) {
         nlohmann::json resource;
@@ -97,37 +109,40 @@ bool ResourceApplicationRecord::ParseFromJson(const nlohmann::json& value)
         BGTASK_LOGE("checkJsonValue of value is failed");
         return false;
     }
+    if (CommonUtils::CheckJsonValue(value, {"cpuLevel"}) && value.at("cpuLevel").is_number_integer()) {
+        this->cpuLevel_ = static_cast<EfficiencyResourcesCpuLevel::Type>(value.at("cpuLevel").get<int32_t>());
+    }
     this->uid_ = value.at("uid").get<int32_t>();
     this->pid_ = value.at("pid").get<int32_t>();
     this->bundleName_ = value.at("bundleName").get<std::string>();
     this->resourceNumber_ = value.at("resourceNumber").get<uint32_t>();
-    if (value.count("resourceUnitList") > 0 && value.at("resourceUnitList").is_array()) {
-        const nlohmann::json &resourceVal = value.at("resourceUnitList");
-        auto nums = static_cast<int32_t>(resourceVal.size());
-        for (int i = 0; i < nums; ++i) {
-            if (resourceVal.at(i).is_null() || !resourceVal.at(i).is_object()) {
-                BGTASK_LOGE("resourceVal.at(%{public}d) is null or is not object", i);
-                continue;
-            }
-            const nlohmann::json &persistTime = resourceVal.at(i);
-            if (!CommonUtils::CheckJsonValue(persistTime,
-                {"resourceIndex", "isPersist", "endTime", "reason", "timeOut"}) ||
-                !persistTime.at("resourceIndex").is_number_integer() || !persistTime.at("isPersist").is_boolean() ||
-                !persistTime.at("endTime").is_number_integer() || !persistTime.at("reason").is_string() ||
-                !persistTime.at("timeOut").is_number_integer()) {
-                BGTASK_LOGE("checkJsonValue of persistTime is failed");
-                continue;
-            }
-            uint32_t resourceIndex = persistTime.at("resourceIndex").get<uint32_t>();
-            bool isPersist_ = persistTime.at("isPersist").get<bool>();
-            int64_t endTime_ = persistTime.at("endTime").get<int64_t>();
-            std::string reason_ = persistTime.at("reason").get<std::string>();
-            int64_t timeOut_ = persistTime.at("timeOut").get<int64_t>();
-            this->resourceUnitList_.emplace_back(PersistTime {resourceIndex, isPersist_, endTime_,
-                reason_, timeOut_});
-        }
-    } else {
+    if (!(value.count("resourceUnitList") > 0 && value.at("resourceUnitList").is_array())) {
         BGTASK_LOGE("resourceUnitList error");
+        return true;
+    }
+    const nlohmann::json &resourceVal = value.at("resourceUnitList");
+    auto nums = static_cast<int32_t>(resourceVal.size());
+    for (int i = 0; i < nums; ++i) {
+        if (resourceVal.at(i).is_null() || !resourceVal.at(i).is_object()) {
+            BGTASK_LOGE("resourceVal.at(%{public}d) is null or is not object", i);
+            continue;
+        }
+        const nlohmann::json &persistTime = resourceVal.at(i);
+        if (!CommonUtils::CheckJsonValue(persistTime,
+            {"resourceIndex", "isPersist", "endTime", "reason", "timeOut"}) ||
+            !persistTime.at("resourceIndex").is_number_integer() || !persistTime.at("isPersist").is_boolean() ||
+            !persistTime.at("endTime").is_number_integer() || !persistTime.at("reason").is_string() ||
+            !persistTime.at("timeOut").is_number_integer()) {
+            BGTASK_LOGE("checkJsonValue of persistTime is failed");
+            continue;
+        }
+        uint32_t resourceIndex = persistTime.at("resourceIndex").get<uint32_t>();
+        bool isPersist_ = persistTime.at("isPersist").get<bool>();
+        int64_t endTime_ = persistTime.at("endTime").get<int64_t>();
+        std::string reason_ = persistTime.at("reason").get<std::string>();
+        int64_t timeOut_ = persistTime.at("timeOut").get<int64_t>();
+        this->resourceUnitList_.emplace_back(PersistTime {resourceIndex, isPersist_, endTime_,
+            reason_, timeOut_});
     }
     return true;
 }

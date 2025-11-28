@@ -51,6 +51,7 @@ static constexpr uint32_t MAX_GET_ALL_CONTINUOUSTASK_PARAMS = 2;
 static constexpr uint32_t MAX_GET_BACKGROUND_TASK_STATE = 1;
 static constexpr uint32_t MAX_SET_BACKGROUND_TASK_STATE = 1;
 static constexpr uint32_t MAX_CHECK_SPRCIAL_SCENARIO_AUTH = 1;
+static constexpr uint32_t MAX_SUBSCRIBER_BACKGROUND_TASK_STATE = 1;
 static constexpr uint32_t CALLBACK_RESULT_PARAMS_NUM = 2;
 static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
@@ -64,6 +65,8 @@ static constexpr uint32_t INDEX_ONE = 1;
 static constexpr uint32_t CONTINUOUS_TASK_CANCEL = 1 << 0;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 1 << 1;
 static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
+static constexpr uint32_t SUBSCRIBER_BACKGROUND_TASK_STATE = 1 << 3;
+static constexpr char SUBSCRIBER_BACKGROUND_TASK_STATE_TYPE[] = "subscribeContinuousTaskState";
 static std::shared_ptr<JsBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
 static std::vector<std::string> g_backgroundModes = {
     "dataTransfer",
@@ -1820,6 +1823,55 @@ napi_value ObtainAllContinuousTasks(napi_env env, napi_callback_info info)
         ret = WrapVoidToJS(env);
     }
     return ret;
+}
+
+napi_value SubscribeContinuousTaskState(napi_env env, napi_callback_info info)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::SubscribeContinuousTaskState");
+    size_t argc = MAX_SUBSCRIBER_BACKGROUND_TASK_STATE;
+    napi_value argv[MAX_SUBSCRIBER_BACKGROUND_TASK_STATE] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc != MAX_SUBSCRIBER_BACKGROUND_TASK_STATE) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
+        return WrapVoidToJS(env);
+    }
+    if (!Common::CheckSubscriberParam(env, argv[INDEX_ZERO])) {
+        BGTASK_LOGE("UnSubscribeContinuousTaskState check subscriber fail.");
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, true);
+        return WrapVoidToJS(env);
+    }
+    if (!SubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE)) {
+        return WrapUndefinedToJS(env);
+    }
+    backgroundTaskSubscriber_->AddJsObserverObject(SUBSCRIBER_BACKGROUND_TASK_STATE_TYPE, argv[INDEX_ZERO]);
+    backgroundTaskSubscriber_->SubscriberBgtaskSaStatusChange();
+    return WrapUndefinedToJS(env);
+}
+
+napi_value UnSubscribeContinuousTaskState(napi_env env, napi_callback_info info)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::UnSubscribeContinuousTaskState");
+    size_t argc = MAX_SUBSCRIBER_BACKGROUND_TASK_STATE;
+    napi_value argv[MAX_SUBSCRIBER_BACKGROUND_TASK_STATE] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc != MAX_SUBSCRIBER_BACKGROUND_TASK_STATE) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
+        return WrapVoidToJS(env);
+    }
+    if (!Common::CheckSubscriberParam(env, argv[INDEX_ZERO])) {
+        BGTASK_LOGE("UnSubscribeContinuousTaskState check subscriber fail.");
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, true);
+        return WrapVoidToJS(env);
+    }
+    if (!backgroundTaskSubscriber_) {
+        BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
+        return WrapUndefinedToJS(env);
+    }
+    backgroundTaskSubscriber_->RemoveJsObserverObject(SUBSCRIBER_BACKGROUND_TASK_STATE_TYPE, argv[INDEX_ZERO]);
+    UnSubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE);
+    return WrapUndefinedToJS(env);
 }
 
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)
