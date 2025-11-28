@@ -65,35 +65,5 @@ void Watchdog::ProcessEvent(const AppExecFwk::InnerEvent::Pointer& event)
     BGTASK_LOGI("handle watchdog, force cancel requestId: %{public}d", requestId);
     bgTask->ForceCancelSuspendDelay(requestId);
 }
-
-bool Watchdog::KillApplicationByUid(const std::string &bundleName, const int32_t uid, const int32_t pid)
-{
-    BGTASK_LOGW("kill running application, app name is %{public}s, uid is %{public}d, pid is %{public}d",
-        bundleName.c_str(), uid, pid);
-    if (appMgrClient_ == nullptr) {
-        appMgrClient_ = std::make_unique<AppExecFwk::AppMgrClient>();
-        if (appMgrClient_ == nullptr) {
-            BGTASK_LOGE("failed to get appMgrClient");
-            return false;
-        }
-        int32_t result = static_cast<int32_t>(appMgrClient_->ConnectAppMgrService());
-        if (result != ERR_OK) {
-            BGTASK_LOGE("failed to ConnectAppMgrService");
-            return false;
-        }
-    }
-    int32_t ret = (int32_t)appMgrClient_->KillApplicationByUid(bundleName, uid);
-    if (ret != ERR_OK) {
-        BGTASK_LOGE("Fail to kill application by uid.");
-        return false;
-    }
-    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::FRAMEWORK,
-        "PROCESS_KILL", HiviewDFX::HiSysEvent::EventType::FAULT,
-        "PID", pid,
-        "PROCESS_NAME", bundleName,
-        "MSG", "TRANSIENT_TASK_TIMEOUT",
-        "FOREGROUND", false);
-    return true;
-}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

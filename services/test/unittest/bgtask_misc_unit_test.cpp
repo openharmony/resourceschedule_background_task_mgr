@@ -395,6 +395,9 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_002, TestSize.Level2)
     eventInfo.eventId_ = EVENT_SCREEN_UNLOCK;
     decisionMaker->OnInputEvent(eventInfo);
     EXPECT_TRUE(true);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo2] = pkgDelaySuspendInfo2;
+    eventInfo.eventId_ = EVENT_SCREEN_OFF;
+    decisionMaker->OnInputEvent(eventInfo);
 }
 
 /**
@@ -535,25 +538,6 @@ HWTEST_F(BgTaskMiscUnitTest, SuspendControllerTest_001, TestSize.Level2)
     suspendController.CancelSuspendDelay(nullptr);
     suspendController.CancelSuspendDelay(keyInfo);
     EXPECT_TRUE(true);
-}
-
-/**
- * @tc.name: WatchdogTest_001
- * @tc.desc: test Watchdog class.
- * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgTaskMiscUnitTest, WatchdogTest_001, TestSize.Level2)
-{
-    auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
-    auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
-    auto timerManager =
-        std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
-    auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
-    auto watchdog = std::make_shared<Watchdog>(bgtaskService, decisionMaker,
-        AppExecFwk::EventRunner::Create("tdd_test_handler"));
-    EXPECT_TRUE(watchdog->KillApplicationByUid("bundleName", 1, 1));
-    EXPECT_TRUE(watchdog->KillApplicationByUid("bundleName", 1, 1));
 }
 
 /**
@@ -748,6 +732,8 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_006, TestSize.Level2)
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo] = pkgDelaySuspendInfo;
     requestIdList = decisionMaker->GetRequestIdListByKey(keyInfo);
     EXPECT_FALSE(requestIdList.empty());
+    decisionMaker->ResetAppMgrProxy();
+    EXPECT_EQ(decisionMaker->appMgrProxy_, nullptr);
 }
 
 /**
