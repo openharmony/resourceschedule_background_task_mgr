@@ -92,7 +92,10 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     bgContinuousTaskMgr_->isSysReady_.store(true);
 }
 
-void BgContinuousTaskMgrTest::TearDownTestCase() {}
+void BgContinuousTaskMgrTest::TearDownTestCase()
+{
+    bgContinuousTaskMgr_->Clear();
+}
 
 void BgContinuousTaskMgrTest::SetUp() {}
 
@@ -956,9 +959,10 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_039, TestSize.Level1)
     bgContinuousTaskMgr_->isSysReady_.store(false);
     bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
     bgContinuousTaskMgr_->isSysReady_.store(true);
-
+    // 构造长时任务信息
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->bgModeIds_ = {1, 2};
     continuousTaskRecord1->bgModeId_ = TEST_NUM_ONE;
     continuousTaskRecord1->isNewApi_ = true;
 
@@ -968,6 +972,27 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_039, TestSize.Level1)
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    // 构造横幅通知信息
+    std::shared_ptr<BannerNotificationRecord> bannerNotification1 = std::make_shared<BannerNotificationRecord>();
+    bannerNotification1->SetBundleName("bundleName1");
+    bannerNotification1->SetUserId(100);
+    std::string label1 = "notificationLabel1";
+    std::shared_ptr<BannerNotificationRecord> bannerNotification2 = std::make_shared<BannerNotificationRecord>();
+    bannerNotification2->SetBundleName("bundleName2");
+    bannerNotification2->SetUserId(200);
+    std::string label2 = "notificationLabel2";
+    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label1, bannerNotification1);
+    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label2, bannerNotification2);
+    // 模拟切语言
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "1234");
+    // 系统语言配置更新
+    bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
+    configuration.RemoveItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificaitonBtn_), PROMPT_NUMS,
+        "bannernotification_test");
     EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
@@ -1862,6 +1887,50 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_068, TestSize.Level1)
     continuousTaskRecord->subNotificationLabel_ = "test";
     EXPECT_EQ(continuousTaskRecord->GetSubNotificationId(), 1);
     EXPECT_EQ(continuousTaskRecord->GetSubNotificationLabel(), "test");
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_069
+ * @tc.desc: test UnregisterAppStateObserver.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_069, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->UnregisterAppStateObserver();
+    EXPECT_EQ(bgContinuousTaskMgr_->appStateObserver_, nullptr);
+    bgContinuousTaskMgr_->RegisterAppStateObserver();
+    EXPECT_NE(bgContinuousTaskMgr_->appStateObserver_, nullptr);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_070
+ * @tc.desc: test SystemEventObserver::OnBannerNotificationActionButtonClick.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_070, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->RegisterSysCommEventListener();
+    EXPECT_NE(bgContinuousTaskMgr_->systemEventListener_, nullptr);
+    EventFwk::CommonEventData eventData;
+    bgContinuousTaskMgr_->systemEventListener_->OnBannerNotificationActionButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_071
+ * @tc.desc: test GetMainAbilityLabel.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_071, TestSize.Level1)
+{
+    std::string mainAbilityLabel;
+    mainAbilityLabel = bgContinuousTaskMgr_->GetMainAbilityLabel("test_bundleName", 0);
+    EXPECT_EQ(mainAbilityLabel, "label");
+    mainAbilityLabel = bgContinuousTaskMgr_->GetMainAbilityLabel("com.ohos.sceneboard", 0);
+    EXPECT_NE(mainAbilityLabel, "");
 }
 
 /**
