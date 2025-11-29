@@ -653,7 +653,7 @@ ErrCode BackgroundTaskMgrService::RequestAuthFromUser(const ContinuousTaskParam 
     return BgContinuousTaskMgr::GetInstance()->RequestAuthFromUser(paramPtr, callback, notificationId);
 }
 
-ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(uint32_t &authResult)
+ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult)
 {
     if (CheckAtomicService()) {
         pid_t callingPid = IPCSkeleton::GetCallingPid();
@@ -667,7 +667,7 @@ ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(uint32_t &authResult)
     if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    return BgContinuousTaskMgr::GetInstance()->CheckSpecialScenarioAuth(authResult);
+    return BgContinuousTaskMgr::GetInstance()->CheckSpecialScenarioAuth(appIndex, authResult);
 }
 
 ErrCode BackgroundTaskMgrService::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)

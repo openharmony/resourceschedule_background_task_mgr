@@ -100,7 +100,7 @@ public:
     ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet) override;
     ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam, const sptr<IExpiredCallback> &callback,
         int32_t &notificationId) override;
-    ErrCode CheckSpecialScenarioAuth(uint32_t &authResult) override;
+    ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult) override;
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex) override;
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable) override;
     ErrCode SetBackgroundTaskState(const BackgroundTaskStateInfo &taskParam) override;

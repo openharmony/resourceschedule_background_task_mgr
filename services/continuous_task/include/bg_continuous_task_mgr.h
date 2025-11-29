@@ -103,7 +103,7 @@ public:
         uint64_t callingTokenId, const std::string &bundleName, uint64_t fullTokenId);
     ErrCode RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam, const sptr<IExpiredCallback> &callback,
         int32_t &notificationId);
-    ErrCode CheckSpecialScenarioAuth(uint32_t &authResult);
+    ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult);
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
     ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);

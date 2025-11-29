@@ -1131,7 +1131,7 @@ HWTEST_F(BgTaskClientUnitTest, UserAuthResult_001, TestSize.Level1)
 HWTEST_F(BgTaskClientUnitTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
 {
     uint32_t authResult = 0;
-    EXPECT_EQ(BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(authResult), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(0, authResult), ERR_BGTASK_PERMISSION_DENIED);
 }
 
 /**

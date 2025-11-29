@@ -301,10 +301,11 @@ public:
 
     /**
      * @brief check mode MODE_SPECIAL_SCENARIO_PROCESSING auth.
+     * @param appIndex app index.
      * @param authResult auth result.
      * @return Returns ERR_OK if success, else failure.
      */
-    ErrCode CheckSpecialScenarioAuth(uint32_t &authResult);
+    ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult);
 
     /**
      * @brief taskdetection check auth.

@@ -50,6 +50,7 @@ static constexpr uint32_t MAX_UPDATE_BG_RUNNING_PARAMS = 2;
 static constexpr uint32_t MAX_GET_ALL_CONTINUOUSTASK_PARAMS = 2;
 static constexpr uint32_t MAX_GET_BACKGROUND_TASK_STATE = 1;
 static constexpr uint32_t MAX_SET_BACKGROUND_TASK_STATE = 1;
+static constexpr uint32_t MAX_CHECK_SPRCIAL_SCENARIO_AUTH = 1;
 static constexpr uint32_t MAX_SUBSCRIBER_BACKGROUND_TASK_STATE = 1;
 static constexpr uint32_t MAX_GET_ALL_CONTINUOUSTASK_PARAMS_SYSTEM = 0;
 static constexpr uint32_t CALLBACK_RESULT_PARAMS_NUM = 2;
@@ -294,6 +295,7 @@ void StartBackgroundRunningExecuteCB(napi_env env, void *data)
         info->name, asyncCallbackInfo->abilityContext->GetToken(), "",
         asyncCallbackInfo->isBatchApi, asyncCallbackInfo->bgModes,
         asyncCallbackInfo->abilityContext->GetAbilityRecordId());
+    taskParam.appIndex_ = info->appIndex;
     BGTASK_LOGD("RequestStartBackgroundRunning isBatch: %{public}d, bgModeSize: %{public}u",
         taskParam.isBatchApi_, static_cast<uint32_t>(taskParam.bgModeIds_.size()));
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
@@ -847,6 +849,7 @@ void StartBackgroundRunningByRequestExecuteCB(napi_env env, void *data)
     taskParam.isCombinedTaskNotification_ = asyncCallbackInfo->request->IsCombinedTaskNotification();
     taskParam.combinedNotificationTaskId_ = asyncCallbackInfo->request->GetContinuousTaskId();
     taskParam.bgSubModeIds_ = asyncCallbackInfo->request->GetBackgroundTaskSubmodes();
+    taskParam.appIndex_ = info->appIndex;
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
     asyncCallbackInfo->bgModes = backgroundTaskModes;
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
@@ -1616,7 +1619,9 @@ void CheckSpecialScenarioAuthExecuteCB(napi_env env, void *data)
         BGTASK_LOGE("input params error");
         return;
     }
-    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(asyncCallbackInfo->authResult);
+    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(info->appIndex,
+        asyncCallbackInfo->authResult);
 }
 
 void CheckSpecialScenarioAuthPromiseCompletedCB(napi_env env, napi_status status, void *data)
@@ -1667,9 +1672,28 @@ napi_value CheckSpecialScenarioAuth(napi_env env, napi_callback_info info)
         BGTASK_LOGE("env param invaild.");
         return WrapVoidToJS(env);
     }
+    size_t argc = MAX_CHECK_SPRCIAL_SCENARIO_AUTH;
+    napi_value argv[MAX_CHECK_SPRCIAL_SCENARIO_AUTH] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc != MAX_CHECK_SPRCIAL_SCENARIO_AUTH) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
+        return WrapVoidToJS(env);
+    }
     AsyncCallbackInfo *asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         BGTASK_LOGE("input params error");
+        return WrapVoidToJS(env);
+    }
+    if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, true);
+        return WrapVoidToJS(env);
+    }
+    if (asyncCallbackInfo->abilityContext->GetAbilityInfo() == nullptr) {
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+        Common::HandleParamErr(env, ERR_ABILITY_INFO_EMPTY, true);
         return WrapVoidToJS(env);
     }
     std::unique_ptr<AsyncCallbackInfo> callbackPtr {asyncCallbackInfo};
