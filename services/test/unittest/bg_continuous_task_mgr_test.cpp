@@ -1088,8 +1088,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_047, TestSize.Level1)
     EXPECT_NE(bgContinuousTaskMgr_->GetNotificationText(continuousTaskRecord), "");
 }
 
-
-
 /**
  * @tc.name: BgTaskManagerUnitTest_048
  * @tc.desc: test CheckSubMode.
