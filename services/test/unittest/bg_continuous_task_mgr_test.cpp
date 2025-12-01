@@ -92,10 +92,7 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     bgContinuousTaskMgr_->isSysReady_.store(true);
 }
 
-void BgContinuousTaskMgrTest::TearDownTestCase()
-{
-    bgContinuousTaskMgr_->Clear();
-}
+void BgContinuousTaskMgrTest::TearDownTestCase() {}
 
 void BgContinuousTaskMgrTest::SetUp() {}
 

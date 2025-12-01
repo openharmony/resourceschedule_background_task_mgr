@@ -203,7 +203,9 @@ void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
 void BgContinuousTaskMgr::Clear()
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
-    Notification::NotificationHelper::UnSubscribeNotification(*subscriber_);
+    if (subscriber_ != nullptr) {
+        Notification::NotificationHelper::UnSubscribeNotification(*subscriber_);
+    }
 #endif
     if (systemEventListener_ != nullptr) {
         systemEventListener_->Unsubscribe();

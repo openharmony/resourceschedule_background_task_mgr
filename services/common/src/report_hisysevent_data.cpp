@@ -14,6 +14,7 @@
  */
 
 #include "report_hisysevent_data.h"
+#include "time_provider.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -25,7 +26,7 @@ bool EfficiencyResourceApplyReportHisysEvent::AddData(const sptr<EfficiencyResou
     }
     appUid_.push_back(callbackInfo->GetUid());
     appPid_.push_back(callbackInfo->GetPid());
-    appName_.push_back(callbackInfo->GetBundleName());
+    appName_.push_back(callbackInfo->GetBundleName() + "|" + std::to_string(TimeProvider::GetCurrentTime()));
     uiabilityIdentity_.push_back(-1);
     resourceType_.push_back(callbackInfo->GetResourceNumber());
     timeout_.push_back(resourceInfo->GetTimeOut());
