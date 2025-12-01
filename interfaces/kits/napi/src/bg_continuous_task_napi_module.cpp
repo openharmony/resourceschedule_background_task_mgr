@@ -52,7 +52,6 @@ static constexpr uint32_t MAX_GET_BACKGROUND_TASK_STATE = 1;
 static constexpr uint32_t MAX_SET_BACKGROUND_TASK_STATE = 1;
 static constexpr uint32_t MAX_CHECK_SPRCIAL_SCENARIO_AUTH = 1;
 static constexpr uint32_t MAX_SUBSCRIBER_BACKGROUND_TASK_STATE = 1;
-static constexpr uint32_t MAX_GET_ALL_CONTINUOUSTASK_PARAMS_SYSTEM = 0;
 static constexpr uint32_t CALLBACK_RESULT_PARAMS_NUM = 2;
 static constexpr uint32_t BG_MODE_ID_BEGIN = 1;
 static constexpr uint32_t BG_MODE_ID_END = 9;
