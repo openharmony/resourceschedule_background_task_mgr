@@ -24,6 +24,7 @@ namespace BackgroundTaskMgr {
 namespace {
     static constexpr uint32_t NOTIFICATION_TEXT_MEDIA_PROCESS_INDEX = 1;
     static constexpr uint32_t NOTIFICATION_TEXT_VIDEO_BROADCAST_INDEX = 2;
+    static constexpr uint32_t NOTIFICATION_TEXT_WORK_OUT_INDEX = 2;
     static constexpr char BANNER_NOTIFICATION_PREFIX[] = "bgbanner";
     // 横幅通知-本次允许按钮
     static constexpr int32_t BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME = 0;
