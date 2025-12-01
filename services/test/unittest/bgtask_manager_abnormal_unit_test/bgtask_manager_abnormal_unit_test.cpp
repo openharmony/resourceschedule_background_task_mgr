@@ -315,7 +315,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_015
     EXPECT_EQ(BackgroundTaskMgrService_->IsModeSupported(taskParam), ERR_BGTASK_PERMISSION_DENIED);
     uint32_t authResult = 1;
     BackgroundTaskStateInfo stateInfo = BackgroundTaskStateInfo();
-    EXPECT_EQ(BackgroundTaskMgrService_->CheckSpecialScenarioAuth(authResult), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->CheckSpecialScenarioAuth(0, authResult), ERR_BGTASK_PERMISSION_DENIED);
     EXPECT_EQ(BackgroundTaskMgrService_->SetBackgroundTaskState(stateInfo), ERR_BGTASK_PERMISSION_DENIED);
     EXPECT_EQ(BackgroundTaskMgrService_->GetBackgroundTaskState(stateInfo, authResult), ERR_BGTASK_PERMISSION_DENIED);
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
