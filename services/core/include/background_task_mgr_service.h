@@ -79,7 +79,7 @@ public:
     ErrCode GetAllContinuousTasks(
         std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended) override;
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber, uint32_t flag) override;
-    ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber) override;
+    ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber, uint32_t flag = 0) override;
     ErrCode GetTransientTaskApps(std::vector<TransientTaskAppInfo> &list) override;
     ErrCode PauseTransientTaskTimeForInner(int32_t uid) override;
     ErrCode StartTransientTaskTimeForInner(int32_t uid) override;
@@ -100,7 +100,7 @@ public:
     ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet) override;
     ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam, const sptr<IExpiredCallback> &callback,
         int32_t &notificationId) override;
-    ErrCode CheckSpecialScenarioAuth(uint32_t &authResult) override;
+    ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult) override;
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex) override;
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable) override;
     ErrCode SetBackgroundTaskState(const BackgroundTaskStateInfo &taskParam) override;

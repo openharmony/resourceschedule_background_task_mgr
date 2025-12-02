@@ -197,7 +197,8 @@ ErrCode BackgroundTaskManager::RequestStopBackgroundRunning(const std::string &a
 
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
-
+    BGTASK_LOGI("requestStopBackgroundRunning abilityName: %{public}s, abilityId: %{public}d, "\
+        "continuousTaskId: %{public}d.", abilityName.c_str(), abilityId, continuousTaskId);
     return proxy_->StopBackgroundRunning(abilityName, abilityToken, abilityId, continuousTaskId);
 }
 
@@ -256,7 +257,7 @@ ErrCode BackgroundTaskManager::UnsubscribeBackgroundTask(const BackgroundTaskSub
         BGTASK_LOGE("subscriberSptr is nullptr");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    return proxy_->UnsubscribeBackgroundTask(subscriberSptr);
+    return proxy_->UnsubscribeBackgroundTask(subscriberSptr, subscriber.flag_);
 }
 
 ErrCode BackgroundTaskManager::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)
@@ -511,12 +512,12 @@ ErrCode BackgroundTaskManager::RequestAuthFromUser(const ContinuousTaskParam &ta
     return proxy_->RequestAuthFromUser(taskParam, callbackSptr, notificationId);
 }
 
-ErrCode BackgroundTaskManager::CheckSpecialScenarioAuth(uint32_t &authResult)
+ErrCode BackgroundTaskManager::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return proxy_->CheckSpecialScenarioAuth(authResult);
+    return proxy_->CheckSpecialScenarioAuth(appIndex, authResult);
 }
 
 ErrCode BackgroundTaskManager::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)

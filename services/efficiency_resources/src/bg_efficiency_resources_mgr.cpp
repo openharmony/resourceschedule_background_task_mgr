@@ -389,6 +389,10 @@ ErrCode BgEfficiencyResourcesMgr::ApplyEfficiencyResources(
         return ERR_BGTASK_NOT_SYSTEM_APP;
     }
 
+    if (const ErrCode errCode = CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid); errCode != ERR_OK) {
+        return errCode;
+    }
+
     auto exemptedResourceType = GetExemptedResourceType(resourceInfo->GetResourceNumber(), uid, bundleName);
     resourceInfo->SetResourceNumber(exemptedResourceType);
     if (exemptedResourceType == 0) {
@@ -439,6 +443,7 @@ void BgEfficiencyResourcesMgr::SendResourceApplyTask(int32_t uid, int32_t pid, c
 {
     std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
         pid, resourceInfo->GetResourceNumber(), bundleName);
+    callbackInfo->SetCpuLevel(resourceInfo->GetCpuLevel());
     if (resourceInfo->IsApply()) {
         handler_->PostTask([this, callbackInfo, resourceInfo]() {
             this->ApplyEfficiencyResourcesInner(callbackInfo, resourceInfo);
@@ -455,16 +460,18 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
     callbackInfo, const sptr<EfficiencyResourceInfo> &resourceInfo)
 {
     BGTASK_LOGI("apply efficiency resources, uid:%{public}d, pid %{public}d, resource number: %{public}u,"\
-        "isPersist: %{public}d, timeOut: %{public}u, isProcess: %{public}d", callbackInfo->GetUid(),
-        callbackInfo->GetPid(), resourceInfo->GetResourceNumber(), resourceInfo->IsPersist(),
-        resourceInfo->GetTimeOut(), resourceInfo->IsProcess());
+        "isPersist: %{public}d, timeOut: %{public}u, isProcess: %{public}d, cpuLevel: %{public}d",
+        callbackInfo->GetUid(), callbackInfo->GetPid(), resourceInfo->GetResourceNumber(), resourceInfo->IsPersist(),
+        resourceInfo->GetTimeOut(), resourceInfo->IsProcess(), resourceInfo->GetCpuLevel());
     int32_t mapKey = resourceInfo->IsProcess() ? callbackInfo->GetPid() : callbackInfo->GetUid();
     auto &infoMap = resourceInfo->IsProcess() ? procResourceApplyMap_ : appResourceApplyMap_;
     uint32_t preResourceNumber = 0;
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end()) {
-        infoMap.emplace(mapKey, std::make_shared<ResourceApplicationRecord>(callbackInfo->GetUid(),
-            callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), callbackInfo->GetBundleName()));
+        auto appRecord = std::make_shared<ResourceApplicationRecord>(callbackInfo->GetUid(),
+            callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), callbackInfo->GetBundleName());
+        appRecord->SetCpuLevel(callbackInfo->GetCpuLevel());
+        infoMap.emplace(mapKey, appRecord);
         iter = infoMap.find(mapKey);
     } else {
         preResourceNumber = iter->second->resourceNumber_;
@@ -604,6 +611,7 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
     RemoveListRecord(resourceRecord->resourceUnitList_, eraseBit);
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(resourceRecord->uid_, resourceRecord->pid_, eraseBit,
         resourceRecord->bundleName_);
+    callbackInfo->SetCpuLevel(resourceRecord->cpuLevel_);
 
     // update quota after time reset if CPU resource apply
     UpdateQuotaIfCpuReset(type, callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
@@ -669,6 +677,7 @@ void BgEfficiencyResourcesMgr::RemoveRelativeProcessRecord(int32_t uid, uint32_t
             uint32_t eraseBit = (resourceNumber & iter->second->resourceNumber_);
             std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
                 iter->second->pid_, eraseBit, iter->second->bundleName_);
+            callbackInfo->SetCpuLevel(iter->second->cpuLevel_);
             handler_->PostTask([this, callbackInfo]() {
                 this->ResetEfficiencyResourcesInner(callbackInfo, true, CancelReason::APP_DIDE_TRIGGER_PROCESS_DIED);
             });
@@ -687,10 +696,10 @@ void BgEfficiencyResourcesMgr::ResetEfficiencyResourcesInner(
         callbackInfo->GetPid(), callbackInfo->GetResourceNumber(), isProcess);
     if (isProcess) {
         RemoveTargetResourceRecord(procResourceApplyMap_, callbackInfo->GetPid(),
-            callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::RESOURCE_RESET, cancelType);
+            callbackInfo, EfficiencyResourcesEventType::RESOURCE_RESET, cancelType);
     } else {
         RemoveTargetResourceRecord(appResourceApplyMap_, callbackInfo->GetUid(),
-            callbackInfo->GetResourceNumber(), EfficiencyResourcesEventType::APP_RESOURCE_RESET, cancelType);
+            callbackInfo, EfficiencyResourcesEventType::APP_RESOURCE_RESET, cancelType);
         RemoveRelativeProcessRecord(callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
     }
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
@@ -874,6 +883,7 @@ void BgEfficiencyResourcesMgr::DumpApplicationInfoMap(std::unordered_map<int32_t
         stream << "\t\tuid: " << iter->second->GetUid() << "\n";
         stream << "\t\tpid: " << iter->second->GetPid() << "\n";
         stream << "\t\tresourceNumber: " << iter->second->GetResourceNumber() << "\n";
+        stream << "\t\tcpuLevel: " << iter->second->GetCpuLevel() << "\n";
         int64_t curTime = TimeProvider::GetCurrentTime();
         auto &resourceUnitList = iter->second->resourceUnitList_;
         for (auto unitIter = resourceUnitList.begin();
@@ -911,6 +921,7 @@ void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> 
             std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>
                 (iter->second->GetUid(), iter->second->GetPid(), iter->second->GetResourceNumber(),
                 iter->second->GetBundleName());
+            callbackInfo->SetCpuLevel(iter->second->GetCpuLevel());
             subscriberMgr_->OnResourceChanged(callbackInfo, type);
         }
         infoMap.clear();
@@ -921,16 +932,26 @@ void BgEfficiencyResourcesMgr::DumpResetResource(const std::vector<std::string> 
         }
         int32_t mapKey = std::atoi(dumpOption[2].c_str());
         uint32_t cleanResource = static_cast<uint32_t>(std::atoi(dumpOption[3].c_str()));
-        RemoveTargetResourceRecord(infoMap, mapKey, cleanResource, type, CancelReason::DUMPER);
+        auto iter = infoMap.find(mapKey);
+        if (iter == infoMap.end()) {
+            BGTASK_LOGW("invalid mapKey: %{public}d", mapKey);
+            return;
+        }
+        std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>
+                (iter->second->GetUid(), iter->second->GetPid(), cleanResource, iter->second->GetBundleName());
+        callbackInfo->SetCpuLevel(iter->second->GetCpuLevel());
+        RemoveTargetResourceRecord(infoMap, mapKey, callbackInfo, type, CancelReason::DUMPER);
     }
 }
 
 bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int32_t,
-    std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey, uint32_t cleanResource,
+    std::shared_ptr<ResourceApplicationRecord>> &infoMap, int32_t mapKey,
+    const std::shared_ptr<ResourceCallbackInfo> &resourcecallbackInfo,
     EfficiencyResourcesEventType type, CancelReason cancelType)
 {
     BGTASK_LOGD("resource record key: %{public}d, resource record size(): %{public}d",
         mapKey, static_cast<int32_t>(infoMap.size()));
+    uint32_t cleanResource = resourcecallbackInfo->GetResourceNumber();
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end() || (iter->second->resourceNumber_ & cleanResource) == 0) {
         BGTASK_LOGD("remove single resource record failure, no matched task: %{public}d", mapKey);
@@ -941,6 +962,9 @@ bool BgEfficiencyResourcesMgr::RemoveTargetResourceRecord(std::unordered_map<int
     RemoveListRecord(iter->second->resourceUnitList_, eraseBit);
     auto callbackInfo = std::make_shared<ResourceCallbackInfo>(iter->second->GetUid(),
         iter->second->GetPid(), eraseBit, iter->second->GetBundleName());
+
+    // update cpuLevel from current request
+    callbackInfo->SetCpuLevel(resourcecallbackInfo->GetCpuLevel());
 
     // update the left quota of cpu efficiency resource when reset
     UpdateQuotaIfCpuReset(type, callbackInfo->GetUid(), callbackInfo->GetResourceNumber());
@@ -992,6 +1016,7 @@ void BgEfficiencyResourcesMgr::GetEfficiencyResourcesInfosInner(const ResourceRe
     for (auto &record : infoMap) {
         auto appInfo = std::make_shared<ResourceCallbackInfo>(record.second->uid_, record.second->pid_,
             record.second->resourceNumber_, record.second->bundleName_);
+        appInfo->SetCpuLevel(record.second->cpuLevel_);
         list.push_back(appInfo);
     }
 }
@@ -1109,6 +1134,9 @@ void BgEfficiencyResourcesMgr::GetAllEfficiencyResourcesInner(const ResourceReco
                 recordIter->timeOut_, recordIter->reason_, recordIter->isPersist_, isProcess);
             appInfo->SetPid(pid);
             appInfo->SetUid(uid);
+            if (iter->second->GetCpuLevel() != static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT)) {
+                appInfo->SetCpuLevel(iter->second->GetCpuLevel());
+            }
             resourceInfoList.push_back(appInfo);
         }
     }
@@ -1144,6 +1172,50 @@ void BgEfficiencyResourcesMgr::ReportHisysEvent(EfficiencyResourceEventTriggerTy
             }
             break;
     }
+}
+
+ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyResourceInfo> &resourceInfo,
+    const std::string &bundleName, pid_t uid)
+{
+    if ((resourceInfo->GetResourceNumber() & ResourceType::CPU) != ResourceType::CPU) {
+        // not include cpu resource type, need to set cpuLevel default
+        resourceInfo->SetCpuLevel(static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT));
+        BGTASK_LOGI("%{public}s: resourceNumber %{public}u is not contains CPU, request cpuLevel %{public}d, need set"
+            "cpuLevel to default -1", __func__, resourceInfo->GetResourceNumber(), resourceInfo->GetCpuLevel());
+        return ERR_OK;
+    }
+
+    // compatible with default scene, app not set cpuLevel
+    if (resourceInfo->GetCpuLevel() == static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT)) {
+        BGTASK_LOGI("%{public}s: default scene, app bundleName %{public}s not set cpuLevel: %{public}d", __func__,
+            bundleName.c_str(), resourceInfo->GetCpuLevel());
+        return ERR_OK;
+    }
+
+    // check whether in ccm
+    if (!DelayedSingleton<BgtaskConfig>::GetInstance()->CheckRequestCpuLevelBundleNameConfigured(bundleName)) {
+        BGTASK_LOGE("%{public}s: bundleName %{public}s not configured", __func__, bundleName.c_str());
+        return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_NOT_ALLOW_APPLY;
+    }
+
+    AppExecFwk::BundleInfo bundleInfo;
+    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
+        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, GetUserIdByUid(uid))) {
+        BGTASK_LOGE("%{public}s: get %{public}s bundle info failed", __func__, bundleName.c_str());
+        return ERR_BGTASK_EFFICIENCY_RESOURCES_INVALID_BUNDLE_INFO;
+    }
+
+    if (!DelayedSingleton<BgtaskConfig>::GetInstance()->CheckRequestCpuLevelAppSignatures(bundleName, bundleInfo.appId,
+        bundleInfo.signatureInfo.appIdentifier)) {
+        BGTASK_LOGE("%{public}s: %{public}s CheckRequestCpuLevelAppSignatures failed", __func__, bundleName.c_str());
+        return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_APP_SIGNATURES_INVALID;
+    }
+
+    if (!DelayedSingleton<BgtaskConfig>::GetInstance()->CheckRequestCpuLevel(bundleName, resourceInfo->GetCpuLevel())) {
+        BGTASK_LOGE("%{public}s: %{public}s CheckRequestCpuLevel failed", __func__, bundleName.c_str());
+        return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_TOO_LARGE;
+    }
+    return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

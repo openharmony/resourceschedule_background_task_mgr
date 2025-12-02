@@ -116,7 +116,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_003
 HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_004, TestSize.Level3)
 {
     DelaySuspendInfo delayInfo;
-    EXPECT_EQ(BackgroundTaskMgrService_->RequestSuspendDelay("test", nullptr, delayInfo), ERR_BGTASK_SYS_NOT_READY);
+    EXPECT_EQ(BackgroundTaskMgrService_->RequestSuspendDelay("test", nullptr, delayInfo), ERR_BGTASK_PERMISSION_DENIED);
     int32_t requestId = 1;
     int32_t delayTime = 1;
     EXPECT_EQ(BackgroundTaskMgrService_->GetRemainingDelayTime(requestId, delayTime), ERR_BGTASK_SYS_NOT_READY);
@@ -207,8 +207,119 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_008
 HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_010, TestSize.Level3)
 {
     uint32_t authResult = -1;
-    EXPECT_EQ(BackgroundTaskMgrService_->CheckSpecialScenarioAuth(authResult),
+    EXPECT_EQ(BackgroundTaskMgrService_->CheckSpecialScenarioAuth(0, authResult),
         ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_011
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
+ * @tc.type: FUNC
+ * @tc.require: 809
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_011, TestSize.Level3)
+{
+    BackgroundTaskMgrService_->dependsReady_ = 7;
+    uint32_t flag = 1;
+    BackgroundTaskMgrService_->SetReady(flag);
+    BackgroundTaskMgrService_->dependsReady_ = 0;
+    BackgroundTaskMgrService_->SetReady(flag);
+    BackgroundTaskMgrService_->dependsReady_ = 3;
+    flag = 4;
+    BackgroundTaskMgrService_->SetReady(flag);
+    EXPECT_TRUE(true);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_012
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
+ * @tc.type: FUNC
+ * @tc.require: 809
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_012, TestSize.Level3)
+{
+    std::string extension = "backup";
+    MessageParcel data;
+    MessageParcel reply;
+    MessageParcel options;
+    std::u16string descriptor = u"test";
+    EXPECT_NE(BackgroundTaskMgrService_->OnExtension(extension, data, reply), ERR_OK);
+
+    extension = "restore";
+    EXPECT_NE(BackgroundTaskMgrService_->OnExtension(extension, data, reply), ERR_OK);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_013
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
+ * @tc.type: FUNC
+ * @tc.require: 809
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_013, TestSize.Level3)
+{
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    taskParam.isByRequestObject_ = false;
+    int32_t notificationId = -1;
+    int32_t continuousTaskId = -1;
+    EXPECT_NE(BackgroundTaskMgrService_->StartBackgroundRunning(
+        taskParam, notificationId, continuousTaskId), ERR_OK);
+
+    taskParam.isByRequestObject_ = true;
+    taskParam.bgModeIds_.push_back(1);
+    EXPECT_EQ(BackgroundTaskMgrService_->StartBackgroundRunning(
+        taskParam, notificationId, continuousTaskId), ERR_BGTASK_PERMISSION_DENIED);
+
+    taskParam.bgModeIds_.clear();
+    taskParam.bgModeIds_ = {1, 2, 4};
+    EXPECT_NE(BackgroundTaskMgrService_->StartBackgroundRunning(
+        taskParam, notificationId, continuousTaskId), ERR_OK);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_014
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
+ * @tc.type: FUNC
+ * @tc.require: 809
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_014, TestSize.Level3)
+{
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    taskParam.isByRequestObject_ = false;
+    int32_t notificationId = -1;
+    int32_t continuousTaskId = -1;
+    EXPECT_NE(BackgroundTaskMgrService_->UpdateBackgroundRunning(
+        taskParam, notificationId, continuousTaskId), ERR_OK);
+
+    taskParam.isByRequestObject_ = true;
+    taskParam.bgModeIds_.push_back(1);
+    EXPECT_EQ(BackgroundTaskMgrService_->UpdateBackgroundRunning(
+        taskParam, notificationId, continuousTaskId), ERR_BGTASK_PERMISSION_DENIED);
+
+    taskParam.bgModeIds_.clear();
+    taskParam.bgModeIds_ = {1, 2, 4};
+    EXPECT_NE(BackgroundTaskMgrService_->UpdateBackgroundRunning(
+        taskParam, notificationId, continuousTaskId), ERR_OK);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_015
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormal.
+ * @tc.type: FUNC
+ * @tc.require: 809
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_015, TestSize.Level3)
+{
+    std::string result = "";
+    BackgroundTaskMgrService_->DumpUsage(result);
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    EXPECT_EQ(BackgroundTaskMgrService_->IsModeSupported(taskParam), ERR_BGTASK_PERMISSION_DENIED);
+    uint32_t authResult = 1;
+    BackgroundTaskStateInfo stateInfo = BackgroundTaskStateInfo();
+    EXPECT_EQ(BackgroundTaskMgrService_->CheckSpecialScenarioAuth(0, authResult), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->SetBackgroundTaskState(stateInfo), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrService_->GetBackgroundTaskState(stateInfo, authResult), ERR_BGTASK_PERMISSION_DENIED);
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    EXPECT_EQ(BackgroundTaskMgrService_->GetAllContinuousTasksBySystem(list), ERR_BGTASK_PERMISSION_DENIED);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

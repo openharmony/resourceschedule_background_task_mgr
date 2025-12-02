@@ -29,6 +29,7 @@
 #include "efficiency_resource_info.h"
 #include "js_runtime_utils.h"
 #include "background_task_state_info.h"
+#include "continuous_task_callback_info.h"
 
 #define BGTASK_NAPI_CALL_BASE(env, theCall, retVal) \
     do {                                     \
@@ -142,6 +143,11 @@ public:
 
     static bool GetBackgroundTaskStateParam(napi_env &env, const napi_value &objValue,
         std::shared_ptr<BackgroundTaskStateInfo> taskState, bool includeAuth = false);
+
+    static bool CheckSubscriberParam(napi_env &env, const napi_value &objValue);
+
+    static napi_value GetNapiCallBackInfo(napi_env &env,
+        const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskInfo);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

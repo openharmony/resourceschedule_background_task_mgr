@@ -25,6 +25,7 @@
 #include "bundle_constants.h"
 #include "common_event_manager.h"
 #include "common_event_support.h"
+#include "common_utils.h"
 #include "file_ex.h"
 #include "ipc_skeleton.h"
 #include "string_ex.h"
@@ -402,6 +403,19 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
         BGTASK_LOGW("SubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
+    // 系统应用通过系统API接口注册
+    if (isHap && flag == SUBSCRIBER_BACKGROUND_TASK_STATE) {
+        if (CheckAtomicService()) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
+        uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+        if (!BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+            return ERR_BGTASK_NOT_SYSTEM_APP;
+        }
+        if (!BundleManagerHelper::GetInstance()->CheckPermission(GET_BACKGROUND_TASK_INFO_PERMISSION)) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
+    }
     pid_t callingPid = IPCSkeleton::GetCallingPid();
     pid_t callingUid = IPCSkeleton::GetCallingUid();
     BGTASK_LOGI("uid %{public}d pid %{public}d isHap %{public}d flag %{public}u subscribe",
@@ -422,13 +436,26 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber)
+ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber,
+    uint32_t flag)
 {
     BgTaskHiTraceChain traceChain(__func__);
     bool isHap = false;
     if (!CheckCallingToken() && !CheckHapCalling(isHap)) {
         BGTASK_LOGW("UnsubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    if (isHap && flag == SUBSCRIBER_BACKGROUND_TASK_STATE) {
+        if (CheckAtomicService()) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
+        uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+        if (!BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+            return ERR_BGTASK_NOT_SYSTEM_APP;
+        }
+        if (!BundleManagerHelper::GetInstance()->CheckPermission(GET_BACKGROUND_TASK_INFO_PERMISSION)) {
+            return ERR_BGTASK_PERMISSION_DENIED;
+        }
     }
     if (BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) != ERR_OK) {
         BGTASK_LOGE("continuous task unsubscribe background task failed");
@@ -626,7 +653,7 @@ ErrCode BackgroundTaskMgrService::RequestAuthFromUser(const ContinuousTaskParam 
     return BgContinuousTaskMgr::GetInstance()->RequestAuthFromUser(paramPtr, callback, notificationId);
 }
 
-ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(uint32_t &authResult)
+ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult)
 {
     if (CheckAtomicService()) {
         pid_t callingPid = IPCSkeleton::GetCallingPid();
@@ -640,7 +667,7 @@ ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(uint32_t &authResult)
     if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    return BgContinuousTaskMgr::GetInstance()->CheckSpecialScenarioAuth(authResult);
+    return BgContinuousTaskMgr::GetInstance()->CheckSpecialScenarioAuth(appIndex, authResult);
 }
 
 ErrCode BackgroundTaskMgrService::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)

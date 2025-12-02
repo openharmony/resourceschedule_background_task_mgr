@@ -555,6 +555,12 @@ napi_value Common::GetNapiEfficiencyResourcesInfo(const napi_env &env,
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "uid", napiUid));
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "pid", napiPid));
 
+    if (efficiencyResourceInfo->GetCpuLevel() != static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT)) {
+        napi_value napiCpuLevel = nullptr;
+        NAPI_CALL(env, napi_create_int32(env, efficiencyResourceInfo->GetCpuLevel(), &napiCpuLevel));
+        NAPI_CALL(env, napi_set_named_property(env, napiInfo, "cpuLevel", napiCpuLevel));
+    }
+
     return napiInfo;
 }
 
@@ -821,6 +827,74 @@ std::string Common::GetStrValue(const napi_env &env, const napi_value &objValue,
         }
     }
     return "";
+}
+
+bool Common::CheckSubscriberParam(napi_env &env, const napi_value &objValue)
+{
+    bool hasProperty = false;
+    napi_status status = napi_has_named_property(env, objValue, "onContinuousTaskStart", &hasProperty);
+    if (!hasProperty || status != napi_ok) {
+        return false;
+    }
+    status = napi_has_named_property(env, objValue, "onContinuousTaskUpdate", &hasProperty);
+    if (!hasProperty || status != napi_ok) {
+        return false;
+    }
+    status = napi_has_named_property(env, objValue, "onContinuousTaskStop", &hasProperty);
+    if (!hasProperty || status != napi_ok) {
+        return false;
+    }
+    napi_value startFunction;
+    status = napi_get_named_property(env, objValue, "onContinuousTaskStart", &startFunction);
+    if (status != napi_ok) {
+        return false;
+    } else {
+        napi_valuetype valueTypeStartFunction = napi_undefined;
+        napi_typeof(env, startFunction, &valueTypeStartFunction);
+        if (valueTypeStartFunction != napi_function) {
+            return false;
+        }
+    }
+    napi_value updateFunction;
+    status = napi_get_named_property(env, objValue, "onContinuousTaskUpdate", &updateFunction);
+    if (status != napi_ok) {
+        return false;
+    } else {
+        napi_valuetype valueTypeUpdateFunction = napi_undefined;
+        napi_typeof(env, updateFunction, &valueTypeUpdateFunction);
+        if (valueTypeUpdateFunction != napi_function) {
+            return false;
+        }
+    }
+    napi_value stopFunction;
+    status = napi_get_named_property(env, objValue, "onContinuousTaskStop", &stopFunction);
+    if (status != napi_ok) {
+        return false;
+    } else {
+        napi_valuetype valueTypeStopFunction = napi_undefined;
+        napi_typeof(env, stopFunction, &valueTypeStopFunction);
+        if (valueTypeStopFunction != napi_function) {
+            return false;
+        }
+    }
+    return true;
+}
+
+napi_value Common::GetNapiCallBackInfo(napi_env &env,
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &callBackInfo)
+{
+    if (callBackInfo == nullptr) {
+        return nullptr;
+    }
+    std::shared_ptr<ContinuousTaskInfo> info = std::make_shared<ContinuousTaskInfo>(
+        callBackInfo->GetAbilityName(), callBackInfo->GetCreatorUid(), callBackInfo->GetCreatorPid(),
+        callBackInfo->IsFromWebview(), callBackInfo->GetTypeIds(), callBackInfo->GetBackgroundSubModes(),
+        callBackInfo->GetNotificationId(), callBackInfo->GetContinuousTaskId(), callBackInfo->GetAbilityId(),
+        callBackInfo->GetWantAgentBundleName(), callBackInfo->GetWantAgentAbilityName());
+    info->SetAppIndex(callBackInfo->GetAppIndex());
+    info->SetBundleName(callBackInfo->GetBundleName());
+    info->SetSuspendState(callBackInfo->GetSuspendState());
+    return GetNapiContinuousTaskInfo(env, info);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

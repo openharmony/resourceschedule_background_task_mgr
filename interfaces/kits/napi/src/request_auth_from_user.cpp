@@ -21,19 +21,21 @@
 #ifdef SUPPORT_JSSTACK
 #include "xpower_event_js.h"
 #endif
-
+#include "ability.h"
+#include "napi_base_context.h"
 #include "background_task_manager.h"
 #include "hitrace_meter.h"
 #include "continuous_task_log.h"
 #include "background_task_mode.h"
 #include "continuous_task_param.h"
 #include "continuous_task_request.h"
+#include "js_runtime_utils.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 std::map<int32_t, std::shared_ptr<ExpiredCallback>> authCallbackInstances_;
 std::mutex authCallbackLock_;
-static const uint32_t REQUEST_AUTH_FORM_USER_PARAMS = 1;
+static const uint32_t REQUEST_AUTH_FORM_USER_PARAMS = 2;
 
 struct CallbackReceiveDataWorker {
     napi_env env = nullptr;
@@ -120,9 +122,42 @@ void AuthCallbackInstance::SetCallbackInfo(const napi_env &env, const napi_ref &
     expiredCallbackInfo_.ref = ref;
 }
 
+napi_value CheckAbilityContext(const napi_env &env, const napi_value &value,
+    std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext)
+{
+    bool stageMode = false;
+    napi_status status = OHOS::AbilityRuntime::IsStageContext(env, value, stageMode);
+    BGTASK_LOGD("is stage mode: %{public}s", stageMode ? "true" : "false");
+
+    if (status == napi_ok && stageMode) {
+        auto context = AbilityRuntime::GetStageModeContext(env, value);
+        if (!context) {
+            BGTASK_LOGE("get context failed");
+            return nullptr;
+        }
+        abilityContext = AbilityRuntime::Context::ConvertTo<AbilityRuntime::AbilityContext>(context);
+        if (!abilityContext) {
+            BGTASK_LOGE("get Stage model ability context failed");
+            return nullptr;
+        }
+        const std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo = abilityContext->GetAbilityInfo();
+        if (abilityInfo == nullptr) {
+            BGTASK_LOGE("ability info is null");
+            return nullptr;
+        }
+        return Common::NapiGetNull(env);
+    }
+    return nullptr;
+}
+
 napi_value GetExpiredCallback(
     const napi_env &env, const napi_value &value, std::shared_ptr<AuthCallbackInstance> &callback)
 {
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    if (valuetype != napi_function) {
+        return Common::NapiGetNull(env);
+    }
     napi_ref result = nullptr;
     callback = std::make_shared<AuthCallbackInstance>();
     callback->Init();
@@ -227,14 +262,13 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
         Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
         return Common::NapiGetNull(env);
     }
-    napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-    if (valuetype != napi_function) {
-        Common::HandleParamErr(env, ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, true);
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
+    if (CheckAbilityContext(env, argv[0], abilityContext) == nullptr) {
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, true);
         return Common::NapiGetNull(env);
     }
     std::shared_ptr<AuthCallbackInstance> callback = nullptr;
-    if (GetExpiredCallback(env, argv[0], callback) == nullptr) {
+    if (GetExpiredCallback(env, argv[1], callback) == nullptr) {
         BGTASK_LOGE("ExpiredCallback parse failed");
         Common::HandleParamErr(env, ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, true);
         return Common::NapiGetNull(env);
@@ -245,6 +279,7 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
         nullptr, "", nullptr, "", true, backgroundTaskModesValue, -1);
     taskParam.isByRequestObject_ = true;
     taskParam.bgSubModeIds_ = request->GetBackgroundTaskSubmodes();
+    taskParam.appIndex_ = abilityContext->GetAbilityInfo()->appIndex;
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestAuthFromUser(taskParam, *callback, notificationId);
     Common::HandleErrCode(env, errCode, true);

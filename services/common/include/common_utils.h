@@ -24,6 +24,7 @@ namespace BackgroundTaskMgr {
 namespace {
     static constexpr uint32_t NOTIFICATION_TEXT_MEDIA_PROCESS_INDEX = 1;
     static constexpr uint32_t NOTIFICATION_TEXT_VIDEO_BROADCAST_INDEX = 2;
+    static constexpr uint32_t NOTIFICATION_TEXT_WORK_OUT_INDEX = 3;
     static constexpr char BANNER_NOTIFICATION_PREFIX[] = "bgbanner";
     // 横幅通知-本次允许按钮
     static constexpr int32_t BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME = 0;
@@ -34,6 +35,8 @@ namespace {
     static constexpr char BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_BTN[] = "bgtask_banner_notificaiton_action_param_btn";
     static constexpr char BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_UID[] = "bgtask_banner_notificaiton_action_param_uid";
     static constexpr char BGTASK_BANNER_NOTIFICATION_ACTION_LABEL[] = "bgtask_banner_notificaiton_action_label";
+    // 系统API 注册subscriber回调
+    static constexpr uint32_t SUBSCRIBER_BACKGROUND_TASK_STATE = 1 << 3;
 }
 class CommonUtils {
 public:

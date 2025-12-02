@@ -114,7 +114,9 @@ constexpr uint32_t SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION = 7;
 constexpr uint32_t SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION = 8;
 constexpr uint32_t SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION = 9;
 constexpr uint32_t SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION = 10;
+constexpr uint32_t SUBMODE_WORK_OUT_NORMAL_NOTIFICATION = 11;
 constexpr uint32_t SUBMODE_END = 12;
+constexpr uint32_t INVALID_MODE_OR_SUBMODE = 0;
 constexpr uint32_t NOT_SUPPORTED = 0;
 constexpr uint32_t NOT_DETERMINED = 1;
 constexpr uint32_t DENIED = 2;
@@ -648,6 +650,13 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     info2->SetBundleName("bundleName");
     info2->SetUserId(1);
     info2->SetAppIndex(1);
+    info2->SetSuspendReason(-1);
+    info2->SetSuspendState(false);
+    std::vector<uint32_t> backgroundSubModes {1};
+    info2->SetBackgroundSubModes(backgroundSubModes);
+    info2->SetNotificationId(1);
+    info2->SetWantAgentBundleName("wantAgentBundleName");
+    info2->SetWantAgentAbilityName("wantAgentAbilityName");
     Parcel parcel = Parcel();
     info2->Marshalling(parcel);
     sptr<ContinuousTaskCallbackInfo> info3 = sptr<ContinuousTaskCallbackInfo>(
@@ -666,6 +675,10 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetBundleName(), "bundleName");
     EXPECT_EQ(info3->GetUserId(), 1);
     EXPECT_EQ(info3->GetAppIndex(), 1);
+    EXPECT_EQ(info3->GetBackgroundSubModes().size(), 1);
+    EXPECT_EQ(info3->GetNotificationId(), 1);
+    EXPECT_EQ(info3->GetWantAgentBundleName(), "wantAgentBundleName");
+    EXPECT_EQ(info3->GetWantAgentAbilityName(), "wantAgentAbilityName");
 }
 
 /**
@@ -876,6 +889,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskInfo_001, TestSize.Level1)
         "wantAgentAbilityName");
     info2->SetBundleName("bundleName");
     info2->SetAppIndex(1);
+    info2->SetSuspendState(true);
     MessageParcel parcel = MessageParcel();
     info2->Marshalling(parcel);
     sptr<ContinuousTaskInfo> info3 = ContinuousTaskInfo::Unmarshalling(parcel);
@@ -893,6 +907,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskInfo_001, TestSize.Level1)
     EXPECT_NE(info3->ToString(backgroundModes), "");
     EXPECT_EQ(info3->GetAppIndex(), 1);
     EXPECT_EQ(info3->GetBundleName(), "bundleName");
+    EXPECT_EQ(info3->GetSuspendState(), true);
 }
 
 /**
@@ -980,11 +995,14 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskMode_001, TestSize.Level0)
     EXPECT_EQ(MODE_SPECIAL_SCENARIO_PROCESSING, (int32_t)BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
     EXPECT_EQ(MODE_END, (int32_t)BackgroundTaskMode::END);
     BackgroundTaskMode::GetBackgroundTaskModeStr(MODE_DATA_TRANSFER);
+    BackgroundTaskMode::GetBackgroundTaskModeStr(INVALID_MODE_OR_SUBMODE);
     EXPECT_TRUE(BackgroundTaskMode::IsModeTypeMatching(MODE_AUDIO_PLAYBACK));
     EXPECT_TRUE(BackgroundTaskMode::IsModeTypeMatching(MODE_AUDIO_RECORDING));
     EXPECT_TRUE(BackgroundTaskMode::IsModeTypeMatching(MODE_LOCATION));
     EXPECT_TRUE(BackgroundTaskMode::IsModeTypeMatching(MODE_VOIP));
     EXPECT_NE(BackgroundTaskMode::GetSubModeTypeMatching(SUBMODE_LIVE_VIEW_NOTIFICATION),
+        BackgroundTaskMode::END);
+    EXPECT_EQ(BackgroundTaskMode::GetSubModeTypeMatching(INVALID_MODE_OR_SUBMODE),
         BackgroundTaskMode::END);
     EXPECT_NE(BackgroundTaskMode::GetV9BackgroundModeByMode(MODE_AUDIO_PLAYBACK),
         BackgroundMode::END);
@@ -992,7 +1010,11 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskMode_001, TestSize.Level0)
         BackgroundMode::END);
     EXPECT_NE(BackgroundTaskMode::GetV9BackgroundModeByMode(MODE_LOCATION),
         BackgroundMode::END);
+    EXPECT_EQ(BackgroundTaskMode::GetV9BackgroundModeByMode(INVALID_MODE_OR_SUBMODE),
+        BackgroundMode::END);
     EXPECT_NE(BackgroundTaskMode::GetV9BackgroundModeBySubMode(SUBMODE_LIVE_VIEW_NOTIFICATION),
+        BackgroundMode::END);
+    EXPECT_EQ(BackgroundTaskMode::GetV9BackgroundModeBySubMode(INVALID_MODE_OR_SUBMODE),
         BackgroundMode::END);
 }
 
@@ -1020,8 +1042,35 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskSubmode_001, TestSize.Level0)
         (int32_t)BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
     EXPECT_EQ(SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION,
         (int32_t)BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION);
+    EXPECT_EQ(SUBMODE_WORK_OUT_NORMAL_NOTIFICATION,
+        (int32_t)BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION);
     EXPECT_EQ(SUBMODE_END, (int32_t)BackgroundTaskSubmode::END);
     BackgroundTaskSubmode::GetBackgroundTaskSubmodeStr(SUBMODE_CAR_KEY_NORMAL_NOTIFICATION);
+    BackgroundTaskSubmode::GetBackgroundTaskSubmodeStr(INVALID_MODE_OR_SUBMODE);
+}
+
+/**
+ * @tc.name: GetBackgroundModeStr_001
+ * @tc.desc: test GetBackgroundModeStr.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, GetBackgroundModeStr_001, TestSize.Level0)
+{
+    EXPECT_NE(BackgroundMode::GetBackgroundModeStr(MODE_LOCATION), "");
+    EXPECT_EQ(BackgroundMode::GetBackgroundModeStr(INVALID_MODE_OR_SUBMODE), "default");
+}
+
+/**
+ * @tc.name: GetBackgroundSubModeStr_001
+ * @tc.desc: test GetBackgroundSubModeStr.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, GetBackgroundSubModeStr_001, TestSize.Level0)
+{
+    EXPECT_NE(BackgroundSubMode::GetBackgroundSubModeStr(CAR_KEY), "");
+    EXPECT_EQ(BackgroundSubMode::GetBackgroundSubModeStr(INVALID_MODE_OR_SUBMODE), "default");
 }
 
 /**
@@ -1118,7 +1167,7 @@ HWTEST_F(BgTaskClientUnitTest, UserAuthResult_001, TestSize.Level1)
 HWTEST_F(BgTaskClientUnitTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
 {
     uint32_t authResult = 0;
-    EXPECT_EQ(BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(authResult), ERR_BGTASK_PERMISSION_DENIED);
+    EXPECT_EQ(BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(0, authResult), ERR_BGTASK_PERMISSION_DENIED);
 }
 
 /**
@@ -1208,6 +1257,17 @@ HWTEST_F(BgTaskClientUnitTest, GetAllContinuousTasksBySystem_001, TestSize.Level
 {
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
     EXPECT_EQ(BackgroundTaskMgrHelper::GetAllContinuousTasksBySystem(list), ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: GetSuspendReasonValue_001
+ * @tc.desc: test GetSuspendReasonValue.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, GetSuspendReasonValue_001, TestSize.Level1)
+{
+    EXPECT_EQ(ContinuousTaskSuspendReason::GetSuspendReasonValue(INVALID_MODE_OR_SUBMODE), 0);
 }
 }
 }

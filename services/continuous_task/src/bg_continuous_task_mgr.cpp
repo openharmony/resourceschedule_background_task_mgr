@@ -79,6 +79,7 @@ static const char *g_taskPromptResNamesSubMode[] = {
     "ohos_bgsubmode_prompt_car_key",
     "ohos_bgsubmode_prompt_media_process",
     "ohos_bgsubmode_prompt_video_broadcast",
+    "ohos_bgsubmode_prompt_work_out"
 };
 
 static const char *g_btnBannerNotification[] = {
@@ -657,13 +658,6 @@ ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTas
     if (record->isSystem_) {
         return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
     }
-    AppExecFwk::BundleInfo bundleInfo;
-    if (BundleManagerHelper::GetInstance()->GetBundleInfo(record->bundleName_,
-        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, record->userId_)) {
-        record->appIndex_ = bundleInfo.appIndex;
-    } else {
-        return ERR_BGTASK_GET_APP_INDEX_FAIL;
-    }
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
         return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
     }
@@ -882,6 +876,7 @@ void BgContinuousTaskMgr::InitRecordParam(std::shared_ptr<ContinuousTaskRecord> 
     continuousTaskRecord->isCombinedTaskNotification_ = taskParam->isCombinedTaskNotification_;
     continuousTaskRecord->combinedNotificationTaskId_ = taskParam->combinedNotificationTaskId_;
     continuousTaskRecord->isByRequestObject_ = taskParam->isByRequestObject_;
+    continuousTaskRecord->appIndex_ = taskParam->appIndex_;
 }
 
 ErrCode BgContinuousTaskMgr::CheckSubMode(const std::shared_ptr<AAFwk::Want> want,
@@ -1431,6 +1426,14 @@ ErrCode BgContinuousTaskMgr::CheckSpecialNotificationText(std::string &notificat
         BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION)) {
         if (NOTIFICATION_TEXT_VIDEO_BROADCAST_INDEX < continuousTaskSubText_.size()) {
             notificationText += continuousTaskSubText_.at(NOTIFICATION_TEXT_VIDEO_BROADCAST_INDEX);
+            notificationText += "\n";
+            return ERR_OK;
+        }
+    }
+    if (CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_,
+        BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION)) {
+        if (NOTIFICATION_TEXT_WORK_OUT_INDEX < continuousTaskSubText_.size()) {
+            notificationText += continuousTaskSubText_.at(NOTIFICATION_TEXT_WORK_OUT_INDEX);
             notificationText += "\n";
             return ERR_OK;
         }
@@ -2449,36 +2452,15 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
         BGTASK_LOGD("continuousTaskCallbackInfo is null");
         return;
     }
-    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     switch (changeEventType) {
         case ContinuousTaskEventTriggerType::TASK_START:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-                BGTASK_LOGD("continuous task start callback trigger");
-                if (!(*iter)->isHap_ && (*iter)->subscriber_) {
-                    (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
-                }
-            }
+            NotifySubscribersTaskStart(continuousTaskCallbackInfo);
             break;
         case ContinuousTaskEventTriggerType::TASK_UPDATE:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-                BGTASK_LOGD("continuous task update callback trigger");
-                if (!(*iter)->isHap_ && (*iter)->subscriber_) {
-                    (*iter)->subscriber_->OnContinuousTaskUpdate(taskCallbackInfoRef);
-                }
-            }
+            NotifySubscribersTaskUpdate(continuousTaskCallbackInfo);
             break;
         case ContinuousTaskEventTriggerType::TASK_CANCEL:
-            for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-                BGTASK_LOGD("continuous task stop callback trigger");
-                if (!(*iter)->isHap_ && (*iter)->subscriber_) {
-                    // notify all sa
-                    (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
-                } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo) && (*iter)->subscriber_) {
-                    // notify self hap
-                    BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify cancel", (*iter)->uid_);
-                    (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
-                }
-            }
+            NotifySubscribersTaskCancel(continuousTaskCallbackInfo);
             break;
         case ContinuousTaskEventTriggerType::TASK_SUSPEND:
             NotifySubscribersTaskSuspend(continuousTaskCallbackInfo);
@@ -2489,6 +2471,53 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
         default:
             BGTASK_LOGE("unknow ContinuousTaskEventTriggerType: %{public}d", changeEventType);
             break;
+    }
+}
+
+void BgContinuousTaskMgr::NotifySubscribersTaskStart(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        BGTASK_LOGD("continuous task start callback trigger");
+        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
+            (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+            (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
+        }
+    }
+}
+
+void BgContinuousTaskMgr::NotifySubscribersTaskUpdate(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        BGTASK_LOGD("continuous task update callback trigger");
+        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
+            (*iter)->subscriber_->OnContinuousTaskUpdate(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+            (*iter)->subscriber_->OnContinuousTaskUpdate(taskCallbackInfoRef);
+        }
+    }
+}
+
+void BgContinuousTaskMgr::NotifySubscribersTaskCancel(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
+{
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        BGTASK_LOGD("continuous task stop callback trigger");
+        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
+            // notify all sa
+            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+        } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo) && (*iter)->subscriber_) {
+            // notify self hap
+            BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify cancel", (*iter)->uid_);
+            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+        }
     }
 }
 
@@ -2508,6 +2537,8 @@ void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(
                 "suspendState: %{public}d", (*iter)->uid_, taskCallbackInfoRef.GetSuspendReason(),
                 taskCallbackInfoRef.GetSuspendState());
             (*iter)->subscriber_->OnContinuousTaskSuspend(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
         }
     }
 }
@@ -2526,6 +2557,8 @@ void BgContinuousTaskMgr::NotifySubscribersTaskActive(
             // 回调通知应用长时任务激活
             BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify active", (*iter)->uid_);
             (*iter)->subscriber_->OnContinuousTaskActive(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+            (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
         }
     }
 }
@@ -3061,13 +3094,6 @@ ErrCode BgContinuousTaskMgr::CheckSendBannerNotificationParam(std::shared_ptr<Co
         BGTASK_LOGI("request auth form user, callback is already exists.");
         return ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS;
     }
-    AppExecFwk::BundleInfo bundleInfo;
-    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(record->bundleName_,
-        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, record->userId_)) {
-        BGTASK_LOGE("get bundle info: %{public}s failure!", record->bundleName_.c_str());
-        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
-    }
-    record->appIndex_ = bundleInfo.appIndex;
     std::string authKey = NotificationTools::GetInstance()->CreateBannerNotificationLabel(record->bundleName_,
         record->userId_, record->appIndex_);
     auto iter = bannerNotificationRecord_.find(authKey);
@@ -3149,7 +3175,7 @@ bool BgContinuousTaskMgr::FormatBannerNotificationContext(const std::string &app
     return true;
 }
 
-ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
+ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
@@ -3174,18 +3200,11 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(uint32_t &authResult)
     if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
         return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
     }
-    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
-    AppExecFwk::BundleInfo bundleInfo;
-    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
-        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId)) {
-        BGTASK_LOGE("get bundle info: %{public}s failure!", bundleName.c_str());
-        return ERR_BGTASK_GET_APP_INDEX_FAIL;
-    }
 #ifndef SUPPORT_AUTH
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
-    int32_t appIndex = bundleInfo.appIndex;
+    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     ErrCode ret = ERR_OK;
     handler_->PostSyncTask([this, &authResult, bundleName, userId, appIndex, &ret]() {
         ret = this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);

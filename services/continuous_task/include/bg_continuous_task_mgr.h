@@ -103,7 +103,7 @@ public:
         uint64_t callingTokenId, const std::string &bundleName, uint64_t fullTokenId);
     ErrCode RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam, const sptr<IExpiredCallback> &callback,
         int32_t &notificationId);
-    ErrCode CheckSpecialScenarioAuth(uint32_t &authResult);
+    ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult);
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
     ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
@@ -217,6 +217,9 @@ private:
     uint32_t GetModeNumByTypeIds(const std::vector<uint32_t> &typeIds);
     void NotifySubscribers(ContinuousTaskEventTriggerType changeEventType,
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void NotifySubscribersTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void NotifySubscribersTaskUpdate(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
+    void NotifySubscribersTaskCancel(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void NotifySubscribersTaskSuspend(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void NotifySubscribersTaskActive(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void ReportHisysEvent(ContinuousTaskEventTriggerType changeEventType,

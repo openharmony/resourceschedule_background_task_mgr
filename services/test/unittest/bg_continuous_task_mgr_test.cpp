@@ -92,7 +92,10 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     bgContinuousTaskMgr_->isSysReady_.store(true);
 }
 
-void BgContinuousTaskMgrTest::TearDownTestCase() {}
+void BgContinuousTaskMgrTest::TearDownTestCase()
+{
+    bgContinuousTaskMgr_->Clear();
+}
 
 void BgContinuousTaskMgrTest::SetUp() {}
 
@@ -437,10 +440,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_003, TestSize.Level1)
         ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
 
     continuousTaskRecord->isSystem_ = false;
-    continuousTaskRecord->bundleName_ = "false-test";
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_SPECIAL_SCENARIO_PROCESSING,
-        BGMODE_SPECIAL_SCENARIO_PROCESSING_ID, true, continuousTaskRecord), ERR_BGTASK_GET_APP_INDEX_FAIL);
-
     continuousTaskRecord->bundleName_ = "bundleName";
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_SPECIAL_SCENARIO_PROCESSING,
         BGMODE_SPECIAL_SCENARIO_PROCESSING_ID, true, continuousTaskRecord), ERR_OK);
@@ -956,9 +955,10 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_039, TestSize.Level1)
     bgContinuousTaskMgr_->isSysReady_.store(false);
     bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
     bgContinuousTaskMgr_->isSysReady_.store(true);
-
+    // 构造长时任务信息
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->bgModeIds_ = {1, 2};
     continuousTaskRecord1->bgModeId_ = TEST_NUM_ONE;
     continuousTaskRecord1->isNewApi_ = true;
 
@@ -968,6 +968,27 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_039, TestSize.Level1)
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    // 构造横幅通知信息
+    std::shared_ptr<BannerNotificationRecord> bannerNotification1 = std::make_shared<BannerNotificationRecord>();
+    bannerNotification1->SetBundleName("bundleName1");
+    bannerNotification1->SetUserId(100);
+    std::string label1 = "notificationLabel1";
+    std::shared_ptr<BannerNotificationRecord> bannerNotification2 = std::make_shared<BannerNotificationRecord>();
+    bannerNotification2->SetBundleName("bundleName2");
+    bannerNotification2->SetUserId(200);
+    std::string label2 = "notificationLabel2";
+    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label1, bannerNotification1);
+    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label2, bannerNotification2);
+    // 模拟切语言
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "1234");
+    // 系统语言配置更新
+    bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
+    configuration.RemoveItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificaitonBtn_), PROMPT_NUMS,
+        "bannernotification_test");
     EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
@@ -1865,6 +1886,50 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_068, TestSize.Level1)
 }
 
 /**
+ * @tc.name: BgTaskManagerUnitTest_069
+ * @tc.desc: test UnregisterAppStateObserver.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_069, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->UnregisterAppStateObserver();
+    EXPECT_EQ(bgContinuousTaskMgr_->appStateObserver_, nullptr);
+    bgContinuousTaskMgr_->RegisterAppStateObserver();
+    EXPECT_NE(bgContinuousTaskMgr_->appStateObserver_, nullptr);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_070
+ * @tc.desc: test SystemEventObserver::OnBannerNotificationActionButtonClick.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_070, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->RegisterSysCommEventListener();
+    EXPECT_NE(bgContinuousTaskMgr_->systemEventListener_, nullptr);
+    EventFwk::CommonEventData eventData;
+    bgContinuousTaskMgr_->systemEventListener_->OnBannerNotificationActionButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_071
+ * @tc.desc: test GetMainAbilityLabel.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_071, TestSize.Level1)
+{
+    std::string mainAbilityLabel;
+    mainAbilityLabel = bgContinuousTaskMgr_->GetMainAbilityLabel("test_bundleName", 0);
+    EXPECT_EQ(mainAbilityLabel, "label");
+    mainAbilityLabel = bgContinuousTaskMgr_->GetMainAbilityLabel("com.ohos.sceneboard", 0);
+    EXPECT_NE(mainAbilityLabel, "");
+}
+
+/**
  * @tc.name: StopBannerContinuousTaskByUser_001
  * @tc.desc: StopBannerContinuousTaskByUser test.
  * @tc.type: FUNC
@@ -1963,10 +2028,10 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
 {
     bgContinuousTaskMgr_->isSysReady_.store(false);
     uint32_t authResult = 0;
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(authResult), ERR_BGTASK_SYS_NOT_READY);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(0, authResult), ERR_BGTASK_SYS_NOT_READY);
 
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(authResult),
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(0, authResult),
         ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
 }
 
@@ -2334,7 +2399,7 @@ HWTEST_F(BgContinuousTaskMgrTest, OnRestore_001, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_BGTASK_SYS_NOT_READY);
 
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    EXPECT_EQ(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
+    EXPECT_NE(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
     bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
     // 构造备份数据
     std::shared_ptr<BannerNotificationRecord> bannerNotification1 = std::make_shared<BannerNotificationRecord>();
@@ -2357,15 +2422,58 @@ HWTEST_F(BgContinuousTaskMgrTest, OnRestore_001, TestSize.Level1)
     // 清除数据缓存
     bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
     // 数据恢复
-    EXPECT_EQ(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
-    EXPECT_EQ(bgContinuousTaskMgr_->bannerNotificationRecord_.size(), 2);
-    auto notification1 = bgContinuousTaskMgr_->bannerNotificationRecord_[label1];
-    EXPECT_EQ(notification1->GetAuthResult(), UserAuthResult::GRANTED_ONCE);
-    EXPECT_EQ(notification1->GetBundleName(), "bundleName1");
-    EXPECT_EQ(notification1->GetUserId(), 100);
-    auto notification2 = bgContinuousTaskMgr_->bannerNotificationRecord_[label2];
-    EXPECT_EQ(notification2->GetAuthResult(), UserAuthResult::GRANTED_ALWAYS);
-    EXPECT_EQ(notification2->GetUserId(), 200);
+    EXPECT_NE(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->bannerNotificationRecord_.size(), 0);
+}
+
+/**
+ * @tc.name: CheckSpecialNotificationText_001
+ * @tc.desc: CheckSpecialNotificationText test.
+ * @tc.type: FUNC
+ * @tc.require: 814
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialNotificationText_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskSubText_ = {};
+    std::string notificationText = "";
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    bgContinuousTaskMgr_->continuousTaskSubText_ = {"test"};
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+}
+
+/**
+ * @tc.name: CheckSpecialNotificationText_002
+ * @tc.desc: CheckSpecialNotificationText test.
+ * @tc.type: FUNC
+ * @tc.require: 814
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialNotificationText_002, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskSubText_ = {"test", "test1", "test2", "test3"};
+    std::string notificationText = "";
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

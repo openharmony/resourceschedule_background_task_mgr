@@ -57,13 +57,16 @@ napi_value GetNamedBoolValue(const napi_env &env, napi_value &object, const char
 }
 
 napi_value GetNamedInt32Value(const napi_env &env, napi_value &object, const char* utf8name,
-    int32_t& result)
+    int32_t& result, bool isNecessary = true)
 {
     bool hasNamedProperty = false;
     napi_value intValue = nullptr;
     if (napi_has_named_property(env, object, utf8name, &hasNamedProperty) != napi_ok || !hasNamedProperty) {
-        BGTASK_LOGE("ParseParameters failed, %{public}s not exist, is nullptr", utf8name);
-        return nullptr;
+        if (isNecessary) {
+            BGTASK_LOGE("ParseParameters failed, %{public}s not exist, is nullptr", utf8name);
+            return nullptr;
+        }
+        return Common::NapiGetNull(env);
     }
     BGTASK_NAPI_CALL(env, napi_get_named_property(env, object, utf8name, &intValue));
     if (!Common::GetInt32NumberValue(env, intValue, result)) {
@@ -111,6 +114,7 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
     std::string reason {""};
     bool isPersist {false};
     bool isProcess {false};
+    int32_t cpuLevel {static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT)};
 
     if (!GetNamedInt32Value(env, argv[0], "resourceTypes", resourceNumber)) {
         Common::HandleParamErr(env, ERR_RESOURCE_TYPES_INVALID, isThrow);
@@ -136,7 +140,12 @@ napi_value ParseParameters(const napi_env &env, const napi_callback_info &info,
         Common::HandleParamErr(env, ERR_ISPROCESS_NULL_OR_TYPE_ERR, isThrow);
         return nullptr;
     }
+    if (!GetNamedInt32Value(env, argv[0], "cpuLevel", cpuLevel, false)) {
+        Common::HandleParamErr(env, ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_INVALID, isThrow);
+        return nullptr;
+    }
     params = EfficiencyResourceInfo {resourceNumber, isApply, timeOut, reason, isPersist, isProcess};
+    params.SetCpuLevel(cpuLevel);
     return Common::NapiGetNull(env);
 }
 

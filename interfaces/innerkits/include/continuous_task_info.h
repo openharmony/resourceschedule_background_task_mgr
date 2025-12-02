@@ -132,6 +132,8 @@ public:
      */
     bool GetSuspendState() const;
 
+    void SetSuspendState(bool suspendState);
+
     void SetBundleName(const std::string &bundleName);
     std::string GetBundleName() const;
     void SetAppIndex(int32_t appIndex);
