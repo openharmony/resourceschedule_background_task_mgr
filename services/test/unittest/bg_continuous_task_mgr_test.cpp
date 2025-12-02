@@ -2438,20 +2438,20 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialNotificationText_001, TestSize.Lev
     std::string notificationText = "";
     std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
     bgContinuousTaskMgr_->continuousTaskSubText_ = {"test"};
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record, 13),
-        ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
-    record->bgSubModeIds_.push_back(1);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record, 13),
-        ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
-    record->bgSubModeIds_.push_back(11);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record, 13),
-        ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
-    record->bgSubModeIds_.push_back(10);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record, 13),
-        ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
-    record->bgSubModeIds_.push_back(9);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record, 13),
-        ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
 }
 
 /**
@@ -2465,12 +2465,15 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialNotificationText_002, TestSize.Lev
     bgContinuousTaskMgr_->continuousTaskSubText_ = {"test", "test1", "test2", "test3"};
     std::string notificationText = "";
     std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
-    record->bgSubModeIds_.push_back(11);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record, 13), ERR_OK);
-    record->bgSubModeIds_.push_back(10);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record, 13), ERR_OK);
-    record->bgSubModeIds_.push_back(9);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record, 13), ERR_OK);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
