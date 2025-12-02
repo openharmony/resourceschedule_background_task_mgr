@@ -115,10 +115,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_work_out",
-            "value":"正在运行运动任务，删除通知后任务将停止",
-            "attr":{
-                "priority":"translate"
-            }
+            "value":"正在运行运动任务，删除通知后任务将停止"
         }
     ]
 }
