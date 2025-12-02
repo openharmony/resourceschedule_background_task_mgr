@@ -2425,5 +2425,55 @@ HWTEST_F(BgContinuousTaskMgrTest, OnRestore_001, TestSize.Level1)
     EXPECT_NE(bgContinuousTaskMgr_->OnRestore(data, reply), ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->bannerNotificationRecord_.size(), 0);
 }
+
+/**
+ * @tc.name: CheckSpecialNotificationText_001
+ * @tc.desc: CheckSpecialNotificationText test.
+ * @tc.type: FUNC
+ * @tc.require: 814
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialNotificationText_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskSubText_ = {};
+    std::string notificationText = "";
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    bgContinuousTaskMgr_->continuousTaskSubText_ = {"test"};
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_BGTASK_NOTIFICATION_VERIFY_FAILED);
+}
+
+/**
+ * @tc.name: CheckSpecialNotificationText_002
+ * @tc.desc: CheckSpecialNotificationText test.
+ * @tc.type: FUNC
+ * @tc.require: 814
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialNotificationText_002, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskSubText_ = {"test", "test1", "test2", "test3"};
+    std::string notificationText = "";
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
+    record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
+        BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

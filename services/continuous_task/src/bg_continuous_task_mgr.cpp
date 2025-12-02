@@ -79,6 +79,7 @@ static const char *g_taskPromptResNamesSubMode[] = {
     "ohos_bgsubmode_prompt_car_key",
     "ohos_bgsubmode_prompt_media_process",
     "ohos_bgsubmode_prompt_video_broadcast",
+    "ohos_bgsubmode_prompt_work_out"
 };
 
 static const char *g_btnBannerNotification[] = {
@@ -1425,6 +1426,14 @@ ErrCode BgContinuousTaskMgr::CheckSpecialNotificationText(std::string &notificat
         BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION)) {
         if (NOTIFICATION_TEXT_VIDEO_BROADCAST_INDEX < continuousTaskSubText_.size()) {
             notificationText += continuousTaskSubText_.at(NOTIFICATION_TEXT_VIDEO_BROADCAST_INDEX);
+            notificationText += "\n";
+            return ERR_OK;
+        }
+    }
+    if (CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_,
+        BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION)) {
+        if (NOTIFICATION_TEXT_WORK_OUT_INDEX < continuousTaskSubText_.size()) {
+            notificationText += continuousTaskSubText_.at(NOTIFICATION_TEXT_WORK_OUT_INDEX);
             notificationText += "\n";
             return ERR_OK;
         }
