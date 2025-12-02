@@ -30,7 +30,7 @@ const std::unordered_map<uint32_t, std::string> PARAM_BACKGROUND_TASK_SUBMODE_ST
     {BackgroundTaskSubmode::SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION, "submodeVoiceChatNormalNotification"},
     {BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION, "submodeMediaProcessNormalNotification"},
     {BackgroundTaskSubmode::SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION, "submodeVideoBroadcastNormalNotification"},
-    {BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION, "submodeWorkoutNormalNotification"},
+    {BackgroundTaskSubmode::SUBMODE_WORK_OUT_NORMAL_NOTIFICATION, "submodeWorkOutNormalNotification"},
     {BackgroundTaskSubmode::END, "end"}
 };
 
