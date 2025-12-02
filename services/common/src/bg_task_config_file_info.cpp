@@ -72,7 +72,7 @@ bool BgTaskConfigFileInfo::CheckAppSignatures(const std::string &bundleName, con
     return true;
 }
 
-std::unordered_map<std::string, CpuLevelConfigInfo>& BgTaskConfigFileInfo::GetAllowApplyCpuBundleInfoMap()
+const std::unordered_map<std::string, CpuLevelConfigInfo>& BgTaskConfigFileInfo::GetAllowApplyCpuBundleInfoMap()
 {
     return allowApplyCpuBundleInfoMap_;
 }

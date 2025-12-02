@@ -276,4 +276,29 @@ describe("EfficiencyResourcesJsTest", function () {
         }
         done();
     })
+
+    /*
+     * @tc.name: EfficiencyResourcesJsTest011
+     * @tc.desc: test apply a efficiency resource with cpuLevel
+     * @tc.type: FUNC
+     * @tc.require: issuesI5OD7X issueI5QJR8
+     */
+    it("EfficiencyResourcesJsTest011", 0, async function (done) {
+        console.info('----------------------EfficiencyResourcesJsTest011---------------------------');
+        let resRequest = {
+            resourceTypes: 1,
+            isApply: true,
+            timeOut: 10,
+            reason: "EfficiencyResourcesJsTest011",
+            isProcess: true,
+            cpuLevel: backgroundTaskManager.EfficiencyResourcesCpuLevel.MEDIUM_CPU,
+        };
+        try {
+            backgroundTaskManager.applyEfficiencyResources(resRequest);
+            expect(false).assertEqual(true);
+        } catch (error) {
+            expect(true).assertEqual(true);
+        }
+        done();
+    })
 })

@@ -44,7 +44,7 @@ public:
     bool CheckCpuLevel(const std::string &bundleName, int32_t cpuLevel);
     bool CheckBundleName(const std::string &bundleName);
     bool CheckAppSignatures(const std::string &bundleName, const std::string &appId, const std::string &appIdentifier);
-    std::unordered_map<std::string, CpuLevelConfigInfo>& GetAllowApplyCpuBundleInfoMap();
+    const std::unordered_map<std::string, CpuLevelConfigInfo>& GetAllowApplyCpuBundleInfoMap();
 
 private:
     std::unordered_map<std::string, CpuLevelConfigInfo> allowApplyCpuBundleInfoMap_ {};
