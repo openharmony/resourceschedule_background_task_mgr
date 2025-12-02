@@ -673,10 +673,10 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ApplyEfficiencyResources_006, TestSize.Le
     resourceInfo->SetResourceNumber(ResourceType::CPU);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
         (int32_t)ERR_OK);
-    resourceInfo->SetCpuLevel(EfficiencyResourcesCpuLevel::DEFAULT);    
+    resourceInfo->SetCpuLevel(EfficiencyResourcesCpuLevel::DEFAULT);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
         (int32_t)ERR_OK);
-    resourceInfo->SetCpuLevel(EfficiencyResourcesCpuLevel::LARGE_CPU);    
+    resourceInfo->SetCpuLevel(EfficiencyResourcesCpuLevel::LARGE_CPU);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
         (int32_t)ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_NOT_ALLOW_APPLY);
     bundleName = "false-test";
@@ -688,7 +688,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ApplyEfficiencyResources_006, TestSize.Le
     bundleName = "bundleTestSign";
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
         (int32_t)ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_TOO_LARGE);
-    resourceInfo->SetCpuLevel(EfficiencyResourcesCpuLevel::MEDIUM_CPU);    
+    resourceInfo->SetCpuLevel(EfficiencyResourcesCpuLevel::MEDIUM_CPU);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
         (int32_t)ERR_OK);
     bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources();
