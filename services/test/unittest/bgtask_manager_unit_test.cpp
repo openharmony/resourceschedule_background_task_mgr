@@ -49,7 +49,8 @@ static constexpr char CONFIG_JSON_INDEX_TOP[] = "params";
 static constexpr char CONFIG_JSON_INDEX_SUSPEND_SECOND[] = "param";
 static constexpr char LAUNCHER_BUNDLE_NAME[] = "com.ohos.launcher";
 static constexpr char SCB_BUNDLE_NAME[] = "com.ohos.sceneboard";
-static constexpr char CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS[] = "cpu_efficiency_resource_allow_apply_bundle_infos";
+static constexpr char CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS[] =
+    "cpu_efficiency_resource_allow_apply_bundle_infos";
 static constexpr char ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME[] = "bundleName";
 static constexpr char ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES[] = "appSignatures";
 static constexpr char ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL[] = "cpuLevel";
@@ -855,7 +856,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_057, TestSize.Level1)
 
 /**
  * @tc.name: BgTaskManagerUnitTest_058
- * @tc.desc: test BgtaskConfig Init for bgTaskConfigFileInfo_
+ * @tc.desc: test BgtaskConfig Init for bgTaskConfigFileInfo_.
  * @tc.type: FUNC
  * @tc.require: issueICVQZF
  */
@@ -870,7 +871,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_058, TestSize.Level1)
 
 /**
  * @tc.name: BgTaskManagerUnitTest_059
- * @tc.desc: test BgtaskConfig Init for ParseCpuEfficiencyResourceApplyBundleInfos
+ * @tc.desc: test BgtaskConfig for ParseCpuEfficiencyResourceApplyBundleInfos.
  * @tc.type: FUNC
  * @tc.require: issueICVQZF
  */
@@ -891,7 +892,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_059, TestSize.Level1)
         DelayedSingleton<BgtaskConfig>::GetInstance()->bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap().empty());
     nlohmann::json root3;
     auto configInfos = nlohmann::json::array();
-    root2[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS] = configInfos;
+    root3[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS] = configInfos;
     DelayedSingleton<BgtaskConfig>::GetInstance()->ParseCpuEfficiencyResourceApplyBundleInfos(root3);
     EXPECT_TRUE(
         DelayedSingleton<BgtaskConfig>::GetInstance()->bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap().empty());
@@ -899,26 +900,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_059, TestSize.Level1)
 
 /**
  * @tc.name: BgTaskManagerUnitTest_060
- * @tc.desc: test BgtaskConfig Init for ParseCpuEfficiencyResourceApplyBundleInfos
- * @tc.type: FUNC
- * @tc.require: issueICVQZF
- */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_058, TestSize.Level1)
-{
-    nlohmann::json configInfo;
-    configInfo[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME] = "bundleName.test";
-    auto configInfos = nlohmann::json::array();
-    configInfos.push_back(configInfos);
-    nlohmann::json root;
-    root2[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS] = configInfos;
-    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseCpuEfficiencyResourceApplyBundleInfos(root);
-    EXPECT_TRUE(
-        DelayedSingleton<BgtaskConfig>::GetInstance()->bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap().empty());
-}
-
-/**
- * @tc.name: BgTaskManagerUnitTest_060
- * @tc.desc: test BgtaskConfig Init for ParseCpuEfficiencyResourceApplyBundleInfos
+ * @tc.desc: test BgtaskConfig Init for ParseCpuEfficiencyResourceApplyBundleInfos.
  * @tc.type: FUNC
  * @tc.require: issueICVQZF
  */
@@ -926,9 +908,8 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_060, TestSize.Level1)
 {
     nlohmann::json configInfo;
     configInfo[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME] = "bundleName.test";
-    configInfo[ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL] = 1;
     auto configInfos = nlohmann::json::array();
-    configInfos.push_back(configInfos);
+    configInfos.push_back(configInfo);
     nlohmann::json root;
     root2[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS] = configInfos;
     DelayedSingleton<BgtaskConfig>::GetInstance()->ParseCpuEfficiencyResourceApplyBundleInfos(root);
@@ -938,11 +919,31 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_060, TestSize.Level1)
 
 /**
  * @tc.name: BgTaskManagerUnitTest_061
- * @tc.desc: test BgtaskConfig Init for ParseCpuEfficiencyResourceApplyBundleInfos
+ * @tc.desc: test BgtaskConfig Init for ParseCpuEfficiencyResourceApplyBundleInfos.
  * @tc.type: FUNC
  * @tc.require: issueICVQZF
  */
 HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_061, TestSize.Level1)
+{
+    nlohmann::json configInfo;
+    configInfo[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME] = "bundleName.test";
+    configInfo[ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL] = 1;
+    auto configInfos = nlohmann::json::array();
+    configInfos.push_back(configInfo);
+    nlohmann::json root;
+    root[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS] = configInfos;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseCpuEfficiencyResourceApplyBundleInfos(root);
+    EXPECT_TRUE(
+        DelayedSingleton<BgtaskConfig>::GetInstance()->bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap().empty());
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_062
+ * @tc.desc: test BgtaskConfig Init for ParseCpuEfficiencyResourceApplyBundleInfos.
+ * @tc.type: FUNC
+ * @tc.require: issueICVQZF
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_062, TestSize.Level1)
 {
     auto signs = nlohmann::json::array();
     signs.push_back("signtest");
@@ -952,21 +953,21 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_061, TestSize.Level1)
     configInfo[ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL] = 1;
     configInfo[ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES] = signs;
     auto configInfos = nlohmann::json::array();
-    configInfos.push_back(configInfos);
+    configInfos.push_back(configInfo);
     nlohmann::json root;
-    root2[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS] = configInfos;
+    root[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS] = configInfos;
     DelayedSingleton<BgtaskConfig>::GetInstance()->ParseCpuEfficiencyResourceApplyBundleInfos(root);
     EXPECT_FALSE(
         DelayedSingleton<BgtaskConfig>::GetInstance()->bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap().empty());
 }
 
 /**
- * @tc.name: BgTaskManagerUnitTest_062
- * @tc.desc: test BgtaskConfig Init for cpuLevel method
+ * @tc.name: BgTaskManagerUnitTest_063
+ * @tc.desc: test BgtaskConfig Init for cpuLevel method.
  * @tc.type: FUNC
  * @tc.require: issueICVQZF
  */
-HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_062, TestSize.Level1)
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_063, TestSize.Level1)
 {
     std::vector<std::string> signs = {"signtest", "signtest2"};
     CpuLevelConfigInfo cpuLevelConfigInfo("bundleName.test", signs, 1);
@@ -979,9 +980,9 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_062, TestSize.Level1)
 
     EXPECT_FALSE(configFileInfo.CheckAppSignatures("bundleName.test2", "sign-false1", "sign-false2"));
     EXPECT_FALSE(configFileInfo.CheckAppSignatures("bundleName.test", "sign-false1", "sign-false2"));
-    EXPECT_TRUE(configFileInfo.CheckAppSignatures("bundleName.test", "sightest", "sign-false2"));
-    EXPECT_TRUE(configFileInfo.CheckAppSignatures("bundleName.test", "sign-false1", "sightest2"));
-    EXPECT_TRUE(configFileInfo.CheckAppSignatures("bundleName.test", "sightest", "sightest2"));
+    EXPECT_TRUE(configFileInfo.CheckAppSignatures("bundleName.test", "signtest", "sign-false2"));
+    EXPECT_TRUE(configFileInfo.CheckAppSignatures("bundleName.test", "sign-false1", "signtest2"));
+    EXPECT_TRUE(configFileInfo.CheckAppSignatures("bundleName.test", "signtest", "signtest2"));
 
     EXPECT_FALSE(configFileInfo.CheckCpuLevel("bundleName.test2", 1));
     int32_t cpuLevel = 2;
