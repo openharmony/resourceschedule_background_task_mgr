@@ -911,7 +911,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_060, TestSize.Level1)
     auto configInfos = nlohmann::json::array();
     configInfos.push_back(configInfo);
     nlohmann::json root;
-    root2[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS] = configInfos;
+    root[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS] = configInfos;
     DelayedSingleton<BgtaskConfig>::GetInstance()->ParseCpuEfficiencyResourceApplyBundleInfos(root);
     EXPECT_TRUE(
         DelayedSingleton<BgtaskConfig>::GetInstance()->bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap().empty());
