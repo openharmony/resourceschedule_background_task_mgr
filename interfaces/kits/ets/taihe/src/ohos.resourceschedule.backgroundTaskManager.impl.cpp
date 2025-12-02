@@ -672,7 +672,7 @@ array<::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesInfo> 
             .uid = info->GetUid(),
             .pid = info->GetPid(),
         };
-        if (info->GetCpuLevel() != EfficiencyResourcesCpuLevel::DEFAULT) {
+        if (info->GetCpuLevel() != OHOS::BackgroundTaskMgr::EfficiencyResourcesCpuLevel::DEFAULT) {
             aniInfo.cpuLevel.emplace(
                 ::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesCpuLevel::from_value(
                     info->GetCpuLevel()));
