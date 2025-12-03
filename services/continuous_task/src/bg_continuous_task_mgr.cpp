@@ -1653,6 +1653,8 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
             record.second->pid_, record.second->isFromWebview_, record.second->bgModeIds_, record.second->bgSubModeIds_,
             record.second->notificationId_, record.second->continuousTaskId_, record.second->abilityId_,
             wantAgentBundleName, wantAgentAbilityName);
+        info->SetBundleName(record.second->bundleName_);
+        info->SetAppIndex(record.second->appIndex_);
         list.push_back(info);
     }
     return ERR_OK;
