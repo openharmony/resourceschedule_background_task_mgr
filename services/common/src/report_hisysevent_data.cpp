@@ -90,7 +90,7 @@ int64_t EfficiencyResourceApplyReportHisysEvent::GetCurrentTimestamp()
 {
     // get current time,precision is ms + us
     struct timeval currentTime;
-    gettimeofdy(&currentTime, nullptr);
+    gettimeofday(&currentTime, nullptr);
     return static_cast<int64_t>(currentTime.tv_sec) * SEC_TO_MILLISEC + currentTime.tv_usec /SEC_TO_MILLISEC;
 }
 }  // namespace BackgroundTaskMgr
