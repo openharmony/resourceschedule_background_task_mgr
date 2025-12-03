@@ -655,5 +655,43 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, GetAllEfficiencyResources_001, TestSize.L
     bgEfficiencyResourcesMgr_->GetAllEfficiencyResources(resourceInfoList);
     EXPECT_EQ((int32_t)resourceInfoList.size(), 1);
 }
+
+/**
+ * @tc.name: ApplyEfficiencyResources_006
+ * @tc.desc: apply efficiency resources
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, ApplyEfficiencyResources_006, TestSize.Level1)
+{
+    std::string bundleName = "bundleName1";
+    pid_t uid = 10010;
+    sptr<EfficiencyResourceInfo> resourceInfo = new (std::nothrow) EfficiencyResourceInfo(ResourceType::WORK_SCHEDULER,
+        true, 0, "apply", true, true);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
+        (int32_t)ERR_OK);
+    resourceInfo->SetResourceNumber(ResourceType::CPU);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
+        (int32_t)ERR_OK);
+    resourceInfo->SetCpuLevel(EfficiencyResourcesCpuLevel::DEFAULT);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
+        (int32_t)ERR_OK);
+    resourceInfo->SetCpuLevel(EfficiencyResourcesCpuLevel::LARGE_CPU);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
+        (int32_t)ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_NOT_ALLOW_APPLY);
+    bundleName = "false-test";
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
+        (int32_t)ERR_BGTASK_EFFICIENCY_RESOURCES_INVALID_BUNDLE_INFO);
+    bundleName = "bundleTest";
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
+        (int32_t)ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_APP_SIGNATURES_INVALID);
+    bundleName = "bundleTestSign";
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
+        (int32_t)ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_TOO_LARGE);
+    resourceInfo->SetCpuLevel(EfficiencyResourcesCpuLevel::MEDIUM_CPU);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->CheckIfCanApplyCpuLevel(resourceInfo, bundleName, uid),
+        (int32_t)ERR_OK);
+    bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources();
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

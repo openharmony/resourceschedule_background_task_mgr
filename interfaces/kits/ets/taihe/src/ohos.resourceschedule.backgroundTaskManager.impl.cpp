@@ -151,6 +151,9 @@ void ApplyEfficiencyResources(EfficiencyResourcesRequest const& request)
         request.isPersist.has_value() ? request.isPersist.value() : false,
         request.isProcess.has_value() ? request.isProcess.value() : false
     };
+    if (request.cpuLevel.has_value()) {
+        resourceInfo.SetCpuLevel(request.cpuLevel.value().get_value());
+    }
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->ApplyEfficiencyResources(resourceInfo);
     if (errCode) {
         BGTASK_LOGE("ApplyEfficiencyResources failed errCode: %{public}d", Common::FindErrCode(errCode));
@@ -669,6 +672,11 @@ array<::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesInfo> 
             .uid = info->GetUid(),
             .pid = info->GetPid(),
         };
+        if (info->GetCpuLevel() != OHOS::BackgroundTaskMgr::EfficiencyResourcesCpuLevel::DEFAULT) {
+            aniInfo.cpuLevel.emplace(
+                ::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesCpuLevel::from_value(
+                    info->GetCpuLevel()));
+        }
         aniInfoList.push_back(aniInfo);
     }
     return array<::ohos::resourceschedule::backgroundTaskManager::EfficiencyResourcesInfo>{copy_data_t{},
