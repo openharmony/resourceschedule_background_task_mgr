@@ -41,6 +41,8 @@ struct EfficiencyResourceApplyReportHisysEvent {
     bool AddData(const sptr<EfficiencyResourceInfo> &resourceInfo,
         const std::shared_ptr<ResourceCallbackInfo> &callbackInfo);
 
+    int64_t GetCurrentTimestamp();
+
     void ClearData();
 };
 

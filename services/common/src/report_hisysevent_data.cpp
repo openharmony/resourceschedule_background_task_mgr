@@ -14,10 +14,12 @@
  */
 
 #include "report_hisysevent_data.h"
-#include "time_provider.h"
+#include <sys/time.h>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+constexpr int64_t SEC_TO_MILLISEC = 1000;
+
 bool EfficiencyResourceApplyReportHisysEvent::AddData(const sptr<EfficiencyResourceInfo> &resourceInfo,
     const std::shared_ptr<ResourceCallbackInfo> &callbackInfo)
 {
@@ -26,7 +28,7 @@ bool EfficiencyResourceApplyReportHisysEvent::AddData(const sptr<EfficiencyResou
     }
     appUid_.push_back(callbackInfo->GetUid());
     appPid_.push_back(callbackInfo->GetPid());
-    appName_.push_back(callbackInfo->GetBundleName() + "|" + std::to_string(TimeProvider::GetCurrentTime()));
+    appName_.push_back(callbackInfo->GetBundleName() + "|" + std::to_string(GetCurrentTimestamp()));
     uiabilityIdentity_.push_back(-1);
     resourceType_.push_back(callbackInfo->GetResourceNumber());
     timeout_.push_back(resourceInfo->GetTimeOut());
@@ -82,6 +84,14 @@ void EfficiencyResourceResetReportHisysEvent::ClearData()
     quota_.clear();
     allQuota_.clear();
     length_ = 0;
+}
+
+int64_t EfficiencyResourceApplyReportHisysEvent::GetCurrentTimestamp()
+{
+    // get current time,precision is ms + us
+    struct timeval currentTime;
+    gettimeofdy(&currentTime, nullptr);
+    return static_cast<int64_t>(currentTime.tv_sec) * SEC_TO_MILLISEC + currentTime.tv_usec /SEC_TO_MILLISEC;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
