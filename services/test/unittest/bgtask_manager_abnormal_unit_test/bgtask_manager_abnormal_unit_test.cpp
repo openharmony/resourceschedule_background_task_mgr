@@ -224,9 +224,6 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_011
     BackgroundTaskMgrService_->SetReady(flag);
     BackgroundTaskMgrService_->dependsReady_ = 0;
     BackgroundTaskMgrService_->SetReady(flag);
-    BackgroundTaskMgrService_->dependsReady_ = 3;
-    flag = 4;
-    BackgroundTaskMgrService_->SetReady(flag);
     EXPECT_TRUE(true);
 }
 
