@@ -111,7 +111,7 @@ ohos_shared_library("bgtaskmgr_service") {
     "hitrace:libhitracechain",
     "init:libbegetutil",
     "ipc:ipc_single",
-    "resource_schedule_service:ressched_client",
+    "resource_schedule_service:resschedsvc",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
@@ -182,7 +182,7 @@ ohos_static_library("bgtaskmgr_service_static") {
     "ipc:ipc_single",
     "relational_store:native_rdb",
     "resource_management:global_resmgr",
-    "resource_schedule_service:ressched_client",
+    "resource_schedule_service:resschedsvc",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
