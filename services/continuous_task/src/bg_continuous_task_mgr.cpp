@@ -1886,7 +1886,6 @@ ErrCode BgContinuousTaskMgr::AddSubscriber(const std::shared_ptr<SubscriberInfo>
         BGTASK_LOGE("subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-
     handler_->PostSyncTask([=]() {
         AddSubscriberInner(subscriberInfo);
     });
@@ -1900,14 +1899,17 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const std::shared_ptr<Subscriber
     auto findSuscriber = [&remoteObj](const auto& target) {
         return remoteObj == target->subscriber_->AsObject();
     };
-
     auto subscriberIter = find_if(bgTaskSubscribers_.begin(), bgTaskSubscribers_.end(), findSuscriber);
     if (subscriberIter != bgTaskSubscribers_.end()) {
         BGTASK_LOGW("target subscriber already exist");
+        if ((*subscriberIter)->isHap) {
+            (*subscriberIter)->flag_ = (*subscriberIter)->flag_ | subscriberInfo->flag;
+            BGTASK_LOGW("update subscriber success, current flag: %{public}d, param flag: %{public}d",
+                (*subscriberIter)->flag_, subscriberInfo->flag);
+        }
         return ERR_BGTASK_OBJECT_EXISTS;
     }
     bgTaskSubscribers_.emplace_back(subscriberInfo);
-
     if (!susriberDeathRecipient_) {
         susriberDeathRecipient_ = new (std::nothrow) RemoteDeathRecipient(
             [this](const wptr<IRemoteObject> &remote) { this->OnRemoteSubscriberDied(remote); });
@@ -1918,20 +1920,19 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const std::shared_ptr<Subscriber
     return ERR_OK;
 }
 
-ErrCode BgContinuousTaskMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber)
+ErrCode BgContinuousTaskMgr::RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber, uint32_t flag)
 {
     if (subscriber == nullptr) {
         BGTASK_LOGE("subscriber is null.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-
     handler_->PostSyncTask([=]() {
-        RemoveSubscriberInner(subscriber);
+        RemoveSubscriberInner(subscriber, flag);
     });
     return ERR_OK;
 }
 
-ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber)
+ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber, uint32_t flag)
 {
     auto remote = subscriber->AsObject();
     if (remote == nullptr) {
@@ -1941,11 +1942,19 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
     auto findSubscriber = [&remote](const auto &info) {
         return remote == info->subscriber_->AsObject();
     };
-
     auto subscriberIter = find_if(bgTaskSubscribers_.begin(), bgTaskSubscribers_.end(), findSubscriber);
     if (subscriberIter == bgTaskSubscribers_.end()) {
         BGTASK_LOGE("subscriber to remove is not exists.");
         return ERR_BGTASK_INVALID_PARAM;
+    }
+    if ((*subscriberIter)->isHap) {
+        (*subscriberIter)->flag_ = (*subscriberIter)->flag_ & ~flag;
+        BGTASK_LOGW("remove subscriber success, current flag: %{public}d, param flag: %{public}d",
+            (*subscriberIter)->flag_, flag);
+        if ((*subscriberIter)->flag_ > 0) {
+            BGTASK_LOGD("application uid: %{public}d have callback function.", (*subscriberIter)->uid_);
+            return ERR_OK;
+        }
     }
     if (susriberDeathRecipient_) {
         remote->RemoveDeathRecipient(susriberDeathRecipient_);
@@ -2509,17 +2518,17 @@ void BgContinuousTaskMgr::NotifySubscribersTaskUpdate(
 void BgContinuousTaskMgr::NotifySubscribersTaskCancel(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
-    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         BGTASK_LOGD("continuous task stop callback trigger");
         if (!(*iter)->isHap_ && (*iter)->subscriber_) {
             // notify all sa
             (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
-        } else if (CanNotifyHap(*iter, continuousTaskCallbackInfo) && (*iter)->subscriber_) {
-            // notify self hap
-            BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify cancel", (*iter)->uid_);
-            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
-        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+        } else if ((*iter)->isHap_ && (*iter)->subscriber_) {
+            if (CanNotifyHap(*iter, continuousTaskCallbackInfo)) {
+                // 标识单独回调oncancel
+                taskCallbackInfoRef.SetCancelCallBackSelf(true);
+            }
             (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
         }
     }
@@ -2534,16 +2543,19 @@ void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(
             // 对SA来说，长时任务暂停状态等同于取消长时任务，保持原有逻辑
             BGTASK_LOGD("continuous task suspend callback trigger");
             (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
-        } else if ((*iter)->isHap_ &&
-            (*iter)->uid_ == continuousTaskCallbackInfo->GetCreatorUid() && (*iter)->subscriber_) {
-            // 回调通知应用长时任务暂停
-            BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify suspend, suspendReason: %{public}d"
-                "suspendState: %{public}d", (*iter)->uid_, taskCallbackInfoRef.GetSuspendReason(),
-                taskCallbackInfoRef.GetSuspendState());
-            (*iter)->subscriber_->OnContinuousTaskSuspend(taskCallbackInfoRef);
-        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
-            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
-        }
+        } else if ((*iter)->isHap_ && (*iter)->subscriber_) {
+            // 回调所有注册的subscriber
+            if (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) {
+                (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+            }
+            if ((*iter)->uid_ == continuousTaskCallbackInfo->GetCreatorUid()) {
+                // 回调通知应用长时任务暂停
+                BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify suspend, suspendReason: %{public}d"
+                    "suspendState: %{public}d", (*iter)->uid_, taskCallbackInfoRef.GetSuspendReason(),
+                    taskCallbackInfoRef.GetSuspendState());
+                (*iter)->subscriber_->OnContinuousTaskSuspend(taskCallbackInfoRef);
+            }
+        } 
     }
 }
 
@@ -2556,13 +2568,16 @@ void BgContinuousTaskMgr::NotifySubscribersTaskActive(
         if (!(*iter)->isHap_ && (*iter)->subscriber_) {
             // 对SA来说，长时任务激活状态等同于注册长时任务，保持原有逻辑
             (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
-        } else if ((*iter)->isHap_ &&
-            (*iter)->uid_ == continuousTaskCallbackInfo->GetCreatorUid() && (*iter)->subscriber_) {
-            // 回调通知应用长时任务激活
-            BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify active", (*iter)->uid_);
-            (*iter)->subscriber_->OnContinuousTaskActive(taskCallbackInfoRef);
-        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
-            (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (*iter)->subscriber_) {
+            // 回调所有注册的subscriber
+            if (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) {
+                (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
+            }
+            if ((*iter)->uid_ == continuousTaskCallbackInfo->GetCreatorUid()) {
+                // 回调通知应用长时任务激活
+                BGTASK_LOGI("uid %{public}d is hap and uid is same, need notify active", (*iter)->uid_);
+                (*iter)->subscriber_->OnContinuousTaskActive(taskCallbackInfoRef);
+            }
         }
     }
 }
