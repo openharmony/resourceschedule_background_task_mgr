@@ -707,6 +707,10 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
             BGTASK_LOGE("continuous task params invalid!");
             return false;
         }
+        if (taskParam->isBatchApi_ && taskParam->bgModeIds_.empty()) {
+            BGTASK_LOGE("bgModeIds_ is empty");
+            return false;
+        }
     }
     return true;
 }
