@@ -1902,10 +1902,10 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const std::shared_ptr<Subscriber
     auto subscriberIter = find_if(bgTaskSubscribers_.begin(), bgTaskSubscribers_.end(), findSuscriber);
     if (subscriberIter != bgTaskSubscribers_.end()) {
         BGTASK_LOGW("target subscriber already exist");
-        if ((*subscriberIter)->isHap) {
-            (*subscriberIter)->flag_ = (*subscriberIter)->flag_ | subscriberInfo->flag;
+        if ((*subscriberIter)->isHap_) {
+            (*subscriberIter)->flag_ = (*subscriberIter)->flag_ | subscriberInfo->flag_;
             BGTASK_LOGW("update subscriber success, current flag: %{public}d, param flag: %{public}d",
-                (*subscriberIter)->flag_, subscriberInfo->flag);
+                (*subscriberIter)->flag_, subscriberInfo->flag_);
         }
         return ERR_BGTASK_OBJECT_EXISTS;
     }
@@ -1947,7 +1947,7 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
         BGTASK_LOGE("subscriber to remove is not exists.");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    if ((*subscriberIter)->isHap) {
+    if ((*subscriberIter)->isHap_) {
         (*subscriberIter)->flag_ = (*subscriberIter)->flag_ & ~flag;
         BGTASK_LOGW("remove subscriber success, current flag: %{public}d, param flag: %{public}d",
             (*subscriberIter)->flag_, flag);
@@ -2555,7 +2555,7 @@ void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(
                     taskCallbackInfoRef.GetSuspendState());
                 (*iter)->subscriber_->OnContinuousTaskSuspend(taskCallbackInfoRef);
             }
-        } 
+        }
     }
 }
 
