@@ -225,8 +225,8 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
     WRITE_PARCEL_WITH_RET(parcel, Int32, notificationId_, false);
     std::u16string u16WantAgentBundleName = Str8ToStr16(wantAgentBundleName_);
     WRITE_PARCEL_WITH_RET(parcel, String16, u16WantAgentBundleName, false);
-    std::u16string u16WantAgentAbilityName_ = Str8ToStr16(wantAgentAbilityName_);
-    WRITE_PARCEL_WITH_RET(parcel, String16, u16WantAgentAbilityName_, false);
+    std::u16string u16WantAgentAbilityName = Str8ToStr16(wantAgentAbilityName_);
+    WRITE_PARCEL_WITH_RET(parcel, String16, u16WantAgentAbilityName, false);
     WRITE_PARCEL_WITH_RET(parcel, Bool, cancelCallBackSelf_, false);
     return true;
 }
