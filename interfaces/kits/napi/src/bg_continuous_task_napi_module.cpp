@@ -1240,15 +1240,13 @@ bool SubscribeBackgroundTask(napi_env env, uint32_t flag = 0)
     return true;
 }
 
-void UnSubscribeBackgroundTask(napi_env env, uint32_t flag = 0)
+void UnSubscribeBackgroundTask(napi_env env, uint32_t flag = 0, const std::string &cbType = "")
 {
-    if (!backgroundTaskSubscriber_->IsEmpty()) {
+    if (!backgroundTaskSubscriber_->IsTypeEmpty(cbType)) {
+        BGTASK_LOGI("cbType: %{public}s is not empty.", cbType.c_str());
         return;
     }
     backgroundTaskSubscriber_->SetFlag(flag, false);
-    if (flag == SUBSCRIBER_BACKGROUND_TASK_STATE) {
-        backgroundTaskSubscriber_->SetFlag(flag, true);
-    }
     ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);
     if (errCode != ERR_OK) {
         BGTASK_LOGE("UnsubscribeBackgroundTask failed.");
@@ -1316,7 +1314,7 @@ napi_value OffOnContinuousTaskCallback(napi_env env, napi_callback_info info)
             type = CONTINUOUS_TASK_ACTIVE;
         }
     }
-    UnSubscribeBackgroundTask(env, type);
+    UnSubscribeBackgroundTask(env, type, typeString);
     return WrapUndefinedToJS(env);
 }
 
@@ -1873,7 +1871,7 @@ napi_value UnSubscribeContinuousTaskState(napi_env env, napi_callback_info info)
         return WrapUndefinedToJS(env);
     }
     backgroundTaskSubscriber_->RemoveJsObserverObject(SUBSCRIBER_BACKGROUND_TASK_STATE_TYPE, argv[INDEX_ZERO]);
-    UnSubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE);
+    UnSubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE, SUBSCRIBER_BACKGROUND_TASK_STATE_TYPE);
     return WrapUndefinedToJS(env);
 }
 

@@ -190,6 +190,16 @@ std::string ContinuousTaskCallbackInfo::GetWantAgentAbilityName() const
     return wantAgentAbilityName_;
 }
 
+void ContinuousTaskCallbackInfo::SetCancelCallBackSelf(bool cancelCallBackSelf)
+{
+    cancelCallBackSelf_ = cancelCallBackSelf;
+}
+
+bool ContinuousTaskCallbackInfo::IsCancelCallBackSelf() const
+{
+    return cancelCallBackSelf_;
+}
+
 bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
 {
     WRITE_PARCEL_WITH_RET(parcel, Uint32, typeId_, false);
@@ -215,8 +225,9 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
     WRITE_PARCEL_WITH_RET(parcel, Int32, notificationId_, false);
     std::u16string u16WantAgentBundleName = Str8ToStr16(wantAgentBundleName_);
     WRITE_PARCEL_WITH_RET(parcel, String16, u16WantAgentBundleName, false);
-    std::u16string u16WantAgentAbilityName_ = Str8ToStr16(wantAgentAbilityName_);
-    WRITE_PARCEL_WITH_RET(parcel, String16, u16WantAgentAbilityName_, false);
+    std::u16string u16WantAgentAbilityName = Str8ToStr16(wantAgentAbilityName_);
+    WRITE_PARCEL_WITH_RET(parcel, String16, u16WantAgentAbilityName, false);
+    WRITE_PARCEL_WITH_RET(parcel, Bool, cancelCallBackSelf_, false);
     return true;
 }
 
@@ -262,6 +273,7 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     std::u16string u16WantAgentAbilityName;
     READ_PARCEL_WITH_RET(parcel, String16, u16WantAgentAbilityName, false);
     wantAgentAbilityName_ = Str16ToStr8(u16WantAgentAbilityName);
+    READ_PARCEL_WITH_RET(parcel, Bool, cancelCallBackSelf_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr

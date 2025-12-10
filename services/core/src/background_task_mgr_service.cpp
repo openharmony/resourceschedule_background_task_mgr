@@ -457,7 +457,7 @@ ErrCode BackgroundTaskMgrService::UnsubscribeBackgroundTask(const sptr<IBackgrou
             return ERR_BGTASK_PERMISSION_DENIED;
         }
     }
-    if (BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber) != ERR_OK) {
+    if (BgContinuousTaskMgr::GetInstance()->RemoveSubscriber(subscriber, flag) != ERR_OK) {
         BGTASK_LOGE("continuous task unsubscribe background task failed");
         return ERR_BGTASK_SYS_NOT_READY;
     }

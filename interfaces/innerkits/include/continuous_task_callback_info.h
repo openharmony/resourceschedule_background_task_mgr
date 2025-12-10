@@ -225,6 +225,10 @@ public:
 
     std::string GetWantAgentAbilityName() const;
 
+    void SetCancelCallBackSelf(bool cancelCallBackSelf);
+
+    bool IsCancelCallBackSelf() const;
+
     /**
      * @brief Marshals a purpose into a parcel.
      *
@@ -259,6 +263,7 @@ private:
     int32_t notificationId_ {-1};
     std::string wantAgentBundleName_ {""};
     std::string wantAgentAbilityName_ {""};
+    bool cancelCallBackSelf_ {false};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

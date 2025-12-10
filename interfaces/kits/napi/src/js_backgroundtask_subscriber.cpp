@@ -251,7 +251,10 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskStop(
             }
             BGTASK_LOGI("OnContinuousTaskStop js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
-            jsObserver->HandleOnContinuousTaskStop(continuousTaskCallbackInfo);
+            if (continuousTaskCallbackInfo->IsCancelCallBackSelf()) {
+                jsObserver->HandleOnContinuousTaskStop(continuousTaskCallbackInfo);
+            }
+            jsObserver->HandleSubscribeOnContinuousTaskStop(continuousTaskCallbackInfo);
         });
     napi_ref callback = nullptr;
     NapiAsyncTask::Schedule("JsBackgroundTaskSubscriber::OnContinuousTaskStop", env_,
@@ -261,7 +264,12 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskStop(
 void JsBackgroundTaskSubscriber::HandleSubscribeOnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    BGTASK_LOGI("HandleSubscribeOnContinuousTaskStop called");
     auto iter = jsObserverObjectMap_.find("subscribeContinuousTaskState");
+    if (iter == jsObserverObjectMap_.end()) {
+        BGTASK_LOGW("null callback Type subscribeContinuousTaskState");
+        return;
+    }
     std::set<std::shared_ptr<NativeReference>> jsObserverObjectSet_ = iter->second;
     for (auto &item : jsObserverObjectSet_) {
         napi_value jsCallbackObj = item->GetNapiValue();
@@ -278,7 +286,7 @@ void JsBackgroundTaskSubscriber::HandleSubscribeOnContinuousTaskStop(
         napi_get_undefined(env_, &undefined);
         napi_status status = napi_call_function(env_, undefined, callFunction, 1, argv, &callResult);
         if (status != napi_ok) {
-            BGTASK_LOGE("call onContinuousTaskStop func failed %{public}d.", status);
+            BGTASK_LOGE("call subscriber onContinuousTaskStop func failed %{public}d.", status);
         }
     }
 }
@@ -288,11 +296,6 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
 {
     BGTASK_LOGI("HandleOnContinuousTaskStop called");
     std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
-    auto iterSubscribe = jsObserverObjectMap_.find("subscribeContinuousTaskState");
-    if (iterSubscribe != jsObserverObjectMap_.end()) {
-        HandleSubscribeOnContinuousTaskStop(continuousTaskCallbackInfo);
-        return;
-    }
     auto iter = jsObserverObjectMap_.find("continuousTaskCancel");
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type");
@@ -318,7 +321,7 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
         napi_get_undefined(env_, &undefined);
         napi_status status = napi_call_function(env_, undefined, jsCallbackObj, 1, argv, &callResult);
         if (status != napi_ok) {
-            BGTASK_LOGE("call js func failed %{public}d.", status);
+            BGTASK_LOGE("call continuousTaskCancel func failed %{public}d.", status);
         }
     }
 }
@@ -527,22 +530,22 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType
         BGTASK_LOGI("null observer");
         return;
     }
- 
     auto observer = GetObserverObject(cbType, jsObserverObject);
     if (observer != nullptr) {
         std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
-        jsObserverObjectMap_[cbType].erase(observer);
+        int32_t size = static_cast<int32_t>(jsObserverObjectMap_[cbType].size());
+        if (size == 1) {
+            jsObserverObjectMap_.erase(cbType);
+        } else {
+            jsObserverObjectMap_[cbType].erase(observer);
+        }
     }
 }
 
 void JsBackgroundTaskSubscriber::SetFlag(uint32_t flag, bool isSubscriber)
 {
     std::lock_guard<std::mutex> lock(flagLock_);
-    if (isSubscriber) {
-        flag_ |= flag;
-    } else {
-        flag_ &= ~flag;
-    }
+    flag_ = flag;
 }
 
 void JsBackgroundTaskSubscriber::GetFlag(int32_t &flag)

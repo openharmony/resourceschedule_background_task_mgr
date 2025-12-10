@@ -93,7 +93,7 @@ public:
     ErrCode RequestGetContinuousTasksByUidForInner(int32_t uid,
         std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
     ErrCode AddSubscriber(const std::shared_ptr<SubscriberInfo> subscriberInfo);
-    ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber);
+    ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber, uint32_t flag = 0);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid = -1);
     ErrCode AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish = false);
@@ -157,7 +157,7 @@ private:
         bool includeSuspended = true, bool exemptUid = false);
     ErrCode CheckIsSysReadyAndPermission(int32_t callingUid);
     ErrCode AddSubscriberInner(const std::shared_ptr<SubscriberInfo> subscriberInfo);
-    ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber);
+    ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber, uint32_t flag = 0);
     ErrCode ShellDumpInner(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
     ErrCode GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid);

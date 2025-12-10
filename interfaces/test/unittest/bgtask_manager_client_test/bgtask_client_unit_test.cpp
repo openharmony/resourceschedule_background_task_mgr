@@ -657,6 +657,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     info2->SetNotificationId(1);
     info2->SetWantAgentBundleName("wantAgentBundleName");
     info2->SetWantAgentAbilityName("wantAgentAbilityName");
+    info2->SetCancelCallBackSelf(true);
     Parcel parcel = Parcel();
     info2->Marshalling(parcel);
     sptr<ContinuousTaskCallbackInfo> info3 = sptr<ContinuousTaskCallbackInfo>(
@@ -679,6 +680,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetNotificationId(), 1);
     EXPECT_EQ(info3->GetWantAgentBundleName(), "wantAgentBundleName");
     EXPECT_EQ(info3->GetWantAgentAbilityName(), "wantAgentAbilityName");
+    EXPECT_EQ(info3->IsCancelCallBackSelf(), true);
 }
 
 /**
