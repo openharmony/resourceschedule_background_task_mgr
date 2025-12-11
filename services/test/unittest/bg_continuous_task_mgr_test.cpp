@@ -2472,5 +2472,28 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialNotificationText_002, TestSize.Lev
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
         BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
 }
+
+/**
+ * @tc.name: OnBundleResourcesChanged_001
+ * @tc.desc: OnBundleResourcesChanged test.
+ * @tc.type: FUNC
+ * @tc.require: 822
+ */
+HWTEST_F(BgContinuousTaskMgrTest, OnBundleResourcesChanged_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    bgContinuousTaskMgr_->OnBundleResourcesChanged();
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->OnBundleResourcesChanged();
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = record;
+    record->bgSubModeIds_.push_back(BackgroundMode::LOCATION);
+    record->bundleName_ = "bundleName";
+    record->userId = 1;
+    bgContinuousTaskMgr_->OnBundleResourcesChanged();
+    record->bgSubModeIds_.push_back(BackgroundMode::DATA_TRANSFER);
+    bgContinuousTaskMgr_->OnBundleResourcesChanged();
+    EXPECT_FALSE(bgContinuousTaskMgr_->continuousTaskInfosMap_.empty());
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

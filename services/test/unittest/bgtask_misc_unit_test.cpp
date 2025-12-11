@@ -1019,5 +1019,31 @@ HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_005, TestSize.Level2)
     EXPECT_TRUE(true);
 #endif
 }
+
+/**
+ * @tc.name: SystemEventObserverTest_002
+ * @tc.desc: test SystemEventObserver class.
+ * @tc.type: FUNC
+ * @tc.require: 822
+ */
+HWTEST_F(BgTaskMiscUnitTest, SystemEventObserverTest_002, TestSize.Level2)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED);
+    EventFwk::CommonEventSubscribeInfo commonEventSubscribeInfo(matchingSkills);
+    auto systemEventListener = std::make_shared<SystemEventObserver>(commonEventSubscribeInfo);
+
+    EventFwk::CommonEventData eventData = EventFwk::CommonEventData();
+    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
+    systemEventListener->SetEventHandler(handler);
+    auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
+    systemEventListener->SetBgContinuousTaskMgr(bgContinuousTaskMgr);
+
+    AAFwk::Want want = AAFwk::Want();
+    want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_RESOURCES_CHANGED);
+    eventData.SetWant(want);
+    systemEventListener->OnReceiveEventContinuousTask(eventData);
+    EXPECT_TRUE(true);
+}
 }
 }
