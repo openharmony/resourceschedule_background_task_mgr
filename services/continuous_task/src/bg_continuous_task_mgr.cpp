@@ -3657,10 +3657,9 @@ void BgContinuousTaskMgr::OnBundleResourcesChanged()
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
-        return ERR_BGTASK_SYS_NOT_READY;
     }
-    handler_->PostSyncTask([this, &list, &ret]() {
-        ret = this->OnBundleResourcesChangedInner();
+    handler_->PostSyncTask([this]() {
+        this->OnBundleResourcesChangedInner();
         }, AppExecFwk::EventQueue::Priority::HIGH);
 }
 
