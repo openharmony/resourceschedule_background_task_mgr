@@ -2499,8 +2499,10 @@ void BgContinuousTaskMgr::NotifySubscribersTaskStart(
         BGTASK_LOGD("continuous task start callback trigger");
         if (!(*iter)->isHap_ && (*iter)->subscriber_) {
             (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
-        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
-            (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (*iter)->subscriber_) {
+            if (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) {
+                (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
+            }
         }
     }
 }
@@ -2513,8 +2515,10 @@ void BgContinuousTaskMgr::NotifySubscribersTaskUpdate(
         BGTASK_LOGD("continuous task update callback trigger");
         if (!(*iter)->isHap_ && (*iter)->subscriber_) {
             (*iter)->subscriber_->OnContinuousTaskUpdate(taskCallbackInfoRef);
-        } else if ((*iter)->isHap_ && (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
-            (*iter)->subscriber_->OnContinuousTaskUpdate(taskCallbackInfoRef);
+        } else if ((*iter)->isHap_ && (*iter)->subscriber_) {
+            if (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) {
+                (*iter)->subscriber_->OnContinuousTaskUpdate(taskCallbackInfoRef);
+            }
         }
     }
 }

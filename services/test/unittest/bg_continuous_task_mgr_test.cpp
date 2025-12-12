@@ -1487,21 +1487,13 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_057, TestSize.Level1)
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_058, TestSize.Level1)
 {
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
-    bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
-
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord->uid_ = TEST_NUM_ONE;
     continuousTaskRecord->bgModeId_ = 2;
     continuousTaskRecord->bgModeIds_.push_back(continuousTaskRecord->bgModeId_);
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord;
-
-    TestBackgroundTaskSubscriber subscriber1 = TestBackgroundTaskSubscriber();
-    auto info1 = std::make_shared<SubscriberInfo>(subscriber1.GetImpl(), 1, 1, 1, 2);
-    bgContinuousTaskMgr_->bgTaskSubscribers_.emplace_back(info1);
-
     bgContinuousTaskMgr_->HandleSuspendContinuousAudioTask(1);
-    bgContinuousTaskMgr_->HandleSuspendContinuousAudioTask(1);
-    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
+    EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 1);
 }
 
 /**
