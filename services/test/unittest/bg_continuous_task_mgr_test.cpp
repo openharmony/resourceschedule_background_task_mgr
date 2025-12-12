@@ -2489,7 +2489,7 @@ HWTEST_F(BgContinuousTaskMgrTest, OnBundleResourcesChanged_001, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = record;
     record->bgSubModeIds_.push_back(BackgroundMode::LOCATION);
     record->bundleName_ = "bundleName";
-    record->userId = 1;
+    record->userId_ = 1;
     bgContinuousTaskMgr_->OnBundleResourcesChanged();
     record->bgSubModeIds_.push_back(BackgroundMode::DATA_TRANSFER);
     bgContinuousTaskMgr_->OnBundleResourcesChanged();
