@@ -882,7 +882,7 @@ napi_value StartBackgroundRunningSubmit(napi_env env, napi_value *argv, uint32_t
     AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
 {
     if (!StartBackgroundRunningCheckRequest(env, argv, argc, isThrow, asyncCallbackInfo)) {
-        return nullptr;
+        return WrapVoidToJS(env);
     } else {
         return StartBackgroundRunningByRequestPromise(env, asyncCallbackInfo, isThrow);
     }
