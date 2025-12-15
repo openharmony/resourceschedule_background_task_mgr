@@ -29,6 +29,7 @@ namespace {
 const std::string TASK_ON_BUNDLEINFO_CHANGED = "OnBundleInfoChanged";
 const std::string TASK_ON_OS_ACCOUNT_CHANGED = "OnOsAccountChanged";
 const std::string TASK_ON_BANNER_NOTIFICATION_ACTION_BUTTON_CLICK = "OnBannerNotificationActionButtonClick";
+const std::string TASK_ON_BUNDLE_RESOURCES_CHANGED = "OnBundleResourcesChanged";
 }
 
 SystemEventObserver::SystemEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo)
@@ -94,6 +95,14 @@ void SystemEventObserver::OnReceiveEventContinuousTask(const EventFwk::CommonEve
     // 长时任务横幅通知点击事件
     if (action == BGTASK_BANNER_NOTIFICATION_ACTION_NAME) {
         OnBannerNotificationActionButtonClick(handler, bgContinuousTaskMgr, eventData);
+        return;
+    }
+    // 切换语言，BMS事件回调
+    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_RESOURCES_CHANGED) {
+        auto task = [bgContinuousTaskMgr]() {
+            bgContinuousTaskMgr->OnBundleResourcesChanged();
+        };
+        handler->PostTask(task, TASK_ON_BUNDLE_RESOURCES_CHANGED);
         return;
     }
     std::string bundleName = want.GetElement().GetBundleName();

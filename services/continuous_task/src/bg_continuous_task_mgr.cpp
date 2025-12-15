@@ -545,6 +545,7 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterSysCommEve
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_ADDED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_RESOURCES_CHANGED);
     // 注册横幅通知的点击事件
     matchingSkills.AddEvent(BGTASK_BANNER_NOTIFICATION_ACTION_NAME);
     EventFwk::CommonEventSubscribeInfo commonEventSubscribeInfo(matchingSkills);
@@ -2773,20 +2774,6 @@ void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration
         return;
     }
     BGTASK_LOGI("System language config has changed");
-    GetNotificationPrompt();
-    cachedBundleInfos_.clear();
-    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
-    auto iter = continuousTaskInfosMap_.begin();
-    while (iter != continuousTaskInfosMap_.end()) {
-        auto record = iter->second;
-        if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
-            std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
-            std::string notificationText = GetNotificationText(record);
-            newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
-        }
-        iter++;
-    }
-    NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
     // 语言切换，刷新横幅通知
     for (const auto &iter : bannerNotificationRecord_) {
         std::string bannerNotificationText {""};
@@ -3668,6 +3655,34 @@ void BgContinuousTaskMgr::DumpAuthRecordInfo(
         index++;
         BGTASK_LOGI("%{public}s", stream.str().c_str());
     }
+}
+
+void BgContinuousTaskMgr::OnBundleResourcesChanged()
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+    }
+    handler_->PostSyncTask([this]() {
+        this->OnBundleResourcesChangedInner();
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+}
+
+void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
+{
+    GetNotificationPrompt();
+    cachedBundleInfos_.clear();
+    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        auto record = iter->second;
+        if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+            std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
+            std::string notificationText = GetNotificationText(record);
+            newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
+        }
+        iter++;
+    }
+    NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

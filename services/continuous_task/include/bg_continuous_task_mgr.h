@@ -141,6 +141,8 @@ public:
     void CancelBgTaskNotificationInner(int32_t uid);
     ErrCode OnBackup(MessageParcel& data, MessageParcel& reply);
     ErrCode OnRestore(MessageParcel& data, MessageParcel& reply);
+    void OnBundleResourcesChanged();
+    void OnBundleResourcesChangedInner();
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
