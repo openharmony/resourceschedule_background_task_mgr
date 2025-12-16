@@ -74,35 +74,35 @@
             "name":"btn_allow_allowed",
             "value":"السماح دومًا",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_allow_time",
             "value":"السماح لمرة واحدة فقط",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"هل تسمح لتطبيق %s بتنفيذ أنشطة طويلة المدى في الخلفية؟",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
             "value":"جارٍ تنفيذ مهمة معالجة وسائط. سيؤدي إغلاق هذا الإشعار إلى إنهائها.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
             "value":"جارٍ تنفيذ مهمة بث فيديو. سيؤدي إغلاق هذا الإشعار إلى إنهائها.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
