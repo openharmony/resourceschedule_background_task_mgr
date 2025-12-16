@@ -74,35 +74,35 @@
             "name":"btn_allow_allowed",
             "value":"Immer zulassen",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_allow_time",
             "value":"Nur dieses Mal zulassen",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"Zulassen, dass %s lang andauernde Aktivitäten im Hintergrund ausführt?",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
             "value":"Eine Medienverarbeitungsaufgabe ist in Arbeit. Durch Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
             "value":"Eine Videoübertragungsaufgabe ist in Arbeit. Durch Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
