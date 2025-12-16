@@ -19,9 +19,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-namespace {
-    const int32_t RESOURCE_TYPE_SHIFTS = 16; // 能效资源类型左移位数
-}
 ResourcesSubscriberMgr::ResourcesSubscriberMgr()
 {
     deathRecipient_ = new (std::nothrow) ObserverDeathRecipient();
@@ -105,7 +102,6 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
         BGTASK_LOGW("Background Task Subscriber List is empty");
         return;
     }
-    HiSysEventResources(callbackInfo, type);
     const ResourceCallbackInfo& callbackInfoRef = *callbackInfo;
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
@@ -134,40 +130,6 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
             break;
     }
     BGTASK_LOGD("efficiency resources on resources changed function succeed");
-}
-
-void ResourcesSubscriberMgr::HiSysEventResources(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
-    EfficiencyResourcesEventType type)
-{
-    if (callbackInfo == nullptr) {
-        BGTASK_LOGE("ResourceCallbackInfo is null");
-        return;
-    }
-    switch (type) {
-        case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
-            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_APPLY, "CONTINUOUS_TASK_APPLY");
-            break;
-        case EfficiencyResourcesEventType::RESOURCE_APPLY:
-            HiSysEventSubmit(callbackInfo, HISYSEVENT_RESOURCE_APPLY, "CONTINUOUS_TASK_APPLY");
-            break;
-        case EfficiencyResourcesEventType::APP_RESOURCE_RESET:
-            HiSysEventSubmit(callbackInfo, HISYSEVENT_APP_RESOURCE_RESET, "CONTINUOUS_TASK_CANCEL");
-            break;
-        case EfficiencyResourcesEventType::RESOURCE_RESET:
-            HiSysEventSubmit(callbackInfo, HISYSEVENT_RESOURCE_RESET, "CONTINUOUS_TASK_CANCEL");
-            break;
-    }
-}
-
-void ResourcesSubscriberMgr::HiSysEventSubmit(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
-    int32_t hiSysEventType, const std::string &eventType)
-{
-    uint32_t resourceType = callbackInfo->GetResourceNumber() << RESOURCE_TYPE_SHIFTS;
-    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, eventType.c_str(),
-        HiviewDFX::HiSysEvent::EventType::STATISTIC, "APP_UID", callbackInfo->GetUid(),
-        "APP_PID", callbackInfo->GetPid(), "APP_NAME", callbackInfo->GetBundleName(),
-        "BGMODE", resourceType,
-        "UIABILITY_IDENTITY", hiSysEventType);
 }
 
 void ResourcesSubscriberMgr::HandleSubscriberDeath(const wptr<IRemoteObject>& remote)
