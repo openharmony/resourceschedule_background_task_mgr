@@ -74,35 +74,35 @@
             "name":"btn_allow_allowed",
             "value":"常に許可",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_allow_time",
             "value":"今回のみ許可",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"バックグラウンドで長時間かかる処理を実行することを%sに許可しますか？",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
             "value":"メディア処理タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
-            "value":"ビデオ投影作業が進行中です。この通知を閉じると、タスクが終了します。",
+            "value":"ビデオ投影タスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
