@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,13 +37,6 @@ enum class EfficiencyResourcesEventType: uint32_t {
     RESOURCE_RESET,
 };
 
-enum : int32_t {
-    HISYSEVENT_APP_RESOURCE_APPLY = -1,
-    HISYSEVENT_APP_RESOURCE_RESET = -2,
-    HISYSEVENT_RESOURCE_APPLY = -3,
-    HISYSEVENT_RESOURCE_RESET = -4,
-};
-
 class ResourcesSubscriberMgr : public std::enable_shared_from_this<ResourcesSubscriberMgr>  {
     DECLARE_DELAYED_SINGLETON(ResourcesSubscriberMgr);
 public:
@@ -54,10 +47,6 @@ public:
     void HandleSubscriberDeath(const wptr<IRemoteObject>& remote);
 
 private:
-    void HiSysEventResources(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
-        EfficiencyResourcesEventType type);
-    void HiSysEventSubmit(const std::shared_ptr<ResourceCallbackInfo> callbackInfo,
-        int32_t hiSysEventType, const std::string &eventType);
 
     std::mutex subscriberLock_;
     std::list<sptr<IBackgroundTaskSubscriber>> subscriberList_ {};
