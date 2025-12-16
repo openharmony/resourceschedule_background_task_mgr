@@ -81,14 +81,14 @@
             "name":"btn_allow_time",
             "value":"本次允許",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"允許「%s」執行應用程式背景長時間活動？",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
