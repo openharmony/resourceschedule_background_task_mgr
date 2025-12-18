@@ -110,7 +110,7 @@
             "name":"ohos_bgsubmode_prompt_video_broadcast",
             "value":"A video casting task is in progress. Closing this notification will end it.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
