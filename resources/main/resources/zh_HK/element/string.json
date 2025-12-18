@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"正在運行運動任務，刪除通知後任務將停止",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

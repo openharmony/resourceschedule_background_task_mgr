@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"Une tâche d'entraînement est en cours. La fermeture de cette notification y mettra fin.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

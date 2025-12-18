@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"Tugas olahraga sedang berlangsung. Menutup notifikasi ini akan mengakhiri tugas tersebut.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

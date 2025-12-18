@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"Zadanie treningowe jest w toku. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
