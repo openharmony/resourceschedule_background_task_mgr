@@ -164,7 +164,7 @@ private:
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
     ErrCode GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid);
     ErrCode AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish = false);
-    void ReromeAudioPlaybackTask(int32_t uid);
+    void RemoveAudioPlaybackDelayTask(int32_t uid);
     ErrCode StopBackgroundRunningByContext(int32_t uid, const std::string &abilityName, int32_t abilityId);
     ErrCode StopBackgroundRunningByTask(const std::shared_ptr<ContinuousTaskRecord> &task);
     void HandlePersistenceData();
