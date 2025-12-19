@@ -108,6 +108,7 @@ static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUN
 static constexpr char BGMODE_PERMISSION_SYSTEM[] = "ohos.permission.KEEP_BACKGROUND_RUNNING_SYSTEM";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
+static constexpr char TASK_NOTIFY_AUDIO_PLAYBACK_SEND[] = "TaskNotifyAudioPlaybackSend";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr uint32_t BGMODE_SPECIAL_SCENARIO_PROCESSING = 4096;
@@ -121,6 +122,7 @@ static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
 static constexpr uint32_t AVSESSION_SA_UID = 6700;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 2;
+static constexpr uint32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 5000;
 #ifdef FEATURE_PRODUCT_WATCH
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
 #else
@@ -2023,10 +2025,18 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
     }
 
     ErrCode result = ERR_OK;
-    handler_->PostSyncTask([this, uid, pid, isPublish, &result]() {
-        result = this->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
-
+    if (isPublish) {
+        handler_->PostSyncTask([this, uid, pid, isPublish, &result]() {
+            result = this->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
+            }, AppExecFwk::EventQueue::Priority::HIGH);
+    } else {
+        auto task = [this, uid, pid, isPublish, &result]() {
+            result = this->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
+        };
+        handler_->PostSyncTask(task, TASK_NOTIFY_AUDIO_PLAYBACK_SEND, NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
+        std::lock_guard<std::mutex> lock(delayTasksMutex_);
+        delayTasks_.insert(uid);
+    }
     return result;
 }
 
@@ -2034,11 +2044,15 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
 {
     BGTASK_LOGD("AVSessionNotifyUpdateNotification start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
     avSessionNotification_[uid] = isPublish;
+    if (isPublish) {
+        ReromeAudioPlaybackTask(uid);
+    }
     auto findUid = [uid](const auto &target) {
         return uid == target.second->GetUid();
     };
     auto findUidIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findUid);
     if (findUidIter == continuousTaskInfosMap_.end()) {
+        ReromeAudioPlaybackTask(uid);
         BGTASK_LOGD("continuous task is not exist: %{public}d", uid);
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
@@ -2049,12 +2063,14 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     // 子类型包含avsession，不发通知
     if (!isPublish &&
         CommonUtils::CheckExistMode(record->bgSubModeIds_, BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK)) {
+        ReromeAudioPlaybackTask(uid);
         return ERR_OK;
     }
 
     // 只有播音类型长时任务，并且没有AVSession通知
     if (!isPublish && record->bgModeIds_.size() == 1 && record->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
         result = SendContinuousTaskNotification(record);
+        ReromeAudioPlaybackTask(uid);
         return result;
     }
     std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
@@ -2070,7 +2086,19 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
             NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
         }
     }
+    ReromeAudioPlaybackTask(uid);
     return result;
+}
+
+void BgContinuousTaskMgr::ReromeAudioPlaybackTask(int32_t uid)
+{
+    std::lock_guard<std::mutex> lock(delayTasksMutex_);
+    auto delayTaskIter = delayTasks_.find(uid);
+    if (delayTaskIter == delayTasks_.end()) {
+        return;
+    }
+    handler_->RemoveTask(TASK_NOTIFY_AUDIO_PLAYBACK_SEND);
+    delayTasks_.erase(delayTaskIter);
 }
 
 void BgContinuousTaskMgr::SuspendContinuousAudioTask(int32_t uid)
