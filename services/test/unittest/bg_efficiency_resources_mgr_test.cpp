@@ -705,17 +705,17 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, GetPreAppCpuLevel_001, TestSize.Level1)
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
     constexpr int32_t uid = 10001;
     constexpr int32_t defaultCpuLevel = static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->GetPreAppCpuLevel(uid), defaultCpuLevel);
+    EXPECT_EQ(bgEfficiencyResourcesMgr_->GetPreAppCpuLevel(uid), defaultCpuLevel);
 
     constexpr int32_t pid = 11001;
     auto appRecord = std::make_shared<ResourceApplicationRecord>(uid, pid, 1, "test");
-    appRecord->cpuLevel = EfficiencyResourcesCpuLevel::END;
-    bgEfficiencyResourcesMgr_->appResourceApplyMap.emplace(uid, appRecord);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->GetPreAppCpuLevel(uid), defaultCpuLevel);
+    appRecord->cpuLevel_ = EfficiencyResourcesCpuLevel::END;
+    bgEfficiencyResourcesMgr_->appResourceApplyMap_.emplace(uid, appRecord);
+    EXPECT_EQ(bgEfficiencyResourcesMgr_->GetPreAppCpuLevel(uid), defaultCpuLevel);
 
     constexpr int32_t mediumCpuLevel = static_cast<int32_t>(EfficiencyResourcesCpuLevel::MEDIUM_CPU);
     appRecord->SetCpuLevel(mediumCpuLevel);
-    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->GetPreAppCpuLevel(uid), mediumCpuLevel);
+    EXPECT_EQ(bgEfficiencyResourcesMgr_->GetPreAppCpuLevel(uid), mediumCpuLevel);
 }
 
 /**
@@ -731,7 +731,7 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, RecoverResourceNumber_001, TestSize.Level
     constexpr int32_t pid = 11002;
     constexpr uint32_t resourceNumber = (ResourceType::WORK_SCHEDULER | ResourceType::CPU);
     auto appRecord = std::make_shared<ResourceApplicationRecord>(uid, pid, resourceNumber, "test1");
-    bgEfficiencyResourcesMgr_->appResourceApplyMap.emplace(uid, appRecord);
+    bgEfficiencyResourcesMgr_->appResourceApplyMap_.emplace(uid, appRecord);
     EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 1);
 
     bgEfficiencyResourcesMgr_->RecoverResourceNumber();
