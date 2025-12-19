@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"هناك مهمة تمرين قيد التقدم. سيؤدي إغلاق هذا الإشعار إلى إنهائها.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

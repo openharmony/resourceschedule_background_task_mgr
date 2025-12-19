@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"ໜ້າວຽກການອອກກຳລັງກາຍພວມດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

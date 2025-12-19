@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"Выполняется задача тренировки. Если вы закроете это уведомление, задача будет завершена.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

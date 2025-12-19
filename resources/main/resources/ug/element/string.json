@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"چېنىقىش ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز ۋەزىپە توختاپ قالىدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

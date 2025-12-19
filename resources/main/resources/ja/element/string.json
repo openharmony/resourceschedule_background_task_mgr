@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"ワークアウトタスクが進行中です。この通知を閉じると、タスクが終了します。",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
