@@ -1444,7 +1444,7 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_002, TestSiz
  * @tc.type: FUNC
  * @tc.require: 828
  */
-HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_002, TestSize.Level1)
+HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_003, TestSize.Level1)
 {
     int32_t uid = 0;
     int32_t pid = 1;
