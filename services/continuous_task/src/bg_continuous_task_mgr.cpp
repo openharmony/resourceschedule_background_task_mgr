@@ -2033,7 +2033,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
         auto task = [this, uid, pid, isPublish, &result]() {
             result = this->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
         };
-        handler_->PostSyncTask(task, TASK_NOTIFY_AUDIO_PLAYBACK_SEND, NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
+        handler_->PostTask(task, TASK_NOTIFY_AUDIO_PLAYBACK_SEND, NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
         std::lock_guard<std::mutex> lock(delayTasksMutex_);
         delayTasks_.insert(uid);
     }
