@@ -174,6 +174,7 @@ void BgEfficiencyResourcesMgr::HandlePersistenceData()
     DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreResourceRecord(
         appResourceApplyMap_, procResourceApplyMap_);
     CheckPersistenceData(allAppProcessInfos);
+    RecoverResourceNumber();
     RecoverDelayedTask(true, procResourceApplyMap_);
     RecoverDelayedTask(false, appResourceApplyMap_);
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
@@ -434,6 +435,9 @@ void BgEfficiencyResourcesMgr::ApplyResourceForPkgAndProc(int32_t uid, int32_t p
         }
         appResourceInfo->SetResourceNumber(resourceNumber);
         appResourceInfo->SetProcess(false);
+
+        // Set the previous appCpuLevel
+        appResourceInfo->SetCpuLevel(GetPreAppCpuLevel(uid));
         SendResourceApplyTask(uid, pid, bundleName, appResourceInfo);
     }
 }
@@ -498,6 +502,7 @@ void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<Res
     } else {
         subscriberMgr_->OnResourceChanged(callbackInfo, EfficiencyResourcesEventType::APP_RESOURCE_APPLY);
     }
+    iter->second->SetCpuLevel(callbackInfo->GetCpuLevel());
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshResourceRecord(
         appResourceApplyMap_, procResourceApplyMap_);
 }
@@ -1216,6 +1221,40 @@ ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyR
         return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_TOO_LARGE;
     }
     return ERR_OK;
+}
+
+int32_t BgEfficiencyResourcesMgr::GetPreAppCpuLevel(int32_t uid)
+{
+    const auto iter = appResourceApplyMap_.find(uid);
+    if (iter == appResourceApplyMap_.end()) {
+        BGTASK_LOGD("%{public}s: uid %{public}d not found", __func__, uid);
+        return static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT);
+    }
+
+    const int32_t cpuLevel = iter->second->GetCpuLevel();
+    if (!EfficiencyResourcesCpuLevel::IsCpuLevelValid(cpuLevel)) {
+        BGTASK_LOGE("%{public}s: uid %{public}d cpuLevel %{public}d invalid", __func__, uid, cpuLevel);
+        return static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT);
+    }
+
+    BGTASK_LOGI("%{public}s: uid %{public}d cpuLevel %{public}d", __func__, uid, cpuLevel);
+    return cpuLevel;
+}
+
+void BgEfficiencyResourcesMgr::RecoverResourceNumber()
+{
+    constexpr int64_t systemUpMaxDurationMs = 4 * 60 * 1000; // 4 min
+    const int64_t systemUpDurationMs = TimeProvider::GetCurrentTime(ClockType::CLOCK_TYPE_BOOTTIME);
+    if (systemUpDurationMs > systemUpMaxDurationMs) {
+        BGTASK_LOGI("%{public}s: system up time exceeded systemUpMaxDurationMs", __func__);
+        return;
+    }
+
+    // Service restart, only retain WORK_SCHEDULER and TIMER
+    constexpr auto workSchedulerAndTimerResourceNumber = (ResourceType::WORK_SCHEDULER | ResourceType::TIMER);
+    for (auto &[uid, appRecord] : appResourceApplyMap_) {
+        appRecord->resourceNumber_ = (appRecord->GetResourceNumber() & workSchedulerAndTimerResourceNumber);
+    }
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
