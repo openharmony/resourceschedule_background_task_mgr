@@ -2045,14 +2045,14 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     BGTASK_LOGD("AVSessionNotifyUpdateNotification start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
     avSessionNotification_[uid] = isPublish;
     if (isPublish) {
-        ReromeAudioPlaybackTask(uid);
+        RemoveAudioPlaybackDelayTask(uid);
     }
     auto findUid = [uid](const auto &target) {
         return uid == target.second->GetUid();
     };
     auto findUidIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findUid);
     if (findUidIter == continuousTaskInfosMap_.end()) {
-        ReromeAudioPlaybackTask(uid);
+        RemoveAudioPlaybackDelayTask(uid);
         BGTASK_LOGD("continuous task is not exist: %{public}d", uid);
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
@@ -2063,14 +2063,14 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     // 子类型包含avsession，不发通知
     if (!isPublish &&
         CommonUtils::CheckExistMode(record->bgSubModeIds_, BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK)) {
-        ReromeAudioPlaybackTask(uid);
+        RemoveAudioPlaybackDelayTask(uid);
         return ERR_OK;
     }
 
     // 只有播音类型长时任务，并且没有AVSession通知
     if (!isPublish && record->bgModeIds_.size() == 1 && record->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
         result = SendContinuousTaskNotification(record);
-        ReromeAudioPlaybackTask(uid);
+        RemoveAudioPlaybackDelayTask(uid);
         return result;
     }
     std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
@@ -2086,11 +2086,11 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
             NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
         }
     }
-    ReromeAudioPlaybackTask(uid);
+    RemoveAudioPlaybackDelayTask(uid);
     return result;
 }
 
-void BgContinuousTaskMgr::ReromeAudioPlaybackTask(int32_t uid)
+void BgContinuousTaskMgr::RemoveAudioPlaybackDelayTask(int32_t uid)
 {
     std::lock_guard<std::mutex> lock(delayTasksMutex_);
     auto delayTaskIter = delayTasks_.find(uid);
