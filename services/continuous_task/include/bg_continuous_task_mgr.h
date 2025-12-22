@@ -164,6 +164,7 @@ private:
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
     ErrCode GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid);
     ErrCode AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish = false);
+    void RemoveAudioPlaybackDelayTask(int32_t uid);
     ErrCode StopBackgroundRunningByContext(int32_t uid, const std::string &abilityName, int32_t abilityId);
     ErrCode StopBackgroundRunningByTask(const std::shared_ptr<ContinuousTaskRecord> &task);
     void HandlePersistenceData();
@@ -263,6 +264,8 @@ private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap_ {};
     std::unordered_map<int32_t, bool> avSessionNotification_ {};
+    std::mutex delayTasksMutex_;
+    std::unordered_set<int32_t> delayTasks_;
     std::mutex liveViewInfoMutex_;
     std::unordered_map<int32_t, std::unordered_set<std::string>> liveViewInfo_ {};
 

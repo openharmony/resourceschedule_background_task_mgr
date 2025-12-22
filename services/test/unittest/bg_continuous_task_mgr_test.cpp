@@ -1439,6 +1439,28 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_002, TestSiz
 }
 
 /**
+ * @tc.name: AVSessionNotifyUpdateNotification_003
+ * @tc.desc: test AVSessionNotifyUpdateNotification interface.
+ * @tc.type: FUNC
+ * @tc.require: 828
+ */
+HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_003, TestSize.Level1)
+{
+    int32_t uid = 0;
+    int32_t pid = 1;
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    uid = 1;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = uid;
+    continuousTaskRecord1->bgModeIds_.push_back(BGMODE_AUDIO_PLAYBACK_ID);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, false), ERR_OK);
+    continuousTaskRecord1->bgModeIds_.push_back(LOCATION_BGMODE_ID);
+    EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, false), ERR_OK);
+}
+
+/**
  * @tc.name: BgTaskManagerUnitTest_054
  * @tc.desc: test SendContinuousTaskNotification.
  * @tc.type: FUNC
