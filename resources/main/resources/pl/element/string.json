@@ -74,35 +74,35 @@
             "name":"btn_allow_allowed",
             "value":"Zawsze zezwalaj",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_allow_time",
             "value":"Zezwól tylko tym razem",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"Zezwolić aplikacji %s na wykonywanie długotrwałych działań w tle?",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
-            "value":"Trwa przetwarzanie multimediów. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
+            "value":"Trwa przetwarzanie multimediów. Zamknięcie tego powiadomienia spowoduje zakończenie tego procesu.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
             "value":"Trwa emisja wideo. Zamknięcie tego powiadomienia spowoduje jej zakończenie.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

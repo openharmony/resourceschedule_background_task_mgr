@@ -74,35 +74,35 @@
             "name":"btn_allow_allowed",
             "value":"ئىزچىل رۇخسەت",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_allow_time",
             "value":"بۇ قېتىم رۇخسەت",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"\u200f«%s» نىڭ ئارقا سۇپىدا ئۇزاق يۈرۈشىگە رۇخسەتمۇ؟",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
             "value":"مېدىيا ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
             "value":"سىن سۇنۇش ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

@@ -74,35 +74,35 @@
             "name":"btn_allow_allowed",
             "value":"Toujours autoriser",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_allow_time",
             "value":"Autoriser cette fois uniquement",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"Autoriser %s à effectuer des activités de longue durée en arrière-plan ?",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
             "value":"Une tâche de traitement multimédia est en cours. La fermeture de cette notification y mettra fin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
             "value":"Une tâche de diffusion vidéo est en cours. La fermeture de cette notification y mettra fin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

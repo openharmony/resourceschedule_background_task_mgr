@@ -82,35 +82,35 @@
             "name":"btn_allow_time",
             "value":"Allow this time only",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_allow_allowed",
             "value":"Always allow",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"Allow %s to perform long-running activities in the background?",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
             "value":"A media processing task is in progress. Closing this notification will end it.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
             "value":"A video casting task is in progress. Closing this notification will end it.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

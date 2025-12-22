@@ -74,35 +74,35 @@
             "name":"btn_allow_allowed",
             "value":"ནམ་ཡང་ཆོག་པ་",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_allow_time",
             "value":"ཐེངས་འདིར་ཆོག་པ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"༼%s༽ཡིས་ཉེར་སྤྱོད་ཀྱི་སྟེགས་རྒྱབ་ཏུ་ཡུན་རིང་བྱེད་སྒོ་བསྟར་ཆོག་པར་བྱེད་དམ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
             "value":"སྨྱན་གཟུགས་ཐག་གཅོད་ཀྱི་ལས་འགན་འཁོར་སྐྱོད་བྱེད་བཞིན་ཡོད། བརྡ་ཐོ་བསུབས་རྗེས་ལས་འགན་མཚམས་འཇོག",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
             "value":"བརྙན་ཟློས་འཕྲོ་གཏོང་གི་ལས་འགན་འཁོར་སྐྱོད་བྱེད་བཞིན་ཡོད། བརྡ་ཐོ་བསུབས་རྗེས་ལས་འགན་མཚམས་འཇོག",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

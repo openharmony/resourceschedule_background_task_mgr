@@ -50,7 +50,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"[TS_1135553]_Allow “%s” to perform background tasks keepalive for the app?"
+            "value":"[TS_1135553]_Allow %s to perform long-running activities in the background?"
         },
         {
             "name":"ohos_app_name",
@@ -58,7 +58,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
-            "value":"[TS_1135550]_A media process task is in progress. Closing this notification will end it."
+            "value":"[TS_1135550]_A media processing task is in progress. Closing this notification will end it."
         },
         {
             "name":"ohos_bgmode_prompt_default_value",

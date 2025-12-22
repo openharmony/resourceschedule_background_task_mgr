@@ -74,35 +74,35 @@
             "name":"btn_allow_allowed",
             "value":"อนุญาตเสมอ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_allow_time",
             "value":"อนุญาตเฉพาะครั้งนี้เท่านั้น",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"อนุญาต %s ให้ทำกิจกรรมที่ใช้เวลานานในพื้นหลังหรือไม่",
+            "value":"อนุญาตให้ %s ทำกิจกรรมที่ใช้เวลานานในพื้นหลังหรือไม่",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
-            "value":"กำลังดำเนินงานการประมวลผลสื่อ หากปิดการแจ้งเตือนนี้จะทำให้การดำเนินการสิ้นสุดลง",
+            "value":"กำลังดำเนินงานการประมวลผลสื่อ หากปิดการแจ้ง\u200bเตือนนี้จะทำให้การดำเนินการสิ้นสุดลง",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
-            "value":"กำลังดำเนินงานการแพร่ภาพวิดีโอ หากปิดการแจ้งเตือนนี้จะทำให้การดำเนินการสิ้นสุดลง",
+            "value":"กำลังดำเนินงานการแพร่ภาพวิดีโอ หากปิดการแจ้ง\u200bเตือนนี้จะทำให้การดำเนินการสิ้นสุดลง",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
