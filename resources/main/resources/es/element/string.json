@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"Hay una tarea de ejercicio en curso. Si cierras esta notificación, finalizará.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

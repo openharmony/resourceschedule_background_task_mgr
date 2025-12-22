@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"ကာယလေ့ကျင့်ခန်း လုပ်ဆောင်နေပါသည်။ ဤအသိပေးချက်ကို ပိတ်ခြင်းက ၎င်းကို အဆုံးသတ်လိုက်ပါမည်။",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

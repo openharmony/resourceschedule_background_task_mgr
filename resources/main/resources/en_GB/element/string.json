@@ -107,7 +107,10 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_work_out",
-            "value":"A workout task is in progress. Closing this notification will end it."
+            "value":"A workout task is in progress. Closing this notification will end it.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

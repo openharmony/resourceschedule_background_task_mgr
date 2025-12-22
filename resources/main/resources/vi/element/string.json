@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"Một tác vụ luyện tập đang được tiến hành. Đóng thông báo này sẽ kết thúc tác vụ đó.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

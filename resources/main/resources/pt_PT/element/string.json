@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"Está a decorrer uma tarefa de exercício. Fechar esta notificação irá terminá-la.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

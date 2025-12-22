@@ -104,6 +104,13 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"ལུས་རྩལ་ལས་འགན་འཁོར་སྐྱོད་བྱེད་བཞིན་ཡོད། བརྡ་ཐོ་བསུབས་རྗེས་ལས་འགན་མཚམས་འཇོག",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
