@@ -135,6 +135,8 @@ private:
         EfficiencyResourcesEventType type);
     ErrCode CheckIfCanApplyCpuLevel(const sptr<EfficiencyResourceInfo> &resourceInfo, const std::string &bundleName,
         pid_t uid);
+    int32_t GetPreAppCpuLevel(int32_t uid);
+    void RecoverResourceNumber();
 
 private:
     std::atomic<bool> isSysReady_ {false};

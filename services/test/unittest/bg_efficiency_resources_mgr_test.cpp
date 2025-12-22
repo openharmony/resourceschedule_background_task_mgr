@@ -693,5 +693,59 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, ApplyEfficiencyResources_006, TestSize.Le
         (int32_t)ERR_OK);
     bgEfficiencyResourcesMgr_->ResetAllEfficiencyResources();
 }
+
+/**
+ * @tc.name: GetPreAppCpuLevel_001
+ * @tc.desc: get pre app cpu level
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, GetPreAppCpuLevel_001, TestSize.Level1)
+{
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
+    constexpr int32_t uid = 10001;
+    constexpr int32_t defaultCpuLevel = static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT);
+    EXPECT_EQ(bgEfficiencyResourcesMgr_->GetPreAppCpuLevel(uid), defaultCpuLevel);
+
+    constexpr int32_t pid = 11001;
+    auto appRecord = std::make_shared<ResourceApplicationRecord>(uid, pid, 1, "test");
+    appRecord->cpuLevel_ = EfficiencyResourcesCpuLevel::END;
+    bgEfficiencyResourcesMgr_->appResourceApplyMap_.emplace(uid, appRecord);
+    EXPECT_EQ(bgEfficiencyResourcesMgr_->GetPreAppCpuLevel(uid), defaultCpuLevel);
+
+    constexpr int32_t mediumCpuLevel = static_cast<int32_t>(EfficiencyResourcesCpuLevel::MEDIUM_CPU);
+    appRecord->SetCpuLevel(mediumCpuLevel);
+    EXPECT_EQ(bgEfficiencyResourcesMgr_->GetPreAppCpuLevel(uid), mediumCpuLevel);
+}
+
+/**
+ * @tc.name: RecoverResourceNumber_001
+ * @tc.desc: recover resource number
+ * @tc.type: FUNC
+ * @tc.require: issuesI5OD7X
+ */
+HWTEST_F(BgEfficiencyResourcesMgrTest, RecoverResourceNumber_001, TestSize.Level1)
+{
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 0);
+    constexpr int32_t uid = 10002;
+    constexpr int32_t pid = 11002;
+    constexpr uint32_t resourceNumber = (ResourceType::WORK_SCHEDULER | ResourceType::CPU);
+    auto appRecord = std::make_shared<ResourceApplicationRecord>(uid, pid, resourceNumber, "test1");
+    bgEfficiencyResourcesMgr_->appResourceApplyMap_.emplace(uid, appRecord);
+    EXPECT_EQ((int32_t)bgEfficiencyResourcesMgr_->appResourceApplyMap_.size(), 1);
+
+    bgEfficiencyResourcesMgr_->RecoverResourceNumber();
+    const auto iter = bgEfficiencyResourcesMgr_->appResourceApplyMap_.find(uid);
+    EXPECT_TRUE(iter != bgEfficiencyResourcesMgr_->appResourceApplyMap_.end());
+    EXPECT_TRUE(iter->second != nullptr);
+
+    constexpr int64_t systemUpMaxDurationMs = 4 * 60 * 1000; // 4 min
+    const int64_t systemUpDurationMs = TimeProvider::GetCurrentTime(ClockType::CLOCK_TYPE_BOOTTIME);
+    if (systemUpDurationMs > systemUpMaxDurationMs) {
+        EXPECT_EQ(iter->second->GetResourceNumber(), resourceNumber);
+    } else {
+        EXPECT_EQ(iter->second->GetResourceNumber(), static_cast<uint32_t>(ResourceType::WORK_SCHEDULER));
+    }
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
