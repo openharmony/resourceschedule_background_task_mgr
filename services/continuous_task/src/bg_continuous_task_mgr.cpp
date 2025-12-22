@@ -657,11 +657,8 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
 
 ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTaskRecord> record)
 {
-    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, record->callingTokenId_)) {
-        return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
-    }
     if (record->isSystem_) {
-        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_APPLY_SPECIAL;
     }
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
         return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
@@ -2881,6 +2878,9 @@ ErrCode BgContinuousTaskMgr::CheckModeSupportedPermission(const sptr<ContinuousT
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
+#ifndef SUPPORT_AUTH
+    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+#endif
     return ERR_OK;
 }
 
@@ -2922,15 +2922,6 @@ ErrCode BgContinuousTaskMgr::CheckTaskkeepingPermission(const sptr<ContinuousTas
         } else {
             return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
         }
-    }
-    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-        BGTASK_LOGW("app have no acl permission");
-        return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
-    }
-    if (CheckModeSupportedPermission(taskParam) == ERR_OK) {
-#ifndef SUPPORT_AUTH
-    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
-#endif
     }
     BGTASK_LOGI("app have acl permission");
     return ERR_OK;
@@ -3108,12 +3099,8 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         "", callingUid, callingPid, taskParam->bgModeId_, true, taskParam->bgModeIds_);
     InitRecordParam(continuousTaskRecord, taskParam, userId);
-    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-        return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
-    }
     if (continuousTaskRecord->isSystem_) {
-        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_APPLY_SPECIAL;
     }
 #ifndef SUPPORT_AUTH
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
@@ -3234,13 +3221,9 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t
 #else // HAS_OS_ACCOUNT_PART
     GetOsAccountIdFromUid(callingUid, userId);
 #endif // HAS_OS_ACCOUNT_PART
-    uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-        return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
-    }
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
     if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
-        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_APPLY_SPECIAL;
     }
 #ifndef SUPPORT_AUTH
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
