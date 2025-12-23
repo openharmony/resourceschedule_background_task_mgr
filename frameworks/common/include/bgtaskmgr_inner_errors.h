@@ -65,7 +65,6 @@ enum : int32_t {
     ERR_BGTASK_CONTINUOUS_NOT_MERGE_CURRENTTASK_COMBINED_FALSE,
     ERR_BGTASK_CONTINUOUS_UPDATE_FAIL_SAME_MODE_AND_MERGED,
     ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL,
-    ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_APPLY_SPECIAL,
     ERR_BGTASK_CONTINUOUS_NOT_APPLY_MAX_TASK,
     ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE,
     ERR_BGTASK_CONTINUOUS_NOT_APPLY_ONBACKGROUND,
@@ -235,8 +234,6 @@ const std::map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Notification verification failed. Current continuous task refresh notification fail."},
     {ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL,
         "Continuous Task verification failed. System app not support taskkeeping ACL permission."},
-    {ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_APPLY_SPECIAL, "Continuous Task verification failed. "
-        "The background task mode: MODE_SPECIAL_SCENARIO_PROCESSING cannot be requested by system app."},
     {ERR_BGTASK_CONTINUOUS_NOT_APPLY_MAX_TASK,
         "Continuous Task verification failed. "
         "The current ability to apply for continuous tasks has exceeded the maximum limit."},

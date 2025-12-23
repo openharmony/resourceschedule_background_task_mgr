@@ -657,9 +657,6 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
 
 ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTaskRecord> record)
 {
-    if (record->isSystem_) {
-        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_APPLY_SPECIAL;
-    }
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
         return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
     }
@@ -3099,9 +3096,6 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         "", callingUid, callingPid, taskParam->bgModeId_, true, taskParam->bgModeIds_);
     InitRecordParam(continuousTaskRecord, taskParam, userId);
-    if (continuousTaskRecord->isSystem_) {
-        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_APPLY_SPECIAL;
-    }
 #ifndef SUPPORT_AUTH
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
@@ -3221,10 +3215,6 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t
 #else // HAS_OS_ACCOUNT_PART
     GetOsAccountIdFromUid(callingUid, userId);
 #endif // HAS_OS_ACCOUNT_PART
-    uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
-    if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
-        return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_APPLY_SPECIAL;
-    }
 #ifndef SUPPORT_AUTH
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
