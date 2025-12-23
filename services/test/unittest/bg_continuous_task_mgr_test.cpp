@@ -431,12 +431,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_003, TestSize.Level1)
         ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BLUETOOTH_INTERACTION, LOCATION_BGMODE_ID, true,
         continuousTaskRecord), ERR_BGTASK_INVALID_BGMODE);
-    continuousTaskRecord->isSystem_ = true;
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_SPECIAL_SCENARIO_PROCESSING,
-        BGMODE_SPECIAL_SCENARIO_PROCESSING_ID, true, continuousTaskRecord),
-        ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
 
-    continuousTaskRecord->isSystem_ = false;
     continuousTaskRecord->bundleName_ = "bundleName";
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_SPECIAL_SCENARIO_PROCESSING,
         BGMODE_SPECIAL_SCENARIO_PROCESSING_ID, true, continuousTaskRecord), ERR_OK);
@@ -2042,8 +2037,9 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(0, authResult), ERR_BGTASK_SYS_NOT_READY);
 
     bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(0, authResult),
-        ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
+        ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD);
 }
 
 /**
@@ -2111,10 +2107,11 @@ HWTEST_F(BgContinuousTaskMgrTest, RequestAuthFromUser_001, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
         ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY);
 
-    taskParam->bgModeIds_.clear();
     taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    bgContinuousTaskMgr_->expiredCallbackMap_.clear();
+    bgContinuousTaskMgr_->expiredCallbackMap_[TEST_NUM_ONE] = proxy;
     EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
-        ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
+        ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS);
 }
 
 /**
