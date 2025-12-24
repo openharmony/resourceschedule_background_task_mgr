@@ -51,7 +51,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_task_keeping",
-            "value":"Hay una tarea informática en curso. Si cierras esta notificación, se detendrá.",
+            "value":"Hay una tarea de computación en curso. Si cierras esta notificación, se detendrá.",
             "attr":{
                 "priority":"LT"
             }

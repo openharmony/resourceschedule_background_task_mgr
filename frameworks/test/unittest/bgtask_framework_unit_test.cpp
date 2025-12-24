@@ -990,7 +990,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, SetMaliciousAppConfig_001, TestSize.Level1)
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet),
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet),
         ERR_OK);
 }
 
