@@ -2024,8 +2024,11 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
             result = this->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
             }, AppExecFwk::EventQueue::Priority::HIGH);
     } else {
-        auto task = [this, uid, pid, isPublish, &result]() {
-            result = this->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
+        auto self = shared_from_this();
+        auto task = [self, uid, pid, isPublish]() {
+            if (self) {
+                self->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
+            }
         };
         handler_->PostTask(task, TASK_NOTIFY_AUDIO_PLAYBACK_SEND, NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
         std::lock_guard<std::mutex> lock(delayTasksMutex_);
@@ -2064,6 +2067,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     // 只有播音类型长时任务，并且没有AVSession通知
     if (!isPublish && record->bgModeIds_.size() == 1 && record->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
         result = SendContinuousTaskNotification(record);
+        RefreshTaskRecord();
         RemoveAudioPlaybackDelayTask(uid);
         return result;
     }
@@ -2079,6 +2083,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
             newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
             NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
         }
+        RefreshTaskRecord();
     }
     RemoveAudioPlaybackDelayTask(uid);
     return result;
@@ -3454,6 +3459,7 @@ void BgContinuousTaskMgr::CancelBgTaskNotificationInner(int32_t uid)
             NotificationTools::GetInstance()->CancelNotification(
                 task.second->GetNotificationLabel(), task.second->GetNotificationId());
             task.second->notificationId_ = -1;
+            RefreshTaskRecord();
             BGTASK_LOGD("continuous task has other mode");
             continue;
         }
@@ -3481,6 +3487,7 @@ void BgContinuousTaskMgr::SendNotificationByLiveViewCancelInner(int32_t uid)
         if (task.second->GetNotificationId() == -1) {
             auto record = task.second;
             SendContinuousTaskNotification(record);
+            RefreshTaskRecord();
         }
     }
 }
