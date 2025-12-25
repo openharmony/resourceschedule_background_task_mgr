@@ -2043,7 +2043,7 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(0, authResult), ERR_BGTASK_SYS_NOT_READY);
 
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(0, authResult),	
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(0, authResult),
         ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
 }
 

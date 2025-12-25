@@ -2887,6 +2887,7 @@ ErrCode BgContinuousTaskMgr::CheckModeSupportedPermission(const sptr<ContinuousT
     int32_t callingUid = IPCSkeleton::GetCallingUid();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
+        uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
         if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
             BGTASK_LOGW("app have no acl permission");
             return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
