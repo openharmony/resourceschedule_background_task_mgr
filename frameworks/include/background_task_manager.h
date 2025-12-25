@@ -348,10 +348,10 @@ public:
 
     /**
      * @brief Set supported special exempted processes.
-     * @param bundlNameSet bundle name set.
+     * @param bundleNameSet bundle name set.
      * @return Returns ERR_OK if success, else failure.
      */
-    ErrCode SetSpecialExemptedProcess(const std::set<std::string> &bundlNameSet);
+    ErrCode SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet);
 private:
     bool GetBackgroundTaskManagerProxy();
 
