@@ -657,6 +657,15 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
 
 ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTaskRecord> record)
 {
+    if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(record->bundleName_)) {
+        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM,
+            record->callingTokenId_)) {
+            return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
+        }
+        if (record->isSystem_) {
+            return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+        }
+    }
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
         return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
     }
@@ -2875,6 +2884,18 @@ ErrCode BgContinuousTaskMgr::CheckModeSupportedPermission(const sptr<ContinuousT
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
+    if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
+        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+            BGTASK_LOGW("app have no acl permission");
+            return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
+        }
+        uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+        if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+            return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+        }
+    }
 #ifndef SUPPORT_AUTH
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
@@ -3096,6 +3117,15 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>(bundleName,
         "", callingUid, callingPid, taskParam->bgModeId_, true, taskParam->bgModeIds_);
     InitRecordParam(continuousTaskRecord, taskParam, userId);
+    if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
+        uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
+        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+            return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
+        }
+        if (continuousTaskRecord->isSystem_) {
+            return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+        }
+    }
 #ifndef SUPPORT_AUTH
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
@@ -3215,11 +3245,21 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t
 #else // HAS_OS_ACCOUNT_PART
     GetOsAccountIdFromUid(callingUid, userId);
 #endif // HAS_OS_ACCOUNT_PART
+    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
+    if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
+        uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
+        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+            return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
+        }
+        uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+        if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+            return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+        }
+    }
 #ifndef SUPPORT_AUTH
     BGTASK_LOGE("no support this device, uid: %{public}d", callingUid);
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
-    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     ErrCode ret = ERR_OK;
     handler_->PostSyncTask([this, &authResult, bundleName, userId, appIndex, &ret]() {
         ret = this->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);

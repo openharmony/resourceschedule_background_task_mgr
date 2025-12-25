@@ -34,6 +34,7 @@ const std::string CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST = "continuous_task_keepi
 const std::string MALICIOUS_APP_BLOCKLIST = "malicious_app_blocklist";
 const std::string TRANSIENT_EXEMPTED_QUOTA = "transient_exempted_quota";
 const std::string TRANSIENT_ERR_DELAYED_FROZEN_TIME = "transient_err_delayed_frozen_time";
+const std::string CONTINUOUS_SPECIAL_EXEMPTED_LIST = "special_exempted_list";
 
 const std::string BACKGROUND_TASK_CONFIG_FILE = "etc/backgroundtask/config.json";
 const std::string CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS = "cpu_efficiency_resource_allow_apply_bundle_infos";
@@ -342,6 +343,21 @@ bool WEAK_FUNC BgtaskConfig::CheckRequestCpuLevel(const std::string &bundleName,
 {
     std::lock_guard<std::mutex> lock(configMutex_);
     return bgTaskConfigFileInfo_.CheckCpuLevel(bundleName, cpuLevel);
+}
+
+void BgtaskConfig::SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet)
+{
+    std::lock_guard<std::mutex> lock(configMutex_);
+    specialExemptedQuatoList_.insert(bundleNameSet.begin(), bundleNameSet.end());
+    for (const auto &item : specialExemptedQuatoList_) {
+        BGTASK_LOGI("special Exemption proc: %{public}s", item.c_str());
+    }
+}
+
+bool BgtaskConfig::IsSpecialExemptedQuatoApp(const std::string &bundleName)
+{
+    std::lock_guard<std::mutex> lock(configMutex_);
+    return specialExemptedQuatoList_.count(bundleName) > 0;
 }
 }
 }

@@ -345,6 +345,13 @@ public:
      * @return ERR_OK if success, else fail.
      */
     ErrCode GetAllContinuousTasksBySystem(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
+
+    /**
+     * @brief Set supported special exempted processes.
+     * @param bundlNameSet bundle name set.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode SetSpecialExemptedProcess(const std::set<std::string> &bundlNameSet);
 private:
     bool GetBackgroundTaskManagerProxy();
 

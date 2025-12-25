@@ -772,6 +772,15 @@ ErrCode BackgroundTaskMgrService::GetAllContinuousTasksBySystem(
     return BgContinuousTaskMgr::GetInstance()->GetAllContinuousTasksBySystem(list);
 }
 
+ErrCode BackgroundTaskMgrService::SetSpecialExemptedProcess(const std::set<std::string> &bundlNameSet)
+{
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    DelayedSingleton<BgtaskConfig>::GetInstance()->SetSpecialExemptedProcess(bundlNameSet);
+    return ERR_OK;
+}
+
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();

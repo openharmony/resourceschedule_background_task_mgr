@@ -41,6 +41,8 @@ public:
     bool CheckRequestCpuLevelAppSignatures(const std::string &bundleName, const std::string &appId,
         const std::string &appIdentifier);
     bool CheckRequestCpuLevel(const std::string &bundleName, int32_t cpuLevel);
+    void SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet);
+    bool IsSpecialExemptedQuatoApp(const std::string &bundleName);
 
 private:
     void LoadConfigFile();
@@ -59,6 +61,7 @@ private:
     std::set<std::string> transientTaskCloudExemptedQuatoList_ {};
     std::set<std::string> taskKeepingExemptedQuatoList_ = {};
     std::set<std::string> maliciousAppBlocklist_ {};
+    std::set<std::string> specialExemptedQuatoList_ = {};
     int32_t transientTaskExemptedQuato_ = 10 * 1000; // 10s
     std::mutex configMutex_;
 
