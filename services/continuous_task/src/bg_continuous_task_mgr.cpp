@@ -2884,22 +2884,24 @@ ErrCode BgContinuousTaskMgr::CheckModeSupportedPermission(const sptr<ContinuousT
         BGTASK_LOGE("background mode permission is not passed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    int32_t callingUid = IPCSkeleton::GetCallingUid();
-    std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
-    if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
-        uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
-            BGTASK_LOGW("app have no acl permission");
-            return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
+    if (specialModeSize == 1 && taskParam->bgModeIds_.size() == 1) {
+        int32_t callingUid = IPCSkeleton::GetCallingUid();
+        std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
+        if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
+            uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
+            if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+                BGTASK_LOGW("app have no acl permission");
+                return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
+            }
+            uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
+            if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
+                return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
+            }
         }
-        uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
-        if (BundleManagerHelper::GetInstance()->IsSystemApp(fullTokenId)) {
-            return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
-        }
-    }
 #ifndef SUPPORT_AUTH
-    return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
+        return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
+    }
     return ERR_OK;
 }
 
