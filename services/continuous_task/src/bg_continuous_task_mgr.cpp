@@ -2944,6 +2944,10 @@ ErrCode BgContinuousTaskMgr::CheckTaskkeepingPermission(const sptr<ContinuousTas
             return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
         }
     }
+    if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+        BGTASK_LOGW("app have no acl permission");
+        return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
+    }
     BGTASK_LOGI("app have acl permission");
     return ERR_OK;
 }
