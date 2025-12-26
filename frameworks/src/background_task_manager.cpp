@@ -576,6 +576,14 @@ ErrCode BackgroundTaskManager::GetAllContinuousTasksBySystem(std::vector<std::sh
     return result;
 }
 
+ErrCode BackgroundTaskManager::SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->SetSpecialExemptedProcess(bundleNameSet);
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 

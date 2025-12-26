@@ -279,6 +279,13 @@ public:
      * @return ERR_OK if success, else fail.
      */
     static ErrCode GetAllContinuousTasksBySystem(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
+
+    /**
+     * @brief Set supported special exempted processes.
+     * @param bundleNameSet bundle name set.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

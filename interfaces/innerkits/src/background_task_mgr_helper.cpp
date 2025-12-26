@@ -184,5 +184,10 @@ ErrCode BackgroundTaskMgrHelper::GetAllContinuousTasksBySystem(std::vector<std::
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTasksBySystem(list);
 }
+
+ErrCode BackgroundTaskMgrHelper::SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetSpecialExemptedProcess(bundleNameSet);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -106,6 +106,7 @@ public:
     ErrCode SetBackgroundTaskState(const BackgroundTaskStateInfo &taskParam) override;
     ErrCode GetBackgroundTaskState(const BackgroundTaskStateInfo &taskParam, uint32_t &authResult) override;
     ErrCode GetAllContinuousTasksBySystem(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list) override;
+    ErrCode SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);
