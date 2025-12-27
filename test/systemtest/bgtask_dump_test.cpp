@@ -221,7 +221,7 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_009, Function | MediumTest | L
     std::vector<std::string> infos;
     std::vector<std::string> options;
     options.push_back("-C");
-    options.push_back("--inner_task WORKOUT DEMO");
+    options.push_back("--inner_task");
     options.push_back("WORKOUT");
     options.push_back("DEMO");
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
@@ -239,7 +239,7 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_010, Function | MediumTest | L
     std::vector<std::string> infos;
     std::vector<std::string> options;
     options.push_back("-C");
-    options.push_back("--inner_task WORKOUT apply");
+    options.push_back("--inner_task");
     options.push_back("WORKOUT");
     options.push_back("apply");
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
@@ -257,7 +257,7 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_011, Function | MediumTest | L
     std::vector<std::string> infos;
     std::vector<std::string> options;
     options.push_back("-C");
-    options.push_back("--inner_task WORKOUT reset");
+    options.push_back("--inner_task");
     options.push_back("WORKOUT");
     options.push_back("reset");
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
