@@ -155,7 +155,8 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_006, Function | MediumTest | L
     std::vector<std::string> infos;
     std::vector<std::string> options;
     options.push_back("-C");
-    options.push_back("--get 20020056");
+    options.push_back("--get");
+    options.push_back("20020056");
     BgContinuousTaskMgr::GetInstance()->continuousTaskInfosMap_.clear();
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord1->abilityName_ = "abilityName";
@@ -202,7 +203,9 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_008, Function | MediumTest | L
     std::vector<std::string> infos;
     std::vector<std::string> options;
     options.push_back("-C");
-    options.push_back("--inner_task DEMO apply");
+    options.push_back("--inner_task");
+    options.push_back("DEMO");
+    options.push_back("apply");
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
     EXPECT_EQ(ret, 0);
 }
@@ -219,6 +222,8 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_009, Function | MediumTest | L
     std::vector<std::string> options;
     options.push_back("-C");
     options.push_back("--inner_task WORKOUT DEMO");
+    options.push_back("WORKOUT");
+    options.push_back("DEMO");
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
     EXPECT_EQ(ret, 0);
 }
@@ -235,6 +240,8 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_010, Function | MediumTest | L
     std::vector<std::string> options;
     options.push_back("-C");
     options.push_back("--inner_task WORKOUT apply");
+    options.push_back("WORKOUT");
+    options.push_back("apply");
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
     EXPECT_EQ(ret, 0);
 }
@@ -251,6 +258,25 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_011, Function | MediumTest | L
     std::vector<std::string> options;
     options.push_back("-C");
     options.push_back("--inner_task WORKOUT reset");
+    options.push_back("WORKOUT");
+    options.push_back("reset");
+    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
+    EXPECT_EQ(ret, 0);
+}
+
+/*
+ * @tc.name: BgtaskDumpTest_ShellDump_012
+ * @tc.desc: Shell dump
+ * @tc.type: FUNC
+ * @tc.require: 838
+ */
+HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_012, Function | MediumTest | Level0)
+{
+    std::vector<std::string> infos;
+    std::vector<std::string> options;
+    options.push_back("-C");
+    options.push_back("--get");
+    options.push_back("-1");
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
     EXPECT_EQ(ret, 0);
 }
