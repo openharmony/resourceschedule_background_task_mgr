@@ -1091,5 +1091,20 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetAllContinuousTasksBySystem_001, TestSize.Le
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTasksBySystem(list),
         ERR_OK);
 }
+
+/**
+ * @tc.name: SetSpecialExemptedProcess_001
+ * @tc.desc: test SetSpecialExemptedProcess.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, SetSpecialExemptedProcess_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::set<std::string> bundleNameSet;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetSpecialExemptedProcess(bundleNameSet),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+}
 }
 }
