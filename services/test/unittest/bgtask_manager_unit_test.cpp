@@ -991,5 +991,22 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_063, TestSize.Level1)
     EXPECT_FALSE(configFileInfo.CheckCpuLevel("bundleName.test", cpuLevel));
     EXPECT_TRUE(configFileInfo.CheckCpuLevel("bundleName.test", 1));
 }
+
+/**
+ * @tc.name: SetSpecialExemptedProcess_001
+ * @tc.desc: test SetSpecialExemptedProcess.
+ * @tc.type: FUNC
+ * @tc.require: issueICVQZF
+ */
+HWTEST_F(BgTaskManagerUnitTest, SetSpecialExemptedProcess_001, TestSize.Level1)
+{
+    std::set<std::string> bundleNameSet;
+    std::string bundleName = "com.test.app";
+    bundleNameSet.insert(bundleName);
+    DelayedSingleton<BgtaskConfig>::GetInstance()->SetSpecialExemptedProcess(bundleNameSet);
+    EXPECT_FALSE(DelayedSingleton<BgtaskConfig>::GetInstance()->taskKeepingExemptedQuatoList_.empty());
+
+    EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName));
+}
 }
 }
