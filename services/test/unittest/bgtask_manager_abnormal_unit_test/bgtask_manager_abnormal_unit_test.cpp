@@ -317,6 +317,9 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_015
     EXPECT_EQ(BackgroundTaskMgrService_->GetBackgroundTaskState(stateInfo, authResult), ERR_BGTASK_PERMISSION_DENIED);
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
     EXPECT_EQ(BackgroundTaskMgrService_->GetAllContinuousTasksBySystem(list), ERR_BGTASK_PERMISSION_DENIED);
+    std::set<std::string> bundleNameSet;
+    bundleNameSet.insert("com.test.app");
+    EXPECT_EQ(BackgroundTaskMgrService_->SetSpecialExemptedProcess(bundleNameSet), ERR_BGTASK_PERMISSION_DENIED);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
