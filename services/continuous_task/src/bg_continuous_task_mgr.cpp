@@ -2024,8 +2024,8 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
             result = this->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
             }, AppExecFwk::EventQueue::Priority::HIGH);
     } else {
-        auto self = shared_from_this();
-        auto task = [self, uid, pid, isPublish]() {
+        auto task = [weak = weak_from_this(), uid, pid, isPublish]() {
+            auto self = weak.lock();
             if (self) {
                 self->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
             }
