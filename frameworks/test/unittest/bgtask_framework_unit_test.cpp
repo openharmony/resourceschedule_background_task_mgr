@@ -1052,7 +1052,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, SetBackgroundTaskState_001, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBackgroundTaskState(taskParam),
         ERR_OK);
-    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBackgroundTaskState(nullptr),
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBackgroundTaskState(nullptr),
         ERR_BGTASK_CHECK_TASK_PARAM);
 }
 
@@ -1073,7 +1073,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetBackgroundTaskState_001, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(taskParam),
         ERR_OK);
-    EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(taskParam),
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(nullptr),
         ERR_BGTASK_CHECK_TASK_PARAM);
 }
 
