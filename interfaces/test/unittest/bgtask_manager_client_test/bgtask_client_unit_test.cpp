@@ -1271,5 +1271,17 @@ HWTEST_F(BgTaskClientUnitTest, GetSuspendReasonValue_001, TestSize.Level1)
 {
     EXPECT_EQ(ContinuousTaskSuspendReason::GetSuspendReasonValue(INVALID_MODE_OR_SUBMODE), 0);
 }
+
+/**
+ * @tc.name: SetSpecialExemptedProcess_001
+ * @tc.desc: test SetSpecialExemptedProcess.
+ * @tc.type: FUNC
+ * @tc.require: issueICVQZF
+ */
+HWTEST_F(BgTaskClientUnitTest, SetSpecialExemptedProcess_001, TestSize.Level1)
+{
+    std::set<std::string> bundleNameSet;
+    EXPECT_EQ(BackgroundTaskMgrHelper::SetSpecialExemptedProcess(bundleNameSet), ERR_OK);
+}
 }
 }
