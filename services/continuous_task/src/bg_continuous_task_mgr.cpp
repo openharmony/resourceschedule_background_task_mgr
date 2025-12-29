@@ -3587,9 +3587,12 @@ ErrCode BgContinuousTaskMgr::SetBackgroundTaskStateInner(std::shared_ptr<Backgro
         bannerNotification->SetAuthResult(authResult);
         std::string key = NotificationTools::GetInstance()->CreateBannerNotificationLabel(bundleName,
             userId, appIndex);
+        BGTASK_LOGI("insert auth record, key: %{public}s, auth value: %{public}d.", key.c_str(), authResult);   
         bannerNotificationRecord_.emplace(key, bannerNotification);
     } else {
         // 存在记录，直接更新
+        BGTASK_LOGI("update auth record, bundleName: %{public}s, userId: %{public}d, appIndex: %{public}d,"
+            " new auth value: %{public}d.", bundleName.c_str(), userId, appIndex, authResult);   
         findRecordIter->second->SetAuthResult(authResult);
     }
     RefreshAuthRecord();
