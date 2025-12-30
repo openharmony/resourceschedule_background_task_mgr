@@ -403,7 +403,8 @@ bool DecisionMaker::CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspe
     int32_t uid = pkgInfo->GetUid();
     std::string bundleName = pkgInfo->GetPkg();
     if (!deviceInfoManager_->IsScreenOn()) {
-        BGTASK_LOGI("deivice is screen off, uid: %{public}d, bunleName: %{public}s start account.", uid, bundleName.c_str());
+        BGTASK_LOGI("deivice is screen off, uid: %{public}d, bunleName: %{public}s start account.",
+            uid, bundleName.c_str());
         return true;
     }
 
