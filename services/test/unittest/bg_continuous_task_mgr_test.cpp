@@ -2510,5 +2510,87 @@ HWTEST_F(BgContinuousTaskMgrTest, OnBundleResourcesChanged_001, TestSize.Level1)
     bgContinuousTaskMgr_->OnBundleResourcesChanged();
     EXPECT_FALSE(bgContinuousTaskMgr_->continuousTaskInfosMap_.empty());
 }
+
+/**
+ * @tc.name: CheckAbilityTaskNum_001
+ * @tc.desc: CheckAbilityTaskNum test.
+ * @tc.type: FUNC
+ * @tc.require: 822
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CheckAbilityTaskNum_001, TestSize.Level2)
+{
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckAbilityTaskNum(record), ERR_OK);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = nullptr;
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckAbilityTaskNum(record), ERR_OK);
+    record->abilityId_ = 1;
+    record->isByRequestObject_ = false;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = record;
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckAbilityTaskNum(record), ERR_OK);
+    record->isByRequestObject_ = true;
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckAbilityTaskNum(record), ERR_OK);
+}
+
+/**
+ * @tc.name: AllowApplyContinuousTask_001
+ * @tc.desc: AllowApplyContinuousTask test.
+ * @tc.type: FUNC
+ * @tc.require: 822
+ */
+HWTEST_F(BgContinuousTaskMgrTest, AllowApplyContinuousTask_001, TestSize.Level2)
+{
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->isByRequestObject_ = false;
+    EXPECT_EQ(bgContinuousTaskMgr_->AllowApplyContinuousTask(record), ERR_OK);
+    record->isByRequestObject_ = true;
+    EXPECT_EQ(bgContinuousTaskMgr_->AllowApplyContinuousTask(record), ERR_OK);
+    record->isFromWebview_ = true;
+    record->uid_ = 1;
+    EXPECT_EQ(bgContinuousTaskMgr_->AllowApplyContinuousTask(record), ERR_OK);
+    bgContinuousTaskMgr_->appOnForeground_.insert(1);
+    EXPECT_EQ(bgContinuousTaskMgr_->AllowApplyContinuousTask(record), ERR_OK);
+}
+
+/**
+ * @tc.name: OnAppStateChanged_001
+ * @tc.desc: OnAppStateChanged test.
+ * @tc.type: FUNC
+ * @tc.require: 822
+ */
+HWTEST_F(BgContinuousTaskMgrTest, OnAppStateChanged_001, TestSize.Level2)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    bgContinuousTaskMgr_->OnAppStateChanged(1,
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND));
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->OnAppStateChanged(1,
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND));
+    EXPECT_EQ(bgContinuousTaskMgr_->appOnForeground_.size(), 0);
+    bgContinuousTaskMgr_->OnAppStateChanged(1,
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND));
+    EXPECT_NE(bgContinuousTaskMgr_->appOnForeground_.size(), 0);
+}
+
+/**
+ * @tc.name: DebugContinuousTaskInner_001
+ * @tc.desc: DebugContinuousTaskInner test.
+ * @tc.type: FUNC
+ * @tc.require: 822
+ */
+HWTEST_F(BgContinuousTaskMgrTest, DebugContinuousTaskInner_001, TestSize.Level2)
+{
+    sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
+        new ContinuousTaskParamForInner(1, 1, true));
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    EXPECT_EQ(bgContinuousTaskMgr_->DebugContinuousTaskInner(taskParam), ERR_BGTASK_SYS_NOT_READY);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->OnRemoveSystemAbility(1, "test");
+    bgContinuousTaskMgr_->OnRemoveSystemAbility(SA_ID_VOIP_CALL_MANAGER, "test");
+    bgContinuousTaskMgr_->OnRemoveSystemAbility(SA_ID_HEALTH_SPORT, "test");
+    EXPECT_EQ(bgContinuousTaskMgr_->DebugContinuousTaskInner(nullptr), ERR_BGTASK_CHECK_TASK_PARAM);
+    EXPECT_EQ(bgContinuousTaskMgr_->DebugContinuousTaskInner(taskParam), ERR_OK);
+    taskParam->isStart_ = false;
+    EXPECT_EQ(bgContinuousTaskMgr_->DebugContinuousTaskInner(taskParam), ERR_OK);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
