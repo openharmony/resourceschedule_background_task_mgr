@@ -247,6 +247,7 @@ ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::sh
         ->HandleTransientTaskSuscriberTask(info, TransientTaskEventType::APP_TASK_START);
     }
     if (CanStartAccountingLocked(pkgInfo)) {
+        BGTASK_LOGI("keyinfo: %{public}s request transient task, start account.", key->ToString().c_str());
         pkgInfo->StartAccounting(delayInfo->GetRequestId());
     }
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "TRANSIENT_TASK_APPLY",
@@ -399,12 +400,16 @@ bool DecisionMaker::IsFrontApp(const string& pkgName, int32_t uid)
 
 bool DecisionMaker::CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo)
 {
+    int32_t uid = pkgInfo->GetUid();
+    std::string bundleName = pkgInfo->GetPkg();
     if (!deviceInfoManager_->IsScreenOn()) {
+        BGTASK_LOGI("deivice is screen off, uid: %{public}d, bunleName: %{public}s start account.",
+            uid, bundleName.c_str());
         return true;
     }
 
     lock_guard<recursive_mutex> lock(recMutex_);
-    return foregroundUidPidMap_.count(pkgInfo->GetUid()) == 0;
+    return foregroundUidPidMap_.count(uid) == 0;
 }
 
 int32_t DecisionMaker::GetDelayTime()
