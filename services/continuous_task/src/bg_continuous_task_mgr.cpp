@@ -2131,8 +2131,8 @@ void BgContinuousTaskMgr::SendAudioCallBackTaskState(const std::shared_ptr<Conti
     if (bgTaskSubscribers_.empty()) {
         return;
     }
-    std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo
-        = std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskInfo->GetBgModeId(),
+    std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo =
+        std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskInfo->GetBgModeId(),
         continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName(),
         continuousTaskInfo->IsFromWebview(), continuousTaskInfo->isBatchApi_, continuousTaskInfo->bgModeIds_,
         continuousTaskInfo->abilityId_, continuousTaskInfo->fullTokenId_);
