@@ -2123,6 +2123,37 @@ void BgContinuousTaskMgr::SuspendContinuousAudioTask(int32_t uid)
     handler_->PostTask(task);
 }
 
+void BgContinuousTaskMgr::SendAudioCallBackTaskState(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo)
+{
+    if (continuousTaskInfo == nullptr) {
+        return;
+    }
+    if (bgTaskSubscribers_.empty()) {
+        return;
+    }
+    std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo =
+        std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskInfo->GetBgModeId(),
+        continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName(),
+        continuousTaskInfo->IsFromWebview(), continuousTaskInfo->isBatchApi_, continuousTaskInfo->bgModeIds_,
+        continuousTaskInfo->abilityId_, continuousTaskInfo->fullTokenId_);
+    continuousTaskCallbackInfo->SetContinuousTaskId(continuousTaskInfo->continuousTaskId_);
+    continuousTaskCallbackInfo->SetCancelReason(continuousTaskInfo->reason_);
+    continuousTaskCallbackInfo->SetSuspendState(continuousTaskInfo->suspendState_);
+    continuousTaskCallbackInfo->SetSuspendReason(continuousTaskInfo->suspendReason_);
+    continuousTaskCallbackInfo->SetByRequestObject(continuousTaskInfo->isByRequestObject_);
+    continuousTaskCallbackInfo->SetBundleName(continuousTaskInfo->bundleName_);
+    continuousTaskCallbackInfo->SetUserId(continuousTaskInfo->userId_);
+    continuousTaskCallbackInfo->SetAppIndex(continuousTaskInfo->appIndex_);
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        if ((*iter)->isHap_ && (*iter)->subscriber_) {
+            if (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) {
+                (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+            }
+        }
+    }
+}
+
 void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
 {
     auto iter = continuousTaskInfosMap_.begin();
@@ -2132,6 +2163,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
             NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
                 iter->second->GetNotificationId());
             if (!IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND)) {
+                SendAudioCallBackTaskState(iter->second);
                 iter++;
                 continue;
             }
