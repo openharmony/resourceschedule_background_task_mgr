@@ -147,8 +147,7 @@ calss BusinessErrorMap {
 public:
     static void GetSaErrMap(std::unordered_map<int32_t, std::string>& errMap);
     static void GetParamErrMap(std::unordered_map<int32_t, std::string>& errMap);
-}
-
+};
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_FRAMEWORKS_COMMON_INCLUDE_BGTASKMGR_INNER_ERRORS_H
