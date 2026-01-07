@@ -51,6 +51,7 @@ taihe_shared_library("background_task_manager_ani") {
     "include",
   ]
   sources += [
+    "${bgtaskmgr_frameworks_path}/common/src/bgtaskmgr_inner_errors.cpp",
     "src/ani_backgroundtask_subscriber.cpp",
     "src/ani_constructor.cpp",
     "src/ani_task.cpp",

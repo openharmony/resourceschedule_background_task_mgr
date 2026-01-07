@@ -35,6 +35,7 @@ ohos_shared_library("backgroundtaskmanager") {
     "-Os",
   ]
   sources = [
+    "${bgtaskmgr_frameworks_path}/common/src/bgtaskmgr_inner_errors.cpp",
     "napi/src/bg_continuous_task_napi_module.cpp",
     "napi/src/cancel_suspend_delay.cpp",
     "napi/src/common.cpp",
@@ -94,6 +95,7 @@ ohos_shared_library("backgroundtaskmanager_napi") {
     "-Os",
   ]
   sources = [
+    "${bgtaskmgr_frameworks_path}/common/src/bgtaskmgr_inner_errors.cpp",
     "napi/src/bg_continuous_task_napi_module.cpp",
     "napi/src/cancel_suspend_delay.cpp",
     "napi/src/common.cpp",
