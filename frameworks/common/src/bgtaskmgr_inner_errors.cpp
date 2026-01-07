@@ -189,5 +189,5 @@ void BusinessErrorMap::GetParamErrMap(std::unordered_map<int32_t, std::string>& 
 {
     errMap = PARAM_ERRCODE_MSG_MAP;
 }
-}
-}
+}  // namespace BackgroundTaskMgr
+}  // namespace OHOS
