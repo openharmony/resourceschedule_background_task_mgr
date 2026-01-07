@@ -3663,8 +3663,9 @@ ErrCode BgContinuousTaskMgr::GetBackgroundTaskState(std::shared_ptr<BackgroundTa
 bool BgContinuousTaskMgr::CheckApplySpecial(const std::string &bundleName, int32_t &userId)
 {
     AppExecFwk::BundleInfo bundleInfo;
-    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
-        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId)) {
+    int32_t flag = static_cast<int32_t>(AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES) |
+        static_cast<int32_t>(AppExecFwk::BundleFlag::GET_BUNDLE_WITH_REQUESTED_PERMISSION);
+    if (!BundleManagerHelper::GetInstance()->GetBundleInfoByFlags(bundleName, flag, bundleInfo, userId)) {
         BGTASK_LOGW("get bundleName bundleInfo: %{public}s bundle info failed", bundleName.c_str());
         return false;
     }
@@ -3672,8 +3673,12 @@ bool BgContinuousTaskMgr::CheckApplySpecial(const std::string &bundleName, int32
         // 不支持1：没权限、是系统应用
         int32_t permissionSize = std::count(bundleInfo.reqPermissions.begin(), bundleInfo.reqPermissions.end(),
             BGMODE_PERMISSION_SYSTEM);
-        if (permissionSize == 0 || bundleInfo.applicationInfo.isSystemApp) {
-            BGTASK_LOGW("bundleName: %{public}s not exempted, not have acl or is system app.", bundleName.c_str());
+        if (permissionSize == 0) {
+            BGTASK_LOGW("bundleName: %{public}s not exempted, not have acl.", bundleName.c_str());
+            return false;
+        }
+        if (bundleInfo.applicationInfo.isSystemApp) {
+            BGTASK_LOGW("bundleName: %{public}s is system app not exempted.", bundleName.c_str());
             return false;
         }
     }
