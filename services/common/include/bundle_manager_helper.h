@@ -41,6 +41,8 @@ public:
         AppExecFwk::AbilityInfo &abilityInfo);
     bool GetBundleResourceInfo(const std::string &bundleName, const AppExecFwk::ResourceFlag flags,
         AppExecFwk::BundleResourceInfo &bundleResourceInfo);
+    bool GetBundleInfoByFlags(const std::string &bundleName, int32_t flags,
+        AppExecFwk::BundleInfo &bundleInfo, int32_t userId);
 
 private:
     bool Connect();
