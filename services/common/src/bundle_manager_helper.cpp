@@ -141,6 +141,19 @@ bool BundleManagerHelper::GetBundleResourceInfo(const std::string &bundleName, c
     return true;
 }
 
+bool BundleManagerHelper::GetBundleInfoByFlags(const std::string &bundleName, int32_t flags,
+    AppExecFwk::BundleInfo &bundleInfo, int32_t userId)
+{
+    std::lock_guard<std::mutex> lock(connectionMutex_);
+
+    Connect();
+
+    if (bundleMgr_ != nullptr && bundleMgr_->GetBundleInfo(bundleName, flags, bundleInfo, userId)) {
+        return true;
+    }
+    return false;
+}
+
 bool BundleManagerHelper::Connect()
 {
     if (bundleMgr_ != nullptr) {
