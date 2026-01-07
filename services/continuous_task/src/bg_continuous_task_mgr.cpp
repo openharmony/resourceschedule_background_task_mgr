@@ -3701,7 +3701,7 @@ ErrCode BgContinuousTaskMgr::GetBackgroundTaskStateInner(std::shared_ptr<Backgro
 {
     std::string bundleName = taskParam->GetBundleName();
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(bundleName)) {
-        BGTASK_LOGW("GetBackgroundTaskState bundleName: %{public}s is malicious app." bundleName.c_str());
+        BGTASK_LOGW("GetBackgroundTaskState bundleName: %{public}s is malicious app.", bundleName.c_str());
         authResult = static_cast<uint32_t>(UserAuthResult::NOT_SUPPORTED);
         return ERR_OK;
     }
