@@ -24,6 +24,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
+static constexpr char BGMODE_PERMISSION_SYSTEM[] = "ohos.permission.KEEP_BACKGROUND_RUNNING_SYSTEM";
 static constexpr uint32_t ALL_NEED_CHECK_BGMODE = 62;
 static constexpr uint64_t NO_SYSTEM_APP_TOKEN_ID = -100;
 std::shared_ptr<IBundleManagerHelper> bundleManagerHelperMock;
@@ -96,6 +97,28 @@ bool BundleManagerHelper::GetBundleInfo(const std::string &bundleName, const App
     bundleInfo.abilityInfos.emplace_back(abilityInfo);
     bundleInfo.name = TEST_DEFAULT_BUNDLE;
     bundleInfo.appIndex = 1;
+    return true;
+}
+
+bool BundleManagerHelper::GetBundleInfoByFlags(const std::string &bundleName, int32_t flags,
+    AppExecFwk::BundleInfo &bundleInfo, int32_t userId)
+{
+    if (bundleName == "false-test") {
+        return false;
+    }
+    if (bundleName == "empty-info") {
+        AppExecFwk::AbilityInfo abilityInfo;
+        abilityInfo.backgroundModes = 0;
+        bundleInfo.abilityInfos.emplace_back(abilityInfo);
+        return true;
+    }
+    AppExecFwk::AbilityInfo abilityInfo;
+    abilityInfo.name = "ability1";
+    abilityInfo.backgroundModes = ALL_NEED_CHECK_BGMODE;
+    bundleInfo.abilityInfos.emplace_back(abilityInfo);
+    bundleInfo.name = TEST_DEFAULT_BUNDLE;
+    bundleInfo.appIndex = 1;
+    bundleInfo.reqPermissions.emplace_back(BGMODE_PERMISSION_SYSTEM);
     return true;
 }
 
