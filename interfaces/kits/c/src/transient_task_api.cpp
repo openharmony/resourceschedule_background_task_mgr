@@ -116,9 +116,9 @@ void Callback::OnExpired()
         return;
     }
     auto callback = findCallback->second;
-    callbackInstances_.erase(findCallback);
     LOGI("call native callback");
-    findCallback->second->ffiCallback_();
+    callback->ffiCallback_();
+    callbackInstances_.erase(findCallback);
     LOGI("OnExpired end");
 }
 
