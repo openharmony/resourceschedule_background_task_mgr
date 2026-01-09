@@ -3660,24 +3660,66 @@ ErrCode BgContinuousTaskMgr::GetBackgroundTaskState(std::shared_ptr<BackgroundTa
     return result;
 }
 
+bool BgContinuousTaskMgr::CheckApplySpecial(const std::string &bundleName, int32_t &userId)
+{
+    AppExecFwk::BundleInfo bundleInfo;
+    int32_t flag = static_cast<int32_t>(AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES) |
+        static_cast<int32_t>(AppExecFwk::BundleFlag::GET_BUNDLE_WITH_REQUESTED_PERMISSION);
+    if (!BundleManagerHelper::GetInstance()->GetBundleInfoByFlags(bundleName, flag, bundleInfo, userId)) {
+        BGTASK_LOGW("get bundleName bundleInfo: %{public}s bundle info failed", bundleName.c_str());
+        return false;
+    }
+    if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
+        // 不支持1：没权限、是系统应用
+        int32_t permissionSize = std::count(bundleInfo.reqPermissions.begin(), bundleInfo.reqPermissions.end(),
+            BGMODE_PERMISSION_SYSTEM);
+        if (permissionSize == 0) {
+            BGTASK_LOGW("bundleName: %{public}s not exempted, not have acl.", bundleName.c_str());
+            return false;
+        }
+        if (bundleInfo.applicationInfo.isSystemApp) {
+            BGTASK_LOGW("bundleName: %{public}s is system app not exempted.", bundleName.c_str());
+            return false;
+        }
+    }
+    // 不支持2：没有配置module
+    int32_t modeType = BG_MODE_INDEX_HEAD << (static_cast<int32_t>(BackgroundMode::SPECIAL_SCENARIO_PROCESSING) - 1);
+    for (auto abilityInfo : bundleInfo.abilityInfos) {
+        if (abilityInfo.backgroundModes != INVALID_BGMODE) {
+            if ((abilityInfo.backgroundModes & modeType) > 0) {
+                return true;
+            }
+        }
+    }
+    BGTASK_LOGW("bundleName: %{public}s not exempted, not config special mode type.", bundleName.c_str());
+    return false;
+}
+
+
 ErrCode BgContinuousTaskMgr::GetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam,
     uint32_t &authResult)
 {
-    int32_t userId = taskParam->GetUserId();
     std::string bundleName = taskParam->GetBundleName();
+    if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(bundleName)) {
+        BGTASK_LOGW("GetBackgroundTaskState bundleName: %{public}s is malicious app.", bundleName.c_str());
+        authResult = static_cast<uint32_t>(UserAuthResult::NOT_SUPPORTED);
+        return ERR_OK;
+    }
+    int32_t userId = taskParam->GetUserId();
     int32_t appIndex = taskParam->GetAppIndex();
-    BGTASK_LOGI("GetBackgroundTaskStateInner bundleName: %{public}s, appIndex: %{public}d",
-        bundleName.c_str(), appIndex);
     auto findRecord = [userId, bundleName, appIndex](const auto &target) {
         return userId == target.second->GetUserId() && appIndex == target.second->GetAppIndex() &&
             bundleName == target.second->GetBundleName();
     };
     auto findRecordIter = find_if(bannerNotificationRecord_.begin(), bannerNotificationRecord_.end(), findRecord);
     if (findRecordIter == bannerNotificationRecord_.end()) {
-        return ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD;
-    } else {
-        authResult = static_cast<uint32_t>(findRecordIter->second->GetAuthResult());
+        authResult = static_cast<uint32_t>(UserAuthResult::NOT_DETERMINED);
+        if (!CheckApplySpecial(bundleName, userId)) {
+            authResult = static_cast<uint32_t>(UserAuthResult::NOT_SUPPORTED);
+        }
+        return ERR_OK;
     }
+    authResult = static_cast<uint32_t>(findRecordIter->second->GetAuthResult());
     return ERR_OK;
 }
 

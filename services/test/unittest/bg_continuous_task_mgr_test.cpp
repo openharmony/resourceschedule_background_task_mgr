@@ -2225,8 +2225,7 @@ HWTEST_F(BgContinuousTaskMgrTest, GetBackgroundTaskState_001, TestSize.Level1)
     // 无对应记录时
     taskParam->SetBundleName("bundleName");
     bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
-    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundTaskState(taskParam, authResult),
-        ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD);
+    EXPECT_EQ(bgContinuousTaskMgr_->GetBackgroundTaskState(taskParam, authResult), ERR_OK);
     // 有记录时更新
     taskParam->SetUserAuthResult(static_cast<int32_t>(UserAuthResult::GRANTED_ALWAYS));
     bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
