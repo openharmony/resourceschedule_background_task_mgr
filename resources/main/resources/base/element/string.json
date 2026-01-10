@@ -71,6 +71,18 @@
             "name":"ohos_app_name",
             "value":"Continuous task notification prompt resource"
         },
+		{
+            "name":"NotificationServiceExtAbility_desc",
+            "value":"NotificationDialog"
+        },
+        {
+            "name":"NotificationServiceExtAbility_label",
+            "value":"NotificationDialog"
+        },
+        {
+            "name":"entry_desc",
+            "value":"description"
+        },
         {
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"Automatic car key functions will not work if you close this card.",
@@ -94,7 +106,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"Allow %s to perform long-running activities in the background?",
+            "value":"Allow %s to run in the background?",
             "attr":{
                 "priority":"LT"
             }
@@ -119,6 +131,22 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_not_allowe",
+            "value":"Not allowed"
+        },
+        {
+            "name":"dialog_title_meida_process",
+            "value":"Background activities are used for media file processing, such as audio and video production, exporting produced content, etc."
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"Background activities are used to project audio and video to other devices."
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"Background activities are used for various types of exercise such as running, walking, cycling, fitness training, swimming, skiing, etc."
         }
     ]
 }
