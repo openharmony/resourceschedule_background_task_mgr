@@ -133,11 +133,11 @@
             }
         },
         {
-            "name":"btn_not_allowe",
+            "name":"btn_not_allowed",
             "value":"Not allowed"
         },
         {
-            "name":"dialog_title_meida_process",
+            "name":"dialog_title_media_process",
             "value":"Background activities are used for media file processing, such as audio and video production, exporting produced content, etc."
         },
         {
