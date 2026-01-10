@@ -143,7 +143,7 @@ enum ParamErr: int32_t {
     ERR_ISPROCESS_NULL_OR_TYPE_ERR,
 };
 
-calss BusinessErrorMap {
+class BusinessErrorMap {
 public:
     static void GetSaErrMsg(int32_t errCode);
     static void GetParamErrMsg(int32_t errCode);
