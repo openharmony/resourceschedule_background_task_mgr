@@ -24,14 +24,14 @@ std::string Common::FindErrMsg(const int32_t errCode)
     if (errCode == ERR_OK) {
         return "";
     }
-    std::string errMsg = BusinessErrorMap::GetSaErrMap(errCode);
+    std::string errMsg = BusinessErrorMap::GetSaErrMsg(errCode);
     if (errMsg != "") {
         std::string errMessage = "BusinessError ";
         int32_t errCodeInfo = FindErrCode(errCode);
         errMessage.append(std::to_string(errCodeInfo)).append(": ").append(errMsg);
         return errMessage;
     }
-    errMsg = BusinessErrorMap::GetParamErrMap(errCode);
+    errMsg = BusinessErrorMap::GetParamErrMsg(errCode);
     if (errMsg != "") {
         std::string errMessage = "BusinessError 401: Parameter error. ";
         errMessage.append(errMsg);
@@ -42,7 +42,7 @@ std::string Common::FindErrMsg(const int32_t errCode)
 
 int32_t Common::FindErrCode(const int32_t errCodeIn)
 {
-    if (BusinessErrorMap::GetParamErrMap(errCodeIn) != "") {
+    if (BusinessErrorMap::GetParamErrMsg(errCodeIn) != "") {
         return ERR_BGTASK_INVALID_PARAM;
     }
     return errCodeIn > THRESHOLD ? errCodeIn / OFFSET : errCodeIn;

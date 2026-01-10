@@ -306,7 +306,7 @@ bool Common::HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow)
     if (!isThrow || errCode == ERR_OK) {
         return false;
     }
-    std::string errMsg = BusinessErrorMap::GetParamErrMap(errCode);
+    std::string errMsg = BusinessErrorMap::GetParamErrMsg(errCode);
     if (errMsg != "") {
         std::string errMessage = "BussinessError 401: Parameter error. ";
         errMessage.append(iter->second);
@@ -321,14 +321,14 @@ std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
     if (errCode == ERR_OK) {
         return "";
     }
-    std::string errMsg = BusinessErrorMap::GetSaErrMap(errCode);
+    std::string errMsg = BusinessErrorMap::GetSaErrMsg(errCode);
     if (errMsg != "") {
         std::string errMessage = "BussinessError ";
         int32_t errCodeInfo = FindErrCode(env, errCode);
         errMessage.append(std::to_string(errCodeInfo)).append(": ").append(errMsg);
         return errMessage;
     }
-    errMsg = BusinessErrorMap::GetParamErrMap(errCode);
+    errMsg = BusinessErrorMap::GetParamErrMsg(errCode);
     if (errMsg != "") {
         std::string errMessage = "BussinessError 401: Parameter error. ";
         errMessage.append(errMsg);
@@ -339,7 +339,7 @@ std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
 
 int32_t Common::FindErrCode(const napi_env &env, const int32_t errCodeIn)
 {
-    if (BusinessErrorMap::GetParamErrMap(errCode) != "") {
+    if (BusinessErrorMap::GetParamErrMsg(errCodeIn) != "") {
         return ERR_BGTASK_INVALID_PARAM;
     }
     return errCodeIn > THRESHOLD ? errCodeIn / OFFSET : errCodeIn;
