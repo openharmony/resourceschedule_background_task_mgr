@@ -306,10 +306,8 @@ bool Common::HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow)
     if (!isThrow || errCode == ERR_OK) {
         return false;
     }
-    std::unordered_map<int32_t, std::string> errMap;
-    BusinessErrorMap::GetParamErrMap(errMap);
-    auto iter = errMap.find(errCode);
-    if (iter != errMap.end()) {
+    std::string errMsg = BusinessErrorMap::GetParamErrMap(errCode);
+    if (errMsg != "") {
         std::string errMessage = "BussinessError 401: Parameter error. ";
         errMessage.append(iter->second);
         napi_throw_error(env, std::to_string(ERR_BGTASK_INVALID_PARAM).c_str(), errMessage.c_str());
@@ -323,20 +321,17 @@ std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
     if (errCode == ERR_OK) {
         return "";
     }
-    std::unordered_map<int32_t, std::string> errMap;
-    BusinessErrorMap::GetSaErrMap(errMap);
-    auto iter = errMap.find(errCode);
-    if (iter != errMap.end()) {
+    std::string errMsg = BusinessErrorMap::GetSaErrMap(errCode);
+    if (errMsg != "") {
         std::string errMessage = "BussinessError ";
         int32_t errCodeInfo = FindErrCode(env, errCode);
-        errMessage.append(std::to_string(errCodeInfo)).append(": ").append(iter->second);
+        errMessage.append(std::to_string(errCodeInfo)).append(": ").append(errMsg);
         return errMessage;
     }
-    BusinessErrorMap::GetParamErrMap(errMap);
-    iter = errMap.find(errCode);
-    if (iter != errMap.end()) {
+    errMsg = BusinessErrorMap::GetParamErrMap(errCode);
+    if (errMsg != "") {
         std::string errMessage = "BussinessError 401: Parameter error. ";
-        errMessage.append(iter->second);
+        errMessage.append(errMsg);
         return errMessage;
     }
     return "Inner error.";
@@ -344,10 +339,7 @@ std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
 
 int32_t Common::FindErrCode(const napi_env &env, const int32_t errCodeIn)
 {
-    std::unordered_map<int32_t, std::string> errMap;
-    BusinessErrorMap::GetParamErrMap(errMap);
-    auto iter = errMap.find(errCodeIn);
-    if (iter != errMap.end()) {
+    if (BusinessErrorMap::GetParamErrMap(errCode) != "") {
         return ERR_BGTASK_INVALID_PARAM;
     }
     return errCodeIn > THRESHOLD ? errCodeIn / OFFSET : errCodeIn;

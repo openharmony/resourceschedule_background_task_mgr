@@ -143,10 +143,10 @@ enum ParamErr: int32_t {
     ERR_ISPROCESS_NULL_OR_TYPE_ERR,
 };
 
-class BusinessErrorMap {
+calss BusinessErrorMap {
 public:
-    static void GetSaErrMap(std::unordered_map<int32_t, std::string>& errMap);
-    static void GetParamErrMap(std::unordered_map<int32_t, std::string>& errMap);
+    static void GetSaErrMsg(int32_t errCode);
+    static void GetParamErrMsg(int32_t errCode);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

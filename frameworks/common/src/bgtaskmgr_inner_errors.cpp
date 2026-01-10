@@ -180,14 +180,22 @@ const std::unordered_map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
 };
 }
 
-void BusinessErrorMap::GetSaErrMap(std::unordered_map<int32_t, std::string>& errMap)
+void BusinessErrorMap::GetSaErrMsg(int32_t errCode)
 {
-    errMap = SA_ERRCODE_MSG_MAP;
+    auto iter = SA_ERRCODE_MSG_MAP.find(errCode);
+    if (iter != SA_ERRCODE_MSG_MAP.end()) {
+        return iter->second;
+    }
+    return "";
 }
 
-void BusinessErrorMap::GetParamErrMap(std::unordered_map<int32_t, std::string>& errMap)
+void BusinessErrorMap::GetParamErrMsg(int32_t errCode)
 {
-    errMap = PARAM_ERRCODE_MSG_MAP;
+    auto iter = PARAM_ERRCODE_MSG_MAP.find(errCode);
+    if (iter != PARAM_ERRCODE_MSG_MAP.end()) {
+        return iter->second;
+    }
+    return "";
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

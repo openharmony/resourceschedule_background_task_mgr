@@ -24,20 +24,17 @@ std::string Common::FindErrMsg(const int32_t errCode)
     if (errCode == ERR_OK) {
         return "";
     }
-    std::unordered_map<int32_t, std::string> errMap;
-    BusinessErrorMap::GetSaErrMap(errMap);
-    auto iter = errMap.find(errCode);
-    if (iter != errMap.end()) {
+    std::string errMsg = BusinessErrorMap::GetSaErrMap(errCode);
+    if (errMsg != "") {
         std::string errMessage = "BusinessError ";
         int32_t errCodeInfo = FindErrCode(errCode);
-        errMessage.append(std::to_string(errCodeInfo)).append(": ").append(iter->second);
+        errMessage.append(std::to_string(errCodeInfo)).append(": ").append(errMsg);
         return errMessage;
     }
-    BusinessErrorMap::GetParamErrMap(errMap);
-    iter = errMap.find(errCode);
-    if (iter != errMap.end()) {
+    errMsg = BusinessErrorMap::GetParamErrMap(errCode);
+    if (errMsg != "") {
         std::string errMessage = "BusinessError 401: Parameter error. ";
-        errMessage.append(iter->second);
+        errMessage.append(errMsg);
         return errMessage;
     }
     return "Inner error.";
@@ -45,10 +42,7 @@ std::string Common::FindErrMsg(const int32_t errCode)
 
 int32_t Common::FindErrCode(const int32_t errCodeIn)
 {
-    std::unordered_map<int32_t, std::string> errMap;
-    BusinessErrorMap::GetParamErrMap(errMap);
-    auto iter = errMap.find(errCodeIn);
-    if (iter != errMap.end()) {
+    if (BusinessErrorMap::GetParamErrMap(errCodeIn) != "") {
         return ERR_BGTASK_INVALID_PARAM;
     }
     return errCodeIn > THRESHOLD ? errCodeIn / OFFSET : errCodeIn;
