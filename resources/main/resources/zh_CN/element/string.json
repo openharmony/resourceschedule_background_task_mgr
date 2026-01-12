@@ -121,11 +121,11 @@
             }
         },
         {
-            "name":"btn_not_allowe",
+            "name":"btn_not_allowed",
             "value":"不允许"
         },
         {
-            "name":"dialog_title_meida_process",
+            "name":"dialog_title_media_process",
             "value":"后台活动用于媒体文件处理，如音视频制作、导出制作内容等。"
         },
         {
