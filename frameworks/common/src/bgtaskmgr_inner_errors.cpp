@@ -180,7 +180,7 @@ const std::unordered_map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
 };
 }
 
-void BusinessErrorMap::GetSaErrMsg(int32_t errCode)
+static std::string BusinessErrorMap::GetSaErrMsg(int32_t errCode)
 {
     auto iter = SA_ERRCODE_MSG_MAP.find(errCode);
     if (iter != SA_ERRCODE_MSG_MAP.end()) {
@@ -189,7 +189,7 @@ void BusinessErrorMap::GetSaErrMsg(int32_t errCode)
     return "";
 }
 
-void BusinessErrorMap::GetParamErrMsg(int32_t errCode)
+static std::string BusinessErrorMap::GetParamErrMsg(int32_t errCode)
 {
     auto iter = PARAM_ERRCODE_MSG_MAP.find(errCode);
     if (iter != PARAM_ERRCODE_MSG_MAP.end()) {
