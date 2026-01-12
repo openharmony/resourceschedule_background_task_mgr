@@ -145,8 +145,8 @@ enum ParamErr: int32_t {
 
 class BusinessErrorMap {
 public:
-    static void GetSaErrMsg(int32_t errCode);
-    static void GetParamErrMsg(int32_t errCode);
+    static std::string GetSaErrMsg(int32_t errCode);
+    static std::string GetParamErrMsg(int32_t errCode);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
