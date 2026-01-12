@@ -3683,7 +3683,7 @@ bool BgContinuousTaskMgr::CheckApplySpecial(const std::string &bundleName, int32
         }
     }
     // 不支持2：没有配置module
-    int32_t modeType = BG_MODE_INDEX_HEAD << (static_cast<int32_t>(BackgroundMode::SPECIAL_SCENARIO_PROCESSING) - 1);
+    uint32_t modeType = BG_MODE_INDEX_HEAD << (static_cast<uint32_t>(BackgroundMode::SPECIAL_SCENARIO_PROCESSING) - 1);
     for (auto abilityInfo : bundleInfo.abilityInfos) {
         if (abilityInfo.backgroundModes != INVALID_BGMODE) {
             if ((abilityInfo.backgroundModes & modeType) > 0) {

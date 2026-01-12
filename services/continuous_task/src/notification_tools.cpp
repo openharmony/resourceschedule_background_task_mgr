@@ -434,6 +434,12 @@ WEAK_FUNC ErrCode NotificationTools::PublishBannerNotification(
         BGTASK_LOGE("create banner notification action button fail");
         return ERR_BGTASK_NOTIFICATION_ERR;
     }
+    std::string allowAllowed = bannerNotificaitonBtn.at(BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED); 
+     if (!SetActionButton(bannerNotification, allowAllowed, notificationRequest, 
+         BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED, bannerNotificationLabel)) { 
+         BGTASK_LOGE("create banner notification action button fail"); 
+         return ERR_BGTASK_NOTIFICATION_ERR; 
+     }
     ErrCode ret = Notification::NotificationHelper::PublishNotification(notificationRequest);
     if (ret != ERR_OK) {
         BGTASK_LOGE("publish banner notificaiton, errcode: %{public}d", ret);
@@ -472,6 +478,12 @@ WEAK_FUNC void NotificationTools::RefreshBannerNotifications(const std::vector<s
             BGTASK_LOGE("create banner notification action button fail");
             return;
         }
+        std::string allowAllowed = bannerNotificaitonBtn.at(BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED); 
+         if (!SetActionButton(bannerNotification, allowAllowed, *var, 
+             BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED, label)) { 
+             BGTASK_LOGE("create banner notification action button fail"); 
+             return; 
+         }
         if (Notification::NotificationHelper::PublishNotification(*var) != ERR_OK) {
             BGTASK_LOGE("refresh notification error");
         }
