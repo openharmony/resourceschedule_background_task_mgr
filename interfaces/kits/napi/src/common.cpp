@@ -309,7 +309,7 @@ bool Common::HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow)
     std::string errMsg = BusinessErrorMap::GetParamErrMsg(errCode);
     if (errMsg != "") {
         std::string errMessage = "BussinessError 401: Parameter error. ";
-        errMessage.append(iter->second);
+        errMessage.append(errMsg);
         napi_throw_error(env, std::to_string(ERR_BGTASK_INVALID_PARAM).c_str(), errMessage.c_str());
         return true;
     }
