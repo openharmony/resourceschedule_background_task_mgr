@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,11 +30,19 @@
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
 #include "resources_subscriber_mgr.h"
+#include "res_sched_signature_validator.h"
 #include "system_ability_definition.h"
 
 using namespace testing::ext;
 
 namespace OHOS {
+ResourceSchedule::SignatureCheckResult ResourceSchedule::ResSchedSignatureValidator::CheckSignatureByBundleName(
+    const std::string &bundle)
+{
+    return bundle == "invalid_bundle" ? ResourceSchedule::SignatureCheckResult::ERR_SIGNATURE_NO_MATCH
+                                      : ResourceSchedule::SignatureCheckResult::CHECK_OK;
+}
+
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t SLEEP_TIME = 500;
@@ -756,6 +764,40 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_052, TestSize.Level1)
 }
 
 /**
+ * @tc.name: IsTransientTaskExemptedQuatoApp_CheckSignature
+ * @tc.desc: test IsTransientTaskExemptedQuatoApp.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskManagerUnitTest, IsTransientTaskExemptedQuatoApp_CheckSignature, TestSize.Level1)
+{
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.clear();
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskCloudExemptedQuatoList_.clear();
+    std::string normalBundle = "normal_bundle";
+    std::string invalidBundle = "invalid_bundle";
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.insert(normalBundle);
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.insert(invalidBundle);
+    EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsTransientTaskExemptedQuatoApp(normalBundle));
+    EXPECT_FALSE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsTransientTaskExemptedQuatoApp(invalidBundle));
+}
+
+/**
+ * @tc.name: IsTransientTaskExemptedQuatoApp_Cloud_CheckSignature
+ * @tc.desc: test IsTransientTaskExemptedQuatoApp for cloud push.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskManagerUnitTest, IsTransientTaskExemptedQuatoApp_Cloud_CheckSignature, TestSize.Level1)
+{
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.clear();
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskCloudExemptedQuatoList_.clear();
+    std::string normalBundle = "normal_bundle";
+    std::string invalidBundle = "invalid_bundle";
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskCloudExemptedQuatoList_.insert(normalBundle);
+    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskCloudExemptedQuatoList_.insert(invalidBundle);
+    EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsTransientTaskExemptedQuatoApp(normalBundle));
+    EXPECT_FALSE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsTransientTaskExemptedQuatoApp(invalidBundle));
+}
+
+/**
  * @tc.name: BgTaskManagerUnitTest_053
  * @tc.desc: test BgtaskConfig GetTransientTaskExemptedQuato.
  * @tc.type: FUNC
@@ -841,6 +883,22 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_056, TestSize.Level1)
 }
 
 /**
+ * @tc.name: IsTaskKeepingExemptedQuatoApp_CheckSignature
+ * @tc.desc: test IsTaskKeepingExemptedQuatoApp.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskManagerUnitTest, IsTaskKeepingExemptedQuatoApp_CheckSignature, TestSize.Level1)
+{
+    DelayedSingleton<BgtaskConfig>::GetInstance()->taskKeepingExemptedQuatoList_.clear();
+    std::string normalBundle = "normal_bundle";
+    std::string invalidBundle = "invalid_bundle";
+    DelayedSingleton<BgtaskConfig>::GetInstance()->taskKeepingExemptedQuatoList_.insert(normalBundle);
+    DelayedSingleton<BgtaskConfig>::GetInstance()->taskKeepingExemptedQuatoList_.insert(invalidBundle);
+    EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsTaskKeepingExemptedQuatoApp(normalBundle));
+    EXPECT_FALSE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsTaskKeepingExemptedQuatoApp(invalidBundle));
+}
+
+/**
  * @tc.name: BgTaskManagerUnitTest_057
  * @tc.desc: test SetMaliciousAppConfig.
  * @tc.type: FUNC
@@ -852,6 +910,40 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_057, TestSize.Level1)
     maliciousAppSet.insert("com.test.app");
     DelayedSingleton<BgtaskConfig>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet);
     EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.empty(), false);
+}
+
+/**
+ * @tc.name: IsMaliciousAppConfig_CheckSignature
+ * @tc.desc: test IsMaliciousAppConfig.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskManagerUnitTest, IsMaliciousAppConfig_CheckSignature, TestSize.Level1)
+{
+    DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.clear();
+    std::string normalBundle = "normal_bundle";
+    std::string invalidBundle = "invalid_bundle";
+    DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.insert(normalBundle);
+    DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.insert(invalidBundle);
+    EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(normalBundle));
+    EXPECT_FALSE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(invalidBundle));
+}
+
+/**
+ * @tc.name: ParseBundleSignature
+ * @tc.desc: test ParseBundleSignature.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskManagerUnitTest, ParseBundleSignature, TestSize.Level1)
+{
+    nlohmann::json jsonObj;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseBundleSignature(jsonObj);
+
+    nlohmann::json bundleSignature = nlohmann::json::object();
+    bundleSignature["bundle1"] = "signature1";
+    bundleSignature["bundle2"] = "signature2";
+    jsonObj["bundle_signature"] = bundleSignature;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseBundleSignature(jsonObj);
+    EXPECT_FALSE(DelayedSingleton<BgtaskConfig>::GetInstance()->CheckSignature("invalid_bundle"));
 }
 
 /**
@@ -990,6 +1082,22 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_063, TestSize.Level1)
     cpuLevel = 3;
     EXPECT_FALSE(configFileInfo.CheckCpuLevel("bundleName.test", cpuLevel));
     EXPECT_TRUE(configFileInfo.CheckCpuLevel("bundleName.test", 1));
+}
+
+/**
+ * @tc.name: IsSpecialExemptedQuatoApp_CheckSignature
+ * @tc.desc: test IsSpecialExemptedQuatoApp.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskManagerUnitTest, IsSpecialExemptedQuatoApp_CheckSignature, TestSize.Level1)
+{
+    DelayedSingleton<BgtaskConfig>::GetInstance()->specialExemptedQuatoList_.clear();
+    std::string normalBundle = "normal_bundle";
+    std::string invalidBundle = "invalid_bundle";
+    DelayedSingleton<BgtaskConfig>::GetInstance()->specialExemptedQuatoList_.insert(normalBundle);
+    DelayedSingleton<BgtaskConfig>::GetInstance()->specialExemptedQuatoList_.insert(invalidBundle);
+    EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(normalBundle));
+    EXPECT_FALSE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(invalidBundle));
 }
 
 /**

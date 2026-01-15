@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 #include "bgtask_config.h"
 #include "data_storage_helper.h"
+#include "res_sched_signature_validator.h"
 #include "bgtaskmgr_log_wrapper.h"
 
 #ifdef BGTASK_MGR_UNIT_TEST
@@ -35,6 +36,7 @@ const std::string MALICIOUS_APP_BLOCKLIST = "malicious_app_blocklist";
 const std::string TRANSIENT_EXEMPTED_QUOTA = "transient_exempted_quota";
 const std::string TRANSIENT_ERR_DELAYED_FROZEN_TIME = "transient_err_delayed_frozen_time";
 const std::string CONTINUOUS_SPECIAL_EXEMPTED_LIST = "special_exempted_list";
+const std::string BUNDLE_SIGNATURE = "bundle_signature";
 
 const std::string BACKGROUND_TASK_CONFIG_FILE = "etc/backgroundtask/config.json";
 const std::string CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS = "cpu_efficiency_resource_allow_apply_bundle_infos";
@@ -138,9 +140,12 @@ bool BgtaskConfig::SetCloudConfigParam(const nlohmann::json &jsonObj)
         return false;
     }
     nlohmann::json params = jsonObj[CONFIG_JSON_INDEX_TOP];
-    std::lock_guard<std::mutex> lock(configMutex_);
-    SetTransientTaskParam(params);
-    SetContinuousTaskParam(params);
+    {
+        std::lock_guard<std::mutex> lock(configMutex_);
+        SetTransientTaskParam(params);
+        SetContinuousTaskParam(params);
+    }
+    ParseBundleSignature(params);
     return true;
 }
 
@@ -221,17 +226,27 @@ void BgtaskConfig::ParseTransientTaskExemptedQuato(const nlohmann::json &jsonObj
 
 bool BgtaskConfig::IsTransientTaskExemptedQuatoApp(const std::string &bundleName)
 {
-    std::lock_guard<std::mutex> lock(configMutex_);
-    if (transientTaskCloudExemptedQuatoList_.size() > 0) {
-        return transientTaskCloudExemptedQuatoList_.count(bundleName) > 0;
+    bool isExempt = false;
+    {
+        std::lock_guard<std::mutex> lock(configMutex_);
+        if (transientTaskCloudExemptedQuatoList_.size() > 0) {
+            isExempt = transientTaskCloudExemptedQuatoList_.count(bundleName) > 0;
+        } else {
+            isExempt = transientTaskExemptedQuatoList_.count(bundleName) > 0;
+        }
     }
-    return transientTaskExemptedQuatoList_.count(bundleName) > 0;
+    return isExempt && CheckSignature(bundleName);
 }
 
 bool BgtaskConfig::IsTaskKeepingExemptedQuatoApp(const std::string &bundleName)
 {
-    std::lock_guard<std::mutex> lock(configMutex_);
-    return taskKeepingExemptedQuatoList_.count(bundleName) > 0;
+    {
+        std::lock_guard<std::mutex> lock(configMutex_);
+        if (!taskKeepingExemptedQuatoList_.count(bundleName)) {
+            return false;
+        }
+    }
+    return CheckSignature(bundleName);
 }
 
 int32_t BgtaskConfig::GetTransientTaskExemptedQuato()
@@ -260,8 +275,13 @@ void BgtaskConfig::SetMaliciousAppConfig(const std::set<std::string> &maliciousA
 
 bool BgtaskConfig::IsMaliciousAppConfig(const std::string &bundleName)
 {
-    std::lock_guard<std::mutex> lock(configMutex_);
-    return maliciousAppBlocklist_.count(bundleName) > 0;
+    {
+        std::lock_guard<std::mutex> lock(configMutex_);
+        if (!maliciousAppBlocklist_.count(bundleName)) {
+            return false;
+        }
+    }
+    return CheckSignature(bundleName);
 }
 
 void BgtaskConfig::LoadBgTaskConfigFile()
@@ -274,6 +294,29 @@ void BgtaskConfig::LoadBgTaskConfigFile()
         return;
     }
     ParseCpuEfficiencyResourceApplyBundleInfos(jsonObj);
+}
+
+void BgtaskConfig::ParseBundleSignature(const nlohmann::json &jsonObj)
+{
+    if (!jsonObj.contains(BUNDLE_SIGNATURE) || !jsonObj[BUNDLE_SIGNATURE].is_object()) {
+        BGTASK_LOGE("no contain bundle.");
+        return;
+    }
+    nlohmann::json bundleList = jsonObj[BUNDLE_SIGNATURE];
+    std::unordered_map<std::string, std::string> configs;
+    for (const auto &info : bundleList.items()) {
+        if (info.value().is_string()) {
+            configs.emplace(info.key(), info.value().get<std::string>());
+        }
+    }
+    BGTASK_LOGI("bundle size:%{public}u", (uint32_t)configs.size());
+    ResourceSchedule::ResSchedSignatureValidator::GetInstance().AddSignatureConfig(configs);
+}
+
+bool BgtaskConfig::CheckSignature(const std::string &bundlename) const
+{
+    return ResourceSchedule::ResSchedSignatureValidator::GetInstance().CheckSignatureByBundleName(bundlename) ==
+           ResourceSchedule::SignatureCheckResult::CHECK_OK;
 }
 
 void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::json &jsonObj)
@@ -356,8 +399,13 @@ void BgtaskConfig::SetSpecialExemptedProcess(const std::set<std::string> &bundle
 
 bool BgtaskConfig::IsSpecialExemptedQuatoApp(const std::string &bundleName)
 {
-    std::lock_guard<std::mutex> lock(configMutex_);
-    return specialExemptedQuatoList_.count(bundleName) > 0;
+    {
+        std::lock_guard<std::mutex> lock(configMutex_);
+        if (!specialExemptedQuatoList_.count(bundleName)) {
+            return false;
+        }
+    }
+    return CheckSignature(bundleName);
 }
 }
 }
