@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -401,10 +401,13 @@ std::string NotificationTools::CreateBannerNotificationLabel(const std::string &
 }
 
 WEAK_FUNC ErrCode NotificationTools::PublishBannerNotification(
-    std::shared_ptr<BannerNotificationRecord> bannerNotification,
-    const std::string &prompt, int32_t serviceUid,
+    std::shared_ptr<BannerNotificationRecord> bannerNotification, const std::string &prompt, int32_t serviceUid,
     const std::vector<std::string> &bannerNotificaitonBtn)
 {
+    if (BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME >= bannerNotificaitonBtn.size() ||
+        BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED >= bannerNotificaitonBtn.size()) {
+        return ERR_BGTASK_NOTIFICATION_ERR;
+    }
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     Notification::NotificationRequest notificationRequest;
     notificationRequest.SetCreatorUid(serviceUid);
@@ -414,8 +417,7 @@ WEAK_FUNC ErrCode NotificationTools::PublishBannerNotification(
     notificationRequest.SetCreatorUserId(userId);
     notificationRequest.SetTapDismissed(false);
     notificationRequest.SetSlotType(OHOS::Notification::NotificationConstant::SlotType::SOCIAL_COMMUNICATION);
-    int32_t uid = bannerNotification->GetUid();
-    notificationRequest.SetOwnerUid(uid);
+    notificationRequest.SetOwnerUid(bannerNotification->GetUid());
     notificationRequest.SetNotificationId(++notificationIdIndex_);
     notificationRequest.SetNotificationControlFlags(BANNER_NOTIFICATION_CONTROL_FLAG);
     notificationRequest.SetBadgeIconStyle(Notification::NotificationRequest::BadgeStyle::LITTLE);
@@ -434,6 +436,12 @@ WEAK_FUNC ErrCode NotificationTools::PublishBannerNotification(
         BGTASK_LOGE("create banner notification action button fail");
         return ERR_BGTASK_NOTIFICATION_ERR;
     }
+    std::string allowAllowed = bannerNotificaitonBtn.at(BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED);
+    if (!SetActionButton(bannerNotification, allowAllowed, notificationRequest,
+        BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED, bannerNotificationLabel)) {
+        BGTASK_LOGE("create banner notification action button fail");
+        return ERR_BGTASK_NOTIFICATION_ERR;
+    }
     ErrCode ret = Notification::NotificationHelper::PublishNotification(notificationRequest);
     if (ret != ERR_OK) {
         BGTASK_LOGE("publish banner notificaiton, errcode: %{public}d", ret);
@@ -449,6 +457,11 @@ WEAK_FUNC void NotificationTools::RefreshBannerNotifications(const std::vector<s
     const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos,
     const std::shared_ptr<BannerNotificationRecord> bannerNotification, int32_t serviceUid)
 {
+    if (BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME >= bannerNotificaitonBtn.size() ||
+        BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED >= bannerNotificaitonBtn.size()) {
+        BGTASK_LOGE("bannerNotificaitonBtn index fail.");
+        return;
+    }
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
     ErrCode ret = Notification::NotificationHelper::GetActiveNotifications(notificationRequests);
@@ -469,6 +482,12 @@ WEAK_FUNC void NotificationTools::RefreshBannerNotifications(const std::vector<s
         std::string allowTimeBtnName = bannerNotificaitonBtn.at(BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME);
         if (!SetActionButton(bannerNotification, allowTimeBtnName, *var,
             BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME, label)) {
+            BGTASK_LOGE("create banner notification action button fail");
+            return;
+        }
+        std::string allowAllowed = bannerNotificaitonBtn.at(BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED);
+        if (!SetActionButton(bannerNotification, allowAllowed, *var,
+            BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED, label)) {
             BGTASK_LOGE("create banner notification action button fail");
             return;
         }

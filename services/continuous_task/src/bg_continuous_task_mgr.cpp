@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -3683,7 +3683,7 @@ bool BgContinuousTaskMgr::CheckApplySpecial(const std::string &bundleName, int32
         }
     }
     // 不支持2：没有配置module
-    int32_t modeType = BG_MODE_INDEX_HEAD << (static_cast<int32_t>(BackgroundMode::SPECIAL_SCENARIO_PROCESSING) - 1);
+    uint32_t modeType = BG_MODE_INDEX_HEAD << (static_cast<uint32_t>(BackgroundMode::SPECIAL_SCENARIO_PROCESSING) - 1);
     for (auto abilityInfo : bundleInfo.abilityInfos) {
         if (abilityInfo.backgroundModes != INVALID_BGMODE) {
             if ((abilityInfo.backgroundModes & modeType) > 0) {
