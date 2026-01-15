@@ -406,7 +406,7 @@ WEAK_FUNC ErrCode NotificationTools::PublishBannerNotification(
 {
     if (BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME >= bannerNotificaitonBtn.size() ||
         BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED >= bannerNotificaitonBtn.size()) {
-       return ERR_BGTASK_NOTIFICATION_ERR; 
+        return ERR_BGTASK_NOTIFICATION_ERR;
     }
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     Notification::NotificationRequest notificationRequest;
@@ -460,7 +460,7 @@ WEAK_FUNC void NotificationTools::RefreshBannerNotifications(const std::vector<s
     if (BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME >= bannerNotificaitonBtn.size() ||
         BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED >= bannerNotificaitonBtn.size()) {
         BGTASK_LOGE("bannerNotificaitonBtn index fail.");
-        return; 
+        return;
     }
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
