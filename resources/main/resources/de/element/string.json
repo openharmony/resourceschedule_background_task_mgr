@@ -18,7 +18,7 @@
             "name":"ohos_bgmode_prompt_multidevice_connection",
             "value":"Eine geräteübergreifende Kooperationsaufgabe ist im Gange, durch das Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -32,7 +32,7 @@
             "name":"ohos_bgmode_prompt_location",
             "value":"Eine Positionierungsaufgabe ist im Gange, durch das Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,7 +60,7 @@
             "name":"ohos_bgmode_prompt_data_transfer",
             "value":"Eine Datenübertragungsaufgabe ist im Gange, durch das Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -100,7 +100,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
-            "value":"Eine Videoübertragungsaufgabe ist in Arbeit. Durch Schließen dieser Benachrichtigung wird sie beendet.",
+            "value":"Eine Videoübertragungsaufgabe ist in Arbeit. Durch Schließen dieser Benachrichtigung \u200bwird sie beendet.",
             "attr":{
                 "priority":"LT"
             }
