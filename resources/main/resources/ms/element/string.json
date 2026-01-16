@@ -67,7 +67,7 @@
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"Fungsi kunci kereta automatik tidak akan berfungsi jika anda menutup kad ini.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
