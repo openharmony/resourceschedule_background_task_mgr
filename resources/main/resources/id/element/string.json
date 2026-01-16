@@ -32,7 +32,7 @@
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"Fungsi kunci mobil otomatis tidak akan berfungsi jika Anda menutup kartu ini.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,7 +60,7 @@
             "name":"ohos_bgmode_prompt_task_keeping",
             "value":"Tugas komputasi sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
