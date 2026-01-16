@@ -67,7 +67,7 @@
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"Funkcje automatycznego kluczyka samochodowego nie będą działać, jeśli zamkniesz tę kartę.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -100,7 +100,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
-            "value":"Trwa emisja wideo. Zamknięcie tego powiadomienia spowoduje jej zakończenie.",
+            "value":"Trwa emisja wideo. Zamknięcie tego powiadomienia spowoduje zakończenie tego procesu.",
             "attr":{
                 "priority":"LT"
             }

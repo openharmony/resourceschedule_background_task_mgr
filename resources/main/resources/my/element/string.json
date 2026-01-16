@@ -32,7 +32,7 @@
             "name":"ohos_bgsubmode_prompt_car_key",
             "value":"ဤကတ်ကို ပိတ်လိုက်ပါက အော်တို ကားသော့ လုပ်ဆောင်မှုများက အလုပ်လုပ်မည် မဟုတ်ပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

@@ -66,7 +66,7 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
-            "value":"[TS_1135552]_A video broadcast task is in progress. Closing this notification will end it."
+            "value":"[TS_1135552]_A video casting task is in progress. Closing this notification will end it."
         },
         {
             "name":"ohos_bgsubmode_prompt_work_out",

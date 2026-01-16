@@ -74,35 +74,35 @@
             "name":"btn_allow_allowed",
             "value":"Luôn cho phép",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_allow_time",
             "value":"Chỉ cho phép lần này",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"Cho phép %s chạy các tác vụ kéo dài dưới nền?",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
             "value":"Một tác vụ xử lý nội dung đa phương tiện đang diễn ra. Đóng thông báo này sẽ kết thúc tác vụ đó.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
             "value":"Một tác vụ phát video đang diễn ra. Đóng thông báo này sẽ kết thúc tác vụ đó.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
