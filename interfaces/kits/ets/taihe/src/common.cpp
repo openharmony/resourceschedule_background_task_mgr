@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,17 +24,17 @@ std::string Common::FindErrMsg(const int32_t errCode)
     if (errCode == ERR_OK) {
         return "";
     }
-    auto iter = SA_ERRCODE_MSG_MAP.find(errCode);
-    if (iter != SA_ERRCODE_MSG_MAP.end()) {
+    std::string errMsg = BusinessErrorMap::GetSaErrMsg(errCode);
+    if (errMsg != "") {
         std::string errMessage = "BusinessError ";
         int32_t errCodeInfo = FindErrCode(errCode);
-        errMessage.append(std::to_string(errCodeInfo)).append(": ").append(iter->second);
+        errMessage.append(std::to_string(errCodeInfo)).append(": ").append(errMsg);
         return errMessage;
     }
-    iter = PARAM_ERRCODE_MSG_MAP.find(errCode);
-    if (iter != PARAM_ERRCODE_MSG_MAP.end()) {
+    errMsg = BusinessErrorMap::GetParamErrMsg(errCode);
+    if (errMsg != "") {
         std::string errMessage = "BusinessError 401: Parameter error. ";
-        errMessage.append(iter->second);
+        errMessage.append(errMsg);
         return errMessage;
     }
     return "Inner error.";
@@ -42,8 +42,7 @@ std::string Common::FindErrMsg(const int32_t errCode)
 
 int32_t Common::FindErrCode(const int32_t errCodeIn)
 {
-    auto iter = PARAM_ERRCODE_MSG_MAP.find(errCodeIn);
-    if (iter != PARAM_ERRCODE_MSG_MAP.end()) {
+    if (BusinessErrorMap::GetParamErrMsg(errCodeIn) != "") {
         return ERR_BGTASK_INVALID_PARAM;
     }
     return errCodeIn > THRESHOLD ? errCodeIn / OFFSET : errCodeIn;

@@ -306,10 +306,10 @@ bool Common::HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow)
     if (!isThrow || errCode == ERR_OK) {
         return false;
     }
-    auto iter = PARAM_ERRCODE_MSG_MAP.find(errCode);
-    if (iter != PARAM_ERRCODE_MSG_MAP.end()) {
+    std::string errMsg = BusinessErrorMap::GetParamErrMsg(errCode);
+    if (errMsg != "") {
         std::string errMessage = "BussinessError 401: Parameter error. ";
-        errMessage.append(iter->second);
+        errMessage.append(errMsg);
         napi_throw_error(env, std::to_string(ERR_BGTASK_INVALID_PARAM).c_str(), errMessage.c_str());
         return true;
     }
@@ -321,17 +321,17 @@ std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
     if (errCode == ERR_OK) {
         return "";
     }
-    auto iter = SA_ERRCODE_MSG_MAP.find(errCode);
-    if (iter != SA_ERRCODE_MSG_MAP.end()) {
+    std::string errMsg = BusinessErrorMap::GetSaErrMsg(errCode);
+    if (errMsg != "") {
         std::string errMessage = "BussinessError ";
         int32_t errCodeInfo = FindErrCode(env, errCode);
-        errMessage.append(std::to_string(errCodeInfo)).append(": ").append(iter->second);
+        errMessage.append(std::to_string(errCodeInfo)).append(": ").append(errMsg);
         return errMessage;
     }
-    iter = PARAM_ERRCODE_MSG_MAP.find(errCode);
-    if (iter != PARAM_ERRCODE_MSG_MAP.end()) {
+    errMsg = BusinessErrorMap::GetParamErrMsg(errCode);
+    if (errMsg != "") {
         std::string errMessage = "BussinessError 401: Parameter error. ";
-        errMessage.append(iter->second);
+        errMessage.append(errMsg);
         return errMessage;
     }
     return "Inner error.";
@@ -339,8 +339,7 @@ std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
 
 int32_t Common::FindErrCode(const napi_env &env, const int32_t errCodeIn)
 {
-    auto iter = PARAM_ERRCODE_MSG_MAP.find(errCodeIn);
-    if (iter != PARAM_ERRCODE_MSG_MAP.end()) {
+    if (BusinessErrorMap::GetParamErrMsg(errCodeIn) != "") {
         return ERR_BGTASK_INVALID_PARAM;
     }
     return errCodeIn > THRESHOLD ? errCodeIn / OFFSET : errCodeIn;
