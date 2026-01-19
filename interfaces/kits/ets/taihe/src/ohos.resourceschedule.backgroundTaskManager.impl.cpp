@@ -34,7 +34,6 @@
 #include "background_task_mode.h"
 #include "background_task_state_info.h"
 
-
 using namespace taihe;
 using namespace OHOS;
 using namespace ohos::resourceschedule::backgroundTaskManager;
