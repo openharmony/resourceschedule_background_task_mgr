@@ -997,5 +997,4 @@ TH_EXPORT_CPP_API_StopBackgroundRunningSync2(StopBackgroundRunningSync2);
 TH_EXPORT_CPP_API_SetBackgroundTaskState(SetBackgroundTaskState);
 TH_EXPORT_CPP_API_GetBackgroundTaskState(GetBackgroundTaskState);
 TH_EXPORT_CPP_API_ObtainAllContinuousTasksSync(ObtainAllContinuousTasksSync);
-TH_EXPORT_CPP_API_CreateContinuousTaskRequest(CreateContinuousTaskRequest);
 // NOLINTEND
