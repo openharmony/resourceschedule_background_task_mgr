@@ -169,7 +169,7 @@ WEAK_FUNC void NotificationTools::RefreshContinuousNotifications(
     ErrCode ret = Notification::NotificationHelper::GetActiveNotifications(notificationRequests);
     if (ret != ERR_OK) {
         BGTASK_LOGE("get all active notification fail!");
-        return ERR_BGTASK_CONTINUOUS_UPDATE_NOTIFICATION_FAIL;
+        return;
     }
     for (const Notification::NotificationRequest *var : notificationRequests) {
         std::string label = var->GetLabel();
