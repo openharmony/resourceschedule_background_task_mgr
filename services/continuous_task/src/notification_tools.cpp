@@ -161,8 +161,11 @@ WEAK_FUNC void NotificationTools::RefreshContinuousNotifications(
     const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos, int32_t serviceUid)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    if (newPromptInfos.empty()) {
+        BGTASK_LOGD("continuous task is not exist.");
+        return;
+    }
     std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
-    
     ErrCode ret = Notification::NotificationHelper::GetActiveNotifications(notificationRequests);
     if (ret != ERR_OK) {
         BGTASK_LOGE("get all active notification fail!");
