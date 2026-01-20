@@ -3805,6 +3805,10 @@ void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
     cachedBundleInfos_.clear();
     std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
     auto iter = continuousTaskInfosMap_.begin();
+    if (iter == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGD("continuous task is not exist.");
+        return;
+    }
     while (iter != continuousTaskInfosMap_.end()) {
         auto record = iter->second;
         if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
