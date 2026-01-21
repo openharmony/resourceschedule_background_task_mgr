@@ -162,7 +162,7 @@ WEAK_FUNC void NotificationTools::RefreshContinuousNotifications(
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     if (newPromptInfos.empty()) {
-        BGTASK_LOGD("newPromptInfos is empty.");
+        BGTASK_LOGI("newPromptInfos is empty.");
         return;
     }
     std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
