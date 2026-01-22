@@ -174,16 +174,21 @@ ErrCode DataStorageHelper::OnBackup(MessageParcel& data, MessageParcel& reply)
     std::string replyCode = SetReplyCode(EXTENSION_SUCCESS_CODE);
     FILE *file = fopen(AUTH_RECORD_FILE_PATH, "r");
     if (file == nullptr) {
-        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", TASK_RECORD_FILE_PATH, strerror(errno));
+        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
         replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
     }
-    UniqueFd fd(fileno(file));
+    UniqueFd fd(-1);
+    if (file != nullptr) {
+        fd = fileno(file);
+    }
     if (fd.Get() < 0) {
         BGTASK_LOGE("OnBackup open fail.");
         replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
     }
     if ((!reply.WriteFileDescriptor(fd)) || (!reply.WriteString(replyCode))) {
-        if (file != nullptr) fclose(file);
+        if (file != nullptr) {
+            fclose(file);
+        }
         BGTASK_LOGE("OnBackup fail: reply write fail!");
         return ERR_INVALID_OPERATION;
     }
@@ -234,6 +239,7 @@ bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
     size_t res = fwrite(authRecordStr.c_str(), 1, authRecordStr.length(), file);
     if (res != authRecordStr.length()) {
         BGTASK_LOGE("Fail to write file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
+        return false;
     }
     int closeResult = fclose(file);
     if (closeResult < 0) {
