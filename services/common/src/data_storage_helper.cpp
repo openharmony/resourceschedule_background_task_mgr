@@ -179,7 +179,7 @@ ErrCode DataStorageHelper::OnBackup(MessageParcel& data, MessageParcel& reply)
     }
     UniqueFd fd(-1);
     if (file != nullptr) {
-        fd = fileno(file);
+        fd = UniqueFd(fileno(file));
     }
     if (fd.Get() < 0) {
         BGTASK_LOGE("OnBackup open fail.");
