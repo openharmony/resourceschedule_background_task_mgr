@@ -171,20 +171,23 @@ ErrCode DataStorageHelper::RefreshAuthRecord(
 
 ErrCode DataStorageHelper::OnBackup(MessageParcel& data, MessageParcel& reply)
 {
-    UniqueFd fd(-1);
     std::string replyCode = SetReplyCode(EXTENSION_SUCCESS_CODE);
-
-    fd = UniqueFd(open(AUTH_RECORD_FILE_PATH, O_RDONLY));
+    FILE *file = fopen(AUTH_RECORD_FILE_PATH, "r");
+    if (file == nullptr) {
+        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", TASK_RECORD_FILE_PATH, strerror(errno));
+        replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
+    }
+    UniqueFd fd(fileno(file));
     if (fd.Get() < 0) {
         BGTASK_LOGE("OnBackup open fail.");
         replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
     }
     if ((!reply.WriteFileDescriptor(fd)) || (!reply.WriteString(replyCode))) {
-        close(fd.Release());
+        if (file != nullptr) fclose(file);
         BGTASK_LOGE("OnBackup fail: reply write fail!");
         return ERR_INVALID_OPERATION;
     }
-    close(fd.Release());
+    fclose(file);
     BGTASK_LOGI("OnBackup success!");
     return ERR_OK;
 }
@@ -217,17 +220,25 @@ bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
         BGTASK_LOGE("OnRestore fail: ReadFileDescriptor or fstat fail");
         return false;
     }
-    int destFd = open(AUTH_RECORD_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-    if (destFd < 0) {
-        BGTASK_LOGE("OnRestore open file fail.");
+    std::string authRecordStr;
+    authRecordStr.resize(statBuf.st_size);
+    if (read(fd, authRecordStr.data(), statBuf.st_size) != statBuf.st_size) {
+        BGTASK_LOGE("Read file failed");
         return false;
     }
-    if (sendfile(destFd, fd.Get(), nullptr, statBuf.st_size) < 0) {
-        BGTASK_LOGE("OnRestore srcFd sendfile(size: %{public}d) to destFd fail.", static_cast<int>(statBuf.st_size));
-        close(destFd);
+    FILE *file = fopen(AUTH_RECORD_FILE_PATH, "w+");
+    if (file == nullptr) {
+        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
         return false;
     }
-    close(destFd);
+    size_t res = fwrite(authRecordStr.c_str(), 1, authRecordStr.length(), file);
+    if (res != authRecordStr.length()) {
+        BGTASK_LOGE("Fail to write file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
+    }
+    int closeResult = fclose(file);
+    if (closeResult < 0) {
+        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
+    }
     return true;
 }
 
