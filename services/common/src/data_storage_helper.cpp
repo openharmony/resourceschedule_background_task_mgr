@@ -199,7 +199,7 @@ ErrCode DataStorageHelper::OnBackup(MessageParcel& data, MessageParcel& reply)
         BGTASK_LOGE("OnBackup fail: reply write fail!");
         return ERR_INVALID_OPERATION;
     }
-    int closeResult;
+    int closeResult = -1;
     if (file != nullptr) {
         closeResult = fclose(file);
     }
