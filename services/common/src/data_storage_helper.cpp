@@ -171,20 +171,42 @@ ErrCode DataStorageHelper::RefreshAuthRecord(
 
 ErrCode DataStorageHelper::OnBackup(MessageParcel& data, MessageParcel& reply)
 {
-    UniqueFd fd(-1);
     std::string replyCode = SetReplyCode(EXTENSION_SUCCESS_CODE);
-
-    fd = UniqueFd(open(AUTH_RECORD_FILE_PATH, O_RDONLY));
+    FILE *file = nullptr;
+    char tmpPath[PATH_MAX] = {0};
+    if (realpath(AUTH_RECORD_FILE_PATH, tmpPath) == nullptr) {
+        BGTASK_LOGE("realpath fail, errno: %{public}s", strerror(errno));
+        replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
+    } else {
+        file = fopen(tmpPath, "r");
+    }
+    if (file == nullptr) {
+        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
+        replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
+    }
+    UniqueFd fd(-1);
+    if (file != nullptr) {
+        fd = UniqueFd(fileno(file));
+    }
     if (fd.Get() < 0) {
         BGTASK_LOGE("OnBackup open fail.");
         replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
     }
     if ((!reply.WriteFileDescriptor(fd)) || (!reply.WriteString(replyCode))) {
-        close(fd.Release());
+        if (file != nullptr) {
+            fclose(file);
+        }
         BGTASK_LOGE("OnBackup fail: reply write fail!");
         return ERR_INVALID_OPERATION;
     }
-    close(fd.Release());
+    int closeResult = -1;
+    if (file != nullptr) {
+        closeResult = fclose(file);
+    }
+    if (closeResult < 0) {
+        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
+        return ERR_INVALID_OPERATION;
+    }
     BGTASK_LOGI("OnBackup success!");
     return ERR_OK;
 }
@@ -217,17 +239,33 @@ bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
         BGTASK_LOGE("OnRestore fail: ReadFileDescriptor or fstat fail");
         return false;
     }
-    int destFd = open(AUTH_RECORD_FILE_PATH, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-    if (destFd < 0) {
-        BGTASK_LOGE("OnRestore open file fail.");
+    std::string authRecordStr;
+    authRecordStr.resize(statBuf.st_size);
+    if (read(fd, authRecordStr.data(), statBuf.st_size) != statBuf.st_size) {
+        BGTASK_LOGE("Read file failed, errno: %{public}s", strerror(errno));
         return false;
     }
-    if (sendfile(destFd, fd.Get(), nullptr, statBuf.st_size) < 0) {
-        BGTASK_LOGE("OnRestore srcFd sendfile(size: %{public}d) to destFd fail.", static_cast<int>(statBuf.st_size));
-        close(destFd);
+    char tmpPath[PATH_MAX] = {0};
+    if (realpath(AUTH_RECORD_FILE_PATH, tmpPath) == nullptr) {
+        BGTASK_LOGE("realpath fail, errno: %{public}s", strerror(errno));
         return false;
     }
-    close(destFd);
+    FILE *file = fopen(tmpPath, "w+");
+    if (file == nullptr) {
+        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
+        return false;
+    }
+    size_t res = fwrite(authRecordStr.c_str(), 1, authRecordStr.length(), file);
+    if (res != authRecordStr.length()) {
+        BGTASK_LOGE("Fail to write file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
+        fclose(file);
+        return false;
+    }
+    int closeResult = fclose(file);
+    if (closeResult < 0) {
+        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
+        return false;
+    }
     return true;
 }
 
