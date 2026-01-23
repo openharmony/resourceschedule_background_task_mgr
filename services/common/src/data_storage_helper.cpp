@@ -199,8 +199,13 @@ ErrCode DataStorageHelper::OnBackup(MessageParcel& data, MessageParcel& reply)
         BGTASK_LOGE("OnBackup fail: reply write fail!");
         return ERR_INVALID_OPERATION;
     }
+    int closeResult;
     if (file != nullptr) {
-        fclose(file);
+        closeResult = fclose(file);
+    }
+    if (closeResult < 0) {
+        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
+        return ERR_INVALID_OPERATION;
     }
     BGTASK_LOGI("OnBackup success!");
     return ERR_OK;
@@ -256,7 +261,11 @@ bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
         fclose(file);
         return false;
     }
-    fclose(file);
+    int closeResult = fclose(file);
+    if (closeResult < 0) {
+        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
+        return false;
+    }
     return true;
 }
 
