@@ -172,9 +172,16 @@ ErrCode DataStorageHelper::RefreshAuthRecord(
 ErrCode DataStorageHelper::OnBackup(MessageParcel& data, MessageParcel& reply)
 {
     std::string replyCode = SetReplyCode(EXTENSION_SUCCESS_CODE);
-    FILE *file = fopen(AUTH_RECORD_FILE_PATH, "r");
+    FILE *file = nullptr;
+    char tmpPath[PATH_MAX] = {0};
+    if (realpath(AUTH_RECORD_FILE_PATH, tmpPath) == nullptr) {
+        BGTASK_LOGE("realpath fail, errno: %{public}s", strerror(errno));
+        replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
+    } else {
+        file = fopen(tmpPath, "r");
+    }
     if (file == nullptr) {
-        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
+        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
         replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
     }
     UniqueFd fd(-1);
@@ -231,19 +238,24 @@ bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
         BGTASK_LOGE("Read file failed");
         return false;
     }
-    FILE *file = fopen(AUTH_RECORD_FILE_PATH, "w+");
+    char tmpPath[PATH_MAX] = {0};
+    if (realpath(AUTH_RECORD_FILE_PATH, tmpPath) == nullptr) {
+        BGTASK_LOGE("realpath fail, errno: %{public}s", strerror(errno));
+        return false;
+    }
+    FILE *file = fopen(tmpPath, "w+");
     if (file == nullptr) {
-        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
+        BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
         return false;
     }
     size_t res = fwrite(authRecordStr.c_str(), 1, authRecordStr.length(), file);
     if (res != authRecordStr.length()) {
-        BGTASK_LOGE("Fail to write file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
+        BGTASK_LOGE("Fail to write file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
         return false;
     }
     int closeResult = fclose(file);
     if (closeResult < 0) {
-        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", AUTH_RECORD_FILE_PATH, strerror(errno));
+        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
     }
     return true;
 }
