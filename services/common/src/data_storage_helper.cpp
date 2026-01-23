@@ -242,7 +242,7 @@ bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
     std::string authRecordStr;
     authRecordStr.resize(statBuf.st_size);
     if (read(fd, authRecordStr.data(), statBuf.st_size) != statBuf.st_size) {
-        BGTASK_LOGE("Read file failed");
+        BGTASK_LOGE("Read file failed, errno: %{public}s", strerror(errno));
         return false;
     }
     char tmpPath[PATH_MAX] = {0};
