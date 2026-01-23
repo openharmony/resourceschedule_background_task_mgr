@@ -253,10 +253,7 @@ bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
         BGTASK_LOGE("Fail to write file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
         return false;
     }
-    int closeResult = fclose(file);
-    if (closeResult < 0) {
-        BGTASK_LOGE("Fail to close file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
-    }
+    fclose(file);
     return true;
 }
 
