@@ -729,7 +729,6 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_051, TestSize.Level1)
     DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.clear();
     DelayedSingleton<BgtaskConfig>::GetInstance()->isInit_ = false;
     DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
-    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.emplace("com.myapplication.demo");
     EXPECT_NE(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
 }
 

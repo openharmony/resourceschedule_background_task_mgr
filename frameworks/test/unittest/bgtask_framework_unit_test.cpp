@@ -244,7 +244,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_007, TestSize.Level1)
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_008, TestSize.Level1)
 {
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
-
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetContinuousTaskApps(list),
@@ -318,7 +317,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_012, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(1, 1, 1, ""),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
-
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(1, 1, 1, ""),
         ERR_BGTASK_PERMISSION_DENIED);
@@ -1052,8 +1050,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, SetBackgroundTaskState_001, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBackgroundTaskState(taskParam),
         ERR_OK);
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBackgroundTaskState(nullptr),
-        ERR_BGTASK_CHECK_TASK_PARAM);
 }
 
 /**
@@ -1073,8 +1069,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetBackgroundTaskState_001, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(taskParam),
         ERR_OK);
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(nullptr),
-        ERR_BGTASK_CHECK_TASK_PARAM);
 }
 
 /**

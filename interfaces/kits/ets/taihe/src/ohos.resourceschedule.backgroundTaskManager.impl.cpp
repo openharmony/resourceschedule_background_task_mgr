@@ -194,7 +194,7 @@ void SetBackgroundTaskState(::ohos::resourceschedule::backgroundTaskManager::Bac
         std::make_shared<OHOS::BackgroundTaskMgr::BackgroundTaskStateInfo>(userIdValue, bundleNameValue, appIndexValue,
         authValue
     );
-    int32_t errCode = BackgroundTaskMgrHelper::SetBackgroundTaskState(taskState);
+    ErrCode errCode = BackgroundTaskMgrHelper::SetBackgroundTaskState(taskState);
     if (errCode) {
         set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
@@ -213,7 +213,7 @@ void SetBackgroundTaskState(::ohos::resourceschedule::backgroundTaskManager::Bac
     }
     std::shared_ptr<OHOS::BackgroundTaskMgr::BackgroundTaskStateInfo> taskState =
         std::make_shared<OHOS::BackgroundTaskMgr::BackgroundTaskStateInfo>(userId, bundleName, appIndex);
-    int32_t errCode = BackgroundTaskMgrHelper::GetBackgroundTaskState(taskState);
+    ErrCode errCode = BackgroundTaskMgrHelper::GetBackgroundTaskState(taskState);
     if (errCode) {
         set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
         return ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
@@ -829,8 +829,8 @@ void OffContinuousTaskCancel(optional_view<callback<void(ContinuousTaskCancelInf
     if (!callback.has_value()) {
         backgroundTaskSubscriber_->RemoveJsObserverObjects("continuousTaskCancel");
     } else {
-        std::shared_ptr<taihe::callback<void(const ContinuousTaskCancelInfo&)>> taiheCallback(
-            new taihe::callback<void(const ContinuousTaskCancelInfo&)>(callback.value()));
+        std::shared_ptr<taihe::callback<void(const ContinuousTaskCancelInfo&)>> taiheCallback =
+            std::make_shared<taihe::callback<void(const ContinuousTaskCancelInfo&)>>(callback.value());
         backgroundTaskSubscriber_->RemoveCancelObserverObject("continuousTaskCancel", taiheCallback);
     }
     UnSubscribeBackgroundTask(env, CONTINUOUS_TASK_CANCEL);
@@ -866,8 +866,8 @@ void OffContinuousTaskSuspend(optional_view<callback<void(ContinuousTaskSuspendI
     if (!callback.has_value()) {
         backgroundTaskSubscriber_->RemoveJsObserverObjects("continuousTaskSuspend");
     } else {
-        std::shared_ptr<taihe::callback<void(const ContinuousTaskSuspendInfo&)>> taiheCallback(
-            new taihe::callback<void(const ContinuousTaskSuspendInfo&)>(callback.value()));
+        std::shared_ptr<taihe::callback<void(const ContinuousTaskSuspendInfo&)>> taiheCallback =
+            std::make_shared<taihe::callback<void(const ContinuousTaskSuspendInfo&)>>(callback.value());
         backgroundTaskSubscriber_->RemoveSuspendObserverObject("continuousTaskSuspend", taiheCallback);
     }
     UnSubscribeBackgroundTask(env, CONTINUOUS_TASK_SUSPEND);
@@ -903,8 +903,8 @@ void OffContinuousTaskActive(optional_view<callback<void(ContinuousTaskActiveInf
     if (!callback.has_value()) {
         backgroundTaskSubscriber_->RemoveJsObserverObjects("continuousTaskActive");
     } else {
-        std::shared_ptr<taihe::callback<void(const ContinuousTaskActiveInfo&)>> taiheCallback(
-            new taihe::callback<void(const ContinuousTaskActiveInfo&)>(callback.value()));
+        std::shared_ptr<taihe::callback<void(const ContinuousTaskActiveInfo&)>> taiheCallback =
+            std::make_shared<taihe::callback<void(const ContinuousTaskActiveInfo&)>>(callback.value());
         backgroundTaskSubscriber_->RemoveActiveObserverObject("continuousTaskActive", taiheCallback);
     }
     UnSubscribeBackgroundTask(env, CONTINUOUS_TASK_ACTIVE);

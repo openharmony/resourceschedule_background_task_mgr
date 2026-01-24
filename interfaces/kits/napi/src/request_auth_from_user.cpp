@@ -66,7 +66,7 @@ void AuthCallbackInstance::DeleteNapiRef()
         napi_delete_reference(dataWorker->env, dataWorker->ref);
     };
     if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high,
-        "DeleteNapiRefAuth")) {
+        "AuthCallbackInstance::DeleteNapiRefAuth")) {
         BGTASK_LOGE("DeleteNapiRef: Failed to SendEvent");
         dataWorker = nullptr;
     }
@@ -109,7 +109,8 @@ __attribute__((no_sanitize("cfi"))) void AuthCallbackInstance::OnExpiredAuth(int
             authCallbackInstances_.erase(findCallback);
         }
     };
-    if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high, "OnExpiredAuth")) {
+    if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high,
+        "AuthCallbackInstance::OnExpiredAuth")) {
         BGTASK_LOGE("OnExpired: Failed to SendEvent");
         dataWorker = nullptr;
         authCallbackInstances_.erase(findCallback);

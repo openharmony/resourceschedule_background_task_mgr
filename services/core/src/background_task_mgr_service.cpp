@@ -403,7 +403,6 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
         BGTASK_LOGW("SubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    // 系统应用通过系统API接口注册
     if (isHap && flag == SUBSCRIBER_BACKGROUND_TASK_STATE) {
         if (CheckAtomicService()) {
             return ERR_BGTASK_PERMISSION_DENIED;

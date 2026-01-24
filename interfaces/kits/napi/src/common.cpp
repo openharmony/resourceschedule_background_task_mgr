@@ -778,6 +778,9 @@ void Common::TaskModeTypeConversion(std::shared_ptr<ContinuousTaskRequest> &requ
 bool Common::GetBackgroundTaskStateParam(napi_env &env, const napi_value &objValue,
     std::shared_ptr<BackgroundTaskStateInfo> taskState, bool inculdeAurh)
 {
+    if (!taskState) {
+        return false;
+    }
     int32_t userId = GetIntProperty(env, objValue, "userId");
     if (userId != -1) {
         taskState->SetUserId(userId);

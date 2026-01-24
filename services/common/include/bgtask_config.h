@@ -61,7 +61,7 @@ private:
     bool isInit_ = false;
     std::set<std::string> transientTaskExemptedQuatoList_ {};
     std::set<std::string> transientTaskCloudExemptedQuatoList_ {};
-    std::set<std::string> taskKeepingExemptedQuatoList_ = {};
+    std::set<std::string> taskKeepingExemptedQuatoList_ {};
     std::set<std::string> maliciousAppBlocklist_ {};
     std::set<std::string> specialExemptedQuatoList_ = {};
     int32_t transientTaskExemptedQuato_ = 10 * 1000; // 10s
