@@ -265,6 +265,7 @@ void JsBackgroundTaskSubscriber::HandleSubscribeOnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("HandleSubscribeOnContinuousTaskStop called");
+    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find("subscribeContinuousTaskState");
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type subscribeContinuousTaskState");
@@ -454,9 +455,9 @@ void JsBackgroundTaskSubscriber::AddJsObserverObject(const std::string cbType, c
     }
  
     if (GetObserverObject(cbType, jsObserverObject) == nullptr) {
-        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
         napi_ref ref = nullptr;
         napi_create_reference(env_, jsObserverObject, 1, &ref);
+        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
         jsObserverObjectMap_[cbType].emplace(
             std::shared_ptr<NativeReference>(reinterpret_cast<NativeReference *>(ref)));
         BGTASK_LOGI("add observer, type: %{public}s, size: %{public}d", cbType.c_str(),

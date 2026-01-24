@@ -83,7 +83,6 @@ int32_t OH_BackgroundTaskManager_GetTransientTaskInfo(TransientTask_TransientTas
     std::vector<std::shared_ptr<DelaySuspendInfo>> listValue;
     auto errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         GetAllTransientTasks(remainingQuotaValue, listValue);
-    std::lock_guard<std::recursive_mutex> lock(callbackLock_);
     if (errCode != 0) {
         return errCode / INNER_ERROR_SHIFT;
     }
@@ -126,6 +125,7 @@ void Callback::OnExpiredAuth(int32_t authResult) {}
 
 void Callback::SetCallbackInfo(void (*callback)())
 {
+    std::lock_guard<std::recursive_mutex> lock(callbackLock_);
     ffiCallback_ = callback;
 }
 }

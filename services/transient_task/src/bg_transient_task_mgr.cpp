@@ -864,6 +864,7 @@ void SubscriberDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 
 void BgTransientTaskMgr::HandleSuspendManagerDie()
 {
+    lock_guard<mutex> lock(transientUidLock_);
     if (!transientPauseUid_.empty()) {
         for (auto iter = transientPauseUid_.begin(); iter != transientPauseUid_.end(); iter++) {
             int32_t uid = *iter;
@@ -877,7 +878,6 @@ void BgTransientTaskMgr::HandleSuspendManagerDie()
                 BGTASK_LOGE("transient task uid: %{public}d, restart fail.", uid);
             }
         }
-        lock_guard<mutex> lock(transientUidLock_);
         transientPauseUid_.clear();
     }
 }
