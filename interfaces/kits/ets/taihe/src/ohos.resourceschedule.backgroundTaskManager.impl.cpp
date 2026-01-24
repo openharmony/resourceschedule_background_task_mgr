@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,9 @@
 #include "ani_backgroundtask_subscriber.h"
 #include "background_mode.h"
 #include "background_sub_mode.h"
+#include "background_task_submode.h"
+#include "background_task_mode.h"
+#include "background_task_state_info.h"
 
 using namespace taihe;
 using namespace OHOS;
@@ -63,6 +66,7 @@ struct ContinuousTaskCallbackInfo {
     uint32_t bgMode {0};
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent {nullptr};
     std::vector<uint32_t> bgModes {};
+    std::vector<uint32_t> bgSubModes {};
     bool isBatchApi {false};
     int32_t notificationId {-1}; // out
     int32_t continuousTaskId {-1}; // out
@@ -168,6 +172,74 @@ void ResetAllEfficiencyResources()
         BGTASK_LOGE("ResetAllEfficiencyResources failed errCode: %{public}d", Common::FindErrCode(errCode));
         set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
     }
+}
+
+void SetBackgroundTaskState(::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskStateInfo const& stateInfo)
+{
+    if (!stateInfo.authResult.has_value()) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID),
+            Common::FindErrMsg(ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID));
+        return;
+    }
+    int32_t authValue =  static_cast<int32_t>(stateInfo.authResult.value());
+    int32_t userIdValue =  static_cast<int32_t>(stateInfo.userId);
+    int32_t appIndexValue =  static_cast<int32_t>(stateInfo.appIndex);
+    std::string bundleNameValue = static_cast<std::string>(stateInfo.bundleName);
+    if (userIdValue < 0 || appIndexValue < 0 || bundleNameValue == "") {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID),
+            Common::FindErrMsg(ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID));
+        return;
+    }
+    std::shared_ptr<OHOS::BackgroundTaskMgr::BackgroundTaskStateInfo> taskState =
+        std::make_shared<OHOS::BackgroundTaskMgr::BackgroundTaskStateInfo>(userIdValue, bundleNameValue, appIndexValue,
+        authValue
+    );
+    int32_t errCode = BackgroundTaskMgrHelper::SetBackgroundTaskState(taskState);
+    if (errCode) {
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
+    }
+}
+
+::ohos::resourceschedule::backgroundTaskManager::UserAuthResult GetBackgroundTaskState(
+    ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskStateInfo const& stateInfo)
+{
+    int32_t userId =  static_cast<int32_t>(stateInfo.userId);
+    int32_t appIndex =  static_cast<int32_t>(stateInfo.appIndex);
+    std::string bundleName = static_cast<std::string>(stateInfo.bundleName);
+    if (userId < 0 || appIndex < 0 || bundleName == "") {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID),
+            Common::FindErrMsg(ERR_BGTASK_CONTINUOUS_BACKGROUND_TASK_PARAM_INVALID));
+        return ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+    }
+    std::shared_ptr<OHOS::BackgroundTaskMgr::BackgroundTaskStateInfo> taskState =
+        std::make_shared<OHOS::BackgroundTaskMgr::BackgroundTaskStateInfo>(userId, bundleName, appIndex);
+    int32_t errCode = BackgroundTaskMgrHelper::GetBackgroundTaskState(taskState);
+    if (errCode) {
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
+        return ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+    }
+    ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t authResult;
+    switch (taskState->GetUserAuthResult()) {
+        case OHOS::BackgroundTaskMgr::UserAuthResult::NOT_SUPPORTED:
+            authResult = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_SUPPORTED;
+            break;
+        case OHOS::BackgroundTaskMgr::UserAuthResult::NOT_DETERMINED:
+            authResult = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+            break;
+        case OHOS::BackgroundTaskMgr::UserAuthResult::DENIED:
+            authResult = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::DENIED;
+            break;
+        case OHOS::BackgroundTaskMgr::UserAuthResult::GRANTED_ONCE:
+            authResult = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::GRANTED_ONCE;
+            break;
+        case OHOS::BackgroundTaskMgr::UserAuthResult::GRANTED_ALWAYS:
+            authResult = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::GRANTED_ALWAYS;
+            break;
+        default:
+            authResult = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+            break;
+    }
+    return authResult;
 }
 
 ani_status GetAbilityContext(ani_env *env, const ani_object &value,
@@ -356,6 +428,7 @@ void StartBackgroundRunningSync(uintptr_t context,
     }
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
         asyncCallbackInfo->wantAgent, info->name, token, "", false, asyncCallbackInfo->bgModes, abilityId);
+    taskParam.appIndex_ = info->appIndex;
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
     asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
@@ -440,6 +513,7 @@ static ani_enum_item GetContentType(ani_env *env)
 
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
         asyncCallbackInfo->wantAgent, info->name, token, "", true, asyncCallbackInfo->bgModes, abilityId);
+    taskParam.appIndex_ = info->appIndex;
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
     asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
@@ -598,6 +672,8 @@ array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> GetAl
             .wantAgentBundleName = info->GetWantAgentBundleName(),
             .wantAgentAbilityName = info->GetWantAgentAbilityName(),
             .suspendState = false,
+            .bundleName = optional<::taihe::string>(std::in_place, info->GetBundleName()),
+            .appIndex = optional<int32_t>(std::in_place, info->GetAppIndex())
         };
         aniInfoList.push_back(aniInfo);
     }
@@ -637,6 +713,8 @@ array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> GetAl
             .wantAgentBundleName = info->GetWantAgentBundleName(),
             .wantAgentAbilityName = info->GetWantAgentAbilityName(),
             .suspendState = info->GetSuspendState(),
+            .bundleName = optional<::taihe::string>(std::in_place, info->GetBundleName()),
+            .appIndex = optional<int32_t>(std::in_place, info->GetAppIndex())
         };
         aniInfoList.push_back(aniInfo);
     }
@@ -831,6 +909,66 @@ void OffContinuousTaskActive(optional_view<callback<void(ContinuousTaskActiveInf
     }
     UnSubscribeBackgroundTask(env, CONTINUOUS_TASK_ACTIVE);
 }
+
+void StopBackgroundRunningSync2(uintptr_t context, int32_t continuousTaskId)
+{
+    auto env = taihe::get_env();
+    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
+    if (continuousTaskId < 0) {
+        BGTASK_LOGE("check continuousTaskId failed");
+        set_business_error(Common::FindErrCode(ERR_BGTASK_CONTINUOUS_TASKID_INVALID),
+            Common::FindErrMsg(ERR_BGTASK_CONTINUOUS_TASKID_INVALID));
+        return;
+    }
+    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
+        BGTASK_LOGE("check param failed");
+        return;
+    }
+    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+    sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
+    int32_t abilityId = asyncCallbackInfo->abilityContext->GetAbilityRecordId();
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStopBackgroundRunning(info->name, token, abilityId,
+        continuousTaskId);
+    if (asyncCallbackInfo->errCode) {
+        BGTASK_LOGE("StopBackgroundRunningSync2 fail errCode: %{public}d",
+            Common::FindErrCode(asyncCallbackInfo->errCode));
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+    }
+}
+
+array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> ObtainAllContinuousTasksSync()
+{
+    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::GetAllContinuousTasksBySystem(asyncCallbackInfo->list);
+    if (asyncCallbackInfo->errCode) {
+        set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+            Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return {};
+    }
+    std::vector<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> aniInfoList;
+    for (const auto& info : asyncCallbackInfo->list) {
+        ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo aniInfo{
+            .abilityName = info->GetAbilityName(),
+            .uid = info->GetUid(),
+            .pid = info->GetPid(),
+            .isFromWebView = info->IsFromWebView(),
+            .backgroundModes = GetAniBackgroundModes(info->GetBackgroundModes()),
+            .backgroundSubModes = GetAniBackgroundSubModes(info->GetBackgroundSubModes()),
+            .notificationId = info->GetNotificationId(),
+            .continuousTaskId = info->GetContinuousTaskId(),
+            .abilityId = info->GetAbilityId(),
+            .wantAgentBundleName = info->GetWantAgentBundleName(),
+            .wantAgentAbilityName = info->GetWantAgentAbilityName(),
+            .suspendState = false,
+            .bundleName = optional<::taihe::string>(std::in_place, info->GetBundleName()),
+            .appIndex = optional<int32_t>(std::in_place, info->GetAppIndex())
+        };
+        aniInfoList.push_back(aniInfo);
+    }
+    return array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo>{copy_data_t{},
+        aniInfoList.data(), aniInfoList.size()};
+}
 } // namespace
 
 // Since these macros are auto-generate, lint will cause false positive.
@@ -854,4 +992,8 @@ TH_EXPORT_CPP_API_OnContinuousTaskSuspend(OnContinuousTaskSuspend);
 TH_EXPORT_CPP_API_OffContinuousTaskSuspend(OffContinuousTaskSuspend);
 TH_EXPORT_CPP_API_OnContinuousTaskActive(OnContinuousTaskActive);
 TH_EXPORT_CPP_API_OffContinuousTaskActive(OffContinuousTaskActive);
+TH_EXPORT_CPP_API_StopBackgroundRunningSync2(StopBackgroundRunningSync2);
+TH_EXPORT_CPP_API_SetBackgroundTaskState(SetBackgroundTaskState);
+TH_EXPORT_CPP_API_GetBackgroundTaskState(GetBackgroundTaskState);
+TH_EXPORT_CPP_API_ObtainAllContinuousTasksSync(ObtainAllContinuousTasksSync);
 // NOLINTEND

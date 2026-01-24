@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -68,6 +68,8 @@ struct ContinuousTaskInfo {
   wantAgentBundleName: String;
   wantAgentAbilityName: String;
   suspendState: bool;
+  bundleName: Optional<String>;
+  appIndex: Optional<i32>;
 }
 
 struct EfficiencyResourcesInfo {
@@ -155,6 +157,49 @@ enum BackgroundModeType : String {
   SUB_MODE = "subMode"
 }
 
+enum BackgroundTaskMode : i32 {
+  MODE_DATA_TRANSFER = 1,
+  MODE_AUDIO_PLAYBACK = 2,
+  MODE_AUDIO_RECORDING = 3,
+  MODE_LOCATION = 4,
+  MODE_BLUETOOTH_INTERACTION = 5,
+  MODE_MULTI_DEVICE_CONNECTION = 6,
+  MODE_ALLOW_WIFI_AWARE = 7,
+  MODE_VOIP = 8,
+  MODE_TASK_KEEPING = 9,
+  MODE_AV_PLAYBACK_AND_RECORD = 12,
+  MODE_SPECIAL_SCENARIO_PROCESSING = 13
+}
+
+enum BackgroundTaskSubmode : i32 {
+  SUBMODE_CAR_KEY_NORMAL_NOTIFICATION = 1,
+  SUBMODE_NORMAL_NOTIFICATION = 2,
+  SUBMODE_LIVE_VIEW_NOTIFICATION = 3,
+  SUBMODE_AUDIO_PLAYBACK_NORMAL_NOTIFICATION = 4,
+  SUBMODE_AVSESSION_AUDIO_PLAYBACK = 5,
+  SUBMODE_AUDIO_RECORD_NORMAL_NOTIFICATION = 6,
+  SUBMODE_SCREEN_RECORD_NORMAL_NOTIFICATION = 7,
+  SUBMODE_VOICE_CHAT_NORMAL_NOTIFICATION = 8,
+  SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION = 9,
+  SUBMODE_VIDEO_BROADCAST_NORMAL_NOTIFICATION = 10,
+  SUBMODE_WORK_OUT_NORMAL_NOTIFICATION = 11
+}
+
+enum UserAuthResult : i32 {
+  NOT_SUPPORTED = 0,
+  NOT_DETERMINED = 1,
+  DENIED = 2,
+  GRANTED_ONCE = 3,
+  GRANTED_ALWAYS = 4
+}
+
+struct BackgroundTaskStateInfo {
+  userId: i32;
+  bundleName: String;
+  appIndex: i32;
+  authResult: Optional<UserAuthResult>;
+}
+
 function CancelSuspendDelay(requestId: i32): void;
 
 @gen_async("getRemainingDelayTime")
@@ -178,6 +223,10 @@ function StopBackgroundRunningSync(context: @sts_type("BaseContext") Opaque): vo
 function ApplyEfficiencyResources(request: EfficiencyResourcesRequest): void;
 
 function ResetAllEfficiencyResources(): void;
+
+function SetBackgroundTaskState(stateInfo: BackgroundTaskStateInfo): void;
+
+function GetBackgroundTaskState(stateInfo: BackgroundTaskStateInfo): UserAuthResult;
 
 @gen_promise("startBackgroundRunning")
 function StartBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque,
@@ -210,3 +259,9 @@ function OffContinuousTaskSuspend(callback: Optional<(data: ContinuousTaskSuspen
 function OnContinuousTaskActive(callback: (data: ContinuousTaskActiveInfo) => void): void;
 
 function OffContinuousTaskActive(callback: Optional<(data: ContinuousTaskActiveInfo) => void>): void;
+
+@gen_promise("stopBackgroundRunning")
+function StopBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque, continuousTaskId: i32): void;
+
+@gen_promise("obtainAllContinuousTasks")
+function ObtainAllContinuousTasksSync(): Array<ContinuousTaskInfo>;

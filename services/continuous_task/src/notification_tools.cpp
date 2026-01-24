@@ -161,6 +161,10 @@ WEAK_FUNC void NotificationTools::RefreshContinuousNotifications(
     const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos, int32_t serviceUid)
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    if (newPromptInfos.empty()) {
+        BGTASK_LOGI("newPromptInfos is empty.");
+        return;
+    }
     std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
     ErrCode ret = Notification::NotificationHelper::GetActiveNotifications(notificationRequests);
     if (ret != ERR_OK) {
