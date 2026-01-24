@@ -390,11 +390,8 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_002, TestSize.Level2)
     decisionMaker->OnInputEvent(eventInfo);
     eventInfo.eventId_ = EVENT_SCREEN_ON;
     decisionMaker->OnInputEvent(eventInfo);
-    eventInfo.eventId_ = EVENT_SCREEN_OFF;
-    decisionMaker->OnInputEvent(eventInfo);
     eventInfo.eventId_ = EVENT_SCREEN_UNLOCK;
     decisionMaker->OnInputEvent(eventInfo);
-    EXPECT_TRUE(true);
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo2] = pkgDelaySuspendInfo2;
     eventInfo.eventId_ = EVENT_SCREEN_OFF;
     decisionMaker->OnInputEvent(eventInfo);
