@@ -43,6 +43,7 @@ void Callback::OnExpiredAuth(int32_t authResult) {}
 void Callback::SetCallbackInfo(
     callback_view<void(::ohos::resourceschedule::backgroundTaskManager::UndefinedType const&)> callback)
 {
+    std::lock_guard<std::mutex> lock(callbackLock_);
     callback_ = callback;
 }
 }  // namespace BackgroundTaskMgr
