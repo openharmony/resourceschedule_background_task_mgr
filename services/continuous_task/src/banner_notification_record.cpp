@@ -116,12 +116,12 @@ void BannerNotificationRecord::SetRecordValue(const nlohmann::json &value)
     this->appIndex_ = value.at("appIndex").get<int32_t>();
 }
 
-bool CheckRecodKey(const nlohmann::json &value)
+bool CheckRecordKey(const nlohmann::json &value)
 {
-    return !value["bundleName"].is_string() || !value["uid"].is_number_integer()
-        || !value["notificationId"].is_number_integer() || !value["notificationLabel"].is_string()
-        || !value["appName"].is_string() || !value["authResult"].is_number_integer()
-        || !value["userId"].is_number_integer() || !value["appIndex"].is_number_integer();
+    return !value["bundleName"].is_string() || !value["uid"].is_number_integer() ||
+        !value["notificationId"].is_number_integer() || !value["notificationLabel"].is_string() ||
+        !value["appName"].is_string() || !value["authResult"].is_number_integer() ||
+        !value["userId"].is_number_integer() || !value["appIndex"].is_number_integer();
 }
 
 bool BannerNotificationRecord::ParseFromJson(const nlohmann::json &value)
@@ -131,7 +131,7 @@ bool BannerNotificationRecord::ParseFromJson(const nlohmann::json &value)
         BGTASK_LOGE("bannerNotificationRecord no key.");
         return false;
     }
-    if (CheckRecodKey(value)) {
+    if (CheckRecordKey(value)) {
         BGTASK_LOGE("bannerNotificationRecord parse from json fail.");
         return false;
     }

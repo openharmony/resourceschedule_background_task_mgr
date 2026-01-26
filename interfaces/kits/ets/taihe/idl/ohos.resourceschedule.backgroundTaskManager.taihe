@@ -207,7 +207,7 @@ function CancelSuspendDelay(requestId: i32): void;
 function GetRemainingDelayTimeSync(requestId: i32): i32;
 
 union UndefinedType {
-  @undefined undefined;
+  uValue: @undefined unit;
 }
 function RequestSuspendDelay(reason: String, callback: (data: UndefinedType) => void): DelaySuspendInfo;
 

@@ -291,6 +291,10 @@ std::shared_ptr<callback<void(const ContinuousTaskCancelInfo&)>> AniBackgroundTa
     }
 
     for (const auto& observer : iter->second) {
+        if (observer == nullptr) {
+            BGTASK_LOGE("null observer");
+            continue;
+        }
         if (*observer == *taiheCallback) {
             return observer;
         }
@@ -348,6 +352,10 @@ std::shared_ptr<callback<void(const ContinuousTaskSuspendInfo&)>> AniBackgroundT
     }
 
     for (const auto& observer : iter->second) {
+        if (observer == nullptr) {
+            BGTASK_LOGE("null observer");
+            continue;
+        }
         if (*observer == *taiheCallback) {
             return observer;
         }
@@ -405,6 +413,10 @@ std::shared_ptr<callback<void(const ContinuousTaskActiveInfo&)>> AniBackgroundTa
     }
 
     for (const auto& observer : iter->second) {
+        if (observer == nullptr) {
+            BGTASK_LOGE("null observer");
+            continue;
+        }
         if (*observer == *taiheCallback) {
             return observer;
         }

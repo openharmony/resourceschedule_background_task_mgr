@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"Autoriser %s à effectuer des activités de longue durée en arrière-plan ?",
+            "value":"Autoriser %s à effectuer des activités de longue durée en arrière-plan ?",
             "attr":{
                 "priority":"LT"
             }

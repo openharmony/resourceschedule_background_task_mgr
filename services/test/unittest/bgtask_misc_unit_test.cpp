@@ -1007,16 +1007,15 @@ HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_005, TestSize.Level2)
     bannerNotification->uid_ = 1;
     bannerNotification->notificationId_ = -1;
     bannerNotification->appIndex_ = 0;
-    std::vector<std::string> bannerNotificaitonBtn;
-    bannerNotificaitonBtn.push_back("banner1");
-    bannerNotificaitonBtn.push_back("banner2");
-    EXPECT_EQ(NotificationTools::GetInstance()->PublishBannerNotification(
-        bannerNotification, "prompt", 0, bannerNotificaitonBtn), ERR_BGTASK_NOTIFICATION_ERR);
+    std::vector<std::string> bannerNotificationBtn;
+    bannerNotificationBtn.push_back("banner1");
+    bannerNotificationBtn.push_back("banner2");
     std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
     newPromptInfos.emplace("label", std::make_pair<std::string, std::string>("test1", "test2"));
     NotificationTools::GetInstance()->RefreshBannerNotifications(
-        bannerNotificaitonBtn, newPromptInfos, bannerNotification, 0);
-    EXPECT_TRUE(true);
+        bannerNotificationBtn, newPromptInfos, bannerNotification, 0);
+    EXPECT_EQ(NotificationTools::GetInstance()->PublishBannerNotification(
+        bannerNotification, "prompt", 0, bannerNotificationBtn), ERR_BGTASK_NOTIFICATION_ERR);
 #endif
 }
 
