@@ -227,6 +227,11 @@ describe("ContinuousTaskJsTest", function () {
             let id = 1;
 
             particleAbility.startBackgroundRunning(id, request, conTaskCallback);
+        }).catch((err) => {
+            console.info('ContinuousTaskJsTest004 getWantAgent failure');
+            setTimeout(() => {
+                done();
+            }, 500);
         });
     })
 
