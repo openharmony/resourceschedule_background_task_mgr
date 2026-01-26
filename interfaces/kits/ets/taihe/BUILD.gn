@@ -70,6 +70,7 @@ taihe_shared_library("background_task_manager_ani") {
     "ability_runtime:abilitykit_native",
     "ability_runtime:ani_base_context",
     "ability_runtime:ani_wantagent_common",
+    "ability_runtime:napi_common",
     "ability_runtime:runtime",
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
