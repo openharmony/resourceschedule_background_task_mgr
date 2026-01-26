@@ -903,6 +903,7 @@ void BgTransientTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const st
 
 std::set<int32_t>& BgTransientTaskMgr::GetTransientPauseUid()
 {
+    lock_guard<mutex> lock(transientUidLock_);
     return transientPauseUid_;
 }
 }  // namespace BackgroundTaskMgr

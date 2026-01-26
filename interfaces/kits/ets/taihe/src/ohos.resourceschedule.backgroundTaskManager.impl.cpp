@@ -139,9 +139,9 @@ int32_t GetRemainingDelayTimeSync(int32_t requestId)
     if (delaySuspendInfo) {
         resultInfo.requestId = delaySuspendInfo->GetRequestId();
         resultInfo.actualDelayTime = delaySuspendInfo->GetActualDelayTime();
+        std::lock_guard<std::mutex> lock(callbackLock_);
+        callbackInstances_[delaySuspendInfo->GetRequestId()] = callbackPtr;
     }
-    std::lock_guard<std::mutex> lock(callbackLock_);
-    callbackInstances_[delaySuspendInfo->GetRequestId()] = callbackPtr;
     return resultInfo;
 }
 
