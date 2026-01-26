@@ -74,7 +74,7 @@ const std::unordered_map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_TRANSIENT_SYS_NOT_READY, "System service operation failed. The system service is not ready."},
     {ERR_BGTASK_TRANSIENT_SERVICE_NOT_CONNECTED,
         "System service operation failed. The system service is not connected."},
-    {ERR_BGTASK_INVALID_PROCESS_NAME, "Transient task verification failed. caller process name invaild."},
+    {ERR_BGTASK_INVALID_PROCESS_NAME, "Transient task verification failed. caller process name invalid."},
     {ERR_BGTASK_CONTINUOUS_REQUEST_NULL_OR_TYPE,
         "Continuous Task verification failed. "
         "The continuousRequestInfo cannot be null and its type must be continuousRequestInfo object."},

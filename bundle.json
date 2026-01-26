@@ -57,8 +57,7 @@
           "i18n",
           "relational_store",
           "icu",
-          "runtime_core",
-          "json"
+          "runtime_core"
         ]
       },
       "build": {
