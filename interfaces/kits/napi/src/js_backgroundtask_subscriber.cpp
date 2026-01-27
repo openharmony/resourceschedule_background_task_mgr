@@ -546,7 +546,11 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType
 void JsBackgroundTaskSubscriber::SetFlag(uint32_t flag, bool isSubscriber)
 {
     std::lock_guard<std::mutex> lock(flagLock_);
-    flag_ = flag;
+    if (isSubscriber) {
+        flag_ = flag_ |= flag;
+    } else {
+        flag_ = flag_ & ~flag;
+    }
 }
 
 void JsBackgroundTaskSubscriber::GetFlag(int32_t &flag)

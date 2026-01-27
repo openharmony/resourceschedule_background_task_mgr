@@ -1915,9 +1915,8 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const std::shared_ptr<Subscriber
     if (subscriberIter != bgTaskSubscribers_.end()) {
         BGTASK_LOGW("target subscriber already exist");
         if ((*subscriberIter)->isHap_) {
-            (*subscriberIter)->flag_ = (*subscriberIter)->flag_ | subscriberInfo->flag_;
-            BGTASK_LOGW("update subscriber success, current flag: %{public}d, param flag: %{public}d",
-                (*subscriberIter)->flag_, subscriberInfo->flag_);
+            (*subscriberIter)->flag_ = subscriberInfo->flag_;
+            BGTASK_LOGW("update subscriber success, current flag: %{public}d", (*subscriberIter)->flag_);
         }
         return ERR_BGTASK_OBJECT_EXISTS;
     }
@@ -1960,9 +1959,8 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
         return ERR_BGTASK_INVALID_PARAM;
     }
     if ((*subscriberIter)->isHap_) {
-        (*subscriberIter)->flag_ = (*subscriberIter)->flag_ & ~flag;
-        BGTASK_LOGW("remove subscriber success, current flag: %{public}d, param flag: %{public}d",
-            (*subscriberIter)->flag_, flag);
+        (*subscriberIter)->flag_ = flag;
+        BGTASK_LOGW("remove subscriber success, current flag: %{public}d", (*subscriberIter)->flag_);
         if ((*subscriberIter)->flag_ > 0) {
             BGTASK_LOGD("application uid: %{public}d have callback function.", (*subscriberIter)->uid_);
             return ERR_OK;
