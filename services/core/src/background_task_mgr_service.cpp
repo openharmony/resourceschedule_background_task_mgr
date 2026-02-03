@@ -785,7 +785,7 @@ ErrCode BackgroundTaskMgrService::GetAllContinuousTaskApps(std::vector<Continuou
     if (!CheckCallingToken() || !CheckCallingProcess()) {
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    std::vector<std::shared_ptr<TransientTaskAppInfo>> resultList;
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> resultList;
     ErrCode result = BgContinuousTaskMgr::GetInstance()->GetAllContinuousTaskApps(resultList);
     if (result == ERR_OK) {
         for (const auto& ptr : resultList) {
