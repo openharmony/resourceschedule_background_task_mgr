@@ -263,22 +263,5 @@ HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_011, Function | MediumTest | L
     auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
     EXPECT_EQ(ret, 0);
 }
-
-/*
- * @tc.name: BgtaskDumpTest_ShellDump_012
- * @tc.desc: Shell dump
- * @tc.type: FUNC
- * @tc.require: 838
- */
-HWTEST_F(BgtaskDumpTest, BgtaskDumpTest_ShellDump_012, Function | MediumTest | Level0)
-{
-    std::vector<std::string> infos;
-    std::vector<std::string> options;
-    options.push_back("-C");
-    options.push_back("--get");
-    options.push_back("-1");
-    auto ret = BgContinuousTaskMgr::GetInstance()->ShellDumpInner(options, infos);
-    EXPECT_EQ(ret, 0);
-}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

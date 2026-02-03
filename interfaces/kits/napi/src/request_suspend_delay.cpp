@@ -63,7 +63,7 @@ void CallbackInstance::DeleteNapiRef()
         napi_delete_reference(dataWorker->env, dataWorker->ref);
     };
     if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high,
-        "CallbackInstance::DeleteNapiRefTransientTask")) {
+        "CallbackInstance::DeleteNapiRef")) {
         BGTASK_LOGE("DeleteNapiRef: Failed to SendEvent");
         dataWorker = nullptr;
     }
