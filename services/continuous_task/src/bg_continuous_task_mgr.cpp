@@ -2014,6 +2014,7 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
             record.second->bgModeIds_, record.second->abilityId_, record.second->fullTokenId_);
         appInfo->SetContinuousTaskId(record.second->continuousTaskId_);
         appInfo->SetByRequestObject(record.second->isByRequestObject_);
+        appInfo->SetSuspendState(record.second->suspendState_);
         list.push_back(appInfo);
     }
     return ERR_OK;
