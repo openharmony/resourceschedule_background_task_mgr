@@ -3829,7 +3829,7 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTaskApps(std::vector<std::shared_pt
         return ERR_BGTASK_SYS_NOT_READY;
     }
     ErrCode result = ERR_OK;
-    handler_->PostSyncTask([this, &list, uid, &result]() {
+    handler_->PostSyncTask([this, &list, &result]() {
         result = this->GetContinuousTaskAppsInner(list, -1, true);
         }, AppExecFwk::EventQueue::Priority::HIGH);
 
