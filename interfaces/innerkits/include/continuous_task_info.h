@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -138,6 +138,8 @@ public:
     std::string GetBundleName() const;
     void SetAppIndex(int32_t appIndex);
     int32_t GetAppIndex() const;
+    bool IsByRequestObject() const;
+    void SetByRequestObject(const bool isByRequestObject);
 
     std::string ToString(const std::vector<uint32_t> &modes) const;
 
@@ -158,6 +160,7 @@ private:
     bool suspendState_ {false};
     std::string bundleName_ {""};
     int32_t appIndex_ {-1};
+    bool isByRequestObject_ {false};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
