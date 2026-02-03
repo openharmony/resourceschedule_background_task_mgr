@@ -3491,18 +3491,6 @@ ErrCode BgContinuousTaskMgr::RefreshAuthRecord()
     return ERR_OK;
 }
 
-void BgContinuousTaskMgr::SendNotificationByLiveViewCancel(int32_t uid)
-{
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return;
-    }
-
-    handler_->PostSyncTask([this, uid]() {
-        this->SendNotificationByLiveViewCancelInner(uid);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
-}
-
 ErrCode BgContinuousTaskMgr::SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam)
 {
     if (!isSysReady_.load()) {
@@ -3693,7 +3681,7 @@ void BgContinuousTaskMgr::CancelBgTaskNotificationInner(int32_t uid)
                 task.second->GetNotificationLabel(), task.second->GetNotificationId());
             task.second->notificationId_ = -1;
             RefreshTaskRecord();
-            BGTASK_LOGD("continuous task has other mode");
+            BGTASK_LOGI("uid %{public} has live view notification , cancel continuous notification", uid);
             continue;
         }
     }
@@ -3723,6 +3711,18 @@ void BgContinuousTaskMgr::SendNotificationByLiveViewCancelInner(int32_t uid)
             RefreshTaskRecord();
         }
     }
+}
+
+void BgContinuousTaskMgr::SendNotificationByLiveViewCancel(int32_t uid)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+
+    handler_->PostSyncTask([this, uid]() {
+        this->SendNotificationByLiveViewCancelInner(uid);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
 }
 
 ErrCode BgContinuousTaskMgr::OnBackup(MessageParcel& data, MessageParcel& reply)

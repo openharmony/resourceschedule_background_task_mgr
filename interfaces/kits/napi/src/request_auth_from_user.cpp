@@ -66,7 +66,7 @@ void AuthCallbackInstance::DeleteNapiRef()
         napi_delete_reference(dataWorker->env, dataWorker->ref);
     };
     if (napi_status::napi_ok != napi_send_event(expiredCallbackInfo_.env, task, napi_eprio_high,
-        "AuthCallbackInstance::DeleteNapiRefAuth")) {
+        "AuthCallbackInstance::DeleteNapiRef")) {
         BGTASK_LOGE("DeleteNapiRef: Failed to SendEvent");
         dataWorker = nullptr;
     }
