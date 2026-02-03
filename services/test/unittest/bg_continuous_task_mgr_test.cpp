@@ -2509,5 +2509,24 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialNotificationText_002, TestSize.Lev
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
         BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
 }
+
+/**
+ * @tc.name: GetAllContinuousTaskApps_001
+ * @tc.desc: test GetAllContinuousTaskApps.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, GetAllContinuousTaskApps_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTaskApps(list), ERR_BGTASK_SYS_NOT_READY);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTaskApps(list), ERR_OK);
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key"] = continuousTaskRecord;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTaskApps(list), ERR_OK);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
