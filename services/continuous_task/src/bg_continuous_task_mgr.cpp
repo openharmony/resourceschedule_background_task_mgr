@@ -3681,7 +3681,7 @@ void BgContinuousTaskMgr::CancelBgTaskNotificationInner(int32_t uid)
                 task.second->GetNotificationLabel(), task.second->GetNotificationId());
             task.second->notificationId_ = -1;
             RefreshTaskRecord();
-            BGTASK_LOGI("uid %{public} has live view notification , cancel continuous notification", uid);
+            BGTASK_LOGI("uid: %{public}d has live view notification , cancel continuous notification", uid);
             continue;
         }
     }
