@@ -1669,6 +1669,7 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
             wantAgentBundleName, wantAgentAbilityName);
         info->SetBundleName(record.second->bundleName_);
         info->SetAppIndex(record.second->appIndex_);
+        info->SetByRequestObject(record.second->isByRequestObject_);
         list.push_back(info);
     }
     return ERR_OK;
@@ -1831,6 +1832,9 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
 
 void BgContinuousTaskMgr::HandleActiveNotification(std::shared_ptr<ContinuousTaskRecord> record)
 {
+    if (record->suspendState_) {
+        return;
+    }
     if (record->isByRequestObject_ && record->bgModeIds_.size() > 1 &&
         CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
         SendLiveViewAndOtherNotification(record);
@@ -1992,7 +1996,7 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskApps(std::vector<std::shared_ptr<C
 }
 
 ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list,
-    int32_t uid)
+    int32_t uid, bool includeSuspended)
 {
     if (continuousTaskInfosMap_.empty()) {
         return ERR_OK;
@@ -2002,13 +2006,15 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
         if (uid != -1 && uid != record.second->uid_) {
             continue;
         }
-        if (record.second->suspendState_) {
+        if (record.second->suspendState_ && !includeSuspended) {
             continue;
         }
         auto appInfo = std::make_shared<ContinuousTaskCallbackInfo>(record.second->bgModeId_, record.second->uid_,
             record.second->pid_, record.second->abilityName_, record.second->isFromWebview_, record.second->isBatchApi_,
             record.second->bgModeIds_, record.second->abilityId_, record.second->fullTokenId_);
         appInfo->SetContinuousTaskId(record.second->continuousTaskId_);
+        appInfo->SetByRequestObject(record.second->isByRequestObject_);
+        appInfo->SetSuspendState(record.second->suspendState_);
         list.push_back(appInfo);
     }
     return ERR_OK;
@@ -3815,6 +3821,20 @@ void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
         iter++;
     }
     NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
+}
+
+ErrCode BgContinuousTaskMgr::GetAllContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    ErrCode result = ERR_OK;
+    handler_->PostSyncTask([this, &list, &result]() {
+        result = this->GetContinuousTaskAppsInner(list, -1, true);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+
+    return result;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

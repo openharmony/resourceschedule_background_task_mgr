@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -381,14 +381,27 @@ napi_value Common::NapiSetBgTaskMode(napi_env env, napi_value napiInfo,
     napi_value napiBackgroundSubModes = nullptr;
     NAPI_CALL(env, napi_create_array(env, &napiBackgroundSubModes));
     count = 0;
-    for (auto subMode : continuousTaskInfo->GetBackgroundSubModes()) {
-        if (subMode < BackgroundSubMode::END) {
-            napi_value napiSubModeText = nullptr;
-            std::string subModeStr = BackgroundSubMode::GetBackgroundSubModeStr(subMode);
-            NAPI_CALL(env, napi_create_string_utf8(env, subModeStr.c_str(), subModeStr.length(),
-                &napiSubModeText));
-                NAPI_CALL(env, napi_set_element(env, napiBackgroundSubModes, count, napiSubModeText));
-            count++;
+    if (continuousTaskInfo->IsByRequestObject()) {
+        for (auto subMode : continuousTaskInfo->GetBackgroundSubModes()) {
+            if (subMode < BackgroundTaskSubmode::END) {
+                napi_value napiSubModeText = nullptr;
+                std::string subModeStr = BackgroundTaskSubmode::GetBackgroundTaskSubmodeStr(subMode);
+                NAPI_CALL(env, napi_create_string_utf8(env, subModeStr.c_str(), subModeStr.length(),
+                    &napiSubModeText));
+                    NAPI_CALL(env, napi_set_element(env, napiBackgroundSubModes, count, napiSubModeText));
+                count++;
+            }
+        }
+    } else {
+        for (auto subMode : continuousTaskInfo->GetBackgroundSubModes()) {
+            if (subMode < BackgroundSubMode::END) {
+                napi_value napiSubModeText = nullptr;
+                std::string subModeStr = BackgroundSubMode::GetBackgroundSubModeStr(subMode);
+                NAPI_CALL(env, napi_create_string_utf8(env, subModeStr.c_str(), subModeStr.length(),
+                    &napiSubModeText));
+                    NAPI_CALL(env, napi_set_element(env, napiBackgroundSubModes, count, napiSubModeText));
+                count++;
+            }
         }
     }
     NAPI_CALL(env, napi_set_named_property(env, napiInfo, "backgroundSubModes", napiBackgroundSubModes));
@@ -896,6 +909,7 @@ napi_value Common::GetNapiCallBackInfo(napi_env &env,
     info->SetAppIndex(callBackInfo->GetAppIndex());
     info->SetBundleName(callBackInfo->GetBundleName());
     info->SetSuspendState(callBackInfo->GetSuspendState());
+    info->SetByRequestObject(callBackInfo->IsByRequestObject());
     return GetNapiContinuousTaskInfo(env, info);
 }
 }  // namespace BackgroundTaskMgr

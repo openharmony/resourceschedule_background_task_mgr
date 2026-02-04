@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -104,6 +104,16 @@ int32_t ContinuousTaskInfo::GetAppIndex() const
     return appIndex_;
 }
 
+bool ContinuousTaskInfo::IsByRequestObject() const
+{
+    return isByRequestObject_;
+}
+
+void ContinuousTaskInfo::SetByRequestObject(const bool isByRequestObject)
+{
+    isByRequestObject_ = isByRequestObject;
+}
+
 std::string ContinuousTaskInfo::ToString(const std::vector<uint32_t> &modes) const
 {
     std::string result;
@@ -136,6 +146,7 @@ bool ContinuousTaskInfo::Marshalling(Parcel& out) const
     WRITE_PARCEL_WITH_RET(out, Bool, suspendState_, false);
     WRITE_PARCEL_WITH_RET(out, String, bundleName_, false);
     WRITE_PARCEL_WITH_RET(out, Int32, appIndex_, false);
+    WRITE_PARCEL_WITH_RET(out, Bool, isByRequestObject_, false);
     return true;
 }
 
@@ -172,6 +183,7 @@ bool ContinuousTaskInfo::ReadFromParcel(Parcel& in)
     READ_PARCEL_WITH_RET(in, Bool, suspendState_, false);
     READ_PARCEL_WITH_RET(in, String, bundleName_, false);
     READ_PARCEL_WITH_RET(in, Int32, appIndex_, false);
+    READ_PARCEL_WITH_RET(in, Bool, isByRequestObject_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr
