@@ -104,6 +104,7 @@ private:
     int32_t combinedNotificationTaskId_ {-1};
     bool isByRequestObject_ {false};
     int32_t appIndex_ {-1};
+    bool audioDetectState_ {true};
     
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

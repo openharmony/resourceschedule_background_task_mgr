@@ -122,7 +122,7 @@ static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
 static constexpr uint32_t AVSESSION_SA_UID = 6700;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 2;
-static constexpr uint32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 5000;
+static constexpr uint32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 65 * 1000;
 #ifdef FEATURE_PRODUCT_WATCH
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
 #else
@@ -2072,6 +2072,13 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     ErrCode result = ERR_OK;
     auto record = findUidIter->second;
 
+    if (!findUidIter->second->audioDetectState_) {
+        BGTASK_LOGD("audio detect fail: %{public}d", uid);
+        findUidIter->second->audioDetectState_ = true;
+        RemoveAudioPlaybackDelayTask(uid);
+        return ERR_OK;
+    }
+
     // 子类型包含avsession，不发通知
     if (!isPublish &&
         CommonUtils::CheckExistMode(record->bgSubModeIds_, BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK)) {
@@ -2166,6 +2173,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->GetUid() == uid &&
             CommonUtils::CheckExistMode(iter->second->bgModeIds_, BackgroundMode::AUDIO_PLAYBACK)) {
+            iter->second->audioDetectState_ = false;
             NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
                 iter->second->GetNotificationId());
             if (!IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND)) {
