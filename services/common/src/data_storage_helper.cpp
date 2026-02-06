@@ -45,7 +45,7 @@ const std::string ENABLE = "enable";
 const std::string DOZE_TIME = "doze_time";
 constexpr int32_t EXTENSION_SUCCESS_CODE = 0;
 constexpr int32_t EXTENSION_ERROR_CODE = 13500099;
-constexpr int32_t MAX_AUTH_RECORD_SIZE = 400 * 200; // 单个应用授权记录数据大小为400
+constexpr int32_t MAX_AUTH_RECORD_SIZE = 400 * 1000; // 单个应用授权记录数据大小为400
 }
 
 DataStorageHelper::DataStorageHelper() {}
@@ -240,6 +240,7 @@ bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
         BGTASK_LOGE("OnRestore fail: ReadFileDescriptor or fstat fail");
         return false;
     }
+    // 告警：在resize需要对st_size进行上界或下界判定
     int32_t fileSize = statBuf.st_size;
     if (fileSize > MAX_AUTH_RECORD_SIZE) {
         BGTASK_LOGE("OnRestore fail: file size exceeding the limit.");
