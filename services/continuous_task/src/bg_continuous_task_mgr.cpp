@@ -2072,6 +2072,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     ErrCode result = ERR_OK;
     auto record = findUidIter->second;
 
+    // avsession检测失败，不发通知
     if (!findUidIter->second->audioDetectState_) {
         findUidIter->second->audioDetectState_ = true;
         RemoveAudioPlaybackDelayTask(uid);
