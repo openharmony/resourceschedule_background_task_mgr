@@ -45,7 +45,7 @@ const std::string ENABLE = "enable";
 const std::string DOZE_TIME = "doze_time";
 constexpr int32_t EXTENSION_SUCCESS_CODE = 0;
 constexpr int32_t EXTENSION_ERROR_CODE = 13500099;
-constexpr int32_t MAX_AUTH_RECORD_SIZE = 400 * 200;
+constexpr int32_t MAX_AUTH_RECORD_SIZE = 400 * 200; // 单个应用授权记录数据大小为400
 }
 
 DataStorageHelper::DataStorageHelper() {}
