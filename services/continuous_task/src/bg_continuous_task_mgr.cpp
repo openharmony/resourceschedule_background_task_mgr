@@ -2073,7 +2073,6 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     auto record = findUidIter->second;
 
     if (!findUidIter->second->audioDetectState_) {
-        BGTASK_LOGD("audio detect fail: %{public}d", uid);
         findUidIter->second->audioDetectState_ = true;
         RemoveAudioPlaybackDelayTask(uid);
         return ERR_OK;
