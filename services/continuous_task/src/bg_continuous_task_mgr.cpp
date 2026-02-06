@@ -185,6 +185,9 @@ bool BgContinuousTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& r
 void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
 {
     BGTASK_LOGI("BgContinuousTaskMgr reclaimProcessMemory pid: %{public}d start.", pid);
+    if (pid <= 0) {
+        return;
+    }
     std::string path = "/proc/" + std::to_string(pid) + "/reclaim";
     std::string contentStr = "1";
     FILE *file = fopen(path.c_str(), "w");
