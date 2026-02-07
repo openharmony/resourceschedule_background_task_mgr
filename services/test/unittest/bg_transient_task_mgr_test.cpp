@@ -32,11 +32,22 @@ public:
 
 class BgTransientTaskMgrTest : public testing::Test {
 public:
-    static void SetUpTestCase() {}
-    static void TearDownTestCase() {}
-    void SetUp() {}
-    void TearDown() {}
+    static void SetUpTestCase();
+    static void TearDownTestCase() {};
+    void SetUp() {};
+    void TearDown() {};
+    static std::shared_ptr<BgTransientTaskMgr> bgTransientTaskMgr_;
 };
+
+std::shared_ptr<BgTransientTaskMgr> BgTransientTaskMgrTest::bgTransientTaskMgr_ = nullptr;
+
+void BgTransientTaskMgrTest::SetUpTestCase()
+{
+    bgTransientTaskMgr_ = std::make_shared<BgTransientTaskMgr>();
+    bgTransientTaskMgr_->isReady_.store(true);
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("tdd_test_handler");
+    bgTransientTaskMgr_->handler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
+}
 
 /**
  * @tc.name: SubscribeTransientTask_001
@@ -47,7 +58,7 @@ public:
 HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_001, TestSize.Level1)
 {
     auto subscriber = std::make_shared<TestBackgroundTaskSubscriber>();
-    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
+    auto ret = bgTransientTaskMgr_->SubscribeBackgroundTask(subscriber->GetImpl());
     EXPECT_TRUE(ret == ERR_OK);
 }
 
@@ -59,7 +70,7 @@ HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_001, TestSize.Level1)
  */
 HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_002, TestSize.Level1)
 {
-    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(nullptr);
+    auto ret = bgTransientTaskMgr_->SubscribeBackgroundTask(nullptr);
     EXPECT_FALSE(ret == ERR_OK);
 }
 
@@ -72,10 +83,10 @@ HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_002, TestSize.Level1)
 HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_003, TestSize.Level1)
 {
     auto subscriber = std::make_shared<TestBackgroundTaskSubscriber>();
-    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
+    auto ret = bgTransientTaskMgr_->SubscribeBackgroundTask(subscriber->GetImpl());
     EXPECT_TRUE(ret == ERR_OK);
 
-    ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
+    ret = bgTransientTaskMgr_->SubscribeBackgroundTask(subscriber->GetImpl());
     EXPECT_TRUE(ret == ERR_OK);
 }
 
@@ -88,12 +99,12 @@ HWTEST_F(BgTransientTaskMgrTest, SubscribeTransientTask_003, TestSize.Level1)
 HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_001, TestSize.Level1)
 {
     auto subscriber = std::make_shared<TestBackgroundTaskSubscriber>();
-    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->SubscribeBackgroundTask(subscriber->GetImpl());
+    auto ret = bgTransientTaskMgr_->SubscribeBackgroundTask(subscriber->GetImpl());
     EXPECT_TRUE(ret == ERR_OK);
 
     usleep(1000);
 
-    ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber->GetImpl());
+    ret = bgTransientTaskMgr_->UnsubscribeBackgroundTask(subscriber->GetImpl());
     EXPECT_TRUE(ret == ERR_OK);
 }
 
@@ -106,7 +117,7 @@ HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_001, TestSize.Level1)
 HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_002, TestSize.Level1)
 {
     auto subscriber = std::make_shared<TestBackgroundTaskSubscriber>();
-    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(subscriber->GetImpl());
+    auto ret = bgTransientTaskMgr_->UnsubscribeBackgroundTask(subscriber->GetImpl());
     EXPECT_TRUE(ret == ERR_OK);
 }
 
@@ -118,7 +129,7 @@ HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_002, TestSize.Level1)
  */
 HWTEST_F(BgTransientTaskMgrTest, UnsubscribeTransientTask_003, TestSize.Level1)
 {
-    auto ret = DelayedSingleton<BgTransientTaskMgr>::GetInstance()->UnsubscribeBackgroundTask(nullptr);
+    auto ret = bgTransientTaskMgr_->UnsubscribeBackgroundTask(nullptr);
     EXPECT_FALSE(ret == ERR_OK);
 }
 
