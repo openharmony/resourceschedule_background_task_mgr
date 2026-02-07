@@ -1119,7 +1119,8 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetAllContinuousTaskApps_001, TestSize.Level1)
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTaskApps(list),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
     SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTaskApps(list), ERR_OK);
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTaskApps(list),
+        ERR_BGTASK_PERMISSION_DENIED);
 }
 }
 }

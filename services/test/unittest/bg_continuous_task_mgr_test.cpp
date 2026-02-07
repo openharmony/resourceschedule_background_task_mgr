@@ -90,6 +90,8 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificaitonBtn_), PROMPT_NUMS,
         "bannernotification_test");
     bgContinuousTaskMgr_->isSysReady_.store(true);
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("tdd_test_handler");
+    bgContinuousTaskMgr_->handler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
 }
 
 void BgContinuousTaskMgrTest::TearDownTestCase() {}
