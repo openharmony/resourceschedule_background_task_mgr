@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -582,6 +582,23 @@ ErrCode BackgroundTaskManager::SetSpecialExemptedProcess(const std::set<std::str
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
     return proxy_->SetSpecialExemptedProcess(bundleNameSet);
+}
+
+ErrCode BackgroundTaskManager::GetAllContinuousTaskApps(
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    std::vector<ContinuousTaskCallbackInfo> TaskAppsList;
+    ErrCode result = proxy_->GetAllContinuousTaskApps(TaskAppsList);
+    if (result == ERR_OK) {
+        list.clear();
+        for (const auto& item : TaskAppsList) {
+            list.push_back(std::make_shared<ContinuousTaskCallbackInfo>(item));
+        }
+    }
+    return result;
 }
 
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)

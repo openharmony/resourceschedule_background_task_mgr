@@ -304,7 +304,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_026, TestSize.Level0)
 {
     bgTransientTaskMgr_->HandleExpiredCallbackDeath(nullptr);
     sptr<TestExpiredCallbackStub> expiredCallbackStub = sptr<TestExpiredCallbackStub>(new TestExpiredCallbackStub());
-    sptr<ExpiredCallbackProxy> proxy = sptr<ExpiredCallbackProxy>(
+    wptr<IRemoteObject> proxy = sptr<ExpiredCallbackProxy>(
         new ExpiredCallbackProxy(expiredCallbackStub->AsObject()));
     bgTransientTaskMgr_->expiredCallbackMap_.clear();
     bgTransientTaskMgr_->HandleExpiredCallbackDeath(proxy);
@@ -729,6 +729,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_051, TestSize.Level1)
     DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.clear();
     DelayedSingleton<BgtaskConfig>::GetInstance()->isInit_ = false;
     DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
+    
     EXPECT_NE(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
 }
 

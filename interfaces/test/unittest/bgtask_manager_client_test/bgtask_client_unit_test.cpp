@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1171,7 +1171,7 @@ HWTEST_F(BgTaskClientUnitTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
     uint32_t authResult = 0;
     EXPECT_EQ(BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(0, authResult), ERR_BGTASK_PERMISSION_DENIED);
 }
-
+ 
 /**
  * @tc.name: CheckTaskAuthResult_001
  * @tc.desc: test CheckTaskAuthResult.
@@ -1282,6 +1282,18 @@ HWTEST_F(BgTaskClientUnitTest, SetSpecialExemptedProcess_001, TestSize.Level1)
 {
     std::set<std::string> bundleNameSet;
     EXPECT_EQ(BackgroundTaskMgrHelper::SetSpecialExemptedProcess(bundleNameSet), ERR_OK);
+}
+
+/**
+ * @tc.name: GetAllContinuousTaskApps_001
+ * @tc.desc: test GetAllContinuousTaskApps interface.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, GetAllContinuousTaskApps_001, TestSize.Level1)
+{
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
+    EXPECT_EQ(BackgroundTaskMgrHelper::GetAllContinuousTaskApps(list), ERR_OK);
 }
 }
 }

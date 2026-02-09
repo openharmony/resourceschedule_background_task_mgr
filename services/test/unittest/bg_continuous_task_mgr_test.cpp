@@ -90,6 +90,8 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificaitonBtn_), PROMPT_NUMS,
         "bannernotification_test");
     bgContinuousTaskMgr_->isSysReady_.store(true);
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("tdd_test_handler");
+    bgContinuousTaskMgr_->handler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
 }
 
 void BgContinuousTaskMgrTest::TearDownTestCase() {}
@@ -1462,6 +1464,27 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_003, TestSiz
 }
 
 /**
+ * @tc.name: AVSessionNotifyUpdateNotification_004
+ * @tc.desc: test AVSessionNotifyUpdateNotification interface.
+ * @tc.type: FUNC
+ * @tc.require: 828
+ */
+HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_004, TestSize.Level1)
+{
+    int32_t uid = 0;
+    int32_t pid = 1;
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    uid = 1;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = uid;
+    continuousTaskRecord1->audioDetectState_ = false;
+    continuousTaskRecord1->bgModeIds_.push_back(BGMODE_AUDIO_PLAYBACK_ID);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, false), ERR_OK);
+}
+
+/**
  * @tc.name: BgTaskManagerUnitTest_054
  * @tc.desc: test SendContinuousTaskNotification.
  * @tc.type: FUNC
@@ -2508,6 +2531,25 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialNotificationText_002, TestSize.Lev
     record->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialNotificationText(notificationText, record,
         BackgroundMode::BLUETOOTH_INTERACTION), ERR_OK);
+}
+
+/**
+ * @tc.name: GetAllContinuousTaskApps_001
+ * @tc.desc: test GetAllContinuousTaskApps.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, GetAllContinuousTaskApps_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTaskApps(list), ERR_BGTASK_SYS_NOT_READY);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTaskApps(list), ERR_OK);
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key"] = continuousTaskRecord;
+    EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTaskApps(list), ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
