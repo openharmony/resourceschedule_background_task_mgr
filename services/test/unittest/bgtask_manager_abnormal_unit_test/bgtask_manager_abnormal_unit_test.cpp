@@ -320,6 +320,8 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_015
     std::set<std::string> bundleNameSet;
     bundleNameSet.insert("com.test.app");
     EXPECT_EQ(BackgroundTaskMgrService_->SetSpecialExemptedProcess(bundleNameSet), ERR_BGTASK_PERMISSION_DENIED);
+    std::set<std::string> taskKeys;
+    EXPECT_EQ(BackgroundTaskMgrService_->SendNotificationByDeteTask(taskKeys), ERR_BGTASK_PERMISSION_DENIED);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
