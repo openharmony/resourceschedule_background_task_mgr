@@ -94,7 +94,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"允许“%s”在后台活动？",
+            "value":"允许“%s”执行应用后台长时活动？",
             "attr":{
                 "priority":"LT"
             }
@@ -119,22 +119,6 @@
             "attr":{
                 "priority":"translate"
             }
-        },
-        {
-            "name":"btn_not_allowed",
-            "value":"不允许"
-        },
-        {
-            "name":"dialog_title_media_process",
-            "value":"后台活动用于媒体文件处理，如音视频制作、导出制作内容等。"
-        },
-        {
-            "name":"dialog_title_video_broadcast",
-            "value":"后台活动用于将音视频投放到其他设备。"
-        },
-        {
-            "name":"dialog_title_work_out",
-            "value":"后台活动用于跑步、健走、骑行、健身、游泳、滑雪等各类运动。"
         }
     ]
 }

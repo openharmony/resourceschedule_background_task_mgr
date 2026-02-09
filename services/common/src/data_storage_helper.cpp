@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,6 +45,7 @@ const std::string ENABLE = "enable";
 const std::string DOZE_TIME = "doze_time";
 constexpr int32_t EXTENSION_SUCCESS_CODE = 0;
 constexpr int32_t EXTENSION_ERROR_CODE = 13500099;
+constexpr int32_t MAX_AUTH_RECORD_SIZE = 400 * 1000; // 单个应用授权记录数据大小为400
 }
 
 DataStorageHelper::DataStorageHelper() {}
@@ -237,6 +238,13 @@ bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
     struct stat statBuf;
     if (fd.Get() < 0 || fstat(fd.Get(), &statBuf) < 0) {
         BGTASK_LOGE("OnRestore fail: ReadFileDescriptor or fstat fail");
+        return false;
+    }
+    // 安全规范告警：在resize前需要对statBuf.st_size进行上界或下界判断
+    // 单个记录的size大小为400，此处设置为1000个应用的记录大小
+    int32_t fileSize = statBuf.st_size;
+    if (fileSize > MAX_AUTH_RECORD_SIZE) {
+        BGTASK_LOGE("OnRestore fail: file size exceeding the limit.");
         return false;
     }
     std::string authRecordStr;
