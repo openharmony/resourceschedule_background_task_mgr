@@ -304,7 +304,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_026, TestSize.Level0)
 {
     bgTransientTaskMgr_->HandleExpiredCallbackDeath(nullptr);
     sptr<TestExpiredCallbackStub> expiredCallbackStub = sptr<TestExpiredCallbackStub>(new TestExpiredCallbackStub());
-    sptr<ExpiredCallbackProxy> proxy = sptr<ExpiredCallbackProxy>(
+    wptr<IRemoteObject> proxy = sptr<ExpiredCallbackProxy>(
         new ExpiredCallbackProxy(expiredCallbackStub->AsObject()));
     bgTransientTaskMgr_->expiredCallbackMap_.clear();
     bgTransientTaskMgr_->HandleExpiredCallbackDeath(proxy);

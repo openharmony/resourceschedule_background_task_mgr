@@ -154,6 +154,11 @@ ohos_shared_library("bgtaskmgr_service") {
 ohos_static_library("bgtaskmgr_service_static") {
   cflags_cc = [ "-DBGTASK_MGR_UNIT_TEST" ]
   sources = BgTaskMgrServicecSrc
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   public_configs = [ ":bgtaskmgr_service_public_config" ]
 
