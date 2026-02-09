@@ -2073,7 +2073,8 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     ErrCode result = ERR_OK;
     auto record = findUidIter->second;
 
-    // avsession检测失败，不发通知
+    // 应用退后台删除播控，退后台在60s后检测avsession，在65s后发送通知，当avsession检测失败且未取消长时任务时，不发通知
+    // 解决删除播控通知后（avsession停流，存在长时任务场景）仍显示长时任务通知的体验问题
     if (!findUidIter->second->audioDetectState_) {
         findUidIter->second->audioDetectState_ = true;
         RemoveAudioPlaybackDelayTask(uid);
