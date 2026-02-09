@@ -122,7 +122,7 @@ static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
 static constexpr uint32_t AVSESSION_SA_UID = 6700;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 2;
-static constexpr uint32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 5000;
+static constexpr uint32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 65 * 000;
 #ifdef FEATURE_PRODUCT_WATCH
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
 #else
@@ -1669,6 +1669,7 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
             wantAgentBundleName, wantAgentAbilityName);
         info->SetBundleName(record.second->bundleName_);
         info->SetAppIndex(record.second->appIndex_);
+        info->SetByRequestObject(record.second->isByRequestObject_);
         list.push_back(info);
     }
     return ERR_OK;
@@ -1831,6 +1832,9 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
 
 void BgContinuousTaskMgr::HandleActiveNotification(std::shared_ptr<ContinuousTaskRecord> record)
 {
+    if (record->suspendState_) {
+        return;
+    }
     if (record->isByRequestObject_ && record->bgModeIds_.size() > 1 &&
         CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
         SendLiveViewAndOtherNotification(record);
@@ -1992,7 +1996,7 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskApps(std::vector<std::shared_ptr<C
 }
 
 ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list,
-    int32_t uid)
+    int32_t uid, bool includeSuspended)
 {
     if (continuousTaskInfosMap_.empty()) {
         return ERR_OK;
@@ -2002,13 +2006,16 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
         if (uid != -1 && uid != record.second->uid_) {
             continue;
         }
-        if (record.second->suspendState_) {
+        if (record.second->suspendState_ && !includeSuspended) {
             continue;
         }
         auto appInfo = std::make_shared<ContinuousTaskCallbackInfo>(record.second->bgModeId_, record.second->uid_,
             record.second->pid_, record.second->abilityName_, record.second->isFromWebview_, record.second->isBatchApi_,
             record.second->bgModeIds_, record.second->abilityId_, record.second->fullTokenId_);
         appInfo->SetContinuousTaskId(record.second->continuousTaskId_);
+        appInfo->SetByRequestObject(record.second->isByRequestObject_);
+        appInfo->SetSuspendState(record.second->suspendState_);
+        appInfo->SetSuspendReason(record.second->suspendReason_);
         list.push_back(appInfo);
     }
     return ERR_OK;
@@ -2065,6 +2072,14 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
 
     ErrCode result = ERR_OK;
     auto record = findUidIter->second;
+
+    // 应用退后台删除播控，退后台在60s后检测avsession，在65s后发送通知，当avsession检测失败且未取消长时任务时，不发通知
+    // 解决删除播控通知后（avsession停留，存在长时任务场景）任显示长时任务通知的体验问题
+    if (!findUidIter->second->audioDetectState_) {
+        findUidIter->second->audioDetectState_ = true;
+        RemoveAudioPlaybackDelayTask(uid);
+        return ERR_OK;
+    }
 
     // 子类型包含avsession，不发通知
     if (!isPublish &&
@@ -2160,6 +2175,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->GetUid() == uid &&
             CommonUtils::CheckExistMode(iter->second->bgModeIds_, BackgroundMode::AUDIO_PLAYBACK)) {
+            iter->second->audioDetectState_ = false;
             NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
                 iter->second->GetNotificationId());
             if (!IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND)) {
@@ -3489,18 +3505,6 @@ ErrCode BgContinuousTaskMgr::RefreshAuthRecord()
     return ERR_OK;
 }
 
-void BgContinuousTaskMgr::SendNotificationByLiveViewCancel(int32_t uid)
-{
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return;
-    }
-
-    handler_->PostSyncTask([this, uid]() {
-        this->SendNotificationByLiveViewCancelInner(uid);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
-}
-
 ErrCode BgContinuousTaskMgr::SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam)
 {
     if (!isSysReady_.load()) {
@@ -3691,7 +3695,7 @@ void BgContinuousTaskMgr::CancelBgTaskNotificationInner(int32_t uid)
                 task.second->GetNotificationLabel(), task.second->GetNotificationId());
             task.second->notificationId_ = -1;
             RefreshTaskRecord();
-            BGTASK_LOGD("continuous task has other mode");
+            BGTASK_LOGI("uid: %{public}d has live view notification , cancel continuous notification", uid);
             continue;
         }
     }
@@ -3721,6 +3725,18 @@ void BgContinuousTaskMgr::SendNotificationByLiveViewCancelInner(int32_t uid)
             RefreshTaskRecord();
         }
     }
+}
+
+void BgContinuousTaskMgr::SendNotificationByLiveViewCancel(int32_t uid)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+
+    handler_->PostSyncTask([this, uid]() {
+        this->SendNotificationByLiveViewCancelInner(uid);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
 }
 
 ErrCode BgContinuousTaskMgr::OnBackup(MessageParcel& data, MessageParcel& reply)
@@ -3815,6 +3831,20 @@ void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
         iter++;
     }
     NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
+}
+
+ErrCode BgContinuousTaskMgr::GetAllContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    ErrCode result = ERR_OK;
+    handler_->PostSyncTask([this, &list, &result]() {
+        result = this->GetContinuousTaskAppsInner(list, -1, true);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+
+    return result;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

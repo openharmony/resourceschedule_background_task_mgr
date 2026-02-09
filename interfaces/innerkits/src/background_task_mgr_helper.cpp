@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -188,6 +188,12 @@ ErrCode BackgroundTaskMgrHelper::GetAllContinuousTasksBySystem(std::vector<std::
 ErrCode BackgroundTaskMgrHelper::SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetSpecialExemptedProcess(bundleNameSet);
+}
+
+ErrCode BackgroundTaskMgrHelper::GetAllContinuousTaskApps(
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTaskApps(list);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
