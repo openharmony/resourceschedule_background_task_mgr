@@ -797,6 +797,7 @@ ErrCode BackgroundTaskMgrService::GetAllContinuousTaskApps(std::vector<Continuou
     return result;
 }
 
+
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
