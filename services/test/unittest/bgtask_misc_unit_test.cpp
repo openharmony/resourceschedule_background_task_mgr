@@ -36,19 +36,21 @@
 #include "event_runner.h"
 #include "input_manager.h"
 #include "key_info.h"
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 #include "notification.h"
 #include "notification_sorting_map.h"
+#include "notification_content.h"
+#include "task_notification_subscriber.h"
+#endif
 #include "notification_tools.h"
 #include "pkg_delay_suspend_info.h"
 #include "process_data.h"
 #include "singleton.h"
 #include "string_wrapper.h"
 #include "suspend_controller.h"
-#include "task_notification_subscriber.h"
 #include "time_provider.h"
 #include "timer_manager.h"
 #include "watchdog.h"
-#include "notification_content.h"
 #include "int_wrapper.h"
 
 using namespace testing::ext;
@@ -61,8 +63,10 @@ extern void SetGetAllActiveNotificationsFlag(int32_t flag);
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t SLEEP_TIME = 500;
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 static constexpr int32_t BGTASKMGR_UID = 1096;
 static constexpr int32_t TEST_NUM_ONE = 1;
+#endif
 static constexpr int32_t TEST_NUM_TWO = 2;
 static constexpr int32_t MIN_ALLOW_QUOTA_TIME = 10 * MSEC_PER_SEC; // 10s
 }
@@ -232,6 +236,7 @@ HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_001, TestSize.Level2)
  */
 HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_001, TestSize.Level2)
 {
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     auto subscriber = std::make_shared<TaskNotificationSubscriber>();
     subscriber->OnCanceled(nullptr, nullptr, 1);
     auto notificationMap = std::make_shared<Notification::NotificationSortingMap>();
@@ -266,6 +271,7 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_001, TestSize.Level2)
     subscriber->OnCanceled(notification, notificationMap,
         Notification::NotificationConstant::USER_STOPPED_REASON_DELETE);
     EXPECT_TRUE(true);
+#endif
 }
 
 /**
@@ -276,6 +282,7 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_001, TestSize.Level2)
  */
 HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_002, TestSize.Level2)
 {
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     auto subscriber = std::make_shared<TaskNotificationSubscriber>();
     subscriber->OnConsumed(nullptr, nullptr);
     subscriber->OnUpdate(nullptr);
@@ -289,6 +296,7 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_002, TestSize.Level2)
     subscriber->OnBatchCanceled(requestList, notificationMap, 1);
     subscriber->OnDisconnected();
     EXPECT_TRUE(true);
+#endif
 }
 
 /**
@@ -838,6 +846,7 @@ HWTEST_F(BgTaskMiscUnitTest, OnProcessStateChanged_001, TestSize.Level2)
  */
 HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_003, TestSize.Level2)
 {
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     auto subscriber = std::make_shared<TaskNotificationSubscriber>();
     subscriber->OnConsumed(nullptr, nullptr);
     auto notificationMap = std::make_shared<Notification::NotificationSortingMap>();
@@ -856,6 +865,7 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_003, TestSize.Level2)
     notification->request_->notificationContentType_ = Notification::NotificationContent::Type::LIVE_VIEW;
     subscriber->OnConsumed(notification, notificationMap);
     EXPECT_TRUE(true);
+#endif
 }
 
 /**
@@ -866,6 +876,7 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_003, TestSize.Level2)
  */
 HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_004, TestSize.Level2)
 {
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     auto subscriber = std::make_shared<TaskNotificationSubscriber>();
     subscriber->OnCanceled(nullptr, nullptr, 1);
     auto notificationMap = std::make_shared<Notification::NotificationSortingMap>();
@@ -886,6 +897,7 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_004, TestSize.Level2)
     notification->request_->notificationContentType_ = Notification::NotificationContent::Type::LIVE_VIEW;
     subscriber->OnCanceled(notification, notificationMap, 1);
     EXPECT_TRUE(true);
+#endif
 }
 
 /**
@@ -896,6 +908,7 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_004, TestSize.Level2)
  */
 HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_005, TestSize.Level2)
 {
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     auto subscriber = std::make_shared<TaskNotificationSubscriber>();
     auto notificationMap = std::make_shared<Notification::NotificationSortingMap>();
     auto notificationRequest = sptr<Notification::NotificationRequest>(new Notification::NotificationRequest());
@@ -914,6 +927,7 @@ HWTEST_F(BgTaskMiscUnitTest, TaskNotificationSubscriber_005, TestSize.Level2)
     subscriber->OnConsumed(notification, notificationMap);
     subscriber->OnCanceled(notification, notificationMap, 1);
     EXPECT_TRUE(true);
+#endif
 }
 
 /**
