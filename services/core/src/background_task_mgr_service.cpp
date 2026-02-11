@@ -802,8 +802,7 @@ ErrCode BackgroundTaskMgrService::SendNotificationByDeteTask(const std::set<std:
     if (!CheckCallingToken() || !CheckCallingProcess()) {
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    DelayedSingleton<BgtaskConfig>::GetInstance()->SendNotificationByDeteTask(taskKeys);
-    return ERR_OK;
+    return BgContinuousTaskMgr::GetInstance()->SendNotificationByDeteTask(taskKeys);
 }
 
 bool BackgroundTaskMgrService::CheckAtomicService()
