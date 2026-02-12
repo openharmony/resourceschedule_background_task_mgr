@@ -109,7 +109,7 @@ public:
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
     ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
     ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
-
+    ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
     bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false);
     bool StopBannerContinuousTaskByUser(const std::string &label);
     void OnAccountsStateChanged(int32_t id);
@@ -262,6 +262,7 @@ private:
     ErrCode GetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
     void SendAudioCallBackTaskState(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo);
     bool CheckApplySpecial(const std::string &bundleName, int32_t &userId);
+    ErrCode SendNotificationByDeteTaskInner(const std::set<std::string> &taskKeys);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};

@@ -195,5 +195,10 @@ ErrCode BackgroundTaskMgrHelper::GetAllContinuousTaskApps(
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTaskApps(list);
 }
+
+ErrCode BackgroundTaskMgrHelper::SendNotificationByDeteTask(const std::set<std::string> &taskKeys)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SendNotificationByDeteTask(taskKeys);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

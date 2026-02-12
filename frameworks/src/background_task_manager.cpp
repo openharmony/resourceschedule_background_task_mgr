@@ -601,6 +601,14 @@ ErrCode BackgroundTaskManager::GetAllContinuousTaskApps(
     return result;
 }
 
+ErrCode BackgroundTaskManager::SendNotificationByDeteTask(const std::set<std::string> &taskKeys)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->SendNotificationByDeteTask(taskKeys);
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 

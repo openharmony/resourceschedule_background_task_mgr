@@ -293,6 +293,13 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode GetAllContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
+
+    /**
+     * @brief send continuous task notification by suspend
+     * @param taskKeys continuous task key
+     * @return Returns ERR_OK if success, else failure.
+     */
+    static ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

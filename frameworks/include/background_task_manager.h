@@ -359,6 +359,13 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode GetAllContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
+
+    /**
+     * @brief send continuous task notification by suspend
+     * @param taskKeys continuous task key
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
 private:
     bool GetBackgroundTaskManagerProxy();
 

@@ -3849,5 +3849,31 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTaskApps(std::vector<std::shared_pt
 
     return result;
 }
+
+ErrCode BgContinuousTaskMgr::SendNotificationByDeteTask(const std::set<std::string> &taskKeys)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    ErrCode result = ERR_OK;
+    handler_->PostSyncTask([this, &taskKeys, &result]() {
+        result = this->SendNotificationByDeteTaskInner(taskKeys);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::SendNotificationByDeteTaskInner(const std::set<std::string> &taskKeys)
+{
+    for (const auto &key : taskKeys) {
+        auto iter = continuousTaskInfosMap_.find(key);
+        if (iter == continuousTaskInfosMap_.end()) {
+            continue;
+        }
+        avSessionNotification_[iter->second->GetUid()] = false;
+        HandleActiveNotification(iter->second);
+    }
+    return ERR_OK;
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

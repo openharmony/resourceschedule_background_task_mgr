@@ -67,4 +67,5 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void GetAllContinuousTasksBySystem([out] sharedptr<ContinuousTaskInfo>[] list);
     [oneway] void SetSpecialExemptedProcess([in] Set<String> bundleNameSet);
     void GetAllContinuousTaskApps([out] ContinuousTaskCallbackInfo[] list);
+    [oneway] void SendNotificationByDeteTask([in] Set<String> taskKeys);
 }

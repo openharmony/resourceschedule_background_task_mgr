@@ -1295,5 +1295,17 @@ HWTEST_F(BgTaskClientUnitTest, GetAllContinuousTaskApps_001, TestSize.Level1)
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
     EXPECT_EQ(BackgroundTaskMgrHelper::GetAllContinuousTaskApps(list), ERR_OK);
 }
+
+/**
+ * @tc.name: SendNotificationByDeteTask_001
+ * @tc.desc: test SendNotificationByDeteTask interface.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, SendNotificationByDeteTask_001, TestSize.Level1)
+{
+    std::set<std::string> taskKeys;
+    EXPECT_EQ(BackgroundTaskMgrHelper::SendNotificationByDeteTask(taskKeys), ERR_OK);
+}
 }
 }
