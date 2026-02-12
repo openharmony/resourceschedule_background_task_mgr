@@ -105,7 +105,7 @@ public:
         return false;
     }
 
-    static bool CheckStrToNum(const std::string &valude)
+    static bool CheckStrToNum(const std::string &value)
     {
         std::regex pattern(R"(^\d+$)");
         return std::regex_match(value, pattern);
