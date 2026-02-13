@@ -122,19 +122,30 @@
         },
         {
             "name":"btn_not_allowed",
-            "value":"不允许"
+            "value":"不允许",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"dialog_title_media_process",
-            "value":"后台活动用于媒体文件处理，如音视频制作、导出制作内容等。"
+            "value":"后台活动用于媒体文件处理，如音视频制作、导出制作内容等。",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"dialog_title_video_broadcast",
-            "value":"后台活动用于将音视频投放到其他设备。"
+            "value":"后台活动用于将音视频投放到其他设备。",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"dialog_title_work_out",
-            "value":"后台活动用于跑步、健走、骑行、健身、游泳、滑雪等各类运动。"
+            "value":"后台活动用于跑步、健走、骑行、健身、游泳、滑雪等各类运动。",
+            "attr":{
+                "priority":"translate"
+            }
         }
-    ]
 }

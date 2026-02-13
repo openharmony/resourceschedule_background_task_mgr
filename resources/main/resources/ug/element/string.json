@@ -111,6 +111,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_not_allowed",
+            "value":"چەكلەش",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"بۇ ئىجازەت يۈگۈرۈش، مېڭىش، ۋېلىسىپىت مىنىش، سۇ ئۈزۈش، قار تېيىلىش قاتارلىق چېنىقىش تۈرلىرىگە ماس مەشغۇلاتنى ئارقا سۇپىدا يۈرگۈزۈش ئۈچۈن ئىشلىتىلىدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"بۇ ئىجازەت ئارقا سۇپىدا باشقا ئۈسكۈنىگە ئۈن-سىن سۇنۇش ئۈچۈن ئىشلىتىلىدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_media_process",
+            "value":"بۇ ئىجازەت ئارقا سۇپىدا ئۈن-سىن ئىشلەش ۋە ئىشلىگەن مەزمۇننى چىقىرىش قاتارلىق مېدىيا ھۆججىتى بىر تەرەپ قىلىش مەشغۇلاتلىرى ئۈچۈن ئىشلىتىلىدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

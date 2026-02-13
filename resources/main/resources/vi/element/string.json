@@ -111,6 +111,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_not_allowed",
+            "value":"Từ chối",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"Quyền này được dùng cho các hoạt động như chạy bộ, tập luyện, bơi lội, v.v.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"Quyền này được dùng để truyền phát âm thanh và video đến các thiết bị khác.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_media_process",
+            "value":"Quyền này được dùng để xử lý các tác vụ đa phương tiện, chẳng hạn như tạo và xuất nội dung âm thanh và video.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

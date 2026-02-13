@@ -111,6 +111,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_not_allowed",
+            "value":"Odmów",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"Służy do obsługi czynności, takich jak bieganie, ćwiczenia, pływanie itp.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"Służy do emisji dźwięku i obrazu na innych urządzeniach.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_media_process",
+            "value":"Służy do przetwarzania zadań multimedialnych, takich jak tworzenie i eksportowanie treści audio i wideo.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

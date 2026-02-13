@@ -111,6 +111,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_not_allowed",
+            "value":"ငြင်းပယ်ရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"ပြေးခြင်း၊ လေ့ကျင့်ခန်းများ၊ ရေကူးခြင်း စသည်တို့ကဲ့သို့ လှုပ်ရှားမှုများအတွက် အသုံးပြုသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"အသံနှင့် ဗီဒီယိုကို အခြားစက်များတွင် ထုတ်လွှင့်ပြသရန်အတွက် အသုံးပြုသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_media_process",
+            "value":"အသံနှင့် ဗီဒီယို အကြောင်းအရာကို ဖန်တီးခြင်းနှင့် ထုတ်သိမ်းခြင်းကဲ့သို့ မီဒီယာဖိုင်လုပ်ငန်းများကို စီမံဆောင်ရွက်ရန် အသုံးပြုသည်။",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
