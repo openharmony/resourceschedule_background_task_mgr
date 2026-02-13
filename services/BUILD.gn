@@ -122,7 +122,7 @@ ohos_shared_library("bgtaskmgr_service") {
     external_deps += [ "os_account:os_account_innerkits" ]
   }
 
-  if (distributed_notification_enable) {
+  if (distributed_notification_enable && background_task_mgr_notification_enable) {
     cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
     external_deps += [ "distributed_notification_service:ans_innerkits" ]
     sources += [ "continuous_task/src/task_notification_subscriber.cpp" ]
@@ -199,7 +199,7 @@ ohos_static_library("bgtaskmgr_service_static") {
     external_deps += [ "os_account:os_account_innerkits" ]
   }
 
-  if (distributed_notification_enable) {
+  if (distributed_notification_enable && background_task_mgr_notification_enable) {
     cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
     external_deps += [ "distributed_notification_service:ans_innerkits" ]
     sources += [ "continuous_task/src/task_notification_subscriber.cpp" ]

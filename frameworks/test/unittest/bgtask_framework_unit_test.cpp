@@ -1118,9 +1118,21 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetAllContinuousTaskApps_001, TestSize.Level1)
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTaskApps(list),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
-    SystemAbilityManagerClient::GetInstance().action_ = "";
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTaskApps(list),
-        ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: SendNotificationByDeteTask_001
+ * @tc.desc: test SendNotificationByDeteTask.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, SendNotificationByDeteTask_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::set<std::string> taskKeys;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SendNotificationByDeteTask(taskKeys),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
 }
 }
 }

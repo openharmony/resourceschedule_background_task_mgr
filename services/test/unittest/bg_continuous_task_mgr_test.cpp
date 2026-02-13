@@ -2551,5 +2551,21 @@ HWTEST_F(BgContinuousTaskMgrTest, GetAllContinuousTaskApps_001, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key"] = continuousTaskRecord;
     EXPECT_EQ(bgContinuousTaskMgr_->GetAllContinuousTaskApps(list), ERR_OK);
 }
+
+/**
+ * @tc.name: SendNotificationByDeteTask_001
+ * @tc.desc: test SendNotificationByDeteTask.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SendNotificationByDeteTask_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    std::set<std::string> taskKeys;
+    EXPECT_EQ(bgContinuousTaskMgr_->SendNotificationByDeteTask(taskKeys), ERR_BGTASK_SYS_NOT_READY);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->SendNotificationByDeteTask(taskKeys), ERR_OK);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

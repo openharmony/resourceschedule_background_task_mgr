@@ -797,6 +797,13 @@ ErrCode BackgroundTaskMgrService::GetAllContinuousTaskApps(std::vector<Continuou
     return result;
 }
 
+ErrCode BackgroundTaskMgrService::SendNotificationByDeteTask(const std::set<std::string> &taskKeys)
+{
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return BgContinuousTaskMgr::GetInstance()->SendNotificationByDeteTask(taskKeys);
+}
 
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
