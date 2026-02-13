@@ -368,6 +368,7 @@ WEAK_FUNC ErrCode NotificationTools::PublishSubNotification(const std::shared_pt
     return ERR_OK;
 }
 
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 std::shared_ptr<Notification::NotificationNormalContent> CreateNotificationNormalContent(
     const std::string &appName, const std::string &prompt)
 {
@@ -377,7 +378,9 @@ std::shared_ptr<Notification::NotificationNormalContent> CreateNotificationNorma
     normalContent->SetText(prompt);
     return normalContent;
 }
+#endif
 
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 bool SetActionButton(const std::shared_ptr<BannerNotificationRecord> &bannerNotification,
     const std::string& buttonName, Notification::NotificationRequest& notificationRequest,
     const int32_t btnTypeValue, const std::string &label)
@@ -412,6 +415,7 @@ bool SetActionButton(const std::shared_ptr<BannerNotificationRecord> &bannerNoti
     notificationRequest.AddActionButton(actionButtonDeal);
     return true;
 }
+#endif
 
 std::string NotificationTools::CreateBannerNotificationLabel(const std::string &bundleName, int32_t userId,
     int32_t appIndex)
