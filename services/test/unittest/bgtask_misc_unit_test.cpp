@@ -1058,5 +1058,29 @@ HWTEST_F(BgTaskMiscUnitTest, SystemEventObserverTest_002, TestSize.Level2)
     systemEventListener->OnReceiveEventContinuousTask(eventData);
     EXPECT_TRUE(true);
 }
+
+/**
+ * @tc.name: submode_notification_text_001
+ * @tc.desc: test SubModeNotification class.
+ * @tc.type: FUNC
+ * @tc.require: 822
+ */
+HWTEST_F(BgTaskMiscUnitTest, SubModeNotification_001, TestSize.Level2)
+{
+    EXPECT_TRUE(BgContinuousTaskMgr::GetInstance()->continuousTaskSubText_.empty());
+    BgContinuousTaskMgr::GetInstance()->GetNotificationPrompt();
+    
+    EXPECT_FALSE(BgContinuousTaskMgr::GetInstance()->continuousTaskSubText_.empty());
+    EXPECT_EQ(BgContinuousTaskMgr::GetInstance()->continuousTaskSubText_.size(), 4);
+
+    std::string carKeyValue = BgContinuousTaskMgr::GetInstance()->continuousTaskSubText_.at(0);
+    EXPECT_EQ(carKeyValue, "关闭卡片后无感车钥匙将失效");
+    std::string mediaProcessValue = BgContinuousTaskMgr::GetInstance()->continuousTaskSubText_.at(1);
+    EXPECT_EQ(mediaProcessValue, "正在运行媒体处理任务，删除通知后任务将停止");
+    std::string videoBroadCastValue = BgContinuousTaskMgr::GetInstance()->continuousTaskSubText_.at(2);
+    EXPECT_EQ(videoBroadCastValue, "正在运行视频投播任务，删除通知后任务将停止");
+    std::string workOutValue = BgContinuousTaskMgr::GetInstance()->continuousTaskSubText_.at(3);
+    EXPECT_EQ(workOutValue, "正在运行运动任务，删除通知后任务将停止");
+}
 }
 }
