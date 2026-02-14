@@ -33,11 +33,11 @@ BgContinuousTaskDumper::~BgContinuousTaskDumper() {}
 void BgContinuousTaskDumper::DebugContinuousTask(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
-    if (dumpOption.size() < MAX_DUMP_INNER_PARAM_NUMS) {
+    if (dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS || dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS + 1) {
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
-    std::string modeStr = dumpOption[MAX_DUMP_PARAM_NUMS -1].c_str();
+    std::string modeStr = dumpOption[MAX_DUMP_INNER_PARAM_NUMS - 2].c_str();
     uint32_t mode = 0;
     if (modeStr == "WORKOUT") {
         mode = BackgroundMode::WORKOUT;
@@ -46,16 +46,18 @@ void BgContinuousTaskDumper::DebugContinuousTask(const std::vector<std::string> 
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
-    std::string operationType = dumpOption[MAX_DUMP_PARAM_NUMS].c_str();
+    std::string operationType = dumpOption[MAX_DUMP_INNER_PARAM_NUMS - 1].c_str();
     if (operationType != "apply" && operationType != "reset") {
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
     bool isApply = (operationType == "apply");
     int32_t uid = 1;
-    std::string uidStr = dumpOption[MAX_DUMP_PARAM_NUMS + 1].c_str();
-    if (dumpOption.size() == MAX_DUMP_INNER_PARAM_NUMS + 1 && CommonUtils::CheckStrToNum(uidStr)) {
-        uid = std::atoi(uidStr.c_str());
+    if (dumpOption.size() == MAX_DUMP_INNER_PARAM_NUMS + 1) {
+        std::string uidStr = dumpOption[MAX_DUMP_INNER_PARAM_NUMS].c_str();
+        if (CommonUtils::CheckStrToNum(uidStr)) {
+            uid = std::atoi(uidStr.c_str());
+        }
     }
     sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
         new ContinuousTaskParamForInner(uid, mode, isApply));
