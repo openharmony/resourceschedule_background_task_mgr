@@ -33,7 +33,7 @@ BgContinuousTaskDumper::~BgContinuousTaskDumper() {}
 void BgContinuousTaskDumper::DebugContinuousTask(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
-    if (dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS || dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS + 1) {
+    if (dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS && dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS + 1) {
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
