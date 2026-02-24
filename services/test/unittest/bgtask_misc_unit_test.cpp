@@ -1063,13 +1063,12 @@ HWTEST_F(BgTaskMiscUnitTest, SystemEventObserverTest_002, TestSize.Level2)
  * @tc.name: submode_notification_text_001
  * @tc.desc: test SubModeNotification class.
  * @tc.type: FUNC
- * @tc.require: 822
+ * @tc.require:
  */
 HWTEST_F(BgTaskMiscUnitTest, SubModeNotification_001, TestSize.Level2)
 {
     EXPECT_TRUE(BgContinuousTaskMgr::GetInstance()->continuousTaskSubText_.empty());
     BgContinuousTaskMgr::GetInstance()->GetNotificationPrompt();
-    
     EXPECT_FALSE(BgContinuousTaskMgr::GetInstance()->continuousTaskSubText_.empty());
     EXPECT_EQ(BgContinuousTaskMgr::GetInstance()->continuousTaskSubText_.size(), 4);
 
