@@ -2835,8 +2835,8 @@ void BgContinuousTaskMgr::ClearBgOsAccountTaskInCar()
         int32_t userId = iter->second->GetUserId();
         auto findInForeground = [userId](const auto &target) {
             return userId == target.localId;
-        }
-        auto idIter = find(accounts.begin(), accounts.end(), findInForeground);
+        };
+        auto idIter = find_if(accounts.begin(), accounts.end(), findInForeground);
         if (idIter == accounts.end()) {
             auto record = iter->second;
             record->reason_ = SYSTEM_CANCEL;
