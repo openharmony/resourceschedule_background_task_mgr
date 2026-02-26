@@ -2792,6 +2792,14 @@ void BgContinuousTaskMgr::OnAccountsStateChanged(int32_t id)
     activatedOsAccountIds.push_back(DEFAULT_OS_ACCOUNT_ID);
     BGTASK_LOGI("there is no account part, use default id.");
 #endif // HAS_OS_ACCOUNT_PART
+    ClearBgOsAccountTask(activatedOsAccountIds);
+}
+
+void BgContinuousTaskMgr::ClearBgOsAccountTask(const std::vector<int32_t> &activatedOsAccountIds)
+{
+#ifdef HAS_OS_ACCOUNT_CAR
+    ClearBgOsAccountTaskInCar();
+#else // HAS_OS_ACCOUNT_CAR
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         auto idIter = find(activatedOsAccountIds.begin(), activatedOsAccountIds.end(), iter->second->GetUserId());
@@ -2808,7 +2816,43 @@ void BgContinuousTaskMgr::OnAccountsStateChanged(int32_t id)
             iter++;
         }
     }
+#endif // HAS_OS_ACCOUNT_CAR
 }
+
+#ifdef HAS_OS_ACCOUNT_CAR
+void BgContinuousTaskMgr::ClearBgOsAccountTaskInCar()
+{
+    // 获取前台用户列表
+    std::vector<AccountSA::ForegroundOsAccount> accounts;
+    ErrCode errCode = AccountSA::OsAccountManager::GetForegroundOsAccounts(accounts);
+    if (errCode != ERR_OK) {
+        BGTASK_LOGE("GetForegroundOsAccounts failed");
+        return;
+    }
+    BGTASK_LOGI("ForegroundOsAccounts size:%{public}lu", accounts.size());
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        int32_t userId = iter->second->GetUserId();
+        auto findInForeground = [userId](const auto &target) {
+            return userId == target.localId;
+        }
+        auto idIter = find(accounts.begin(), accounts.end(), findInForeground);
+        if (idIter == accounts.end()) {
+            auto record = iter->second;
+            record->reason_ = SYSTEM_CANCEL;
+            OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            NotificationTools::GetInstance()->CancelNotification(
+                record->GetNotificationLabel(), record->GetNotificationId());
+            iter = continuousTaskInfosMap_.erase(iter);
+            HandleAppContinuousTaskStop(record->uid_);
+            RefreshTaskRecord();
+            BGTASK_LOGI("uid:%{public}d not in foreground OsAccounts, clear", record->uid_);
+        } else {
+            iter++;
+        }
+    }
+}
+#endif // HAS_OS_ACCOUNT_CAR
 
 void BgContinuousTaskMgr::HandleAppContinuousTaskStop(int32_t uid)
 {

@@ -263,6 +263,10 @@ private:
     void SendAudioCallBackTaskState(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo);
     bool CheckApplySpecial(const std::string &bundleName, int32_t &userId);
     ErrCode SendNotificationByDeteTaskInner(const std::set<std::string> &taskKeys);
+    void ClearBgOsAccountTask(const std::vector<int32_t> &activatedOsAccountIds);
+#ifdef HAS_OS_ACCOUNT_CAR
+    void ClearBgOsAccountTaskInCar();
+#endif
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};

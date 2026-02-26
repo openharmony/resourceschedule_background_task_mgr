@@ -145,6 +145,8 @@ ohos_shared_library("bgtaskmgr_service") {
     cflags_cc += [ "-DSUPPORT_AUTH" ]
   } else if (target_platform == "tablet") {
     cflags_cc += [ "-DSUPPORT_AUTH" ]
+  } else if (target_platform == "car") {
+    cflags_cc += [ "-DHAS_OS_ACCOUNT_CAR" ]
   }
 
   subsystem_name = "resourceschedule"
@@ -222,6 +224,8 @@ ohos_static_library("bgtaskmgr_service_static") {
     cflags_cc += [ "-DSUPPORT_AUTH" ]
   } else if (target_platform == "tablet") {
     cflags_cc += [ "-DSUPPORT_AUTH" ]
+  } else if (target_platform == "car") {
+    cflags_cc += [ "-DHAS_OS_ACCOUNT_CAR" ]
   }
 
   subsystem_name = "resourceschedule"
