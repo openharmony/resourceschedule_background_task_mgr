@@ -33,7 +33,8 @@ const std::unordered_map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_OBJECT_NOT_EXIST,
         "Continuous Task verification failed. The application has not applied for a continuous task."},
     {ERR_BGTASK_KEEPING_TASK_VERIFY_ERR,
-        "Continuous Task verification failed. TASK_KEEPING background mode only supported in particular device."},
+        "Continuous Task verification failed. "
+        "Current device can not request continuous tasks of the TASK_KEEPING type."},
     {ERR_BGTASK_INVALID_BGMODE, "Continuous Task verification failed. The bgMode is invalid."},
     {ERR_BGTASK_INVALID_UID, "Continuous Task verification failed. The uid is invalid."},
     {ERR_BGTASK_NOTIFICATION_VERIFY_FAILED, "Notification verification failed for a continuous task."
