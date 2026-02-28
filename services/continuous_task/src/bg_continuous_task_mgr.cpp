@@ -2730,6 +2730,8 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
     continuousTaskCallbackInfo->SetBundleName(continuousTaskInfo->bundleName_);
     continuousTaskCallbackInfo->SetUserId(continuousTaskInfo->userId_);
     continuousTaskCallbackInfo->SetAppIndex(continuousTaskInfo->appIndex_);
+    continuousTaskCallbackInfo->SetNotificationId(continuousTaskInfo->notificationId_);
+    continuousTaskCallbackInfo->SetBackgroundSubModes(continuousTaskInfo->bgSubModeIds_);
     NotifySubscribers(changeEventType, continuousTaskCallbackInfo);
     ReportHisysEvent(changeEventType, continuousTaskInfo);
 }
