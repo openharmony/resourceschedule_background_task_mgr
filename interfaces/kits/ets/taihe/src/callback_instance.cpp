@@ -40,13 +40,48 @@ void Callback::OnExpired()
     callbackInstances_.erase(findCallback);
 }
 
-void Callback::OnExpiredAuth(int32_t authResult) {}
+void Callback::OnExpiredAuth(int32_t authResult)
+{
+    std::lock_guard<std::mutex> lock(callbackLock_);
+    if (authCallback_ == nullptr) {
+        BGTASK_LOGE("authCallback_ is null");
+        return;
+    }
+    ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t authResultRet;
+    switch (authResult) {
+        case OHOS::BackgroundTaskMgr::UserAuthResult::NOT_SUPPORTED:
+            authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_SUPPORTED;
+            break;
+        case OHOS::BackgroundTaskMgr::UserAuthResult::NOT_DETERMINED:
+            authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+            break;
+        case OHOS::BackgroundTaskMgr::UserAuthResult::DENIED:
+            authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::DENIED;
+            break;
+        case OHOS::BackgroundTaskMgr::UserAuthResult::GRANTED_ONCE:
+            authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::GRANTED_ONCE;
+            break;
+        case OHOS::BackgroundTaskMgr::UserAuthResult::GRANTED_ALWAYS:
+            authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::GRANTED_ALWAYS;
+            break;
+        default:
+            authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+            break;
+    }
+    (*authCallback_)(authResultRet);
+}
 
 void Callback::SetCallbackInfo(
     callback_view<void(::ohos::resourceschedule::backgroundTaskManager::UndefinedType const&)> callback)
 {
     std::lock_guard<std::mutex> lock(callbackLock_);
     callback_ = callback;
+}
+
+void Callback::SetAuthCallbackInfo(std::shared_ptr<AuthCallbackType> authCallback)
+{
+    std::lock_guard<std::mutex> lock(callbackLock_);
+    authCallback_ = authCallback;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
