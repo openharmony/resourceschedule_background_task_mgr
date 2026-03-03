@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,8 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 using namespace taihe;
+using AuthCallbackType = ::taihe::callback<
+ 	void(::ohos::resourceschedule::backgroundTaskManager::UserAuthResult data)>;
 
 class Callback : public ExpiredCallback {
 public:
@@ -32,9 +34,11 @@ public:
     void OnExpiredAuth(int32_t authResult) override;
     void SetCallbackInfo(
         callback_view<void(::ohos::resourceschedule::backgroundTaskManager::UndefinedType const&)> callback);
+    void SetAuthCallbackInfo(std::shared_ptr<AuthCallbackType> authCallback);
 
 private:
     std::function<void(::ohos::resourceschedule::backgroundTaskManager::UndefinedType const&)> callback_;
+    std::shared_ptr<AuthCallbackType> authCallback_;
     std::map<int32_t, std::shared_ptr<Callback>> callbackInstances_;
     std::mutex callbackLock_;
 };
