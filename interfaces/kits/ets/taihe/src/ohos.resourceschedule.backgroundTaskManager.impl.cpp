@@ -38,6 +38,8 @@ using namespace taihe;
 using namespace OHOS;
 using namespace ohos::resourceschedule::backgroundTaskManager;
 using namespace OHOS::BackgroundTaskMgr;
+using TaskSubModeType = ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskSubmode;
+using TaskModeType = ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskMode;
 
 namespace {
 // To be implemented.
@@ -48,6 +50,7 @@ static constexpr uint32_t BG_MODE_ID_END = 9;
 static constexpr uint32_t CONTINUOUS_TASK_CANCEL = 1 << 0;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 1 << 1;
 static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
+static constexpr int32_t MAX_SPECIAL_TASK_NUMS = 1;
 static std::shared_ptr<BackgroundTaskMgr::AniBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
 std::mutex backgroundTaskSubscriberMutex_;
 
@@ -70,6 +73,7 @@ struct ContinuousTaskCallbackInfo {
     bool isBatchApi {false};
     int32_t notificationId {-1}; // out
     int32_t continuousTaskId {-1}; // out
+    uint32_t authResult {0}; // out
     bool isCallback = false;
     int32_t errCode = 0;
     std::vector<std::shared_ptr<BackgroundTaskMgr::ContinuousTaskInfo>> list; // out
@@ -89,6 +93,397 @@ static std::vector<std::string> g_backgroundModes = {
     "wifiInteraction",
     "voip",
     "taskKeeping"
+};
+
+ani_status GetAbilityContext(ani_env *env, const ani_object &value,
+    std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext)
+{
+    ani_boolean stageMode = false;
+    ani_status status = AbilityRuntime::IsStageContext(env, value, stageMode);
+    BGTASK_LOGD("is stage mode: %{public}s", stageMode ? "true" : "false");
+
+    if (status != ANI_OK || !stageMode) {
+        return ANI_ERROR;
+    }
+    BGTASK_LOGD("Getting context with stage model");
+    auto context = AbilityRuntime::GetStageModeContext(env, value);
+    if (!context) {
+        BGTASK_LOGE("get context failed");
+        return ANI_ERROR;
+    }
+    abilityContext = AbilityRuntime::Context::ConvertTo<AbilityRuntime::AbilityContext>(context);
+    if (!abilityContext) {
+        BGTASK_LOGE("get Stage model ability context failed");
+        return ANI_ERROR;
+    }
+    return ANI_OK;
+}
+
+ani_status GetWantAgent(ani_env *env, const ani_object &value,
+    std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent)
+{
+    AbilityRuntime::WantAgent::WantAgent *wantAgentPtr = nullptr;
+    AppExecFwk::UnwrapWantAgent(env, value, reinterpret_cast<void **>(&wantAgentPtr));
+    if (wantAgentPtr == nullptr) {
+        BGTASK_LOGE("wantAgentPtr is nullptr");
+        return ANI_ERROR;
+    }
+    wantAgent = std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*wantAgentPtr);
+    return ANI_OK;
+}
+
+bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uintptr_t context)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        set_business_error(
+            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
+        return false;
+    }
+    if (GetAbilityContext(env, reinterpret_cast<ani_object>(context), asyncCallbackInfo->abilityContext) != ANI_OK) {
+        BGTASK_LOGE("get ability failed");
+        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return false;
+    }
+
+    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+    if (info == nullptr) {
+        BGTASK_LOGE("ability info is nullptr");
+        asyncCallbackInfo->errCode = ERR_ABILITY_INFO_EMPTY;
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return false;
+    }
+
+    sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
+    if (!token) {
+        BGTASK_LOGE("get ability token info failed");
+        asyncCallbackInfo->errCode = ERR_GET_TOKEN_ERR;
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return false;
+    }
+    return true;
+}
+
+ani_status GetModes(ani_env *env, const array_view<string> &bgModes, ContinuousTaskCallbackInfo *asyncCallbackInfo)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        set_business_error(
+            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
+        return ANI_ERROR;
+    }
+    if (bgModes.size() == 0) {
+        BGTASK_LOGE("get bgModes arraylen is 0");
+        asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return ANI_ERROR;
+    }
+    std::vector<string> bgModesVector(bgModes.begin(), bgModes.end());
+    for (const auto &iter : bgModesVector) {
+        auto it = std::find(g_backgroundModes.begin(), g_backgroundModes.end(), iter);
+        if (it != g_backgroundModes.end()) {
+            auto index = std::distance(g_backgroundModes.begin(), it);
+            auto modeIter = std::find(asyncCallbackInfo->bgModes.begin(), asyncCallbackInfo->bgModes.end(), index + 1);
+            if (modeIter == asyncCallbackInfo->bgModes.end()) {
+                asyncCallbackInfo->bgModes.push_back(index + 1);
+            }
+        } else {
+            BGTASK_LOGE("mode string is invalid");
+            asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
+            set_business_error(
+                Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+            return ANI_ERROR;
+        }
+    }
+    return ANI_OK;
+}
+
+bool CheckBackgroundMode(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        set_business_error(
+            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
+        return false;
+    }
+    if (!asyncCallbackInfo->isBatchApi) {
+        if (asyncCallbackInfo->bgMode < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgMode > BG_MODE_ID_END) {
+            BGTASK_LOGE("request background mode id: %{public}u out of range", asyncCallbackInfo->bgMode);
+            asyncCallbackInfo->errCode = ERR_BGMODE_RANGE_ERR;
+            set_business_error(
+                Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+            return false;
+        }
+    } else {
+        for (unsigned int i = 0; i < asyncCallbackInfo->bgModes.size(); i++) {
+            if (asyncCallbackInfo->bgModes[i] < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgModes[i] > BG_MODE_ID_END) {
+                BGTASK_LOGE("request background mode id: %{public}u out of range", asyncCallbackInfo->bgModes[i]);
+                asyncCallbackInfo->errCode = ERR_BGMODE_RANGE_ERR;
+                set_business_error(
+                    Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+class ContinuousTaskRequestImpl {
+public:
+    ContinuousTaskRequestImpl()
+    {}
+
+    ~ContinuousTaskRequestImpl()
+    {}
+
+    ::taihe::array_view<TaskModeType> getBackgroundTaskModes()
+    {
+        return taiheBackgroundTaskModes_;
+    }
+
+    void setBackgroundTaskModes(::taihe::array_view<TaskModeType> backgroundTaskModes)
+    {
+        if (backgroundTaskModes.size() == 0) {
+            return;
+        }
+        taiheBackgroundTaskModes_ = backgroundTaskModes;
+        std::vector<uint32_t> bgModesVector(backgroundTaskModes.begin(), backgroundTaskModes.end());
+        backgroundTaskModes_ = bgModesVector;
+    }
+
+    ::taihe::array_view<TaskSubModeType> getBackgroundTaskSubmodes()
+    {
+        return taiheBackgroundTaskSubmodes_;
+    }
+
+    void setBackgroundTaskSubmodes(::taihe::array_view<TaskSubModeType> backgroundTaskSubmodes)
+    {
+        if (backgroundTaskSubmodes.size() == 0) {
+            return;
+        }
+        taiheBackgroundTaskSubmodes_ = backgroundTaskSubmodes;
+        std::vector<uint32_t> bgSubModesVector(backgroundTaskSubmodes.begin(), backgroundTaskSubmodes.end());
+        backgroundTaskSubmodes_ = bgSubModesVector;
+    }
+
+    uintptr_t getWantAgent()
+    {
+        return taiheWantAgent_;
+    }
+
+    void setWantAgent(uintptr_t wantAgent)
+    {
+        taiheWantAgent_ = wantAgent;
+        auto env = taihe::get_env();
+        AbilityRuntime::WantAgent::WantAgent *wantAgentPtr = nullptr;
+        AppExecFwk::UnwrapWantAgent(env, reinterpret_cast<ani_object>(wantAgent),
+            reinterpret_cast<void **>(&wantAgentPtr));
+        if (wantAgentPtr == nullptr) {
+            BGTASK_LOGE("wantAgentPtr is nullptr");
+            return;
+        }
+        wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*wantAgentPtr);
+    }
+
+    optional<bool> getCombinedTaskNotification()
+    {
+        return optional<bool>(std::in_place, combinedTaskNotification_);
+    }
+
+    void setCombinedTaskNotification(optional<bool> combinedTaskNotification)
+    {
+        if (combinedTaskNotification.has_value()) {
+            combinedTaskNotification_ = static_cast<bool>(combinedTaskNotification.value());
+        }
+    }
+
+    optional<int32_t> getContinuousTaskId()
+    {
+        return optional<int32_t>(std::in_place, continuousTaskId_);
+    }
+
+    void setContinuousTaskId(optional<int32_t> continuousTaskId)
+    {
+        if (continuousTaskId.has_value()) {
+            continuousTaskId_ = static_cast<int32_t>(continuousTaskId.value());
+        }
+    }
+
+    bool isModeSupported()
+    {
+        if (backgroundTaskModes_.size() == 0) {
+            set_business_error(Common::FindErrCode(ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY),
+                Common::FindErrMsg(ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY));
+            return false;
+        }
+        int32_t specialModeSize = std::count(backgroundTaskModes_.begin(), backgroundTaskModes_.end(),
+            OHOS::BackgroundTaskMgr::BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
+        if (specialModeSize > MAX_SPECIAL_TASK_NUMS) {
+            set_business_error(Common::FindErrCode(ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION),
+                Common::FindErrMsg(ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION));
+            return false;
+        }
+        if (specialModeSize == MAX_SPECIAL_TASK_NUMS && backgroundTaskModes_.size() > MAX_SPECIAL_TASK_NUMS) {
+            set_business_error(Common::FindErrCode(ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK),
+                Common::FindErrMsg(ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK));
+            return false;
+        }
+        ContinuousTaskParam taskParam = ContinuousTaskParam(true, -1,
+            nullptr, "", nullptr, "", true, backgroundTaskModes_, -1);
+        int32_t errCode = OHOS::BackgroundTaskMgr::BackgroundTaskMgrHelper::IsModeSupported(taskParam);
+        if (errCode) {
+            BGTASK_LOGE("isModeSupported failed errCode: %{public}d", Common::FindErrCode(errCode));
+            set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
+            return false;
+        }
+        return true;
+    }
+
+    void requestAuthFromUser(uintptr_t context, ::taihe::callback_view<void(
+        ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult data)> callback)
+    {
+        auto env = taihe::get_env();
+        std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
+        if (!CheckModesInner(asyncCallbackInfo.get())) {
+            BGTASK_LOGE("check mode or subMode failed");
+            set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+                Common::FindErrMsg(asyncCallbackInfo->errCode));
+            return;
+        }
+        if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
+            BGTASK_LOGE("check param failed");
+            return;
+        }
+        std::shared_ptr<OHOS::BackgroundTaskMgr::AuthCallbackType> taiheCallback =
+            std::make_shared<OHOS::BackgroundTaskMgr::AuthCallbackType>(callback);
+        std::shared_ptr<Callback> callbackPtr = std::make_shared<Callback>();
+        callbackPtr->Init();
+        callbackPtr->SetAuthCallbackInfo(taiheCallback);
+        ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
+            nullptr, "", nullptr, "", true, asyncCallbackInfo->bgModes, -1);
+        taskParam.isByRequestObject_ = true;
+        taskParam.bgSubModeIds_ = asyncCallbackInfo->bgSubModes;
+        const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+        taskParam.appIndex_ = info->appIndex;
+        int32_t notificationId = -1;
+        asyncCallbackInfo->errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+            RequestAuthFromUser(taskParam, *callbackPtr, notificationId);
+        if (asyncCallbackInfo->errCode) {
+            set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+                Common::FindErrMsg(asyncCallbackInfo->errCode));
+        } else {
+            std::lock_guard<std::mutex> lock(callbackLock_);
+            callbackInstances_[notificationId] = callbackPtr;
+        }
+    }
+
+    ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult checkSpecialScenarioAuthSync(uintptr_t context)
+    {
+        auto env = taihe::get_env();
+        std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
+        if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
+            BGTASK_LOGE("check param failed");
+            return ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+        }
+        const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+        asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(info->appIndex,
+            asyncCallbackInfo->authResult);
+        if (asyncCallbackInfo->errCode) {
+            BGTASK_LOGE("checkSpecialScenarioAuth failed errCode: %{public}d",
+                Common::FindErrCode(asyncCallbackInfo->errCode));
+            set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+                Common::FindErrMsg(asyncCallbackInfo->errCode));
+            return ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+        }
+        ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t authResultRet;
+        switch (asyncCallbackInfo->authResult) {
+            case OHOS::BackgroundTaskMgr::UserAuthResult::NOT_SUPPORTED:
+                authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_SUPPORTED;
+                break;
+            case OHOS::BackgroundTaskMgr::UserAuthResult::NOT_DETERMINED:
+                authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+                break;
+            case OHOS::BackgroundTaskMgr::UserAuthResult::DENIED:
+                authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::DENIED;
+                break;
+            case OHOS::BackgroundTaskMgr::UserAuthResult::GRANTED_ONCE:
+                authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::GRANTED_ONCE;
+                break;
+            case OHOS::BackgroundTaskMgr::UserAuthResult::GRANTED_ALWAYS:
+                authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::GRANTED_ALWAYS;
+                break;
+            default:
+                authResultRet = ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+                break;
+        }
+        return authResultRet;
+    }
+
+    int64_t GetInner()
+    {
+        return reinterpret_cast<int64_t>(this);
+    }
+
+    bool CheckModesInner(ContinuousTaskCallbackInfo *asyncCallbackInfo)
+    {
+        if (backgroundTaskModes_.size() == 0 || backgroundTaskSubmodes_.size() == 0) {
+            asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY;
+            return false;
+        }
+        if (backgroundTaskModes_.size() != backgroundTaskSubmodes_.size()) {
+            asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_LENGTH_MISMATCH;
+            return false;
+        }
+        int32_t specialModeSize = std::count(backgroundTaskModes_.begin(), backgroundTaskModes_.end(),
+            OHOS::BackgroundTaskMgr::BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
+        if (specialModeSize > MAX_SPECIAL_TASK_NUMS) {
+            asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
+            return false;
+        }
+        if (specialModeSize == MAX_SPECIAL_TASK_NUMS && backgroundTaskModes_.size() > MAX_SPECIAL_TASK_NUMS) {
+            asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
+            return false;
+        }
+        for (uint32_t index = 0; index < backgroundTaskSubmodes_.size(); index++) {
+            uint32_t subMode = backgroundTaskSubmodes_[index];
+            if (subMode >= OHOS::BackgroundTaskMgr::BackgroundTaskSubmode::END ||
+                subMode < OHOS::BackgroundTaskMgr::BackgroundTaskSubmode::SUBMODE_CAR_KEY_NORMAL_NOTIFICATION) {
+                asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_CROSS_BORDER;
+                return false;
+            }
+            if (subMode == OHOS::BackgroundTaskMgr::BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION) {
+                if (!OHOS::BackgroundTaskMgr::BackgroundTaskMode::IsModeTypeMatching(backgroundTaskModes_[index])) {
+                    asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
+                    return false;
+                }
+            } else {
+                if (OHOS::BackgroundTaskMgr::BackgroundTaskMode::GetSubModeTypeMatching(subMode) !=
+                    backgroundTaskModes_[index]) {
+                    asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
+                    return false;
+                }
+            }
+        }
+        asyncCallbackInfo->bgModes = backgroundTaskModes_;
+        asyncCallbackInfo->bgMode = backgroundTaskModes_[0];
+        asyncCallbackInfo->bgSubModes = backgroundTaskSubmodes_;
+        return true;
+    }
+
+public:
+    int32_t continuousTaskId_ = -1;
+    bool combinedTaskNotification_ = false;
+    uintptr_t taiheWantAgent_;
+    std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
+    std::vector<uint32_t> backgroundTaskSubmodes_ {};
+    std::vector<uint32_t> backgroundTaskModes_ {};
+    ::taihe::array_view<TaskSubModeType> taiheBackgroundTaskSubmodes_;
+    ::taihe::array_view<TaskModeType> taiheBackgroundTaskModes_;
 };
 
 void CancelSuspendDelay(int32_t requestId)
@@ -240,144 +635,6 @@ void SetBackgroundTaskState(::ohos::resourceschedule::backgroundTaskManager::Bac
             break;
     }
     return authResult;
-}
-
-ani_status GetAbilityContext(ani_env *env, const ani_object &value,
-    std::shared_ptr<AbilityRuntime::AbilityContext> &abilityContext)
-{
-    ani_boolean stageMode = false;
-    ani_status status = AbilityRuntime::IsStageContext(env, value, stageMode);
-    BGTASK_LOGD("is stage mode: %{public}s", stageMode ? "true" : "false");
-
-    if (status != ANI_OK || !stageMode) {
-        return ANI_ERROR;
-    }
-    BGTASK_LOGD("Getting context with stage model");
-    auto context = AbilityRuntime::GetStageModeContext(env, value);
-    if (!context) {
-        BGTASK_LOGE("get context failed");
-        return ANI_ERROR;
-    }
-    abilityContext = AbilityRuntime::Context::ConvertTo<AbilityRuntime::AbilityContext>(context);
-    if (!abilityContext) {
-        BGTASK_LOGE("get Stage model ability context failed");
-        return ANI_ERROR;
-    }
-    return ANI_OK;
-}
-
-ani_status GetWantAgent(ani_env *env, const ani_object &value,
-    std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent)
-{
-    AbilityRuntime::WantAgent::WantAgent *wantAgentPtr = nullptr;
-    AppExecFwk::UnwrapWantAgent(env, value, reinterpret_cast<void **>(&wantAgentPtr));
-    if (wantAgentPtr == nullptr) {
-        BGTASK_LOGE("wantAgentPtr is nullptr");
-        return ANI_ERROR;
-    }
-    wantAgent = std::make_shared<AbilityRuntime::WantAgent::WantAgent>(*wantAgentPtr);
-    return ANI_OK;
-}
-
-bool CheckParam(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uintptr_t context)
-{
-    if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo is nullptr");
-        set_business_error(
-            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
-        return false;
-    }
-    if (GetAbilityContext(env, reinterpret_cast<ani_object>(context), asyncCallbackInfo->abilityContext) != ANI_OK) {
-        BGTASK_LOGE("get ability failed");
-        asyncCallbackInfo->errCode = ERR_CONTEXT_NULL_OR_TYPE_ERR;
-        set_business_error(
-            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
-        return false;
-    }
-
-    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
-    if (info == nullptr) {
-        BGTASK_LOGE("ability info is nullptr");
-        asyncCallbackInfo->errCode = ERR_ABILITY_INFO_EMPTY;
-        set_business_error(
-            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
-        return false;
-    }
-
-    sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
-    if (!token) {
-        BGTASK_LOGE("get ability token info failed");
-        asyncCallbackInfo->errCode = ERR_GET_TOKEN_ERR;
-        set_business_error(
-            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
-        return false;
-    }
-    return true;
-}
-
-ani_status GetModes(ani_env *env, const array_view<string> &bgModes, ContinuousTaskCallbackInfo *asyncCallbackInfo)
-{
-    if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo is nullptr");
-        set_business_error(
-            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
-        return ANI_ERROR;
-    }
-    if (bgModes.size() == 0) {
-        BGTASK_LOGE("get bgModes arraylen is 0");
-        asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
-        set_business_error(
-            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
-        return ANI_ERROR;
-    }
-    std::vector<string> bgModesVector(bgModes.begin(), bgModes.end());
-    for (const auto &iter : bgModesVector) {
-        auto it = std::find(g_backgroundModes.begin(), g_backgroundModes.end(), iter);
-        if (it != g_backgroundModes.end()) {
-            auto index = std::distance(g_backgroundModes.begin(), it);
-            auto modeIter = std::find(asyncCallbackInfo->bgModes.begin(), asyncCallbackInfo->bgModes.end(), index + 1);
-            if (modeIter == asyncCallbackInfo->bgModes.end()) {
-                asyncCallbackInfo->bgModes.push_back(index + 1);
-            }
-        } else {
-            BGTASK_LOGE("mode string is invalid");
-            asyncCallbackInfo->errCode = ERR_BGMODE_NULL_OR_TYPE_ERR;
-            set_business_error(
-                Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
-            return ANI_ERROR;
-        }
-    }
-    return ANI_OK;
-}
-
-bool CheckBackgroundMode(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo)
-{
-    if (asyncCallbackInfo == nullptr) {
-        BGTASK_LOGE("asyncCallbackInfo is nullptr");
-        set_business_error(
-            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
-        return false;
-    }
-    if (!asyncCallbackInfo->isBatchApi) {
-        if (asyncCallbackInfo->bgMode < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgMode > BG_MODE_ID_END) {
-            BGTASK_LOGE("request background mode id: %{public}u out of range", asyncCallbackInfo->bgMode);
-            asyncCallbackInfo->errCode = ERR_BGMODE_RANGE_ERR;
-            set_business_error(
-                Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
-            return false;
-        }
-    } else {
-        for (unsigned int i = 0; i < asyncCallbackInfo->bgModes.size(); i++) {
-            if (asyncCallbackInfo->bgModes[i] < BG_MODE_ID_BEGIN || asyncCallbackInfo->bgModes[i] > BG_MODE_ID_END) {
-                BGTASK_LOGE("request background mode id: %{public}u out of range", asyncCallbackInfo->bgModes[i]);
-                asyncCallbackInfo->errCode = ERR_BGMODE_RANGE_ERR;
-                set_business_error(
-                    Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
-                return false;
-            }
-        }
-    }
-    return true;
 }
 
 void StopBackgroundRunningSync(uintptr_t context)
@@ -969,6 +1226,151 @@ array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo> Obtai
     return array<::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo>{copy_data_t{},
         aniInfoList.data(), aniInfoList.size()};
 }
+
+::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskRequest CreateContinuousTaskRequest()
+{
+    return taihe::make_holder<ContinuousTaskRequestImpl,
+        ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskRequest>();
+}
+
+bool CheckModeAndSubMode(ani_env *env, ohos::resourceschedule::backgroundTaskManager::ContinuousTaskRequest request,
+    ContinuousTaskCallbackInfo *asyncCallbackInfo)
+{
+    auto requetImpl = reinterpret_cast<ContinuousTaskRequestImpl*>(request->GetInner());
+    std::vector<uint32_t> modes = requetImpl->backgroundTaskModes_;
+    std::vector<uint32_t> subModes = requetImpl->backgroundTaskSubmodes_;
+    if (modes.size() == 0 || subModes.size() == 0) {
+        asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY;
+        return false;
+    }
+    if (modes.size() != subModes.size()) {
+        asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_LENGTH_MISMATCH;
+        return false;
+    }
+    int32_t specialModeSize = std::count(modes.begin(), modes.end(),
+        OHOS::BackgroundTaskMgr::BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
+    if (specialModeSize > MAX_SPECIAL_TASK_NUMS) {
+        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION;
+        return false;
+    }
+    if (specialModeSize == MAX_SPECIAL_TASK_NUMS && modes.size() > MAX_SPECIAL_TASK_NUMS) {
+        asyncCallbackInfo->errCode = ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK;
+        return false;
+    }
+    for (uint32_t index = 0; index < subModes.size(); index++) {
+        uint32_t subMode = subModes[index];
+        if (subMode >= OHOS::BackgroundTaskMgr::BackgroundTaskSubmode::END ||
+            subMode < OHOS::BackgroundTaskMgr::BackgroundTaskSubmode::SUBMODE_CAR_KEY_NORMAL_NOTIFICATION) {
+            asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_CROSS_BORDER;
+            return false;
+        }
+        if (subMode == OHOS::BackgroundTaskMgr::BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION) {
+            if (!OHOS::BackgroundTaskMgr::BackgroundTaskMode::IsModeTypeMatching(modes[index])) {
+                asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
+                return false;
+            }
+        } else {
+            if (OHOS::BackgroundTaskMgr::BackgroundTaskMode::GetSubModeTypeMatching(subMode) != modes[index]) {
+                asyncCallbackInfo->errCode = ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH;
+                return false;
+            }
+        }
+    }
+    asyncCallbackInfo->bgModes = modes;
+    asyncCallbackInfo->bgMode = modes[0];
+    asyncCallbackInfo->bgSubModes = subModes;
+    return true;
+}
+
+::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification StartBackgroundRunningSync3(
+    uintptr_t context, ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskRequest request)
+{
+    auto env = taihe::get_env();
+    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
+    ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification notification;
+    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
+        BGTASK_LOGE("check param failed");
+        return notification;
+    }
+    if (!CheckModeAndSubMode(env, request, asyncCallbackInfo.get())) {
+        BGTASK_LOGE("check mode or subMode failed");
+        set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+            Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return notification;
+    }
+    sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
+    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+    int32_t abilityId = asyncCallbackInfo->abilityContext->GetAbilityRecordId();
+    auto requetImpl = reinterpret_cast<ContinuousTaskRequestImpl*>(request->GetInner());
+    ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
+        requetImpl->wantAgent_, info->name, token, "", true, asyncCallbackInfo->bgModes, abilityId);
+    taskParam.appIndex_ = info->appIndex;
+    taskParam.bgSubModeIds_ = asyncCallbackInfo->bgSubModes;
+    taskParam.isByRequestObject_ = true;
+    taskParam.isCombinedTaskNotification_ = requetImpl->combinedTaskNotification_;
+    taskParam.combinedNotificationTaskId_ = requetImpl->continuousTaskId_;
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
+    asyncCallbackInfo->notificationId = taskParam.notificationId_;
+    asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
+    if (asyncCallbackInfo->errCode) {
+        set_business_error(
+            Common::FindErrCode(asyncCallbackInfo->errCode), Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return notification;
+    }
+    if (!GetSlotType(env) || !GetContentType(env)) {
+        return notification;
+    }
+    notification.slotType = (uintptr_t)GetSlotType(env);
+    notification.contentType = (uintptr_t)GetContentType(env);
+    notification.notificationId = taskParam.notificationId_;
+    notification.continuousTaskId = optional<int32_t>(std::in_place, taskParam.continuousTaskId_);
+    return notification;
+}
+
+::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification UpdateBackgroundRunningSync2(
+    uintptr_t context, ohos::resourceschedule::backgroundTaskManager::ContinuousTaskRequest request)
+{
+    ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification notification;
+    auto requetImpl = reinterpret_cast<ContinuousTaskRequestImpl*>(request->GetInner());
+    if (requetImpl->continuousTaskId_ < 0) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_CONTINUOUS_TASKID_INVALID),
+            Common::FindErrMsg(ERR_BGTASK_CONTINUOUS_TASKID_INVALID));
+        return notification;
+    }
+    auto env = taihe::get_env();
+    std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
+    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
+        return notification;
+    }
+    if (!CheckModeAndSubMode(env, request, asyncCallbackInfo.get())) {
+        set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+            Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return notification;
+    }
+    sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
+    const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+    int32_t abilityId = asyncCallbackInfo->abilityContext->GetAbilityRecordId();
+    ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
+        requetImpl->wantAgent_, info->name, token, "", true, asyncCallbackInfo->bgModes, abilityId);
+    taskParam.bgSubModeIds_ = asyncCallbackInfo->bgSubModes;
+    taskParam.isCombinedTaskNotification_ = requetImpl->combinedTaskNotification_;
+    taskParam.updateTaskId_ = requetImpl->continuousTaskId_;
+    taskParam.isByRequestObject_ = true;
+    asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam);
+    if (asyncCallbackInfo->errCode) {
+        set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+            Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return notification;
+    }
+    if (!GetSlotType(env) || !GetContentType(env)) {
+        return notification;
+    }
+    notification.slotType = (uintptr_t)GetSlotType(env);
+    notification.contentType = (uintptr_t)GetContentType(env);
+    notification.notificationId = taskParam.notificationId_;
+    notification.continuousTaskId = optional<int32_t>(std::in_place, taskParam.continuousTaskId_);
+    return notification;
+}
 } // namespace
 
 // Since these macros are auto-generate, lint will cause false positive.
@@ -996,4 +1398,7 @@ TH_EXPORT_CPP_API_StopBackgroundRunningSync2(StopBackgroundRunningSync2);
 TH_EXPORT_CPP_API_SetBackgroundTaskState(SetBackgroundTaskState);
 TH_EXPORT_CPP_API_GetBackgroundTaskState(GetBackgroundTaskState);
 TH_EXPORT_CPP_API_ObtainAllContinuousTasksSync(ObtainAllContinuousTasksSync);
+TH_EXPORT_CPP_API_CreateContinuousTaskRequest(CreateContinuousTaskRequest);
+TH_EXPORT_CPP_API_StartBackgroundRunningSync3(StartBackgroundRunningSync3);
+TH_EXPORT_CPP_API_UpdateBackgroundRunningSync2(UpdateBackgroundRunningSync2);
 // NOLINTEND
