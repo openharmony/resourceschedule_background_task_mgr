@@ -244,8 +244,6 @@ interface ContinuousTaskRequest {
 
 function CancelSuspendDelay(requestId: i32): void;
 
-function CancelSuspendDelay(requestId: i32): void;
-
 @gen_async("getRemainingDelayTime")
 @gen_promise("getRemainingDelayTime")
 function GetRemainingDelayTimeSync(requestId: i32): i32;
