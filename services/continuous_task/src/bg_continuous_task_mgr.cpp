@@ -2048,7 +2048,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
 
 ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish)
 {
-    BGTASK_LOGD("AVSessionNotifyUpdateNotification start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
+    BGTASK_LOGI("AVSessionNotifyUpdateNotification start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
     avSessionNotification_[uid] = isPublish;
     if (isPublish) {
         RemoveAudioPlaybackDelayTask(uid);
@@ -2075,6 +2075,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
 
     // 只有播音类型长时任务，并且没有AVSession通知
     if (!isPublish && record->bgModeIds_.size() == 1 && record->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
+        BGTASK_LOGI("avsession not exist, send continuousTask notification uid: %{public}d", uid);
         result = SendContinuousTaskNotification(record);
         RefreshTaskRecord();
         RemoveAudioPlaybackDelayTask(uid);
@@ -2441,6 +2442,9 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
         BGTASK_LOGW("manager is not ready");
         return;
     }
+    int32_t stopUserId;
+    std::string stopBundleName;
+    int32_t stopAppIndex;
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->uid_ == uid) {
@@ -2449,6 +2453,9 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
                 "bgModeId: %{public}d, abilityId: %{public}d", uid, record->bundleName_.c_str(),
                 record->abilityName_.c_str(), record->bgModeId_, record->abilityId_);
             record->reason_ = SYSTEM_CANCEL;
+            stopUserId = record->userId_;
+            stopBundleName = record->bundleName_;
+            stopAppIndex = record->appIndex_;
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             if (record->GetNotificationId() != -1) {
                 NotificationTools::GetInstance()->CancelNotification(
@@ -2467,14 +2474,16 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
     }
     auto iterAuth = bannerNotificationRecord_.begin();
     while (iterAuth != bannerNotificationRecord_.end()) {
-        if (iterAuth->second->GetUid() != uid ||
-            iterAuth->second->GetAuthResult() != static_cast<int32_t>(UserAuthResult::GRANTED_ONCE)) {
+        auto bannerRecord = iterAuth->second;
+        if (bannerRecord->GetUserId() == stopUserId && bannerRecord->GetBundleName() ==stopBundleName &&
+            bannerRecord->GetAppIndex() == stopAppIndex &&
+            bannerRecord->GetAuthResult() == static_cast<int32_t>(UserAuthResult::GRANTED_ONCE)) {
+            BGTASK_LOGI("uid: %{public}d app stop, remove allow once time auth record.", uid);
+            iterAuth = bannerNotificationRecord_.erase(iterAuth);
+            RefreshAuthRecord();
+        } else {
             iterAuth++;
-            continue;
         }
-        BGTASK_LOGI("uid: %{public}d app stop, remove allow once time auth record.", uid);
-        iterAuth = bannerNotificationRecord_.erase(iterAuth);
-        RefreshAuthRecord();
     }
 }
 
@@ -3351,7 +3360,7 @@ ErrCode BgContinuousTaskMgr::EnableContinuousTaskRequest(int32_t uid, bool isEna
             } else {
                 disableRequestUidList_.insert(uid);
             }
-            BGTASK_LOGI("EnableContinuousTaskRequest uid: %{public}d, isEnable: %{public}d", uid, isEnable);
+            BGTASK_LOGD("EnableContinuousTaskRequest uid: %{public}d, isEnable: %{public}d", uid, isEnable);
         }, AppExecFwk::EventQueue::Priority::IMMEDIATE);
 
     return ERR_OK;
