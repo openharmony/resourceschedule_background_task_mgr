@@ -2059,7 +2059,6 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     auto findUidIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findUid);
     if (findUidIter == continuousTaskInfosMap_.end()) {
         RemoveAudioPlaybackDelayTask(uid);
-        BGTASK_LOGD("continuous task is not exist: %{public}d", uid);
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
 
@@ -2088,7 +2087,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
         if (notificationText.empty()) {
             result = NotificationTools::GetInstance()->CancelNotification(
                 record->GetNotificationLabel(), record->GetNotificationId());
-                record->notificationId_ = -1;
+            record->notificationId_ = -1;
         } else {
             newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
             NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
