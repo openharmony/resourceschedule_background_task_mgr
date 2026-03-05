@@ -1644,7 +1644,7 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
     if (continuousTaskInfosMap_.empty()) {
         return ERR_OK;
     }
-    BGTASK_LOGW("GetAllContinuousTasksInner, includeSuspended: %{public}d", includeSuspended);
+    BGTASK_LOGD("GetAllContinuousTasksInner, includeSuspended: %{public}d", includeSuspended);
     for (const auto &record : continuousTaskInfosMap_) {
         if (!record.second) {
             continue;
@@ -2441,9 +2441,6 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
         BGTASK_LOGW("manager is not ready");
         return;
     }
-    int32_t stopUserId;
-    std::string stopBundleName;
-    int32_t stopAppIndex;
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->uid_ == uid) {
@@ -2452,9 +2449,6 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
                 "bgModeId: %{public}d, abilityId: %{public}d", uid, record->bundleName_.c_str(),
                 record->abilityName_.c_str(), record->bgModeId_, record->abilityId_);
             record->reason_ = SYSTEM_CANCEL;
-            stopUserId = record->userId_;
-            stopBundleName = record->bundleName_;
-            stopAppIndex = record->appIndex_;
             OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
             if (record->GetNotificationId() != -1) {
                 NotificationTools::GetInstance()->CancelNotification(
@@ -2471,11 +2465,17 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
             iter++;
         }
     }
+    std::string stopBundleName;
+    int32_t stopAppIndex;
+    if (!BundleManagerHelper::GetInstance()->GetAppIndexAndBundleNameByUid(uid, stopAppIndex, stopBundleName)) {
+        BGTASK_LOGW("get bundleName and appIndex failed, uid: %{public}d", uid);
+        return;
+    }
+    BGTASK_LOGI("OnAppStopped uid: %{public}d, bundleName: %{public}s", uid, stopBundleName.c_str());
     auto iterAuth = bannerNotificationRecord_.begin();
     while (iterAuth != bannerNotificationRecord_.end()) {
         auto bannerRecord = iterAuth->second;
-        if (bannerRecord->GetUserId() == stopUserId && bannerRecord->GetBundleName() ==stopBundleName &&
-            bannerRecord->GetAppIndex() == stopAppIndex &&
+        if (bannerRecord->GetBundleName() == stopBundleName && bannerRecord->GetAppIndex() == stopAppIndex &&
             bannerRecord->GetAuthResult() == static_cast<int32_t>(UserAuthResult::GRANTED_ONCE)) {
             BGTASK_LOGI("uid: %{public}d app stop, remove allow once time auth record.", uid);
             iterAuth = bannerNotificationRecord_.erase(iterAuth);

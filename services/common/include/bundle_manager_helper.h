@@ -43,6 +43,7 @@ public:
         AppExecFwk::BundleResourceInfo &bundleResourceInfo);
     bool GetBundleInfoByFlags(const std::string &bundleName, int32_t flags,
         AppExecFwk::BundleInfo &bundleInfo, int32_t userId);
+    bool GetAppIndexAndBundleNameByUid(int32_t uid, int32_t &appIndex, std::string &bundleName);
 
 private:
     bool Connect();
