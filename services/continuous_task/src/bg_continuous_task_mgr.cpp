@@ -2471,7 +2471,6 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
         BGTASK_LOGW("get bundleName and appIndex failed, uid: %{public}d", uid);
         return;
     }
-    BGTASK_LOGI("OnAppStopped uid: %{public}d, bundleName: %{public}s", uid, stopBundleName.c_str());
     auto iterAuth = bannerNotificationRecord_.begin();
     while (iterAuth != bannerNotificationRecord_.end()) {
         auto bannerRecord = iterAuth->second;
