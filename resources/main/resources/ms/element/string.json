@@ -111,6 +111,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_not_allowed",
+            "value":"Tolak",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"Digunakan untuk aktiviti seperti berlari, bersenam, berenang, dan sebagainya.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"Digunakan untuk tayangan audio dan video pada peranti lain.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_media_process",
+            "value":"Digunakan untuk memproses tugas media, seperti mencipta dan mengeksport kandungan audio dan video.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -403,7 +403,6 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
         BGTASK_LOGW("SubscribeBackgroundTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    // 系统应用通过系统API接口注册
     if (isHap && flag == SUBSCRIBER_BACKGROUND_TASK_STATE) {
         if (CheckAtomicService()) {
             return ERR_BGTASK_PERMISSION_DENIED;
@@ -779,6 +778,31 @@ ErrCode BackgroundTaskMgrService::SetSpecialExemptedProcess(const std::set<std::
     }
     DelayedSingleton<BgtaskConfig>::GetInstance()->SetSpecialExemptedProcess(bundleNameSet);
     return ERR_OK;
+}
+
+ErrCode BackgroundTaskMgrService::GetAllContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list)
+{
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> resultList;
+    ErrCode result = BgContinuousTaskMgr::GetInstance()->GetAllContinuousTaskApps(resultList);
+    if (result == ERR_OK) {
+        for (const auto& ptr : resultList) {
+            if (ptr != nullptr) {
+                list.push_back(*ptr);
+            }
+        }
+    }
+    return result;
+}
+
+ErrCode BackgroundTaskMgrService::SendNotificationByDeteTask(const std::set<std::string> &taskKeys)
+{
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return BgContinuousTaskMgr::GetInstance()->SendNotificationByDeteTask(taskKeys);
 }
 
 bool BackgroundTaskMgrService::CheckAtomicService()

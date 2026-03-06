@@ -111,6 +111,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_not_allowed",
+            "value":"Запретить",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"Используется для таких активностей, как бег, тренировки, плавание и другие.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"Используется для трансляции аудио и видео на другие устройства.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_media_process",
+            "value":"Используется для обработки медиазадач, например создания и экспорта аудио- и видеоконтента.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

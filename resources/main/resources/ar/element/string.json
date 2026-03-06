@@ -111,6 +111,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_not_allowed",
+            "value":"رفض",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"يُستخدم هذا الإذن في الأنشطة، مثل الجري والتمارين والسباحة وغيرها.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"يُستخدم هذا الإذن لبث الصوت والفيديو إلى أجهزة أخرى.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_media_process",
+            "value":"يُستخدم هذا الإذن لمعالجة مهام الوسائط، مثل إنشاء محتوى الصوت والفيديو وتصديره.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

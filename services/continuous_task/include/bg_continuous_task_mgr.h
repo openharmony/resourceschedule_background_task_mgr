@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -96,6 +96,7 @@ public:
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber, uint32_t flag = 0);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode GetContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid = -1);
+    ErrCode GetAllContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list);
     ErrCode AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish = false);
     ErrCode DebugContinuousTaskInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode IsModeSupported(const sptr<ContinuousTaskParam> &taskParam);
@@ -108,7 +109,7 @@ public:
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
     ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
     ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
-
+    ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
     bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false);
     bool StopBannerContinuousTaskByUser(const std::string &label);
     void OnAccountsStateChanged(int32_t id);
@@ -162,7 +163,8 @@ private:
     ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber, uint32_t flag = 0);
     ErrCode ShellDumpInner(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     ErrCode SendContinuousTaskNotification(std::shared_ptr<ContinuousTaskRecord> &ContinuousTaskRecordPtr);
-    ErrCode GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid);
+    ErrCode GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list, int32_t uid,
+        bool includeSuspended = false);
     ErrCode AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish = false);
     void RemoveAudioPlaybackDelayTask(int32_t uid);
     ErrCode StopBackgroundRunningByContext(int32_t uid, const std::string &abilityName, int32_t abilityId);
@@ -260,6 +262,11 @@ private:
     ErrCode GetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
     void SendAudioCallBackTaskState(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo);
     bool CheckApplySpecial(const std::string &bundleName, int32_t &userId);
+    ErrCode SendNotificationByDeteTaskInner(const std::set<std::string> &taskKeys);
+    void ClearBgOsAccountTask(const std::vector<int32_t> &activatedOsAccountIds);
+#ifdef HAS_OS_ACCOUNT_CAR
+    void ClearBgOsAccountTaskInCar();
+#endif
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};

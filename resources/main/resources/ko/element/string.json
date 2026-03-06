@@ -111,6 +111,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_not_allowed",
+            "value":"거부",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"달리기, 운동, 수영 등의 활동에 사용됩니다.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"다른 장치로 오디오 및 비디오를 방송하는 데 사용됩니다.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_media_process",
+            "value":"오디오 및 비디오 콘텐츠 생성 및 내보내기 등의 미디어 작업을 처리하는 사용됩니다.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
