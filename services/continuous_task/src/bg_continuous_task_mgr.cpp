@@ -2718,6 +2718,8 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
     continuousTaskCallbackInfo->SetBundleName(continuousTaskInfo->bundleName_);
     continuousTaskCallbackInfo->SetUserId(continuousTaskInfo->userId_);
     continuousTaskCallbackInfo->SetAppIndex(continuousTaskInfo->appIndex_);
+    continuousTaskCallbackInfo->SetNotificationId(continuousTaskInfo->notificationId_);
+    continuousTaskCallbackInfo->SetBackgroundSubModes(continuousTaskInfo->bgSubModeIds_);
     if (continuousTaskInfo->wantAgentInfo_ != nullptr) {
         continuousTaskCallbackInfo->SetWantAgentBundleName(continuousTaskInfo->wantAgentInfo_->bundleName_);
         continuousTaskCallbackInfo->SetWantAgentAbilityName(continuousTaskInfo->wantAgentInfo_->abilityName_);
