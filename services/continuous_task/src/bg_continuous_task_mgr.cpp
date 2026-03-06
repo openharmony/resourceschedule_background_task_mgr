@@ -2718,6 +2718,10 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
     continuousTaskCallbackInfo->SetBundleName(continuousTaskInfo->bundleName_);
     continuousTaskCallbackInfo->SetUserId(continuousTaskInfo->userId_);
     continuousTaskCallbackInfo->SetAppIndex(continuousTaskInfo->appIndex_);
+    if (continuousTaskInfo->wantAgentInfo_ != nullptr) {
+        continuousTaskCallbackInfo->SetWantAgentBundleName(continuousTaskInfo->wantAgentInfo_->bundleName_);
+        continuousTaskCallbackInfo->SetWantAgentAbilityName(continuousTaskInfo->wantAgentInfo_->abilityName_);
+    }
     NotifySubscribers(changeEventType, continuousTaskCallbackInfo);
     ReportHisysEvent(changeEventType, continuousTaskInfo);
 }

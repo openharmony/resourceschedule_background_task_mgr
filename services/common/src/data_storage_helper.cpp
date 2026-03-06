@@ -101,7 +101,7 @@ ErrCode DataStorageHelper::RestoreAuthRecord(std::unordered_map<std::string,
     std::shared_ptr<BannerNotificationRecord>> &authRecord)
 {
     nlohmann::json root;
-    BGTASK_LOGI("RestoreAuthRecord start, old authRecord size:%{public}ld", authRecord.size());
+    BGTASK_LOGI("RestoreAuthRecord start, old authRecord size:%{public}lu", authRecord.size());
     if (ParseJsonValueFromFile(root, AUTH_RECORD_FILE_PATH) != ERR_OK) {
         BGTASK_LOGE("bannerNotification parse json value from file fail.");
         return ERR_BGTASK_DATA_STORAGE_ERR;
