@@ -20,7 +20,8 @@
       "features": [
         "background_task_mgr_graphics",
         "background_task_mgr_jsstack",
-        "background_task_mgr_device_enable"
+        "background_task_mgr_device_enable",
+        "background_task_mgr_notification_enable"
       ],
       "adapted_system_type": [
         "standard"
@@ -35,6 +36,7 @@
           "ability_base",
           "ability_runtime",
           "access_token",
+          "ace_engine",
           "bundle_framework",
           "common_event_service",
           "config_policy",
@@ -57,8 +59,7 @@
           "i18n",
           "relational_store",
           "icu",
-          "runtime_core",
-          "json"
+          "runtime_core"
         ]
       },
       "build": {

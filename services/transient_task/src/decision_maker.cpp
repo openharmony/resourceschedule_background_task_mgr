@@ -401,9 +401,9 @@ bool DecisionMaker::IsFrontApp(const string& pkgName, int32_t uid)
 bool DecisionMaker::CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo)
 {
     int32_t uid = pkgInfo->GetUid();
-    std::string bundleName = pkgInfo->GetPkg();
     if (!deviceInfoManager_->IsScreenOn()) {
-        BGTASK_LOGI("deivice is screen off, uid: %{public}d, bunleName: %{public}s start account.",
+        std::string bundleName = pkgInfo->GetPkg();
+        BGTASK_LOGI("device is screen off, uid: %{public}d, bunleName: %{public}s start account.",
             uid, bundleName.c_str());
         return true;
     }

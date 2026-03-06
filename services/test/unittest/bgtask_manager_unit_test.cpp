@@ -304,7 +304,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_026, TestSize.Level0)
 {
     bgTransientTaskMgr_->HandleExpiredCallbackDeath(nullptr);
     sptr<TestExpiredCallbackStub> expiredCallbackStub = sptr<TestExpiredCallbackStub>(new TestExpiredCallbackStub());
-    sptr<ExpiredCallbackProxy> proxy = sptr<ExpiredCallbackProxy>(
+    wptr<IRemoteObject> proxy = sptr<ExpiredCallbackProxy>(
         new ExpiredCallbackProxy(expiredCallbackStub->AsObject()));
     bgTransientTaskMgr_->expiredCallbackMap_.clear();
     bgTransientTaskMgr_->HandleExpiredCallbackDeath(proxy);
@@ -729,7 +729,13 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_051, TestSize.Level1)
     DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.clear();
     DelayedSingleton<BgtaskConfig>::GetInstance()->isInit_ = false;
     DelayedSingleton<BgtaskConfig>::GetInstance()->Init();
-    DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.emplace("com.myapplication.demo");
+
+    nlohmann::json root;
+    auto appInfo = nlohmann::json::array();
+    appInfo.push_back("com.myapplication.demo1");
+    appInfo.push_back("com.myapplication.demo2");
+    root[TRANSIENT_ERR_DELAYED_FROZEN_LIST] = appInfo;
+    DelayedSingleton<BgtaskConfig>::GetInstance()->ParseTransientTaskExemptedQuatoList(root);
     EXPECT_NE(DelayedSingleton<BgtaskConfig>::GetInstance()->transientTaskExemptedQuatoList_.size(), 0);
 }
 

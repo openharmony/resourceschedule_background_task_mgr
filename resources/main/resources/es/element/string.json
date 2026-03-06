@@ -111,6 +111,34 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"btn_not_allowed",
+            "value":"Denegar",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"Se utiliza para actividades como correr, hacer ejercicio, nadar, etc.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"Se utiliza para la transmisión de audio y vídeo a otros dispositivos.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"dialog_title_media_process",
+            "value":"Se utiliza para procesar tareas multimedia, como la creación y exportación de contenido de audio y vídeo.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

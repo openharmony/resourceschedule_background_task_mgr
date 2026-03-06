@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -107,6 +107,8 @@ public:
     ErrCode GetBackgroundTaskState(const BackgroundTaskStateInfo &taskParam, uint32_t &authResult) override;
     ErrCode GetAllContinuousTasksBySystem(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list) override;
     ErrCode SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet) override;
+    ErrCode GetAllContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list) override;
+    ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);

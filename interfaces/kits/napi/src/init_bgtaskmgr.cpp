@@ -55,6 +55,7 @@ napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getAllEfficiencyResources", GetAllEfficiencyResources),
         DECLARE_NAPI_FUNCTION("setBackgroundTaskState", SetBackgroundTaskState),
         DECLARE_NAPI_FUNCTION("getBackgroundTaskState", GetBackgroundTaskState),
+        DECLARE_NAPI_FUNCTION("obtainAllContinuousTasks", ObtainAllContinuousTasks),
         DECLARE_NAPI_FUNCTION("subscribeContinuousTaskState", SubscribeContinuousTaskState),
         DECLARE_NAPI_FUNCTION("unsubscribeContinuousTaskState", UnSubscribeContinuousTaskState),
         DECLARE_NAPI_FUNCTION("on", OnOnContinuousTaskCallback),

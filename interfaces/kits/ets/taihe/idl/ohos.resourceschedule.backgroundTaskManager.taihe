@@ -200,6 +200,48 @@ struct BackgroundTaskStateInfo {
   authResult: Optional<UserAuthResult>;
 }
 
+@class
+interface ContinuousTaskRequest {
+  @get("backgroundTaskModes")
+  getBackgroundTaskModes(): Array<BackgroundTaskMode>;
+
+  @set("backgroundTaskModes")
+  setBackgroundTaskModes(backgroundTaskModes: Array<BackgroundTaskMode>): void;
+
+  @get("backgroundTaskSubmodes")
+  getBackgroundTaskSubmodes(): Array<BackgroundTaskSubmode>;
+
+  @set("backgroundTaskSubmodes")
+  setBackgroundTaskSubmodes(backgroundTaskSubmodes: Array<BackgroundTaskSubmode>): void;
+
+  @get("wantAgent")
+  getWantAgent(): @sts_type("WantAgent") Opaque;
+
+  @set("wantAgent")
+  setWantAgent(wantAgent: @sts_type("WantAgent") Opaque): void;
+
+  @get("combinedTaskNotification")
+  getCombinedTaskNotification(): Optional<bool>;
+
+  @set("combinedTaskNotification")
+  setCombinedTaskNotification(combinedTaskNotification: Optional<bool>): void;
+
+  @get("continuousTaskId")
+  getContinuousTaskId(): Optional<i32>;
+
+  @set("continuousTaskId")
+  setContinuousTaskId(continuousTaskId: Optional<i32>): void;
+
+  GetInner(): i64;
+
+  isModeSupported(): bool;
+
+  requestAuthFromUser(context: @sts_type("BaseContext") Opaque, callback: (data: UserAuthResult) => void): void;
+
+  @gen_promise("checkSpecialScenarioAuth")
+  checkSpecialScenarioAuthSync(context: @sts_type("BaseContext") Opaque): UserAuthResult;
+}
+
 function CancelSuspendDelay(requestId: i32): void;
 
 @gen_async("getRemainingDelayTime")
@@ -207,7 +249,7 @@ function CancelSuspendDelay(requestId: i32): void;
 function GetRemainingDelayTimeSync(requestId: i32): i32;
 
 union UndefinedType {
-  @undefined undefined;
+  uValue: @undefined unit;
 }
 function RequestSuspendDelay(reason: String, callback: (data: UndefinedType) => void): DelaySuspendInfo;
 
@@ -265,3 +307,12 @@ function StopBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque, co
 
 @gen_promise("obtainAllContinuousTasks")
 function ObtainAllContinuousTasksSync(): Array<ContinuousTaskInfo>;
+
+@ctor("ContinuousTaskRequest")
+function CreateContinuousTaskRequest(): ContinuousTaskRequest;
+
+@gen_promise("startBackgroundRunning")
+function StartBackgroundRunningSync3(context: @sts_type("BaseContext") Opaque, request: ContinuousTaskRequest): ContinuousTaskNotification;
+ 	 
+@gen_promise("updateBackgroundRunning")
+function UpdateBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque, request: ContinuousTaskRequest): ContinuousTaskNotification;

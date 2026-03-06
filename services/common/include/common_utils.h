@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_CONTINUOUS_TASK_COMMON_UTILS_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_CONTINUOUS_TASK_COMMON_UTILS_H
 
+#include <regex>
 #include <set>
 #include "nlohmann/json.hpp"
 
@@ -104,6 +105,11 @@ public:
         return false;
     }
 
+    static bool CheckStrToNum(const std::string &value)
+    {
+        std::regex pattern(R"(^\d+$)");
+        return std::regex_match(value, pattern);
+    }
 public:
     static constexpr int32_t jsonFormat_ = 4;
 };

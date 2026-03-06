@@ -27,6 +27,7 @@ declare_args() {
   background_task_mgr_graphics = true
   background_task_mgr_jsstack = true
   background_task_mgr_device_enable = true
+  background_task_mgr_notification_enable = true
 }
 
 if (!defined(global_parts_info) ||

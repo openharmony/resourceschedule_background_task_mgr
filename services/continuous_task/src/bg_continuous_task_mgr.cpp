@@ -122,7 +122,7 @@ static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
 static constexpr uint32_t AVSESSION_SA_UID = 6700;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 2;
-static constexpr uint32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 5000;
+static constexpr uint32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 65 * 1000;
 #ifdef FEATURE_PRODUCT_WATCH
 static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
 #else
@@ -185,6 +185,9 @@ bool BgContinuousTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& r
 void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
 {
     BGTASK_LOGI("BgContinuousTaskMgr reclaimProcessMemory pid: %{public}d start.", pid);
+    if (pid <= 0) {
+        return;
+    }
     std::string path = "/proc/" + std::to_string(pid) + "/reclaim";
     std::string contentStr = "1";
     FILE *file = fopen(path.c_str(), "w");
@@ -1079,7 +1082,6 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
             return ret;
         }
     }
-    continuousTaskRecord->bgModeId_ = taskParam->bgModeId_;
     continuousTaskRecord->bgModeIds_ = taskParam->bgModeIds_;
     continuousTaskRecord->isBatchApi_ = taskParam->isBatchApi_;
 
@@ -1094,10 +1096,10 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
             return ret;
         }
     }
-    if (continuousTaskInfosMap_[taskInfoMapKey] != nullptr && continuousTaskInfosMap_[taskInfoMapKey]->suspendState_) {
+    if (continuousTaskRecord->suspendState_) {
         HandleActiveContinuousTask(continuousTaskRecord->uid_, continuousTaskRecord->pid_, taskInfoMapKey);
     }
-    OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_UPDATE);
+    OnContinuousTaskChanged(continuousTaskRecord, ContinuousTaskEventTriggerType::TASK_UPDATE);
     taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
     taskParam->continuousTaskId_ = continuousTaskRecord->GetContinuousTaskId();
     return RefreshTaskRecord();
@@ -1174,10 +1176,13 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         + continuousTaskRecord->abilityName_ + SEPARATOR + std::to_string(continuousTaskRecord->abilityId_);
     if (continuousTaskRecord->isByRequestObject_) {
         taskInfoMapKey = taskInfoMapKey + SEPARATOR + std::to_string(continuousTaskRecord->continuousTaskId_);
+        ErrCode ret = CheckAbilityTaskNum(continuousTaskRecord);
+        if (ret != ERR_OK) {
+            return ret;
+        }
     }
     if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
-        if (continuousTaskInfosMap_[taskInfoMapKey] != nullptr &&
-                continuousTaskInfosMap_[taskInfoMapKey]->suspendState_) {
+        if (continuousTaskRecord->suspendState_) {
             HandleActiveContinuousTask(continuousTaskRecord->uid_, continuousTaskRecord->pid_, taskInfoMapKey);
             return ERR_OK;
         }
@@ -1667,6 +1672,7 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
             wantAgentBundleName, wantAgentAbilityName);
         info->SetBundleName(record.second->bundleName_);
         info->SetAppIndex(record.second->appIndex_);
+        info->SetByRequestObject(record.second->isByRequestObject_);
         list.push_back(info);
     }
     return ERR_OK;
@@ -1829,6 +1835,9 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
 
 void BgContinuousTaskMgr::HandleActiveNotification(std::shared_ptr<ContinuousTaskRecord> record)
 {
+    if (record->suspendState_) {
+        return;
+    }
     if (record->isByRequestObject_ && record->bgModeIds_.size() > 1 &&
         CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
         SendLiveViewAndOtherNotification(record);
@@ -1913,9 +1922,8 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const std::shared_ptr<Subscriber
     if (subscriberIter != bgTaskSubscribers_.end()) {
         BGTASK_LOGW("target subscriber already exist");
         if ((*subscriberIter)->isHap_) {
-            (*subscriberIter)->flag_ = (*subscriberIter)->flag_ | subscriberInfo->flag_;
-            BGTASK_LOGW("update subscriber success, current flag: %{public}d, param flag: %{public}d",
-                (*subscriberIter)->flag_, subscriberInfo->flag_);
+            (*subscriberIter)->flag_ = subscriberInfo->flag_;
+            BGTASK_LOGW("update subscriber success, current flag: %{public}d", (*subscriberIter)->flag_);
         }
         return ERR_BGTASK_OBJECT_EXISTS;
     }
@@ -1958,9 +1966,8 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
         return ERR_BGTASK_INVALID_PARAM;
     }
     if ((*subscriberIter)->isHap_) {
-        (*subscriberIter)->flag_ = (*subscriberIter)->flag_ & ~flag;
-        BGTASK_LOGW("remove subscriber success, current flag: %{public}d, param flag: %{public}d",
-            (*subscriberIter)->flag_, flag);
+        (*subscriberIter)->flag_ = flag;
+        BGTASK_LOGW("remove subscriber success, current flag: %{public}d", (*subscriberIter)->flag_);
         if ((*subscriberIter)->flag_ > 0) {
             BGTASK_LOGD("application uid: %{public}d have callback function.", (*subscriberIter)->uid_);
             return ERR_OK;
@@ -1992,7 +1999,7 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskApps(std::vector<std::shared_ptr<C
 }
 
 ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list,
-    int32_t uid)
+    int32_t uid, bool includeSuspended)
 {
     if (continuousTaskInfosMap_.empty()) {
         return ERR_OK;
@@ -2002,13 +2009,16 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
         if (uid != -1 && uid != record.second->uid_) {
             continue;
         }
-        if (record.second->suspendState_) {
+        if (record.second->suspendState_ && !includeSuspended) {
             continue;
         }
         auto appInfo = std::make_shared<ContinuousTaskCallbackInfo>(record.second->bgModeId_, record.second->uid_,
             record.second->pid_, record.second->abilityName_, record.second->isFromWebview_, record.second->isBatchApi_,
             record.second->bgModeIds_, record.second->abilityId_, record.second->fullTokenId_);
         appInfo->SetContinuousTaskId(record.second->continuousTaskId_);
+        appInfo->SetByRequestObject(record.second->isByRequestObject_);
+        appInfo->SetSuspendState(record.second->suspendState_);
+        appInfo->SetSuspendReason(record.second->suspendReason_);
         list.push_back(appInfo);
     }
     return ERR_OK;
@@ -2064,6 +2074,14 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
 
     ErrCode result = ERR_OK;
     auto record = findUidIter->second;
+
+    // 应用退后台删除播控，退后台在60s后检测avsession，在65s后发送通知，当avsession检测失败且未取消长时任务时，不发通知
+    // 解决删除播控通知后（avsession停流，存在长时任务场景）仍显示长时任务通知的体验问题
+    if (!findUidIter->second->audioDetectState_) {
+        findUidIter->second->audioDetectState_ = true;
+        RemoveAudioPlaybackDelayTask(uid);
+        return ERR_OK;
+    }
 
     // 子类型包含avsession，不发通知
     if (!isPublish &&
@@ -2160,6 +2178,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->GetUid() == uid &&
             CommonUtils::CheckExistMode(iter->second->bgModeIds_, BackgroundMode::AUDIO_PLAYBACK)) {
+            iter->second->audioDetectState_ = false;
             NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
                 iter->second->GetNotificationId());
             if (!IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND)) {
@@ -2718,6 +2737,8 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
     continuousTaskCallbackInfo->SetBundleName(continuousTaskInfo->bundleName_);
     continuousTaskCallbackInfo->SetUserId(continuousTaskInfo->userId_);
     continuousTaskCallbackInfo->SetAppIndex(continuousTaskInfo->appIndex_);
+    continuousTaskCallbackInfo->SetNotificationId(continuousTaskInfo->notificationId_);
+    continuousTaskCallbackInfo->SetBackgroundSubModes(continuousTaskInfo->bgSubModeIds_);
     if (continuousTaskInfo->wantAgentInfo_ != nullptr) {
         continuousTaskCallbackInfo->SetWantAgentBundleName(continuousTaskInfo->wantAgentInfo_->bundleName_);
         continuousTaskCallbackInfo->SetWantAgentAbilityName(continuousTaskInfo->wantAgentInfo_->abilityName_);
@@ -2784,6 +2805,14 @@ void BgContinuousTaskMgr::OnAccountsStateChanged(int32_t id)
     activatedOsAccountIds.push_back(DEFAULT_OS_ACCOUNT_ID);
     BGTASK_LOGI("there is no account part, use default id.");
 #endif // HAS_OS_ACCOUNT_PART
+    ClearBgOsAccountTask(activatedOsAccountIds);
+}
+
+void BgContinuousTaskMgr::ClearBgOsAccountTask(const std::vector<int32_t> &activatedOsAccountIds)
+{
+#ifdef HAS_OS_ACCOUNT_CAR
+    ClearBgOsAccountTaskInCar();
+#else // HAS_OS_ACCOUNT_CAR
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         auto idIter = find(activatedOsAccountIds.begin(), activatedOsAccountIds.end(), iter->second->GetUserId());
@@ -2800,7 +2829,43 @@ void BgContinuousTaskMgr::OnAccountsStateChanged(int32_t id)
             iter++;
         }
     }
+#endif // HAS_OS_ACCOUNT_CAR
 }
+
+#ifdef HAS_OS_ACCOUNT_CAR
+void BgContinuousTaskMgr::ClearBgOsAccountTaskInCar()
+{
+    // 获取前台用户列表
+    std::vector<AccountSA::ForegroundOsAccount> accounts;
+    ErrCode errCode = AccountSA::OsAccountManager::GetForegroundOsAccounts(accounts);
+    if (errCode != ERR_OK) {
+        BGTASK_LOGE("GetForegroundOsAccounts failed");
+        return;
+    }
+    BGTASK_LOGI("ForegroundOsAccounts size:%{public}lu", accounts.size());
+    auto iter = continuousTaskInfosMap_.begin();
+    while (iter != continuousTaskInfosMap_.end()) {
+        int32_t userId = iter->second->GetUserId();
+        auto findInForeground = [userId](const auto &target) {
+            return userId == target.localId;
+        };
+        auto idIter = find_if(accounts.begin(), accounts.end(), findInForeground);
+        if (idIter == accounts.end()) {
+            auto record = iter->second;
+            record->reason_ = SYSTEM_CANCEL;
+            OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            NotificationTools::GetInstance()->CancelNotification(
+                record->GetNotificationLabel(), record->GetNotificationId());
+            iter = continuousTaskInfosMap_.erase(iter);
+            HandleAppContinuousTaskStop(record->uid_);
+            RefreshTaskRecord();
+            BGTASK_LOGI("uid:%{public}d not in foreground OsAccounts, clear", record->uid_);
+        } else {
+            iter++;
+        }
+    }
+}
+#endif // HAS_OS_ACCOUNT_CAR
 
 void BgContinuousTaskMgr::HandleAppContinuousTaskStop(int32_t uid)
 {
@@ -3463,17 +3528,17 @@ void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeath(const wptr<IRemoteObjec
 
 void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeathInner(const wptr<IRemoteObject> &remote)
 {
-    auto findCallback = [&remote](const auto& callbackMap) {
+    auto findAuthCallback = [&remote](const auto& callbackMap) {
         return callbackMap.second->AsObject() == remote;
     };
-    auto callbackIter = find_if(expiredCallbackMap_.begin(), expiredCallbackMap_.end(), findCallback);
-    if (callbackIter == expiredCallbackMap_.end()) {
-        BGTASK_LOGE("expiredCallback death, remote in callback not found.");
+    auto authCallbackIter = find_if(expiredCallbackMap_.begin(), expiredCallbackMap_.end(), findAuthCallback);
+    if (authCallbackIter == expiredCallbackMap_.end()) {
+        BGTASK_LOGE("auth expiredCallback death, remote in callback not found.");
         return;
     }
-    int32_t notificationId = callbackIter->first;
-    BGTASK_LOGI("expiredCallback death, remote callback notificationId: %{public}d.", notificationId);
-    expiredCallbackMap_.erase(callbackIter);
+    int32_t notificationId = authCallbackIter->first;
+    BGTASK_LOGI("auth expiredCallback death, remote callback notificationId: %{public}d.", notificationId);
+    expiredCallbackMap_.erase(authCallbackIter);
     if (notificationId != -1) {
         auto findRecord = [notificationId](const auto &target) {
             return notificationId == target.second->GetNotificationId();
@@ -3498,100 +3563,6 @@ ErrCode BgContinuousTaskMgr::RefreshAuthRecord()
         return ret;
     }
     return ERR_OK;
-}
-
-void BgContinuousTaskMgr::SetLiveViewInfo(int32_t uid, bool isLiveViewPublish, const std::string &eventName)
-{
-    std::lock_guard<std::mutex> lock(liveViewInfoMutex_);
-    if (isLiveViewPublish) {
-        liveViewInfo_[uid].emplace(eventName);
-    } else {
-        liveViewInfo_[uid].erase(eventName);
-        if (liveViewInfo_[uid].empty()) {
-            liveViewInfo_.erase(uid);
-        }
-    }
-}
-
-bool BgContinuousTaskMgr::CheckLiveViewInfoModes(std::shared_ptr<ContinuousTaskRecord> record)
-{
-    if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::LOCATION) &&
-        !CommonUtils::CheckExistOtherMode(record->bgModeIds_, BackgroundMode::LOCATION, g_liveViewTypes)) {
-        BGTASK_LOGD("continuous task has liveView");
-        return true;
-    }
-    return false;
-}
-
-bool BgContinuousTaskMgr::CheckLiveViewInfo(std::shared_ptr<ContinuousTaskRecord> record)
-{
-    std::lock_guard<std::mutex> lock(liveViewInfoMutex_);
-    auto iter = liveViewInfo_.find(record->uid_);
-    if (iter == liveViewInfo_.end()) {
-        return false;
-    }
-    if (CheckLiveViewInfoModes(record)) {
-        return true;
-    }
-    return false;
-}
-
-void BgContinuousTaskMgr::CancelBgTaskNotificationInner(int32_t uid)
-{
-    for (const auto &task : continuousTaskInfosMap_) {
-        if (!task.second || task.second->GetUid() != uid) {
-            continue;
-        }
-        if (task.second->GetNotificationId() == -1) {
-            continue;
-        }
-        if (CheckLiveViewInfoModes(task.second)) {
-            NotificationTools::GetInstance()->CancelNotification(
-                task.second->GetNotificationLabel(), task.second->GetNotificationId());
-            task.second->notificationId_ = -1;
-            RefreshTaskRecord();
-            BGTASK_LOGD("continuous task has other mode");
-            continue;
-        }
-    }
-}
-
-void BgContinuousTaskMgr::CancelBgTaskNotification(int32_t uid)
-{
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return;
-    }
-
-    handler_->PostSyncTask([this, uid]() {
-        this->CancelBgTaskNotificationInner(uid);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
-}
-
-void BgContinuousTaskMgr::SendNotificationByLiveViewCancelInner(int32_t uid)
-{
-    for (const auto &task : continuousTaskInfosMap_) {
-        if (!task.second || task.second->GetUid() != uid) {
-            continue;
-        }
-        if (task.second->GetNotificationId() == -1) {
-            auto record = task.second;
-            SendContinuousTaskNotification(record);
-            RefreshTaskRecord();
-        }
-    }
-}
-
-void BgContinuousTaskMgr::SendNotificationByLiveViewCancel(int32_t uid)
-{
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return;
-    }
-
-    handler_->PostSyncTask([this, uid]() {
-        this->SendNotificationByLiveViewCancelInner(uid);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
 }
 
 ErrCode BgContinuousTaskMgr::SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam)
@@ -3734,19 +3705,98 @@ ErrCode BgContinuousTaskMgr::GetBackgroundTaskStateInner(std::shared_ptr<Backgro
     return ERR_OK;
 }
 
-ErrCode BgContinuousTaskMgr::GetAllContinuousTasksBySystem(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+void BgContinuousTaskMgr::SetLiveViewInfo(int32_t uid, bool isLiveViewPublish, const std::string &eventName)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
-        "BackgroundTaskManager::ContinuousTask::Service::GetAllContinuousTasks");
+    std::lock_guard<std::mutex> lock(liveViewInfoMutex_);
+    if (isLiveViewPublish) {
+        liveViewInfo_[uid].emplace(eventName);
+    } else {
+        liveViewInfo_[uid].erase(eventName);
+        if (liveViewInfo_[uid].empty()) {
+            liveViewInfo_.erase(uid);
+        }
+    }
+}
+
+bool BgContinuousTaskMgr::CheckLiveViewInfoModes(std::shared_ptr<ContinuousTaskRecord> record)
+{
+    if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::LOCATION) &&
+        !CommonUtils::CheckExistOtherMode(record->bgModeIds_, BackgroundMode::LOCATION, g_liveViewTypes)) {
+        BGTASK_LOGD("continuous task has liveView");
+        return true;
+    }
+    return false;
+}
+
+bool BgContinuousTaskMgr::CheckLiveViewInfo(std::shared_ptr<ContinuousTaskRecord> record)
+{
+    std::lock_guard<std::mutex> lock(liveViewInfoMutex_);
+    auto iter = liveViewInfo_.find(record->uid_);
+    if (iter == liveViewInfo_.end()) {
+        return false;
+    }
+    if (CheckLiveViewInfoModes(record)) {
+        return true;
+    }
+    return false;
+}
+
+void BgContinuousTaskMgr::CancelBgTaskNotificationInner(int32_t uid)
+{
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (!task.second || task.second->GetUid() != uid) {
+            continue;
+        }
+        if (task.second->GetNotificationId() == -1) {
+            continue;
+        }
+        if (CheckLiveViewInfoModes(task.second)) {
+            NotificationTools::GetInstance()->CancelNotification(
+                task.second->GetNotificationLabel(), task.second->GetNotificationId());
+            task.second->notificationId_ = -1;
+            RefreshTaskRecord();
+            BGTASK_LOGI("uid: %{public}d has live view notification , cancel continuous notification", uid);
+            continue;
+        }
+    }
+}
+
+void BgContinuousTaskMgr::CancelBgTaskNotification(int32_t uid)
+{
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
-        return ERR_BGTASK_SYS_NOT_READY;
+        return;
     }
-    ErrCode ret = ERR_OK;
-    handler_->PostSyncTask([this, &list, &ret]() {
-        ret = this->GetAllContinuousTasksInner(-1, list, false, true);
+
+    handler_->PostSyncTask([this, uid]() {
+        this->CancelBgTaskNotificationInner(uid);
         }, AppExecFwk::EventQueue::Priority::HIGH);
-    return ret;
+}
+
+void BgContinuousTaskMgr::SendNotificationByLiveViewCancelInner(int32_t uid)
+{
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (!task.second || task.second->GetUid() != uid) {
+            continue;
+        }
+        if (task.second->GetNotificationId() == -1) {
+            auto record = task.second;
+            SendContinuousTaskNotification(record);
+            RefreshTaskRecord();
+        }
+    }
+}
+
+void BgContinuousTaskMgr::SendNotificationByLiveViewCancel(int32_t uid)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return;
+    }
+
+    handler_->PostSyncTask([this, uid]() {
+        this->SendNotificationByLiveViewCancelInner(uid);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
 }
 
 ErrCode BgContinuousTaskMgr::OnBackup(MessageParcel& data, MessageParcel& reply)
@@ -3800,6 +3850,21 @@ void BgContinuousTaskMgr::DumpAuthRecordInfo(
     }
 }
 
+ErrCode BgContinuousTaskMgr::GetAllContinuousTasksBySystem(std::vector<std::shared_ptr<ContinuousTaskInfo>> &list)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Service::GetAllContinuousTasks");
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    ErrCode ret = ERR_OK;
+    handler_->PostSyncTask([this, &list, &ret]() {
+        ret = this->GetAllContinuousTasksInner(-1, list, false, true);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return ret;
+}
+
 void BgContinuousTaskMgr::OnBundleResourcesChanged()
 {
     if (!isSysReady_.load()) {
@@ -3826,6 +3891,46 @@ void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
         iter++;
     }
     NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
+}
+
+ErrCode BgContinuousTaskMgr::GetAllContinuousTaskApps(std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> &list)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    ErrCode result = ERR_OK;
+    handler_->PostSyncTask([this, &list, &result]() {
+        result = this->GetContinuousTaskAppsInner(list, -1, true);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::SendNotificationByDeteTask(const std::set<std::string> &taskKeys)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    ErrCode result = ERR_OK;
+    handler_->PostSyncTask([this, &taskKeys, &result]() {
+        result = this->SendNotificationByDeteTaskInner(taskKeys);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::SendNotificationByDeteTaskInner(const std::set<std::string> &taskKeys)
+{
+    for (const auto &key : taskKeys) {
+        auto iter = continuousTaskInfosMap_.find(key);
+        if (iter == continuousTaskInfosMap_.end()) {
+            continue;
+        }
+        avSessionNotification_[iter->second->GetUid()] = false;
+        HandleActiveNotification(iter->second);
+    }
+    return ERR_OK;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

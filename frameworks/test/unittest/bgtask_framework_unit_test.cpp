@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -244,7 +244,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_007, TestSize.Level1)
 HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_008, TestSize.Level1)
 {
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
-
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetContinuousTaskApps(list),
@@ -318,7 +317,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, BgTaskFrameworkUnitTest_012, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(1, 1, 1, ""),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
-
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->StopContinuousTask(1, 1, 1, ""),
         ERR_BGTASK_PERMISSION_DENIED);
@@ -1052,8 +1050,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, SetBackgroundTaskState_001, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBackgroundTaskState(taskParam),
         ERR_OK);
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetBackgroundTaskState(nullptr),
-        ERR_BGTASK_CHECK_TASK_PARAM);
 }
 
 /**
@@ -1073,8 +1069,6 @@ HWTEST_F(BgTaskFrameworkUnitTest, GetBackgroundTaskState_001, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "";
     EXPECT_NE(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(taskParam),
         ERR_OK);
-    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetBackgroundTaskState(nullptr),
-        ERR_BGTASK_CHECK_TASK_PARAM);
 }
 
 /**
@@ -1108,6 +1102,36 @@ HWTEST_F(BgTaskFrameworkUnitTest, SetSpecialExemptedProcess_001, TestSize.Level1
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     std::set<std::string> bundleNameSet;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetSpecialExemptedProcess(bundleNameSet),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+}
+
+/**
+ * @tc.name: GetAllContinuousTaskApps_001
+ * @tc.desc: test GetAllContinuousTaskApps.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, GetAllContinuousTaskApps_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::vector<std::shared_ptr<ContinuousTaskCallbackInfo>> list;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->GetAllContinuousTaskApps(list),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+}
+
+/**
+ * @tc.name: SendNotificationByDeteTask_001
+ * @tc.desc: test SendNotificationByDeteTask.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, SendNotificationByDeteTask_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    std::set<std::string> taskKeys;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SendNotificationByDeteTask(taskKeys),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 }
 }

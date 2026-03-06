@@ -74,6 +74,27 @@ std::string CreateNotificationLabel(int32_t uid, const std::string &abilityName,
     return label;
 }
 
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+Notification::NotificationRequest CreateNotificationRequest(
+    const std::shared_ptr<ContinuousTaskRecord>& continuousTaskRecord,
+    const std::shared_ptr<Notification::NotificationLocalLiveViewContent>& liveContent,
+    const std::shared_ptr<AAFwk::WantParams>& extraInfo,
+    int32_t serviceUid, const std::string& notificationLabel)
+{
+    Notification::NotificationRequest notificationRequest = Notification::NotificationRequest();
+    notificationRequest.SetContent(std::make_shared<Notification::NotificationContent>(liveContent));
+    notificationRequest.SetAdditionalData(extraInfo);
+    notificationRequest.SetCreatorUid(serviceUid);
+    notificationRequest.SetInProgress(true);
+    notificationRequest.SetIsAgentNotification(true);
+    notificationRequest.SetUpdateByOwnerAllowed(true);
+    notificationRequest.SetLabel(notificationLabel);
+    notificationRequest.SetWantAgent(continuousTaskRecord->GetWantAgent());
+    notificationRequest.SetOwnerUid(continuousTaskRecord->GetUid());
+    return notificationRequest;
+}
+#endif
+
 WEAK_FUNC ErrCode NotificationTools::PublishNotification(
     const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
     const std::string &appName, const std::string &prompt, int32_t serviceUid)
@@ -101,18 +122,18 @@ WEAK_FUNC ErrCode NotificationTools::PublishNotification(
         continuousTaskRecord->abilityName_, continuousTaskRecord->abilityId_,
         continuousTaskRecord->isByRequestObject_, continuousTaskRecord->continuousTaskId_);
 
-    Notification::NotificationRequest notificationRequest = Notification::NotificationRequest();
-    notificationRequest.SetContent(std::make_shared<Notification::NotificationContent>(liveContent));
-    notificationRequest.SetAdditionalData(extraInfo);
-    notificationRequest.SetWantAgent(continuousTaskRecord->wantAgent_);
-    notificationRequest.SetCreatorUid(serviceUid);
-    notificationRequest.SetOwnerUid(continuousTaskRecord->GetUid());
-    notificationRequest.SetInProgress(true);
-    notificationRequest.SetIsAgentNotification(true);
-    notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
-    notificationRequest.SetUpdateByOwnerAllowed(true);
-    notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
-    notificationRequest.SetLabel(notificationLabel);
+    Notification::NotificationRequest notificationRequest = CreateNotificationRequest(
+        continuousTaskRecord, liveContent, extraInfo, serviceUid, notificationLabel);
+    if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
+        BACKGROUND_MODE_DATA_TANSFER) != continuousTaskRecord->bgModeIds_.end()) {
+        notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
+        notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
+    } else {
+        notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::OTHER);
+        notificationRequest.GetContent()->ResetToBasicContent();
+        notificationRequest.SetUnremovable(true);
+        notificationRequest.SetTapDismissed(false);
+    }
     if (continuousTaskRecord->GetNotificationId() == -1) {
         notificationRequest.SetNotificationId(++notificationIdIndex_);
     } else {
@@ -347,6 +368,7 @@ WEAK_FUNC ErrCode NotificationTools::PublishSubNotification(const std::shared_pt
     return ERR_OK;
 }
 
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 std::shared_ptr<Notification::NotificationNormalContent> CreateNotificationNormalContent(
     const std::string &appName, const std::string &prompt)
 {
@@ -356,7 +378,9 @@ std::shared_ptr<Notification::NotificationNormalContent> CreateNotificationNorma
     normalContent->SetText(prompt);
     return normalContent;
 }
+#endif
 
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 bool SetActionButton(const std::shared_ptr<BannerNotificationRecord> &bannerNotification,
     const std::string& buttonName, Notification::NotificationRequest& notificationRequest,
     const int32_t btnTypeValue, const std::string &label)
@@ -391,6 +415,7 @@ bool SetActionButton(const std::shared_ptr<BannerNotificationRecord> &bannerNoti
     notificationRequest.AddActionButton(actionButtonDeal);
     return true;
 }
+#endif
 
 std::string NotificationTools::CreateBannerNotificationLabel(const std::string &bundleName, int32_t userId,
     int32_t appIndex)

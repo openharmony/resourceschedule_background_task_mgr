@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,8 @@
 #include "background_mode.h"
 #include "bg_continuous_task_dumper.h"
 #include "bg_continuous_task_mgr.h"
+#include "common_utils.h"
+#include <sstream>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -31,11 +33,11 @@ BgContinuousTaskDumper::~BgContinuousTaskDumper() {}
 void BgContinuousTaskDumper::DebugContinuousTask(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
-    if (dumpOption.size() < MAX_DUMP_INNER_PARAM_NUMS) {
+    if (dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS && dumpOption.size() != MAX_DUMP_INNER_PARAM_NUMS + 1) {
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
-    std::string modeStr = dumpOption[MAX_DUMP_PARAM_NUMS -1].c_str();
+    std::string modeStr = dumpOption[MAX_DUMP_INNER_PARAM_NUMS - 2].c_str();
     uint32_t mode = 0;
     if (modeStr == "WORKOUT") {
         mode = BackgroundMode::WORKOUT;
@@ -44,7 +46,7 @@ void BgContinuousTaskDumper::DebugContinuousTask(const std::vector<std::string> 
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
-    std::string operationType = dumpOption[MAX_DUMP_PARAM_NUMS].c_str();
+    std::string operationType = dumpOption[MAX_DUMP_INNER_PARAM_NUMS - 1].c_str();
     if (operationType != "apply" && operationType != "reset") {
         dumpInfo.emplace_back("param invaild\n");
         return;
@@ -52,7 +54,10 @@ void BgContinuousTaskDumper::DebugContinuousTask(const std::vector<std::string> 
     bool isApply = (operationType == "apply");
     int32_t uid = 1;
     if (dumpOption.size() == MAX_DUMP_INNER_PARAM_NUMS + 1) {
-        uid = std::atoi(dumpOption[MAX_DUMP_PARAM_NUMS + 1].c_str());
+        std::string uidStr = dumpOption[MAX_DUMP_INNER_PARAM_NUMS].c_str();
+        if (CommonUtils::CheckStrToNum(uidStr)) {
+            uid = std::atoi(uidStr.c_str());
+        }
     }
     sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
         new ContinuousTaskParamForInner(uid, mode, isApply));
