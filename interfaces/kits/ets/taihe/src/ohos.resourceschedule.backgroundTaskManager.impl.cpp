@@ -478,7 +478,7 @@ public:
 public:
     int32_t continuousTaskId_ = -1;
     bool combinedTaskNotification_ = false;
-    uintptr_t taiheWantAgent_;
+    uintptr_t taiheWantAgent_ {0};
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
     std::vector<uint32_t> backgroundTaskSubmodes_ {};
     std::vector<uint32_t> backgroundTaskModes_ {};
