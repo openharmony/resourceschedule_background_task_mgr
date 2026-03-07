@@ -27,6 +27,7 @@ static constexpr char TEST_DEFAULT_BUNDLE[]  = "bundleName";
 static constexpr char BGMODE_PERMISSION_SYSTEM[] = "ohos.permission.KEEP_BACKGROUND_RUNNING_SYSTEM";
 static constexpr uint32_t ALL_NEED_CHECK_BGMODE = 62;
 static constexpr uint64_t NO_SYSTEM_APP_TOKEN_ID = -100;
+static constexpr int32_t APP_INDEX = 1234;
 std::shared_ptr<IBundleManagerHelper> bundleManagerHelperMock;
 }
 
@@ -119,6 +120,13 @@ bool BundleManagerHelper::GetBundleInfoByFlags(const std::string &bundleName, in
     bundleInfo.name = TEST_DEFAULT_BUNDLE;
     bundleInfo.appIndex = 1;
     bundleInfo.reqPermissions.emplace_back(BGMODE_PERMISSION_SYSTEM);
+    return true;
+}
+
+bool BundleManagerHelper::GetAppIndexAndBundleNameByUid(int32_t uid, int32_t &appIndex, std::string &bundleName)
+{
+    appIndex = APP_INDEX;
+    bundleName = "empty-info";
     return true;
 }
 

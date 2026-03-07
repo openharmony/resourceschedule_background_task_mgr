@@ -1649,7 +1649,7 @@ ErrCode BgContinuousTaskMgr::GetAllContinuousTasksInner(int32_t uid,
     if (continuousTaskInfosMap_.empty()) {
         return ERR_OK;
     }
-    BGTASK_LOGW("GetAllContinuousTasksInner, includeSuspended: %{public}d", includeSuspended);
+    BGTASK_LOGD("GetAllContinuousTasksInner, includeSuspended: %{public}d", includeSuspended);
     for (const auto &record : continuousTaskInfosMap_) {
         if (!record.second) {
             continue;
@@ -2058,7 +2058,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
 
 ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish)
 {
-    BGTASK_LOGD("AVSessionNotifyUpdateNotification start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
+    BGTASK_LOGI("AVSessionNotifyUpdateNotification start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
     avSessionNotification_[uid] = isPublish;
     if (isPublish) {
         RemoveAudioPlaybackDelayTask(uid);
@@ -2069,7 +2069,6 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
     auto findUidIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findUid);
     if (findUidIter == continuousTaskInfosMap_.end()) {
         RemoveAudioPlaybackDelayTask(uid);
-        BGTASK_LOGD("continuous task is not exist: %{public}d", uid);
         return ERR_BGTASK_OBJECT_NOT_EXIST;
     }
 
@@ -2093,6 +2092,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
 
     // 只有播音类型长时任务，并且没有AVSession通知
     if (!isPublish && record->bgModeIds_.size() == 1 && record->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
+        BGTASK_LOGI("avsession not exist, send continuousTask notification uid: %{public}d", uid);
         result = SendContinuousTaskNotification(record);
         RefreshTaskRecord();
         RemoveAudioPlaybackDelayTask(uid);
@@ -2105,7 +2105,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
         if (notificationText.empty()) {
             result = NotificationTools::GetInstance()->CancelNotification(
                 record->GetNotificationLabel(), record->GetNotificationId());
-                record->notificationId_ = -1;
+            record->notificationId_ = -1;
         } else {
             newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
             NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
@@ -2484,16 +2484,23 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
             iter++;
         }
     }
+    std::string stopBundleName;
+    int32_t stopAppIndex;
+    if (!BundleManagerHelper::GetInstance()->GetAppIndexAndBundleNameByUid(uid, stopAppIndex, stopBundleName)) {
+        BGTASK_LOGW("get bundleName and appIndex failed, uid: %{public}d", uid);
+        return;
+    }
     auto iterAuth = bannerNotificationRecord_.begin();
     while (iterAuth != bannerNotificationRecord_.end()) {
-        if (iterAuth->second->GetUid() != uid ||
-            iterAuth->second->GetAuthResult() != static_cast<int32_t>(UserAuthResult::GRANTED_ONCE)) {
+        auto bannerRecord = iterAuth->second;
+        if (bannerRecord->GetBundleName() == stopBundleName && bannerRecord->GetAppIndex() == stopAppIndex &&
+            bannerRecord->GetAuthResult() == static_cast<int32_t>(UserAuthResult::GRANTED_ONCE)) {
+            BGTASK_LOGI("uid: %{public}d app stop, remove allow once time auth record.", uid);
+            iterAuth = bannerNotificationRecord_.erase(iterAuth);
+            RefreshAuthRecord();
+        } else {
             iterAuth++;
-            continue;
         }
-        BGTASK_LOGI("uid: %{public}d app stop, remove allow once time auth record.", uid);
-        iterAuth = bannerNotificationRecord_.erase(iterAuth);
-        RefreshAuthRecord();
     }
 }
 
@@ -2732,6 +2739,10 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
     continuousTaskCallbackInfo->SetAppIndex(continuousTaskInfo->appIndex_);
     continuousTaskCallbackInfo->SetNotificationId(continuousTaskInfo->notificationId_);
     continuousTaskCallbackInfo->SetBackgroundSubModes(continuousTaskInfo->bgSubModeIds_);
+    if (continuousTaskInfo->wantAgentInfo_ != nullptr) {
+        continuousTaskCallbackInfo->SetWantAgentBundleName(continuousTaskInfo->wantAgentInfo_->bundleName_);
+        continuousTaskCallbackInfo->SetWantAgentAbilityName(continuousTaskInfo->wantAgentInfo_->abilityName_);
+    }
     NotifySubscribers(changeEventType, continuousTaskCallbackInfo);
     ReportHisysEvent(changeEventType, continuousTaskInfo);
 }
@@ -3416,7 +3427,7 @@ ErrCode BgContinuousTaskMgr::EnableContinuousTaskRequest(int32_t uid, bool isEna
             } else {
                 disableRequestUidList_.insert(uid);
             }
-            BGTASK_LOGI("EnableContinuousTaskRequest uid: %{public}d, isEnable: %{public}d", uid, isEnable);
+            BGTASK_LOGD("EnableContinuousTaskRequest uid: %{public}d, isEnable: %{public}d", uid, isEnable);
         }, AppExecFwk::EventQueue::Priority::IMMEDIATE);
 
     return ERR_OK;

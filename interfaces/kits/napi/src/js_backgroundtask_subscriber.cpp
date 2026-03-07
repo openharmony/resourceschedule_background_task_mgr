@@ -142,7 +142,7 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskStart(
                 BGTASK_LOGE("null observer");
                 return;
             }
-            BGTASK_LOGI("OnContinuousTaskStart js thread %{public}s",
+            BGTASK_LOGD("OnContinuousTaskStart js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
             jsObserver->HandleOnContinuousTaskStart(continuousTaskCallbackInfo);
         });
@@ -195,7 +195,7 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskUpdate(
                 BGTASK_LOGE("null observer");
                 return;
             }
-            BGTASK_LOGI("OnContinuousTaskUpdate js thread %{public}s",
+            BGTASK_LOGD("OnContinuousTaskUpdate js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
             jsObserver->HandleOnContinuousTaskUpdate(continuousTaskCallbackInfo);
         });
@@ -249,7 +249,7 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskStop(
                 BGTASK_LOGE("null observer");
                 return;
             }
-            BGTASK_LOGI("OnContinuousTaskStop js thread %{public}s",
+            BGTASK_LOGD("OnContinuousTaskStop js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
             if (continuousTaskCallbackInfo->IsCancelCallBackSelf()) {
                 jsObserver->HandleOnContinuousTaskStop(continuousTaskCallbackInfo);
@@ -405,7 +405,7 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskActive(
                 BGTASK_LOGE("null observer");
                 return;
             }
-            BGTASK_LOGI("OnContinuousTaskActive js thread %{public}s",
+            BGTASK_LOGD("OnContinuousTaskActive js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
             jsObserver->HandleOnContinuousTaskActive(continuousTaskCallbackInfo);
         });

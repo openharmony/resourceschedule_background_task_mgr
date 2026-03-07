@@ -145,7 +145,7 @@ void AniBackgroundTaskSubscriber::OnContinuousTaskStop(
                 BGTASK_LOGE("null observer");
                 return;
             }
-            BGTASK_LOGI("OnContinuousTaskStop js thread %{public}s",
+            BGTASK_LOGD("OnContinuousTaskStop js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
             jsObserver->HandleOnContinuousTaskStop(continuousTaskCallbackInfo);
         };
@@ -188,7 +188,7 @@ void AniBackgroundTaskSubscriber::OnContinuousTaskSuspend(
                 BGTASK_LOGE("null observer");
                 return;
             }
-            BGTASK_LOGI("OnContinuousTaskSuspend js thread %{public}s",
+            BGTASK_LOGD("OnContinuousTaskSuspend js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
             jsObserver->HandleOnContinuousTaskSuspend(continuousTaskCallbackInfo);
         };
@@ -230,7 +230,7 @@ void AniBackgroundTaskSubscriber::OnContinuousTaskActive(
                 BGTASK_LOGE("null observer");
                 return;
             }
-            BGTASK_LOGI("OnContinuousTaskActive js thread %{public}s",
+            BGTASK_LOGD("OnContinuousTaskActive js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
             jsObserver->HandleOnContinuousTaskActive(continuousTaskCallbackInfo);
         };

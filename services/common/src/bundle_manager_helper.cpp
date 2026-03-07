@@ -154,6 +154,20 @@ bool BundleManagerHelper::GetBundleInfoByFlags(const std::string &bundleName, in
     return false;
 }
 
+bool BundleManagerHelper::GetAppIndexAndBundleNameByUid(int32_t uid, int32_t &appIndex, std::string &bundleName)
+{
+    std::lock_guard<std::mutex> lock(connectionMutex_);
+    Connect();
+    if (bundleMgr_ == nullptr) {
+        return false;
+    }
+    ErrCode ret = bundleMgr_->GetNameAndIndexForUid(uid, bundleName, appIndex);
+    if (ret == ERR_OK) {
+        return true;
+    }
+    return false;
+}
+
 bool BundleManagerHelper::Connect()
 {
     if (bundleMgr_ != nullptr) {

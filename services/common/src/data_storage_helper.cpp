@@ -102,7 +102,7 @@ ErrCode DataStorageHelper::RestoreAuthRecord(std::unordered_map<std::string,
     std::shared_ptr<BannerNotificationRecord>> &authRecord)
 {
     nlohmann::json root;
-    BGTASK_LOGI("RestoreAuthRecord start");
+    BGTASK_LOGI("RestoreAuthRecord start, old authRecord size:%{public}u", authRecord.size());
     if (ParseJsonValueFromFile(root, AUTH_RECORD_FILE_PATH) != ERR_OK) {
         BGTASK_LOGE("bannerNotification parse json value from file fail.");
         return ERR_BGTASK_DATA_STORAGE_ERR;
@@ -110,7 +110,17 @@ ErrCode DataStorageHelper::RestoreAuthRecord(std::unordered_map<std::string,
     for (auto iter = root.begin(); iter != root.end(); iter++) {
         nlohmann::json recordJson = iter.value();
         std::shared_ptr<BannerNotificationRecord> record = std::make_shared<BannerNotificationRecord>();
-        if (record->ParseFromJson(recordJson)) {
+        if (!record->ParseFromJson(recordJson)) {
+            continue;
+        }
+        auto findRecord = [record](const auto &iter) {
+            auto oldRecord = iter.second;
+            return oldRecord->GetUserId() == record->GetUserId() &&
+                oldRecord->GetBundleName() == record->GetBundleName() &&
+                oldRecord->GetAppIndex() == record->GetAppIndex();
+        };
+        auto findRecordIter = find_if(authRecord.begin(), authRecord.end(), findRecord);
+        if (findRecordIter == authRecord.end()) {
             authRecord.emplace(iter.key(), record);
         }
     }
