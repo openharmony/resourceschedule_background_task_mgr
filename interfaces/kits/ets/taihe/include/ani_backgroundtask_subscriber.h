@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,11 +28,17 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 using namespace taihe;
 using namespace ohos::resourceschedule::backgroundTaskManager;
+using JsBackgroundTaskSubscriberType = ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskSubscriber;
 class AniBackgroundTaskSubscriber : public OHOS::BackgroundTaskMgr::BackgroundTaskSubscriber,
     public std::enable_shared_from_this<AniBackgroundTaskSubscriber> {
 public:
     explicit AniBackgroundTaskSubscriber();
     virtual ~AniBackgroundTaskSubscriber();
+    void OnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo> &info) override;
+    void HandleOnContinuousTaskStart(const std::shared_ptr<ContinuousTaskCallbackInfo> &info);
+    void OnContinuousTaskUpdate(const std::shared_ptr<ContinuousTaskCallbackInfo> &info) override;
+    void HandleOnContinuousTaskUpdate(const std::shared_ptr<ContinuousTaskCallbackInfo> &info);
+    void HandleSubscribeOnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &info);
     void OnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo) override;
     void HandleOnContinuousTaskStop(const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);
     void OnContinuousTaskSuspend(
@@ -60,6 +66,12 @@ public:
     void RemoveActiveObserverObject(const std::string& cbType,
         std::shared_ptr<callback<void(const ContinuousTaskActiveInfo&)>> taiheCallback);
     void RemoveJsObserverObjects(const std::string& cbType);
+    void AddJsSubscribeObserverObject(const std::string& cbType,
+        std::shared_ptr<JsBackgroundTaskSubscriberType> taiheSubscriber);
+    std::shared_ptr<JsBackgroundTaskSubscriberType> GetJsSubscribeObserverObject(const std::string& cbType,
+        std::shared_ptr<JsBackgroundTaskSubscriberType> taiheSubscriber);
+    void RemoveJsSubscribeObserverObject(const std::string& cbType,
+        std::shared_ptr<JsBackgroundTaskSubscriberType> taiheSubscriber);
     bool IsEmpty();
     void SubscriberBgtaskSaStatusChange();
     void UnSubscriberBgtaskSaStatusChange();
@@ -83,7 +95,7 @@ private:
     std::map<std::string, std::set<std::shared_ptr<callback<void(const ContinuousTaskActiveInfo&)>>>> activeCallbacks_;
     std::map<std::string, std::set<std::shared_ptr<callback<void(
         const ContinuousTaskSuspendInfo&)>>>> suspendCallbacks_;
-
+    std::map<std::string, std::set<std::shared_ptr<JsBackgroundTaskSubscriberType>>> jsSubscriberCallbacks_;
     sptr<JsBackgroudTaskSystemAbilityStatusChange> jsSaListner_ = nullptr;
     std::atomic<bool> needRestoreSubscribeStatus_ = false;
     std::mutex flagLock_;
