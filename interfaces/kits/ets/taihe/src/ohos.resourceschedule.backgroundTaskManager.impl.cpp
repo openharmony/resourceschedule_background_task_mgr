@@ -1407,7 +1407,7 @@ void UnsubscribeContinuousTaskState(JsBackgroundTaskSubscriberType subscriber)
         return;
     }
     backgroundTaskSubscriber_->RemoveJsSubscribeObserverObject("subscribeContinuousTaskState", taiheSubscriber);
-    UnSubscribeBackgroundTask(env, CONTINUOUS_TASK_CANCEL);
+    UnSubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE);
 }
 } // namespace
 
