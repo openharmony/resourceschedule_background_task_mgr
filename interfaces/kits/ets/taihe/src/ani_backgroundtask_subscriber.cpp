@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,10 @@
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 #include "ani_task.h"
- 
+#include "background_mode.h"
+#include "background_sub_mode.h"
+#include "background_task_submode.h"
+
 namespace OHOS {
 namespace BackgroundTaskMgr {
 using namespace taihe;
@@ -130,7 +133,178 @@ void AniBackgroundTaskSubscriber::UnSubscriberBgtaskSaStatusChange()
     }
     jsSaListner_ = nullptr;
 }
- 
+
+taihe::array<taihe::string> GetAniBackgroundSubModes(const std::shared_ptr<ContinuousTaskCallbackInfo> &info)
+{
+    if (info == nullptr) {
+        BGTASK_LOGE("info is null");
+        return taihe::array<taihe::string>(nullptr, 0);
+    }
+    std::vector<uint32_t> subModes = info->GetBackgroundSubModes();
+    if (subModes.empty()) {
+        return taihe::array<taihe::string>(nullptr, 0);
+    }
+    std::vector<taihe::string> aniModes;
+    if (info->IsByRequestObject()) {
+        for (auto subMode : subModes) {
+            if (subMode < BackgroundTaskSubmode::END) {
+                std::string subModeStr = BackgroundTaskSubmode::GetBackgroundTaskSubmodeStr(subMode);
+                aniModes.push_back(taihe::string(subModeStr));
+            }
+        }
+    } else {
+        for (auto &iter : subModes) {
+            if (iter < BackgroundSubMode::END) {
+                std::string subModeStr = BackgroundSubMode::GetBackgroundSubModeStr(iter);
+                aniModes.push_back(taihe::string(subModeStr));
+            }
+        }
+    }
+    array<taihe::string> subModesArr(aniModes);
+    return subModesArr;
+}
+
+taihe::array<taihe::string> GetAniBackgroundModes(const std::vector<uint32_t> &modes)
+{
+    if (modes.empty()) {
+        return taihe::array<taihe::string>(nullptr, 0);
+    }
+    std::vector<taihe::string> aniModes;
+    for (auto &iter : modes) {
+        if (iter < BackgroundTaskMgr::BackgroundMode::END) {
+            std::string modeStr = BackgroundTaskMgr::BackgroundMode::GetBackgroundModeStr(iter);
+            aniModes.push_back(taihe::string(modeStr));
+        }
+    }
+    array<taihe::string> modesArr(aniModes);
+    return modesArr;
+}
+
+void AniBackgroundTaskSubscriber::OnContinuousTaskStart(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &info)
+{
+    auto task = [self = weak_from_this(), info]() {
+            auto jsObserver = self.lock();
+            if (jsObserver == nullptr) {
+                BGTASK_LOGE("null observer");
+                return;
+            }
+            jsObserver->HandleOnContinuousTaskStart(info);
+        };
+    if (AniTask::AniSendEvent(task) != ANI_OK) {
+        BGTASK_LOGE("Failed to aniSendEvent HandleOnContinuousTaskStart");
+    }
+}
+
+void AniBackgroundTaskSubscriber::HandleOnContinuousTaskStart(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &info)
+{
+    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    auto iter = jsSubscriberCallbacks_.find("subscribeContinuousTaskState");
+    if (iter == jsSubscriberCallbacks_.end()) {
+        BGTASK_LOGW("null callback Type");
+        return;
+    }
+    auto& jsObserverObjectSet_ = iter->second;
+    for (auto &item : jsObserverObjectSet_) {
+        ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo aniInfo{
+            .abilityName = info->GetAbilityName(),
+            .uid = info->GetCreatorUid(),
+            .pid = info->GetCreatorPid(),
+            .isFromWebView = info->IsFromWebview(),
+            .backgroundModes = GetAniBackgroundModes(info->GetTypeIds()),
+            .backgroundSubModes = GetAniBackgroundSubModes(info),
+            .notificationId = info->GetNotificationId(),
+            .continuousTaskId = info->GetContinuousTaskId(),
+            .abilityId = info->GetAbilityId(),
+            .wantAgentBundleName = info->GetWantAgentBundleName(),
+            .wantAgentAbilityName = info->GetWantAgentAbilityName(),
+            .suspendState = info->GetSuspendState(),
+            .bundleName = optional<::taihe::string>(std::in_place, info->GetBundleName()),
+            .appIndex = optional<int32_t>(std::in_place, info->GetAppIndex())
+        };
+        item->onContinuousTaskStart(aniInfo);
+    }
+}
+
+void AniBackgroundTaskSubscriber::OnContinuousTaskUpdate(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &info)
+{
+    auto task = [self = weak_from_this(), info]() {
+            auto jsObserver = self.lock();
+            if (jsObserver == nullptr) {
+                BGTASK_LOGE("null observer");
+                return;
+            }
+            jsObserver->HandleOnContinuousTaskUpdate(info);
+        };
+    if (AniTask::AniSendEvent(task) != ANI_OK) {
+        BGTASK_LOGE("Failed to aniSendEvent HandleOnContinuousTaskUpdate");
+    }
+}
+
+void AniBackgroundTaskSubscriber::HandleOnContinuousTaskUpdate(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &info)
+{
+    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    auto iter = jsSubscriberCallbacks_.find("subscribeContinuousTaskState");
+    if (iter == jsSubscriberCallbacks_.end()) {
+        BGTASK_LOGW("null callback Type");
+        return;
+    }
+    auto& jsObserverObjectSet_ = iter->second;
+    for (auto &item : jsObserverObjectSet_) {
+        ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo aniInfo{
+            .abilityName = info->GetAbilityName(),
+            .uid = info->GetCreatorUid(),
+            .pid = info->GetCreatorPid(),
+            .isFromWebView = info->IsFromWebview(),
+            .backgroundModes = GetAniBackgroundModes(info->GetTypeIds()),
+            .backgroundSubModes = GetAniBackgroundSubModes(info),
+            .notificationId = info->GetNotificationId(),
+            .continuousTaskId = info->GetContinuousTaskId(),
+            .abilityId = info->GetAbilityId(),
+            .wantAgentBundleName = info->GetWantAgentBundleName(),
+            .wantAgentAbilityName = info->GetWantAgentAbilityName(),
+            .suspendState = info->GetSuspendState(),
+            .bundleName = optional<::taihe::string>(std::in_place, info->GetBundleName()),
+            .appIndex = optional<int32_t>(std::in_place, info->GetAppIndex())
+        };
+        item->onContinuousTaskUpdate(aniInfo);
+    }
+}
+
+void AniBackgroundTaskSubscriber::HandleSubscribeOnContinuousTaskStop(
+    const std::shared_ptr<ContinuousTaskCallbackInfo> &info)
+{
+    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    auto iter = jsSubscriberCallbacks_.find("subscribeContinuousTaskState");
+    if (iter == jsSubscriberCallbacks_.end()) {
+        BGTASK_LOGW("null callback Type");
+        return;
+    }
+    auto& jsObserverObjectSet_ = iter->second;
+    for (auto &item : jsObserverObjectSet_) {
+        ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskInfo aniInfo{
+            .abilityName = info->GetAbilityName(),
+            .uid = info->GetCreatorUid(),
+            .pid = info->GetCreatorPid(),
+            .isFromWebView = info->IsFromWebview(),
+            .backgroundModes = GetAniBackgroundModes(info->GetTypeIds()),
+            .backgroundSubModes = GetAniBackgroundSubModes(info),
+            .notificationId = info->GetNotificationId(),
+            .continuousTaskId = info->GetContinuousTaskId(),
+            .abilityId = info->GetAbilityId(),
+            .wantAgentBundleName = info->GetWantAgentBundleName(),
+            .wantAgentAbilityName = info->GetWantAgentAbilityName(),
+            .suspendState = info->GetSuspendState(),
+            .bundleName = optional<::taihe::string>(std::in_place, info->GetBundleName()),
+            .appIndex = optional<int32_t>(std::in_place, info->GetAppIndex())
+        };
+        item->onContinuousTaskStop(aniInfo);
+    }
+}
+
 void AniBackgroundTaskSubscriber::OnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
@@ -147,7 +321,10 @@ void AniBackgroundTaskSubscriber::OnContinuousTaskStop(
             }
             BGTASK_LOGD("OnContinuousTaskStop js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
-            jsObserver->HandleOnContinuousTaskStop(continuousTaskCallbackInfo);
+            if (continuousTaskCallbackInfo->IsCancelCallBackSelf()) {
+                jsObserver->HandleOnContinuousTaskStop(continuousTaskCallbackInfo);
+            }
+            jsObserver->HandleSubscribeOnContinuousTaskStop(continuousTaskCallbackInfo);
         };
     if (AniTask::AniSendEvent(task) != ANI_OK) {
         BGTASK_LOGE("Failed to aniSendEvent");
@@ -442,10 +619,72 @@ void AniBackgroundTaskSubscriber::RemoveActiveObserverObject(const std::string& 
     }
 }
 
+void AniBackgroundTaskSubscriber::AddJsSubscribeObserverObject(const std::string& cbType,
+    std::shared_ptr<JsBackgroundTaskSubscriberType> taiheSubscriber)
+{
+    if (taiheSubscriber == nullptr) {
+        BGTASK_LOGE("null observer");
+        return;
+    }
+    if (GetJsSubscribeObserverObject(cbType, taiheSubscriber) == nullptr) {
+        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+        jsSubscriberCallbacks_[cbType].emplace(taiheSubscriber);
+        BGTASK_LOGI("add observer, type: %{public}s, size: %{public}d", cbType.c_str(),
+            static_cast<int32_t>(jsSubscriberCallbacks_[cbType].size()));
+    } else {
+        BGTASK_LOGI("observer exist");
+    }
+}
+
+std::shared_ptr<JsBackgroundTaskSubscriberType> AniBackgroundTaskSubscriber::GetJsSubscribeObserverObject(
+    const std::string& cbType, std::shared_ptr<JsBackgroundTaskSubscriberType> taiheSubscriber)
+{
+    if (taiheSubscriber == nullptr) {
+        BGTASK_LOGI("null observer");
+        return nullptr;
+    }
+    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    auto iter = jsSubscriberCallbacks_.find(cbType);
+    if (iter == jsSubscriberCallbacks_.end()) {
+        BGTASK_LOGW("null callback Type: %{public}s", cbType.c_str());
+        return nullptr;
+    }
+
+    for (const auto& observer : iter->second) {
+        if (observer == nullptr) {
+            BGTASK_LOGE("null observer");
+            continue;
+        }
+        if (*observer == *taiheSubscriber) {
+            return observer;
+        }
+    }
+    return nullptr;
+}
+
+void AniBackgroundTaskSubscriber::RemoveJsSubscribeObserverObject(
+    const std::string& cbType, std::shared_ptr<JsBackgroundTaskSubscriberType> taiheSubscriber)
+{
+    if (taiheSubscriber == nullptr) {
+        BGTASK_LOGI("null observer");
+        return;
+    }
+ 
+    auto observer = GetJsSubscribeObserverObject(cbType, taiheSubscriber);
+    if (observer != nullptr) {
+        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+        jsSubscriberCallbacks_[cbType].erase(observer);
+        if (jsSubscriberCallbacks_[cbType].empty()) {
+            jsSubscriberCallbacks_.erase(cbType);
+        }
+    }
+}
+
 bool AniBackgroundTaskSubscriber::IsEmpty()
 {
     std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
-    return cancelCallbacks_.empty() && suspendCallbacks_.empty() && activeCallbacks_.empty();
+    return cancelCallbacks_.empty() && suspendCallbacks_.empty() && activeCallbacks_.empty() &&
+        jsSubscriberCallbacks_.empty();
 }
 
 void AniBackgroundTaskSubscriber::RemoveJsObserverObjects(const std::string& cbType)

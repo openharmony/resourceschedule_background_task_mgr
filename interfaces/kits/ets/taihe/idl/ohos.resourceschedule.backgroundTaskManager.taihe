@@ -242,6 +242,14 @@ interface ContinuousTaskRequest {
   checkSpecialScenarioAuthSync(context: @sts_type("BaseContext") Opaque): UserAuthResult;
 }
 
+struct BackgroundTaskSubscriber {
+  onContinuousTaskStart: (info: ContinuousTaskInfo) => void;
+
+  onContinuousTaskUpdate: (info: ContinuousTaskInfo) => void;
+
+  onContinuousTaskStop: (info: ContinuousTaskInfo) => void;
+}
+
 function CancelSuspendDelay(requestId: i32): void;
 
 @gen_async("getRemainingDelayTime")
@@ -269,6 +277,10 @@ function ResetAllEfficiencyResources(): void;
 function SetBackgroundTaskState(stateInfo: BackgroundTaskStateInfo): void;
 
 function GetBackgroundTaskState(stateInfo: BackgroundTaskStateInfo): UserAuthResult;
+
+function SubscribeContinuousTaskState(subscriber: BackgroundTaskSubscriber): void;
+
+function UnsubscribeContinuousTaskState(subscriber: BackgroundTaskSubscriber): void;
 
 @gen_promise("startBackgroundRunning")
 function StartBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque,
