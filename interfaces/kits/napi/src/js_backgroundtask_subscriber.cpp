@@ -132,6 +132,10 @@ void JsBackgroundTaskSubscriber::UnSubscriberBgtaskSaStatusChange()
 void JsBackgroundTaskSubscriber::OnContinuousTaskStart(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskCallbackInfo is null");
+        return;
+    }
     BGTASK_LOGI("OnContinuousTaskStart abilityname %{public}s continuousTaskId %{public}d",
         continuousTaskCallbackInfo->GetAbilityName().c_str(),
         continuousTaskCallbackInfo->GetContinuousTaskId());
@@ -185,6 +189,10 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStart(
 void JsBackgroundTaskSubscriber::OnContinuousTaskUpdate(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskCallbackInfo is null");
+        return;
+    }
     BGTASK_LOGI("OnContinuousTaskUpdate abilityname %{public}s continuousTaskId %{public}d",
         continuousTaskCallbackInfo->GetAbilityName().c_str(),
         continuousTaskCallbackInfo->GetContinuousTaskId());
@@ -332,6 +340,10 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
 void JsBackgroundTaskSubscriber::OnContinuousTaskSuspend(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskCallbackInfo is null");
+        return;
+    }
     BGTASK_LOGI("OnContinuousTaskSuspend abilityname: %{public}s, continuousTaskId: %{public}d,"
         "suspendReason: %{public}d, suspendState: %{public}d", continuousTaskCallbackInfo->GetAbilityName().c_str(),
         continuousTaskCallbackInfo->GetContinuousTaskId(), continuousTaskCallbackInfo->GetSuspendReason(),
@@ -398,6 +410,10 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
 void JsBackgroundTaskSubscriber::OnContinuousTaskActive(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskCallbackInfo is null");
+        return;
+    }
     BGTASK_LOGI("OnContinuousTaskActive abilityname: %{public}s, continuousTaskId: %{public}d",
         continuousTaskCallbackInfo->GetAbilityName().c_str(), continuousTaskCallbackInfo->GetContinuousTaskId());
     std::unique_ptr<NapiAsyncTask::CompleteCallback> complete = std::make_unique<NapiAsyncTask::CompleteCallback>(
