@@ -2628,11 +2628,10 @@ void BgContinuousTaskMgr::NotifySubscribersTaskCancel(
             // notify all sa
             (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
         } else if ((*iter)->isHap_ && (*iter)->subscriber_) {
-            if (CanNotifyHap(*iter, continuousTaskCallbackInfo)) {
-                // 标识单独回调oncancel
-                taskCallbackInfoRef.SetCancelCallBackSelf(true);
+            if (CanNotifyHap(*iter, continuousTaskCallbackInfo) ||
+                (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0)) {
+                (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
             }
-            (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
         }
     }
 }

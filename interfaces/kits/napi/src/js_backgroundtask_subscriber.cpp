@@ -251,10 +251,7 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskStop(
             }
             BGTASK_LOGD("OnContinuousTaskStop js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
-            if (continuousTaskCallbackInfo->IsCancelCallBackSelf()) {
-                jsObserver->HandleOnContinuousTaskStop(continuousTaskCallbackInfo);
-            }
-            jsObserver->HandleSubscribeOnContinuousTaskStop(continuousTaskCallbackInfo);
+            jsObserver->HandleOnContinuousTaskStop(continuousTaskCallbackInfo);
         });
     napi_ref callback = nullptr;
     NapiAsyncTask::Schedule("JsBackgroundTaskSubscriber::OnContinuousTaskStop", env_,
@@ -295,6 +292,11 @@ void JsBackgroundTaskSubscriber::HandleSubscribeOnContinuousTaskStop(
 void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGW("continuousTaskCallbackInfo is null");
+        return;
+    }
+    HandleSubscribeOnContinuousTaskStop(continuousTaskCallbackInfo);
     BGTASK_LOGI("HandleOnContinuousTaskStop called");
     std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find("continuousTaskCancel");
