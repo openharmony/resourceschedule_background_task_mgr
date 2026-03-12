@@ -238,6 +238,10 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskUpdate(
 void JsBackgroundTaskSubscriber::OnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskCallbackInfo is null");
+        return;
+    }
     BGTASK_LOGI("OnContinuousTaskStop abilityname %{public}s continuousTaskId %{public}d cancelReason %{public}d",
         continuousTaskCallbackInfo->GetAbilityName().c_str(),
         continuousTaskCallbackInfo->GetContinuousTaskId(),
@@ -292,10 +296,6 @@ void JsBackgroundTaskSubscriber::HandleSubscribeOnContinuousTaskStop(
 void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
-    if (continuousTaskCallbackInfo == nullptr) {
-        BGTASK_LOGW("continuousTaskCallbackInfo is null");
-        return;
-    }
     HandleSubscribeOnContinuousTaskStop(continuousTaskCallbackInfo);
     BGTASK_LOGI("HandleOnContinuousTaskStop called");
     std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
