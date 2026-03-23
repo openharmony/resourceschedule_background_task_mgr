@@ -372,7 +372,7 @@ public:
         taskParam.bgSubModeIds_ = asyncCallbackInfo->bgSubModes;
         const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
         taskParam.appIndex_ = info->appIndex;
-        int32_t notificationId = -1;
+        int32_t notificationId = 0;
         asyncCallbackInfo->errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
             RequestAuthFromUser(taskParam, *callbackPtr, notificationId);
         if (asyncCallbackInfo->errCode) {
