@@ -378,7 +378,7 @@ public:
         if (asyncCallbackInfo->errCode) {
             set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
                 Common::FindErrMsg(asyncCallbackInfo->errCode));
-        } else {
+        } else if (notificationId >= 0) {
             std::lock_guard<std::mutex> lock(callbackLock_);
             callbackInstances_[notificationId] = callbackPtr;
         }
