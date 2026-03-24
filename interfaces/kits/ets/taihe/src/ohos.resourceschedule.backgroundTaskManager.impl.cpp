@@ -372,13 +372,13 @@ public:
         taskParam.bgSubModeIds_ = asyncCallbackInfo->bgSubModes;
         const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
         taskParam.appIndex_ = info->appIndex;
-        int32_t notificationId = 0;
+        int32_t notificationId = -1;
         asyncCallbackInfo->errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
             RequestAuthFromUser(taskParam, *callbackPtr, notificationId);
         if (asyncCallbackInfo->errCode) {
             set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
                 Common::FindErrMsg(asyncCallbackInfo->errCode));
-        } else {
+        } else if (notificationId >= 0) {
             std::lock_guard<std::mutex> lock(callbackLock_);
             callbackInstances_[notificationId] = callbackPtr;
         }
