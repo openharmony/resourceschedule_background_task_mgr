@@ -159,6 +159,58 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"notification_text_data_transfer",
+            "value":"data transfer"
+        },
+        {
+            "name":"notification_text_audio_playbackr",
+            "value":"audio/video playback"
+        },
+        {
+            "name":"notification_text_audio_recording",
+            "value":"recording"
+        },
+        {
+            "name":"notification_text_location",
+            "value":"positioning"
+        },
+        {
+            "name":"notification_text_bluetooth_interactionn",
+            "value":"Bluetooth"
+        },
+        {
+            "name":"notification_text_multidevice_connection",
+            "value":"cross-device collaboration"
+        },
+        {
+            "name":"notification_text_wifi_interaction",
+            "value":"WLAN"
+        },
+        {
+            "name":"notification_text_voip",
+            "value":"call"
+        },
+        {
+            "name":"notification_text_task_keeping",
+            "value":"computing"
+        },
+        {
+            "name":"notification_text_starting_task",
+            "value":"Starting the task..."
+        },
+        {
+            "name":"notification_text_running_task_two_mode",
+            "value":"The %1$s、%2$s tasks is in progress. Closing this notification will end it."
+        },
+        {
+            "name":"notification_text_running_task_three_mode",
+            "value":"The %1$s、%2$s、%3$s tasks is in progress. Closing this notification will end it."
+        },
+        {
+            "name":"notification_text_running_task_exceed",
+            "value":"Tasks such as %1$s、%2$s、%3$s is in progress. Closing this notification will end it."
         }
     ]
 }
