@@ -346,9 +346,11 @@ WEAK_FUNC ErrCode NotificationTools::PublishSubNotification(const std::shared_pt
     notificationRequest.SetOwnerUid(subRecord->GetUid());
     notificationRequest.SetInProgress(true);
     notificationRequest.SetIsAgentNotification(true);
-    notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
     notificationRequest.SetUpdateByOwnerAllowed(true);
-    notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
+    notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::OTHER);
+    notificationRequest.GetContent()->ResetToBasicContent();
+    notificationRequest.SetUnremovable(true);
+    notificationRequest.SetTapDismissed(false);
     notificationRequest.SetLabel(notificationLabel);
     if (mainRecord->GetSubNotificationId() == -1) {
         notificationRequest.SetNotificationId(++notificationIdIndex_);
