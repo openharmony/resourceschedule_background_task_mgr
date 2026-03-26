@@ -63,7 +63,7 @@ public:
     void SetBundleName(std::string bundleName);
     void SetAbilityContext(std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abilityContext);
     void ReleaseOrErrorHandle(int32_t code);
- 
+
 private:
     int32_t sessionId_ = 0;
     std::string bundleName_;

@@ -207,6 +207,9 @@ void BgContinuousTaskMgr::Clear()
     if (systemEventListener_ != nullptr) {
         systemEventListener_->Unsubscribe();
     }
+    if (dialogClickListener_ != nullptr) {
+        dialogClickListener_->Unsubscribe();
+    }
     UnregisterAppStateObserver();
 }
 
@@ -237,6 +240,9 @@ void BgContinuousTaskMgr::InitNecessaryState()
         return;
     }
     if (!RegisterConfigurationObserver()) {
+        return;
+    }
+    if (!RegisterDialogClickListener()) {
         return;
     }
     InitRequiredResourceInfo();
@@ -531,14 +537,28 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterSysCommEve
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_RESOURCES_CHANGED);
-    // 注册授权点击事件
-    matchingSkills.AddEvent(BGTASK_AUTH_DIALOG_EVENT_NAME);
     EventFwk::CommonEventSubscribeInfo commonEventSubscribeInfo(matchingSkills);
     systemEventListener_ = std::make_shared<SystemEventObserver>(commonEventSubscribeInfo);
     if (systemEventListener_ != nullptr) {
         systemEventListener_->SetEventHandler(handler_);
         systemEventListener_->SetBgContinuousTaskMgr(shared_from_this());
         res = systemEventListener_->Subscribe();
+    }
+    return res;
+}
+
+__attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterDialogClickListener()
+{
+    bool res = true;
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::BGTASK_AUTH_DIALOG_EVENT_NAME);
+    EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
+    subscribeInfo.SetPublisherBundleName(BGTASK_BUNDLE_NAME);
+    dialogClickListener_ = std::make_shared<DialogEventObserver>(subscribeInfo);
+    if (dialogClickListener_ != nullptr) {
+        dialogClickListener_->SetEventHandler(handler_);
+        dialogClickListener_->SetBgContinuousTaskMgr(shared_from_this());
+        res = dialogClickListener_->Subscribe();
     }
     return res;
 }
@@ -3235,7 +3255,7 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUserInner(std::shared_ptr<Continuous
     if (authCallbackDeathRecipient_ != nullptr) {
         (void)remote->AddDeathRecipient(authCallbackDeathRecipient_);
     }
-    BGTASK_LOGI("send banner notification, label key: %{public}s", key.c_str());
+    BGTASK_LOGI("send permission dialog, label key: %{public}s", key.c_str());
     bannerNotificationRecord_.emplace(key, bannerNotification);
     return RefreshAuthRecord();
 }
@@ -3300,6 +3320,8 @@ ErrCode BgContinuousTaskMgr::CheckTaskAuthResultInner(const std::string &bundleN
     };
     auto authRecordIter = find_if(bannerNotificationRecord_.begin(), bannerNotificationRecord_.end(), authRecord);
     if (authRecordIter == bannerNotificationRecord_.end()) {
+        BGTASK_LOGE("bundleName: %{public}s, userId: %{public}d, appIndex: %{public}d no have auth record.",
+            bundleName.c_str(), userId, appIndex);
         return ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD;
     }
     int32_t auth = authRecordIter->second->GetAuthResult();
@@ -3337,6 +3359,8 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuthInner(uint32_t &authResult,
     };
     auto authRecordIter = find_if(bannerNotificationRecord_.begin(), bannerNotificationRecord_.end(), authRecord);
     if (authRecordIter == bannerNotificationRecord_.end()) {
+        BGTASK_LOGE("bundleName: %{public}s, userId: %{public}d, appIndex: %{public}d no have auth record.",
+            bundleName.c_str(), userId, appIndex);
         return ERR_BGTASK_CONTINUOUS_NOT_APPLY_AUTH_RECORD;
     }
     int32_t auth = authRecordIter->second->GetAuthResult();
@@ -3386,8 +3410,8 @@ void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeathInner(const wptr<IRemote
     }
     std::string key = authCallbackIter->first;
     expiredCallbackMap_.erase(authCallbackIter);
-    bannerNotificationRecord_.erase(key);
     RefreshAuthRecord();
+    bannerNotificationRecord_.erase(key);
 }
 
 ErrCode BgContinuousTaskMgr::RefreshAuthRecord()

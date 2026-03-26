@@ -613,7 +613,7 @@ ErrCode BackgroundTaskManager::RemoveAuthRecord(const ContinuousTaskParam &taskP
 {
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
- 
+
     return proxy_->RemoveAuthRecord(taskParam);
 }
 

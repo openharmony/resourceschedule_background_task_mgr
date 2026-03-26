@@ -368,10 +368,10 @@ bool CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abi
  
 ModalExtensionCallback::ModalExtensionCallback()
 {}
- 
+
 ModalExtensionCallback::~ModalExtensionCallback()
 {}
- 
+
 /*
 * when UIExtensionAbility use terminateSelfWithResult
 */
@@ -379,7 +379,7 @@ void ModalExtensionCallback::OnResult(int32_t resultCode, const AAFwk::Want& res
 {
     BGTASK_LOGI("called OnResult");
 }
- 
+
 /*
 * when UIExtensionAbility send message to UIExtensionComponent
 */
@@ -387,7 +387,7 @@ void ModalExtensionCallback::OnReceive(const AAFwk::WantParams& receive)
 {
     BGTASK_LOGI("called OnReceive");
 }
- 
+
 /*
 * when UIExtensionAbility disconnect or use terminate or process die
 * releaseCode is 0 when process normal exit
@@ -397,7 +397,7 @@ void ModalExtensionCallback::OnRelease(int32_t releaseCode)
     BGTASK_LOGI("called OnRelease");
     ReleaseOrErrorHandle(releaseCode);
 }
- 
+
 /*
 * when UIExtensionComponent init or turn to background or destroy UIExtensionAbility occur error
 */
@@ -406,7 +406,7 @@ void ModalExtensionCallback::OnError(int32_t code, const std::string& name, cons
     BGTASK_LOGI("called OnError, name = %{public}s, message = %{public}s", name.c_str(), message.c_str());
     ReleaseOrErrorHandle(code);
 }
- 
+
 /*
 * when UIExtensionComponent connect to UIExtensionAbility, ModalUIExtensionProxy will init,
 * UIExtensionComponent can send message to UIExtensionAbility by ModalUIExtensionProxy
@@ -415,7 +415,7 @@ void ModalExtensionCallback::OnRemoteReady(const std::shared_ptr<Ace::ModalUIExt
 {
     BGTASK_LOGI("called OnRemoteReady");
 }
- 
+
 /*
 * when UIExtensionComponent destructed
 */
@@ -423,22 +423,22 @@ void ModalExtensionCallback::OnDestroy()
 {
     BGTASK_LOGI("called OnDestroy");
 }
- 
+
 void ModalExtensionCallback::SetSessionId(int32_t sessionId)
 {
     this->sessionId_ = sessionId;
 }
- 
+
 void ModalExtensionCallback::SetBundleName(std::string bundleName)
 {
     this->bundleName_ = bundleName;
 }
- 
+
 void ModalExtensionCallback::SetAbilityContext(std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abilityContext)
 {
     this->abilityContext_ = abilityContext;
 }
- 
+
 void ModalExtensionCallback::ReleaseOrErrorHandle(int32_t code)
 {
     Ace::UIContent* uiContent = this->abilityContext_->GetUIContent();
