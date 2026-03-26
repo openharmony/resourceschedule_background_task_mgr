@@ -2450,7 +2450,7 @@ HWTEST_F(BgContinuousTaskMgrTest, OnAppStateChanged_001, TestSize.Level1)
     bgContinuousTaskMgr_->isSysReady_.store(false);
     bgContinuousTaskMgr_->OnAppStateChanged(1,
         static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND));
-    bgContinuousTaskMgr_->isSysReady_.store(true); 
+    bgContinuousTaskMgr_->isSysReady_.store(true);
     bgContinuousTaskMgr_->OnAppStateChanged(1,
         static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND));
     EXPECT_EQ(bgContinuousTaskMgr_->appOnForeground_.size(), 0);

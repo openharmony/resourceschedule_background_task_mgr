@@ -29,7 +29,7 @@ namespace {
     // 系统API 注册subscriber回调
     static constexpr uint32_t SUBSCRIBER_BACKGROUND_TASK_STATE = 1 << 3;
     // 长时任务授权Dialog点击事件
- 	static constexpr char BGTASK_AUTH_DIALOG_EVENT_NAME[] = "OnBgTaskServiceDialogClicked";
+    static constexpr char BGTASK_AUTH_DIALOG_EVENT_NAME[] = "OnBgTaskServiceDialogClicked";
     // 点击公共事件只接收长时hap自己发送的
     static constexpr char BGTASK_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 }
