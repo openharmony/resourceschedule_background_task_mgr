@@ -298,7 +298,6 @@ private:
     std::vector<std::string> continuousTaskSubText_ {};
     sptr<AuthExpiredCallbackDeathRecipient> authCallbackDeathRecipient_ {nullptr};
     std::map<std::string, sptr<IExpiredCallback>> expiredCallbackMap_;
-    std::map<int32_t, sptr<IExpiredCallback>> expiredCallbackMap_;
     int32_t continuousTaskIdIndex_ = 0;
     std::unordered_set<int32_t> disableRequestUidList_ {};
 

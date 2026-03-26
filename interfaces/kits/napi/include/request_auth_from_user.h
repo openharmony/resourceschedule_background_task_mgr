@@ -49,6 +49,9 @@ private:
     CallbackInfo expiredCallbackInfo_;
 };
 
+bool CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abilityContext,
+    const ContinuousTaskParam &taskParam);
+
 class ModalExtensionCallback {
 public:
     ModalExtensionCallback();
