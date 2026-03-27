@@ -1200,7 +1200,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     return StartBackgroundRunningSubmit(continuousTaskRecord, taskInfoMapKey);
 }
 
-ErrCode BgContinuousTaskMgr::ReportAnoamlyBgmodeToXpower(
+void BgContinuousTaskMgr::ReportAnomalyBgmodeToXpower(
     const std::shared_ptr<ContinuousTaskRecord> &continuousTaskInfo, int32_t ret)
 {
     if (continuousTaskInfo == nullptr) {
