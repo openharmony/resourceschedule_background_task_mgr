@@ -98,6 +98,7 @@ static const std::set<uint32_t> g_liveViewTypes = {
     BackgroundMode::VOIP,
 };
 
+static constexpr char XPOWER_HISYSEVENT_DOMAIN[] = "POWERTHERMAL";
 static constexpr char SEPARATOR[] = "_";
 static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
 static constexpr char DUMP_PARAM_CANCEL_ALL[] = "--cancel_all";
@@ -1199,6 +1200,22 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     return StartBackgroundRunningSubmit(continuousTaskRecord, taskInfoMapKey);
 }
 
+void BgContinuousTaskMgr::ReportAnomalyBgmodeToXpower(
+    const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord, int32_t ret)
+{
+    if (continuousTaskRecord == nullptr) {
+        BGTASK_LOGE("ReportAnoamlyBgmodeToXpower failed!");
+        return;
+    }
+    HiSysEventWrite(XPOWER_HISYSEVENT_DOMAIN,
+        "ANOMALY_RUNNINGLOCK_OCCUPANCY", HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        "TYPE", "BGMODE_TYPE_MATCHING_FAILED",
+        "BUNDLE_NAME", continuousTaskRecord->bundleName_,
+        "UID", continuousTaskRecord->uid_,
+        "PID", continuousTaskRecord->pid_,
+        "REASON", std::to_string(ret));
+}
+
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
     std::string &taskInfoMapKey)
 {
@@ -1212,6 +1229,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
             ret = CheckBgmodeType(configuredBgMode, *it, continuousTaskRecord->isNewApi_, continuousTaskRecord);
             if (ret != ERR_OK) {
                 BGTASK_LOGE("CheckBgmodeType invalid!");
+                ReportAnomalyBgmodeToXpower(continuousTaskRecord, ret);
                 return ret;
             }
         }
