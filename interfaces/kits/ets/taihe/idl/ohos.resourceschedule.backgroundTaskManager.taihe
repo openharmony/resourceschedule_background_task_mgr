@@ -238,8 +238,8 @@ interface ContinuousTaskRequest {
 
   requestAuthFromUser(context: @sts_type("BaseContext") Opaque, callback: (data: UserAuthResult) => void): void;
 
-  @gen_promise("checkSpecialScenarioAuth")
-  checkSpecialScenarioAuthSync(context: @sts_type("BaseContext") Opaque): UserAuthResult;
+  @rename("checkSpecialScenarioAuth")
+  @promise checkSpecialScenarioAuthSync(context: @sts_type("BaseContext") Opaque): UserAuthResult;
 }
 
 struct BackgroundTaskSubscriber {
@@ -252,8 +252,10 @@ struct BackgroundTaskSubscriber {
 
 function CancelSuspendDelay(requestId: i32): void;
 
-@gen_async("getRemainingDelayTime")
-@gen_promise("getRemainingDelayTime")
+@rename("getRemainingDelayTime")
+@async function GetRemainingDelayTimeAsync(requestId: i32): i32;
+@rename("getRemainingDelayTime")
+@promise function GetRemainingDelayTimePromise(requestId: i32): i32;
 function GetRemainingDelayTimeSync(requestId: i32): i32;
 
 union UndefinedType {
@@ -261,13 +263,19 @@ union UndefinedType {
 }
 function RequestSuspendDelay(reason: String, callback: (data: UndefinedType) => void): DelaySuspendInfo;
 
-@gen_async("startBackgroundRunning")
-@gen_promise("startBackgroundRunning")
+@rename("startBackgroundRunning")
+@async function StartBackgroundRunningAsync(
+  context: @sts_type("BaseContext") Opaque, bgMode: BackgroundMode, wantAgent: @sts_type("WantAgent") Opaque): void;
+@rename("startBackgroundRunning")
+@promise function StartBackgroundRunningPromise(
+  context: @sts_type("BaseContext") Opaque, bgMode: BackgroundMode, wantAgent: @sts_type("WantAgent") Opaque): void;
 function StartBackgroundRunningSync(
   context: @sts_type("BaseContext") Opaque, bgMode: BackgroundMode, wantAgent: @sts_type("WantAgent") Opaque): void;
 
-@gen_async("stopBackgroundRunning")
-@gen_promise("stopBackgroundRunning")
+@rename("stopBackgroundRunning")
+@async function StopBackgroundRunningAsync(context: @sts_type("BaseContext") Opaque): void;
+@rename("stopBackgroundRunning")
+@promise function StopBackgroundRunningPromise(context: @sts_type("BaseContext") Opaque): void;
 function StopBackgroundRunningSync(context: @sts_type("BaseContext") Opaque): void;
 
 function ApplyEfficiencyResources(request: EfficiencyResourcesRequest): void;
@@ -282,25 +290,25 @@ function SubscribeContinuousTaskState(subscriber: BackgroundTaskSubscriber): voi
 
 function UnsubscribeContinuousTaskState(subscriber: BackgroundTaskSubscriber): void;
 
-@gen_promise("startBackgroundRunning")
-function StartBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque,
+@rename("startBackgroundRunning")
+@promise function StartBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque,
   bgModes: Array<String>, wantAgent: @sts_type("WantAgent") Opaque): ContinuousTaskNotification;
 
-@gen_promise("updateBackgroundRunning")
-function UpdateBackgroundRunningSync(
+@rename("updateBackgroundRunning")
+@promise function UpdateBackgroundRunningSync(
   context: @sts_type("BaseContext") Opaque, bgModes: Array<String>): ContinuousTaskNotification;
 
-@gen_promise("getTransientTaskInfo")
-function GetTransientTaskInfoSync(): TransientTaskInfo;
+@rename("getTransientTaskInfo")
+@promise function GetTransientTaskInfoSync(): TransientTaskInfo;
 
-@gen_promise("getAllContinuousTasks")
-function GetAllContinuousTasksSync(context: @sts_type("BaseContext") Opaque): Array<ContinuousTaskInfo>;
+@rename("getAllContinuousTasks")
+@promise function GetAllContinuousTasksSync(context: @sts_type("BaseContext") Opaque): Array<ContinuousTaskInfo>;
 
-@gen_promise("getAllContinuousTasks")
-function GetAllContinuousTasksSync2(context: @sts_type("BaseContext") Opaque, includeSuspended: bool): Array<ContinuousTaskInfo>;
+@rename("getAllContinuousTasks")
+@promise function GetAllContinuousTasksSync2(context: @sts_type("BaseContext") Opaque, includeSuspended: bool): Array<ContinuousTaskInfo>;
 
-@gen_promise("getAllEfficiencyResources")
-function GetAllEfficiencyResourcesSync(): Array<EfficiencyResourcesInfo>;
+@rename("getAllEfficiencyResources")
+@promise function GetAllEfficiencyResourcesSync(): Array<EfficiencyResourcesInfo>;
 
 function OnContinuousTaskCancel(callback: (data: ContinuousTaskCancelInfo) => void): void;
 
@@ -314,17 +322,19 @@ function OnContinuousTaskActive(callback: (data: ContinuousTaskActiveInfo) => vo
 
 function OffContinuousTaskActive(callback: Optional<(data: ContinuousTaskActiveInfo) => void>): void;
 
-@gen_promise("stopBackgroundRunning")
-function StopBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque, continuousTaskId: i32): void;
+@rename("stopBackgroundRunning")
+@promise function StopBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque, continuousTaskId: i32): void;
 
-@gen_promise("obtainAllContinuousTasks")
-function ObtainAllContinuousTasksSync(): Array<ContinuousTaskInfo>;
+@rename("obtainAllContinuousTasks")
+@promise function ObtainAllContinuousTasksSync(): Array<ContinuousTaskInfo>;
 
 @ctor("ContinuousTaskRequest")
-function CreateContinuousTaskRequest(): ContinuousTaskRequest;
+@promise function CreateContinuousTaskRequest(): ContinuousTaskRequest;
 
-@gen_promise("startBackgroundRunning")
-function StartBackgroundRunningSync3(context: @sts_type("BaseContext") Opaque, request: ContinuousTaskRequest): ContinuousTaskNotification;
+@rename("startBackgroundRunning")
+@promise function StartBackgroundRunningSync3(
+  context: @sts_type("BaseContext") Opaque, request: ContinuousTaskRequest): ContinuousTaskNotification;
  	 
-@gen_promise("updateBackgroundRunning")
-function UpdateBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque, request: ContinuousTaskRequest): ContinuousTaskNotification;
+@rename("updateBackgroundRunning")
+@promise function UpdateBackgroundRunningSync2(
+  context: @sts_type("BaseContext") Opaque, request: ContinuousTaskRequest): ContinuousTaskNotification;
