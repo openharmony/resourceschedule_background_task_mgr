@@ -329,7 +329,7 @@ function OffContinuousTaskActive(callback: Optional<(data: ContinuousTaskActiveI
 @promise function ObtainAllContinuousTasksSync(): Array<ContinuousTaskInfo>;
 
 @ctor("ContinuousTaskRequest")
-@promise function CreateContinuousTaskRequest(): ContinuousTaskRequest;
+function CreateContinuousTaskRequest(): ContinuousTaskRequest;
 
 @rename("startBackgroundRunning")
 @promise function StartBackgroundRunningSync3(
