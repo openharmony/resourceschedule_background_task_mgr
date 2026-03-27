@@ -1201,18 +1201,18 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
 }
 
 void BgContinuousTaskMgr::ReportAnomalyBgmodeToXpower(
-    const std::shared_ptr<ContinuousTaskRecord> &continuousTaskInfo, int32_t ret)
+    const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord, int32_t ret)
 {
-    if (continuousTaskInfo == nullptr) {
+    if (continuousTaskRecord == nullptr) {
         BGTASK_LOGE("ReportAnoamlyBgmodeToXpower failed!");
         return;
     }
     HiSysEventWrite(XPOWER_HISYSEVENT_DOMAIN,
         "ANOMALY_RUNNINGLOCK_OCCUPANCY", HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         "TYPE", "BGMODE_TYPE_MATCHING_FAILED",
-        "BUNDLE_NAME", continuousTaskInfo->bundleName_,
-        "UID", continuousTaskInfo->uid_,
-        "PID", continuousTaskInfo->pid_,
+        "BUNDLE_NAME", continuousTaskRecord->bundleName_,
+        "UID", continuousTaskRecord->uid_,
+        "PID", continuousTaskRecord->pid_,
         "REASON", std::to_string(ret));
 }
 
