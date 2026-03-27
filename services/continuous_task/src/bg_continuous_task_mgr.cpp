@@ -551,7 +551,7 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterDialogClic
 {
     bool res = true;
     EventFwk::MatchingSkills matchingSkills;
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::BGTASK_AUTH_DIALOG_EVENT_NAME);
+    matchingSkills.AddEvent(BGTASK_AUTH_DIALOG_EVENT_NAME);
     EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
     subscribeInfo.SetPublisherBundleName(BGTASK_BUNDLE_NAME);
     dialogClickListener_ = std::make_shared<DialogEventObserver>(subscribeInfo);
