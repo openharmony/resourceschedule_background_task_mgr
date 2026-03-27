@@ -1229,7 +1229,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
             ret = CheckBgmodeType(configuredBgMode, *it, continuousTaskRecord->isNewApi_, continuousTaskRecord);
             if (ret != ERR_OK) {
                 BGTASK_LOGE("CheckBgmodeType invalid!");
-                ReportAnoamlyBgmodeToXpower(continuousTaskRecord, ret);
+                ReportAnomalyBgmodeToXpower(continuousTaskRecord, ret);
                 return ret;
             }
         }
