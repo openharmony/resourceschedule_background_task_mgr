@@ -305,7 +305,8 @@ function UnsubscribeContinuousTaskState(subscriber: BackgroundTaskSubscriber): v
 @promise function GetAllContinuousTasksSync(context: @sts_type("BaseContext") Opaque): Array<ContinuousTaskInfo>;
 
 @rename("getAllContinuousTasks")
-@promise function GetAllContinuousTasksSync2(context: @sts_type("BaseContext") Opaque, includeSuspended: bool): Array<ContinuousTaskInfo>;
+@promise function GetAllContinuousTasksSync2(
+  context: @sts_type("BaseContext") Opaque, includeSuspended: bool): Array<ContinuousTaskInfo>;
 
 @rename("getAllEfficiencyResources")
 @promise function GetAllEfficiencyResourcesSync(): Array<EfficiencyResourcesInfo>;
