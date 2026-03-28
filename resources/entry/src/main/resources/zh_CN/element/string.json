@@ -147,6 +147,58 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"notification_text_data_transfer",
+            "value":"数据传输"
+        },
+        {
+            "name":"notification_text_audio_playbackr",
+            "value":"音视频播放"
+        },
+        {
+            "name":"notification_text_audio_recording",
+            "value":"录制"
+        },
+        {
+            "name":"notification_text_location",
+            "value":"定位"
+        },
+        {
+            "name":"notification_text_bluetooth_interactionn",
+            "value":"蓝牙相关"
+        },
+        {
+            "name":"notification_text_multidevice_connection",
+            "value":"分布式"
+        },
+        {
+            "name":"notification_text_wifi_interaction",
+            "value":"WLAN相关"
+        },
+        {
+            "name":"notification_text_voip",
+            "value":"通话相关"
+        },
+        {
+            "name":"notification_text_task_keeping",
+            "value":"计算"
+        },
+        {
+            "name":"notification_text_starting_task",
+            "value":"任务启动中"
+        },
+        {
+            "name":"notification_text_running_task_two_mode",
+            "value":"正在运行%1$s、%2$s任务，删除通知后任务将停止"
+        },
+        {
+            "name":"notification_text_running_task_three_mode",
+            "value":"正在运行%1$s、%2$s、%3$s任务，删除通知后任务将停止"
+        },
+        {
+            "name":"notification_text_running_task_exceed",
+            "value":"正在运行%1$s、%2$s、%3$s等任务，删除通知后任务将停止"
         }
     ]
 }
