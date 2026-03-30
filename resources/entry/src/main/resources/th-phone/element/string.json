@@ -1,0 +1,11 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"กำลังหาตำแหน่งอยู่ การปิดการแจ้งเตือนนี้จะสิ้นสุด\u200bการดำเนินการนี้",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+  "color": [
+    {
+      "name": "white",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "default_background_color",
+      "value": "#ffffff"
+    },
+    {
+      "name": "divider_color",
+      "value": "#f3f4f6"
+    },
+    {
+      "name": "button_color",
+      "value": "#007DFF"
+    },
+    {
+      "name": "text_primary",
+      "value": "#E5000000"
+    },
+    {
+      "name": "comp_divider",
+      "value": "#33000000"
+    },
+    {
+      "name": "dialog_bg",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "button_text",
+      "value": "#0A59F7"
+    },
+    {
+      "name": "mask_thin",
+      "value": "#33000000"
+    }
+  ]
+}
