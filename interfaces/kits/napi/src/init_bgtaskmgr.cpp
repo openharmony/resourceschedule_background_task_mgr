@@ -187,6 +187,44 @@ napi_value ContinuousTaskCancelReasonInit(napi_env env, napi_value exports)
     return exports;
 }
 
+napi_value ContinuousTaskDetailedCancelReasonInit(napi_env env, napi_value exports)
+{
+    napi_value obj = nullptr;
+    napi_create_object(env, &obj);
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::USER_CANCEL_REMOVE_NOTIFICATION), "USER_CANCEL_REMOVE_NOTIFICATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_DATA_TRANSFER_LOW_SPEED), "SYSTEM_CANCEL_DATA_TRANSFER_LOW_SPEED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_USE_AVSESSION),
+        "SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_USE_AVSESSION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING),
+        "SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_RECORDING_NOT_RUNNING),
+        "SYSTEM_CANCEL_AUDIO_RECORDING_NOT_RUNNING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_LOCATION), "SYSTEM_CANCEL_NOT_USE_LOCATION");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_BLUETOOTH), "SYSTEM_CANCEL_NOT_USE_BLUETOOTH");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE), "SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_USE_ILLEGALLY), "SYSTEM_CANCEL_USE_ILLEGALLY");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_DATA_TRANSFER_NOT_UPDATE), "SYSTEM_CANCEL_DATA_TRANSFER_NOT_UPDATE");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_VOIP_NOT_RUNNING), "SYSTEM_CANCEL_VOIP_NOT_RUNNING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_USER_UNAUTHORIZED), "SYSTEM_CANCEL_USER_UNAUTHORIZED");
+    napi_property_descriptor exportFuncs[] = {
+        DECLARE_NAPI_PROPERTY("ContinuousTaskDetailedCancelReason", obj),
+    };
+    napi_define_properties(env, exports, sizeof(exportFuncs) / sizeof(*exportFuncs), exportFuncs);
+    return exports;
+}
+
 napi_value ContinuousTaskSuspendReasonInit(napi_env env, napi_value exports)
 {
     napi_value obj = nullptr;
@@ -215,6 +253,20 @@ napi_value ContinuousTaskSuspendReasonInit(napi_env env, napi_value exports)
         ContinuousTaskSuspendReason::SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING), "SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         ContinuousTaskSuspendReason::SYSTEM_SUSPEND_VOIP_NOT_USED), "SYSTEM_SUSPEND_VOIP_NOT_USED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_DATA_NOT_EXIST),
+        "SYSTEM_SUSPEND_BLUETOOTH_DATA_NOT_EXIST");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_POSITION_NOT_MOVED), "SYSTEM_SUSPEND_POSITION_NOT_MOVED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_MUTE), "SYSTEM_SUSPEND_AUDIO_PLAYBACK_MUTE");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_NEARLINK_NOT_USED), "SYSTEM_SUSPEND_NEARLINK_NOT_USED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_NEARLINK_DATA_NOT_EXIST),
+        "SYSTEM_SUSPEND_NEARLINK_DATA_NOT_EXIST");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USER_UNAUTHORIZED), "SYSTEM_SUSPEND_USER_UNAUTHORIZED");
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("ContinuousTaskSuspendReason", obj),
     };
@@ -319,6 +371,7 @@ static napi_value InitApi(napi_env env, napi_value exports)
     BackgroundTaskMgrInit(env, exports);
     BackgroundModeInit(env, exports);
     ContinuousTaskCancelReasonInit(env, exports);
+    ContinuousTaskDetailedCancelReasonInit(env, exports);
     ContinuousTaskSuspendReasonInit(env, exports);
     BackgroundTaskModeInit(env, exports);
     BackgroundTaskSubModeInit(env, exports);

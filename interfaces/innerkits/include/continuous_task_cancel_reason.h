@@ -21,7 +21,8 @@ namespace BackgroundTaskMgr {
 class ContinuousTaskCancelReason {
 public:
     virtual ~ContinuousTaskCancelReason() = default;
-    enum Type : uint32_t {
+    enum Type : int32_t {
+        INVALID_REASON = 0,
         USER_CANCEL = 1,
         SYSTEM_CANCEL,
         USER_CANCEL_REMOVE_NOTIFICATION,
@@ -33,6 +34,9 @@ public:
         SYSTEM_CANCEL_NOT_USE_BLUETOOTH,
         SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE,
         SYSTEM_CANCEL_USE_ILLEGALLY,
+        SYSTEM_CANCEL_DATA_TRANSFER_NOT_UPDATE,
+        SYSTEM_CANCEL_VOIP_NOT_RUNNING,
+        SYSTEM_CANCEL_USER_UNAUTHORIZED,
     };
 };
 }  // namespace BackgroundTaskMgr

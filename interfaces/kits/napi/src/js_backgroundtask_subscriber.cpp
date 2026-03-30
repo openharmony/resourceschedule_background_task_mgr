@@ -19,6 +19,7 @@
 #include "js_runtime_utils.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
+#include "continuous_task_suspend_reason.h"
  
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -250,10 +251,10 @@ void JsBackgroundTaskSubscriber::OnContinuousTaskStop(
         BGTASK_LOGE("continuousTaskCallbackInfo is null");
         return;
     }
-    BGTASK_LOGI("OnContinuousTaskStop abilityname %{public}s continuousTaskId %{public}d cancelReason %{public}d",
-        continuousTaskCallbackInfo->GetAbilityName().c_str(),
-        continuousTaskCallbackInfo->GetContinuousTaskId(),
-        continuousTaskCallbackInfo->GetCancelReason());
+    BGTASK_LOGI("OnContinuousTaskStop abilityname %{public}s continuousTaskId %{public}d cancelReason %{public}d "
+        "detailedCancelReason %{public}d", continuousTaskCallbackInfo->GetAbilityName().c_str(),
+        continuousTaskCallbackInfo->GetContinuousTaskId(), continuousTaskCallbackInfo->GetCancelReason(),
+        continuousTaskCallbackInfo->GetDetailedCancelReason());
     std::unique_ptr<NapiAsyncTask::CompleteCallback> complete = std::make_unique<NapiAsyncTask::CompleteCallback>(
         [self = weak_from_this(), continuousTaskCallbackInfo](napi_env env, NapiAsyncTask &task, int32_t status) {
             auto jsObserver = self.lock();
@@ -326,6 +327,9 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
         napi_create_int32(env_, continuousTaskCallbackInfo->GetContinuousTaskId(), &value);
         napi_set_named_property(env_, jsContinuousTaskCancelInfo, "id", value);
 
+        napi_create_int32(env_, continuousTaskCallbackInfo->GetDetailedCancelReason(), &value);
+        napi_set_named_property(env_, jsContinuousTaskCancelInfo, "detailedReason", value);
+
         napi_value argv[1] = { jsContinuousTaskCancelInfo };
         napi_value callResult = nullptr;
         napi_value undefined = nullptr;
@@ -395,6 +399,18 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
         napi_value suspendReason = nullptr;
         napi_create_int32(env_, -1, &suspendReason);
         napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendReason", suspendReason);
+
+        // set suspendMessage
+        napi_value suspendMessage = nullptr;
+        napi_create_object(env_, &suspendMessage);
+        napi_value detailedSuspendReason = nullptr;
+        napi_value detailedMessage = nullptr;
+        napi_create_int32(env_, continuousTaskCallbackInfo->GetSuspendReason(), &detailedSuspendReason);
+        napi_set_named_property(env_, suspendMessage, "reason", detailedSuspendReason);
+        napi_create_string_utf8(env_, ContinuousTaskSuspendReason::GetSuspendReasonMessage(
+            continuousTaskCallbackInfo->GetSuspendReason()).c_str(), NAPI_AUTO_LENGTH, &detailedMessage);
+        napi_set_named_property(env_, suspendMessage, "message", detailedMessage);
+        napi_set_named_property(env_, jsContinuousTaskSuspendInfo, "suspendMessage", suspendMessage);
 
         napi_value argv[1] = { jsContinuousTaskSuspendInfo };
         napi_value callResult = nullptr;

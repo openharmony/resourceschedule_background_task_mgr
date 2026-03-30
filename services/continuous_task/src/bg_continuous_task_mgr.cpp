@@ -38,6 +38,7 @@
 #include "os_account_manager.h"
 #endif // HAS_OS_ACCOUNT_PART
 #include "notification_tools.h"
+#include "notification_content.h"
 #include "running_process_info.h"
 #include "string_wrapper.h"
 #include "system_ability_definition.h"
@@ -55,6 +56,7 @@
 #endif // SUPPORT_GRAPHICS
 #include "background_mode.h"
 #include "background_sub_mode.h"
+#include "continuous_task_cancel_reason.h"
 #include "continuous_task_suspend_reason.h"
 #include "bg_continuous_task_dumper.h"
 #include "user_auth_result.h"
@@ -1708,7 +1710,12 @@ void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uin
         return;
     }
     auto record = continuousTaskInfosMap_.at(key);
-    SetReason(key, FREEZE_CANCEL);
+    int32_t detailedCancelReason_ = ContinuousTaskCancelReason::INVALID_REASON;
+    if (record->bgModeIds_.size() > 0) {
+        /* 多类型时，返回第一个类型对应的检测失败原因 */
+        detailedCancelReason_ = BackgroundMode::GetDetailedCancelReasonFromMode(record->bgModeIds_[0]);
+    }
+    SetReason(key, FREEZE_CANCEL, detailedCancelReason_);
     StopBackgroundRunningByTask(record);
 }
 
@@ -1856,6 +1863,7 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUid(int32_t uid)
         }
         BGTASK_LOGW("erase key %{public}s", iter->first.c_str());
         iter->second->reason_ = FREEZE_CANCEL;
+        iter->second->detailedCancelReason_ = ContinuousTaskCancelReason::SYSTEM_CANCEL_USE_ILLEGALLY;
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
         NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
             iter->second->GetNotificationId());
@@ -1884,6 +1892,7 @@ void BgContinuousTaskMgr::RemoveContinuousTaskRecordByUidAndMode(int32_t uid, ui
             continue;
         }
         iter->second->reason_ = FREEZE_CANCEL;
+        iter->second->detailedCancelReason_ = BackgroundMode::GetDetailedCancelReasonFromMode(mode);
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
         NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
             iter->second->GetNotificationId());
@@ -2319,26 +2328,36 @@ void BgContinuousTaskMgr::DumpCancelTask(const std::vector<std::string> &dumpOpt
     }
 }
 
-void BgContinuousTaskMgr::SetReason(const std::string &mapKey, int32_t reason)
+void BgContinuousTaskMgr::SetReason(const std::string &mapKey, int32_t reason, int32_t detailedCancelReason)
 {
     auto iter = continuousTaskInfosMap_.find(mapKey);
     if (iter == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("SetReason failure, no matched task: %{public}s", mapKey.c_str());
-    } else {
-        auto record = iter->second;
-        record->reason_ = reason;
+        return;
+    }
+    auto record = iter->second;
+    record->reason_ = reason;
+    if (detailedCancelReason != ContinuousTaskCancelReason::INVALID_REASON) {
+        record->detailedCancelReason_ = detailedCancelReason;
+        BGTASK_LOGI("SetReason detailedCancelReason: %{public}d", detailedCancelReason);
     }
 }
 
-bool BgContinuousTaskMgr::StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification)
+bool BgContinuousTaskMgr::StopContinuousTaskByUser(
+    const std::string &mapKey, bool isSubNotification, int32_t deleteReason)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return false;
     }
+    int32_t detailedCancelReason = ContinuousTaskCancelReason::USER_CANCEL_REMOVE_NOTIFICATION;
+    if (deleteReason >= Notification::NotificationConstant::TRIGGER_EIGHT_HOUR_REASON_DELETE &&
+        deleteReason <= Notification::NotificationConstant::TRIGGER_THIRTY_MINUTES_REASON_DELETE) {
+        detailedCancelReason = ContinuousTaskCancelReason::SYSTEM_CANCEL_DATA_TRANSFER_NOT_UPDATE;
+    }
     bool result = true;
-    handler_->PostSyncTask([this, mapKey, isSubNotification, &result]() {
-        SetReason(mapKey, REMOVE_NOTIFICATION_CANCEL);
+    handler_->PostSyncTask([this, mapKey, isSubNotification, &result, detailedCancelReason]() {
+        SetReason(mapKey, REMOVE_NOTIFICATION_CANCEL, detailedCancelReason);
         result = StopContinuousTaskByUserInner(mapKey, isSubNotification);
     });
     return result;
@@ -2730,6 +2749,7 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
         continuousTaskInfo->abilityId_, continuousTaskInfo->fullTokenId_);
     continuousTaskCallbackInfo->SetContinuousTaskId(continuousTaskInfo->continuousTaskId_);
     continuousTaskCallbackInfo->SetCancelReason(continuousTaskInfo->reason_);
+    continuousTaskCallbackInfo->SetDetailedCancelReason(continuousTaskInfo->detailedCancelReason_);
     continuousTaskCallbackInfo->SetSuspendState(continuousTaskInfo->suspendState_);
     continuousTaskCallbackInfo->SetSuspendReason(continuousTaskInfo->suspendReason_);
     continuousTaskCallbackInfo->SetByRequestObject(continuousTaskInfo->isByRequestObject_);

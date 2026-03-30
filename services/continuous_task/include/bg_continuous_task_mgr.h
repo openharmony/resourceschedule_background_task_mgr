@@ -110,7 +110,8 @@ public:
     ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
     ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
     ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
-    bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false);
+    bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false,
+        int32_t deleteReason = Notification::NotificationConstant::CANCEL_REASON_DELETE);
     bool StopBannerContinuousTaskByUser(const std::string &label);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
@@ -218,7 +219,7 @@ private:
     void RemoveContinuousTaskRecordByUidAndMode(int32_t uid, uint32_t mode);
     void RemoveContinuousTaskRecordByUid(int32_t uid);
     void ReclaimProcessMemory(int32_t pid);
-    void SetReason(const std::string &mapKey, int32_t reason);
+    void SetReason(const std::string &mapKey, int32_t reason, int32_t detailedCancelReason = 0);
     uint32_t GetModeNumByTypeIds(const std::vector<uint32_t> &typeIds);
     void NotifySubscribers(ContinuousTaskEventTriggerType changeEventType,
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo);

@@ -203,6 +203,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["subNotificationLabel"] = subNotificationLabel_;
     root["subNotificationId"] = subNotificationId_;
     root["appIndex"] = appIndex_;
+    root["detailedCancelReason"] = detailedCancelReason_;
     return root.dump(CommonUtils::jsonFormat_);
 }
 
@@ -217,7 +218,8 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["suspendState"].is_boolean() || !value["suspendReason"].is_number_integer()
         || !value["isCombinedTaskNotification"].is_boolean() || !value["combinedNotificationTaskId"].is_number_integer()
         || !value["isByRequestObject"].is_boolean() || !value["subNotificationLabel"].is_string()
-        || !value["subNotificationId"].is_number_integer() || !value["appIndex"].is_number_integer();
+        || !value["subNotificationId"].is_number_integer() || !value["appIndex"].is_number_integer()
+        || !value["detailedCancelReason"].is_number_integer();
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
@@ -225,7 +227,8 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
     if (value.is_null() || !value.is_object() || !CommonUtils::CheckJsonValue(value, { "bundleName",
         "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel",
         "isSystem", "continuousTaskId", "abilityId", "suspendState", "suspendReason", "isCombinedTaskNotification",
-        "combinedNotificationTaskId", "isByRequestObject", "subNotificationLabel", "subNotificationId", "appIndex"})) {
+        "combinedNotificationTaskId", "isByRequestObject", "subNotificationLabel", "subNotificationId", "appIndex",
+        "detailedCancelReason"})) {
         BGTASK_LOGE("continuoustaskrecord no key");
         return false;
     }
@@ -284,6 +287,7 @@ void ContinuousTaskRecord::SetRecordValue(const nlohmann::json &value)
         auto subModes = value.at("bgSubModeIds").get<std::string>();
         this->bgSubModeIds_ = ToVector(subModes);
     }
+    this->detailedCancelReason_ = value.at("detailedCancelReason").get<int32_t>();
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

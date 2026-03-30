@@ -126,6 +126,20 @@ public:
     void SetCancelReason(const int32_t reason);
 
     /**
+     * @brief Get the detailed cancel reason.
+     *
+     * @return The detailed cancel reason.
+     */
+    int32_t GetDetailedCancelReason() const;
+
+    /**
+     * @brief Set the detailed cancel reasond.
+     *
+     * @param reason The detailed cancel reason.
+     */
+    void SetDetailedCancelReason(const int32_t detailedReason);
+
+    /**
      * @brief Get the suspend reason.
      *
      * @return The suspend reason.
@@ -253,6 +267,7 @@ private:
     uint64_t tokenId_ {0};
     int32_t continuousTaskId_ {-1};
     int32_t cancelReason_ {-1};
+    int32_t detailedCancelReason_ {-1};
     bool suspendState_ {false};
     int32_t suspendReason_ {-1};
     bool isByRequestObject_ {false};
