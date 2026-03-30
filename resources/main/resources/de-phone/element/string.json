@@ -1,0 +1,18 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"Eine Audio-/Videowiedergabeaufgabe ist im Gange, durch das Schließen dieser Benach\u200brichtigung wird sie beendet.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"Eine geräteübergreifende Kooperationsauf\u200bgabe ist im Gange, durch das Schließen dieser Benachrichtigung wird sie beendet.",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
+}
