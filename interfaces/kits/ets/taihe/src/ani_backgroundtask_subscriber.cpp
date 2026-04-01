@@ -22,6 +22,7 @@
 #include "background_mode.h"
 #include "background_sub_mode.h"
 #include "background_task_submode.h"
+#include "continuous_task_suspend_reason.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -347,6 +348,8 @@ void AniBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
         ContinuousTaskCancelInfo aniCallBack{
             .reason = ContinuousTaskCancelReason::from_value(continuousTaskCallbackInfo->GetCancelReason()),
             .id = continuousTaskCallbackInfo->GetContinuousTaskId(),
+            .detailedReason = optional<ContinuousTaskDetailedCancelReason>(std::in_place,
+                ContinuousTaskDetailedCancelReason::from_value(continuousTaskCallbackInfo->GetDetailedCancelReason()))
         };
         (*item)(aniCallBack);
     }
@@ -386,11 +389,19 @@ void AniBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
     }
     auto& jsObserverObjectSet_ = iter->second;
     for (auto &item : jsObserverObjectSet_) {
+        ::ohos::resourceschedule::backgroundTaskManager::SuspendMessage suspendMessage{
+            .message = ContinuousTaskSuspendReason::GetSuspendReasonMessage(
+                continuousTaskCallbackInfo->GetSuspendReason()),
+            .reason = ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskSuspendReason::from_value(
+                continuousTaskCallbackInfo->GetSuspendReason())
+        };
         ContinuousTaskSuspendInfo aniCallBack{
             .continuousTaskId = continuousTaskCallbackInfo->GetContinuousTaskId(),
             .suspendState = continuousTaskCallbackInfo->GetSuspendState(),
-            .suspendReason = ContinuousTaskSuspendReason::from_value(
+            .suspendReason = ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskSuspendReason::from_value(
                 continuousTaskCallbackInfo->GetSuspendReason()),
+            .suspendMessage = optional<::ohos::resourceschedule::backgroundTaskManager::SuspendMessage>(
+                std::in_place, suspendMessage)
         };
         (*item)(aniCallBack);
     }
