@@ -322,10 +322,7 @@ void AniBackgroundTaskSubscriber::OnContinuousTaskStop(
             }
             BGTASK_LOGD("OnContinuousTaskStop js thread %{public}s",
                 continuousTaskCallbackInfo->GetAbilityName().c_str());
-            if (continuousTaskCallbackInfo->IsCancelCallBackSelf()) {
-                jsObserver->HandleOnContinuousTaskStop(continuousTaskCallbackInfo);
-            }
-            jsObserver->HandleSubscribeOnContinuousTaskStop(continuousTaskCallbackInfo);
+            jsObserver->HandleOnContinuousTaskStop(continuousTaskCallbackInfo);
         };
     if (AniTask::AniSendEvent(task) != ANI_OK) {
         BGTASK_LOGE("Failed to aniSendEvent");
