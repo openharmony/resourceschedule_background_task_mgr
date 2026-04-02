@@ -38,7 +38,9 @@
 #include "os_account_manager.h"
 #endif // HAS_OS_ACCOUNT_PART
 #include "notification_tools.h"
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 #include "notification_content.h"
+#endif
 #include "running_process_info.h"
 #include "string_wrapper.h"
 #include "system_ability_definition.h"
@@ -2369,10 +2371,12 @@ bool BgContinuousTaskMgr::StopContinuousTaskByUser(
         return false;
     }
     int32_t detailedCancelReason = ContinuousTaskCancelReason::USER_CANCEL_REMOVE_NOTIFICATION;
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     if (deleteReason >= Notification::NotificationConstant::TRIGGER_EIGHT_HOUR_REASON_DELETE &&
         deleteReason <= Notification::NotificationConstant::TRIGGER_THIRTY_MINUTES_REASON_DELETE) {
         detailedCancelReason = ContinuousTaskCancelReason::SYSTEM_CANCEL_DATA_TRANSFER_NOT_UPDATE;
     }
+#endif
     bool result = true;
     handler_->PostSyncTask([this, mapKey, isSubNotification, &result, detailedCancelReason]() {
         SetReason(mapKey, REMOVE_NOTIFICATION_CANCEL, detailedCancelReason);
