@@ -51,7 +51,11 @@ namespace BackgroundTaskMgr {
 namespace {
     static constexpr uint32_t SA_ID_VOIP_CALL_MANAGER = 65968;
     static constexpr uint32_t SA_ID_HEALTH_SPORT = 9527;
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    static constexpr int32_t CANCEL_REASON_DELETE = Notification::NotificationConstant::CANCEL_REASON_DELETE;
+#else
     static constexpr int32_t CANCEL_REASON_DELETE = 2;
+#endif
 }
 class BackgroundTaskMgrService;
 class DataStorageHelper;
