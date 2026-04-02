@@ -45,13 +45,13 @@
 #include "banner_notification_record.h"
 #include "iexpired_callback.h"
 #include "background_task_state_info.h"
-#include "notification_constant.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
     static constexpr uint32_t SA_ID_VOIP_CALL_MANAGER = 65968;
     static constexpr uint32_t SA_ID_HEALTH_SPORT = 9527;
+    static constexpr int32_t CANCEL_REASON_DELETE = 2;
 }
 class BackgroundTaskMgrService;
 class DataStorageHelper;
@@ -112,7 +112,7 @@ public:
     ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
     ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
     bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false,
-        int32_t deleteReason = Notification::NotificationConstant::CANCEL_REASON_DELETE);
+        int32_t deleteReason = CANCEL_REASON_DELETE);
     bool StopBannerContinuousTaskByUser(const std::string &label);
     void OnAccountsStateChanged(int32_t id);
     void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
