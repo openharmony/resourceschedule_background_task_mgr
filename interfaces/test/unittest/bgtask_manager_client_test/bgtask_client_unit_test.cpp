@@ -1308,7 +1308,7 @@ HWTEST_F(BgTaskClientUnitTest, GetAllContinuousTasksBySystem_001, TestSize.Level
  */
 HWTEST_F(BgTaskClientUnitTest, GetSuspendReasonMessage_001, TestSize.Level1)
 {
-    EXPECT_NE(ContinuousTaskSuspendReason::GetSuspendReasonMessage(INVALID_MODE_OR_SUBMODE), 0);
+    EXPECT_EQ(ContinuousTaskSuspendReason::GetSuspendReasonMessage(INVALID_MODE_OR_SUBMODE), "unknown suspendReason");
 }
 
 /**
@@ -1319,7 +1319,7 @@ HWTEST_F(BgTaskClientUnitTest, GetSuspendReasonMessage_001, TestSize.Level1)
  */
 HWTEST_F(BgTaskClientUnitTest, GetSuspendReasonValue_001, TestSize.Level1)
 {
-    EXPECT_EQ(ContinuousTaskSuspendReason::GetSuspendReasonValue(INVALID_MODE_OR_SUBMODE), "unknown suspendReason");
+    EXPECT_EQ(ContinuousTaskSuspendReason::GetSuspendReasonValue(INVALID_MODE_OR_SUBMODE), 0);
 }
 
 /**
