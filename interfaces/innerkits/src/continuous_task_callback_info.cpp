@@ -102,6 +102,16 @@ int32_t ContinuousTaskCallbackInfo::GetSuspendReason() const
     return suspendReason_;
 }
 
+int32_t ContinuousTaskCallbackInfo::GetDetailedCancelReason() const
+{
+    return detailedCancelReason_;
+}
+
+void ContinuousTaskCallbackInfo::SetDetailedCancelReason(const int32_t detailedReason)
+{
+    detailedCancelReason_ = detailedReason;
+}
+
 bool ContinuousTaskCallbackInfo::GetSuspendState() const
 {
     return suspendState_;
@@ -214,6 +224,7 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
     WRITE_PARCEL_WITH_RET(parcel, Uint64, tokenId_, false);
     WRITE_PARCEL_WITH_RET(parcel, Int32, continuousTaskId_, false);
     WRITE_PARCEL_WITH_RET(parcel, Int32, cancelReason_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Int32, detailedCancelReason_, false);
     WRITE_PARCEL_WITH_RET(parcel, Bool, suspendState_, false);
     WRITE_PARCEL_WITH_RET(parcel, Int32, suspendReason_, false);
     WRITE_PARCEL_WITH_RET(parcel, Bool, isByRequestObject_, false);
@@ -257,6 +268,7 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     READ_PARCEL_WITH_RET(parcel, Uint64, tokenId_, false);
     READ_PARCEL_WITH_RET(parcel, Int32, continuousTaskId_, false);
     READ_PARCEL_WITH_RET(parcel, Int32, cancelReason_, false);
+    READ_PARCEL_WITH_RET(parcel, Int32, detailedCancelReason_, false);
     READ_PARCEL_WITH_RET(parcel, Bool, suspendState_, false);
     READ_PARCEL_WITH_RET(parcel, Int32, suspendReason_, false);
     READ_PARCEL_WITH_RET(parcel, Bool, isByRequestObject_, false);

@@ -31,6 +31,7 @@ void SetNamedPropertyByString(napi_env env, napi_value dstObj, const char *objNa
 napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports);
 napi_value BackgroundModeInit(napi_env env, napi_value exports);
 napi_value ContinuousTaskCancelReasonInit(napi_env env, napi_value exports);
+napi_value ContinuousTaskDetailedCancelReasonInit(napi_env env, napi_value exports);
 napi_value ContinuousTaskSuspendReasonInit(napi_env env, napi_value exports);
 napi_value BackgroundTaskModeInit(napi_env env, napi_value exports);
 napi_value BackgroundTaskSubModeInit(napi_env env, napi_value exports);

@@ -82,6 +82,7 @@ constexpr uint32_t SYSTEM_CANCEL_NOT_USE_LOCATION = 8;
 constexpr uint32_t SYSTEM_CANCEL_NOT_USE_BLUETOOTH = 9;
 constexpr uint32_t SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE = 10;
 constexpr uint32_t SYSTEM_CANCEL_USE_ILLEGALLY = 11;
+constexpr uint32_t SYSTEM_CANCEL_DATA_TRANSFER_NOT_UPDATE = 12;
 constexpr uint32_t CAR_KEY = 1;
 constexpr uint32_t SYSTEM_SUSPEND_DATA_TRANSFER_LOW_SPEED = 4;
 constexpr uint32_t SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_USE_AVSESSION = 5;
@@ -92,6 +93,13 @@ constexpr uint32_t SYSTEM_SUSPEND_BLUETOOTH_NOT_USED = 9;
 constexpr uint32_t SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED = 10;
 constexpr uint32_t SYSTEM_SUSPEND_USED_ILLEGALLY = 11;
 constexpr uint32_t SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING = 12;
+constexpr uint32_t SYSTEM_SUSPEND_VOIP_NOT_USED = 13;
+constexpr uint32_t SYSTEM_SUSPEND_BLUETOOTH_DATA_NOT_EXIST = 14;
+constexpr uint32_t SYSTEM_SUSPEND_POSITION_NOT_MOVED = 15;
+constexpr uint32_t SYSTEM_SUSPEND_AUDIO_PLAYBACK_MUTE = 16;
+constexpr uint32_t SYSTEM_SUSPEND_NEARLINK_NOT_USED = 17;
+constexpr uint32_t SYSTEM_SUSPEND_NEARLINK_DATA_NOT_EXIST = 18;
+constexpr uint32_t SYSTEM_SUSPEND_USER_UNAUTHORIZED = 19;
 constexpr uint32_t MODE_DATA_TRANSFER = 1;
 constexpr uint32_t MODE_AUDIO_PLAYBACK = 2;
 constexpr uint32_t MODE_AUDIO_RECORDING = 3;
@@ -326,6 +334,8 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCancelReason_001, TestSize.Level1)
     EXPECT_EQ(SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE,
         (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE);
     EXPECT_EQ(SYSTEM_CANCEL_USE_ILLEGALLY, (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_USE_ILLEGALLY);
+    EXPECT_EQ(SYSTEM_CANCEL_DATA_TRANSFER_NOT_UPDATE,
+        (int32_t)ContinuousTaskCancelReason::SYSTEM_CANCEL_DATA_TRANSFER_NOT_UPDATE);
 }
 
 /**
@@ -353,6 +363,19 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskSuspendReason_001, TestSize.Level1)
     EXPECT_EQ(SYSTEM_SUSPEND_USED_ILLEGALLY, (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USED_ILLEGALLY);
     EXPECT_EQ(SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING,
         (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_SYSTEM_LOAD_WARNING);
+    EXPECT_EQ(SYSTEM_SUSPEND_VOIP_NOT_USED, (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_VOIP_NOT_USED);
+    EXPECT_EQ(SYSTEM_SUSPEND_BLUETOOTH_DATA_NOT_EXIST,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_DATA_NOT_EXIST);
+    EXPECT_EQ(SYSTEM_SUSPEND_POSITION_NOT_MOVED,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_POSITION_NOT_MOVED);
+    EXPECT_EQ(SYSTEM_SUSPEND_AUDIO_PLAYBACK_MUTE,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_MUTE);
+    EXPECT_EQ(SYSTEM_SUSPEND_NEARLINK_NOT_USED,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_NEARLINK_NOT_USED);
+    EXPECT_EQ(SYSTEM_SUSPEND_NEARLINK_DATA_NOT_EXIST,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_NEARLINK_DATA_NOT_EXIST);
+    EXPECT_EQ(SYSTEM_SUSPEND_USER_UNAUTHORIZED,
+        (uint32_t)ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USER_UNAUTHORIZED);
 }
 
 /**
@@ -646,6 +669,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
         new ContinuousTaskCallbackInfo(1, 1, 1, "test"));
     info2->SetContinuousTaskId(1);
     info2->SetCancelReason(1);
+    info2->SetDetailedCancelReason(3);
     info2->SetByRequestObject(true);
     info2->SetBundleName("bundleName");
     info2->SetUserId(1);
@@ -670,6 +694,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
     EXPECT_EQ(info3->GetTokenId(), 0);
     EXPECT_EQ(info3->GetContinuousTaskId(), 1);
     EXPECT_EQ(info3->GetCancelReason(), 1);
+    EXPECT_EQ(info3->GetDetailedCancelReason(), 3);
     EXPECT_EQ(info3->GetSuspendState(), false);
     EXPECT_EQ(info3->GetSuspendReason(), -1);
     EXPECT_EQ(info3->IsByRequestObject(), true);
@@ -1064,6 +1089,20 @@ HWTEST_F(BgTaskClientUnitTest, GetBackgroundModeStr_001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: GetDetailedCancelReasonFromMode_001
+ * @tc.desc: test GetDetailedCancelReasonFromMode.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, GetDetailedCancelReasonFromMode_001, TestSize.Level0)
+{
+    EXPECT_EQ(BackgroundMode::GetDetailedCancelReasonFromMode(INVALID_MODE_OR_SUBMODE),
+        ContinuousTaskCancelReason::INVALID_REASON);
+    EXPECT_EQ(BackgroundMode::GetDetailedCancelReasonFromMode(MODE_LOCATION),
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_LOCATION);
+}
+
+/**
  * @tc.name: GetBackgroundSubModeStr_001
  * @tc.desc: test GetBackgroundSubModeStr.
  * @tc.type: FUNC
@@ -1259,6 +1298,17 @@ HWTEST_F(BgTaskClientUnitTest, GetAllContinuousTasksBySystem_001, TestSize.Level
 {
     std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
     EXPECT_EQ(BackgroundTaskMgrHelper::GetAllContinuousTasksBySystem(list), ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: GetSuspendReasonMessage_001
+ * @tc.desc: test GetSuspendReasonMessage.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, GetSuspendReasonMessage_001, TestSize.Level1)
+{
+    EXPECT_EQ(ContinuousTaskSuspendReason::GetSuspendReasonMessage(INVALID_MODE_OR_SUBMODE), "unknown suspendReason");
 }
 
 /**

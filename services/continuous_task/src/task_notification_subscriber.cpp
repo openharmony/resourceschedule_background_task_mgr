@@ -196,7 +196,7 @@ void TaskNotificationSubscriber::CancelNotificationByBgTask(
     if (labelSplits.size() == LABEL_SIZE + 1) {
         isSubNotification = true;
     }
-    if (continuousTaskMgr_->StopContinuousTaskByUser(taskInfoMapKey, isSubNotification)) {
+    if (continuousTaskMgr_->StopContinuousTaskByUser(taskInfoMapKey, isSubNotification, deleteReason)) {
         BGTASK_LOGI("remove continuous task record Key: %{public}s", taskInfoMapKey.c_str());
     }
 }

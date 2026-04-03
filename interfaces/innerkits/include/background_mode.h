@@ -39,6 +39,7 @@ public:
     };
 
     static std::string GetBackgroundModeStr(uint32_t mode);
+    static int32_t GetDetailedCancelReasonFromMode(uint32_t mode);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
