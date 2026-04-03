@@ -211,6 +211,10 @@
         {
             "name":"notification_text_running_task_exceed",
             "value":"Tasks such as %1$s、%2$s、%3$s is in progress. Closing this notification will end it."
+        },
+        {
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"A nearlink task is in progress. Closing this notification will end it."
         }
     ]
 }
