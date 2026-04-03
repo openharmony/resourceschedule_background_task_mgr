@@ -1204,8 +1204,8 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
     return StartBackgroundRunningSubmit(continuousTaskRecord, taskInfoMapKey);
 }
 
-void BgContinuousTaskMgr::ReportAnomalyBgmodeToXpower(
-    const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord, int32_t ret)
+void BgContinuousTaskMgr::ReportXpowerHisysevent(
+    const std::string &type, const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord, int32_t ret)
 {
     if (continuousTaskRecord == nullptr) {
         BGTASK_LOGE("ReportAnoamlyBgmodeToXpower failed!");
@@ -1213,7 +1213,7 @@ void BgContinuousTaskMgr::ReportAnomalyBgmodeToXpower(
     }
     HiSysEventWrite(XPOWER_HISYSEVENT_DOMAIN,
         "ANOMALY_RUNNINGLOCK_OCCUPANCY", HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
-        "TYPE", "BGMODE_TYPE_MATCHING_FAILED",
+        "TYPE", type,
         "BUNDLE_NAME", continuousTaskRecord->bundleName_,
         "UID", continuousTaskRecord->uid_,
         "PID", continuousTaskRecord->pid_,
@@ -1233,7 +1233,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
             ret = CheckBgmodeType(configuredBgMode, *it, continuousTaskRecord->isNewApi_, continuousTaskRecord);
             if (ret != ERR_OK) {
                 BGTASK_LOGE("CheckBgmodeType invalid!");
-                ReportAnomalyBgmodeToXpower(continuousTaskRecord, ret);
+                ReportXpowerHisysevent("BGMODE_TYPE_MATCHING_FAILED", continuousTaskRecord, ret);
                 return ret;
             }
         }
