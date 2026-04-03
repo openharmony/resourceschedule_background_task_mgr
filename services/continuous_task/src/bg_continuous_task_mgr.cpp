@@ -126,6 +126,7 @@ static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t VOIP_SA_UID = 7022;
 static constexpr uint32_t AVSESSION_SA_UID = 6700;
+static constexpr uint32_t CFWK_UID = 5520;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 2;
 static constexpr uint32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 65 * 1000;
 #ifdef FEATURE_PRODUCT_WATCH
@@ -772,6 +773,9 @@ bool BgContinuousTaskMgr::CheckPermissionForInner(
         return true;
     }
     if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
+        return true;
+    }
+    if (callingUid == CFWK_UID && taskParam->bgModeId_ == BackgroundMode::SPECIAL_SCENARIO_PROCESSING) {
         return true;
     }
     return false;
