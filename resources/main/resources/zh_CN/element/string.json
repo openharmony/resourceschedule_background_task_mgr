@@ -199,6 +199,10 @@
         {
             "name":"notification_text_running_task_exceed",
             "value":"正在运行%1$s、%2$s、%3$s等任务，删除通知后任务将停止"
+        },
+        {
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"正在运行星闪相关任务，删除通知后任务将停止"
         }
     ]
 }
