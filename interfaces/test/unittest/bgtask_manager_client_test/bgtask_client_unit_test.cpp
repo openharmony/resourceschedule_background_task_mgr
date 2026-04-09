@@ -59,7 +59,8 @@ constexpr int32_t VOIP_ID = 8;
 constexpr int32_t TASK_KEEPING_ID = 9;
 constexpr int32_t WORKOUT = 10;
 constexpr int32_t SPECIAL_SCENARIO_PROCESSING = 13;
-constexpr int32_t END = 14;
+constexpr int32_t NEARLINK = 14;
+constexpr int32_t END = 15;
 constexpr int32_t SLEEP_TIME = 500;
 constexpr int32_t RSS_UID = 1096;
 constexpr uint32_t CPU_TYPE = 1;
@@ -111,7 +112,8 @@ constexpr uint32_t MODE_VOIP = 8;
 constexpr uint32_t MODE_TASK_KEEPING = 9;
 constexpr uint32_t MODE_AV_PLAYBACK_AND_RECORD = 12;
 constexpr uint32_t MODE_SPECIAL_SCENARIO_PROCESSING = 13;
-constexpr uint32_t MODE_END = 14;
+constexpr uint32_t MODE_NEARLINK = 14
+constexpr uint32_t MODE_END = 15;
 constexpr uint32_t SUBMODE_CAR_KEY_NORMAL_NOTIFICATION = 1;
 constexpr uint32_t SUBMODE_NORMAL_NOTIFICATION = 2;
 constexpr uint32_t SUBMODE_LIVE_VIEW_NOTIFICATION = 3;
@@ -308,6 +310,17 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundMode_001, TestSize.Level0)
     EXPECT_EQ(WORKOUT, (int32_t)BackgroundMode::WORKOUT);
     EXPECT_EQ(SPECIAL_SCENARIO_PROCESSING, (int32_t)BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     EXPECT_EQ(END, (int32_t)BackgroundMode::END);
+}
+
+/**
+ * @tc.name: BackgroundMode_002
+ * @tc.desc: test background mode constant.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, BackgroundMode_002, TestSize.Level0)
+{
+    EXPECT_EQ(NEARLINK, (int32_t)BackgroundMode::NEARLINK);
 }
 
 /**
@@ -1043,6 +1056,17 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskMode_001, TestSize.Level0)
         BackgroundMode::END);
     EXPECT_EQ(BackgroundTaskMode::GetV9BackgroundModeBySubMode(INVALID_MODE_OR_SUBMODE),
         BackgroundMode::END);
+}
+
+/**
+ * @tc.name: BackgroundTaskMode_002
+ * @tc.desc: test background task mode.
+ * @tc.type: FUNC
+ * @tc.require: issueI5IRJK
+ */
+HWTEST_F(BgTaskClientUnitTest, BackgroundTaskMode_002, TestSize.Level0)
+{
+    EXPECT_EQ(MODE_NEARLINK, (int32_t)BackgroundTaskMode::MODE_NEARLINK);
 }
 
 /**

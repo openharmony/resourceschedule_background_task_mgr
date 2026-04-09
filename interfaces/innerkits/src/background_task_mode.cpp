@@ -33,6 +33,7 @@ const std::unordered_map<uint32_t, std::string> PARAM_BACKGROUND_TASK_MODE_STR_M
     {BackgroundTaskMode::MODE_TASK_KEEPING, "modeTaskKeeping"},
     {BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD, "modeAVPlaybackAndRecord"},
     {BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING, "modeSpecialScenarioProcessing"},
+    {BackgroundTaskMode::MODE_NEARLINK, "modeNearlink"},
     {BackgroundTaskMode::END, "end"}
 };
 

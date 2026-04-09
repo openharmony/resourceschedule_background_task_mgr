@@ -32,6 +32,7 @@ const std::unordered_map<uint32_t, std::string> PARAM_BACKGROUND_MODE_STR_MAP = 
     {BackgroundMode::TASK_KEEPING, "taskKeeping"},
     {BackgroundMode::WORKOUT, "workout"},
     {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, "specialScenarioProcessing"},
+    {BackgroundMode::NEARLINK, "nearlink"},
     {BackgroundMode::END, "end"}
 };
 
