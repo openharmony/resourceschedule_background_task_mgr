@@ -36,6 +36,7 @@ const char *g_continuousTaskModeName[CONTINUOUS_TASK_MODE_LENGTH] = {
     "default",
     "avPlaybackAndRecord",
     "specialScenarioProcessing",
+    "nearlink",
     "default",
 };
 

@@ -35,6 +35,7 @@ public:
         MODE_TASK_KEEPING = 9,
         MODE_AV_PLAYBACK_AND_RECORD = 12,
         MODE_SPECIAL_SCENARIO_PROCESSING = 13,
+        MODE_NEARLINK = 14,
         END,
     };
 
