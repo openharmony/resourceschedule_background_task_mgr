@@ -31,6 +31,12 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_SUSPEND_REASON = {
     {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USER_UNAUTHORIZED}
 };
 
+const std::unordered_map<uint32_t, uint32_t> STANDBY_SUSPEND_REASON = {
+    {BackgroundMode::AUDIO_PLAYBACK, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_MUTE},
+    {BackgroundMode::LOCATION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_POSITION_NOT_MOVED},
+    {BackgroundMode::BLUETOOTH_INTERACTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_DATA_NOT_EXIST},
+};
+
 const std::unordered_map<uint32_t, std::string> SUSPEND_REASON_TO_MESSAGE = {
     {ContinuousTaskSuspendReason::SYSTEM_SUSPEND_DATA_TRANSFER_LOW_SPEED,
         "For a period of time, the application did not use data transfer or the data transfer rate was too low."},
@@ -66,10 +72,11 @@ const std::unordered_map<uint32_t, std::string> SUSPEND_REASON_TO_MESSAGE = {
         "User not authorized when request MODE_SPECIAL_SCENARIO_PROCESSING."}
 };
 
-uint32_t ContinuousTaskSuspendReason::GetSuspendReasonValue(const uint32_t mode)
+uint32_t ContinuousTaskSuspendReason::GetSuspendReasonValue(const uint32_t mode, bool isStandby)
 {
-    auto iter = PARAM_SUSPEND_REASON.find(mode);
-    if (iter != PARAM_SUSPEND_REASON.end()) {
+    auto reasonMap = isStandby ? STANDBY_SUSPEND_REASON : PARAM_SUSPEND_REASON;
+    auto iter = reasonMap.find(mode);
+    if (iter != reasonMap.end()) {
         return iter->second;
     }
     return 0;
