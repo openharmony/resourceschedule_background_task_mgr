@@ -1743,17 +1743,18 @@ void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uin
     StopBackgroundRunningByTask(record);
 }
 
-void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+void BgContinuousTaskMgr::SuspendContinuousTask(
+    int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
     }
     auto self = shared_from_this();
-    auto task = [self, uid, pid, reason, key]() {
+    auto task = [self, uid, pid, reason, key, isStandby]() {
         if (self) {
             if (self->IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND)) {
-                self->HandleSuspendContinuousTask(uid, pid, reason, key);
+                self->HandleSuspendContinuousTask(uid, pid, reason, key, isStandby);
             } else {
                 self->HandleStopContinuousTask(uid, pid, 0, key);
             }
@@ -1773,7 +1774,8 @@ bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, uint32_t type)
     return false;
 }
 
-void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t mode, const std::string &key)
+void BgContinuousTaskMgr::HandleSuspendContinuousTask(
+    int32_t uid, int32_t pid, int32_t mode, const std::string &key, bool isStandby)
 {
     if (continuousTaskInfosMap_.find(key) == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("suspend TaskInfo failure, no matched task: %{public}s", key.c_str());
@@ -1787,7 +1789,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, 
         }
         BGTASK_LOGW("SuspendContinuousTask mode: %{public}d, key %{public}s", mode, key.c_str());
         iter->second->suspendState_ = true;
-        uint32_t reasonValue = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode);
+        uint32_t reasonValue = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode, isStandby);
         if (reasonValue == 0) {
             iter->second->suspendReason_ = -1;
         } else {

@@ -177,7 +177,8 @@ public:
      * @param key continuous task key.
      * @return Returns ERR_OK if success, else failure.
      */
-    static ErrCode SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
+    static ErrCode SuspendContinuousTask(
+        int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby = false);
 
     /**
      * @brief Request active continuous task.

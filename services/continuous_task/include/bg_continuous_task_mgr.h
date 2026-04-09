@@ -130,7 +130,8 @@ public:
     void Clear();
     int32_t GetBgTaskUid();
     void StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
-    void SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
+    void SuspendContinuousTask(
+        int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby = false);
     void SuspendContinuousAudioTask(int32_t uid);
     void ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
@@ -195,7 +196,8 @@ private:
     bool FormatBannerNotificationContext(const std::string &appName, std::string &bannerContent);
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
-    void HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
+    void HandleSuspendContinuousTask(
+        int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby = false);
     void HandleSuspendContinuousAudioTask(int32_t uid);
     void HandleActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
     void HandleActiveNotification(std::shared_ptr<ContinuousTaskRecord> record);

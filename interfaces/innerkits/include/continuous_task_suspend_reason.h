@@ -40,7 +40,7 @@ public:
         SYSTEM_SUSPEND_USER_UNAUTHORIZED = 19
     };
 
-    static uint32_t GetSuspendReasonValue(const uint32_t mode);
+    static uint32_t GetSuspendReasonValue(const uint32_t mode, , bool isStandby);
     static std::string GetSuspendReasonMessage(const uint32_t suspendReason);
 };
 }  // namespace BackgroundTaskMgr
