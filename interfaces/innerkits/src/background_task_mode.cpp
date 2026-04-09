@@ -62,7 +62,8 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_BACKGROUND_TASK_SUBMODE_CORRE
     {BackgroundTaskMode::MODE_MULTI_DEVICE_CONNECTION, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
     {BackgroundTaskMode::MODE_ALLOW_WIFI_AWARE, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
     {BackgroundTaskMode::MODE_VOIP, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
-    {BackgroundTaskMode::MODE_TASK_KEEPING, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION}
+    {BackgroundTaskMode::MODE_TASK_KEEPING, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
+    {BackgroundTaskMode::MODE_NEARLINK, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION}
 };
 
 const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_V9MODE_CORRESPONDENCE_V21MODE = {
@@ -75,6 +76,7 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_V9MODE_CORRES
     {BackgroundTaskMode::MODE_VOIP, BackgroundMode::VOIP},
     {BackgroundTaskMode::MODE_TASK_KEEPING, BackgroundMode::TASK_KEEPING},
     {BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING, BackgroundMode::SPECIAL_SCENARIO_PROCESSING},
+    {BackgroundTaskMode::MODE_NEARLINK, BackgroundMode::NEARLINK}
 };
 
 const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_V9MODE_CORRESPONDENCE_V21SUBMODE = {
