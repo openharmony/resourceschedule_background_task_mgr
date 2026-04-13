@@ -35,6 +35,7 @@ public:
         TASK_KEEPING = 9,
         WORKOUT = 10,
         SPECIAL_SCENARIO_PROCESSING = 13,
+        NEARLINK = 14,
         END,
     };
 
