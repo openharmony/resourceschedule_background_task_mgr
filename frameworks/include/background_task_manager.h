@@ -231,6 +231,7 @@ public:
      * @param pid app pid.
      * @param reason continuous task suspend reason.
      * @param key continuous task key.
+     * @param key isStandby whether it is standby send, default is false.
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode SuspendContinuousTask(

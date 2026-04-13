@@ -119,7 +119,7 @@ ErrCode BackgroundTaskMgrHelper::SetBgTaskConfig(const std::string &configData, 
 }
 
 ErrCode BackgroundTaskMgrHelper::SuspendContinuousTask(
-    int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby = false)
+    int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SuspendContinuousTask(
         uid, pid, reason, key, isStandby);

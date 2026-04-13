@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -204,6 +204,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["subNotificationId"] = subNotificationId_;
     root["appIndex"] = appIndex_;
     root["detailedCancelReason"] = detailedCancelReason_;
+    root["isStandby"] = isStandby_;
     return root.dump(CommonUtils::jsonFormat_);
 }
 
@@ -219,7 +220,7 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["isCombinedTaskNotification"].is_boolean() || !value["combinedNotificationTaskId"].is_number_integer()
         || !value["isByRequestObject"].is_boolean() || !value["subNotificationLabel"].is_string()
         || !value["subNotificationId"].is_number_integer() || !value["appIndex"].is_number_integer()
-        || !value["detailedCancelReason"].is_number_integer();
+        || !value["detailedCancelReason"].is_number_integer() || !value["isStandby"].is_boolean();
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
@@ -228,7 +229,7 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
         "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel",
         "isSystem", "continuousTaskId", "abilityId", "suspendState", "suspendReason", "isCombinedTaskNotification",
         "combinedNotificationTaskId", "isByRequestObject", "subNotificationLabel", "subNotificationId", "appIndex",
-        "detailedCancelReason"})) {
+        "detailedCancelReason", "isStandby"})) {
         BGTASK_LOGE("continuoustaskrecord no key");
         return false;
     }
@@ -288,6 +289,7 @@ void ContinuousTaskRecord::SetRecordValue(const nlohmann::json &value)
         this->bgSubModeIds_ = ToVector(subModes);
     }
     this->detailedCancelReason_ = value.at("detailedCancelReason").get<int32_t>();
+    this->isStandby_ = value.at("isStandby").get<bool>();
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
