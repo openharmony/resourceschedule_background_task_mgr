@@ -106,7 +106,7 @@ private:
     bool isByRequestObject_ {false};
     int32_t appIndex_ {-1};
     bool audioDetectState_ {true};
-     bool isStandby_ {false};
+    bool isStandby_ {false};
     
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;
