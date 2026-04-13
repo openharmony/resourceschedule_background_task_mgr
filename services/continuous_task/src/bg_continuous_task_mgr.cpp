@@ -111,6 +111,7 @@ static constexpr char DUMP_PARAM_GET[] = "--get";
 static constexpr char DUMP_INNER_TASK[] = "--inner_task";
 static constexpr char BGMODE_PERMISSION[] = "ohos.permission.KEEP_BACKGROUND_RUNNING";
 static constexpr char BGMODE_PERMISSION_SYSTEM[] = "ohos.permission.KEEP_BACKGROUND_RUNNING_SYSTEM";
+static constexpr char BGMODE_PERMISSION_SPECIAL_SCENARIO[] = "ohos.permission.KEEP_BACKGROUND_RUNNING_SPECIAL_SCENARIO";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 static constexpr char TASK_NOTIFY_AUDIO_PLAYBACK_SEND[] = "TaskNotifyAudioPlaybackSend";
@@ -657,18 +658,22 @@ bool BgContinuousTaskMgr::AllowUseTaskKeeping(const std::shared_ptr<ContinuousTa
     if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsTaskKeepingExemptedQuatoApp(bundleName)) {
         return true;
     }
-    if (BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM,
-        continuousTaskRecord->callingTokenId_) && !continuousTaskRecord->isSystem_) {
+    if (CheckSpecialScenarioACLPermission(continuousTaskRecord->callingTokenId_) && !continuousTaskRecord->isSystem_) {
         return true;
     }
     return false;
 }
 
+bool BgContinuousTaskMgr::CheckSpecialScenarioACLPermission(uint64_t callingTokenId)
+{
+    return BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId) ||
+        BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SPECIAL_SCENARIO, callingTokenId);
+}
+
 ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTaskRecord> record)
 {
     if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(record->bundleName_)) {
-        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM,
-            record->callingTokenId_)) {
+        if (!CheckSpecialScenarioACLPermission(record->callingTokenId_)) {
             return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
         }
         if (record->isSystem_) {
@@ -3047,7 +3052,7 @@ ErrCode BgContinuousTaskMgr::CheckModeSupportedPermission(const sptr<ContinuousT
         std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
         if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
             uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-            if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+            if (!CheckSpecialScenarioACLPermission(callingTokenId)) {
                 BGTASK_LOGW("app have no acl permission");
                 return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
             }
@@ -3284,7 +3289,7 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUser(const sptr<ContinuousTaskParam>
     InitRecordParam(continuousTaskRecord, taskParam, userId);
     if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
         uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+        if (!CheckSpecialScenarioACLPermission(callingTokenId)) {
             return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
         }
         if (continuousTaskRecord->isSystem_) {
@@ -3413,7 +3418,7 @@ ErrCode BgContinuousTaskMgr::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(callingUid);
     if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
         uint64_t callingTokenId = IPCSkeleton::GetCallingTokenID();
-        if (!BundleManagerHelper::GetInstance()->CheckACLPermission(BGMODE_PERMISSION_SYSTEM, callingTokenId)) {
+        if (!CheckSpecialScenarioACLPermission(callingTokenId)) {
             return ERR_BGTASK_CONTINUOUS_APP_NOT_HAVE_BGMODE_PERMISSION_SYSTEM;
         }
         uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
@@ -3698,9 +3703,11 @@ bool BgContinuousTaskMgr::CheckApplySpecial(const std::string &bundleName, int32
     }
     if (!DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName)) {
         // 不支持1：没权限、是系统应用
-        int32_t permissionSize = std::count(bundleInfo.reqPermissions.begin(), bundleInfo.reqPermissions.end(),
+        int32_t oldPermissionSize = std::count(bundleInfo.reqPermissions.begin(), bundleInfo.reqPermissions.end(),
             BGMODE_PERMISSION_SYSTEM);
-        if (permissionSize == 0) {
+        int32_t newPermissionSize = std::count(bundleInfo.reqPermissions.begin(), bundleInfo.reqPermissions.end(),
+            BGMODE_PERMISSION_SPECIAL_SCENARIO);
+        if (oldPermissionSize == 0 && newPermissionSize == 0) {
             BGTASK_LOGW("bundleName: %{public}s not exempted, not have acl.", bundleName.c_str());
             return false;
         }
