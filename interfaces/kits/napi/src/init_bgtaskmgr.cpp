@@ -300,6 +300,8 @@ napi_value BackgroundTaskModeInit(napi_env env, napi_value exports)
         BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD), "MODE_AV_PLAYBACK_AND_RECORD");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING), "MODE_SPECIAL_SCENARIO_PROCESSING");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        BackgroundTaskMode::MODE_NEARLINK), "MODE_NEARLINK");
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("BackgroundTaskMode", obj),
     };

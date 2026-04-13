@@ -77,6 +77,10 @@ static const char *g_taskPromptResNames[] = {
     "ohos_bgmode_prompt_voip",
     "ohos_bgmode_prompt_task_keeping",
     "ohos_bgmode_prompt_default_value",
+    "ohos_bgmode_prompt_default_value",
+    "ohos_bgmode_prompt_default_value",
+    "ohos_bgmode_prompt_default_value",
+    "ohos_bgmode_prompt_nearlink"
 };
 
 static const char *g_taskPromptResNamesSubMode[] = {
