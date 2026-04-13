@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -210,6 +210,16 @@ bool ContinuousTaskCallbackInfo::IsCancelCallBackSelf() const
     return cancelCallBackSelf_;
 }
 
+bool ContinuousTaskCallbackInfo::IsStandby() const
+{
+    return isStandby_;
+}
+ 
+void ContinuousTaskCallbackInfo::SetStandby(const bool isStandby)
+{
+    isStandby_ = isStandby;
+}
+
 bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
 {
     WRITE_PARCEL_WITH_RET(parcel, Uint32, typeId_, false);
@@ -239,6 +249,7 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
     std::u16string u16WantAgentAbilityName = Str8ToStr16(wantAgentAbilityName_);
     WRITE_PARCEL_WITH_RET(parcel, String16, u16WantAgentAbilityName, false);
     WRITE_PARCEL_WITH_RET(parcel, Bool, cancelCallBackSelf_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Bool, isStandby_, false);
     return true;
 }
 
@@ -286,6 +297,7 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     READ_PARCEL_WITH_RET(parcel, String16, u16WantAgentAbilityName, false);
     wantAgentAbilityName_ = Str16ToStr8(u16WantAgentAbilityName);
     READ_PARCEL_WITH_RET(parcel, Bool, cancelCallBackSelf_, false);
+    READ_PARCEL_WITH_RET(parcel, Bool, isStandby_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr
