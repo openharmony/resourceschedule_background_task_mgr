@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +29,12 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_SUSPEND_REASON = {
     {BackgroundMode::MULTI_DEVICE_CONNECTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED},
     {BackgroundMode::VOIP, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_VOIP_NOT_USED},
     {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USER_UNAUTHORIZED}
+};
+
+const std::unordered_map<uint32_t, uint32_t> STANDBY_SUSPEND_REASON = {
+    {BackgroundMode::AUDIO_PLAYBACK, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_MUTE},
+    {BackgroundMode::LOCATION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_POSITION_NOT_MOVED},
+    {BackgroundMode::BLUETOOTH_INTERACTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_DATA_NOT_EXIST},
 };
 
 const std::unordered_map<uint32_t, std::string> SUSPEND_REASON_TO_MESSAGE = {
@@ -66,10 +72,11 @@ const std::unordered_map<uint32_t, std::string> SUSPEND_REASON_TO_MESSAGE = {
         "User not authorized when request MODE_SPECIAL_SCENARIO_PROCESSING."}
 };
 
-uint32_t ContinuousTaskSuspendReason::GetSuspendReasonValue(const uint32_t mode)
+uint32_t ContinuousTaskSuspendReason::GetSuspendReasonValue(const uint32_t mode, bool isStandby)
 {
-    auto iter = PARAM_SUSPEND_REASON.find(mode);
-    if (iter != PARAM_SUSPEND_REASON.end()) {
+    auto reasonMap = isStandby ? STANDBY_SUSPEND_REASON : PARAM_SUSPEND_REASON;
+    auto iter = reasonMap.find(mode);
+    if (iter != reasonMap.end()) {
         return iter->second;
     }
     return 0;

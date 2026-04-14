@@ -553,13 +553,13 @@ ErrCode BackgroundTaskMgrService::StopContinuousTask(int32_t uid, int32_t pid, u
 }
 
 ErrCode BackgroundTaskMgrService::SuspendContinuousTask(
-    int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+    int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby)
 {
     if (!CheckCallingToken() || !CheckCallingProcess()) {
         BGTASK_LOGW("SuspendContinuousTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    BgContinuousTaskMgr::GetInstance()->SuspendContinuousTask(uid, pid, reason, key);
+    BgContinuousTaskMgr::GetInstance()->SuspendContinuousTask(uid, pid, reason, key, isStandby);
     return ERR_OK;
 }
 
