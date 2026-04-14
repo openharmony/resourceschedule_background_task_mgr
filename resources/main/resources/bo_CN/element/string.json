@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"༼%s༽ཡིས་ཉེར་སྤྱོད་ཀྱི་སྟེགས་རྒྱབ་ཏུ་ཡུན་རིང་བྱེད་སྒོ་བསྟར་ཆོག་པར་བྱེད་དམ།",
+            "value":"༼%s༽ཡིས་སྟེགས་རྒྱབ་ཏུ་བྱེད་སྒོ་བསྟར་ཆོག་པར་བྱེད་དམ།",
             "attr":{
                 "priority":"LT"
             }
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"ལུས་རྩལ་ལས་འགན་འཁོར་སྐྱོད་བྱེད་བཞིན་ཡོད། བརྡ་ཐོ་བསུབས་རྗེས་ལས་འགན་མཚམས་འཇོག",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"མི་ཆོག",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"སྟེགས་རྒྱབ་བྱེད་སྒོ་ནི་རྒྱུག་ཤར། གོམ་བགྲོད། ལུས་སྦྱོང་། ཆུ་རྐྱལ། གངས་ཤུད་སོགས་ལུས་རྩལ་སྣ་ཚོགས་ལ་བེད་སྤྱོད་བྱ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"སྟེགས་རྒྱབ་བྱེད་སྒོ་ནི་སྒྲ་བརྙན་ཟློས་སྒྲིག་ཆས་གཞན་པར་འཕེན་གཏོང་ལ་བེད་སྤྱོད་བྱ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"སྟེགས་རྒྱབ་བྱེད་སྒོ་ནི་སྨྱན་གཟུགས་ཡིག་ཆ་ཐག་གཅོད་ལ་བེད་སྤྱོད་བྱ་བ་སྟེ། དཔེར་ན། སྒྲ་བརྙན་ཟློས་བཟོ་སྐྲུན། བཟོས་པའི་ནང་དོན་ཕྱིར་འདྲེན་སོགས།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

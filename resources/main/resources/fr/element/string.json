@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"Autoriser %s à effectuer des activités de longue durée en arrière-plan ?",
+            "value":"Autoriser %s à s'exécuter en arrière-plan ?",
             "attr":{
                 "priority":"LT"
             }
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"Une tâche d'entraînement est en cours. La fermeture de cette notification y mettra fin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"Refuser",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"Ceci est utilisé pour des activités telles que la course à pied, les entraînements, la natation, et plus encore.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"Ceci est utilisé pour la diffusion audio et vidéo vers d'autres appareils.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"Ceci est utilisé pour traiter des tâches multimédias, telles que la création et l'exportation de contenu audio et vidéo.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
