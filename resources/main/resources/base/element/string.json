@@ -108,7 +108,7 @@
             "name":"text_notification_allow_background_keepalive",
             "value":"Allow %s to run in the background?",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -129,52 +129,64 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"A workout task is in progress. Closing this notification will end it.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"Deny",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"This is used to process media tasks, such as creating and exporting audio and video content.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"This is used for audio and video casting to other devices.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"This is used for activities such as running, workouts, swimming, and more.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_data_transfer",
-            "value":"data transfer"
+            "value":"data transfer",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_audio_playbackr",
-            "value":"audio/video playback"
+            "value":"audio/video playback",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_audio_recording",
-            "value":"recording"
+            "value":"recording",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_location",
-            "value":"positioning"
+            "value":"positioning",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_bluetooth_interactionn",
@@ -182,7 +194,10 @@
         },
         {
             "name":"notification_text_multidevice_connection",
-            "value":"cross-device collaboration"
+            "value":"cross-device collaboration",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_wifi_interaction",
@@ -194,23 +209,38 @@
         },
         {
             "name":"notification_text_task_keeping",
-            "value":"computing"
+            "value":"computing",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Starting the task..."
+            "value":"Starting the task...",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_running_task_two_mode",
-            "value":"The %1$s、%2$s tasks is in progress. Closing this notification will end it."
+            "value":"Tasks in progress (%1$s, %2$s). Closing this notification will end them.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_running_task_three_mode",
-            "value":"The %1$s、%2$s、%3$s tasks is in progress. Closing this notification will end it."
+            "value":"Tasks in progress (%1$s, %2$s, %3$s). Closing this notification will end them.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_running_task_exceed",
-            "value":"Tasks such as %1$s、%2$s、%3$s is in progress. Closing this notification will end it."
+            "value":"Tasks in progress (%1$s, %2$s, %3$s, and more). Closing this notification will end them.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"ohos_bgmode_prompt_nearlink",

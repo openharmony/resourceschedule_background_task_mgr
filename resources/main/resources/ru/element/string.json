@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"Разрешить приложению %s выполнять операции в фоновом режиме длительное время?",
+            "value":"Разрешить приложению %s работу в фоновом режиме?",
             "attr":{
                 "priority":"LT"
             }
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"Выполняется задача тренировки. Если вы закроете это уведомление, задача будет завершена.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"Запретить",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"Используется для таких активностей, как бег, тренировки, плавание и другие.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"Используется для трансляции аудио и видео на другие устройства.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"Используется для обработки медиазадач, например создания и экспорта аудио- и видеоконтента.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

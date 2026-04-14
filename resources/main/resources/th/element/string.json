@@ -86,9 +86,9 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"อนุญาตให้ %s ทำกิจกรรมที่ใช้เวลานานในพื้นหลังหรือไม่",
+            "value":"อนุญาตให้ %s ทำงานในเบื้องหลังหรือไม่",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"งานออกกำลังกายกำลังดำเนินการอยู่ การปิดการแจ้งเตือนนี้จะเป็นการสิ้นสุดการดำเนินการ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"ปฏิเสธ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"ใช้เพื่อกิจกรรมต่างๆ เช่น การวิ่ง การออกกำลังกาย การว่ายน้ำ และอื่น ๆ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"ใช้เพื่อส่งสัญญาณเสียงและวิดีโอไปยังอุปกรณ์อื่น ๆ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"ใช้เพื่อประมวลผลงานด้านสื่อ เช่น การสร้างและส่งออกเนื้อหาเสียงและวิดีโอ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

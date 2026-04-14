@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"Zulassen, dass %s lang andauernde Aktivitäten im Hintergrund ausführt?",
+            "value":"Zulassen, dass %s im Hintergrund ausgeführt wird?",
             "attr":{
                 "priority":"LT"
             }
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"Eine Trainingsaufgabe wird ausgeführt. Durch das Schließen dieser Benachrichtigung wird sie beendet.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"Verweigern",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"Dies dient für Aktivitäten wie Laufen, Training, Schwimmen und mehr.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"Dies dient der Übertragung von Audio- und Videodaten an andere Geräte.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"Dies dient der Bearbeitung von Medienaufgaben, wie z. B. dem Erstellen und Exportieren von Audio- und Videoinhalten.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

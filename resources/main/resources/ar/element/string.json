@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"هل تسمح لتطبيق %s بتنفيذ أنشطة طويلة المدى في الخلفية؟",
+            "value":"هل تسمح بتشغيل تطبيق %s في الخلفية؟",
             "attr":{
                 "priority":"LT"
             }
@@ -107,37 +107,37 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_work_out",
-            "value":"هناك مهمة تمرين قيد التقدم. سيؤدي إغلاق هذا الإشعار إلى إنهائها.",
+            "value":"هناك مهمة تمرين جارية. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"رفض",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"يُستخدم هذا الإذن في الأنشطة، مثل الجري والتمارين والسباحة وغيرها.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"يُستخدم هذا الإذن لبث الصوت والفيديو إلى أجهزة أخرى.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"يُستخدم هذا الإذن لمعالجة مهام الوسائط، مثل إنشاء محتوى الصوت والفيديو وتصديره.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

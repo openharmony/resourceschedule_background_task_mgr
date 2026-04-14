@@ -82,35 +82,35 @@
             "name":"btn_allow_time",
             "value":"本次允许",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
             "name":"btn_allow_allowed",
             "value":"始终允许",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
             "name":"text_notification_allow_background_keepalive",
             "value":"允许“%s”在后台活动？",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
             "value":"正在运行媒体处理任务，删除通知后任务将停止",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
             "name":"ohos_bgsubmode_prompt_video_broadcast",
             "value":"正在运行视频投播任务，删除通知后任务将停止",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -150,19 +150,31 @@
         },
         {
             "name":"notification_text_data_transfer",
-            "value":"数据传输"
+            "value":"数据传输",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_audio_playbackr",
-            "value":"音视频播放"
+            "value":"音视频播放",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_audio_recording",
-            "value":"录制"
+            "value":"录制",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_location",
-            "value":"定位"
+            "value":"定位",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_bluetooth_interactionn",
@@ -170,7 +182,10 @@
         },
         {
             "name":"notification_text_multidevice_connection",
-            "value":"分布式"
+            "value":"分布式",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_wifi_interaction",
@@ -182,23 +197,38 @@
         },
         {
             "name":"notification_text_task_keeping",
-            "value":"计算"
+            "value":"计算",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_starting_task",
-            "value":"任务启动中"
+            "value":"任务启动中",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_running_task_two_mode",
-            "value":"正在运行%1$s、%2$s任务，删除通知后任务将停止"
+            "value":"正在运行%1$s、%2$s任务，删除通知后任务将停止",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_running_task_three_mode",
-            "value":"正在运行%1$s、%2$s、%3$s任务，删除通知后任务将停止"
+            "value":"正在运行%1$s、%2$s、%3$s任务，删除通知后任务将停止",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_running_task_exceed",
-            "value":"正在运行%1$s、%2$s、%3$s等任务，删除通知后任务将停止"
+            "value":"正在运行%1$s、%2$s、%3$s等任务，删除通知后任务将停止",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"ohos_bgmode_prompt_nearlink",
