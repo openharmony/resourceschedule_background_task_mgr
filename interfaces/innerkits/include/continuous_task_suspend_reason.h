@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,7 @@ public:
         SYSTEM_SUSPEND_USER_UNAUTHORIZED = 19
     };
 
-    static uint32_t GetSuspendReasonValue(const uint32_t mode);
+    static uint32_t GetSuspendReasonValue(const uint32_t mode, bool isStandby);
     static std::string GetSuspendReasonMessage(const uint32_t suspendReason);
 };
 }  // namespace BackgroundTaskMgr

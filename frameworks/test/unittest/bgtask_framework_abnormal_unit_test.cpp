@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -603,23 +603,23 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_018
     BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, ""), ERR_INVALID_VALUE);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, "", false), ERR_INVALID_VALUE);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, ""), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, "", false), ERR_INVALID_DATA);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteUint32Flag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, ""), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, "", false), ERR_INVALID_DATA);
 
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteUint32Flag(true);
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
-    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, ""), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, "", false), ERR_INVALID_DATA);
 
     BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
-    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, ""), ERR_INVALID_DATA);
+    EXPECT_EQ(backgroundTaskMgrProxy.SuspendContinuousTask(1, 1, 1, "", false), ERR_INVALID_DATA);
 }
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -243,6 +243,10 @@ public:
 
     bool IsCancelCallBackSelf() const;
 
+    bool IsStandby() const;
+ 
+    void SetStandby(const bool isStandby);
+
     /**
      * @brief Marshals a purpose into a parcel.
      *
@@ -279,6 +283,7 @@ private:
     std::string wantAgentBundleName_ {""};
     std::string wantAgentAbilityName_ {""};
     bool cancelCallBackSelf_ {false};
+    bool isStandby_ {false};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

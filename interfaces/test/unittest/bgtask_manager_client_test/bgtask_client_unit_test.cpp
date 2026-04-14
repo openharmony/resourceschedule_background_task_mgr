@@ -1343,7 +1343,30 @@ HWTEST_F(BgTaskClientUnitTest, GetSuspendReasonMessage_001, TestSize.Level1)
  */
 HWTEST_F(BgTaskClientUnitTest, GetSuspendReasonValue_001, TestSize.Level1)
 {
-    EXPECT_EQ(ContinuousTaskSuspendReason::GetSuspendReasonValue(INVALID_MODE_OR_SUBMODE), 0);
+    EXPECT_EQ(ContinuousTaskSuspendReason::GetSuspendReasonValue(INVALID_MODE_OR_SUBMODE, false), 0);
+}
+
+/**
+ * @tc.name: GetSuspendReasonValue_002
+ * @tc.desc: test GetSuspendReasonValue.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, GetSuspendReasonValue_002, TestSize.Level1)
+{
+    EXPECT_EQ(ContinuousTaskSuspendReason::GetSuspendReasonValue(INVALID_MODE_OR_SUBMODE, true), 0);
+}
+
+/**
+ * @tc.name: GetSuspendReasonValue_003
+ * @tc.desc: test GetSuspendReasonValue.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, GetSuspendReasonValue_003, TestSize.Level1)
+{
+    EXPECT_EQ(ContinuousTaskSuspendReason::GetSuspendReasonValue(
+        AUDIO_PLAYBACK_ID, true), SYSTEM_SUSPEND_AUDIO_PLAYBACK_MUTE);
 }
 
 /**

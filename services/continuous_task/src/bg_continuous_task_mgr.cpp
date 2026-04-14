@@ -1747,17 +1747,18 @@ void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uin
     StopBackgroundRunningByTask(record);
 }
 
-void BgContinuousTaskMgr::SuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key)
+void BgContinuousTaskMgr::SuspendContinuousTask(
+    int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
     }
     auto self = shared_from_this();
-    auto task = [self, uid, pid, reason, key]() {
+    auto task = [self, uid, pid, reason, key, isStandby]() {
         if (self) {
-            if (self->IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND)) {
-                self->HandleSuspendContinuousTask(uid, pid, reason, key);
+            if (self->IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND) || isStandby) {
+                self->HandleSuspendContinuousTask(uid, pid, reason, key, isStandby);
             } else {
                 self->HandleStopContinuousTask(uid, pid, 0, key);
             }
@@ -1777,7 +1778,8 @@ bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, uint32_t type)
     return false;
 }
 
-void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t mode, const std::string &key)
+void BgContinuousTaskMgr::HandleSuspendContinuousTask(
+    int32_t uid, int32_t pid, int32_t mode, const std::string &key, bool isStandby)
 {
     if (continuousTaskInfosMap_.find(key) == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("suspend TaskInfo failure, no matched task: %{public}s", key.c_str());
@@ -1791,7 +1793,8 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, 
         }
         BGTASK_LOGW("SuspendContinuousTask mode: %{public}d, key %{public}s", mode, key.c_str());
         iter->second->suspendState_ = true;
-        uint32_t reasonValue = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode);
+        iter->second->isStandby_ = isStandby;
+        uint32_t reasonValue = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode, isStandby);
         if (reasonValue == 0) {
             iter->second->suspendReason_ = -1;
         } else {
@@ -2690,13 +2693,14 @@ void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(
 {
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
-            // 对SA来说，长时任务暂停状态等同于取消长时任务，保持原有逻辑
+        if (!(*iter)->isHap_ && (*iter)->subscriber_ && !continuousTaskCallbackInfo->IsStandby()) {
+            // 对SA来说，长时任务暂停状态等同于取消长时任务，保持原有逻辑；功耗检测失败不回调SA
             BGTASK_LOGD("continuous task suspend callback trigger");
             (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
         } else if ((*iter)->isHap_ && (*iter)->subscriber_) {
             // 回调所有注册的subscriber
-            if (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) {
+            if ((((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) &&
+                !continuousTaskCallbackInfo->IsStandby()) {
                 (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
             }
             if ((*iter)->uid_ == continuousTaskCallbackInfo->GetCreatorUid()) {
@@ -2716,12 +2720,13 @@ void BgContinuousTaskMgr::NotifySubscribersTaskActive(
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         BGTASK_LOGD("continuous task active callback trigger");
-        if (!(*iter)->isHap_ && (*iter)->subscriber_) {
-            // 对SA来说，长时任务激活状态等同于注册长时任务，保持原有逻辑
+        if (!(*iter)->isHap_ && (*iter)->subscriber_ && !continuousTaskCallbackInfo->IsStandby()) {
+            // 对SA来说，长时任务激活状态等同于注册长时任务，保持原有逻辑；功耗激活不回调SA
             (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
         } else if ((*iter)->isHap_ && (*iter)->subscriber_) {
             // 回调所有注册的subscriber
-            if (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) {
+            if ((((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) &&
+                !continuousTaskCallbackInfo->IsStandby()) {
                 (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
             }
             if ((*iter)->uid_ == continuousTaskCallbackInfo->GetCreatorUid()) {
@@ -2792,6 +2797,7 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
         continuousTaskCallbackInfo->SetWantAgentBundleName(continuousTaskInfo->wantAgentInfo_->bundleName_);
         continuousTaskCallbackInfo->SetWantAgentAbilityName(continuousTaskInfo->wantAgentInfo_->abilityName_);
     }
+    continuousTaskCallbackInfo->SetStandby(continuousTaskInfo->isStandby_);
     NotifySubscribers(changeEventType, continuousTaskCallbackInfo);
     ReportHisysEvent(changeEventType, continuousTaskInfo);
 }
