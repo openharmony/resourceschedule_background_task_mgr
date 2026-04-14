@@ -1220,7 +1220,7 @@ void BgContinuousTaskMgr::ReportXpowerHisysevent(
         return;
     }
     HiSysEventWrite(XPOWER_HISYSEVENT_DOMAIN,
-        "ANOMALY_RUNNINGLOCK_OCCUPANCY", HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+        "ANOMALY_RUNNINGLOCK_OCCUPANCY", HiviewDFX::HiSysEvent::EventType::STATISTIC,
         "TYPE", type,
         "BUNDLE_NAME", continuousTaskRecord->bundleName_,
         "UID", continuousTaskRecord->uid_,
