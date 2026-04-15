@@ -71,7 +71,7 @@
             "name":"ohos_app_name",
             "value":"Continuous task notification prompt resource"
         },
-		{
+        {
             "name":"NotificationServiceExtAbility_desc",
             "value":"NotificationDialog"
         },
