@@ -207,6 +207,7 @@ private:
     ErrCode CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi,
         const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord);
     bool AllowUseTaskKeeping(const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord);
+    bool CheckSpecialScenarioACLPermission(uint64_t callingTokenId);
     ErrCode AllowUseSpecial(const std::shared_ptr<ContinuousTaskRecord> record);
     ErrCode CheckBgmodeTypeForInner(uint32_t requestedBgModeId);
     void InitRecordParam(std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord,
