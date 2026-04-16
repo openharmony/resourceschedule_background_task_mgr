@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"バックグラウンドで長時間かかる処理を実行することを%sに許可しますか？",
+            "value":"%sがバックグラウンドで実行することを許可しますか？",
             "attr":{
                 "priority":"LT"
             }
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"ワークアウトタスクが進行中です。この通知を閉じると、タスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"拒否",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"これは、ランニング、ワークアウト、水泳などのアクティビティに使用されます。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"これは、他のデバイスへの音声およびビデオのキャストに使用されます。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"これは、オーディオやビデオコンテンツの作成やエクスポートといったメディアタスクを処理するために使用されます。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

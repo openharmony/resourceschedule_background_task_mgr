@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"\u200f«%s» نىڭ ئارقا سۇپىدا ئۇزاق يۈرۈشىگە رۇخسەتمۇ؟",
+            "value":"‏«%s» ئارقا سۇپىدا يۈرمەكچى",
             "attr":{
                 "priority":"LT"
             }
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"چېنىقىش ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز ۋەزىپە توختاپ قالىدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"چەكلەش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"بۇ ئىجازەت يۈگۈرۈش، مېڭىش، ۋېلىسىپىت مىنىش، سۇ ئۈزۈش، قار تېيىلىش قاتارلىق چېنىقىش تۈرلىرىگە ماس مەشغۇلاتنى ئارقا سۇپىدا يۈرگۈزۈش ئۈچۈن ئىشلىتىلىدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"بۇ ئىجازەت ئارقا سۇپىدا باشقا ئۈسكۈنىگە ئۈن-سىن سۇنۇش ئۈچۈن ئىشلىتىلىدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"بۇ ئىجازەت ئارقا سۇپىدا ئۈن-سىن ئىشلەش ۋە ئىشلىگەن مەزمۇننى چىقىرىش قاتارلىق مېدىيا ھۆججىتى بىر تەرەپ قىلىش مەشغۇلاتلىرى ئۈچۈن ئىشلىتىلىدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

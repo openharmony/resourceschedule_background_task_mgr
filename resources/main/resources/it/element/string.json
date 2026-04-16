@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"Vuoi consentire a %s l'esecuzione di attività di lunga durata in background?",
+            "value":"Vuoi consentire l'esecuzione di %s in background?",
             "attr":{
                 "priority":"LT"
             }
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"È in corso un'attività di allenamento. Chiudendo questa notifica, la interromperai.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"Nega",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"Per attività come la corsa, gli allenamenti, il nuoto e altro ancora.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"Per trasmettere audio e video ad altri dispositivi.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"Per elaborare attività multimediali, come la creazione e l'esportazione di contenuti audio e video.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

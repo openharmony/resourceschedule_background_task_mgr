@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"允許「%s」執行應用程式背景長時活動？",
+            "value":"允許「%s」在背景活動？",
             "attr":{
                 "priority":"LT"
             }
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"正在執行運動任務，刪除通知後，任務將停止",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"不允許",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"背景活動用於跑步、健走、騎行、健身、游泳、滑雪等各類運動。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"背景活動用於將音訊和影片投放至其他裝置。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"背景活動用於媒體檔案處理，例如製作音訊和影片、匯出製作內容等。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"Permitir a %s executar atividades de longa duração em segundo plano?",
+            "value":"Permitir a execução de %s em segundo plano?",
             "attr":{
                 "priority":"LT"
             }
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"Está a decorrer uma tarefa de exercício. Fechar esta notificação irá terminá-la.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"Negar",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"Para atividades como corrida, exercícios, natação, etc.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"Para a transmissão de áudio e vídeo para outros dispositivos.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"Para processar tarefas multimédia, como a criação e exportação de conteúdos de áudio e vídeo.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
