@@ -86,7 +86,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"%s uygulamasının arka planda uzun süreli aktiviteler gerçekleştirmesine izin veril\u200bsin mi?",
+            "value":"%s uygulamasının arka planda çalışmasına izin verilsin mi?",
             "attr":{
                 "priority":"LT"
             }
@@ -109,35 +109,35 @@
             "name":"ohos_bgsubmode_prompt_work_out",
             "value":"Devam eden egzersiz görevi var. Bu bildirimi kapatmak görevi sonlandıracaktır.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"btn_not_allowed",
             "value":"Reddet",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_work_out",
             "value":"Bu izin; koşu, egzersiz, yüzme ve benzeri aktiviteler için kullanılır.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_video_broadcast",
             "value":"Bu izin; ses ve video dosyalarını diğer cihazlara aktarmak için kullanılır.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"dialog_title_media_process",
             "value":"Bu izin; ses ve video içeriği oluşturma ve dışa aktarma gibi medya işlemlerini gerçekleştirmek için kullanılır.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

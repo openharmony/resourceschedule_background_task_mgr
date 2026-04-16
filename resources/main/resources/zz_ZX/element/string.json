@@ -50,7 +50,7 @@
         },
         {
             "name":"text_notification_allow_background_keepalive",
-            "value":"[TS_1135553]_Allow %s to perform long-running activities in the background?"
+            "value":"[TS_1135553]_Allow %s to run in the background?"
         },
         {
             "name":"ohos_bgsubmode_prompt_media_process",
