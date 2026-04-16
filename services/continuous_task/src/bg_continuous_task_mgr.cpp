@@ -3214,6 +3214,7 @@ ErrCode BgContinuousTaskMgr::SendLiveViewAndOtherNotification(std::shared_ptr<Co
         return ret;
     }
     subRecord->bgModeIds_.clear();
+    
     for (const auto &mode : record->bgModeIds_) {
         if (mode == BackgroundMode::DATA_TRANSFER) {
             continue;
