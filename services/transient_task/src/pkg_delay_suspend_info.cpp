@@ -51,11 +51,13 @@ void PkgDelaySuspendInfo::AddRequest(const shared_ptr<DelaySuspendInfoEx>& delay
 {
     if (needSetTime) {
         int32_t exempted_quota = DelayedSingleton<BgtaskConfig>::GetInstance()->GetTransientTaskExemptedQuato();
-        BGTASK_LOGD("pkgname: %{public}s, requestId: %{public}d exempted_quota %{public}d", pkg_.c_str(),
+        BGTASK_LOGI("pkgname: %{public}s, requestId: %{public}d exempted_quota %{public}d", pkg_.c_str(),
             delayInfo->GetRequestId(), exempted_quota);
         delayInfo->SetActualDelayTime(exempted_quota + WATCHDOG_DELAY_TIME);
     } else {
         delayInfo->SetActualDelayTime((quota_ < delayTime) ? quota_ : delayTime);
+        BGTASK_LOGI("pkgname: %{public}s, requestId: %{public}d, quota_: %{public}d, delayTime: %{public}d",
+            pkg_.c_str(), delayInfo->GetRequestId(), quota_, delayTime);
     }
     requestList_.push_back(delayInfo);
 }
