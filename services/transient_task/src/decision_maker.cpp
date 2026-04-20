@@ -116,7 +116,7 @@ void DecisionMaker::ApplicationStateObserver::OnProcessStateChanged(const AppExe
     bool isForeground = processData.state == AppExecFwk::AppProcessState::APP_STATE_FOREGROUND ||
         processData.state == AppExecFwk::AppProcessState::APP_STATE_FOCUS;
     bool isBackground = processData.state == AppExecFwk::AppProcessState::APP_STATE_BACKGROUND;
-    BGTASK_LOGI("uid: %{public}d, OnProcessState: %{public}d, isForeground: %{public}d, isForeground: %{public}d",
+    BGTASK_LOGI("uid: %{public}d, OnProcessState: %{public}d, isForeground: %{public}d, isBackground: %{public}d",
         processData.pid, processData.state, isForeground, isBackground);
     decisionMaker_.UpdateForegroundUidPidMap(processData.uid, processData.pid, isForeground);
     if (isForeground || isBackground) {
