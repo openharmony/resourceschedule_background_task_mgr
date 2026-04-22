@@ -85,15 +85,17 @@
 
 **目录**: `common/`
 
-| 类名 | 文件 | 功能描述 |
-|------|------|----------|
-| `AppStateObserver` | `app_state_observer.h/cpp` | 应用状态观察者 |
-| `SystemEventObserver` | `system_event_observer.h/cpp` | 系统事件观察者 |
-| `BundleManagerHelper` | `bundle_manager_helper.h/cpp` | Bundle 信息查询 Helper |
-| `AppMgrHelper` | `app_mgr_helper.h/cpp` | 应用管理 Helper |
-| `BgtaskConfig` | `bgtask_config.h/cpp` | 配置管理 |
-| `DataStorageHelper` | `data_storage_helper.h/cpp` | 数据存储 Helper |
-| `CommonUtils` | `common_utils.h` | 通用工具函数 |
-| `TimeProvider` | `time_provider.h/cpp` | 时间管理 |
-| `ReportHiSysEventData` | `report_hisysevent_data.h/cpp` | HiSysEvent 上报 |
-| `BgtaskHiTraceChain` | `bgtask_hitrace_chain.h/cpp` | HiTrace 链路追踪 |
+提供后台任务管理服务的公共基础设施和辅助工具：
+
+| 类名 | 功能描述 |
+|------|----------|
+| `AppStateObserver` | 应用状态观察者，监听应用前后台切换、进程创建/死亡、Ability状态变化等事件 |
+| `SystemEventObserver` | 系统事件观察者，监听用户状态变更、Bundle信息变更、系统公共事件等 |
+| `BundleManagerHelper` | Bundle信息查询助手，获取应用包信息、检查权限声明、判断系统应用身份 |
+| `AppMgrHelper` | 应用管理代理，获取运行进程列表、订阅应用状态观察者、查询Ability状态 |
+| `BgtaskConfig` | 配置管理器，解析配置文件（豁免应用列表、恶意应用黑名单、配额参数等） |
+| `DataStorageHelper` | 数据持久化助手，负责任务记录的JSON序列化存储和设备重启后的恢复 |
+| `CommonUtils` | 通用工具函数，提供JSON校验、后台模式检查、字符串处理等公共方法 |
+| `TimeProvider` | 时间提供者，提供多种时钟类型的精确时间获取，支持单调时钟和实时时钟 |
+| `ReportHiSysEventData` | HiSysEvent上报数据结构，封装任务申请/取消/超时等事件的上报字段 |
+| `BgtaskHiTraceChain` | HiTrace链路追踪，为关键操作添加性能追踪点，支持跨进程调用链追踪 |
