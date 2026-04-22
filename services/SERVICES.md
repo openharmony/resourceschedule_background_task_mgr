@@ -33,13 +33,6 @@
 
 **目录**: `transient_task/` → [详细开发指南](transient_task/AGENTS.md)
 
-| 核心类 | 文件 | 功能描述 |
-|--------|------|----------|
-| `BgTransientTaskMgr` | `bg_transient_task_mgr.h/cpp` | 短时任务管理主类，处理申请、延期、取消 |
-| `DecisionMaker` | `decision_maker.h/cpp` | 决策器，判断是否允许申请任务 |
-| `TimerManager` | `timer_manager.h/cpp` | 定时器管理，控制任务超时 |
-| `Watchdog` | `watchdog.h/cpp` | 看门狗，监控任务执行状态 |
-
 **核心流程**：
 - 申请流程：验证调用 → 决策器判断 → 配额检查 → 设置定时器 → 返回结果
 - 过期流程：定时器触发 → 提前5秒回调通知 → 自动取消任务 → 通知订阅者
@@ -48,13 +41,6 @@
 
 **目录**: `continuous_task/` → [详细开发指南](continuous_task/AGENTS.md)
 
-| 核心类 | 文件 | 功能描述 |
-|--------|------|----------|
-| `BgContinuousTaskMgr` | `bg_continuous_task_mgr.h/cpp` | 长时任务管理主类 |
-| `ContinuousTaskRecord` | `continuous_task_record.h/cpp` | 任务记录，存储任务详情 |
-| `NotificationTools` | `notification_tools.h/cpp` | 通知工具，管理后台任务通知 |
-| `TaskNotificationSubscriber` | `task_notification_subscriber.h/cpp` | 通知订阅者 |
-
 **核心流程**：
 - 开始流程：权限检查 → 模式验证 → 创建记录 → 发送通知 → 通知订阅者 → 持久化
 - 停止流程：查找记录 → 取消通知 → 设置原因 → 通知订阅者 → 删除记录
@@ -62,12 +48,6 @@
 ## 5. 能效资源服务
 
 **目录**: `efficiency_resources/` → [详细开发指南](efficiency_resources/AGENTS.md)
-
-| 核心类 | 文件 | 功能描述 |
-|--------|------|----------|
-| `BgEfficiencyResourcesMgr` | `bg_efficiency_resources_mgr.h/cpp` | 能效资源管理主类 |
-| `ResourceApplicationRecord` | `resource_application_record.h/cpp` | 资源申请记录 |
-| `ResourcesSubscriberMgr` | `resources_subscriber_mgr.h/cpp` | 资源订阅管理 |
 
 **核心流程**：
 - 申请流程：验证调用 → CPU配额检查 → 创建/更新记录 → 通知订阅者 → 持久化
