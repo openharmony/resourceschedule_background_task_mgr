@@ -39,13 +39,44 @@ frameworks/
 | `mutex_` | `std::mutex` | 线程安全锁 |
 | `recipient_` | `sptr<BgTaskMgrDeathRecipient>` | 死亡监听 |
 
-**主要方法**：
-- 短时任务：`RequestSuspendDelay`、`CancelSuspendDelay`、`GetRemainingDelayTime`
-- 长时任务：`RequestStartBackgroundRunning`、`RequestStopBackgroundRunning`
-- 能效资源：`ApplyEfficiencyResources`、`ResetAllEfficiencyResources`
-- 订阅管理：`SubscribeBackgroundTask`、`UnsubscribeBackgroundTask`
+## 4. 主要方法
 
-## 4. 日志规范
+### 4.1 短时任务 API
+
+| 方法 | 作用描述 |
+|------|----------|
+| `RequestSuspendDelay` | 申请短时任务，获取 requestId 和延迟时间，应用可在后台短暂运行 |
+| `CancelSuspendDelay` | 取消短时任务，释放后台运行资源 |
+| `GetRemainingDelayTime` | 获取剩余延迟时间，应用可据此判断是否需要续期 |
+| `GetAllTransientTasks` | 获取系统所有短时任务列表（内部接口） |
+
+### 4.2 长时任务 API
+
+| 方法 | 作用描述 |
+|------|----------|
+| `StartBackgroundRunning` | 开始长时任务，申请指定长时任务类型，系统发布通知提示用户 |
+| `StopBackgroundRunning` | 停止长时任务，取消后台运行和通知 |
+| `UpdateBackgroundRunning` | 更新长时任务模式，动态调整后台长时任务类型 |
+| `GetAllContinuousTasks` | 查询已申请的长时任务 |
+| `OnOnContinuousTaskCallback` | 注册长时任务回调，监听取消/暂停/激活事件 |
+| `OffOnContinuousTaskCallback` | 取消注册长时任务回调 |
+
+### 4.3 能效资源 API
+
+| 方法 | 作用描述 |
+|------|----------|
+| `ApplyEfficiencyResources` | 申请能效资源（如 CPU、GPS、音频等），优化后台运行效率 |
+| `ResetAllEfficiencyResources` | 重置所有已申请的能效资源 |
+| `GetEfficiencyResourcesInfos` | 获取应用级和进程级的能效资源申请信息 |
+
+### 4.4 订阅管理 API
+
+| 方法 | 作用描述 |
+|------|----------|
+| `SubscribeBackgroundTask` | 订阅后台任务状态变更事件 |
+| `UnsubscribeBackgroundTask` | 取消订阅后台任务状态变更事件 |
+
+## 5. 日志规范
 
 使用 `bgtaskmgr_log_wrapper.h` 定义的宏：
 
@@ -59,11 +90,7 @@ BGTASK_LOGE("Error message: %{public}d", err);     // 错误日志
 BGTASK_LOGF("Fatal message");                       // 致命错误日志
 ```
 
-**格式化说明**：
-- `%{public}` 表示公开字段，可完整输出
-- 敏感数据使用 `%{private}` 隐藏
-
-## 5. 错误处理
+## 6. 错误处理
 
 使用 `bgtaskmgr_inner_errors.h` 中定义的错误码：
 

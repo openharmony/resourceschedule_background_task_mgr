@@ -51,21 +51,45 @@ continuous_task/
 
 ### 3.2 ContinuousTaskRecord
 
-任务记录实体，存储任务详细信息。
+任务记录实体，存储任务的完整详细信息。
 
-**核心字段**：
+**成员变量**：
 
-| 字段 | 说明 |
-|------|------|
-| `bundleName_` | 包名 |
-| `abilityName_` | Ability名称 |
-| `uid_` | 用户ID |
-| `pid_` | 进程ID |
-| `bgModeId_` | 后台模式ID |
-| `bgModeIds_` | 后台模式列表（新API） |
-| `notificationLabel_` | 通知标签 |
-| `suspendState_` | 是否暂停状态 |
-| `isBatchApi_` | 是否批量API |
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `bundleName_` | `std::string` | 申请长时任务的包名，用于标识应用身份 |
+| `abilityName_` | `std::string` | 申请长时任务的Ability名称，用于绑定具体组件 |
+| `wantAgent_` | `std::shared_ptr<WantAgent>` | WantAgent对象，用于通知点击时跳转回应用 |
+| `userId_` | `int32_t` | 多用户系统中的用户ID，区分不同用户的长时任务 |
+| `uid_` | `int32_t` | 应用的UID，用于权限校验和资源隔离 |
+| `pid_` | `pid_t` | 进程ID，标识运行长时任务的具体进程 |
+| `bgModeId_` | `uint32_t` | 长时任务类型（旧API），单类型申请时使用 |
+| `isNewApi_` | `bool` | 是否使用新API（background_task_mode.h），区分新旧接口调用 |
+| `isFromWebview_` | `bool` | 长时任务申请是否来自Webview组件，标记特殊来源 |
+| `notificationLabel_` | `std::string` | 主通知标签，用于发布/取消通知的唯一标识 |
+| `notificationId_` | `int32_t` | 主通知ID，系统通知服务的通知编号 |
+| `subNotificationLabel_` | `std::string` | 子通知标签，用于子模式的辅助通知 |
+| `subNotificationId_` | `int32_t` | 子通知ID，子模式通知的编号 |
+| `wantAgentInfo_` | `std::shared_ptr<WantAgentInfo>` | WantAgent信息结构，存储跳转目标包名和Ability名 |
+| `appName_` | `std::string` | 应用显示名称，用于通知内容展示 |
+| `fullTokenId_` | `uint64_t` | 完全TokenID，包含应用索引和用户ID的完整令牌 |
+| `callingTokenId_` | `uint64_t` | 调用者TokenID，记录发起调用的应用令牌 |
+| `isBatchApi_` | `bool` | 是否使用批量API，支持同时申请多个后台模式 |
+| `bgModeIds_` | `std::vector<uint32_t>` | 长时任务类型（新API），批量申请时的模式集合 |
+| `bgSubModeIds_` | `std::vector<uint32_t>` | 长时任务子类型列表，如车钥匙、媒体处理等子类型 |
+| `abilityId_` | `int32_t` | Ability唯一标识ID，用于精确匹配Ability实例 |
+| `reason_` | `int32_t` | 任务取消原因，如用户取消、系统取消、通知删除等 |
+| `detailedCancelReason_` | `int32_t` | 详细取消原因码，提供更精确的取消原因分类 |
+| `isSystem_` | `bool` | 是否为系统应用，系统应用有特殊豁免权限和其他使用约束 |
+| `continuousTaskId_` | `int32_t` | 长时任务唯一ID，全局唯一标识一个长时任务实例 |
+| `suspendState_` | `bool` | 任务暂停状态，暂停时长时任务不取消但是应用仍会挂起 |
+| `suspendReason_` | `int32_t` | 任务暂停原因，记录导致暂停的具体触发条件 |
+| `suspendAudioTaskTimes_` | `int32_t` | 音频任务暂停次数统计，用于音频特殊处理 |
+| `isCombinedTaskNotification_` | `bool` | 是否为组合任务通知，多个任务合并显示一条通知 |
+| `combinedNotificationTaskId_` | `int32_t` | 组合通知的任务ID，关联组合通知中的主任务 |
+| `isByRequestObject_` | `bool` | 是否通过ContinuousTaskRequest对象申请，新API调用方式 |
+| `appIndex_` | `int32_t` | 应用索引，多实例应用中区分不同实例 |
+| `audioDetectState_` | `bool` | 音频检测状态，标记是否启用音频活动检测机制 |
 
 ### 3.3 NotificationTools
 
