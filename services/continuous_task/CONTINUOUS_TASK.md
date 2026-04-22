@@ -93,13 +93,45 @@ continuous_task/
 
 ### 3.3 NotificationTools
 
-通知工具类，管理后台任务通知。
+通知工具类，管理后台任务通知的发布、更新和取消。
 
-**核心功能**：
-- 发布后台任务通知
-- 取消后台任务通知
-- 更新通知内容
-- 处理通知点击事件
+**通知规格说明**：
+
+| 通知类型 | 使用场景 | Slot类型 | 特性 |
+|----------|----------|----------|------|
+| **实况通知** | 数据传输模式（bgModeId=1） | `LIVE_VIEW` | 延迟3秒发布、支持实时更新、TypeCode=8 |
+| **普通通知** | 音频播放、录制、VoIP、定位等模式 | `OTHER` | 不可移除、不可点击消失、转为基础内容 |
+| **横幅通知** | 用户授权确认场景 | `SOCIAL_COMMUNICATION` | 带操作按钮（本次允许/始终允许） |
+| **聚合通知** | 多个任务合并显示 | `LIVE_VIEW` | 主通知+子通知分离、共享通知ID |
+
+**通知发布时机**：
+- **新任务申请**：调用 `PublishNotification()` 发布新通知
+- **任务更新**：调用 `RefreshContinuousNotificationWantAndContext()` 更新通知内容和WantAgent
+- **任务停止**：调用 `CancelNotification()` 取消通知
+- **任务暂停**：更新通知状态但保持通知显示
+
+**通知更新场景**：
+- **内容更新**：应用名称或提示文本变更时刷新通知内容
+- **配置变更**：系统语言切换时更新通知文本为对应语言
+- **WantAgent更新**：任务关联的Ability发生变化时更新跳转目标
+
+**聚合通知机制**：
+- 当 `isCombinedTaskNotification_=true` 时启用聚合
+- 通过 `combinedNotificationTaskId_` 关联到主任务
+- 主通知使用 `PublishMainNotification()`，子通知使用 `PublishSubNotification()`
+- 主子通知共享 `notificationId_`，便于统一管理
+- 子通知标签包含 PID 以区分不同进程
+
+**核心方法**：
+
+| 方法 | 功能 |
+|------|------|
+| `PublishNotification` | 发布长时任务通知（实况或普通） |
+| `CancelNotification` | 取消指定通知 |
+| `RefreshContinuousNotifications` | 批量刷新通知内容 |
+| `RefreshContinuousNotificationWantAndContext` | 更新通知WantAgent和内容 |
+| `PublishBannerNotification` | 发布用户授权横幅通知 |
+| `GetAllActiveNotificationsLabels` | 获取所有活跃通知标签 |
 
 ### 3.4 TaskNotificationSubscriber
 
@@ -247,7 +279,7 @@ struct CachedBundleInfo {
 关键锁保护：
 
 ```cpp
-std::mutex delayTasksMutex_;         // 延迟任务保护
+std::mutex delayTasksMutex_;         // 播音任务列表保护
 std::mutex liveViewInfoMutex_;       // 实时视图信息保护
 ```
 
