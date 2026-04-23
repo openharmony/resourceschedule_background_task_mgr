@@ -26,7 +26,7 @@ This file provides guidance to CodeAgent when working with code in this reposity
 │
 ├── interfaces/           # 接口层 - API 定义
 │   ├── innerkits/       # 内部 C++ API（IDL 接口、数据模型）
-│   ├── kits/            # 外部 API（NAPI/NDK/CJ/ANI）
+│   ├── kits/            # 外部 API（NAPI/Native Development Kit/CJ/ANI）
 │   ├── test/            # 接口层测试
 │   └── [INTERFACES.md](interfaces/INTERFACES.md)  # 接口层开发指南
 │
