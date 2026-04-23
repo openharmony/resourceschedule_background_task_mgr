@@ -13,6 +13,7 @@
       "name": "background_task_mgr",
       "subsystem": "resourceschedule",
       "syscap": [
+        "SystemCapability.ResourceSchedule.BackgroundTaskManager.Core",
         "SystemCapability.ResourceSchedule.BackgroundTaskManager.ContinuousTask",
         "SystemCapability.ResourceSchedule.BackgroundTaskManager.TransientTask",
         "SystemCapability.ResourceSchedule.BackgroundTaskManager.EfficiencyResourcesApply"
