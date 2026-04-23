@@ -19,7 +19,7 @@ interfaces/
 │   └── BUILD.gn        # 构建配置
 ├── kits/               # 外部多语言 API
 │   ├── napi/           # Node-API（ArkTS/JS）
-│   ├── c/              # C API（NDK）
+│   ├── c/              # C API（Native Development Kit）
 │   ├── cj/             # CJ FFI（仓颉语言）
 │   └── ets/taihe/      # ANI（ArkTS Native Interface）
 └── test/               # 接口层测试
@@ -66,7 +66,7 @@ interfaces/
 |------|------|------|------|
 | **NAPI** | `kits/napi/` | `backgroundtaskmanager` | ArkTS/JS API，模块路径 `@ohos.backgroundTaskManager` |
 | **NAPI** | `kits/napi/` | `backgroundtaskmanager_napi` | 扩展 NAPI，含订阅者功能 |
-| **C API** | `kits/c/` | `transient_task` | NDK C API，供原生应用调用 |
+| **C API** | `kits/c/` | `transient_task` | Native Development Kit for C API，供原生应用调用 |
 | **CJ FFI** | `kits/cj/` | `cj_background_task_mgr_ffi` | 仓颉语言 FFI 绑定 |
 | **ANI** | `kits/ets/taihe/` | `background_task_manager_taihe` | ArkTS Native Interface |
 

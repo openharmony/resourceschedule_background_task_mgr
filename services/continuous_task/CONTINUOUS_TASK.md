@@ -80,7 +80,7 @@ continuous_task/
 | `abilityId_` | `int32_t` | Ability唯一标识ID，用于精确匹配Ability实例 |
 | `reason_` | `int32_t` | 任务取消原因，如用户取消、系统取消、通知删除等 |
 | `detailedCancelReason_` | `int32_t` | 详细取消原因码，提供更精确的取消原因分类 |
-| `isSystem_` | `bool` | 是否为系统应用，系统应用有特殊豁免权限和其他使用约束 |
+| `isSystem_` | `bool` | 是否为系统应用，系统应用有特殊权限 |
 | `continuousTaskId_` | `int32_t` | 长时任务唯一ID，全局唯一标识一个长时任务实例 |
 | `suspendState_` | `bool` | 任务暂停状态，暂停时长时任务不取消但是应用仍会挂起 |
 | `suspendReason_` | `int32_t` | 任务暂停原因，记录导致暂停的具体触发条件 |

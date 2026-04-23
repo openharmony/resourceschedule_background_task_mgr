@@ -23,8 +23,8 @@ resources/
     └── resources/              # 多语言资源目录
         ├── base/element/string.json    # 基础语言（英文）
         ├── zh_CN/element/string.json   # 简体中文
-        ├── zh_TW/element/string.json   # 繁体中文（台湾）
-        ├── zh_HK/element/string.json   # 繁体中文（香港）
+        ├── zh_TW/element/string.json   # 繁体中文（中国台湾）
+        ├── zh_HK/element/string.json   # 繁体中文（中国香港）
         └── ... (共约70个语言目录)
 ```
 
