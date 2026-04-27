@@ -28,13 +28,15 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_SUSPEND_REASON = {
     {BackgroundMode::BLUETOOTH_INTERACTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_NOT_USED},
     {BackgroundMode::MULTI_DEVICE_CONNECTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED},
     {BackgroundMode::VOIP, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_VOIP_NOT_USED},
-    {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USER_UNAUTHORIZED}
+    {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USER_UNAUTHORIZED},
+    {BackgroundMode::NEARLINK, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_NEARLINK_NOT_USED}
 };
 
 const std::unordered_map<uint32_t, uint32_t> STANDBY_SUSPEND_REASON = {
     {BackgroundMode::AUDIO_PLAYBACK, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_AUDIO_PLAYBACK_MUTE},
     {BackgroundMode::LOCATION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_POSITION_NOT_MOVED},
     {BackgroundMode::BLUETOOTH_INTERACTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_BLUETOOTH_DATA_NOT_EXIST},
+    {BackgroundMode::NEARLINK, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_NEARLINK_DATA_NOT_EXIST}
 };
 
 const std::unordered_map<uint32_t, std::string> SUSPEND_REASON_TO_MESSAGE = {
