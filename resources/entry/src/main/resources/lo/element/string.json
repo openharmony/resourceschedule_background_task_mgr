@@ -1,0 +1,144 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"ໜ້າວຽກການບັນທຶກກຳລັງດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_voip",
+            "value":"ການໂທກຳລັງດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"ໜ້າວຽກການຊອກຫາຕຳແໜ່ງກຳລັງດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_wifi_interaction",
+            "value":"ໜ້າວຽກ WLAN ກຳລັງດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"btn_allow_allowed",
+            "value":"ອະນຸຍາດ​ສະ​ເໝີ",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"ໜ້າວຽກການຫຼິ້ນສຽງ/ວິດີໂອກຳລັງດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"ໜ້າວຽກການເຮັດວຽກຮ່ວມກັນຂ້າມອຸປະກອນກຳລັງດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"ຟັງຊັນກະແຈລົດອັດຕະໂນມັດຈະບໍ່ເຮັດວຽກຖ້າທ່ານປິດບັດນີ້.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"ໜ້າວຽກ Bluetooth ກຳລັງດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_task_keeping",
+            "value":"ໜ້າວຽກການຄຳນວນກຳລັງດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_data_transfer",
+            "value":"ໜ້າວຽກໂອນຂໍ້ມູນກຳລັງດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"btn_allow_time",
+            "value":"ອະນຸຍາດຄັ້ງນີ້ເທົ່ານັ້ນ",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"text_notification_allow_background_keepalive",
+            "value":"ອະນຸຍາດໃຫ້ %s ເປີດໃຊ້ໃນພື້ນຫຼັງບໍ?",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_media_process",
+            "value":"ໜ້າວຽກການປະມວນຜົນມີເດຍພວມດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_video_broadcast",
+            "value":"ໜ້າວຽກການອອກອາກາດວິດີໂອພວມດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_work_out",
+            "value":"ໜ້າວຽກການອອກກຳລັງກາຍພວມດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"btn_not_allowed",
+            "value":"ປະຕິເສດ",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"dialog_title_work_out",
+            "value":"ສິ່ງນີ້ຖືກໃຊ້ສຳລັບກິດຈະກຳ ເຊັ່ນ: ການແລ່ນ, ການອອກກຳລັງກາຍ, ການລອຍນ້ຳ ແລະ ອື່ນໆ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"dialog_title_video_broadcast",
+            "value":"ສິ່ງນີ້ຖືກໃຊ້ສຳລັບການອອກອາກາດສຽງ ແລະ ວິດີໂອໄປຫາອຸປະກອນອື່ນໆ.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"dialog_title_media_process",
+            "value":"ສິ່ງນີ້ຖືກໃຊ້ເພື່ອປະມວນຜົນໜ້າວຽກ ເຊັ່ນ: ການສ້າງ ແລະ ການສົ່ງອອກເນື້ອຫາສຽງ ແລະ ວິດີໂອ.",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
+}

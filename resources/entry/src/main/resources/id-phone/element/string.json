@@ -1,0 +1,32 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"Tugas pemutaran audio/video sedang ber\u200blangsung. Menutup notifikasi ini akan meng\u200bakhirinya.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"Tugas kolaborasi lintas perangkat sedang ber\u200blangsung. Menutup notifikasi ini akan meng\u200bakhirinya.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_car_key",
+            "value":"Fungsi kunci mobil otomatis tidak akan ber\u200bfungsi jika Anda menutup kartu ini.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"Tugas Bluetooth sedang berlangsung. Menu\u200btup notifikasi ini akan mengakhirinya.",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
+}
