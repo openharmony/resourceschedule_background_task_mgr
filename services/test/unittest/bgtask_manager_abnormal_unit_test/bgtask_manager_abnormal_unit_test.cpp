@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -322,6 +322,20 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_015
     EXPECT_EQ(BackgroundTaskMgrService_->SetSpecialExemptedProcess(bundleNameSet), ERR_BGTASK_PERMISSION_DENIED);
     std::set<std::string> taskKeys;
     EXPECT_EQ(BackgroundTaskMgrService_->SendNotificationByDeteTask(taskKeys), ERR_BGTASK_PERMISSION_DENIED);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_016
+ * @tc.desc: test RemoveAuthRecord.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_016, TestSize.Level3)
+{
+    std::string result = "";
+    BackgroundTaskMgrService_->DumpUsage(result);
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    EXPECT_EQ(BackgroundTaskMgrService_->RemoveAuthRecord(taskParam), ERR_BGTASK_PERMISSION_DENIED);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

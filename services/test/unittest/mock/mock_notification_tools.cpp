@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,23 +51,6 @@ ErrCode NotificationTools::PublishMainNotification(const std::shared_ptr<Continu
     std::shared_ptr<ContinuousTaskRecord> mainRecord)
 {
     return ERR_OK;
-}
-
-ErrCode PublishBannerNotification(std::shared_ptr<BannerNotificationRecord> bannerNotification,
-    const std::string &prompt, int32_t serviceUid,
-    const std::vector<std::string> &bannerNotificaitonBtn)
-{
-    return ERR_OK;
-}
-
-void RefreshBannerNotifications(const std::vector<std::string> &bannerNotificaitonBtn,
-    const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos,
-    const std::shared_ptr<BannerNotificationRecord> bannerNotification, int32_t serviceUid) {}
-
-std::string CreateBannerNotificationLabel(const std::string &bundleName, int32_t userId,
-    int32_t appIndex)
-{
-    return "default";
 }
 }
 }

@@ -248,10 +248,19 @@ bool CheckRequestAuthFromUserParam(napi_env env, napi_callback_info info,
 bool SendRequest(napi_env env, const ContinuousTaskParam &taskParam, const ExpiredCallback &callback,
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext, int32_t &callbackUid)
 {
+    // 进行权限请求弹窗处理
+    // 1、先查询是否已经有授权，有的话，则返回错误码，不再弹窗
+    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        RequestAuthFromUser(taskParam, callback, callbackUid);
+    if (errCode != ERR_OK) {
+        Common::HandleErrCode(env, errCode, true);
+        return false;
+    }
     // 2、没有授权，则弹窗授权
     if (!CreateUIExtension(abilityContext, taskParam)) {
         BGTASK_LOGE("CreateUIExtension failed");
         // 拉起授权弹窗失败，取消已经申请的授权记录
+        DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam);
         Common::HandleErrCode(env, ERR_BGTASK_SYS_NOT_READY, true);
         return false;
     }

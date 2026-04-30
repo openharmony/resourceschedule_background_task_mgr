@@ -805,6 +805,17 @@ ErrCode BackgroundTaskMgrService::SendNotificationByDeteTask(const std::set<std:
     return BgContinuousTaskMgr::GetInstance()->SendNotificationByDeteTask(taskKeys);
 }
 
+ErrCode BackgroundTaskMgrService::RemoveAuthRecord(const ContinuousTaskParam &taskParam)
+{
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetCallingTokenID();
+    auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
+    return BgContinuousTaskMgr::GetInstance()->RemoveAuthRecord(paramPtr);
+}
+
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();

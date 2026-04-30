@@ -87,8 +87,6 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     bgContinuousTaskMgr_ = BgContinuousTaskMgr::GetInstance();
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificaitonBtn_), PROMPT_NUMS,
-        "bannernotification_test");
     bgContinuousTaskMgr_->isSysReady_.store(true);
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("tdd_test_handler");
     bgContinuousTaskMgr_->handler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
@@ -987,8 +985,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_039, TestSize.Level1)
     configuration.RemoveItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificaitonBtn_), PROMPT_NUMS,
-        "bannernotification_test");
     EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
@@ -1935,21 +1931,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_069, TestSize.Level1)
 }
 
 /**
- * @tc.name: BgTaskManagerUnitTest_070
- * @tc.desc: test SystemEventObserver::OnBannerNotificationActionButtonClick.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_070, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->RegisterSysCommEventListener();
-    EXPECT_NE(bgContinuousTaskMgr_->systemEventListener_, nullptr);
-    EventFwk::CommonEventData eventData;
-    bgContinuousTaskMgr_->systemEventListener_->OnBannerNotificationActionButtonClick(
-        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
-}
-
-/**
  * @tc.name: BgTaskManagerUnitTest_071
  * @tc.desc: test GetMainAbilityLabel.
  * @tc.type: FUNC
@@ -1962,37 +1943,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_071, TestSize.Level1)
     EXPECT_EQ(mainAbilityLabel, "label");
     mainAbilityLabel = bgContinuousTaskMgr_->GetMainAbilityLabel("com.ohos.sceneboard", 0);
     EXPECT_NE(mainAbilityLabel, "");
-}
-
-/**
- * @tc.name: StopBannerContinuousTaskByUser_001
- * @tc.desc: StopBannerContinuousTaskByUser test.
- * @tc.type: FUNC
- * @tc.require: 752
- */
-HWTEST_F(BgContinuousTaskMgrTest, StopBannerContinuousTaskByUser_01, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->isSysReady_.store(false);
-    std::string label = "bgbanner_100_0_bundleName";
-    EXPECT_FALSE(bgContinuousTaskMgr_->StopBannerContinuousTaskByUser(label));
-
-    bgContinuousTaskMgr_->isSysReady_.store(true);
-    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
-    std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>();
-    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification);
-    EXPECT_TRUE(bgContinuousTaskMgr_->StopBannerContinuousTaskByUser(label));
-    EXPECT_TRUE(bgContinuousTaskMgr_->bannerNotificationRecord_.empty());
-
-    bannerNotification->SetAuthResult(UserAuthResult::GRANTED_ONCE);
-    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification);
-    EXPECT_TRUE(bgContinuousTaskMgr_->StopBannerContinuousTaskByUser(label));
-    EXPECT_FALSE(bgContinuousTaskMgr_->bannerNotificationRecord_.empty());
-
-    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
-    bannerNotification->SetAuthResult(UserAuthResult::GRANTED_ALWAYS);
-    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification);
-    EXPECT_TRUE(bgContinuousTaskMgr_->StopBannerContinuousTaskByUser(label));
-    EXPECT_FALSE(bgContinuousTaskMgr_->bannerNotificationRecord_.empty());
 }
 
 /**
@@ -2020,125 +1970,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BannerNotificationRecord_001, TestSize.Level1)
     EXPECT_EQ(bannerNotification->GetAuthResult(), 1);
     EXPECT_EQ(bannerNotification->GetUserId(), 1);
     EXPECT_EQ(bannerNotification->GetAppIndex(), 1);
-}
-
-/**
- * @tc.name: OnBannerNotificationActionButtonClick_001
- * @tc.desc: OnBannerNotificationActionButtonClick test.
- * @tc.type: FUNC
- * @tc.require: 752
- */
-HWTEST_F(BgContinuousTaskMgrTest, OnBannerNotificationActionButtonClick_001, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->isSysReady_.store(false);
-    int32_t buttonType = BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME;
-    int32_t uid = 1;
-    std::string label = "bgbanner_100_0_bundleName";
-    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
-    std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>();
-    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification);
-    bgContinuousTaskMgr_->OnBannerNotificationActionButtonClick(buttonType, uid, "label");
-    auto iter = bgContinuousTaskMgr_->bannerNotificationRecord_.at(label);
-    EXPECT_NE(iter->GetAuthResult(), UserAuthResult::GRANTED_ONCE);
-    EXPECT_NE(iter->GetAuthResult(), UserAuthResult::GRANTED_ALWAYS);
-    bgContinuousTaskMgr_->isSysReady_.store(true);
-    // 点击横幅通知按钮-本次允许
-    bgContinuousTaskMgr_->OnBannerNotificationActionButtonClick(buttonType, uid, label);
-    auto iter2 = bgContinuousTaskMgr_->bannerNotificationRecord_.at(label);
-    EXPECT_EQ(iter2->GetAuthResult(), UserAuthResult::GRANTED_ONCE);
-    // 未点击横幅通知按钮-始终允许
-    buttonType = BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED;
-    bgContinuousTaskMgr_->OnBannerNotificationActionButtonClick(buttonType, uid, label);
-    auto iter3 = bgContinuousTaskMgr_->bannerNotificationRecord_.at(label);
-    EXPECT_EQ(iter3->GetAuthResult(), UserAuthResult::GRANTED_ALWAYS);
-}
-
-/**
- * @tc.name: CheckSpecialScenarioAuth_001
- * @tc.desc: CheckSpecialScenarioAuth test.
- * @tc.type: FUNC
- * @tc.require: 752
- */
-HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->isSysReady_.store(false);
-    uint32_t authResult = 0;
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(0, authResult), ERR_BGTASK_SYS_NOT_READY);
-
-    bgContinuousTaskMgr_->isSysReady_.store(true);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(0, authResult),
-        ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
-}
-
-/**
- * @tc.name: CheckSpecialScenarioAuthInner_001
- * @tc.desc: CheckSpecialScenarioAuthInner test.
- * @tc.type: FUNC
- * @tc.require: 752
- */
-HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialScenarioAuthInner_001, TestSize.Level1)
-{
-    std::string bundleName = "bundleName";
-    int32_t userId = 1;
-    int32_t appIndex = 1;
-    uint32_t authResult = 0;
-    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
-    bgContinuousTaskMgr_->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
-    EXPECT_NE(authResult, UserAuthResult::GRANTED_ONCE);
-
-    std::string label = "bgbanner_1_1_bundleName";
-    std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>();
-    bannerNotification->SetAuthResult(UserAuthResult::GRANTED_ONCE);
-    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification);
-    bgContinuousTaskMgr_->CheckSpecialScenarioAuthInner(authResult, bundleName, userId, appIndex);
-    EXPECT_NE(authResult, 0);
-}
-
-/**
- * @tc.name: RequestAuthFromUser_001
- * @tc.desc: RequestAuthFromUser test.
- * @tc.type: FUNC
- * @tc.require: 752
- */
-HWTEST_F(BgContinuousTaskMgrTest, RequestAuthFromUser_001, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->isSysReady_.store(false);
-    int32_t notificationId = 0;
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(nullptr, nullptr, notificationId), ERR_BGTASK_SYS_NOT_READY);
-
-    bgContinuousTaskMgr_->isSysReady_.store(true);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(nullptr, nullptr, notificationId),
-        ERR_BGTASK_CHECK_TASK_PARAM);
-
-    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, nullptr, notificationId),
-        ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR);
-
-    sptr<TestExpiredCallbackStub> expiredCallbackStub = sptr<TestExpiredCallbackStub>(new TestExpiredCallbackStub());
-    sptr<ExpiredCallbackProxy> proxy = sptr<ExpiredCallbackProxy>(
-        new ExpiredCallbackProxy(expiredCallbackStub->AsObject()));
-    taskParam->bgModeIds_.clear();
-    taskParam->bgSubModeIds_.clear();
-    taskParam->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
-    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
-        ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION);
-
-    taskParam->bgModeIds_.clear();
-    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    taskParam->bgModeIds_.push_back(BackgroundMode::LOCATION);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
-        ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK);
-
-    taskParam->bgModeIds_.clear();
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
-        ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY);
-
-    taskParam->bgModeIds_.clear();
-    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
-    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
-        ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
 }
 
 /**
@@ -2566,6 +2397,243 @@ HWTEST_F(BgContinuousTaskMgrTest, SendNotificationByDeteTask_001, TestSize.Level
     EXPECT_EQ(bgContinuousTaskMgr_->SendNotificationByDeteTask(taskKeys), ERR_BGTASK_SYS_NOT_READY);
     bgContinuousTaskMgr_->isSysReady_.store(true);
     EXPECT_EQ(bgContinuousTaskMgr_->SendNotificationByDeteTask(taskKeys), ERR_OK);
+}
+
+/**
+ * @tc.name: CheckAbilityTaskNum_001
+ * @tc.desc: CheckAbilityTaskNum test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CheckAbilityTaskNum_001, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckAbilityTaskNum(record), ERR_OK);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = nullptr;
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckAbilityTaskNum(record), ERR_OK);
+    record->abilityId_ = 1;
+    record->isByRequestObject_ = false;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = record;
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckAbilityTaskNum(record), ERR_OK);
+    record->isByRequestObject_ = true;
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckAbilityTaskNum(record), ERR_OK);
+}
+
+/**
+ * @tc.name: AllowApplyContinuousTask_001
+ * @tc.desc: AllowApplyContinuousTask test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, AllowApplyContinuousTask_001, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->isByRequestObject_ = false;
+    EXPECT_EQ(bgContinuousTaskMgr_->AllowApplyContinuousTask(record), ERR_OK);
+    record->isByRequestObject_ = true;
+    EXPECT_EQ(bgContinuousTaskMgr_->AllowApplyContinuousTask(record), ERR_OK);
+    record->isFromWebview_ = true;
+    record->uid_ = 1;
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckAbilityTaskNum(record), ERR_OK);
+    bgContinuousTaskMgr_->appOnForeground_.insert(1);
+    EXPECT_EQ(bgContinuousTaskMgr_->AllowApplyContinuousTask(record), ERR_OK);
+}
+
+/**
+ * @tc.name: OnAppStateChanged_001
+ * @tc.desc: OnAppStateChanged test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, OnAppStateChanged_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    bgContinuousTaskMgr_->OnAppStateChanged(1,
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND));
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->OnAppStateChanged(1,
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND));
+    EXPECT_EQ(bgContinuousTaskMgr_->appOnForeground_.size(), 0);
+    bgContinuousTaskMgr_->OnAppStateChanged(1,
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND));
+    EXPECT_NE(bgContinuousTaskMgr_->appOnForeground_.size(), 0);
+}
+
+/**
+ * @tc.name: DebugContinuousTaskInner_001
+ * @tc.desc: DebugContinuousTaskInner test.
+ * @tc.type: FUNC
+ * @tc.require: 838
+ */
+HWTEST_F(BgContinuousTaskMgrTest, DebugContinuousTaskInner_001, TestSize.Level1)
+{
+    sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
+        new ContinuousTaskParamForInner(1, 1, true));
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    EXPECT_EQ(bgContinuousTaskMgr_->DebugContinuousTaskInner(taskParam), ERR_BGTASK_SYS_NOT_READY);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->OnRemoveSystemAbility(1, "test");
+    bgContinuousTaskMgr_->OnRemoveSystemAbility(SA_ID_VOIP_CALL_MANAGER, "test");
+    bgContinuousTaskMgr_->OnRemoveSystemAbility(SA_ID_HEALTH_SPORT, "test");
+    EXPECT_EQ(bgContinuousTaskMgr_->DebugContinuousTaskInner(nullptr), ERR_BGTASK_CHECK_TASK_PARAM);
+    EXPECT_EQ(bgContinuousTaskMgr_->DebugContinuousTaskInner(taskParam), ERR_OK);
+    taskParam->isStart_ = false;
+    EXPECT_EQ(bgContinuousTaskMgr_->DebugContinuousTaskInner(taskParam), ERR_OK);
+}
+
+/**
+ * @tc.name: OnPermissionDialogButtonClick_001
+ * @tc.desc: test OnPermissionDialogButtonClick
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, OnPermissionDialogButtonClick_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->RegisterDialogClickListener();
+    EXPECT_NE(bgContinuousTaskMgr_->dialogClickListener_, nullptr);
+    EventFwk::CommonEventData eventData;
+    bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+
+    AAFwk::Want want;
+    want.SetParam("appIndex", 0);
+    eventData.SetWant(want);
+    bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+
+    want.SetParam("bundleUid", 0);
+    eventData.SetWant(want);
+    bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+
+    std::string bundleNameValue = "bundleName";
+    want.SetParam("bundleName", bundleNameValue);
+    eventData.SetWant(want);
+    bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+
+    eventData.SetCode(-1);
+    bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+
+    eventData.SetCode(2);
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    std::shared_ptr<BannerNotificationRecord> bannerNotification1 = std::make_shared<BannerNotificationRecord>();
+    bannerNotification1->SetBundleName("bundleName");
+    bannerNotification1->SetUserId(0);
+    bannerNotification1->SetAuthResult(UserAuthResult::GRANTED_ONCE);
+    bannerNotification1->SetAppIndex(0);
+    bannerNotification1->SetUid(0);
+    std::string label = "bundleName_0_0";
+    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification1);
+    bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+
+    auto authRecordIter = bgContinuousTaskMgr_->bannerNotificationRecord_.find(label);
+    EXPECT_EQ(authRecordIter->second->GetAuthResult(), 2);
+}
+
+/**
+ * @tc.name: RequestAuthFromUser_001
+ * @tc.desc: RequestAuthFromUser test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, RequestAuthFromUser_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    int32_t notificationId = 0;
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(nullptr, nullptr, notificationId), ERR_BGTASK_SYS_NOT_READY);
+
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(nullptr, nullptr, notificationId),
+        ERR_BGTASK_CHECK_TASK_PARAM);
+
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, nullptr, notificationId),
+        ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR);
+
+    sptr<TestExpiredCallbackStub> expiredCallbackStub = sptr<TestExpiredCallbackStub>(new TestExpiredCallbackStub());
+    sptr<ExpiredCallbackProxy> proxy = sptr<ExpiredCallbackProxy>(
+        new ExpiredCallbackProxy(expiredCallbackStub->AsObject()));
+    taskParam->bgModeIds_.clear();
+    taskParam->bgSubModeIds_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
+        ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY);
+
+    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
+        ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_IS_EMPTY);
+
+    taskParam->bgModeIds_.clear();
+    taskParam->bgModeIds_.push_back(BackgroundMode::LOCATION);
+    taskParam->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
+        ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_EMPTY);
+
+    taskParam->bgModeIds_.clear();
+    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
+        ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_ONLY_ALLOW_ONE_APPLICATION);
+
+    taskParam->bgModeIds_.clear();
+    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    taskParam->bgModeIds_.push_back(BackgroundMode::LOCATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
+        ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_CONFLICTS_WITH_OTHER_TASK);
+
+    taskParam->bgModeIds_.clear();
+    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    taskParam->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION);
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
+        ERR_BGTASK_CONTINUOUS_MODE_OR_SUBMODE_TYPE_MISMATCH);
+
+    taskParam->bgSubModeIds_.clear();
+    taskParam->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
+    bgContinuousTaskMgr_->expiredCallbackMap_.clear();
+    bgContinuousTaskMgr_->expiredCallbackMap_["key"] = proxy;
+    EXPECT_EQ(bgContinuousTaskMgr_->RequestAuthFromUser(taskParam, proxy, notificationId),
+        ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
+}
+
+/**
+ * @tc.name: CheckSpecialScenarioAuth_001
+ * @tc.desc: CheckSpecialScenarioAuth test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CheckSpecialScenarioAuth_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    int32_t appIndex = 0;
+    uint32_t authResult = 0;
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(appIndex, authResult), ERR_BGTASK_SYS_NOT_READY);
+
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckSpecialScenarioAuth(appIndex, authResult),
+        ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL);
+}
+
+/**
+ * @tc.name: RemoveAuthRecord_001
+ * @tc.desc: RemoveAuthRecord test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, RemoveAuthRecord_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    EXPECT_EQ(bgContinuousTaskMgr_->RemoveAuthRecord(nullptr), ERR_BGTASK_SYS_NOT_READY);
+
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    EXPECT_EQ(bgContinuousTaskMgr_->RemoveAuthRecord(nullptr), ERR_BGTASK_CHECK_TASK_PARAM);
+
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
+    taskParam->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
+    taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    EXPECT_EQ(bgContinuousTaskMgr_->RemoveAuthRecord(taskParam), ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

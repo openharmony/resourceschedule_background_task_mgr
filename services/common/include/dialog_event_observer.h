@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_SYSTEM_EVENT_OBSERVER_H
-#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_SYSTEM_EVENT_OBSERVER_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_DIALOG_EVENT_OBSERVER_H
+#define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_DIALOG_EVENT_OBSERVER_H
 
 #include "common_event_manager.h"
 #include "common_event_subscriber.h"
@@ -24,11 +24,11 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 class BgContinuousTaskMgr;
-class SystemEventObserver : public EventFwk::CommonEventSubscriber,
-                            public std::enable_shared_from_this<SystemEventObserver> {
+class DialogEventObserver : public EventFwk::CommonEventSubscriber,
+                            public std::enable_shared_from_this<DialogEventObserver> {
 public:
-    explicit SystemEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo);
-    ~SystemEventObserver() override = default;
+    explicit DialogEventObserver(const EventFwk::CommonEventSubscribeInfo &subscribeInfo);
+    ~DialogEventObserver() override = default;
     void OnReceiveEvent(const EventFwk::CommonEventData &eventData) override;
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
     void SetBgContinuousTaskMgr(const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr_);
@@ -36,8 +36,9 @@ public:
     bool Unsubscribe();
 
 private:
-    void OnReceiveEventContinuousTask(const EventFwk::CommonEventData &eventData);
-    void OnReceiveEventEfficiencyRes(const EventFwk::CommonEventData &eventData);
+    void OnPermissionDialogButtonClick(const std::shared_ptr<AppExecFwk::EventHandler> &handler,
+        const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr,
+        const EventFwk::CommonEventData &eventData);
 
 private:
     std::weak_ptr<AppExecFwk::EventHandler> handler_;
@@ -45,4 +46,4 @@ private:
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_SYSTEM_EVENT_OBSERVER_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_DIALOG_EVENT_OBSERVER_H

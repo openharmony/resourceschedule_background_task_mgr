@@ -368,6 +368,13 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
+
+    /**
+     * @brief remove auth record.
+     * @param taskParam Request param.
+     * @return Returns ERR_OK if success, else failure.
+     */
+    ErrCode RemoveAuthRecord(const ContinuousTaskParam &taskParam);
 private:
     bool GetBackgroundTaskManagerProxy();
 
