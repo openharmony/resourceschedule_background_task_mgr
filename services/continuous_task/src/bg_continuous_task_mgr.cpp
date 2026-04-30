@@ -574,7 +574,6 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterDialogClic
     return res;
 }
 
-
 int32_t BgContinuousTaskMgr::GetBgTaskUid()
 {
     return bgTaskUid_;
