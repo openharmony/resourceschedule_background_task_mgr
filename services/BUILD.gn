@@ -33,6 +33,7 @@ BgTaskMgrServicecSrc = [
   "common/src/bgtask_hitrace_chain.cpp",
   "common/src/bundle_manager_helper.cpp",
   "common/src/data_storage_helper.cpp",
+  "common/src/dialog_event_observer.cpp",
   "common/src/report_hisysevent_data.cpp",
   "common/src/system_event_observer.cpp",
   "common/src/time_provider.cpp",

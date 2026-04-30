@@ -610,6 +610,14 @@ ErrCode BackgroundTaskManager::SendNotificationByDeteTask(const std::set<std::st
     return proxy_->SendNotificationByDeteTask(taskKeys);
 }
 
+ErrCode BackgroundTaskManager::RemoveAuthRecord(const ContinuousTaskParam &taskParam)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->RemoveAuthRecord(taskParam);
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 

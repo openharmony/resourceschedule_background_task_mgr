@@ -45,6 +45,7 @@
 #include "banner_notification_record.h"
 #include "iexpired_callback.h"
 #include "background_task_state_info.h"
+#include "dialog_event_observer.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -115,6 +116,7 @@ public:
     ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
     ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
     ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
+    ErrCode RemoveAuthRecord(const sptr<ContinuousTaskParam> &taskParam);
     bool StopContinuousTaskByUser(const std::string &mapKey, bool isSubNotification = false,
         int32_t deleteReason = CANCEL_REASON_DELETE);
     bool StopBannerContinuousTaskByUser(const std::string &label);
@@ -151,6 +153,8 @@ public:
     ErrCode OnRestore(MessageParcel& data, MessageParcel& reply);
     void OnBundleResourcesChanged();
     void OnBundleResourcesChangedInner();
+    void OnPermissionDialogButtonClickInner(int32_t authResult, int32_t bundleUid, const std::string &bundleName,
+ 	  	int32_t appIndex);
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
@@ -192,6 +196,7 @@ private:
     bool RegisterAppStateObserver();
     void UnregisterAppStateObserver();
     bool RegisterConfigurationObserver();
+    bool RegisterDialogClickListener();
     bool GetNotificationPrompt();
     bool FormatBannerNotificationContext(const std::string &appName, std::string &bannerContent);
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
@@ -254,12 +259,9 @@ private:
     ErrCode SendLiveViewAndOtherNotification(std::shared_ptr<ContinuousTaskRecord> record);
     ErrCode SendNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
         std::shared_ptr<ContinuousTaskRecord> record, const std::string &appName, bool isSubNotification);
-    ErrCode CheckSendBannerNotificationParam(std::shared_ptr<ContinuousTaskRecord> record,
-        const sptr<IExpiredCallback>& callback);
-    ErrCode SendBannerNotification(std::shared_ptr<ContinuousTaskRecord> record, const sptr<IExpiredCallback> &callback,
-        int32_t &notificationId);
-    void OnBannerNotificationActionButtonClickInner(const int32_t buttonType, const int32_t uid,
-        const std::string &label);
+    ErrCode CheckAuthParam(std::shared_ptr<ContinuousTaskRecord> record, const sptr<IExpiredCallback>& callback);
+    ErrCode RequestAuthFromUserInner(std::shared_ptr<ContinuousTaskRecord> record,
+        const sptr<IExpiredCallback> &callback, int32_t &notification);
     ErrCode CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
         int32_t userId, int32_t appIndex);
     ErrCode CheckModeSupportedPermission(const sptr<ContinuousTaskParam> &taskParam);
@@ -278,6 +280,7 @@ private:
 #ifdef HAS_OS_ACCOUNT_CAR
     void ClearBgOsAccountTaskInCar();
 #endif
+    ErrCode RemoveAuthRecordInner(const std::shared_ptr<ContinuousTaskRecord> record);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
@@ -293,6 +296,7 @@ private:
     std::shared_ptr<TaskNotificationSubscriber> subscriber_ {nullptr};
 #endif
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
+    std::shared_ptr<DialogEventObserver> dialogClickListener_ {nullptr};
     sptr<AppStateObserver> appStateObserver_ {nullptr};
     sptr<AppExecFwk::IConfigurationObserver> configChangeObserver_ {nullptr};
     std::list<std::shared_ptr<SubscriberInfo>> bgTaskSubscribers_ {};
@@ -303,9 +307,8 @@ private:
     std::set<int32_t> appOnForeground_ {};
     std::vector<std::string> continuousTaskText_ {};
     std::vector<std::string> continuousTaskSubText_ {};
-    std::vector<std::string> bannerNotificaitonBtn_ {};
     sptr<AuthExpiredCallbackDeathRecipient> authCallbackDeathRecipient_ {nullptr};
-    std::map<int32_t, sptr<IExpiredCallback>> expiredCallbackMap_;
+    std::map<std::string, sptr<IExpiredCallback>> expiredCallbackMap_;
     int32_t continuousTaskIdIndex_ = 0;
     std::unordered_set<int32_t> disableRequestUidList_ {};
 

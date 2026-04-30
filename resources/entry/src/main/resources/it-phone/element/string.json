@@ -1,0 +1,39 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"È in corso un'attività di registrazione. Se chiu\u200bdi questa notifica, verrà terminata.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_voip",
+            "value":"È in corso una chiamata. Se chiudi questa no\u200btifica, verrà terminata.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"È in corso un'attività di posizionamento. Se chiu\u200bdi questa notifica, verrà terminata.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"È in corso un'attività di riproduzione audio/video. Se chiudi questa notifica, verrà termina\u200bta.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_multidevice_connection",
+            "value":"È in corso un'attività di collaborazione tra di\u200bspositivi. Se chiudi questa notifica, verrà terminata.",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
+}

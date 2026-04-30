@@ -110,6 +110,7 @@ public:
     ErrCode SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet) override;
     ErrCode GetAllContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list) override;
     ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys) override;
+    ErrCode RemoveAuthRecord(const ContinuousTaskParam &taskParam) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);

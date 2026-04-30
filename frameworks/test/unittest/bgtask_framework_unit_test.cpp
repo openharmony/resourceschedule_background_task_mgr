@@ -1134,5 +1134,20 @@ HWTEST_F(BgTaskFrameworkUnitTest, SendNotificationByDeteTask_001, TestSize.Level
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SendNotificationByDeteTask(taskKeys),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 }
+
+/**
+ * @tc.name: RemoveAuthRecord_001
+ * @tc.desc: test RemoveAuthRecord.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, RemoveAuthRecord_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+}
 }
 }
