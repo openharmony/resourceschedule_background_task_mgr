@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,6 @@ namespace BackgroundTaskMgr {
 namespace {
 const std::string TASK_ON_BUNDLEINFO_CHANGED = "OnBundleInfoChanged";
 const std::string TASK_ON_OS_ACCOUNT_CHANGED = "OnOsAccountChanged";
-const std::string TASK_ON_BANNER_NOTIFICATION_ACTION_BUTTON_CLICK = "OnBannerNotificationActionButtonClick";
 const std::string TASK_ON_BUNDLE_RESOURCES_CHANGED = "OnBundleResourcesChanged";
 }
 
@@ -92,11 +91,6 @@ void SystemEventObserver::OnReceiveEventContinuousTask(const EventFwk::CommonEve
         handler->PostTask(task, TASK_ON_OS_ACCOUNT_CHANGED);
         return;
     }
-    // 长时任务横幅通知点击事件
-    if (action == BGTASK_BANNER_NOTIFICATION_ACTION_NAME) {
-        OnBannerNotificationActionButtonClick(handler, bgContinuousTaskMgr, eventData);
-        return;
-    }
     // 切换语言，BMS事件回调
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_RESOURCES_CHANGED) {
         auto task = [bgContinuousTaskMgr]() {
@@ -124,27 +118,6 @@ void SystemEventObserver::OnReceiveEventEfficiencyRes(const EventFwk::CommonEven
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
         DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveAppRecord(uid, bundleName, true);
     }
-}
-
-void SystemEventObserver::OnBannerNotificationActionButtonClick(
-    const std::shared_ptr<AppExecFwk::EventHandler> &handler,
-    const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr,
-    const EventFwk::CommonEventData &eventData)
-{
-    AAFwk::Want want = eventData.GetWant();
-    int32_t buttonType = want.GetIntParam(BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_BTN, -1);
-    int32_t uid = want.GetIntParam(BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_UID, -1);
-    std::string label = want.GetStringParam(BGTASK_BANNER_NOTIFICATION_ACTION_LABEL);
-    if (buttonType == -1 || uid == -1 || label == "") {
-        BGTASK_LOGE("OnBannerNotificationActionButtonClick get param fail.");
-        return;
-    }
-    BGTASK_LOGI("banner notification onclick, buttonType: %{public}d, uid: %{public}d, label: %{public}s",
-        buttonType, uid, label.c_str());
-    auto task = [bgContinuousTaskMgr, buttonType, uid, label]() {
-        bgContinuousTaskMgr->OnBannerNotificationActionButtonClick(buttonType, uid, label);
-    };
-    handler->PostTask(task, TASK_ON_BANNER_NOTIFICATION_ACTION_BUTTON_CLICK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

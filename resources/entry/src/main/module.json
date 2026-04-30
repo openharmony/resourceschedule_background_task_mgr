@@ -1,0 +1,41 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "feature",
+    "srcEntrance": "./ets/Application/AbilityStage.ts",
+    "description": "$string:entry_desc",
+    "mainElement": "MainAbility",
+    "deviceTypes": [
+      "tablet",
+      "default",
+      "tv",
+      "car",
+      "wearable",
+      "2in1"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [],
+    "extensionAbilities": [
+      {
+        "name": "EnableBgTaskAuthDialog",
+        "srcEntrance": "./ets/ServiceExtAbility/NotificationServiceExtAbility.ts",
+        "description": "$string:NotificationServiceExtAbility_desc",
+        "icon": "$media:icon",
+        "label": "$string:NotificationServiceExtAbility_label",
+        "exported":true,
+        "type": "sysDialog/common",
+        "extensionProcessMode": "instance"
+      }
+    ],
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.START_ABILITIES_FROM_BACKGROUND"
+      },
+      {
+        "name": "ohos.permission.GET_BUNDLE_RESOURCES"
+      }
+    ]
+  }
+}

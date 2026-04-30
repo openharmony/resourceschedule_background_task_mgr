@@ -1,0 +1,32 @@
+{
+    "string":[
+        {
+            "name":"ohos_bgmode_prompt_audio_recording",
+            "value":"Bir kayıt görevi devam ediyor. Bu bildirim ka\u200bpatıldığında sonlandırılacaktır.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_location",
+            "value":"Bir konumlandırma görevi devam ediyor. Bu bil\u200bdirim kapatıldığında sonlandırılacaktır.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_audio_playback",
+            "value":"Bir ses/video oynatma görevi devam ediyor. Bu bil\u200bdirim kapatıldığında sonlandırılacaktır.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_bluetooth_interaction",
+            "value":"Bir Bluetooth görevi devam ediyor. Bu bildi\u200brim kapatıldığında sonlandırılacaktır.",
+            "attr":{
+                "priority":"LT"
+            }
+        }
+    ]
+}
