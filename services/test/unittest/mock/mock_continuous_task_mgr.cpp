@@ -25,3 +25,4 @@ ErrCode BgContinuousTaskMgr::FormatNotificationText(std::string &notificationTex
     return ERR_OK;
 }
 }
+}
