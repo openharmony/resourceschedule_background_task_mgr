@@ -200,14 +200,14 @@ private:
     bool RegisterDialogClickListener();
     bool GetNotificationPrompt();
     bool GetNotificationTextForMode(std::shared_ptr<Global::Resource::ResourceManager> &resourceManager);
- 	void FilterNotificationMode(const std::shared_ptr<ContinuousTaskRecord> record, std::vector<uint32_t> &checkModes);
- 	ErrCode MergeNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
- 	    const std::string &mergeBlueNotificationText);
- 	ErrCode FormatNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
- 	    const std::string &mergeBlueNotificationText,
- 	    std::vector<std::tuple<Global::Resource::ResourceManager::NapiValueType, std::string>> &jsParams);
- 	ErrCode SingleModeNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
- 	    const std::string &mergeBlueNotificationText, const std::shared_ptr<ContinuousTaskRecord> record);
+    void FilterNotificationMode(const std::shared_ptr<ContinuousTaskRecord> record, std::vector<uint32_t> &checkModes);
+    ErrCode MergeNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
+        const std::string &mergeBlueNotificationText);
+    ErrCode FormatNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
+        const std::string &mergeBlueNotificationText,
+        std::vector<std::tuple<Global::Resource::ResourceManager::NapiValueType, std::string>> &jsParams);
+    ErrCode SingleModeNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
+        const std::string &mergeBlueNotificationText, const std::shared_ptr<ContinuousTaskRecord> record);
     bool FormatBannerNotificationContext(const std::string &appName, std::string &bannerContent);
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
@@ -292,7 +292,7 @@ private:
 #endif
     ErrCode RemoveAuthRecordInner(const std::shared_ptr<ContinuousTaskRecord> record);
     void InitNotificationText();
- 	void NotifyAudioStartInner(const int32_t uid);
+    void NotifyAudioStartInner(const int32_t uid);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
