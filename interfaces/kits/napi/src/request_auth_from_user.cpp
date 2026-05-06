@@ -33,7 +33,7 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-std::map<int32_t, std::shared_ptr<ExpiredCallback>> authCallbackInstances_;
+std::unordered_set<std::shared_ptr<ExpiredCallback>> authCallbackInstances_;
 std::mutex authCallbackLock_;
 static const uint32_t REQUEST_AUTH_FORM_USER_PARAMS = 2;
 
@@ -79,7 +79,7 @@ __attribute__((no_sanitize("cfi"))) void AuthCallbackInstance::OnExpiredAuth(int
     BGTASK_LOGI("OnExpiredAuth authresult: %{public}d", authResult);
     std::lock_guard<std::mutex> lock(authCallbackLock_);
     auto findCallback = std::find_if(authCallbackInstances_.begin(), authCallbackInstances_.end(),
-        [&](const auto& callbackInstance) { return callbackInstance.second.get() == this; }
+        [&](const auto& callbackInstance) { return callbackInstance.get() == this; }
     );
     if (findCallback == authCallbackInstances_.end()) {
         BGTASK_LOGI("expired callback is not found");
@@ -103,7 +103,7 @@ __attribute__((no_sanitize("cfi"))) void AuthCallbackInstance::OnExpiredAuth(int
         Common::SetAuthCallback(dataWorker->env, dataWorker->ref, authResult);
         std::lock_guard<std::mutex> lock(authCallbackLock_);
         auto findCallback = std::find_if(authCallbackInstances_.begin(), authCallbackInstances_.end(),
-            [&](const auto& callbackInstance) { return callbackInstance.second == dataWorker->callback; }
+            [&](const auto& callbackInstance) { return callbackInstance == dataWorker->callback; }
         );
         if (findCallback != authCallbackInstances_.end()) {
             authCallbackInstances_.erase(findCallback);
@@ -245,14 +245,22 @@ bool CheckRequestAuthFromUserParam(napi_env env, napi_callback_info info,
     return true;
 }
 
-bool SendRequest(napi_env env, const ContinuousTaskParam &taskParam, const ExpiredCallback &callback,
+bool SendRequest(napi_env env, const ContinuousTaskParam &taskParam,
+    const std::shared_ptr<AuthCallbackInstance> callback,
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext, int32_t &callbackUid)
 {
     // 进行权限请求弹窗处理
-    // 1、先查询是否已经有授权，有的话，则返回错误码，不再弹窗
+    // 1、查询是否已经授权
+    std::lock_guard<std::mutex> lock(authCallbackLock_);
+    authCallbackInstances_.insert(callback);
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
-        RequestAuthFromUser(taskParam, callback, callbackUid);
+        RequestAuthFromUser(taskParam, *callback, callbackUid);
+    if (errCode == ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED) {
+        // 已授权，触发回调
+        return true;
+    }
     if (errCode != ERR_OK) {
+        authCallbackInstances_.erase(callback);
         Common::HandleErrCode(env, errCode, true);
         return false;
     }
@@ -305,10 +313,6 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
     int32_t callbackUid = 0;
     if (!SendRequest(env, taskParam, *callback, abilityContext, callbackUid)) {
         return Common::NapiGetNull(env);
-    }
-    {
-        std::lock_guard<std::mutex> lock(authCallbackLock_);
-        authCallbackInstances_[callbackUid] = callback;
     }
     napi_value result = nullptr;
     napi_create_int32(env, 0, &result);
