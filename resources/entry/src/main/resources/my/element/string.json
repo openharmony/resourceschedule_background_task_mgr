@@ -139,6 +139,104 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"notification_text_bluetooth_interactionn",
+            "value":"ဘလူးတုသ်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_wifi_interaction",
+            "value":"WLAN",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_voip",
+            "value":"ခေါ်ဆိုမှု",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_two_mode",
+            "value":"လုပ်ဆောင်နေဆဲ အလုပ်များ (%1$s၊ %2$s)။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ထိုအလုပ်များ အဆုံးသတ်သွားပါမည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_task_keeping",
+            "value":"တွက်ချက်မှု",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_recording",
+            "value":"အသံဖမ်းမှု",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_location",
+            "value":"တည်နေရာ ရှာဖွေသတ်မှတ်မှု",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_data_transfer",
+            "value":"ဒေတာ လွှဲပြောင်းမှု",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_three_mode",
+            "value":"လုပ်ဆောင်နေဆဲ အလုပ်များ (%1$s၊ %2$s၊ %3$s)။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ထိုအလုပ်များ အဆုံးသတ်သွားပါမည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_exceed",
+            "value":"လုပ်ဆောင်နေဆဲ အလုပ်များ (%1$s၊ %2$s၊ %3$sနှင့် နောက်ထပ်အရာများစွာ)။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ထိုအလုပ်များ အဆုံးသတ်သွားပါမည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_multidevice_connection",
+            "value":"စက်များအကြား ပူးတွဲဆောင်ရွက်မှု",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_starting_task",
+            "value":"အလုပ်ကို စတင်နေဆဲ…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_playbackr",
+            "value":"အော်ဒီယို/ဗီဒီယို ပြန်ဖွင့်မှု",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name": "ohos_bgmode_prompt_nearlink",
+            "value": "NearLink အလုပ်တစ်ခုကို လုပ်ဆောင်နေဆဲဖြစ်သည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ယင်းအလုပ် အဆုံးသတ်သွားပါမည်။",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }
