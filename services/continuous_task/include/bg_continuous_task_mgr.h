@@ -155,6 +155,7 @@ public:
     void OnBundleResourcesChangedInner();
     void OnPermissionDialogButtonClickInner(int32_t authResult, int32_t bundleUid, const std::string &bundleName,
  	  	int32_t appIndex);
+    ErrCode NotifyAudioStart(const int32_t uid);
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
@@ -198,6 +199,15 @@ private:
     bool RegisterConfigurationObserver();
     bool RegisterDialogClickListener();
     bool GetNotificationPrompt();
+    bool GetNotificationTextForMode(std::shared_ptr<Global::Resource::ResourceManager> &resourceManager);
+ 	void FilterNotificationMode(const std::shared_ptr<ContinuousTaskRecord> record, std::vector<uint32_t> &checkModes);
+ 	ErrCode MergeNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
+ 	    const std::string &mergeBlueNotificationText);
+ 	ErrCode FormatNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
+ 	    const std::string &mergeBlueNotificationText,
+ 	    std::vector<std::tuple<Global::Resource::ResourceManager::NapiValueType, std::string>> &jsParams);
+ 	ErrCode SingleModeNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
+ 	    const std::string &mergeBlueNotificationText, const std::shared_ptr<ContinuousTaskRecord> record);
     bool FormatBannerNotificationContext(const std::string &appName, std::string &bannerContent);
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
@@ -281,6 +291,8 @@ private:
     void ClearBgOsAccountTaskInCar();
 #endif
     ErrCode RemoveAuthRecordInner(const std::shared_ptr<ContinuousTaskRecord> record);
+    void InitNotificationText();
+ 	void NotifyAudioStartInner(const int32_t uid);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
@@ -307,10 +319,12 @@ private:
     std::set<int32_t> appOnForeground_ {};
     std::vector<std::string> continuousTaskText_ {};
     std::vector<std::string> continuousTaskSubText_ {};
+    std::vector<std::string> startingTaskText_ {};
     sptr<AuthExpiredCallbackDeathRecipient> authCallbackDeathRecipient_ {nullptr};
     std::map<std::string, sptr<IExpiredCallback>> expiredCallbackMap_;
     int32_t continuousTaskIdIndex_ = 0;
     std::unordered_set<int32_t> disableRequestUidList_ {};
+    std::map<uint32_t, std::pair<std::string, std::string>> modeForNotificationText_ {};
 
     DECLARE_DELAYED_SINGLETON(BgContinuousTaskMgr);
 };

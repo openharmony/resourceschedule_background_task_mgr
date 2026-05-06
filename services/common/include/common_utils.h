@@ -19,6 +19,7 @@
 #include <regex>
 #include <set>
 #include "nlohmann/json.hpp"
+#include "background_mode.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -103,6 +104,27 @@ public:
     {
         std::regex pattern(R"(^\d+$)");
         return std::regex_match(value, pattern);
+    }
+
+    static void SortMode(std::vector<uint32_t> &bgModeIds)
+    {
+        std::vector<uint32_t> result;
+        std::vector<uint32_t> target = {
+            BackgroundMode::DATA_TRANSFER,
+            BackgroundMode::AUDIO_RECORDING,
+            BackgroundMode::LOCATION
+        };
+        for (const auto mode : target) {
+            if (std::find(bgModeIds.begin(), bgModeIds.end(), mode) != bgModeIds.end()) {
+                result.push_back(mode);
+            }
+        }
+        for (const auto mode : bgModeIds) {
+            if (std::find(target.begin(), target.end(), mode) == target.end()) {
+                result.push_back(mode);
+            }
+        }
+        bgModeIds = result;
     }
 public:
     static constexpr int32_t jsonFormat_ = 4;

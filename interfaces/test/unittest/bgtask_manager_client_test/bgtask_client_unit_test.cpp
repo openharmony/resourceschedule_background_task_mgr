@@ -1404,5 +1404,17 @@ HWTEST_F(BgTaskClientUnitTest, SendNotificationByDeteTask_001, TestSize.Level1)
     std::set<std::string> taskKeys;
     EXPECT_EQ(BackgroundTaskMgrHelper::SendNotificationByDeteTask(taskKeys), ERR_OK);
 }
+
+/**
+ * @tc.name: NotifyAudioStart_001
+ * @tc.desc: test NotifyAudioStart interface.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, NotifyAudioStart_001, TestSize.Level1)
+{
+    int32_t uid = 1;
+    EXPECT_EQ(BackgroundTaskMgrHelper::NotifyAudioStart(uid), ERR_OK);
+}
 }
 }

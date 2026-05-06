@@ -107,6 +107,7 @@ private:
     int32_t appIndex_ {-1};
     bool audioDetectState_ {true};
     bool isStandby_ {false};
+    bool audioPlayState_ {true};
     
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

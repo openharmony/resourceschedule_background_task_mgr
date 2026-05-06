@@ -87,9 +87,15 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     bgContinuousTaskMgr_ = BgContinuousTaskMgr::GetInstance();
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->startingTaskText_), PROMPT_NUMS, "starttask_test");
     bgContinuousTaskMgr_->isSysReady_.store(true);
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("tdd_test_handler");
     bgContinuousTaskMgr_->handler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
+    bgContinuousTaskMgr_->modeForNotificationText_.clear();
+    bgContinuousTaskMgr_->InitNotificationText();
+    for (auto &iter : bgContinuousTaskMgr_->modeForNotificationText_) {
+        iter.second.second = "bgmode_test";
+    }
 }
 
 void BgContinuousTaskMgrTest::TearDownTestCase() {}
@@ -2634,6 +2640,39 @@ HWTEST_F(BgContinuousTaskMgrTest, RemoveAuthRecord_001, TestSize.Level1)
     taskParam->bgSubModeIds_.push_back(BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION);
     taskParam->bgModeIds_.push_back(BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     EXPECT_EQ(bgContinuousTaskMgr_->RemoveAuthRecord(taskParam), ERR_OK);
+}
+
+/**
+ * @tc.name: NotifyAudioStart_001
+ * @tc.desc: NotifyAudioStart test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, NotifyAudioStart_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    int32_t uid = 1;
+    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_BGTASK_SYS_NOT_READY);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->abilityName_ = "abilityName";
+    continuousTaskRecord1->uid_ = 1;
+    continuousTaskRecord1->bgModeId_ = BGMODE_AUDIO_PLAYBACK_ID;
+    continuousTaskRecord1->bgModeIds_.push_back(BGMODE_AUDIO_PLAYBACK_ID);
+    continuousTaskRecord1->notificationId_ = 1;
+    continuousTaskRecord1->continuousTaskId_ = 1;
+    continuousTaskRecord1->abilityId_ = 1;
+    std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+    info->bundleName_ = "wantAgentBundleName";
+    info->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord1->wantAgentInfo_ = info;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskText_.clear();
+    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmmode_test");
+    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

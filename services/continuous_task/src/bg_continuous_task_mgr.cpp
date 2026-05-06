@@ -62,6 +62,13 @@
 #include "continuous_task_suspend_reason.h"
 #include "bg_continuous_task_dumper.h"
 #include "user_auth_result.h"
+#include "audio_stream_manager.h"
+
+#ifdef BGTASK_MGR_UNIT_TEST
+#define WEAK_FUNC __attribute__((weak))
+#else
+#define WEAK_FUNC
+#endif
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -97,6 +104,16 @@ static const std::set<uint32_t> g_liveViewTypes = {
     BackgroundMode::VOIP,
 };
 
+static const char *g_taskNotificationResNames[] = {
+    "notification_text_running_task_two_mode",
+    "notification_text_running_task_three_mode",
+    "notification_text_running_task_exceed",
+};
+
+static const char *g_startingTaskNotificationResNames[] = {
+    "notification_text_starting_task",
+};
+
 static constexpr char XPOWER_HISYSEVENT_DOMAIN[] = "POWERTHERMAL";
 static constexpr char SEPARATOR[] = "_";
 static constexpr char DUMP_PARAM_LIST_ALL[] = "--all";
@@ -117,6 +134,7 @@ static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
 static constexpr int32_t ILLEGAL_NOTIFICATION_ID = -2;
+static constexpr int32_t MAX_NOTIFICATION_TEXT_TYPE = 3;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
@@ -240,7 +258,6 @@ void BgContinuousTaskMgr::InitNecessaryState()
         handler_->PostTask(task, DELAY_TIME);
         return;
     }
-
     if (!RegisterNotificationSubscriber()) {
         return;
     }
@@ -397,6 +414,7 @@ bool BgContinuousTaskMgr::checkNotificationCondition(const std::set<std::string>
 
 void BgContinuousTaskMgr::InitRequiredResourceInfo()
 {
+    InitNotificationText();
     if (!GetNotificationPrompt()) {
         BGTASK_LOGW("init required resource info failed");
     }
@@ -404,6 +422,28 @@ void BgContinuousTaskMgr::InitRequiredResourceInfo()
     isSysReady_.store(true);
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->SetReady(ServiceReadyState::CONTINUOUS_SERVICE_READY);
     BGTASK_LOGI("SetReady CONTINUOUS_SERVICE_READY");
+}
+
+void BgContinuousTaskMgr::InitNotificationText()
+{
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::DATA_TRANSFER),
+        std::make_pair("notification_text_data_transfer", ""));
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::AUDIO_PLAYBACK),
+        std::make_pair("notification_text_audio_playbackr", ""));
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::AUDIO_RECORDING),
+        std::make_pair("notification_text_audio_recording", ""));
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::LOCATION),
+        std::make_pair("notification_text_location", ""));
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::BLUETOOTH_INTERACTION),
+        std::make_pair("notification_text_bluetooth_interactionn", ""));
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::MULTI_DEVICE_CONNECTION),
+        std::make_pair("notification_text_multidevice_connection", ""));
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::WIFI_INTERACTION),
+        std::make_pair("notification_text_wifi_interaction", ""));
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::VOIP),
+        std::make_pair("notification_text_voip", ""));
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::TASK_KEEPING),
+        std::make_pair("notification_text_task_keeping", ""));
 }
 
 bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
@@ -529,6 +569,39 @@ bool BgContinuousTaskMgr::GetNotificationPrompt()
         }
         BGTASK_LOGI("get sub taskSubText: %{public}s", taskSubText.c_str());
         continuousTaskSubText_.push_back(taskSubText);
+    }
+    return GetNotificationTextForMode(resourceManager);
+}
+
+bool BgContinuousTaskMgr::GetNotificationTextForMode(
+    std::shared_ptr<Global::Resource::ResourceManager> &resourceManager)
+{
+    if (resourceManager == nullptr) {
+        BGTASK_LOGE("Get bgtask resource hap manager failed");
+        return false;
+    }
+    std::string modeNotificationText {""};
+    for (auto &iter : modeForNotificationText_) {
+        std::string modeDbid = iter.second.first.c_str();
+        resourceManager->GetStringByName(modeDbid.c_str(), modeNotificationText);
+        if (modeNotificationText.empty()) {
+            BGTASK_LOGE("get modeNotificationText failed, resId: %{public}s.", modeDbid.c_str());
+            return false;
+        }
+        BGTASK_LOGI("get modeNotificationText success, resId: %{public}s, notification text: %{public}s.",
+            modeDbid.c_str(), modeNotificationText.c_str());
+        iter.second.second = modeNotificationText;
+    }
+    startingTaskText_.clear();
+    std::string startTaskText {""};
+    for (std::string name : g_startingTaskNotificationResNames) {
+        resourceManager->GetStringByName(name.c_str(), startTaskText);
+        if (startTaskText.empty()) {
+            BGTASK_LOGE("get startingTaskText failed!");
+            return false;
+        }
+        BGTASK_LOGI("get startTaskText: %{public}s", startTaskText.c_str());
+        startingTaskText_.push_back(startTaskText);
     }
     return true;
 }
@@ -1410,6 +1483,33 @@ ErrCode BgContinuousTaskMgr::SendContinuousTaskNotification(
         appName, notificationText, bgTaskUid_);
 }
 
+void BgContinuousTaskMgr::FilterNotificationMode(const std::shared_ptr<ContinuousTaskRecord> record,
+    std::vector<uint32_t> &checkModes)
+{
+    std::vector<uint32_t> modesValue = record->bgModeIds_;
+    std::vector<uint32_t> subModesValue = record->bgSubModeIds_;
+    if (CommonUtils::CheckExistMode(modesValue, BackgroundMode::BLUETOOTH_INTERACTION) &&
+        CommonUtils::CheckExistMode(subModesValue, BackgroundSubMode::CAR_KEY)) {
+        auto carKeyIter = std::find(subModesValue.begin(), subModesValue.end(), BackgroundSubMode::CAR_KEY);
+        subModesValue.erase(carKeyIter);
+        auto blueIter = std::find(modesValue.begin(), modesValue.end(), BackgroundMode::BLUETOOTH_INTERACTION);
+        modesValue.erase(blueIter);
+    }
+    auto iter = avSessionNotification_.find(record->uid_);
+    bool isPublish = (iter != avSessionNotification_.end()) ? iter->second : false;
+    bool isPublishAvsession = isPublish || (CommonUtils::CheckExistMode(subModesValue,
+        BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK) && record->isByRequestObject_);
+    for (const auto mode : modesValue) {
+        if ((mode == BackgroundMode::AUDIO_PLAYBACK && isPublishAvsession) || ((mode == BackgroundMode::VOIP ||
+            mode == BackgroundMode::AUDIO_RECORDING) && record->IsSystem())) {
+            continue;
+        }
+        BGTASK_LOGD("FilterNotificationMode mode: %{public}d", mode);
+        checkModes.push_back(mode);
+    }
+    CommonUtils::SortMode(checkModes);
+}
+
 ErrCode BgContinuousTaskMgr::CheckNotificationText(std::string &notificationText,
     const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord)
 {
@@ -1417,36 +1517,141 @@ ErrCode BgContinuousTaskMgr::CheckNotificationText(std::string &notificationText
         BGTASK_LOGI("LiveView Notification isPublish. uid: %{public}d", continuousTaskRecord->uid_);
         return ERR_OK;
     }
-    auto iter = avSessionNotification_.find(continuousTaskRecord->uid_);
-    bool isPublish = (iter != avSessionNotification_.end()) ? iter->second : false;
-    BGTASK_LOGD("AVSession Notification isPublish: %{public}d", isPublish);
-    // 子类型带有avsession,不发通知
-    bool isPublishAvsession = isPublish || (CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_,
-        BackgroundTaskSubmode::SUBMODE_AVSESSION_AUDIO_PLAYBACK) && continuousTaskRecord->isByRequestObject_);
-    for (auto mode : continuousTaskRecord->bgModeIds_) {
-        if ((mode == BackgroundMode::AUDIO_PLAYBACK && isPublishAvsession) || ((mode == BackgroundMode::VOIP ||
-            mode == BackgroundMode::AUDIO_RECORDING) && continuousTaskRecord->IsSystem())) {
-            continue;
-        }
-        BGTASK_LOGD("mode %{public}d", mode);
-        if (mode == BackgroundMode::SPECIAL_SCENARIO_PROCESSING || (mode == BackgroundMode::BLUETOOTH_INTERACTION &&
-            CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_, BackgroundSubMode::CAR_KEY))) {
-            ErrCode ret = CheckSpecialNotificationText(notificationText, continuousTaskRecord, mode);
-            if (ret != ERR_OK) {
-                BGTASK_LOGE("check special notification fail.");
-                return ret;
-            }
-            continue;
-        }
-        uint32_t index = GetBgModeNameIndex(mode, continuousTaskRecord->isNewApi_);
-        if (index < continuousTaskText_.size()) {
-            notificationText += continuousTaskText_.at(index);
-            notificationText += "\n";
+    // 特殊类型
+    if (CommonUtils::CheckExistMode(continuousTaskRecord->bgModeIds_, BackgroundMode::SPECIAL_SCENARIO_PROCESSING)) {
+        return CheckSpecialNotificationText(notificationText, continuousTaskRecord,
+            BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    }
+    // 单独处理蓝牙车钥匙，因为该类型，通知文案与其他不一致
+    std::string mergeBlueNotificationText {""};
+    if (CommonUtils::CheckExistMode(continuousTaskRecord->bgModeIds_, BackgroundMode::BLUETOOTH_INTERACTION) &&
+        CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_, BackgroundSubMode::CAR_KEY)) {
+        uint32_t index = BackgroundSubMode::CAR_KEY - 1;
+        if (index < continuousTaskSubText_.size()) {
+            mergeBlueNotificationText += continuousTaskSubText_.at(index);
+            mergeBlueNotificationText += "\n";
         } else {
-            BGTASK_LOGI("index is invalid");
             return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
         }
     }
+    std::vector<uint32_t> checkModes;
+    // 过滤需要发送通知的长时任务类型，去除不需发送的，最多发送3个，优先数据传输、录制、定位
+    FilterNotificationMode(continuousTaskRecord, checkModes);
+    if (checkModes.empty()) {
+        notificationText += mergeBlueNotificationText;
+        return ERR_OK;
+    }
+    if (checkModes.size() == 1) {
+        return SingleModeNotificationText(notificationText, checkModes, mergeBlueNotificationText,
+            continuousTaskRecord);
+    }
+    ErrCode ret = MergeNotificationText(notificationText, checkModes, mergeBlueNotificationText);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::SingleModeNotificationText(std::string &notificationText,
+    const std::vector<uint32_t> &checkModes, const std::string &mergeBlueNotificationText,
+    const std::shared_ptr<ContinuousTaskRecord> record)
+{
+    if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::BLUETOOTH_INTERACTION) &&
+        CommonUtils::CheckExistMode(checkModes, BackgroundMode::AUDIO_PLAYBACK)) {
+        // 只有播音类型，且播音类型要发通知
+        std::vector<std::shared_ptr<AudioStandard::AudioRendererChangeInfo>> rendererChangeInfos;
+        auto res = AudioStandard::AudioStreamManager::GetInstance()->GetCurrentRendererChangeInfos(rendererChangeInfos);
+        if (res != 0) {
+            BGTASK_LOGE("GetCurrentRendererChangeInfos failed");
+            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+        }
+        auto findIter = std::find_if(rendererChangeInfos.begin(), rendererChangeInfos.end(), [&](const auto &ele) {
+            return record->uid_ == ele->clientUID &&
+                ele->rendererState == AudioStandard::RendererState::RENDERER_RUNNING;
+        });
+        if (findIter == rendererChangeInfos.end() && startingTaskText_.size() > 0) {
+            // 此时应用未播音
+            notificationText += startingTaskText_[0];
+            record->audioPlayState_ = false;
+            BGTASK_LOGD("uid: %{public}d, bundleName: %{public}s is not playing audio.",
+                record->uid_, record->bundleName_.c_str());
+            return ERR_OK;
+        }
+    }
+    uint32_t index = GetBgModeNameIndex(checkModes[0], record->isNewApi_);
+    if (index < continuousTaskText_.size()) {
+        if (mergeBlueNotificationText != "") {
+            notificationText += mergeBlueNotificationText;
+        }
+        notificationText += continuousTaskText_.at(index);
+        notificationText += "\n";
+        return ERR_OK;
+    } else {
+        BGTASK_LOGE("index is invalid");
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
+    return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::MergeNotificationText(std::string &notificationText,
+    const std::vector<uint32_t> &checkModes, const std::string &mergeBlueNotificationText)
+{
+    std::vector<std::tuple<Global::Resource::ResourceManager::NapiValueType, std::string>> jsParams;
+    for (const auto mode : checkModes) {
+        if (modeForNotificationText_.count(mode) == 0) {
+            BGTASK_LOGE("mode: %{public}d is invalid, no have notification text.", mode);
+            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+        }
+        std::string modeText = modeForNotificationText_.at(mode).second;
+        if (modeText == "") {
+            BGTASK_LOGE("mode: %{public}d is invalid, notification text is empty.", mode);
+            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+        }
+        jsParams.emplace_back(Global::Resource::ResourceManager::NapiValueType::NAPI_STRING, modeText);
+        if (jsParams.size() == MAX_NOTIFICATION_TEXT_TYPE) {
+            break;
+        }
+    }
+    ErrCode ret = FormatNotificationText(notificationText, checkModes, mergeBlueNotificationText, jsParams);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    return ERR_OK;
+}
+
+WEAK_FUNC ErrCode BgContinuousTaskMgr::FormatNotificationText(std::string &notificationText,
+    const std::vector<uint32_t> &checkModes, const std::string &mergeBlueNotificationText,
+    std::vector<std::tuple<Global::Resource::ResourceManager::NapiValueType, std::string>> &jsParams)
+{
+    AppExecFwk::BundleInfo bundleInfo;
+    if (!BundleManagerHelper::GetInstance()->GetBundleInfo(BG_TASK_RES_BUNDLE_NAME,
+        AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo)) {
+        BGTASK_LOGE("get bundleName bundleInfo: %{public}s bundle info failed.", BG_TASK_RES_BUNDLE_NAME);
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
+    auto resourceManager = GetBundleResMgr(bundleInfo);
+    if (resourceManager == nullptr) {
+        BGTASK_LOGE("resourceManager is null.");
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
+    std::string notificationFormatType {""};
+    if (checkModes.size() == MAX_NOTIFICATION_TEXT_TYPE - 1) {
+        // 双类型通知
+        notificationFormatType = g_taskNotificationResNames[0];
+    } else if (checkModes.size() == MAX_NOTIFICATION_TEXT_TYPE) {
+        // 三类型通知
+        notificationFormatType = g_taskNotificationResNames[1];
+    } else if (checkModes.size() > MAX_NOTIFICATION_TEXT_TYPE) {
+        // 超三类型通知
+        notificationFormatType = g_taskNotificationResNames[MAX_NOTIFICATION_TEXT_TYPE - 1];
+    }
+    std::string notificationMergeText {""};
+    resourceManager->GetStringFormatByName(notificationFormatType.c_str(), notificationMergeText, jsParams);
+    if (notificationMergeText.empty()) {
+        BGTASK_LOGE("get merge notification title text failed!");
+        return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
+    }
+    notificationText = mergeBlueNotificationText + notificationMergeText;
     return ERR_OK;
 }
 
@@ -1456,15 +1661,6 @@ ErrCode BgContinuousTaskMgr::CheckSpecialNotificationText(std::string &notificat
     if (continuousTaskSubText_.empty()) {
         BGTASK_LOGE("get subMode notification prompt info failed, continuousTaskSubText_ is empty");
         return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
-    }
-    if (mode == BackgroundMode::BLUETOOTH_INTERACTION &&
-        CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_, BackgroundSubMode::CAR_KEY)) {
-        uint32_t index = BackgroundSubMode::CAR_KEY - 1;
-        if (index < continuousTaskSubText_.size()) {
-            notificationText += continuousTaskSubText_.at(index);
-            notificationText += "\n";
-            return ERR_OK;
-        }
     }
     if (CommonUtils::CheckExistMode(continuousTaskRecord->bgSubModeIds_,
         BackgroundTaskSubmode::SUBMODE_MEDIA_PROCESS_NORMAL_NOTIFICATION)) {
@@ -2957,22 +3153,7 @@ std::string BgContinuousTaskMgr::GetNotificationText(const std::shared_ptr<Conti
     bool isPublish = (iter != avSessionNotification_.end()) ? iter->second : false;
     BGTASK_LOGD("AVSession Notification isPublish: %{public}d", isPublish);
     std::string notificationText {""};
-    for (auto mode : record->bgModeIds_) {
-        if ((mode == BackgroundMode::AUDIO_PLAYBACK && isPublish) || ((mode == BackgroundMode::VOIP ||
-            mode == BackgroundMode::AUDIO_RECORDING) && record->IsSystem())) {
-            continue;
-        }
-        if (mode == BackgroundMode::SPECIAL_SCENARIO_PROCESSING || (mode == BackgroundMode::BLUETOOTH_INTERACTION &&
-            CommonUtils::CheckExistMode(record->bgSubModeIds_, BackgroundSubMode::CAR_KEY))) {
-            CheckSpecialNotificationText(notificationText, record, mode);
-            continue;
-        }
-        uint32_t index = GetBgModeNameIndex(mode, record->isNewApi_);
-        if (index < continuousTaskText_.size()) {
-            notificationText += continuousTaskText_.at(index);
-            notificationText += "\n";
-        }
-    }
+    CheckNotificationText(notificationText, record);
     return notificationText;
 }
 
@@ -3167,11 +3348,14 @@ ErrCode BgContinuousTaskMgr::SendLiveViewAndOtherNotification(std::shared_ptr<Co
         return ret;
     }
     subRecord->bgModeIds_.clear();
-    for (const auto &mode : record->bgModeIds_) {
+    for (size_t index = 0; index < record->bgModeIds_.size(); index++) {
+        uint32_t mode = record->bgModeIds_[index];
         if (mode == BackgroundMode::DATA_TRANSFER) {
             continue;
         }
+        uint32_t subMode = record->bgSubModeIds_[index];
         subRecord->bgModeIds_.push_back(mode);
+        subRecord->bgSubModeIds_.push_back(subMode);
     }
     subRecord->bgModeId_ = subRecord->bgModeIds_[0];
     ret = SendNotification(subRecord, record, appName, true);
@@ -3942,6 +4126,47 @@ ErrCode BgContinuousTaskMgr::RemoveAuthRecordInner(const std::shared_ptr<Continu
         expiredCallbackMap_.erase(callbackIter);
     }
     return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::NotifyAudioStart(const int32_t uid)
+{
+    if (!isSysReady_.load()) {
+        BGTASK_LOGW("manager is not ready");
+        return ERR_BGTASK_SYS_NOT_READY;
+    }
+    auto self = shared_from_this();
+    auto task = [self, uid]() {
+        if (self) {
+            self->NotifyAudioStartInner(uid);
+        }
+    };
+    handler_->PostTask(task);
+    return ERR_OK;
+}
+
+void BgContinuousTaskMgr::NotifyAudioStartInner(const int32_t uid)
+{
+    auto findTask = [uid](const auto &target) {
+        return uid == target.second->uid_ && !target.second->audioPlayState_ && target.second->notificationId_ > 0;
+    };
+    auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findTask);
+    if (findTaskIter == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGI("uid: %{public}d no have continoustask.", uid);
+        return;
+    }
+    // 播音回调，更新通知文案
+    auto record = findTaskIter->second;
+    uint32_t index = GetBgModeNameIndex(BackgroundMode::AUDIO_PLAYBACK, record->isNewApi_);
+    if (index >= continuousTaskText_.size()) {
+        BGTASK_LOGE("index: %{public}d is invaild.", index);
+        return;
+    }
+    std::string notificationText = continuousTaskText_.at(index);
+    ErrCode ret = NotificationTools::GetInstance()->PublishNotification(record, record->appName_,
+        notificationText, bgTaskUid_);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("uid: %{public}d update notification fail for audio_playback.", uid);
+    }
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
