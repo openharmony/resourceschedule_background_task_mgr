@@ -139,6 +139,104 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"notification_text_bluetooth_interactionn",
+            "value":"Bluetooth",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_wifi_interaction",
+            "value":"WLAN",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_voip",
+            "value":"chiamata",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_two_mode",
+            "value":"Attività in corso (%1$s, %2$s). Chiudendo questa notifica, verranno terminate.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_task_keeping",
+            "value":"elaborazione",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_recording",
+            "value":"registrazione",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_location",
+            "value":"posizionamento",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_data_transfer",
+            "value":"trasferimento dati",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_three_mode",
+            "value":"Attività in corso (%1$s, %2$s, %3$s). Chiudendo questa notifica, verranno terminate.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_exceed",
+            "value":"Attività in corso (%1$s, %2$s, %3$s e altre). Chiudendo questa notifica, verranno terminate.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_multidevice_connection",
+            "value":"collaborazione tra dispositivi",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_starting_task",
+            "value":"Avvio attività…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_playbackr",
+            "value":"riproduzione audio/video",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name": "ohos_bgmode_prompt_nearlink",
+            "value": "Un'attività NearLink è in corso. Se chiudi questa notifica, terminerà.",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }
