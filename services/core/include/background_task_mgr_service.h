@@ -111,7 +111,7 @@ public:
     ErrCode GetAllContinuousTaskApps(std::vector<ContinuousTaskCallbackInfo> &list) override;
     ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys) override;
     ErrCode RemoveAuthRecord(const ContinuousTaskParam &taskParam) override;
-    ErrCode NotifyAudioStart(const int32_t uid);
+    ErrCode NotifyAudioStart(const int32_t uid) override;
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
     void ForceCancelSuspendDelay(int32_t requestId);
