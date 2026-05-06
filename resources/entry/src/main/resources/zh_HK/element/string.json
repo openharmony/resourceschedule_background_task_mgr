@@ -139,6 +139,104 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"notification_text_bluetooth_interactionn",
+            "value":"藍牙",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_wifi_interaction",
+            "value":"WLAN",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_voip",
+            "value":"通話",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_two_mode",
+            "value":"正在運行%1$s和%2$s任務，刪除通知後任務將停止",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_task_keeping",
+            "value":"計算",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_recording",
+            "value":"錄製",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_location",
+            "value":"定位",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_data_transfer",
+            "value":"數據傳輸",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_three_mode",
+            "value":"正在運行%1$s、%2$s和%3$s任務，刪除通知後任務將停止",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_exceed",
+            "value":"正在運行%1$s、%2$s、%3$s等任務，刪除通知後任務將停止",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_multidevice_connection",
+            "value":"分佈式",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_starting_task",
+            "value":"任務啟動中",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_playbackr",
+            "value":"影音播放",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name": "ohos_bgmode_prompt_nearlink",
+            "value": "正在運行星閃相關任務，刪除通知後任務將停止",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }
