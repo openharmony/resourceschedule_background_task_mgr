@@ -2778,7 +2778,8 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
     ReportHisysEvent(changeEventType, continuousTaskInfo);
 }
 
-void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid)
+void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid,
+    int32_t userId, int32_t appIndex)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
@@ -2793,7 +2794,8 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
         cachedBundleInfos_.erase(uid);
         auto iterAuth = bannerNotificationRecord_.begin();
         while (iterAuth != bannerNotificationRecord_.end()) {
-            if (iterAuth->second->GetUid() != uid || iterAuth->second->GetBundleName() != bundleName) {
+            if (iterAuth->second->GetUserId() != userId || iterAuth->second->GetBundleName() != bundleName ||
+                iterAuth->second->GetAppIndex() != appIndex) {
                 iterAuth++;
                 continue;
             }
