@@ -178,7 +178,10 @@
         },
         {
             "name":"notification_text_bluetooth_interactionn",
-            "value":"蓝牙相关"
+            "value":"蓝牙相关",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_multidevice_connection",
@@ -189,11 +192,17 @@
         },
         {
             "name":"notification_text_wifi_interaction",
-            "value":"WLAN相关"
+            "value":"WLAN相关",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_voip",
-            "value":"通话相关"
+            "value":"通话相关",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_task_keeping",
@@ -232,7 +241,10 @@
         },
         {
             "name":"ohos_bgmode_prompt_nearlink",
-            "value":"正在运行星闪相关任务，删除通知后任务将停止"
+            "value":"正在运行星闪相关任务，删除通知后任务将停止",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
