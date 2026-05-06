@@ -725,10 +725,10 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_015, TestSize.Level1)
     bgContinuousTaskMgr_->OnBundleInfoChanged("action", "bundleName", -1, -1, -1);
     bgContinuousTaskMgr_->isSysReady_.store(true);
     bgContinuousTaskMgr_->OnBundleInfoChanged(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED,
-        "bundleName", -1, -1);
+        "bundleName", -1, -1, -1);
 
     bgContinuousTaskMgr_->OnBundleInfoChanged(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED,
-        "bundleName", -1, -1);
+        "bundleName", -1, -1, -1);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
