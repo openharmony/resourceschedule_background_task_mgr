@@ -139,6 +139,104 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"notification_text_bluetooth_interactionn",
+            "value":"Bluetooth",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_wifi_interaction",
+            "value":"WLAN",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_voip",
+            "value":"вызов",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_two_mode",
+            "value":"Выполняются задачи (%1$s, %2$s). Если вы закроете это уведомление, задачи будут завершены.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_task_keeping",
+            "value":"вычисление",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_recording",
+            "value":"запись контента",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_location",
+            "value":"определение местоположения",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_data_transfer",
+            "value":"перенос данных",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_three_mode",
+            "value":"Выполняются задачи (%1$s, %2$s и %3$s). Если вы закроете это уведомление, задачи будут завершены.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_exceed",
+            "value":"Выполняются задачи (%1$s, %2$s, %3$s и другие). Если вы закроете это уведомление, задачи будут завершены.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_multidevice_connection",
+            "value":"задача взаимодействия между устройствами",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_starting_task",
+            "value":"Запуск задачи...",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_playbackr",
+            "value":"воспроизведение аудио/видео",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name": "ohos_bgmode_prompt_nearlink",
+            "value": "Выполняется задача, связанная с NearLink. Если вы закроете это уведомление, задача будет завершена.",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }
