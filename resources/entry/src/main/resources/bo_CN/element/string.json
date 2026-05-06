@@ -139,6 +139,104 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"notification_text_bluetooth_interactionn",
+            "value":"སོ་སྔོན་",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_wifi_interaction",
+            "value":"WLAN",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_voip",
+            "value":"ཁ་པར་གཏོང་ལེན་",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_two_mode",
+            "value":"%1$s %2$sལས་སྒོ་འཁོར་སྐྱོད་བྱེད་བཞིན་ཡོད། བརྡ་ཐོ་བསུབས་རྗེས་ལས་འགན་མཚམས་འཇོག",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_task_keeping",
+            "value":"རྩིས་རྒྱག",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_recording",
+            "value":"ཕབ་བཟོ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_location",
+            "value":"གནས་ངེས།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_data_transfer",
+            "value":"གཞི་གྲངས་བརྒྱུད་གཏོང་།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_three_mode",
+            "value":"%1$s %2$s %3$sལས་སྒོ་འཁོར་སྐྱོད་བྱེད་བཞིན་ཡོད། བརྡ་ཐོ་བསུབས་རྗེས་ལས་འགན་མཚམས་འཇོག",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_exceed",
+            "value":"%1$s %2$s %3$sསོགས་ཀྱི་ལས་སྒོ་འཁོར་སྐྱོད་བྱེད་བཞིན་ཡོད། བརྡ་ཐོ་བསུབས་རྗེས་ལས་འགན་མཚམས་འཇོག",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_multidevice_connection",
+            "value":"ཁྱབ་འགྲེམ་རྣམ་པ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_starting_task",
+            "value":"ལས་འགན་འགོ་སློང་བཞིན་པ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_playbackr",
+            "value":"སྒྲ་བརྙན་ཟློས་གཏོང་བ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name": "ohos_bgmode_prompt_nearlink",
+            "value": "སྐར་ཆེམ་ཀྱི་འབྲེལ་ཡོད་ལས་འགན་འཁོར་སྐྱོད་བྱེད་བཞིན་ཡོད། བརྡ་ཐོ་བསུབས་རྗེས་ལས་འགན་མཚམས་འཇོག",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }
