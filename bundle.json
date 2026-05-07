@@ -61,7 +61,10 @@
           "i18n",
           "relational_store",
           "icu",
-          "runtime_core"
+          "runtime_core",
+          "ets_frontend",
+          "image_framework",
+          "json"
         ]
       },
       "build": {
