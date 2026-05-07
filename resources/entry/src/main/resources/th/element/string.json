@@ -139,6 +139,104 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"notification_text_bluetooth_interactionn",
+            "value":"บลูทูธ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_wifi_interaction",
+            "value":"WLAN",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_voip",
+            "value":"การโทร",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_two_mode",
+            "value":"งานที่กำลังดำเนินการอยู่ (%1$s %2$s) การปิดการแจ้งเตือนนี้จะสิ้นสุดงานเหล่านั้น",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_task_keeping",
+            "value":"กำลังประมวลผล",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_recording",
+            "value":"กำลังบันทึก",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_location",
+            "value":"การหาตำแหน่ง",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_data_transfer",
+            "value":"การถ่ายโอนข้อมูล",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_three_mode",
+            "value":"งานที่กำลังดำเนินการอยู่ (%1$s %2$s %3$s) การปิดการแจ้งเตือนนี้จะสิ้นสุดงานเหล่านั้น",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_exceed",
+            "value":"งานที่กำลังดำเนินการอยู่ (%1$s %2$s %3$s และอื่น ๆ) การปิดการแจ้งเตือนนี้จะสิ้นสุดงานเหล่านั้น",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_multidevice_connection",
+            "value":"การทำงานร่วมกันข้ามอุปกรณ์",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_starting_task",
+            "value":"กำลังเริ่มงงาน…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_playbackr",
+            "value":"การเล่นเสียง/วิดีโอ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name": "ohos_bgmode_prompt_nearlink",
+            "value": "มีงาน NearLink ที่ดำเนินการอยู่ การปิดการแจ้งเตือนนี้จะเป็นการสิ้นสุดการดำเนินการ",
+            "attr": {
+                "priority": "translate"
+            }
         }
     ]
 }

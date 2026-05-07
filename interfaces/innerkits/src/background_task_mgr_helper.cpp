@@ -201,5 +201,10 @@ ErrCode BackgroundTaskMgrHelper::SendNotificationByDeteTask(const std::set<std::
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SendNotificationByDeteTask(taskKeys);
 }
+
+ErrCode BackgroundTaskMgrHelper::NotifyAudioStart(const int32_t uid)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->NotifyAudioStart(uid);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

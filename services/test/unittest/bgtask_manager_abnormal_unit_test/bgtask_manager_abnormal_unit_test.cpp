@@ -337,5 +337,17 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_016
     ContinuousTaskParam taskParam = ContinuousTaskParam();
     EXPECT_EQ(BackgroundTaskMgrService_->RemoveAuthRecord(taskParam), ERR_BGTASK_PERMISSION_DENIED);
 }
+
+/**
+ * @tc.name: NotifyAudioStart_001
+ * @tc.desc: test NotifyAudioStart.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, NotifyAudioStart_001, TestSize.Level3)
+{
+    int32_t uid = 1;
+    EXPECT_EQ(BackgroundTaskMgrService_->NotifyAudioStart(uid), ERR_BGTASK_PERMISSION_DENIED);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

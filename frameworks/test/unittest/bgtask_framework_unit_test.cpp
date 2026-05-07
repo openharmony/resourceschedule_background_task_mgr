@@ -1149,5 +1149,20 @@ HWTEST_F(BgTaskFrameworkUnitTest, RemoveAuthRecord_001, TestSize.Level1)
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 }
+
+/**
+ * @tc.name: NotifyAudioStart_001
+ * @tc.desc: test NotifyAudioStart.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, NotifyAudioStart_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    int32_t uid = 1;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->NotifyAudioStart(uid),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+}
 }
 }

@@ -190,7 +190,10 @@
         },
         {
             "name":"notification_text_bluetooth_interactionn",
-            "value":"Bluetooth"
+            "value":"Bluetooth",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_multidevice_connection",
@@ -201,11 +204,17 @@
         },
         {
             "name":"notification_text_wifi_interaction",
-            "value":"WLAN"
+            "value":"WLAN",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_voip",
-            "value":"call"
+            "value":"call",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_task_keeping",
@@ -216,7 +225,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Starting the task...",
+            "value":"Starting task…",
             "attr":{
                 "priority":"translate"
             }
@@ -244,7 +253,10 @@
         },
         {
             "name":"ohos_bgmode_prompt_nearlink",
-            "value":"A nearlink task is in progress. Closing this notification will end it."
+            "value":"A NearLink task is in progress. Closing this notification will end it.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

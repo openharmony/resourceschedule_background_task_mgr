@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -297,6 +297,7 @@ RState ResourceManagerImpl::GetDrawableInfoByName(const char *name, std::string 
 RState ResourceManagerImpl::GetStringFormatByName(const char *name, std::string &outValue,
     std::vector<std::tuple<ResourceManager::NapiValueType, std::string>> &jsParams)
 {
+    outValue = "bgmode_test";
     return SUCCESS;
 }
 

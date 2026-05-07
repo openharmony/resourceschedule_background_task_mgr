@@ -816,6 +816,14 @@ ErrCode BackgroundTaskMgrService::RemoveAuthRecord(const ContinuousTaskParam &ta
     return BgContinuousTaskMgr::GetInstance()->RemoveAuthRecord(paramPtr);
 }
 
+ErrCode BackgroundTaskMgrService::NotifyAudioStart(const int32_t uid)
+{
+    if (!CheckCallingToken() || !CheckCallingProcess()) {
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    return BgContinuousTaskMgr::GetInstance()->NotifyAudioStart(uid);
+}
+
 bool BackgroundTaskMgrService::CheckAtomicService()
 {
     uint64_t tokenId = IPCSkeleton::GetCallingFullTokenID();
