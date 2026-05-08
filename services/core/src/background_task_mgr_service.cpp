@@ -222,9 +222,6 @@ ErrCode BackgroundTaskMgrService::StartBackgroundRunning(const ContinuousTaskPar
     int32_t& notificationId, int32_t& continuousTaskId)
 {
     if (CheckAtomicService()) {
-        if (taskParam.isByRequestObject_) {
-            return ERR_BGTASK_PERMISSION_DENIED;
-        }
         for (const auto mode : taskParam.bgModeIds_) {
             if (mode != BackgroundMode::AUDIO_PLAYBACK && mode != BackgroundMode::MULTI_DEVICE_CONNECTION &&
                 mode != BackgroundMode::LOCATION) {
@@ -249,9 +246,6 @@ ErrCode BackgroundTaskMgrService::UpdateBackgroundRunning(const ContinuousTaskPa
     int32_t& notificationId, int32_t& continuousTaskId)
 {
     if (CheckAtomicService()) {
-        if (taskParam.isByRequestObject_) {
-            return ERR_BGTASK_PERMISSION_DENIED;
-        }
         for (const auto mode : taskParam.bgModeIds_) {
             if (mode != BackgroundMode::AUDIO_PLAYBACK && mode != BackgroundMode::MULTI_DEVICE_CONNECTION &&
                 mode != BackgroundMode::LOCATION) {
