@@ -57,7 +57,6 @@ ohos_unittest("bgtask_manager_abnormal_unit_test") {
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "i18n:intl_util",
-    "image_framework:image_native",
     "ipc:ipc_single",
     "relational_store:native_rdb",
     "resource_management:global_resmgr",
