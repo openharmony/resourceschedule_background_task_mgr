@@ -257,6 +257,10 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"notification_text_nearlink",
+            "value":"nearlink"
         }
     ]
 }

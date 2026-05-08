@@ -444,6 +444,8 @@ void BgContinuousTaskMgr::InitNotificationText()
         std::make_pair("notification_text_voip", ""));
     modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::TASK_KEEPING),
         std::make_pair("notification_text_task_keeping", ""));
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::NEARLINK),
+        std::make_pair("notification_text_nearlink", ""));
 }
 
 bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
