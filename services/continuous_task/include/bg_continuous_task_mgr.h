@@ -121,7 +121,8 @@ public:
         int32_t deleteReason = CANCEL_REASON_DELETE);
     bool StopBannerContinuousTaskByUser(const std::string &label);
     void OnAccountsStateChanged(int32_t id);
-    void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid);
+    void OnBundleInfoChanged(const std::string &action, const std::string &bundleName, int32_t uid,
+        int32_t userId, int32_t appIndex);
     void OnAbilityStateChanged(int32_t uid, const std::string &abilityName, int32_t abilityId);
     void OnAppStopped(int32_t uid);
     void OnAppStateChanged(int32_t uid, int32_t state);

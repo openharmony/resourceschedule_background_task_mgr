@@ -728,13 +728,13 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_014, TestSize.Level1)
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_015, TestSize.Level1)
 {
     bgContinuousTaskMgr_->isSysReady_.store(false);
-    bgContinuousTaskMgr_->OnBundleInfoChanged("action", "bundleName", -1);
+    bgContinuousTaskMgr_->OnBundleInfoChanged("action", "bundleName", -1, -1, -1);
     bgContinuousTaskMgr_->isSysReady_.store(true);
     bgContinuousTaskMgr_->OnBundleInfoChanged(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED,
-        "bundleName", -1);
+        "bundleName", -1, -1, -1);
 
     bgContinuousTaskMgr_->OnBundleInfoChanged(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED,
-        "bundleName", -1);
+        "bundleName", -1, -1, -1);
 
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
@@ -745,7 +745,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_015, TestSize.Level1)
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
     bgContinuousTaskMgr_->OnBundleInfoChanged(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED,
-        "bundleName", 1);
+        "bundleName", 1, -1, -1);
     EXPECT_TRUE(true);
 }
 

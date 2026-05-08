@@ -101,10 +101,12 @@ void SystemEventObserver::OnReceiveEventContinuousTask(const EventFwk::CommonEve
     }
     std::string bundleName = want.GetElement().GetBundleName();
     int32_t uid = want.GetIntParam(AppExecFwk::Constants::UID, -1);
-    BGTASK_LOGI("get common event action = %{public}s, bundleName = %{public}s, uid = %{public}d",
-        action.c_str(), bundleName.c_str(), uid);
-    auto task = [bgContinuousTaskMgr, action, bundleName, uid]() {
-        bgContinuousTaskMgr->OnBundleInfoChanged(action, bundleName, uid);
+    int32_t userId = want.GetIntParam(AppExecFwk::Constants::USER_ID, -1);
+    int32_t appIndex = want.GetIntParam(AppExecFwk::Constants::APP_INDEX, -1);
+    BGTASK_LOGI("get common event action = %{public}s, bundleName = %{public}s, uid = %{public}d, "
+        "userId = %{public}d, appIndex = %{public}d,", action.c_str(), bundleName.c_str(), uid, userId, appIndex);
+    auto task = [bgContinuousTaskMgr, action, bundleName, uid, userId, appIndex]() {
+        bgContinuousTaskMgr->OnBundleInfoChanged(action, bundleName, uid, userId, appIndex);
     };
     handler->PostTask(task, TASK_ON_BUNDLEINFO_CHANGED);
 }
