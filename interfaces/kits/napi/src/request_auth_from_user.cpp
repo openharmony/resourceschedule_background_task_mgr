@@ -311,7 +311,7 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
     taskParam.bgSubModeIds_ = request->GetBackgroundTaskSubmodes();
     taskParam.appIndex_ = abilityContext->GetAbilityInfo()->appIndex;
     int32_t callbackUid = 0;
-    if (!SendRequest(env, taskParam, *callback, abilityContext, callbackUid)) {
+    if (!SendRequest(env, taskParam, callback, abilityContext, callbackUid)) {
         return Common::NapiGetNull(env);
     }
     napi_value result = nullptr;
