@@ -63,6 +63,7 @@
           "icu",
           "runtime_core",
           "ets_frontend",
+          "image_framework",
           "json"
         ]
       },
