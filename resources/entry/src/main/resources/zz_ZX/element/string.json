@@ -135,6 +135,10 @@
         {
             "name": "ohos_bgmode_prompt_nearlink",
             "value": "[TS_1198127]_A NearLink task is in progress. Closing this notification will end it."
+        },
+        {
+            "name": "notification_text_nearlink",
+            "value": "[TS_1207152]_nearlink"
         }
     ]
 }
