@@ -3466,25 +3466,23 @@ ErrCode BgContinuousTaskMgr::CheckAuthParam(std::shared_ptr<ContinuousTaskRecord
         BGTASK_LOGI("request auth form user, callback is already exists.");
         return ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS;
     }
-    auto authRecord = [record](const auto &target) {
-        return record->GetBundleName() == target.second->GetBundleName() &&
-            record->GetUserId() == target.second->GetUserId() && record->GetAppIndex() == target.second->GetAppIndex();
-    };
-    auto authRecordIter = find_if(bannerNotificationRecord_.begin(), bannerNotificationRecord_.end(), authRecord);
-    if (authRecordIter != bannerNotificationRecord_.end()) {
-        if (authRecordIter->second->GetAuthResult() == static_cast<int32_t>(UserAuthResult::NOT_SUPPORTED)) {
-            BGTASK_LOGE("bundleName: %{public}s module.json not deploy special type.", record->bundleName_.c_str());
-            return ERR_BGTASK_CONTINUOUS_NOT_DEPLOY_SPECIAL_SCENARIO_PROCESSING;
-        }
-        BGTASK_LOGE("bundleName: %{public}s has banner notification or authorized.", record->bundleName_.c_str());
-        return ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED;
-    }
     return ERR_OK;
 }
 
 ErrCode BgContinuousTaskMgr::RequestAuthFromUserInner(std::shared_ptr<ContinuousTaskRecord> record,
     const sptr<IExpiredCallback>& callback, int32_t &notificationId)
 {
+    auto authRecord = [record](const auto &target) {
+        return record->GetBundleName() == target.second->GetBundleName() &&
+            record->GetUserId() == target.second->GetUserId() && record->GetAppIndex() == target.second->GetAppIndex();
+    };
+    auto authRecordIter = find_if(bannerNotificationRecord_.begin(), bannerNotificationRecord_.end(), authRecord);
+    if (authRecordIter != bannerNotificationRecord_.end()) {
+        // 请求授权时，已经存在授权记录，直接回调结果
+        int32_t authResult = authRecordIter->second->GetAuthResult();
+        callback->OnExpiredAuth(authResult);
+        return ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED;
+    }
     ErrCode ret = CheckAuthParam(record, callback);
     if (ret != ERR_OK) {
         return ret;

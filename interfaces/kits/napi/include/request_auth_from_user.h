@@ -73,7 +73,7 @@ private:
     std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abilityContext_;
 };
 
-extern std::map<int32_t, std::shared_ptr<ExpiredCallback>> authCallbackInstances_;
+extern std::unordered_set<std::shared_ptr<ExpiredCallback>> authCallbackInstances_;
 extern std::mutex authCallbackLock_;
 
 napi_value RequestAuthFromUser(napi_env env, napi_callback_info info);
