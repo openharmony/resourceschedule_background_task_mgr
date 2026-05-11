@@ -116,6 +116,8 @@ void DecisionMaker::ApplicationStateObserver::OnProcessStateChanged(const AppExe
     bool isForeground = processData.state == AppExecFwk::AppProcessState::APP_STATE_FOREGROUND ||
         processData.state == AppExecFwk::AppProcessState::APP_STATE_FOCUS;
     bool isBackground = processData.state == AppExecFwk::AppProcessState::APP_STATE_BACKGROUND;
+    BGTASK_LOGI("uid: %{public}d, OnProcessState: %{public}d, isForeground: %{public}d, isBackground: %{public}d",
+        processData.pid, processData.state, isForeground, isBackground);
     decisionMaker_.UpdateForegroundUidPidMap(processData.uid, processData.pid, isForeground);
     if (isForeground || isBackground) {
         HandleStateChange(processData.bundleName, processData.uid, isForeground, isBackground);
@@ -157,6 +159,8 @@ void DecisionMaker::ApplicationStateObserver::HandleStateChange(
     } else if (isBackground) {
         auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
         if (it == decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
+            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is not in delay suspend list",
+                bundleName.c_str(), uid);
             return;
         }
         auto pkgInfo = it->second;
@@ -501,7 +505,7 @@ void DecisionMaker::HandleScreenOff()
         };
         auto findUidIter = find_if(transientPauseUid.begin(), transientPauseUid.end(), findUid);
         if (findUidIter != transientPauseUid.end()) {
-            BGTASK_LOGD("transient task freeze, not can start.");
+            BGTASK_LOGI("uid: %{public}d transient task freeze, not can start.", pkgInfo->GetUid());
             continue;
         }
         if (CanStartAccountingLocked(pkgInfo)) {

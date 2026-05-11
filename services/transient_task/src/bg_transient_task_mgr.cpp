@@ -193,7 +193,7 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
         BGTASK_LOGI("Request suspend delay failed, calling info is illegal.");
         return ret;
     }
-    BGTASK_LOGD("request suspend delay pkg : %{public}s, reason : %{public}s, uid : %{public}d, pid : %{public}d",
+    BGTASK_LOGI("request suspend delay pkg : %{public}s, reason : %{public}s, uid : %{public}d, pid : %{public}d",
         name.c_str(), Str16ToStr8(reason).c_str(), uid, pid);
 
     auto infoEx = make_shared<DelaySuspendInfoEx>(pid);
@@ -772,7 +772,7 @@ void BgTransientTaskMgr::OnAppCacheStateChanged(int32_t uid, int32_t pid, const 
     auto keyInfo = make_shared<KeyInfo>(bundleName, uid, pid);
     vector<int32_t> requestIdList = decisionMaker_->GetRequestIdListByKey(keyInfo);
     if (requestIdList.empty()) {
-        BGTASK_LOGD("pkgname: %{public}s, uid: %{public}d not request transient task.",
+        BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d not request transient task.",
             bundleName.c_str(), uid);
         return;
     }
