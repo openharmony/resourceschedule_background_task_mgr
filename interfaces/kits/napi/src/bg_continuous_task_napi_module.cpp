@@ -570,7 +570,7 @@ napi_value GetWantAgent(const napi_env &env, const napi_value &value,
         Common::HandleParamErr(env, ERR_WANTAGENT_NULL_OR_TYPE_ERR, true);
         return nullptr;
     }
-    napi_unwrap(env, value, (void **)&wantAgentPtr);
+    napi_unwrap(env, value, reinterpret_cast<void **>(&wantAgentPtr));
     if (wantAgentPtr == nullptr) {
         return nullptr;
     }
