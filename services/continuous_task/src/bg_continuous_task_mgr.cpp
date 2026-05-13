@@ -4181,7 +4181,7 @@ void BgContinuousTaskMgr::HisysEventRequestAuth(const std::shared_ptr<BannerNoti
         HiviewDFX::HiSysEvent::EventType::STATISTIC,
         "APP_UID", std::vector<int32_t>{authRecord->GetUid()},
         "APP_PID", std::vector<int32_t>{authRecord->GetUserId()},
-        "APP_NAME", std::vector<int32_t>{authRecord->GetAppName()},
+        "APP_NAME", std::vector<std::string>{authRecord->GetAppName()},
         "UIABILITY_IDENTITY", std::vector<int32_t>{authRecord->GetAppIndex()},
         "MODULE_NAME", std::vector<std::string>{""},
         "FUNC_NAME", std::vector<std::string>{""},
