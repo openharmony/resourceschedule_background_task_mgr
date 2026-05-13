@@ -104,6 +104,15 @@ static const std::set<uint32_t> g_liveViewTypes = {
     BackgroundMode::VOIP,
 };
 
+static const char *g_taskNotificationResNames[] = {
+     "notification_text_running_task_two_mode",
+     "notification_text_running_task_three_mode",
+     "notification_text_running_task_exceed",
+ };
+ 
+ static const char *g_startingTaskNotificationResNames[] = {
+     "notification_text_starting_task",
+
 static const std::map<int32_t, InnerApiReqBgRunningConfig> g_innerApiReqBgRunningConfig = {
     {7022, InnerApiReqBgRunningConfig(BackgroundMode::VOIP, false)},                         // VOIP_SA
     {5520, InnerApiReqBgRunningConfig(BackgroundMode::SPECIAL_SCENARIO_PROCESSING, false)},  // CFWK_SA
@@ -833,7 +842,7 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     }
     BGTASK_LOGI("continuous task param uid %{public}d, real %{public}d", taskParam->uid_, callingUid);
     if (taskParam->isStart_) {
-        return StartBackgroundRunningForInner(taskParam, callingUid);
+        return StartBackgroundRunningForInner(taskParam, callingUid);   
     }
     return StopBackgroundRunningForInner(taskParam);
 }
