@@ -109,10 +109,10 @@ static const char *g_taskNotificationResNames[] = {
     "notification_text_running_task_three_mode",
     "notification_text_running_task_exceed",
 };
- 
- static const char *g_startingTaskNotificationResNames[] = {
+
+static const char *g_startingTaskNotificationResNames[] = {
     "notification_text_starting_task",
- }
+}
 
 static const std::map<int32_t, InnerApiReqBgRunningConfig> g_innerApiReqBgRunningConfig = {
     {7022, InnerApiReqBgRunningConfig(BackgroundMode::VOIP, false)},                         // VOIP_SA
