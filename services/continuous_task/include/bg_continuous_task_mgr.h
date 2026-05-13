@@ -294,6 +294,7 @@ private:
     ErrCode RemoveAuthRecordInner(const std::shared_ptr<ContinuousTaskRecord> record);
     void InitNotificationText();
     void NotifyAudioStartInner(const int32_t uid);
+    void HisysEventRequestAuth(const std::shared_ptr<BannerNotificationRecord> authRecord);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};

@@ -3504,6 +3504,7 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUserInner(std::shared_ptr<Continuous
     }
     BGTASK_LOGI("send permission dialog, label key: %{public}s", key.c_str());
     bannerNotificationRecord_.emplace(key, bannerNotification);
+    HisysEventRequestAuth(bannerNotification);
     return RefreshAuthRecord();
 }
 
@@ -4169,6 +4170,23 @@ void BgContinuousTaskMgr::NotifyAudioStartInner(const int32_t uid)
     if (ret != ERR_OK) {
         BGTASK_LOGE("uid: %{public}d update notification fail for audio_playback.", uid);
     }
+}
+
+void BgContinuousTaskMgr::HisysEventRequestAuth(const std::shared_ptr<BannerNotificationRecord> authRecord)
+{
+    if (authRecord == nullptr) {
+        return;
+    }
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "BGTASK_ERR",
+        HiviewDFX::HiSysEvent::EventType::STATISTIC,
+        "APP_UID", std::vector<int32_t>{authRecord->GetUid()},
+        "APP_PID", std::vector<int32_t>{authRecord->GetUserId()},
+        "APP_NAME", std::vector<int32_t>{authRecord->GetAppName()},
+        "UIABILITY_IDENTITY", std::vector<int32_t>{authRecord->GetAppIndex()},
+        "MODULE_NAME", std::vector<std::string>{""},
+        "FUNC_NAME", std::vector<std::string>{""},
+        "ERR_CODE", std::vector<int32_t>{-1},
+        "ERR_MSG", std::vector<std::string>{"Request user authorization for using special type continuous tasks"});
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
