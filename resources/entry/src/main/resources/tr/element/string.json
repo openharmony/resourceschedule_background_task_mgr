@@ -139,7 +139,8 @@
             "attr":{
                 "priority":"LT"
             }
-        }{
+        },
+        {
             "name":"ohos_bgmode_prompt_nearlink",
             "value":"NearLink görevi devam ediyor. Bu bildirim kapatılırsa görev sonlandırılır.",
             "attr":{
