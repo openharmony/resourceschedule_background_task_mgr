@@ -139,6 +139,110 @@
             "attr":{
                 "priority":"LT"
             }
+        }{
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"NearLink görevi devam ediyor. Bu bildirim kapatılırsa görev sonlandırılır.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_two_mode",
+            "value":"Görevler devam ediyor (%1$s ve %2$s). Bu bildirimi kapatmak, bu görevleri sonlandırır.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_task_keeping",
+            "value":"bilgi işlem",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_recording",
+            "value":"kayıt",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_bluetooth_interactionn",
+            "value":"Bluetooth",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_wifi_interaction",
+            "value":"WLAN",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_location",
+            "value":"konumlandırma",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_voip",
+            "value":"arama",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_data_transfer",
+            "value":"veri aktarma",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_three_mode",
+            "value":"Görevler devam ediyor (%1$s, %2$s ve %3$s). Bu bildirimi kapatmak, bu görevleri sonlandırır.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_running_task_exceed",
+            "value":"Görevler devam ediyor (%1$s, %2$s, %3$s ve diğerleri). Bu bildirimi kapatmak, bu görevleri sonlandırır.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_multidevice_connection",
+            "value":"cihazlar arası iş birliği",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_starting_task",
+            "value":"Görev başlatılıyor…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_audio_playbackr",
+            "value":"ses/video oynatma",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_nearlink",
+            "value":"NearLink",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
