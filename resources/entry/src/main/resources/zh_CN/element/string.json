@@ -248,7 +248,10 @@
         },
         {
             "name":"notification_text_nearlink",
-            "value":"星闪"
+            "value":"星闪",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

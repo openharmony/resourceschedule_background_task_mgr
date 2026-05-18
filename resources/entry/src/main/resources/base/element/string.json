@@ -260,7 +260,10 @@
         },
         {
             "name":"notification_text_nearlink",
-            "value":"nearlink"
+            "value":"NearLink",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

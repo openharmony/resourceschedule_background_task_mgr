@@ -237,6 +237,13 @@
             "attr": {
                 "priority": "translate"
             }
+        },
+        {
+            "name":"notification_text_nearlink",
+            "value":"星閃",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
