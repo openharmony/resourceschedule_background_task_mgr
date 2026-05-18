@@ -14,7 +14,7 @@
  */
 
 #include "report_hisysevent_data.h"
-#include <sys/time.h>
+#include "res_sched_time_util.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -28,7 +28,8 @@ bool EfficiencyResourceApplyReportHisysEvent::AddData(const sptr<EfficiencyResou
     }
     appUid_.push_back(callbackInfo->GetUid());
     appPid_.push_back(callbackInfo->GetPid());
-    appName_.push_back(callbackInfo->GetBundleName() + "|" + std::to_string(GetCurrentTimestamp()));
+    appName_.push_back(callbackInfo->GetBundleName() +
+        "|" + std::to_string(ResourceSchedule::ResCommonUtil::GetCurrentTimestamp()));
     uiabilityIdentity_.push_back(-1);
     resourceType_.push_back(callbackInfo->GetResourceNumber());
     timeout_.push_back(resourceInfo->GetTimeOut());
@@ -59,7 +60,8 @@ bool EfficiencyResourceResetReportHisysEvent::AddData(const std::shared_ptr<Reso
     }
     appUid_.push_back(callbackInfo->GetUid());
     appPid_.push_back(callbackInfo->GetPid());
-    appName_.push_back(callbackInfo->GetBundleName());
+    appName_.push_back(callbackInfo->GetBundleName() +
+        "|" + std::to_string(ResourceSchedule::ResCommonUtil::GetCurrentTimestamp()));
     uiabilityIdentity_.push_back(-1);
     resourceType_.push_back(callbackInfo->GetResourceNumber());
     if (type == EfficiencyResourcesEventType::APP_RESOURCE_RESET) {
@@ -84,14 +86,6 @@ void EfficiencyResourceResetReportHisysEvent::ClearData()
     quota_.clear();
     allQuota_.clear();
     length_ = 0;
-}
-
-int64_t EfficiencyResourceApplyReportHisysEvent::GetCurrentTimestamp()
-{
-    // get current time,precision is ms + us
-    struct timeval currentTime;
-    gettimeofday(&currentTime, nullptr);
-    return static_cast<int64_t>(currentTime.tv_sec) * SEC_TO_MILLISEC + currentTime.tv_usec /SEC_TO_MILLISEC;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
