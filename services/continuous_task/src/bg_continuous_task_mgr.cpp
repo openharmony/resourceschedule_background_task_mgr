@@ -1091,6 +1091,9 @@ ErrCode BgContinuousTaskMgr::UpdateTaskNotification(std::shared_ptr<ContinuousTa
         std::string notificationText = GetNotificationText(record);
         if (notificationText.empty()) {
             BGTASK_LOGE("notificationText is empty, uid: %{public}d", record->uid_);
+        } else if (record->notificationId_ == -1) {
+            // 原始任务没有通知，更新新任务时需要新发通知
+            return SendContinuousTaskNotification(record);
         } else {
             newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
             return NotificationTools::GetInstance()->RefreshContinuousNotificationWantAndContext(bgTaskUid_,
