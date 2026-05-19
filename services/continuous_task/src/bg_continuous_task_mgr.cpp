@@ -3468,23 +3468,27 @@ ErrCode BgContinuousTaskMgr::CheckAuthParam(std::shared_ptr<ContinuousTaskRecord
         BGTASK_LOGI("request auth form user, callback is already exists.");
         return ERR_BGTASK_CONTINUOUS_CALLBACK_EXISTS;
     }
-    return ERR_OK;
-}
-
-ErrCode BgContinuousTaskMgr::RequestAuthFromUserInner(std::shared_ptr<ContinuousTaskRecord> record,
-    const sptr<IExpiredCallback>& callback, int32_t &notificationId)
-{
     auto authRecord = [record](const auto &target) {
         return record->GetBundleName() == target.second->GetBundleName() &&
             record->GetUserId() == target.second->GetUserId() && record->GetAppIndex() == target.second->GetAppIndex();
     };
     auto authRecordIter = find_if(bannerNotificationRecord_.begin(), bannerNotificationRecord_.end(), authRecord);
     if (authRecordIter != bannerNotificationRecord_.end()) {
-        // 请求授权时，已经存在授权记录，直接回调结果
+        // 请求授权时，已经存在本次允许或始终允许授权记录，直接回调结果
         int32_t authResult = authRecordIter->second->GetAuthResult();
-        callback->OnExpiredAuth(authResult);
+        if (authResult == static_cast<int32_t>(UserAuthResult::GRANTED_ONCE) ||
+            authResult == static_cast<int32_t>(UserAuthResult::GRANTED_ALWAYS)) {
+            callback->OnExpiredAuth(authResult);
+            return ERR_BGTASK_CONTINUOUS_TRIGGER_CALLBACK;
+        }
         return ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED;
     }
+    return ERR_OK;
+}
+
+ErrCode BgContinuousTaskMgr::RequestAuthFromUserInner(std::shared_ptr<ContinuousTaskRecord> record,
+    const sptr<IExpiredCallback>& callback, int32_t &notificationId)
+{
     ErrCode ret = CheckAuthParam(record, callback);
     if (ret != ERR_OK) {
         return ret;

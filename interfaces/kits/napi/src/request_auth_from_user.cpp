@@ -255,7 +255,7 @@ bool SendRequest(napi_env env, const ContinuousTaskParam &taskParam,
     authCallbackInstances_.insert(callback);
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestAuthFromUser(taskParam, *callback, callbackUid);
-    if (errCode == ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED) {
+    if (errCode == ERR_BGTASK_CONTINUOUS_TRIGGER_CALLBACK) {
         // 已授权，触发回调
         return true;
     }
