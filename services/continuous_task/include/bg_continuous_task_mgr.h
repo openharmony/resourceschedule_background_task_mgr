@@ -295,6 +295,8 @@ private:
     void InitNotificationText();
     void NotifyAudioStartInner(const int32_t uid);
     void HisysEventRequestAuth(const std::shared_ptr<BannerNotificationRecord> authRecord);
+    bool InitSubNotificationRecord(const std::shared_ptr<ContinuousTaskRecord> record,
+        std::shared_ptr<ContinuousTaskRecord> subRecord);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
