@@ -4022,7 +4022,7 @@ void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
         auto record = iter->second;
         if (record->subNotificationId_ != -1 && record->subNotificationLabel_ != "") {
             // 长时任务存在子通知时（data_transfer+其他类型）
-            std::shared_ptr<ContinuousTaskRecord> subRecord = make_shared<ContinuousTaskRecord>(*record);
+            std::shared_ptr<ContinuousTaskRecord> subRecord = std::make_shared<ContinuousTaskRecord>(*record);
             if (!InitSubNotificationRecord(record, subRecord)) {
                 iter++;
             }
@@ -4032,7 +4032,7 @@ void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
             if (ret == ERR_OK && subNotificationText != "") {
                 newPromptInfos.emplace(record->subNotificationLabel_, std::make_pair(appName, subNotificationText));
             }
-        } else if (!CommonUtils::CheckExistMode(subRecord->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+        } else if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
             std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
             std::string notificationText = GetNotificationText(record);
             newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
