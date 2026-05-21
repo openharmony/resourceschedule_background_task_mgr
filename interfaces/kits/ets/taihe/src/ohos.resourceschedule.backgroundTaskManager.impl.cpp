@@ -1284,6 +1284,35 @@ bool CheckModeAndSubMode(ani_env *env, ohos::resourceschedule::backgroundTaskMan
     return true;
 }
 
+bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        set_business_error(
+            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
+        return false;
+    }
+    std::vector<uint32_t> backgroundTaskSubModes = asyncCallbackInfo->bgSubModes;
+    std::vector<uint32_t> backgroundTaskModes = asyncCallbackInfo->bgModes;
+    std::vector<uint32_t> modes {};
+    std::vector<uint32_t> subModes {};
+    for (uint32_t index = 0; index < backgroundTaskSubModes.size(); index++) {
+        uint32_t subMode = backgroundTaskSubModes[index];
+        subModes.push_back(subMode);
+        uint32_t mode = 0;
+        if (subMode == OHOS::BackgroundTaskMgr::BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION) {
+            mode = OHOS::BackgroundTaskMgr::BackgroundTaskMode::GetV9BackgroundModeByMode(backgroundTaskModes[index]);
+        } else {
+            mode = OHOS::BackgroundTaskMgr::BackgroundTaskMode::GetV9BackgroundModeBySubMode(subMode);
+        }
+        modes.push_back(mode);
+    }
+    asyncCallbackInfo->bgSubModes = subModes;
+    asyncCallbackInfo->bgModes = modes;
+    asyncCallbackInfo->bgMode = modes[0];
+    return true;
+}
+
 ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification StartBackgroundRunningSync3(
     uintptr_t context, ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskRequest request)
 {
@@ -1298,6 +1327,10 @@ bool CheckModeAndSubMode(ani_env *env, ohos::resourceschedule::backgroundTaskMan
         BGTASK_LOGE("check mode or subMode failed");
         set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
             Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return notification;
+    }
+    if (!TaskModeTypeConversion(asyncCallbackInfo.get())) {
+        BGTASK_LOGE("task mode conversion fail.");
         return notification;
     }
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
@@ -1347,6 +1380,10 @@ bool CheckModeAndSubMode(ani_env *env, ohos::resourceschedule::backgroundTaskMan
     if (!CheckModeAndSubMode(env, request, asyncCallbackInfo.get())) {
         set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
             Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return notification;
+    }
+    if (!TaskModeTypeConversion(asyncCallbackInfo.get())) {
+        BGTASK_LOGE("task mode conversion fail.");
         return notification;
     }
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
