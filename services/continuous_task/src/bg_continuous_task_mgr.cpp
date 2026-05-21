@@ -4025,6 +4025,7 @@ void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
             std::shared_ptr<ContinuousTaskRecord> subRecord = std::make_shared<ContinuousTaskRecord>(*record);
             if (!InitSubNotificationRecord(record, subRecord)) {
                 iter++;
+                continue;
             }
             std::string appName = GetMainAbilityLabel(record->bundleName_, record->userId_);
             std::string subNotificationText {""};
