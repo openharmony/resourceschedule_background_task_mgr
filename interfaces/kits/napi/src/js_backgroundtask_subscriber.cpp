@@ -50,6 +50,7 @@ void JsBackgroundTaskSubscriber::JsBackgroudTaskSystemAbilityStatusChange::OnAdd
     if (!subscriber->needRestoreSubscribeStatus_) {
         return;
     }
+    subscriber->currentFlag_ = subscriber->flag_;
     ErrCode errCode = BackgroundTaskMgrHelper::SubscribeBackgroundTask(*subscriber);
     if (errCode) {
         BGTASK_LOGE("restore SubscribeBackgroundTask error");
@@ -580,6 +581,7 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType
 void JsBackgroundTaskSubscriber::SetFlag(uint32_t flag, bool isSubscriber)
 {
     std::lock_guard<std::mutex> lock(flagLock_);
+    currentFlag_ = flag;
     if (isSubscriber) {
         flag_ = flag_ |= flag;
     } else {
