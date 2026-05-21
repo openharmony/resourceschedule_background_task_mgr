@@ -4164,19 +4164,32 @@ void BgContinuousTaskMgr::NotifyAudioStartInner(const int32_t uid)
         BGTASK_LOGI("uid: %{public}d no have continoustask.", uid);
         return;
     }
-    // 播音回调，更新通知文案
-    auto record = findTaskIter->second;
-    uint32_t index = GetBgModeNameIndex(BackgroundMode::AUDIO_PLAYBACK, record->isNewApi_);
-    if (index >= continuousTaskText_.size()) {
-        BGTASK_LOGE("index: %{public}d is invaild.", index);
+    string appName = GetMainAbilityLabel(findTaskIter->second->bundleName_, findTaskIter->second->userId_);
+    if (appName == "") {
+        BGTASK_LOGE("bundleName: %{public}s get app name fail.", findTaskIter->second->bundleName_.c_str());
         return;
     }
-    std::string notificationText = continuousTaskText_.at(index);
-    ErrCode ret = NotificationTools::GetInstance()->PublishNotification(record, record->appName_,
-        notificationText, bgTaskUid_);
-    if (ret != ERR_OK) {
-        BGTASK_LOGE("uid: %{public}d update notification fail for audio_playback.", uid);
+    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (!task.second) {
+            continue;
+        }
+        if (task.second->audioPlayState_ || task.second->notificationId_ == -1 || task.second->uid_ != uid) {
+            continue;
+        }
+        uint32_t index = GetBgModeNameIndex(BackgroundMode::AUDIO_PLAYBACK, task.second->isNewApi_);
+        if (index >= continuousTaskText_.size()) {
+            BGTASK_LOGE("index: %{public}d is invaild.", index);
+            return;
+        }
+        std::string notificationText = continuousTaskText_.at(index);
+        if (notificationText == "") {
+            BGTASK_LOGE("notificationText is null.");
+            return;
+        }
+        newPromptInfos.emplace(task.second->notificationLabel_, std::make_pair(appName, notificationText));
     }
+    NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
 }
 
 void BgContinuousTaskMgr::HisysEventRequestAuth(const std::shared_ptr<BannerNotificationRecord> authRecord)
