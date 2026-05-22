@@ -244,7 +244,7 @@ __attribute__((no_sanitize("cfi"))) ErrCode BackgroundTaskManager::SubscribeBack
         BGTASK_LOGE("subscriberSptr is nullptr");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    return proxy_->SubscribeBackgroundTask(subscriberSptr, subscriber.currentFlag_);
+    return proxy_->SubscribeBackgroundTask(subscriberSptr, subscriber.currentCallBackType_);
 }
 
 ErrCode BackgroundTaskManager::UnsubscribeBackgroundTask(const BackgroundTaskSubscriber &subscriber)
@@ -257,7 +257,7 @@ ErrCode BackgroundTaskManager::UnsubscribeBackgroundTask(const BackgroundTaskSub
         BGTASK_LOGE("subscriberSptr is nullptr");
         return ERR_BGTASK_INVALID_PARAM;
     }
-    return proxy_->UnsubscribeBackgroundTask(subscriberSptr, subscriber.currentFlag_);
+    return proxy_->UnsubscribeBackgroundTask(subscriberSptr, subscriber.currentCallBackType_);
 }
 
 ErrCode BackgroundTaskManager::GetTransientTaskApps(std::vector<std::shared_ptr<TransientTaskAppInfo>> &list)

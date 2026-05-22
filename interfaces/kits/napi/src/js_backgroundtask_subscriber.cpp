@@ -50,7 +50,7 @@ void JsBackgroundTaskSubscriber::JsBackgroudTaskSystemAbilityStatusChange::OnAdd
     if (!subscriber->needRestoreSubscribeStatus_) {
         return;
     }
-    subscriber->currentFlag_ = subscriber->flag_;
+    subscriber->currentCallBackType_ = subscriber->allCallBackTypes_;
     ErrCode errCode = BackgroundTaskMgrHelper::SubscribeBackgroundTask(*subscriber);
     if (errCode) {
         BGTASK_LOGE("restore SubscribeBackgroundTask error");
@@ -581,18 +581,18 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType
 void JsBackgroundTaskSubscriber::SetFlag(uint32_t flag, bool isSubscriber)
 {
     std::lock_guard<std::mutex> lock(flagLock_);
-    currentFlag_ = flag;
+    currentCallBackType_ = flag;
     if (isSubscriber) {
-        flag_ = flag_ |= flag;
+        allCallBackTypes_ = allCallBackTypes_ |= flag;
     } else {
-        flag_ = flag_ & ~flag;
+        allCallBackTypes_ = allCallBackTypes_ & ~flag;
     }
 }
 
 void JsBackgroundTaskSubscriber::GetFlag(int32_t &flag)
 {
     std::lock_guard<std::mutex> lock(flagLock_);
-    flag = static_cast<int32_t>(flag_);
+    flag = static_cast<int32_t>(allCallBackTypes_);
 }
 } // BackgroundTaskMgr
 } // OHOS

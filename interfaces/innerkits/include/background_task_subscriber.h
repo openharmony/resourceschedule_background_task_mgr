@@ -306,8 +306,8 @@ private:
     friend class BackgroundTaskManager;
 
 public:
-    uint32_t flag_ = 0; // 所有监听类型标识
-    uint32_t currentFlag_ = 0; // 当前监听类型标识
+    uint32_t allCallBackTypes_ = 0; // 所有已注册的回调类型
+    uint32_t currentCallBackType_ = 0; // 当前的回调类型
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -711,16 +711,16 @@ void AniBackgroundTaskSubscriber::SetFlag(uint32_t flag, bool isSubscriber)
 {
     std::lock_guard<std::mutex> lock(flagLock_);
     if (isSubscriber) {
-        flag_ |= flag;
+        allCallBackTypes_ |= flag;
     } else {
-        flag_ &= ~flag;
+        allCallBackTypes_ &= ~flag;
     }
 }
 
 void AniBackgroundTaskSubscriber::GetFlag(int32_t &flag)
 {
     std::lock_guard<std::mutex> lock(flagLock_);
-    flag = static_cast<int32_t>(flag_);
+    flag = static_cast<int32_t>(allCallBackTypes_);
 }
 
 } // BackgroundTaskMgr

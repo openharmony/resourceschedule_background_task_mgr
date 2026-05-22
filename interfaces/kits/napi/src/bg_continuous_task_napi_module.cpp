@@ -1247,9 +1247,7 @@ void UnSubscribeBackgroundTask(napi_env env, uint32_t flag = 0, const std::strin
         return;
     }
     backgroundTaskSubscriber_->SetFlag(flag, false);
-    int32_t afterFlag = 0; // 本次解注册之后的标识
-    backgroundTaskSubscriber_->GetFlag(afterFlag);
-    if (afterFlag == 0) {
+    if (backgroundTaskSubscriber_.IsEmpty())) {
         ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);
         if (errCode != ERR_OK) {
             BGTASK_LOGE("UnsubscribeBackgroundTask failed.");
