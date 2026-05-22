@@ -3988,6 +3988,30 @@ void BgContinuousTaskMgr::OnBundleResourcesChanged()
         }, AppExecFwk::EventQueue::Priority::HIGH);
 }
 
+bool BgContinuousTaskMgr::InitSubNotificationRecord(const std::shared_ptr<ContinuousTaskRecord> record,
+    std::shared_ptr<ContinuousTaskRecord> subRecord)
+{
+    if (record == nullptr || subRecord == nullptr) {
+        BGTASK_LOGE("record or subRecord is null.");
+        return false;
+    }
+    subRecord->bgModeIds_.clear();
+    subRecord->bgSubModeIds_.clear();
+    for (size_t index = 0; index < record->bgModeIds_.size(); index++) {
+        uint32_t mode = record->bgModeIds_[index];
+        if (mode == BackgroundMode::DATA_TRANSFER) {
+            continue;
+        }
+        uint32_t subMode = record->bgSubModeIds_[index];
+        subRecord->bgModeIds_.push_back(mode);
+        subRecord->bgSubModeIds_.push_back(subMode);
+    }
+    if (!subRecord->bgSubModeIds_.empty()) {
+        subRecord->bgModeId_ = subRecord->bgModeIds_[0];
+    }
+    return true;
+}
+
 void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
 {
     GetNotificationPrompt();
@@ -3996,7 +4020,20 @@ void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
     auto iter = continuousTaskInfosMap_.begin();
     while (iter != continuousTaskInfosMap_.end()) {
         auto record = iter->second;
-        if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+        if (record->subNotificationId_ != -1 && record->subNotificationLabel_ != "") {
+            // 长时任务存在子通知时（data_transfer+其他类型）
+            std::shared_ptr<ContinuousTaskRecord> subRecord = std::make_shared<ContinuousTaskRecord>(*record);
+            if (!InitSubNotificationRecord(record, subRecord)) {
+                iter++;
+                continue;
+            }
+            std::string appName = GetMainAbilityLabel(record->bundleName_, record->userId_);
+            std::string subNotificationText {""};
+            ErrCode ret = CheckNotificationText(subNotificationText, subRecord);
+            if (ret == ERR_OK && subNotificationText != "") {
+                newPromptInfos.emplace(record->subNotificationLabel_, std::make_pair(appName, subNotificationText));
+            }
+        } else if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
             std::string mainAbilityLabel = GetMainAbilityLabel(record->bundleName_, record->userId_);
             std::string notificationText = GetNotificationText(record);
             newPromptInfos.emplace(record->notificationLabel_, std::make_pair(mainAbilityLabel, notificationText));
