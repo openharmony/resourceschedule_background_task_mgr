@@ -1247,7 +1247,7 @@ void UnSubscribeBackgroundTask(napi_env env, uint32_t flag = 0, const std::strin
         return;
     }
     backgroundTaskSubscriber_->SetFlag(flag, false);
-    if (backgroundTaskSubscriber_.IsEmpty())) {
+    if (backgroundTaskSubscriber_->IsEmpty()) {
         ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);
         if (errCode != ERR_OK) {
             BGTASK_LOGE("UnsubscribeBackgroundTask failed.");

@@ -724,6 +724,5 @@ void AniBackgroundTaskSubscriber::GetFlag(int32_t &flag)
     std::lock_guard<std::mutex> lock(flagLock_);
     flag = static_cast<int32_t>(allCallBackTypes_);
 }
-
 } // BackgroundTaskMgr
 } // OHOS
