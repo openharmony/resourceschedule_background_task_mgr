@@ -124,7 +124,7 @@ private:
     void DumpUsage(std::string &result);
     bool AllowDump();
     bool CheckCallingToken();
-    bool CheckHapCalling(bool &isHap);
+    bool CheckHapCalling(bool &isHap, uint32_t flag = 0);
     bool CheckCallingProcess();
     bool CheckAtomicService();
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;

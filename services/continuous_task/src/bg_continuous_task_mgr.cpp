@@ -2168,7 +2168,7 @@ ErrCode BgContinuousTaskMgr::AddSubscriberInner(const std::shared_ptr<Subscriber
     if (subscriberIter != bgTaskSubscribers_.end()) {
         BGTASK_LOGW("target subscriber already exist");
         if ((*subscriberIter)->isHap_) {
-            (*subscriberIter)->flag_ = subscriberInfo->flag_;
+            (*subscriberIter)->flag_ = (*subscriberIter)->flag_ |= subscriberInfo->flag_;
             BGTASK_LOGW("update subscriber success, current flag: %{public}d", (*subscriberIter)->flag_);
         }
         return ERR_BGTASK_OBJECT_EXISTS;
