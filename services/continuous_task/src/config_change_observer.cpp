@@ -51,7 +51,10 @@ void ConfigChangeObserver::OnConfigurationUpdated(const AppExecFwk::Configuratio
         return;
     }
     auto task = [this, configuration]() {
-        this->taskMgr_.lock()->OnConfigurationChanged(configuration);
+        auto taskMgr = this->taskMgr_.lock();
+        if (taskMgr != nullptr) {
+            taskMgr->OnConfigurationChanged(configuration);
+        }
     };
     handler->PostTask(task);
 }
