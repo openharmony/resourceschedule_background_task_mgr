@@ -756,6 +756,11 @@ ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dump
 ErrCode BgEfficiencyResourcesMgr::ShellDumpInner(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
+    if (dumpOption.size() <= 1) {
+        BGTASK_LOGW("Invalid dump param number, need at least 2 params.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
     const std::unordered_map<std::string, std::function<void()>> dumpProcMap = {
         { DUMP_PARAM_LIST_ALL, [&] { DumpAllApplicationInfo(dumpInfo); }},
         { DUMP_PARAM_RESET_ALL, [&] { DumpResetAllResource(dumpInfo); }},

@@ -32,7 +32,7 @@ extern "C" {
 int32_t OH_BackgroundTaskManager_RequestSuspendDelay(const char* reason,
     TransientTask_Callback callback, TransientTask_DelaySuspendInfo *info)
     {
-        if (!callback || !info) {
+        if (!reason || !callback || !info) {
             LOGI("OH_BackgroundTaskManager_RequestSuspendDelay param is null");
             return ERR_TRANSIENT_TASK_INVALID_PARAM;
         }
@@ -58,6 +58,10 @@ int32_t OH_BackgroundTaskManager_RequestSuspendDelay(const char* reason,
 
 int32_t OH_BackgroundTaskManager_GetRemainingDelayTime(int32_t requestId, int32_t *delayTime)
 {
+    if (delayTime == nullptr) {
+        LOGE("OH_BackgroundTaskManager_GetRemainingDelayTime delayTime is null");
+        return ERR_TRANSIENT_TASK_INVALID_PARAM;
+    }
     auto errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         GetRemainingDelayTime(requestId, *delayTime);
     return errCode / INNER_ERROR_SHIFT;
@@ -79,6 +83,10 @@ int32_t OH_BackgroundTaskManager_CancelSuspendDelay(int32_t requestId)
 
 int32_t OH_BackgroundTaskManager_GetTransientTaskInfo(TransientTask_TransientTaskInfo *info)
 {
+    if (info == nullptr) {
+        LOGE("OH_BackgroundTaskManager_GetTransientTaskInfo info is null");
+        return ERR_TRANSIENT_TASK_INVALID_PARAM;
+    }
     int32_t remainingQuotaValue = 0;
     std::vector<std::shared_ptr<DelaySuspendInfo>> listValue;
     auto errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->

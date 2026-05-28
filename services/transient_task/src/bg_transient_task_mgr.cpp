@@ -696,6 +696,10 @@ ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption
         BGTASK_LOGE("Transient task manager is not ready.");
         return ERR_BGTASK_SYS_NOT_READY;
     }
+    if (dumpOption.size() <= 1) {
+        BGTASK_LOGW("Invalid dump param number, need at least 2 params.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
     bool result = false;
     if (dumpOption[1] == ALL_BGTASKMGR_OPTION) {
         result = DumpAllRequestId(dumpInfo);
@@ -787,6 +791,10 @@ void BgTransientTaskMgr::OnAppCacheStateChanged(int32_t uid, int32_t pid, const 
 void BgTransientTaskMgr::DumpTaskTime(const std::vector<std::string> &dumpOption, bool pause,
     std::vector<std::string> &dumpInfo)
 {
+    if (dumpOption.size() <= DUMP_PARAM_INDEX_TWO) {
+        BGTASK_LOGW("Invalid dump param number, need at least 3 params.");
+        return;
+    }
     int32_t uid = std::atoi(dumpOption[DUMP_PARAM_INDEX_TWO].c_str());
     ErrCode ret = ERR_OK;
     if (pause) {
