@@ -2675,7 +2675,7 @@ bool BgContinuousTaskMgr::StopBannerContinuousTaskByUser(const std::string &labe
 
 bool BgContinuousTaskMgr::StopBannerContinuousTaskByUserInner(const std::string &label)
 {
-    auto iter = bannerNotificationRecord_.find(label)
+    auto iter = bannerNotificationRecord_.find(label);
     if (iter != bannerNotificationRecord_.end()) {
         auto record = iter->second;
         // 本次授权记录没有被用户授权，则清除记录
@@ -4401,7 +4401,7 @@ void BgContinuousTaskMgr::OnBannerNotificationActionButtonClickInner(const int32
     const int32_t uid, const std::string &label)
 {
     BGTASK_LOGI("banner notification click, label key: %{public}s!", label.c_str());
-    auto iter = bannerNotificationRecord_.find(label)
+    auto iter = bannerNotificationRecord_.find(label);
     if (iter == bannerNotificationRecord_.end()) {
         return;
     }
