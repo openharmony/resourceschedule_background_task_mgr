@@ -244,6 +244,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"༼%s༽ཡིས་ཉེར་སྤྱོད་ཀྱི་སྟེགས་རྒྱབ་ཏུ་ཡུན་རིང་བྱེད་སྒོ་བསྟར་ཆོག་པར་བྱེད་དམ།",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
