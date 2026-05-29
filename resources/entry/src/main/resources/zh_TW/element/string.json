@@ -244,6 +244,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"允許「%s」執行應用程式背景長時間活動？",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
