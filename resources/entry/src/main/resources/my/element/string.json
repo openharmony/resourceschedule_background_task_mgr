@@ -244,6 +244,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"%s ကို နောက်ခံတွင် လုပ်ဆောင်ခွင့်ပြုမည်လား။",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
