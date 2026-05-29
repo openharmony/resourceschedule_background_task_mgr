@@ -88,6 +88,8 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->startingTaskText_), PROMPT_NUMS, "starttask_test");
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificationBtn_), PROMPT_NUMS,
+        "bannernotification_test");
     bgContinuousTaskMgr_->isSysReady_.store(true);
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("tdd_test_handler");
     bgContinuousTaskMgr_->handler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
@@ -991,6 +993,8 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_039, TestSize.Level1)
     configuration.RemoveItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificationBtn_), PROMPT_NUMS,
+        "bannernotification_test");
     EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
@@ -2673,6 +2677,80 @@ HWTEST_F(BgContinuousTaskMgrTest, NotifyAudioStart_001, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmmode_test");
     EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_072
+ * @tc.desc: test SystemEventObserver::OnBannerNotificationActionButtonClick.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_072, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->RegisterSysCommEventListener();
+    EXPECT_NE(bgContinuousTaskMgr_->systemEventListener_, nullptr);
+}
+
+/**
+ * @tc.name: StopBannerContinuousTaskByUser_001
+ * @tc.desc: StopBannerContinuousTaskByUser test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, StopBannerContinuousTaskByUser_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    std::string label = "bgbanner_100_0_bundleName";
+    EXPECT_FALSE(bgContinuousTaskMgr_->StopBannerContinuousTaskByUser(label));
+
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>();
+    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification);
+    EXPECT_TRUE(bgContinuousTaskMgr_->StopBannerContinuousTaskByUser(label));
+    EXPECT_TRUE(bgContinuousTaskMgr_->bannerNotificationRecord_.empty());
+
+    bannerNotification->SetAuthResult(UserAuthResult::GRANTED_ONCE);
+    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification);
+    EXPECT_TRUE(bgContinuousTaskMgr_->StopBannerContinuousTaskByUser(label));
+    EXPECT_FALSE(bgContinuousTaskMgr_->bannerNotificationRecord_.empty());
+
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    bannerNotification->SetAuthResult(UserAuthResult::GRANTED_ALWAYS);
+    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification);
+    EXPECT_TRUE(bgContinuousTaskMgr_->StopBannerContinuousTaskByUser(label));
+    EXPECT_FALSE(bgContinuousTaskMgr_->bannerNotificationRecord_.empty());
+}
+
+/**
+ * @tc.name: OnBannerNotificationActionButtonClick_001
+ * @tc.desc: OnBannerNotificationActionButtonClick test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, OnBannerNotificationActionButtonClick_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    int32_t buttonType = BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_TIME;
+    int32_t uid = 1;
+    std::string label = "bgbanner_100_0_bundleName";
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>();
+    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification);
+    bgContinuousTaskMgr_->OnBannerNotificationActionButtonClick(buttonType, uid, "label");
+    auto iter = bgContinuousTaskMgr_->bannerNotificationRecord_.at(label);
+    EXPECT_NE(iter->GetAuthResult(), UserAuthResult::GRANTED_ONCE);
+    EXPECT_NE(iter->GetAuthResult(), UserAuthResult::GRANTED_ALWAYS);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    // 点击横幅通知按钮-本次允许
+    bgContinuousTaskMgr_->OnBannerNotificationActionButtonClick(buttonType, uid, label);
+    auto iter2 = bgContinuousTaskMgr_->bannerNotificationRecord_.at(label);
+    EXPECT_EQ(iter2->GetAuthResult(), UserAuthResult::GRANTED_ONCE);
+    // 未点击横幅通知按钮-始终允许
+    buttonType = BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED;
+    bgContinuousTaskMgr_->OnBannerNotificationActionButtonClick(buttonType, uid, label);
+    auto iter3 = bgContinuousTaskMgr_->bannerNotificationRecord_.at(label);
+    EXPECT_EQ(iter3->GetAuthResult(), UserAuthResult::GRANTED_ALWAYS);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

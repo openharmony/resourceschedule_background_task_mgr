@@ -16,13 +16,17 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_COMMON_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_BACKGROUND_COMMON_H
 
-#include <string>
-
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
     // 查询用户授权API接口-起始版本
     static constexpr int32_t API_VERSION_CHECK_SPECIAL_USER_AUTH = 22;
+    // 查询用户授权API 26接口
+    static constexpr int32_t API_VERSION_CHECK_SPECIAL_USER_AUTH_RESULT = 26;
+    // 请求用户授权API接口-起始版本
+    static constexpr int32_t API_VERSION_REQUEST_SPECIAL_USER_AUTH = 22;
+    // 请求用户授权API 26接口
+    static constexpr int32_t API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG = 26;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

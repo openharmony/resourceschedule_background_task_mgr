@@ -513,12 +513,12 @@ ErrCode BackgroundTaskManager::RequestAuthFromUser(const ContinuousTaskParam &ta
     return proxy_->RequestAuthFromUser(taskParam, callbackSptr, notificationId);
 }
 
-ErrCode BackgroundTaskManager::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult)
+ErrCode BackgroundTaskManager::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult, int32_t apiVersion)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return proxy_->CheckSpecialScenarioAuth(appIndex, authResult);
+    return proxy_->CheckSpecialScenarioAuth(appIndex, authResult, apiVersion);
 }
 
 ErrCode BackgroundTaskManager::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)

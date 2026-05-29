@@ -77,6 +77,7 @@ extern std::unordered_set<std::shared_ptr<ExpiredCallback>> authCallbackInstance
 extern std::mutex authCallbackLock_;
 
 napi_value RequestAuthFromUser(napi_env env, napi_callback_info info);
+napi_value RequestAuthFromUserByDialog(napi_env env, napi_callback_info info);
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_REQUEST_AUTH_FROM_USER_H

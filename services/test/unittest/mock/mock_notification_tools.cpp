@@ -52,5 +52,22 @@ ErrCode NotificationTools::PublishMainNotification(const std::shared_ptr<Continu
 {
     return ERR_OK;
 }
+
+ErrCode NotificationTools::PublishBannerNotification(std::shared_ptr<BannerNotificationRecord> bannerNotification,
+    const std::string &prompt, int32_t serviceUid,
+    const std::vector<std::string> &bannerNotificationBtn)
+{
+    return ERR_OK;
+}
+
+void NotificationTools::RefreshBannerNotifications(const std::vector<std::string> &bannerNotificationBtn,
+    const std::map<std::string, std::pair<std::string, std::string>> &newPromptInfos,
+    const std::shared_ptr<BannerNotificationRecord> bannerNotification, int32_t serviceUid) {}
+
+std::string NotificationTools::CreateBannerNotificationLabel(const std::string &bundleName, int32_t userId,
+    int32_t appIndex)
+{
+    return "default";
+}
 }
 }

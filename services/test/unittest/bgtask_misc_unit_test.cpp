@@ -1084,5 +1084,32 @@ HWTEST_F(BgTaskMiscUnitTest, DialogEventObserver_001, TestSize.Level2)
     eventData.SetWant(want);
     dialogEventObserver->OnReceiveEvent(eventData);
 }
+
+/**
+ * @tc.name: NotificationToolsTest_005
+ * @tc.desc: test NotificationTools class.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_005, TestSize.Level2)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    auto bannerNotification = std::make_shared<BannerNotificationRecord>();
+    bannerNotification->bundleName_ = "bundleName";
+    bannerNotification->appName_ = "appName";
+    bannerNotification->uid_ = 1;
+    bannerNotification->notificationId_ = -1;
+    bannerNotification->appIndex_ = 0;
+    std::vector<std::string> bannerNotificationBtn;
+    bannerNotificationBtn.push_back("banner1");
+    bannerNotificationBtn.push_back("banner2");
+    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
+    newPromptInfos.emplace("label", std::make_pair<std::string, std::string>("test1", "test2"));
+    NotificationTools::GetInstance()->RefreshBannerNotifications(bannerNotificationBtn,
+        newPromptInfos, bannerNotification, 0);
+    EXPECT_EQ(NotificationTools::GetInstance()->PublishBannerNotification(bannerNotification,
+        "prompt", 0, bannerNotificationBtn), ERR_BGTASK_NOTIFICATION_ERR);
+#endif
+}
 }
 }
