@@ -4418,15 +4418,15 @@ void BgContinuousTaskMgr::OnBannerNotificationActionButtonClickInner(const int32
     }
     RefreshAuthRecord();
     // 点击授权按钮后，取消通知
-    int32_t notificatinId = iter->GetNotificationId();
+    int32_t notificationId = iter->GetNotificationId();
     std::string notificationLabel = iter->GetNotificationLabel();
-    if (notificatinId != -1 && notificationLabel != "") {
-        NotificationTools::GetInstance()->CancelNotification(notificationLabel, notificatinId);
+    if (notificationId != -1 && notificationLabel != "") {
+        NotificationTools::GetInstance()->CancelNotification(notificationLabel, notificationId);
     }
     // 触发回调
     auto callbackIter = expiredCallbackMap_.find(notificationLabel);
     if (callbackIter != expiredCallbackMap_.end()) {
-        BGTASK_LOGI("click banner notificationId: %{public}d, trigger callback.", notificatinId);
+        BGTASK_LOGI("click banner notificationId: %{public}d, trigger callback.", notificationId);
         int32_t authResult = iter->GetAuthResult();
         callbackIter->second->OnExpiredAuth(authResult);
         auto remote = callbackIter->second->AsObject();
