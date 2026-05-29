@@ -142,7 +142,7 @@
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
-            "value":"[TS_1207152]_Allow %s to run in the background?"
+            "value":"[TS_1208333]_Allow %s to run in the background?"
         }
     ]
 }
