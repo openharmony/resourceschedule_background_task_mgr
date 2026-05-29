@@ -244,6 +244,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"อนุญาตให้ %s ทำงานในพื้นหลังหรือไม่",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
