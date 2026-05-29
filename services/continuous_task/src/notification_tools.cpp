@@ -485,7 +485,7 @@ WEAK_FUNC void NotificationTools::RefreshBannerNotifications(const std::vector<s
 {
     if (bannerNotificationBtn.size() <= BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED) {
         BGTASK_LOGE("bannerNotificationBtn index fail.");
-        return ERR_BGTASK_NOTIFICATION_ERR;
+        return;
     }
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::vector<sptr<Notification::NotificationRequest>> notificationRequests;

@@ -4181,7 +4181,7 @@ void BgContinuousTaskMgr::OnBundleResourcesChangedInner()
     for (const auto &iter : bannerNotificationRecord_) {
         std::string bannerNotificationText {""};
         std::string appName = GetMainAbilityLabel(iter.second->GetBundleName(), iter.second->GetUserId());
-        iter.second.SetAppName(appName);
+        iter.second->SetAppName(appName);
         int32_t uid = iter.second->GetUid();
         if (!FormatBannerNotificationContext(appName, bannerNotificationText)) {
             BGTASK_LOGE("get banner notification text fail, uid: %{public}d", uid);
