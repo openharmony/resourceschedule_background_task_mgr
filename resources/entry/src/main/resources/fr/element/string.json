@@ -244,6 +244,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"Autoriser %s à s'exécuter en arrière-plan ?",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
