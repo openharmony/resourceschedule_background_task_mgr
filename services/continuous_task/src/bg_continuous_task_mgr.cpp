@@ -3799,7 +3799,7 @@ void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeathInner(const wptr<IRemote
     int notificationId = findRecordIter->second->GetNotificationId();
     if (notificationId != -1) {
         NotificationTools::GetInstance()->CancelNotification(key, notificationId);
-    } 
+    }
     bannerNotificationRecord_.erase(key);
     RefreshAuthRecord();
 }
