@@ -244,6 +244,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"%s uygulamasının arka planda çalışmasına izin verilsin mi?",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
