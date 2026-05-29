@@ -142,7 +142,7 @@
         },
         {
             "name":"notification_text_bluetooth_interactionn",
-            "value":"블루투스",
+            "value":"Bluetooth",
             "attr":{
                 "priority":"translate"
             }
@@ -156,86 +156,86 @@
         },
         {
             "name":"notification_text_voip",
-            "value":"통화",
+            "value":"ໂທ",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_running_task_two_mode",
-            "value":"작업(%1$s, %2$s)이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
+            "value":"ໜ້າວຽກພວມດຳເນີນຢູ່ (%1$s, %2$s). ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດພວກມັນ.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_task_keeping",
-            "value":"계산",
+            "value":"ກຳລັງຄຳນວນ",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_audio_recording",
-            "value":"녹음/녹화",
+            "value":"ການບັນທຶກ",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_location",
-            "value":"포지셔닝",
+            "value":"ການຊອກຫາຕຳແໜ່ງ",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_data_transfer",
-            "value":"데이터 전송",
+            "value":"ການໂອນຂໍ້ມູນ",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_running_task_three_mode",
-            "value":"작업(%1$s, %2$s, %3$s)이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
+            "value":"ໜ້າວຽກພວມດຳເນີນຢູ່ (%1$s, %2$s, %3$s). ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດພວກມັນ.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_running_task_exceed",
-            "value":"작업(%1$s, %2$s, %3$s 등)이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
+            "value":"ໜ້າວຽກພວມດຳເນີນຢູ່ (%1$s, %2$s, %3$s ແລະ ອື່ນໆ). ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດພວກມັນ.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_multidevice_connection",
-            "value":"장치 간 콜라보",
+            "value":"ການເຮັດວຽກຮ່ວມກັນຂ້າມອຸປະກອນ",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_starting_task",
-            "value":"작업 시작 중…",
+            "value":"ກຳລັງເລີ່ມຕົ້ນໜ້າວຽກ…",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_audio_playbackr",
-            "value":"오디오/비디오 재생",
+            "value":"ການຫຼິ້ນສຽງ/ວິດີໂອ",
             "attr":{
                 "priority":"translate"
             }
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "NearLink 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
-            "attr": {
-                "priority": "translate"
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"ໜ້າວຽກ NearLink ພວມດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດມັນ.",
+            "attr":{
+                "priority":"translate"
             }
         },
         {
