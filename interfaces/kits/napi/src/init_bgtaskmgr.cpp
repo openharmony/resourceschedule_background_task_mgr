@@ -72,7 +72,7 @@ napi_value ContinuousTaskRequestInit(napi_env env, napi_value exports)
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_FUNCTION("isModeSupported", IsModeSupported),
         DECLARE_NAPI_FUNCTION("requestAuthFromUser", RequestAuthFromUser),
-        DECLARE_NAPI_FUNCTION("requestAuthFromUserByDialog", requestAuthFromUserByDialog),
+        DECLARE_NAPI_FUNCTION("requestAuthFromUserByDialog", RequestAuthFromUserByDialog),
         DECLARE_NAPI_FUNCTION("checkSpecialScenarioAuth", CheckSpecialScenarioAuth),
         DECLARE_NAPI_FUNCTION("checkSpecialScenarioAuthResult", CheckSpecialScenarioAuthResult),
     };
