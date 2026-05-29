@@ -244,6 +244,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"Cho phép %s chạy dưới nền?",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
