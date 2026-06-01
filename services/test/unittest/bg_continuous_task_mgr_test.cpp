@@ -2534,7 +2534,7 @@ HWTEST_F(BgContinuousTaskMgrTest, OnPermissionDialogButtonClick_001, TestSize.Le
     bannerNotification1->SetAuthResult(UserAuthResult::GRANTED_ONCE);
     bannerNotification1->SetAppIndex(0);
     bannerNotification1->SetUid(0);
-    std::string label = "bundleName_0_0";
+    std::string label = "default";
     bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification1);
     bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
         bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
