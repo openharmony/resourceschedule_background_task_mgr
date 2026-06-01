@@ -244,6 +244,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"%s 앱의 백그라운드 실행을 허용하시겠습니까?",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

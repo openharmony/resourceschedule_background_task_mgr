@@ -252,6 +252,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"允许“%s”执行应用后台长时活动？",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

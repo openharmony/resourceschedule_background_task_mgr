@@ -39,6 +39,7 @@
 #include "js_backgroundtask_subscriber.h"
 #include "js_runtime_utils.h"
 #include "background_task_state_info.h"
+#include "background_common.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -97,6 +98,7 @@ struct AsyncCallbackInfo : public AsyncWorkData {
     bool includeSuspended {false};
     std::shared_ptr<ContinuousTaskRequest> request = std::make_shared<ContinuousTaskRequest>();
     int32_t removeTaskId {-1}; // in
+    int32_t checkSpecialAuthApiVersion {API_VERSION_REQUEST_SPECIAL_USER_AUTH};
     int32_t notificationId {-1}; // out
     int32_t continuousTaskId {-1}; // out
     uint32_t authResult {0}; // out
@@ -1561,7 +1563,7 @@ void CheckSpecialScenarioAuthExecuteCB(napi_env env, void *data)
     }
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(info->appIndex,
-        asyncCallbackInfo->authResult);
+        asyncCallbackInfo->authResult, asyncCallbackInfo->checkSpecialAuthApiVersion);
 }
 
 void CheckSpecialScenarioAuthPromiseCompletedCB(napi_env env, napi_status status, void *data)
@@ -1604,7 +1606,7 @@ napi_value CheckSpecialScenarioAuthPromise(napi_env env, AsyncCallbackInfo *asyn
     return promise;
 }
 
-napi_value CheckSpecialScenarioAuth(napi_env env, napi_callback_info info)
+napi_value CheckSpecialScenarioUserAuth(napi_env env, napi_callback_info info, int32_t apiVersion)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Napi::CheckSpecialScenarioAuth");
@@ -1624,6 +1626,7 @@ napi_value CheckSpecialScenarioAuth(napi_env env, napi_callback_info info)
         BGTASK_LOGE("input params error");
         return WrapVoidToJS(env);
     }
+    asyncCallbackInfo->checkSpecialAuthApiVersion = apiVersion;
     if (GetAbilityContext(env, argv[0], asyncCallbackInfo->abilityContext) == nullptr) {
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
@@ -1905,6 +1908,16 @@ napi_value StopBackgroundRunningThrow(napi_env env, napi_callback_info info)
 napi_value GetAllContinuousTasksThrow(napi_env env, napi_callback_info info)
 {
     return GetAllContinuousTasks(env, info, true);
+}
+
+napi_value CheckSpecialScenarioAuthResult(napi_env env, napi_callback_info info)
+{
+    return CheckSpecialScenarioUserAuth(env, info, API_VERSION_CHECK_SPECIAL_USER_AUTH);
+}
+
+napi_value CheckSpecialScenarioAuth(napi_env env, napi_callback_info info)
+{
+    return CheckSpecialScenarioUserAuth(env, info, API_VERSION_CHECK_SPECIAL_USER_AUTH_RESULT);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

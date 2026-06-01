@@ -645,11 +645,17 @@ ErrCode BackgroundTaskMgrService::RequestAuthFromUser(const ContinuousTaskParam 
     if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
         return ERR_BGTASK_PERMISSION_DENIED;
     }
+    int32_t apiVersion = taskParam.requestAuthApiVersion_;
+    if (apiVersion != API_VERSION_REQUEST_SPECIAL_USER_AUTH &&
+        apiVersion != API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG) {
+        BGTASK_LOGE("api version: %{public}d is fail.", apiVersion);
+        return ERR_BGTASK_CONTINUOUS_API_VERSION_FAIL;
+    }
     auto paramPtr = sptr<ContinuousTaskParam>(new ContinuousTaskParam(taskParam));
     return BgContinuousTaskMgr::GetInstance()->RequestAuthFromUser(paramPtr, callback, notificationId);
 }
 
-ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult)
+ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult, int32_t apiVersion)
 {
     if (CheckAtomicService()) {
         pid_t callingPid = IPCSkeleton::GetCallingPid();
@@ -662,6 +668,11 @@ ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(int32_t appIndex, uin
     auto tokenFlag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
     if (tokenFlag != Security::AccessToken::ATokenTypeEnum::TOKEN_HAP) {
         return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    if (apiVersion != API_VERSION_CHECK_SPECIAL_USER_AUTH &&
+        apiVersion != API_VERSION_CHECK_SPECIAL_USER_AUTH_RESULT) {
+        BGTASK_LOGE("api version: %{public}d is fail.", apiVersion);
+        return ERR_BGTASK_CONTINUOUS_API_VERSION_FAIL;
     }
     return BgContinuousTaskMgr::GetInstance()->CheckSpecialScenarioAuth(appIndex, authResult);
 }
