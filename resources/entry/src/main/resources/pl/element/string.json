@@ -121,7 +121,7 @@
         },
         {
             "name":"dialog_title_work_out",
-            "value":"Służy do obsługi czynności, takich jak bieganie, ćwiczenia, pływanie itp.",
+            "value":"Służy do obsługi aktywności, takich jak bieganie, ćwiczenia, pływanie itp.",
             "attr":{
                 "priority":"LT"
             }
