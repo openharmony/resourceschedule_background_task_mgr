@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 #include "resources_subscriber_mgr.h"
 #include "efficiency_resource_log.h"
 #include "hisysevent.h"
+#include "background_task_observer.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -106,24 +107,28 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
             BGTASK_LOGD("start callback function of app resources application");
+            BackgroundTaskObserver::GetInstance().OnAppEfficiencyResourcesApply(callbackInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
                 (*iter)->OnAppEfficiencyResourcesApply(callbackInfoRef);
             }
             break;
         case EfficiencyResourcesEventType::RESOURCE_APPLY:
             BGTASK_LOGD("start callback function of proc resources application");
+            BackgroundTaskObserver::GetInstance().OnProcEfficiencyResourcesApply(callbackInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
                 (*iter)->OnProcEfficiencyResourcesApply(callbackInfoRef);
             }
             break;
         case EfficiencyResourcesEventType::APP_RESOURCE_RESET:
             BGTASK_LOGD("start callback function of app resources reset");
+            BackgroundTaskObserver::GetInstance().OnAppEfficiencyResourcesReset(callbackInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
                 (*iter)->OnAppEfficiencyResourcesReset(callbackInfoRef);
             }
             break;
         case EfficiencyResourcesEventType::RESOURCE_RESET:
             BGTASK_LOGD("start callback function of proc resources reset");
+            BackgroundTaskObserver::GetInstance().OnProcEfficiencyResourcesReset(callbackInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
                 (*iter)->OnProcEfficiencyResourcesReset(callbackInfoRef);
             }

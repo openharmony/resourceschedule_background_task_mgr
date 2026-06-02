@@ -63,6 +63,7 @@
 #include "bg_continuous_task_dumper.h"
 #include "user_auth_result.h"
 #include "audio_stream_manager.h"
+#include "background_task_observer.h"
 
 #ifdef BGTASK_MGR_UNIT_TEST
 #define WEAK_FUNC __attribute__((weak))
@@ -265,7 +266,8 @@ void BgContinuousTaskMgr::InitNecessaryState()
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
         || systemAbilityManager->CheckSystemAbility(ADVANCED_NOTIFICATION_SERVICE_ABILITY_ID) == nullptr
 #endif
-        || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr) {
+        || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
+        || systemAbilityManager->CheckSystemAbility(RES_SCHED_SYS_ABILITY_ID) == nullptr) {
         BGTASK_LOGW("request system service is not ready yet!");
         auto task = [this]() { this->InitNecessaryState(); };
         handler_->PostTask(task, DELAY_TIME);
@@ -2847,6 +2849,7 @@ void BgContinuousTaskMgr::NotifySubscribers(ContinuousTaskEventTriggerType chang
 void BgContinuousTaskMgr::NotifySubscribersTaskStart(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    BackgroundTaskObserver::GetInstance().OnContinuousTaskStart(continuousTaskCallbackInfo);
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         BGTASK_LOGD("continuous task start callback trigger");
@@ -2863,6 +2866,7 @@ void BgContinuousTaskMgr::NotifySubscribersTaskStart(
 void BgContinuousTaskMgr::NotifySubscribersTaskUpdate(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    BackgroundTaskObserver::GetInstance().OnContinuousTaskUpdate(continuousTaskCallbackInfo);
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         BGTASK_LOGD("continuous task update callback trigger");
@@ -2879,6 +2883,7 @@ void BgContinuousTaskMgr::NotifySubscribersTaskUpdate(
 void BgContinuousTaskMgr::NotifySubscribersTaskCancel(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    BackgroundTaskObserver::GetInstance().OnContinuousTaskStop(continuousTaskCallbackInfo);
     ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         BGTASK_LOGD("continuous task stop callback trigger");
@@ -2897,16 +2902,19 @@ void BgContinuousTaskMgr::NotifySubscribersTaskCancel(
 void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    const bool isNotStandby = !continuousTaskCallbackInfo->IsStandby();
+    if (isNotStandby) {
+        BackgroundTaskObserver::GetInstance().OnContinuousTaskStop(continuousTaskCallbackInfo);
+    }
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
-        if (!(*iter)->isHap_ && (*iter)->subscriber_ && !continuousTaskCallbackInfo->IsStandby()) {
+        if (!(*iter)->isHap_ && (*iter)->subscriber_ && isNotStandby) {
             // 对SA来说，长时任务暂停状态等同于取消长时任务，保持原有逻辑；功耗检测失败不回调SA
             BGTASK_LOGD("continuous task suspend callback trigger");
             (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
         } else if ((*iter)->isHap_ && (*iter)->subscriber_) {
             // 回调所有注册的subscriber
-            if ((((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) &&
-                !continuousTaskCallbackInfo->IsStandby()) {
+            if ((((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) && isNotStandby) {
                 (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
             }
             if ((*iter)->uid_ == continuousTaskCallbackInfo->GetCreatorUid()) {
@@ -2923,16 +2931,19 @@ void BgContinuousTaskMgr::NotifySubscribersTaskSuspend(
 void BgContinuousTaskMgr::NotifySubscribersTaskActive(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    const bool isNotStandby = !continuousTaskCallbackInfo->IsStandby();
+    if (isNotStandby) {
+        BackgroundTaskObserver::GetInstance().OnContinuousTaskStart(continuousTaskCallbackInfo);
+    }
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         BGTASK_LOGD("continuous task active callback trigger");
-        if (!(*iter)->isHap_ && (*iter)->subscriber_ && !continuousTaskCallbackInfo->IsStandby()) {
+        if (!(*iter)->isHap_ && (*iter)->subscriber_ && isNotStandby) {
             // 对SA来说，长时任务激活状态等同于注册长时任务，保持原有逻辑；功耗激活不回调SA
             (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
         } else if ((*iter)->isHap_ && (*iter)->subscriber_) {
             // 回调所有注册的subscriber
-            if ((((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) &&
-                !continuousTaskCallbackInfo->IsStandby()) {
+            if ((((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) && isNotStandby) {
                 (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
             }
             if ((*iter)->uid_ == continuousTaskCallbackInfo->GetCreatorUid()) {
