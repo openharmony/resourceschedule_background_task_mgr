@@ -235,6 +235,11 @@ void BgContinuousTaskMgr::ReclaimProcessMemory(int32_t pid)
     BGTASK_LOGI("BgContinuousTaskMgr reclaimProcessMemory pid: %{public}d end.", pid);
 }
 
+std::shared_ptr<AppExecFwk::EventHandler> BgContinuousTaskMgr::GetHandler() const
+{
+    return handler_;
+}
+
 void BgContinuousTaskMgr::Clear()
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
@@ -248,7 +253,6 @@ void BgContinuousTaskMgr::Clear()
     if (dialogClickListener_ != nullptr) {
         dialogClickListener_->Unsubscribe();
     }
-    UnregisterAppStateObserver();
 }
 
 void BgContinuousTaskMgr::InitNecessaryState()
@@ -268,9 +272,6 @@ void BgContinuousTaskMgr::InitNecessaryState()
         return;
     }
     if (!RegisterNotificationSubscriber()) {
-        return;
-    }
-    if (!RegisterAppStateObserver()) {
         return;
     }
     if (!RegisterSysCommEventListener()) {
@@ -469,34 +470,6 @@ bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
     }
 #endif
     return res;
-}
-
-__attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterAppStateObserver()
-{
-    appStateObserver_ = new (std::nothrow) AppStateObserver(); // must be sprt
-    if (!appStateObserver_) {
-        BGTASK_LOGE("appStateObserver_ null");
-        return false;
-    }
-    if (!AppMgrHelper::GetInstance()->SubscribeObserver(appStateObserver_)) {
-        BGTASK_LOGE("RegisterApplicationStateObserver error");
-        return false;
-    }
-    appStateObserver_->SetEventHandler(handler_);
-    return true;
-}
-
-void BgContinuousTaskMgr::UnregisterAppStateObserver()
-{
-    if (!appStateObserver_) {
-        return;
-    }
-    if (!AppMgrHelper::GetInstance()->UnsubscribeObserver(appStateObserver_)) {
-        BGTASK_LOGE("UnregisterApplicationStateObserver error");
-        return;
-    }
-    appStateObserver_ = nullptr;
-    BGTASK_LOGI("UnregisterApplicationStateObserver ok");
 }
 
 __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterConfigurationObserver()

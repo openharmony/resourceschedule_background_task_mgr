@@ -30,6 +30,7 @@
 #include "common_utils.h"
 #include "expired_callback_proxy.h"
 #include "expired_callback_stub.h"
+#include "running_process_info.h"
 
 using namespace testing::ext;
 
@@ -1924,20 +1925,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_068, TestSize.Level1)
     continuousTaskRecord->subNotificationLabel_ = "test";
     EXPECT_EQ(continuousTaskRecord->GetSubNotificationId(), 1);
     EXPECT_EQ(continuousTaskRecord->GetSubNotificationLabel(), "test");
-}
-
-/**
- * @tc.name: BgTaskManagerUnitTest_069
- * @tc.desc: test UnregisterAppStateObserver.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_069, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->UnregisterAppStateObserver();
-    EXPECT_EQ(bgContinuousTaskMgr_->appStateObserver_, nullptr);
-    bgContinuousTaskMgr_->RegisterAppStateObserver();
-    EXPECT_NE(bgContinuousTaskMgr_->appStateObserver_, nullptr);
 }
 
 /**

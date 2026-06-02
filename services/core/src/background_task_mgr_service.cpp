@@ -34,6 +34,7 @@
 
 #include "bgtaskmgr_log_wrapper.h"
 #include <parameters.h>
+#include "bgtask_plugin_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -94,6 +95,7 @@ void BackgroundTaskMgrService::SetReady(uint32_t flag)
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
+    BgtaskPluginMgr::GetInstance().Init();
     BGTASK_LOGI("background task manager service start succeed!");
 }
 

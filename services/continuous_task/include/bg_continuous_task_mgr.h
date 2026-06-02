@@ -24,7 +24,6 @@
 #include "resource_manager.h"
 #include "singleton.h"
 
-#include "app_state_observer.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_info.h"
 #include "continuous_task_callback_info.h"
@@ -160,6 +159,7 @@ public:
     void OnPermissionDialogButtonClickInner(int32_t authResult, int32_t bundleUid, const std::string &bundleName,
  	  	int32_t appIndex);
     ErrCode NotifyAudioStart(const int32_t uid);
+    std::shared_ptr<AppExecFwk::EventHandler> GetHandler() const;
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
@@ -198,8 +198,6 @@ private:
     bool AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool RegisterNotificationSubscriber();
     bool RegisterSysCommEventListener();
-    bool RegisterAppStateObserver();
-    void UnregisterAppStateObserver();
     bool RegisterConfigurationObserver();
     bool RegisterDialogClickListener();
     bool GetNotificationPrompt();
@@ -319,7 +317,6 @@ private:
 #endif
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
     std::shared_ptr<DialogEventObserver> dialogClickListener_ {nullptr};
-    sptr<AppStateObserver> appStateObserver_ {nullptr};
     sptr<AppExecFwk::IConfigurationObserver> configChangeObserver_ {nullptr};
     std::list<std::shared_ptr<SubscriberInfo>> bgTaskSubscribers_ {};
     sptr<RemoteDeathRecipient> susriberDeathRecipient_ {nullptr};
