@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,44 +50,9 @@ public:
     void OnInputEvent(const EventInfo& eventInfo) override;
     int32_t GetQuota(const std::shared_ptr<KeyInfo>& key);
     bool IsFrontApp(const string& pkgName, int32_t uid);
-    void ResetAppMgrProxy();
     vector<int32_t> GetRequestIdListByKey(const std::shared_ptr<KeyInfo>& key);
-
-private:
-    class ApplicationStateObserver : public AppExecFwk::ApplicationStateObserverStub {
-    public:
-        explicit ApplicationStateObserver(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
-        ~ApplicationStateObserver() override {}
-        void OnForegroundApplicationChanged(const AppExecFwk::AppStateData &appStateData) override
-        {}
-        void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
-        {}
-        void OnExtensionStateChanged(const AppExecFwk::AbilityStateData &abilityStateData) override
-        {}
-        void OnProcessStateChanged(const AppExecFwk::ProcessData &processData) override;
-        void OnProcessCreated(const AppExecFwk::ProcessData &processData) override
-        {}
-        void OnProcessDied(const AppExecFwk::ProcessData &processData) override
-        {}
-
-    private:
-        void HandleStateChange(const std::string &bundleName, int32_t uid, bool isForeground, bool isBackground);
-
-        DecisionMaker &decisionMaker_;
-    };
-
-private:
-    class AppMgrDeathRecipient : public IRemoteObject::DeathRecipient {
-    public:
-        explicit AppMgrDeathRecipient(DecisionMaker &decisionMaker) : decisionMaker_(decisionMaker) {}
-
-        ~AppMgrDeathRecipient() override {}
-
-        void OnRemoteDied(const wptr<IRemoteObject> &remote) override;
-
-    private:
-        DecisionMaker &decisionMaker_;
-    };
+    void OnProcessStateChanged(const AppExecFwk::ProcessData &processData);
+    void HandleStateChange(const std::string &bundleName, int32_t uid, bool isForeground, bool isBackground);
 
 private:
     int32_t NewDelaySuspendRequestId();
@@ -116,9 +81,6 @@ private:
     std::shared_ptr<DeviceInfoManager> deviceInfoManager_ {nullptr};
     std::map<std::shared_ptr<KeyInfo>, std::shared_ptr<PkgDelaySuspendInfo>, KeyInfoComp> pkgDelaySuspendInfoMap_;
     std::map<std::shared_ptr<KeyInfo>, int32_t, KeyInfoComp> pkgBgDurationMap_;
-    sptr<AppExecFwk::IAppMgr> appMgrProxy_ {nullptr};
-    sptr<AppMgrDeathRecipient> recipient_;
-    sptr<ApplicationStateObserver> observer_ {nullptr};
     std::recursive_mutex recMutex_;
     std::map<int32_t, std::set<int32_t>> foregroundUidPidMap_;
 };
