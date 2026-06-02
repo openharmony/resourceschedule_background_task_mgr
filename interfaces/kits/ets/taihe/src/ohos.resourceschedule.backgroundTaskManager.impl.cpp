@@ -465,7 +465,7 @@ public:
                 Common::FindErrCode(asyncCallbackInfo->errCode));
             set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
                 Common::FindErrMsg(asyncCallbackInfo->errCode));
-            return ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED; 
+            return ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
         }
         ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t authResultRet;
         switch (asyncCallbackInfo->authResult) {
