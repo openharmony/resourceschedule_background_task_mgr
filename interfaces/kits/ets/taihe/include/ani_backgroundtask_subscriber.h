@@ -28,7 +28,6 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 using namespace taihe;
 using namespace ohos::resourceschedule::backgroundTaskManager;
-using JsBackgroundTaskSubscriberType = ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskSubscriber;
 class AniBackgroundTaskSubscriber : public OHOS::BackgroundTaskMgr::BackgroundTaskSubscriber,
     public std::enable_shared_from_this<AniBackgroundTaskSubscriber> {
 public:

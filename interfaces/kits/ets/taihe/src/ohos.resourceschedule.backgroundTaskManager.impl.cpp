@@ -40,7 +40,6 @@ using namespace ohos::resourceschedule::backgroundTaskManager;
 using namespace OHOS::BackgroundTaskMgr;
 using TaskSubModeType = ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskSubmode;
 using TaskModeType = ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskMode;
-using JsBackgroundTaskSubscriberType = ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskSubscriber;
 
 namespace {
 // To be implemented.
@@ -1410,42 +1409,6 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
     notification.continuousTaskId = optional<int32_t>(std::in_place, taskParam.continuousTaskId_);
     return notification;
 }
-
-void SubscribeContinuousTaskState(JsBackgroundTaskSubscriberType subscriber)
-{
-    auto env = taihe::get_env();
-    std::shared_ptr<JsBackgroundTaskSubscriberType> taiheSubscriber =
-        std::make_shared<JsBackgroundTaskSubscriberType>(subscriber);
-    if (!taiheSubscriber) {
-        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM),
-            Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
-        BGTASK_LOGE("taiheSubscriber is invalid");
-        return;
-    }
-    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
-    if (!SubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE)) {
-        BGTASK_LOGE("SubscribeBackgroundTask fail.");
-        return;
-    }
-    backgroundTaskSubscriber_->AddJsSubscribeObserverObject("subscribeContinuousTaskState", taiheSubscriber);
-    backgroundTaskSubscriber_->SubscriberBgtaskSaStatusChange();
-}
-
-void UnsubscribeContinuousTaskState(JsBackgroundTaskSubscriberType subscriber)
-{
-    auto env = taihe::get_env();
-    std::shared_ptr<JsBackgroundTaskSubscriberType> taiheSubscriber =
-        std::make_shared<JsBackgroundTaskSubscriberType>(subscriber);
-    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
-    if (!backgroundTaskSubscriber_ || !taiheSubscriber) {
-        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM),
-            Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
-        BGTASK_LOGE("backgroundTaskSubscriber_ or taiheSubscriber is null, return");
-        return;
-    }
-    backgroundTaskSubscriber_->RemoveJsSubscribeObserverObject("subscribeContinuousTaskState", taiheSubscriber);
-    UnSubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE);
-}
 } // namespace
 
 // Since these macros are auto-generate, lint will cause false positive.
@@ -1482,6 +1445,4 @@ TH_EXPORT_CPP_API_ObtainAllContinuousTasksSync(ObtainAllContinuousTasksSync);
 TH_EXPORT_CPP_API_CreateContinuousTaskRequest(CreateContinuousTaskRequest);
 TH_EXPORT_CPP_API_StartBackgroundRunningSync3(StartBackgroundRunningSync3);
 TH_EXPORT_CPP_API_UpdateBackgroundRunningSync2(UpdateBackgroundRunningSync2);
-TH_EXPORT_CPP_API_SubscribeContinuousTaskState(SubscribeContinuousTaskState);
-TH_EXPORT_CPP_API_UnsubscribeContinuousTaskState(UnsubscribeContinuousTaskState);
 // NOLINTEND
