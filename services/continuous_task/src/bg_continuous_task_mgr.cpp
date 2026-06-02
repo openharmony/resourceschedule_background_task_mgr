@@ -254,7 +254,7 @@ void BgContinuousTaskMgr::Clear()
     if (dialogClickListener_ != nullptr) {
         dialogClickListener_->Unsubscribe();
     }
-    }
+}
 
 void BgContinuousTaskMgr::InitNecessaryState()
 {
@@ -276,7 +276,7 @@ void BgContinuousTaskMgr::InitNecessaryState()
     if (!RegisterNotificationSubscriber()) {
         return;
     }
-        if (!RegisterSysCommEventListener()) {
+    if (!RegisterSysCommEventListener()) {
         return;
     }
     if (!RegisterConfigurationObserver()) {

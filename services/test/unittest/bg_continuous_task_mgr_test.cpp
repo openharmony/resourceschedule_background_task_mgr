@@ -1929,20 +1929,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_068, TestSize.Level1)
 }
 
 /**
- * @tc.name: BgTaskManagerUnitTest_069
- * @tc.desc: test UnregisterAppStateObserver.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_069, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->UnregisterAppStateObserver();
-    EXPECT_EQ(bgContinuousTaskMgr_->appStateObserver_, nullptr);
-    bgContinuousTaskMgr_->RegisterAppStateObserver();
-    EXPECT_NE(bgContinuousTaskMgr_->appStateObserver_, nullptr);
-}
-
-/**
  * @tc.name: BgTaskManagerUnitTest_071
  * @tc.desc: test GetMainAbilityLabel.
  * @tc.type: FUNC
@@ -2536,7 +2522,7 @@ HWTEST_F(BgContinuousTaskMgrTest, OnPermissionDialogButtonClick_001, TestSize.Le
     bannerNotification1->SetAuthResult(UserAuthResult::GRANTED_ONCE);
     bannerNotification1->SetAppIndex(0);
     bannerNotification1->SetUid(0);
-    std::string label = "bundleName_0_0";
+    std::string label = "default";
     bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification1);
     bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
         bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);

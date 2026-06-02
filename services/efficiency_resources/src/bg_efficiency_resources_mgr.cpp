@@ -51,6 +51,7 @@ namespace {
     constexpr uint32_t BUNDLE_MGR_READY = 2;
     constexpr uint32_t RES_SCHED_SYS_READY = 4;
     constexpr uint32_t ALL_DEPENDS_READY = APP_MGR_READY | BUNDLE_MGR_READY | RES_SCHED_SYS_READY;
+    const uint32_t FREEZE_ALL_RESOURCES = 0;
     const uint32_t MAX_RESOURCES_TYPE_NUM = ResourceTypeName.size();
     const uint32_t MAX_RESOURCE_MASK = (1 << ResourceTypeName.size()) - 1;
     const char *RESOURCE_QUOTA_MANAGER_LIB = "libresource_quota_manager.z.so";
