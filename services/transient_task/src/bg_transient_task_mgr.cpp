@@ -36,6 +36,7 @@
 #include "time_provider.h"
 #include "transient_task_log.h"
 #include "hitrace_meter.h"
+#include "background_task_observer.h"
 
 using namespace std;
 
@@ -95,7 +96,8 @@ void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::Ev
     if (systemAbilityManager == nullptr
         || systemAbilityManager->CheckSystemAbility(APP_MGR_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr) {
+        || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
+        || systemAbilityManager->CheckSystemAbility(RES_SCHED_SYS_ABILITY_ID) == nullptr) {
         isReady_.store(false);
         BGTASK_LOGI("request system service is not ready yet!");
         auto InitNecessaryStateFunc = [this, runner] { this->InitNecessaryState(runner); };
@@ -330,26 +332,31 @@ void BgTransientTaskMgr::NotifyTransientTaskSuscriber(const shared_ptr<Transient
     const TransientTaskAppInfo& appInfoRef = *appInfo;
     switch (type) {
         case TransientTaskEventType::TASK_START:
+            BackgroundTaskObserver::GetInstance().OnTransientTaskStart(appInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnTransientTaskStart(appInfoRef);
             }
             break;
         case TransientTaskEventType::TASK_END:
+            BackgroundTaskObserver::GetInstance().OnTransientTaskEnd(appInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnTransientTaskEnd(appInfoRef);
             }
             break;
         case TransientTaskEventType::TASK_ERR:
+            BackgroundTaskObserver::GetInstance().OnTransientTaskErr(appInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnTransientTaskErr(appInfoRef);
             }
             break;
         case TransientTaskEventType::APP_TASK_START:
+            BackgroundTaskObserver::GetInstance().OnAppTransientTaskStart(appInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnAppTransientTaskStart(appInfoRef);
             }
             break;
         case TransientTaskEventType::APP_TASK_END:
+            BackgroundTaskObserver::GetInstance().OnAppTransientTaskEnd(appInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnAppTransientTaskEnd(appInfoRef);
             }

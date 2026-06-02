@@ -29,6 +29,7 @@ config("bgtaskmgr_service_public_config") {
 BgTaskMgrServicecSrc = [
   "common/src/app_mgr_helper.cpp",
   "common/src/app_state_observer.cpp",
+  "common/src/background_task_observer.cpp",
   "common/src/bg_task_config_file_info.cpp",
   "common/src/bgtask_config.cpp",
   "common/src/bgtask_hitrace_chain.cpp",
@@ -59,9 +60,6 @@ BgTaskMgrServicecSrc = [
   "transient_task/src/suspend_controller.cpp",
   "transient_task/src/timer_manager.cpp",
   "transient_task/src/watchdog.cpp",
-  "plugin/src/app_state_observer_plugin_adapter.cpp",
-  "plugin/src/bgtask_plugin.cpp",
-  "plugin/src/bgtask_plugin_mgr.cpp",
 ]
 
 ohos_shared_library("bgtaskmgr_service") {
@@ -76,6 +74,7 @@ ohos_shared_library("bgtaskmgr_service") {
   }
 
   cflags_cc = [
+    "-fvisibility=hidden",
     "-fdata-sections",
     "-ffunction-sections",
     "-fstack-protector-strong",
@@ -156,7 +155,6 @@ ohos_shared_library("bgtaskmgr_service") {
 
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
-  version_script = "libbgtaskmgr_services.versionscript"
 }
 
 ohos_static_library("bgtaskmgr_service_static") {

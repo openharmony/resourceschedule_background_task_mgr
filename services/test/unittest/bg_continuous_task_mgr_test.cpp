@@ -31,6 +31,7 @@
 #include "expired_callback_proxy.h"
 #include "expired_callback_stub.h"
 #include "running_process_info.h"
+#include "background_task_observer.h"
 
 using namespace testing::ext;
 
@@ -1928,6 +1929,20 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_068, TestSize.Level1)
 }
 
 /**
+ * @tc.name: BgTaskManagerUnitTest_069
+ * @tc.desc: test UnregisterAppStateObserver.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_069, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->UnregisterAppStateObserver();
+    EXPECT_EQ(bgContinuousTaskMgr_->appStateObserver_, nullptr);
+    bgContinuousTaskMgr_->RegisterAppStateObserver();
+    EXPECT_NE(bgContinuousTaskMgr_->appStateObserver_, nullptr);
+}
+
+/**
  * @tc.name: BgTaskManagerUnitTest_071
  * @tc.desc: test GetMainAbilityLabel.
  * @tc.type: FUNC
@@ -2521,7 +2536,7 @@ HWTEST_F(BgContinuousTaskMgrTest, OnPermissionDialogButtonClick_001, TestSize.Le
     bannerNotification1->SetAuthResult(UserAuthResult::GRANTED_ONCE);
     bannerNotification1->SetAppIndex(0);
     bannerNotification1->SetUid(0);
-    std::string label = "default";
+    std::string label = "bundleName_0_0";
     bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification1);
     bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
         bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
@@ -2738,6 +2753,119 @@ HWTEST_F(BgContinuousTaskMgrTest, OnBannerNotificationActionButtonClick_001, Tes
     bgContinuousTaskMgr_->OnBannerNotificationActionButtonClick(buttonType, uid, label);
     auto iter3 = bgContinuousTaskMgr_->bannerNotificationRecord_.at(label);
     EXPECT_EQ(iter3->GetAuthResult(), UserAuthResult::GRANTED_ALWAYS);
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_073
+ * @tc.desc: test continuous task with valid task info.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_073, TestSize.Level2)
+{
+    bgContinuousTaskMgr_->bgTaskSubscribers_.clear();
+    auto validTaskInfo = std::make_shared<ContinuousTaskCallbackInfo>(
+        BGMODE_AUDIO_PLAYBACK_ID, 1000, 1000, "abilityName");
+    bgContinuousTaskMgr_->NotifySubscribersTaskStart(validTaskInfo);
+    bgContinuousTaskMgr_->NotifySubscribersTaskUpdate(validTaskInfo);
+    bgContinuousTaskMgr_->NotifySubscribersTaskCancel(validTaskInfo);
+    EXPECT_TRUE(BackgroundTaskObserver::GetInstance().CheckContinuousTaskInfo(validTaskInfo));
+}
+ 
+/**
+ * @tc.name: BgTaskManagerUnitTest_074
+ * @tc.desc: test continuous task with invalid task info.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_074, TestSize.Level2)
+{
+    auto invalidTaskInfo1 = std::make_shared<ContinuousTaskCallbackInfo>(
+        BGMODE_AUDIO_PLAYBACK_ID, -1, 1000, "abilityName");
+    bgContinuousTaskMgr_->NotifySubscribersTaskStart(invalidTaskInfo1);
+    bgContinuousTaskMgr_->NotifySubscribersTaskUpdate(invalidTaskInfo1);
+    bgContinuousTaskMgr_->NotifySubscribersTaskCancel(invalidTaskInfo1);
+    EXPECT_FALSE(BackgroundTaskObserver::GetInstance().CheckContinuousTaskInfo(invalidTaskInfo1));
+}
+ 
+/**
+ * @tc.name: BgTaskManagerUnitTest_075
+ * @tc.desc: test continuous task with invalid task info.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_075, TestSize.Level2)
+{
+    auto invalidTaskInfo2 = std::make_shared<ContinuousTaskCallbackInfo>(
+        BGMODE_AUDIO_PLAYBACK_ID, 0, 1000, "abilityName");
+    bgContinuousTaskMgr_->NotifySubscribersTaskStart(invalidTaskInfo2);
+    bgContinuousTaskMgr_->NotifySubscribersTaskUpdate(invalidTaskInfo2);
+    bgContinuousTaskMgr_->NotifySubscribersTaskCancel(invalidTaskInfo2);
+    EXPECT_FALSE(BackgroundTaskObserver::GetInstance().CheckContinuousTaskInfo(invalidTaskInfo2));
+}
+ 
+/**
+ * @tc.name: BgTaskManagerUnitTest_076
+ * @tc.desc: test continuous task with invalid task info.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_076, TestSize.Level2)
+{
+    auto invalidTaskInfo3 = std::make_shared<ContinuousTaskCallbackInfo>(
+        BGMODE_AUDIO_PLAYBACK_ID, 1000, -1, "abilityName");
+    bgContinuousTaskMgr_->NotifySubscribersTaskStart(invalidTaskInfo3);
+    bgContinuousTaskMgr_->NotifySubscribersTaskUpdate(invalidTaskInfo3);
+    bgContinuousTaskMgr_->NotifySubscribersTaskCancel(invalidTaskInfo3);
+    EXPECT_FALSE(BackgroundTaskObserver::GetInstance().CheckContinuousTaskInfo(invalidTaskInfo3));
+}
+ 
+/**
+ * @tc.name: BgTaskManagerUnitTest_077
+ * @tc.desc: test continuous task with invalid task info.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_077, TestSize.Level2)
+{
+    auto invalidTaskInfo4 = std::make_shared<ContinuousTaskCallbackInfo>(
+        BGMODE_AUDIO_PLAYBACK_ID, 1000, 1000, "");
+    bgContinuousTaskMgr_->NotifySubscribersTaskStart(invalidTaskInfo4);
+    bgContinuousTaskMgr_->NotifySubscribersTaskUpdate(invalidTaskInfo4);
+    bgContinuousTaskMgr_->NotifySubscribersTaskCancel(invalidTaskInfo4);
+    EXPECT_FALSE(BackgroundTaskObserver::GetInstance().CheckContinuousTaskInfo(invalidTaskInfo4));
+}
+ 
+/**
+ * @tc.name: BgTaskManagerUnitTest_078
+ * @tc.desc: test continuous task with invalid task info.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_078, TestSize.Level2)
+{
+    auto invalidTaskInfo5 = std::make_shared<ContinuousTaskCallbackInfo>(
+        0, 1000, 1000, "abilityName");
+    bgContinuousTaskMgr_->NotifySubscribersTaskStart(invalidTaskInfo5);
+    bgContinuousTaskMgr_->NotifySubscribersTaskUpdate(invalidTaskInfo5);
+    bgContinuousTaskMgr_->NotifySubscribersTaskCancel(invalidTaskInfo5);
+    EXPECT_FALSE(BackgroundTaskObserver::GetInstance().CheckContinuousTaskInfo(invalidTaskInfo5));
+}
+ 
+/**
+ * @tc.name: BgTaskManagerUnitTest_079
+ * @tc.desc: test continuous task with invalid task info.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_079, TestSize.Level2)
+{
+    auto invalidTaskInfo6 = std::make_shared<ContinuousTaskCallbackInfo>(
+        100, 1000, 1000, "abilityName");
+    bgContinuousTaskMgr_->NotifySubscribersTaskStart(invalidTaskInfo6);
+    bgContinuousTaskMgr_->NotifySubscribersTaskUpdate(invalidTaskInfo6);
+    bgContinuousTaskMgr_->NotifySubscribersTaskCancel(invalidTaskInfo6);
+    EXPECT_FALSE(BackgroundTaskObserver::GetInstance().CheckContinuousTaskInfo(invalidTaskInfo6));
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
