@@ -268,8 +268,13 @@ interface ContinuousTaskRequest {
 
   requestAuthFromUser(context: @sts_type("BaseContext") Opaque, callback: (data: UserAuthResult) => void): void;
 
+  requestAuthFromUserByDialog(context: @sts_type("BaseContext") Opaque, callback: (data: UserAuthResult) => void): void;
+
   @rename("checkSpecialScenarioAuth")
   @promise checkSpecialScenarioAuthSync(context: @sts_type("BaseContext") Opaque): UserAuthResult;
+
+  @rename("checkSpecialScenarioAuthResult")
+  @promise checkSpecialScenarioAuthSync2(context: @sts_type("BaseContext") Opaque): UserAuthResult;
 }
 
 struct BackgroundTaskSubscriber {
