@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <cinttypes>
 #include "bgtask_plugin_mgr.h"
 #include "bgtaskmgr_log_wrapper.h"
 #include "plugin_mgr.h"
@@ -76,7 +77,7 @@ void BgtaskPluginMgr::DispatchResource(const std::shared_ptr<ResourceSchedule::R
         return;
     }
 
-    BGTASK_LOGD("BgtaskPluginMgr dispatch resource, type: %{public}u, value: %{public}lld",
+    BGTASK_LOGD("BgtaskPluginMgr dispatch resource, type: %{public}u, value: %{public}" PRId64,
         resData->resType, resData->value);
 
     std::lock_guard<std::mutex> lock(cbMapMutex_);
