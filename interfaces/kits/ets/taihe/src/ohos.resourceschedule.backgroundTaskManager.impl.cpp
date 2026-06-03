@@ -50,7 +50,6 @@ static constexpr uint32_t BG_MODE_ID_END = 9;
 static constexpr uint32_t CONTINUOUS_TASK_CANCEL = 1 << 0;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 1 << 1;
 static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
-static constexpr uint32_t SUBSCRIBER_BACKGROUND_TASK_STATE = 1 << 3;
 static constexpr int32_t MAX_SPECIAL_TASK_NUMS = 1;
 static std::shared_ptr<BackgroundTaskMgr::AniBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
 std::mutex backgroundTaskSubscriberMutex_;
