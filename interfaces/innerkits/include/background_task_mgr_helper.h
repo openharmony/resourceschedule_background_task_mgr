@@ -305,13 +305,6 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
-
-    /**
-     * @brief notify audio start.
-     * @param uid uid.
-     * @return Returns ERR_OK if success, else failure.
-     */
-    static ErrCode NotifyAudioStart(const int32_t uid);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

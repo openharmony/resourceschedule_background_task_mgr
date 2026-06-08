@@ -34,6 +34,7 @@ BgTaskMgrServicecSrc = [
   "common/src/bgtask_config.cpp",
   "common/src/bgtask_hitrace_chain.cpp",
   "common/src/bundle_manager_helper.cpp",
+  "common/src/common_utils.cpp",
   "common/src/data_storage_helper.cpp",
   "common/src/dialog_event_observer.cpp",
   "common/src/report_hisysevent_data.cpp",
@@ -61,6 +62,7 @@ BgTaskMgrServicecSrc = [
   "transient_task/src/timer_manager.cpp",
   "transient_task/src/watchdog.cpp",
   "plugin/src/app_state_observer_plugin_adapter.cpp",
+  "plugin/src/audio_stream_plugin_adapter.cpp",
   "plugin/src/bgtask_plugin.cpp",
   "plugin/src/bgtask_plugin_mgr.cpp",
 ]
