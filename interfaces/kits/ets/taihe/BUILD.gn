@@ -49,10 +49,12 @@ taihe_shared_library("background_task_manager_ani") {
   include_dirs = [
     "${bgtaskmgr_frameworks_path}/include",
     "${bgtaskmgr_frameworks_path}/common/include",
+    "${bgtaskmgr_interfaces_path}/kits/common/include",
     "include",
   ]
   sources += [
     "${bgtaskmgr_frameworks_path}/common/src/bgtaskmgr_inner_errors.cpp",
+    "${bgtaskmgr_interfaces_path}/kits/common/src/ui_extension_helper.cpp",
     "src/ani_backgroundtask_subscriber.cpp",
     "src/ani_constructor.cpp",
     "src/ani_task.cpp",
@@ -70,6 +72,7 @@ taihe_shared_library("background_task_manager_ani") {
     "ability_runtime:abilitykit_native",
     "ability_runtime:ani_base_context",
     "ability_runtime:ani_wantagent_common",
+    "ability_runtime:napi_base_context",
     "ability_runtime:napi_common",
     "ability_runtime:runtime",
     "ability_runtime:wantagent_innerkits",
