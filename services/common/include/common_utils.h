@@ -49,7 +49,7 @@ class CommonUtils {
 public:
     static bool CheckJsonValue(const nlohmann::json &value, std::initializer_list<std::string> params);
     static bool CheckExistMode(const std::vector<uint32_t> &bgModeIds, uint32_t bgMode);
-    static bool CheckExistNotification(const std::vector<int32_t> &notificaitonIds, const int32_t notificaitonId);
+    static bool CheckExistNotification(const std::vector<int32_t> &notificationIds, const int32_t notificationId);
     static bool CheckModesSame(const std::vector<uint32_t> &oldBgModeIds, const std::vector<uint32_t> &newBgModeIds);
     static std::string ModesToString(const std::vector<uint32_t> &bgmodes);
     static bool CheckApplyMode(const std::vector<uint32_t> &applyBgModeIds,

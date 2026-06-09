@@ -34,10 +34,10 @@ bool CommonUtils::CheckExistMode(const std::vector<uint32_t> &bgModeIds, uint32_
     return iter != bgModeIds.end();
 }
 
-bool CommonUtils::CheckExistNotification(const std::vector<int32_t> &notificaitonIds, const int32_t notificaitonId)
+bool CommonUtils::CheckExistNotification(const std::vector<int32_t> &notificationIds, const int32_t notificationId)
 {
-    auto iter = std::find(notificaitonIds.begin(), notificaitonIds.end(), notificaitonId);
-    return iter == notificaitonIds.end();
+    auto iter = std::find(notificationIds.begin(), notificationIds.end(), notificationId);
+    return iter == notificationIds.end();
 }
 
 bool CommonUtils::CheckModesSame(const std::vector<uint32_t> &oldBgModeIds, const std::vector<uint32_t> &newBgModeIds)
