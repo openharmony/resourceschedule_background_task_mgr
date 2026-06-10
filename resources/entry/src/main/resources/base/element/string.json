@@ -9,7 +9,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"An audio/video playback task is in progress. Closing this notification will end it.",
+            "value":"An audio/video are currently playing. Closing this notification will end it.",
             "attr":{
                 "priority":"LT"
             }
@@ -225,7 +225,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Starting task…",
+            "value":"Loading audio/video. Closing this notification will interrupt playback.",
             "attr":{
                 "priority":"translate"
             }
