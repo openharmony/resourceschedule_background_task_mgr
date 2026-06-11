@@ -1249,13 +1249,13 @@ void UnSubscribeBackgroundTask(napi_env env, uint32_t flag = 0, const std::strin
         return;
     }
     backgroundTaskSubscriber_->SetFlag(flag, false);
+    ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);
+    if (errCode != ERR_OK) {
+        BGTASK_LOGE("UnsubscribeBackgroundTask failed.");
+        Common::HandleErrCode(env, errCode, true);
+        return;
+    }
     if (backgroundTaskSubscriber_->IsEmpty()) {
-        ErrCode errCode = BackgroundTaskMgrHelper::UnsubscribeBackgroundTask(*backgroundTaskSubscriber_);
-        if (errCode != ERR_OK) {
-            BGTASK_LOGE("UnsubscribeBackgroundTask failed.");
-            Common::HandleErrCode(env, errCode, true);
-            return;
-        }
         backgroundTaskSubscriber_->UnSubscriberBgtaskSaStatusChange();
         backgroundTaskSubscriber_ = nullptr;
     }

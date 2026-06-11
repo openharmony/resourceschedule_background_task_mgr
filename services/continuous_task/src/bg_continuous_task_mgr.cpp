@@ -2209,7 +2209,7 @@ ErrCode BgContinuousTaskMgr::RemoveSubscriberInner(const sptr<IBackgroundTaskSub
         return ERR_BGTASK_INVALID_PARAM;
     }
     if ((*subscriberIter)->isHap_) {
-        (*subscriberIter)->flag_ = flag;
+        (*subscriberIter)->flag_ = (*subscriberIter)->flag_ & ~flag;
         BGTASK_LOGW("remove subscriber success, current flag: %{public}d", (*subscriberIter)->flag_);
         if ((*subscriberIter)->flag_ > 0) {
             BGTASK_LOGD("application uid: %{public}d have callback function.", (*subscriberIter)->uid_);
