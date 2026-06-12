@@ -50,6 +50,7 @@ public:
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
     bool IsNewApi() const;
+    // 标记是否通过内部API申请的长时任务
     bool IsFromWebview() const;
     uint32_t GetBgModeId() const;
     int32_t GetUserId() const;
@@ -82,6 +83,8 @@ private:
     uint32_t bgModeId_ {0};
     bool isNewApi_ {false};
     bool isFromWebview_ {false};
+    // 标记通过SA申请长时任务是否需要发送通知
+    bool needNotificationForInnerApi_ {false};
     std::string notificationLabel_ {""};
     int32_t notificationId_ {-1};
     std::string subNotificationLabel_ {""};

@@ -115,6 +115,17 @@ static const char *g_startingTaskNotificationResNames[] = {
     "notification_text_starting_task",
 };
 
+static const std::map<int32_t, InnerApiReqBgRunningConfig> g_innerApiReqBgRunningConfig = {
+    {7022, InnerApiReqBgRunningConfig(BackgroundMode::VOIP, false)},                         // VOIP_SA
+    {5520, InnerApiReqBgRunningConfig(BackgroundMode::SPECIAL_SCENARIO_PROCESSING, false)},  // CFWK_SA
+    {7878, InnerApiReqBgRunningConfig(BackgroundMode::AUDIO_PLAYBACK, true)},                // AUDIO_CONNECT_SA
+#ifdef FEATURE_PRODUCT_WATCH
+    {7500, InnerApiReqBgRunningConfig(BackgroundMode::WORKOUT, false)},  // HEALTHSPORT_SA
+#else
+    {7259, InnerApiReqBgRunningConfig(BackgroundMode::WORKOUT, false)},  // HEALTHSPORT_SA
+#endif
+};
+
 static const char *g_btnBannerNotification[] = {
     "btn_allow_time",
     "btn_allow_allowed",
@@ -148,16 +159,9 @@ static constexpr int32_t MAX_NOTIFICATION_TEXT_TYPE = 3;
 static constexpr uint32_t INVALID_BGMODE = 0;
 static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
-static constexpr uint32_t VOIP_SA_UID = 7022;
 static constexpr uint32_t AVSESSION_SA_UID = 6700;
-static constexpr uint32_t CFWK_UID = 5520;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 2;
 static constexpr uint32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 65 * 1000;
-#ifdef FEATURE_PRODUCT_WATCH
-static constexpr uint32_t HEALTHSPORT_SA_UID = 7500;
-#else
-static constexpr uint32_t HEALTHSPORT_SA_UID = 7259;
-#endif
 static constexpr uint32_t ALL_MODES = 0xFF;
 static constexpr uint32_t ABILITY_TASK_MAX_NUM = 10;
 #ifndef HAS_OS_ACCOUNT_PART
@@ -375,12 +379,7 @@ void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::Run
                 iter++;
                 continue;
             }
-            if (cachedBundleInfos_.find(iter->second->GetUid()) == cachedBundleInfos_.end()) {
-                std::string mainAbilityLabel = GetMainAbilityLabel(iter->second->GetBundleName(),
-                    iter->second->GetUserId());
-                SetCachedBundleInfo(iter->second->GetUid(), iter->second->GetUserId(),
-                    iter->second->GetBundleName(), mainAbilityLabel);
-            }
+            SetCachedBundleInfo(iter->second->GetUid(), iter->second->GetUserId(), iter->second->GetBundleName());
             HandleActiveNotification(iter->second);
             BGTASK_LOGI("restore notification id %{public}d", iter->second->GetNotificationId());
             iter++;
@@ -651,9 +650,11 @@ int32_t BgContinuousTaskMgr::GetBgTaskUid()
     return bgTaskUid_;
 }
 
-bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId,
-    const std::string &bundleName, const std::string &appName)
+bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName)
 {
+    if (cachedBundleInfos_.count(uid)) {
+        return true;
+    }
     BgTaskHiTraceChain traceChain(__func__);
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
@@ -663,7 +664,7 @@ bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId,
     }
 
     CachedBundleInfo cachedBundleInfo = CachedBundleInfo();
-    cachedBundleInfo.appName_ = appName;
+    cachedBundleInfo.appName_ = GetMainAbilityLabel(bundleName, userId);
     if (AddAbilityBgModeInfos(bundleInfo, cachedBundleInfo)) {
         cachedBundleInfos_.emplace(uid, cachedBundleInfo);
         return true;
@@ -839,24 +840,22 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     }
     BGTASK_LOGI("continuous task param uid %{public}d, real %{public}d", taskParam->uid_, callingUid);
     if (taskParam->isStart_) {
-        return StartBackgroundRunningForInner(taskParam);
+        return StartBackgroundRunningForInner(taskParam, callingUid);
     }
     return StopBackgroundRunningForInner(taskParam);
 }
 
-bool BgContinuousTaskMgr::CheckPermissionForInner(
-    const sptr<ContinuousTaskParamForInner> &taskParam, int32_t callingUid)
+bool BgContinuousTaskMgr::CheckPermissionForInner(const sptr<ContinuousTaskParamForInner> &taskParam,
+    int32_t callingUid)
 {
-    if (callingUid == VOIP_SA_UID && taskParam->bgModeId_ == BackgroundMode::VOIP) {
-        return true;
+    auto it = g_innerApiReqBgRunningConfig.find(callingUid);
+    if (it != g_innerApiReqBgRunningConfig.end()) {
+        if (it->second.bgModeId_ == taskParam->bgModeId_) {
+            return true;
+        }
     }
-    if (callingUid == HEALTHSPORT_SA_UID && taskParam->bgModeId_ == BackgroundMode::WORKOUT) {
-        return true;
-    }
+
     if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
-        return true;
-    }
-    if (callingUid == CFWK_UID && taskParam->bgModeId_ == BackgroundMode::SPECIAL_SCENARIO_PROCESSING) {
         return true;
     }
     return false;
@@ -878,7 +877,8 @@ ErrCode BgContinuousTaskMgr::RequestGetContinuousTasksByUidForInner(int32_t uid,
     return result;
 }
 
-ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
+ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam,
+    const int32_t callingUid)
 {
     BgTaskHiTraceChain traceChain(__func__);
     ErrCode result = ERR_OK;
@@ -904,6 +904,8 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     continuousTaskRecord->isFromWebview_ = true;
     continuousTaskRecord->userId_ = userId;
     continuousTaskRecord->fullTokenId_ = fullTokenId;
+    continuousTaskRecord->needNotificationForInnerApi_ = g_innerApiReqBgRunningConfig.count(callingUid) ?
+        g_innerApiReqBgRunningConfig.at(callingUid).needNotification_ : false;
 
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::StartBackgroundRunningInner");
@@ -1282,12 +1284,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         BGTASK_LOGD("continuous task is already exist: %{public}s", taskInfoMapKey.c_str());
         return ERR_BGTASK_OBJECT_EXISTS;
     }
-    if (!continuousTaskRecord->isFromWebview_
-        && cachedBundleInfos_.find(continuousTaskRecord->uid_) == cachedBundleInfos_.end()) {
-        std::string mainAbilityLabel = GetMainAbilityLabel(continuousTaskRecord->bundleName_,
-            continuousTaskRecord->userId_);
+    if (!continuousTaskRecord->isFromWebview_ || continuousTaskRecord->needNotificationForInnerApi_) {
         SetCachedBundleInfo(continuousTaskRecord->uid_, continuousTaskRecord->userId_,
-            continuousTaskRecord->bundleName_, mainAbilityLabel);
+            continuousTaskRecord->bundleName_);
     }
     return StartBackgroundRunningSubmit(continuousTaskRecord, taskInfoMapKey);
 }
@@ -1331,7 +1330,8 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
     if (ret != ERR_OK) {
         return ret;
     }
-    if (!continuousTaskRecord->isFromWebview_ && sendNotification) {
+    if ((!continuousTaskRecord->isFromWebview_ || continuousTaskRecord->needNotificationForInnerApi_) &&
+        sendNotification) {
         if (continuousTaskRecord->isByRequestObject_ && continuousTaskRecord->bgModeIds_.size() > 1 &&
             CommonUtils::CheckExistMode(continuousTaskRecord->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
             ret = SendLiveViewAndOtherNotification(continuousTaskRecord);
@@ -1802,27 +1802,9 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningByTask(const std::shared_ptr<C
     }
     auto record = findTaskIter->second;
     OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
-    int32_t notificationId = record->GetNotificationId();
     BGTASK_LOGI("remove continuous task success, taskId: %{public}d", continuousTaskId);
     continuousTaskInfosMap_.erase(findTaskIter);
-    ErrCode result = ERR_OK;
-    if (notificationId != -1) {
-        std::string notificationLabel = record->GetNotificationLabel();
-        auto findNotification = [notificationId, notificationLabel](const auto &target) {
-            return notificationId == target.second->notificationId_ &&
-                notificationLabel == target.second->notificationLabel_;
-        };
-        auto findNotificationIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(),
-            findNotification);
-        if (findNotificationIter == continuousTaskInfosMap_.end()) {
-            result = NotificationTools::GetInstance()->CancelNotification(notificationLabel, notificationId);
-            int32_t subNotificationId = record->GetSubNotificationId();
-            if (subNotificationId != -1 && record->isByRequestObject_) {
-                std::string subNotificationLabel = record->GetSubNotificationLabel();
-                result = NotificationTools::GetInstance()->CancelNotification(subNotificationLabel, subNotificationId);
-            }
-        }
-    }
+    auto result = CancelNotification(record);
     HandleAppContinuousTaskStop(record->uid_);
     RefreshTaskRecord();
     return result;
@@ -3218,6 +3200,8 @@ void BgContinuousTaskMgr::HandleRemoveTaskByMode(uint32_t mode)
             iter = continuousTaskInfosMap_.erase(iter);
             HandleAppContinuousTaskStop(record->uid_);
             RefreshTaskRecord();
+            auto result = CancelNotification(record);
+            BGTASK_LOGI("Cancel notification, uid: %{public}d, result: %{public}d", record->uid_, result);
         } else {
             iter++;
         }
@@ -3327,6 +3311,13 @@ void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const s
                 handler_->PostTask(task);
             }
             break;
+        case SA_ID_AAM_CONN:
+            {
+                BGTASK_LOGI("remove aam connection system ability, systemAbilityId: %{public}d", systemAbilityId);
+                auto task = [this]() { this->HandleRemoveTaskByMode(BackgroundMode::AUDIO_PLAYBACK); };
+                handler_->PostTask(task);
+            }
+            break;
         default:
             break;
     }
@@ -3341,7 +3332,7 @@ ErrCode BgContinuousTaskMgr::DebugContinuousTaskInner(const sptr<ContinuousTaskP
         return ERR_BGTASK_CHECK_TASK_PARAM;
     }
     if (taskParam->isStart_) {
-        return StartBackgroundRunningForInner(taskParam);
+        return StartBackgroundRunningForInner(taskParam, 0);
     }
     return StopBackgroundRunningForInner(taskParam);
 }
@@ -4442,6 +4433,30 @@ void BgContinuousTaskMgr::HisysEventRequestAuth(const std::shared_ptr<BannerNoti
         "FUNC_NAME", std::vector<std::string>{""},
         "ERR_CODE", std::vector<int32_t>{-1},
         "ERR_MSG", std::vector<std::string>{"Request user authorization for using special type continuous tasks"});
+}
+
+ErrCode BgContinuousTaskMgr::CancelNotification(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo)
+{
+    ErrCode result = ERR_OK;
+    int32_t notificationId = continuousTaskInfo->GetNotificationId();
+    if (notificationId != -1) {
+        std::string notificationLabel = continuousTaskInfo->GetNotificationLabel();
+        auto findNotification = [notificationId, notificationLabel](const auto &target) {
+            return notificationId == target.second->notificationId_ &&
+                notificationLabel == target.second->notificationLabel_;
+        };
+        auto findNotificationIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(),
+            findNotification);
+        if (findNotificationIter == continuousTaskInfosMap_.end()) {
+            result = NotificationTools::GetInstance()->CancelNotification(notificationLabel, notificationId);
+            int32_t subNotificationId = continuousTaskInfo->GetSubNotificationId();
+            if (subNotificationId != -1 && continuousTaskInfo->isByRequestObject_) {
+                std::string subNotificationLabel = continuousTaskInfo->GetSubNotificationLabel();
+                result = NotificationTools::GetInstance()->CancelNotification(subNotificationLabel, subNotificationId);
+            }
+        }
+    }
+    return result;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

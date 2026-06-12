@@ -182,6 +182,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["bgModeId"] = bgModeId_;
     root["isNewApi"] = isNewApi_;
     root["isFromWebview"] = isFromWebview_;
+    root["needSendNotificationForInnerApi"] = needNotificationForInnerApi_;
     root["notificationLabel"] = notificationLabel_;
     root["notificationId"] = notificationId_;
     root["isBatchApi"] = isBatchApi_;
@@ -216,6 +217,7 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["userId"].is_number_integer() || !value["uid"].is_number_integer()
         || !value["pid"].is_number_integer() || !value["bgModeId"].is_number_integer()
         || !value["isNewApi"].is_boolean() || !value["isFromWebview"].is_boolean()
+        || !value["needSendNotificationForInnerApi"].is_boolean()
         || !value["notificationLabel"].is_string() || !value["isSystem"].is_boolean()
         || !value["continuousTaskId"].is_number_integer() || !value["abilityId"].is_number_integer()
         || !value["suspendState"].is_boolean() || !value["suspendReason"].is_number_integer()
@@ -232,7 +234,7 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
         "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel",
         "isSystem", "continuousTaskId", "abilityId", "suspendState", "suspendReason", "isCombinedTaskNotification",
         "combinedNotificationTaskId", "isByRequestObject", "subNotificationLabel", "subNotificationId", "appIndex",
-        "detailedCancelReason", "isStandby", "audioPlayState"})) {
+        "detailedCancelReason", "isStandby", "audioPlayState", "needSendNotificationForInnerApi"})) {
         BGTASK_LOGE("continuoustaskrecord no key");
         return false;
     }
@@ -268,6 +270,7 @@ void ContinuousTaskRecord::SetRecordValue(const nlohmann::json &value)
     this->bgModeId_ = value.at("bgModeId").get<uint32_t>();
     this->isNewApi_ = value.at("isNewApi").get<bool>();
     this->isFromWebview_ = value.at("isFromWebview").get<bool>();
+    this->needNotificationForInnerApi_ = value.at("needSendNotificationForInnerApi").get<bool>();
     this->notificationLabel_ = value.at("notificationLabel").get<std::string>();
     this->isSystem_ = value.at("isSystem").get<bool>();
     this->continuousTaskId_ = value.at("continuousTaskId").get<int32_t>();

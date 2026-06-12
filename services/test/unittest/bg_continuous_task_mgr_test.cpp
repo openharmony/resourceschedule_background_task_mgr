@@ -130,6 +130,20 @@ public:
     ErrCode OnExpiredAuth(int32_t authResult) override {return ERR_OK;}
 };
 
+// 创建测试用的 ContinuousTaskRecord
+std::shared_ptr<ContinuousTaskRecord> CreateTestTaskRecord(
+    int32_t uid, const std::string &bundleName, const std::string &abilityName, uint32_t bgModeId)
+{
+    auto record = std::make_shared<ContinuousTaskRecord>();
+    record->uid_ = uid;
+    record->bundleName_ = bundleName;
+    record->abilityName_ = abilityName;
+    record->abilityId_ = 0;
+    record->bgModeIds_.push_back(bgModeId);
+    record->isFromWebview_ = false;
+    return record;
+}
+
 /**
  * @tc.name: StartBackgroundRunning_001
  * @tc.desc: start background runnging use new api test.
@@ -402,9 +416,10 @@ HWTEST_F(BgContinuousTaskMgrTest, UnsubscribeContinuousTask_001, TestSize.Level1
  */
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_002, TestSize.Level1)
 {
-    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(1, 1, "false-test", "test"));
-    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(1, 1, "empty-info", "test"));
-    EXPECT_TRUE(bgContinuousTaskMgr_->SetCachedBundleInfo(1, 1, "valid", "test"));
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(1, 1, "false-test"));
+    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(1, 1, "empty-info"));
+    EXPECT_TRUE(bgContinuousTaskMgr_->SetCachedBundleInfo(1, 1, "valid"));
 }
 
 /**
@@ -1014,7 +1029,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_043, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->RequestBackgroundRunningForInner(nullptr), ERR_BGTASK_CHECK_TASK_PARAM);
     sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
         new ContinuousTaskParamForInner(1, 1, true));
-    EXPECT_EQ(bgContinuousTaskMgr_->StartBackgroundRunningForInner(taskParam), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->StartBackgroundRunningForInner(taskParam, 200200), ERR_OK);
     taskParam->isStart_ = false;
     EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunningForInner(taskParam), ERR_OK);
 }
@@ -2852,6 +2867,55 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_079, TestSize.Level2)
     bgContinuousTaskMgr_->NotifySubscribersTaskUpdate(invalidTaskInfo6);
     bgContinuousTaskMgr_->NotifySubscribersTaskCancel(invalidTaskInfo6);
     EXPECT_FALSE(BackgroundTaskObserver::GetInstance().CheckContinuousTaskInfo(invalidTaskInfo6));
+}
+
+/**
+ * @tc.name: StartBackgroundRunningInner_Test_001
+ * @tc.desc: Test StartBackgroundRunningInner with valid parameters.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunningInner_Test_001, TestSize.Level1)
+{
+    auto taskRecord = CreateTestTaskRecord(10001, "com.test.bundle", "EntryAbility",
+        static_cast<uint32_t>(BackgroundMode::AUDIO_PLAYBACK));
+
+    ErrCode result = bgContinuousTaskMgr_->StartBackgroundRunningInner(taskRecord);
+
+    EXPECT_EQ(result, ERR_BGMODE_NULL_OR_TYPE_ERR);
+}
+
+/**
+ * @tc.name: StartBackgroundRunningInner_Test_002
+ * @tc.desc: Test StartBackgroundRunningInner with empty bundleName.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunningInner_Test_002, TestSize.Level1)
+{
+    auto taskRecord = CreateTestTaskRecord(10001, "", "EntryAbility",
+        static_cast<uint32_t>(BackgroundMode::AUDIO_PLAYBACK));
+
+    ErrCode result = bgContinuousTaskMgr_->StartBackgroundRunningInner(taskRecord);
+
+    EXPECT_EQ(result, ERR_BGMODE_NULL_OR_TYPE_ERR);
+}
+
+/**
+ * @tc.name: StartBackgroundRunningInner_Test_003
+ * @tc.desc: Test StartBackgroundRunningInner with webview task.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, StartBackgroundRunningInner_Test_003, TestSize.Level1)
+{
+    auto taskRecord = CreateTestTaskRecord(10001, "com.test.bundle", "EntryAbility",
+        static_cast<uint32_t>(BackgroundMode::AUDIO_PLAYBACK));
+    taskRecord->isFromWebview_ = true;
+
+    ErrCode result = bgContinuousTaskMgr_->StartBackgroundRunningInner(taskRecord);
+
+    EXPECT_EQ(result, ERR_OK);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

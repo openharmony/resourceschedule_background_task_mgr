@@ -52,6 +52,7 @@ namespace BackgroundTaskMgr {
 namespace {
     static constexpr uint32_t SA_ID_VOIP_CALL_MANAGER = 65968;
     static constexpr uint32_t SA_ID_HEALTH_SPORT = 9527;
+    static constexpr uint32_t SA_ID_AAM_CONN = 65952;
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     static constexpr int32_t CANCEL_REASON_DELETE = Notification::NotificationConstant::CANCEL_REASON_DELETE;
 #else
@@ -84,6 +85,14 @@ struct SubscriberInfo {
     int pid_;
     bool isHap_ {false};
     uint32_t flag_ {0};
+};
+
+struct InnerApiReqBgRunningConfig {
+    bool needNotification_;
+    uint32_t bgModeId_;
+
+    InnerApiReqBgRunningConfig(uint32_t bgModeId, bool needNotification)
+        : needNotification_(needNotification), bgModeId_(bgModeId) {}
 };
 
 class BgContinuousTaskMgr : public DelayedSingleton<BgContinuousTaskMgr>,
@@ -168,7 +177,8 @@ private:
     ErrCode UpdateTaskNotification(std::shared_ptr<ContinuousTaskRecord> record,
         const sptr<ContinuousTaskParam> &taskParam);
     ErrCode UpdateBackgroundRunningByTaskIdInner(int32_t uid, const sptr<ContinuousTaskParam> &taskParam);
-    ErrCode StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
+    ErrCode StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam,
+        const int32_t callingUid);
     ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName, int32_t abilityId,
         int32_t continuousTaskId = -1);
     ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
@@ -211,7 +221,7 @@ private:
     ErrCode SingleModeNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
         const std::string &mergeBlueNotificationText, const std::shared_ptr<ContinuousTaskRecord> record);
     bool FormatBannerNotificationContext(const std::string &appName, std::string &bannerContent);
-    bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName, const std::string &appName);
+    bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void HandleSuspendContinuousTask(
         int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby = false);
@@ -290,6 +300,7 @@ private:
     void ReportXpowerHisysevent(
         const std::string &type, const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord, int32_t ret);
     void ClearBgOsAccountTask(const std::vector<int32_t> &activatedOsAccountIds);
+    ErrCode CancelNotification(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo);
 #ifdef HAS_OS_ACCOUNT_CAR
     void ClearBgOsAccountTaskInCar();
 #endif
