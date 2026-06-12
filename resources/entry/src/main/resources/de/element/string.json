@@ -237,6 +237,20 @@
             "attr": {
                 "priority": "translate"
             }
+        },
+        {
+            "name":"notification_text_nearlink",
+            "value":"NearLink",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"Zulassen, dass %s im Hintergrund ausgeführt wird?",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

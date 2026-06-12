@@ -32,6 +32,7 @@
 #include "resources_subscriber_mgr.h"
 #include "res_sched_signature_validator.h"
 #include "system_ability_definition.h"
+#include "background_task_observer.h"
 
 using namespace testing::ext;
 
@@ -1121,6 +1122,75 @@ HWTEST_F(BgTaskManagerUnitTest, SetSpecialExemptedProcess_001, TestSize.Level1)
     EXPECT_FALSE(DelayedSingleton<BgtaskConfig>::GetInstance()->taskKeepingExemptedQuatoList_.empty());
 
     EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName));
+}
+
+/**
+ * @tc.name: BgTaskManagerUnitTest_064
+ * @tc.desc: test BgTransientTaskMgr NotifyTransientTaskSuscriber with invalid data.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_064, TestSize.Level2)
+{
+    bgTransientTaskMgr_->subscriberList_.clear();
+    auto invalidTaskInfo3 = std::make_shared<TransientTaskAppInfo>("", 1000, 1000);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo3, TransientTaskEventType::TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo3, TransientTaskEventType::TASK_END);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo3, TransientTaskEventType::TASK_ERR);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo3, TransientTaskEventType::APP_TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo3, TransientTaskEventType::APP_TASK_END);
+    EXPECT_FALSE(BackgroundTaskObserver::GetInstance().CheckTransientTaskAppInfo(invalidTaskInfo3));
+}
+ 
+/**
+ * @tc.name: BgTaskManagerUnitTest_065
+ * @tc.desc: test BgTransientTaskMgr NotifyTransientTaskSuscriber with valid data.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_065, TestSize.Level2)
+{
+    auto validTaskInfo = std::make_shared<TransientTaskAppInfo>("com.test.app", 1000, 1000);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(validTaskInfo, TransientTaskEventType::TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(validTaskInfo, TransientTaskEventType::TASK_END);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(validTaskInfo, TransientTaskEventType::TASK_ERR);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(validTaskInfo, TransientTaskEventType::APP_TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(validTaskInfo, TransientTaskEventType::APP_TASK_END);
+    EXPECT_TRUE(BackgroundTaskObserver::GetInstance().CheckTransientTaskAppInfo(validTaskInfo));
+}
+ 
+/**
+ * @tc.name: BgTaskManagerUnitTest_066
+ * @tc.desc: test BgTransientTaskMgr NotifyTransientTaskSuscriber with invalid data.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_066, TestSize.Level2)
+{
+    auto invalidTaskInfo1 = std::make_shared<TransientTaskAppInfo>("com.test.app", 1000, -1);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo1, TransientTaskEventType::TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo1, TransientTaskEventType::TASK_END);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo1, TransientTaskEventType::TASK_ERR);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo1, TransientTaskEventType::APP_TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo1, TransientTaskEventType::APP_TASK_END);
+    EXPECT_FALSE(BackgroundTaskObserver::GetInstance().CheckTransientTaskAppInfo(invalidTaskInfo1));
+}
+ 
+/**
+ * @tc.name: BgTaskManagerUnitTest_067
+ * @tc.desc: test BgTransientTaskMgr NotifyTransientTaskSuscriber with invalid data.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_067, TestSize.Level2)
+{
+    auto invalidTaskInfo2 = std::make_shared<TransientTaskAppInfo>("com.test.app", -1, 1000);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo2, TransientTaskEventType::TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo2, TransientTaskEventType::TASK_END);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo2, TransientTaskEventType::TASK_ERR);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo2, TransientTaskEventType::APP_TASK_START);
+    bgTransientTaskMgr_->NotifyTransientTaskSuscriber(invalidTaskInfo2, TransientTaskEventType::APP_TASK_END);
+    EXPECT_FALSE(BackgroundTaskObserver::GetInstance().CheckTransientTaskAppInfo(invalidTaskInfo2));
 }
 }
 }

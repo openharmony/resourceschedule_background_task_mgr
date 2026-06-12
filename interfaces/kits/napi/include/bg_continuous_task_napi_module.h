@@ -31,6 +31,7 @@ napi_value OffOnContinuousTaskCallback(napi_env env, napi_callback_info info);
 napi_value GetAllContinuousTasksThrow(napi_env env, napi_callback_info info);
 napi_value IsModeSupported(napi_env env, napi_callback_info info);
 napi_value CheckSpecialScenarioAuth(napi_env env, napi_callback_info info);
+napi_value CheckSpecialScenarioAuthResult(napi_env env, napi_callback_info info);
 napi_value SetBackgroundTaskState(napi_env env, napi_callback_info info);
 napi_value GetBackgroundTaskState(napi_env env, napi_callback_info info);
 napi_value ObtainAllContinuousTasks(napi_env env, napi_callback_info info);

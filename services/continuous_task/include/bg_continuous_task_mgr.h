@@ -24,7 +24,6 @@
 #include "resource_manager.h"
 #include "singleton.h"
 
-#include "app_state_observer.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "bundle_info.h"
 #include "continuous_task_callback_info.h"
@@ -33,6 +32,7 @@
 #endif
 #include "continuous_task_info.h"
 #include "background_task_mode.h"
+#include "background_common.h"
 #include "continuous_task_param.h"
 #include "continuous_task_record.h"
 #include "continuous_task_request.h"
@@ -119,9 +119,11 @@ public:
         uint64_t callingTokenId, const std::string &bundleName, uint64_t fullTokenId);
     ErrCode RequestAuthFromUser(const sptr<ContinuousTaskParam> &taskParam, const sptr<IExpiredCallback> &callback,
         int32_t &notificationId);
-    ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult);
+    ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult,
+        int32_t apiVersion = API_VERSION_CHECK_SPECIAL_USER_AUTH);
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
+
     ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
     ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
     ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
@@ -166,6 +168,7 @@ public:
     void OnPermissionDialogButtonClickInner(int32_t authResult, int32_t bundleUid, const std::string &bundleName,
  	  	int32_t appIndex);
     ErrCode NotifyAudioStart(const int32_t uid);
+    std::shared_ptr<AppExecFwk::EventHandler> GetHandler() const;
 private:
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
@@ -205,8 +208,6 @@ private:
     bool AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool RegisterNotificationSubscriber();
     bool RegisterSysCommEventListener();
-    bool RegisterAppStateObserver();
-    void UnregisterAppStateObserver();
     bool RegisterConfigurationObserver();
     bool RegisterDialogClickListener();
     bool GetNotificationPrompt();
@@ -280,11 +281,12 @@ private:
     ErrCode SendLiveViewAndOtherNotification(std::shared_ptr<ContinuousTaskRecord> record);
     ErrCode SendNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,
         std::shared_ptr<ContinuousTaskRecord> record, const std::string &appName, bool isSubNotification);
-    ErrCode CheckAuthParam(std::shared_ptr<ContinuousTaskRecord> record, const sptr<IExpiredCallback>& callback);
+    ErrCode CheckAuthParam(std::shared_ptr<ContinuousTaskRecord> record, const sptr<IExpiredCallback>& callback,
+        int32_t apiVersion);
     ErrCode RequestAuthFromUserInner(std::shared_ptr<ContinuousTaskRecord> record,
-        const sptr<IExpiredCallback> &callback, int32_t &notification);
+        const sptr<IExpiredCallback> &callback, int32_t &notification, int32_t apiVersion);
     ErrCode CheckSpecialScenarioAuthInner(uint32_t &authResult, const std::string &bundleName,
-        int32_t userId, int32_t appIndex);
+        int32_t userId, int32_t appIndex, int32_t apiVersion);
     ErrCode CheckModeSupportedPermission(const sptr<ContinuousTaskParam> &taskParam);
     ErrCode CheckSpecialModePermission(const sptr<ContinuousTaskParam> &taskParam);
     void HandleAuthExpiredCallbackDeathInner(const wptr<IRemoteObject> &remote);
@@ -293,7 +295,7 @@ private:
     ErrCode SetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
     ErrCode GetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
     void SendAudioCallBackTaskState(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo);
-    bool CheckApplySpecial(const std::string &bundleName, int32_t &userId);
+    bool CheckApplySpecial(const std::string &bundleName, int32_t &userId, bool checkPermission = true);
     ErrCode SendNotificationByDeteTaskInner(const std::set<std::string> &taskKeys);
     void ReportXpowerHisysevent(
         const std::string &type, const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord, int32_t ret);
@@ -305,6 +307,11 @@ private:
     ErrCode RemoveAuthRecordInner(const std::shared_ptr<ContinuousTaskRecord> record);
     void InitNotificationText();
     void NotifyAudioStartInner(const int32_t uid);
+    void HisysEventRequestAuth(const std::shared_ptr<BannerNotificationRecord> authRecord);
+    bool InitSubNotificationRecord(const std::shared_ptr<ContinuousTaskRecord> record,
+        std::shared_ptr<ContinuousTaskRecord> subRecord);
+    void OnBannerNotificationActionButtonClickInner(const int32_t buttonType,
+        const int32_t uid, const std::string &label);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};
@@ -321,7 +328,6 @@ private:
 #endif
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
     std::shared_ptr<DialogEventObserver> dialogClickListener_ {nullptr};
-    sptr<AppStateObserver> appStateObserver_ {nullptr};
     sptr<AppExecFwk::IConfigurationObserver> configChangeObserver_ {nullptr};
     std::list<std::shared_ptr<SubscriberInfo>> bgTaskSubscribers_ {};
     sptr<RemoteDeathRecipient> susriberDeathRecipient_ {nullptr};
@@ -332,6 +338,7 @@ private:
     std::vector<std::string> continuousTaskText_ {};
     std::vector<std::string> continuousTaskSubText_ {};
     std::vector<std::string> startingTaskText_ {};
+    std::vector<std::string> bannerNotificationBtn_ {};
     sptr<AuthExpiredCallbackDeathRecipient> authCallbackDeathRecipient_ {nullptr};
     std::map<std::string, sptr<IExpiredCallback>> expiredCallbackMap_;
     int32_t continuousTaskIdIndex_ = 0;

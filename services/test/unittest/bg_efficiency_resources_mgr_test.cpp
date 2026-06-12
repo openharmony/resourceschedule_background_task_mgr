@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -404,7 +404,6 @@ HWTEST_F(BgEfficiencyResourcesMgrTest, SystemAbility_001, TestSize.Level1)
     bgEfficiencyResourcesMgr_->isSysReady_.store(true);
     bgEfficiencyResourcesMgr_->CheckAlivedApp(0);
     bgEfficiencyResourcesMgr_->Clear();
-    bgEfficiencyResourcesMgr_->appStateObserver_ = nullptr;
     bgEfficiencyResourcesMgr_->Clear();
     bgEfficiencyResourcesMgr_->CheckAlivedApp(0);
     EXPECT_TRUE(true);

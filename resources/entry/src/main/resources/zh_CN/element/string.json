@@ -9,7 +9,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"正在运行音视频播放任务，删除通知后任务将停止",
+            "value":"音视频正在播放中，移除通知将中断播放",
             "attr":{
                 "priority":"translate"
             }
@@ -213,7 +213,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"任务启动中",
+            "value":"音视频启动加载中，移除通知将中断播放",
             "attr":{
                 "priority":"translate"
             }
@@ -248,7 +248,17 @@
         },
         {
             "name":"notification_text_nearlink",
-            "value":"星闪"
+            "value":"星闪",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"允许“%s”执行应用后台长时活动？",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

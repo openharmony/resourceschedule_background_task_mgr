@@ -237,6 +237,20 @@
             "attr": {
                 "priority": "translate"
             }
+        },
+        {
+            "name":"notification_text_nearlink",
+            "value":"星閃",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"允許「%s」執行應用程式背景長時活動？",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

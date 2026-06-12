@@ -23,6 +23,7 @@
 #include "parcel.h"
 #include "refbase.h"
 #include "want_agent.h"
+#include "background_common.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -42,6 +43,7 @@ struct ContinuousTaskParam : public Parcelable {
     int32_t updateTaskId_ {-1};
     bool isByRequestObject_ {false};
     int32_t appIndex_ {-1};
+    int32_t requestAuthApiVersion_ {API_VERSION_REQUEST_SPECIAL_USER_AUTH}; // 特殊类型长时任务请求用户授权API版本，起始22
     int32_t notificationId_ {-1}; // out
     int32_t continuousTaskId_ {-1}; // out
 

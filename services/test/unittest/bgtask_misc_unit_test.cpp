@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -94,47 +94,91 @@ void BgTaskMiscUnitTest::TearDown() {}
 
 /**
  * @tc.name: AppStateObserverTest_001
- * @tc.desc: test AppStateObserver class CheckParamValid method.
+ * @tc.desc: test OnAppCacheStateChanged method.
  * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V issueIB08SV
+ * @tc.require:
  */
 HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_001, TestSize.Level2)
 {
-    sptr<AppStateObserver> appStateObserver = sptr<AppStateObserver>(new AppStateObserver());
-    AppExecFwk::ProcessData processData = AppExecFwk::ProcessData();
-    appStateObserver->OnProcessDied(processData);
-    appStateObserver->OnProcessDiedEfficiencyRes(processData);
-    AppExecFwk::AbilityStateData abilityStateData = AppExecFwk::AbilityStateData();
-    appStateObserver->OnAbilityStateChanged(abilityStateData);
-    AppExecFwk::AppStateData appStateDataCache = AppExecFwk::AppStateData();
-    // state is invalid
-    appStateDataCache.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_SET_COLD_START);
-    appStateObserver->OnAppCacheStateChanged(appStateDataCache);
-    // handle is null
-    appStateDataCache.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_CACHED);
-    appStateObserver->OnAppCacheStateChanged(appStateDataCache);
-    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
-    appStateObserver->SetEventHandler(handler);
+    AppStateObserver appStateObserver;
+ 
+    AppExecFwk::ProcessData processData;
+    processData.uid = 1;
+    processData.pid = 1;
+    processData.bundleName = "bundleName";
+    appStateObserver.OnProcessDied(processData);
+ 
+    AppExecFwk::AbilityStateData abilityStateData;
+    abilityStateData.uid = 1;
+    abilityStateData.abilityName = "abilityName";
+    abilityStateData.abilityRecordId = 1;
+    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
+    appStateObserver.OnAbilityStateChanged(abilityStateData);
+ 
+    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_CREATE);
+    appStateObserver.OnAbilityStateChanged(abilityStateData);
+ 
+    AppExecFwk::AppStateData appStateDataCache;
     appStateDataCache.uid = 1;
     appStateDataCache.pid = 1;
     appStateDataCache.bundleName = "bundleName";
-    appStateObserver->OnAppCacheStateChanged(appStateDataCache);
-    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
-    appStateObserver->OnAbilityStateChanged(abilityStateData);
-    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_CREATE);
-    appStateObserver->OnAbilityStateChanged(abilityStateData);
-    abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
-    appStateObserver->OnAbilityStateChanged(abilityStateData);
-    AppExecFwk::AppStateData appStateData = AppExecFwk::AppStateData();
-    appStateObserver->OnAppStopped(appStateData);
+    appStateDataCache.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_CACHED);
+    appStateObserver.OnAppCacheStateChanged(appStateDataCache);
+    EXPECT_TRUE(appStateObserver.ValidateAppStateData(appStateDataCache));
+}
+ 
+/**
+ * @tc.name: AppStateObserverTest_002
+ * @tc.desc: test AppStateObserver OnAppStopped method.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_002, TestSize.Level2)
+{
+    AppStateObserver appStateObserver;
+ 
+    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
+    appStateObserver.SetEventHandler(handler);
+ 
+    AppExecFwk::AppStateData appStateData;
+    appStateData.uid = 1;
+    appStateData.pid = 1;
+    appStateData.bundleName = "bundleName";
+    appStateObserver.OnAppStopped(appStateData);
+ 
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_TERMINATED);
+    appStateObserver.OnAppStopped(appStateData);
+ 
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END);
+    appStateObserver.OnAppStopped(appStateData);
+    EXPECT_TRUE(appStateObserver.ValidateAppStateData(appStateData));
+}
+ 
+/**
+ * @tc.name: AppStateObserverTest_003
+ * @tc.desc: test AppStateObserver OnAppStateChanged method.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_003, TestSize.Level2)
+{
+    AppStateObserver appStateObserver;
+    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
+    appStateObserver.SetEventHandler(handler);
+ 
+    AppExecFwk::AppStateData appStateData;
+    appStateData.pid = 1;
     appStateData.uid = 1;
     appStateData.bundleName = "bundleName";
-    appStateObserver->OnAppStopped(appStateData);
-    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_TERMINATED);
-    appStateObserver->OnAppStopped(appStateData);
-    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_END);
-    appStateObserver->OnAppStopped(appStateData);
-    EXPECT_TRUE(appStateObserver->ValidateAppStateData(appStateData));
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND);
+    appStateObserver.OnAppStateChanged(appStateData);
+ 
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND);
+    appStateObserver.OnAppStateChanged(appStateData);
+ 
+    appStateData.state = static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_CREATE);
+    appStateObserver.OnAppStateChanged(appStateData);
+    EXPECT_TRUE(appStateObserver.ValidateAppStateData(appStateData));
 }
 
 /**
@@ -738,8 +782,6 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_006, TestSize.Level2)
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo] = pkgDelaySuspendInfo;
     requestIdList = decisionMaker->GetRequestIdListByKey(keyInfo);
     EXPECT_FALSE(requestIdList.empty());
-    decisionMaker->ResetAppMgrProxy();
-    EXPECT_EQ(decisionMaker->appMgrProxy_, nullptr);
 }
 
 /**
@@ -812,14 +854,12 @@ HWTEST_F(BgTaskMiscUnitTest, OnProcessStateChanged_001, TestSize.Level2)
     auto timerManager =
         std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
     auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
-    auto applicationStateObserver = sptr<DecisionMaker::ApplicationStateObserver>(
-        new (std::nothrow) DecisionMaker::ApplicationStateObserver(*decisionMaker));
 
     AppExecFwk::ProcessData processData;
     processData.uid = 1;
     processData.bundleName = "bundleName1";
     processData.state = AppExecFwk::AppProcessState::APP_STATE_FOREGROUND;
-    applicationStateObserver->OnProcessStateChanged(processData);
+    decisionMaker->OnProcessStateChanged(processData);
 
     auto keyInfo1 = std::make_shared<KeyInfo>("bundleName1", 1);
     auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", 1, timerManager);
@@ -829,13 +869,13 @@ HWTEST_F(BgTaskMiscUnitTest, OnProcessStateChanged_001, TestSize.Level2)
     auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
     decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
     processData.state = AppExecFwk::AppProcessState::APP_STATE_FOREGROUND;
-    applicationStateObserver->OnProcessStateChanged(processData);
+    decisionMaker->OnProcessStateChanged(processData);
 
     decisionMaker->pkgDelaySuspendInfoMap_.clear();
     processData.state = AppExecFwk::AppProcessState::APP_STATE_BACKGROUND;
-    applicationStateObserver->OnProcessStateChanged(processData);
+    decisionMaker->OnProcessStateChanged(processData);
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
-    applicationStateObserver->OnProcessStateChanged(processData);
+    decisionMaker->OnProcessStateChanged(processData);
     EXPECT_EQ((int32_t)decisionMaker->pkgDelaySuspendInfoMap_.size(), 1);
 }
 
@@ -1083,6 +1123,33 @@ HWTEST_F(BgTaskMiscUnitTest, DialogEventObserver_001, TestSize.Level2)
     want.SetAction(BGTASK_AUTH_DIALOG_EVENT_NAME);
     eventData.SetWant(want);
     dialogEventObserver->OnReceiveEvent(eventData);
+}
+
+/**
+ * @tc.name: NotificationToolsTest_005
+ * @tc.desc: test NotificationTools class.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskMiscUnitTest, NotificationToolsTest_005, TestSize.Level2)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    auto bannerNotification = std::make_shared<BannerNotificationRecord>();
+    bannerNotification->bundleName_ = "bundleName";
+    bannerNotification->appName_ = "appName";
+    bannerNotification->uid_ = 1;
+    bannerNotification->notificationId_ = -1;
+    bannerNotification->appIndex_ = 0;
+    std::vector<std::string> bannerNotificationBtn;
+    bannerNotificationBtn.push_back("banner1");
+    bannerNotificationBtn.push_back("banner2");
+    std::map<std::string, std::pair<std::string, std::string>> newPromptInfos;
+    newPromptInfos.emplace("label", std::make_pair<std::string, std::string>("test1", "test2"));
+    NotificationTools::GetInstance()->RefreshBannerNotifications(bannerNotificationBtn,
+        newPromptInfos, bannerNotification, 0);
+    EXPECT_EQ(NotificationTools::GetInstance()->PublishBannerNotification(bannerNotification,
+        "prompt", 0, bannerNotificationBtn), ERR_BGTASK_NOTIFICATION_ERR);
+#endif
 }
 }
 }

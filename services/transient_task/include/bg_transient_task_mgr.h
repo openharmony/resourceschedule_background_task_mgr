@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -81,6 +81,7 @@ public:
     void HandleSuspendManagerDie();
     void OnAppCacheStateChanged(int32_t uid, int32_t pid, const std::string &bundleName);
     std::set<int32_t>& GetTransientPauseUid();
+    std::shared_ptr<DecisionMaker> GetDecisionMaker();
 
 private:
     ErrCode IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,

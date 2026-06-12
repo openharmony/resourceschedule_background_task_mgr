@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,7 @@
 #include "hisysevent.h"
 #include "data_storage_helper.h"
 #include "bgtask_config.h"
+#include "app_mgr_helper.h"
 
 using namespace std;
 
@@ -39,86 +40,18 @@ DecisionMaker::DecisionMaker(const shared_ptr<TimerManager>& timerManager, const
     lock_guard<mutex> lock(lock_);
     timerManager_ = timerManager;
     deviceInfoManager_ = device;
-
-    if (!GetAppMgrProxy()) {
-        BGTASK_LOGE("GetAppMgrProxy failed");
-        return;
-    }
 }
 
-DecisionMaker::~DecisionMaker()
-{
-    lock_guard<mutex> lock(lock_);
-    if (appMgrProxy_ && observer_) {
-        appMgrProxy_->UnregisterApplicationStateObserver(iface_cast<AppExecFwk::IApplicationStateObserver>(observer_));
-    }
-    appMgrProxy_ = nullptr;
-    observer_ = nullptr;
-    recipient_ = nullptr;
-}
+DecisionMaker::~DecisionMaker() {}
 
-bool DecisionMaker::GetAppMgrProxy()
-{
-    if (appMgrProxy_ != nullptr) {
-        return true;
-    }
-
-    sptr<ISystemAbilityManager> systemAbilityManager =
-        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityManager == nullptr) {
-        BGTASK_LOGE("GetSystemAbilityManager failed.");
-        return false;
-    }
-
-    sptr<IRemoteObject> remoteObject =
-        systemAbilityManager->GetSystemAbility(APP_MGR_SERVICE_ID);
-    if (remoteObject == nullptr) {
-        BGTASK_LOGE("GetSystemAbility failed.");
-        return false;
-    }
-
-    appMgrProxy_ = iface_cast<AppExecFwk::IAppMgr>(remoteObject);
-    if ((appMgrProxy_ == nullptr) || (appMgrProxy_->AsObject() == nullptr)) {
-        BGTASK_LOGE("iface_cast remoteObject failed.");
-        return false;
-    }
-    observer_ = new (std::nothrow) ApplicationStateObserver(*this);
-    if (observer_ == nullptr) {
-        return false;
-    }
-    appMgrProxy_->RegisterApplicationStateObserver(iface_cast<AppExecFwk::IApplicationStateObserver>(observer_));
-
-    recipient_ = new (std::nothrow) AppMgrDeathRecipient(*this);
-    if (recipient_ == nullptr) {
-        return false;
-    }
-    appMgrProxy_->AsObject()->AddDeathRecipient(recipient_);
-    return true;
-}
-
-void DecisionMaker::ResetAppMgrProxy()
-{
-    if ((appMgrProxy_ != nullptr) && (appMgrProxy_->AsObject() != nullptr)) {
-        appMgrProxy_->AsObject()->RemoveDeathRecipient(recipient_);
-    }
-    appMgrProxy_ = nullptr;
-}
-
-void DecisionMaker::AppMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &remote)
-{
-    lock_guard<mutex> lock(decisionMaker_.lock_);
-    decisionMaker_.ResetAppMgrProxy();
-    decisionMaker_.GetAppMgrProxy();
-}
-
-void DecisionMaker::ApplicationStateObserver::OnProcessStateChanged(const AppExecFwk::ProcessData &processData)
+void DecisionMaker::OnProcessStateChanged(const AppExecFwk::ProcessData &processData)
 {
     bool isForeground = processData.state == AppExecFwk::AppProcessState::APP_STATE_FOREGROUND ||
         processData.state == AppExecFwk::AppProcessState::APP_STATE_FOCUS;
     bool isBackground = processData.state == AppExecFwk::AppProcessState::APP_STATE_BACKGROUND;
-    BGTASK_LOGI("uid: %{public}d, OnProcessState: %{public}d, isForeground: %{public}d, isBackground: %{public}d",
+    BGTASK_LOGI("pid: %{public}d, OnProcessState: %{public}d, isForeground: %{public}d, isBackground: %{public}d",
         processData.pid, processData.state, isForeground, isBackground);
-    decisionMaker_.UpdateForegroundUidPidMap(processData.uid, processData.pid, isForeground);
+    UpdateForegroundUidPidMap(processData.uid, processData.pid, isForeground);
     if (isForeground || isBackground) {
         HandleStateChange(processData.bundleName, processData.uid, isForeground, isBackground);
     }
@@ -138,37 +71,37 @@ void DecisionMaker::UpdateForegroundUidPidMap(int32_t uid, int32_t pid, bool isF
     }
 }
 
-void DecisionMaker::ApplicationStateObserver::HandleStateChange(
+void DecisionMaker::HandleStateChange(
     const std::string &bundleName, int32_t uid, bool isForeground, bool isBackground)
 {
-    lock_guard<mutex> lock(decisionMaker_.lock_);
+    lock_guard<mutex> lock(lock_);
     auto key = std::make_shared<KeyInfo>(bundleName, uid);
 
     if (isForeground) {
-        auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
-        if (it != decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
+        auto it = pkgDelaySuspendInfoMap_.find(key);
+        if (it != pkgDelaySuspendInfoMap_.end()) {
             auto pkgInfo = it->second;
             BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is foreground, stop accounting",
                 bundleName.c_str(), uid);
             pkgInfo->StopAccountingAll();
         }
-        auto itBg = decisionMaker_.pkgBgDurationMap_.find(key);
-        if (itBg != decisionMaker_.pkgBgDurationMap_.end()) {
-            decisionMaker_.pkgBgDurationMap_.erase(itBg);
+        auto itBg = pkgBgDurationMap_.find(key);
+        if (itBg != pkgBgDurationMap_.end()) {
+            pkgBgDurationMap_.erase(itBg);
         }
     } else if (isBackground) {
-        auto it = decisionMaker_.pkgDelaySuspendInfoMap_.find(key);
-        if (it == decisionMaker_.pkgDelaySuspendInfoMap_.end()) {
+        auto it = pkgDelaySuspendInfoMap_.find(key);
+        if (it == pkgDelaySuspendInfoMap_.end()) {
             BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is not in delay suspend list",
                 bundleName.c_str(), uid);
             return;
         }
         auto pkgInfo = it->second;
-        if (decisionMaker_.CanStartAccountingLocked(pkgInfo)) {
+        if (CanStartAccountingLocked(pkgInfo)) {
             BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is background, start accounting",
                 bundleName.c_str(), uid);
             pkgInfo->StartAccounting();
-            decisionMaker_.pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
+            pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();
         }
     }
 }
@@ -388,12 +321,11 @@ int32_t DecisionMaker::GetQuota(const std::shared_ptr<KeyInfo>& key)
 bool DecisionMaker::IsFrontApp(const string& pkgName, int32_t uid)
 {
     lock_guard<mutex> lock(lock_);
-    if (!GetAppMgrProxy()) {
-        BGTASK_LOGE("GetAppMgrProxy failed");
+    vector<AppExecFwk::AppStateData> fgAppList;
+    if (!AppMgrHelper::GetInstance()->GetForegroundApplications(fgAppList)) {
+        BGTASK_LOGE("GetForegroundApplications failed");
         return false;
     }
-    vector<AppExecFwk::AppStateData> fgAppList;
-    appMgrProxy_->GetForegroundApplications(fgAppList);
     for (auto fgApp : fgAppList) {
         if (fgApp.bundleName == pkgName && fgApp.uid == uid) {
             return true;
@@ -476,12 +408,11 @@ void DecisionMaker::OnInputEvent(const EventInfo& eventInfo)
 void DecisionMaker::HandleScreenOn()
 {
     lock_guard<mutex> lock(lock_);
-    if (!GetAppMgrProxy()) {
-        BGTASK_LOGE("GetAppMgrProxy failed");
+    vector<AppExecFwk::AppStateData> fgAppList;
+    if (!AppMgrHelper::GetInstance()->GetForegroundApplications(fgAppList)) {
+        BGTASK_LOGE("GetForegroundApplications failed");
         return;
     }
-    vector<AppExecFwk::AppStateData> fgAppList;
-    appMgrProxy_->GetForegroundApplications(fgAppList);
     for (auto fgApp : fgAppList) {
         auto key = std::make_shared<KeyInfo>(fgApp.bundleName, fgApp.uid);
         auto it = pkgDelaySuspendInfoMap_.find(key);
