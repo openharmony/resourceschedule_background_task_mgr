@@ -113,7 +113,7 @@ static const char *g_taskNotificationResNames[] = {
 
 static const char *g_startingTaskNotificationResNames[] = {
     "notification_text_starting_task",
-}
+};
 
 static const std::map<int32_t, InnerApiReqBgRunningConfig> g_innerApiReqBgRunningConfig = {
     {7022, InnerApiReqBgRunningConfig(BackgroundMode::VOIP, false)},                         // VOIP_SA
@@ -4437,7 +4437,7 @@ void BgContinuousTaskMgr::HisysEventRequestAuth(const std::shared_ptr<BannerNoti
 
 ErrCode BgContinuousTaskMgr::CancelNotification(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo)
 {
-    ErrCode = ERR_OK;
+    ErrCode result = ERR_OK;
     int32_t notificationId = continuousTaskInfo->GetNotificationId();
     if (notificationId != -1) {
         std::string notificationLabel = continuousTaskInfo->GetNotificationLabel();
