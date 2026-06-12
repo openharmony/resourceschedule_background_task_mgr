@@ -38,6 +38,7 @@ static constexpr uint32_t LABEL_APP_UID_POS = 1;
 static constexpr uint32_t LABEL_SIZE = 5;
 static constexpr uint32_t LABEL_ABILITYID_INDEX = 3;
 static constexpr uint32_t LABEL_TASKID_INDEX = 4;
+static constexpr uint32_t LABEL_BANNER_SIZE = 4;
 static constexpr char NAVIGATION[] = "NAVIGATION";
 static constexpr int32_t CAPSULE_STATUS_ACTIVE = 1;
 }
@@ -155,6 +156,14 @@ void TaskNotificationSubscriber::CancelNotificationByBgTask(
     // continuous task notification label is consisted of bgmode prefix, app uid, abilityName hash code.
     std::string notificationLabel = request.GetLabel();
     std::vector<std::string> labelSplits = StringSplit(notificationLabel, LABEL_SPLITER);
+    if (labelSplits.size() == LABEL_BANNER_SIZE &&
+        labelSplits[LABEL_BGMODE_PREFIX_POS] == BANNER_NOTIFICATION_PREFIX) {
+        // 横幅通知左滑删除
+        if (continuousTaskMgr_->StopBannerContinuousTaskByUser(notificationLabel)) {
+            BGTASK_LOGI("remove banner notification, label: %{public}s", notificationLabel.c_str());
+        }
+        return;
+    }
     if (labelSplits.empty() || labelSplits[LABEL_BGMODE_PREFIX_POS] != NOTIFICATION_PREFIX
         || labelSplits.size() > LABEL_SIZE + 1 || labelSplits.size() < LABEL_SIZE - 1) {
         BGTASK_LOGW("callback notification label is invalid");

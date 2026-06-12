@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +36,7 @@
 #include "time_provider.h"
 #include "transient_task_log.h"
 #include "hitrace_meter.h"
+#include "background_task_observer.h"
 
 using namespace std;
 
@@ -95,7 +96,8 @@ void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::Ev
     if (systemAbilityManager == nullptr
         || systemAbilityManager->CheckSystemAbility(APP_MGR_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr) {
+        || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
+        || systemAbilityManager->CheckSystemAbility(RES_SCHED_SYS_ABILITY_ID) == nullptr) {
         isReady_.store(false);
         BGTASK_LOGI("request system service is not ready yet!");
         auto InitNecessaryStateFunc = [this, runner] { this->InitNecessaryState(runner); };
@@ -330,26 +332,31 @@ void BgTransientTaskMgr::NotifyTransientTaskSuscriber(const shared_ptr<Transient
     const TransientTaskAppInfo& appInfoRef = *appInfo;
     switch (type) {
         case TransientTaskEventType::TASK_START:
+            BackgroundTaskObserver::GetInstance().OnTransientTaskStart(appInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnTransientTaskStart(appInfoRef);
             }
             break;
         case TransientTaskEventType::TASK_END:
+            BackgroundTaskObserver::GetInstance().OnTransientTaskEnd(appInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnTransientTaskEnd(appInfoRef);
             }
             break;
         case TransientTaskEventType::TASK_ERR:
+            BackgroundTaskObserver::GetInstance().OnTransientTaskErr(appInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnTransientTaskErr(appInfoRef);
             }
             break;
         case TransientTaskEventType::APP_TASK_START:
+            BackgroundTaskObserver::GetInstance().OnAppTransientTaskStart(appInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnAppTransientTaskStart(appInfoRef);
             }
             break;
         case TransientTaskEventType::APP_TASK_END:
+            BackgroundTaskObserver::GetInstance().OnAppTransientTaskEnd(appInfo);
             for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); iter++) {
                 (*iter)->OnAppTransientTaskEnd(appInfoRef);
             }
@@ -696,6 +703,10 @@ ErrCode BgTransientTaskMgr::ShellDump(const std::vector<std::string> &dumpOption
         BGTASK_LOGE("Transient task manager is not ready.");
         return ERR_BGTASK_SYS_NOT_READY;
     }
+    if (dumpOption.size() <= 1) {
+        BGTASK_LOGW("Invalid dump param number, need at least 2 params.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
     bool result = false;
     if (dumpOption[1] == ALL_BGTASKMGR_OPTION) {
         result = DumpAllRequestId(dumpInfo);
@@ -787,6 +798,10 @@ void BgTransientTaskMgr::OnAppCacheStateChanged(int32_t uid, int32_t pid, const 
 void BgTransientTaskMgr::DumpTaskTime(const std::vector<std::string> &dumpOption, bool pause,
     std::vector<std::string> &dumpInfo)
 {
+    if (dumpOption.size() <= DUMP_PARAM_INDEX_TWO) {
+        BGTASK_LOGW("Invalid dump param number, need at least 3 params.");
+        return;
+    }
     int32_t uid = std::atoi(dumpOption[DUMP_PARAM_INDEX_TWO].c_str());
     ErrCode ret = ERR_OK;
     if (pause) {
@@ -905,6 +920,11 @@ std::set<int32_t>& BgTransientTaskMgr::GetTransientPauseUid()
 {
     lock_guard<mutex> lock(transientUidLock_);
     return transientPauseUid_;
+}
+
+std::shared_ptr<DecisionMaker> BgTransientTaskMgr::GetDecisionMaker()
+{
+    return decisionMaker_;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

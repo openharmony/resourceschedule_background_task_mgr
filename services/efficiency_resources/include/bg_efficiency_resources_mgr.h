@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,6 @@
 #include "bundle_manager_helper.h"
 #include "resource_application_record.h"
 #include "resources_subscriber_mgr.h"
-#include "app_state_observer.h"
 #include "data_storage_helper.h"
 #include "report_hisysevent_data.h"
 
@@ -144,7 +143,6 @@ private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> appResourceApplyMap_ {};
     std::unordered_map<int32_t, std::shared_ptr<ResourceApplicationRecord>> procResourceApplyMap_ {};
-    std::shared_ptr<AppStateObserver> appStateObserver_ {nullptr};
     std::shared_ptr<ResourcesSubscriberMgr> subscriberMgr_ {nullptr};
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_ {nullptr};
     uint32_t dependsReady_ = 0;

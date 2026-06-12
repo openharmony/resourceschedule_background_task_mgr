@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,9 +47,10 @@ namespace {
     const std::string DUMP_PARAM_RESET_CPU_QUOTA = "--resetquota";
     const std::string DUMP_PARAM_GET_CPU_QUOTA = "--getquota";
     const int32_t MAX_DUMP_PARAM_NUMS = 4;
-    const uint32_t APP_MGR_READY = 1;
-    const uint32_t BUNDLE_MGR_READY = 2;
-    const uint32_t ALL_DEPENDS_READY = 3;
+    constexpr uint32_t APP_MGR_READY = 1;
+    constexpr uint32_t BUNDLE_MGR_READY = 2;
+    constexpr uint32_t RES_SCHED_SYS_READY = 4;
+    constexpr uint32_t ALL_DEPENDS_READY = APP_MGR_READY | BUNDLE_MGR_READY | RES_SCHED_SYS_READY;
     const uint32_t FREEZE_ALL_RESOURCES = 0;
     const uint32_t MAX_RESOURCES_TYPE_NUM = ResourceTypeName.size();
     const uint32_t MAX_RESOURCE_MASK = (1 << ResourceTypeName.size()) - 1;
@@ -116,6 +117,10 @@ void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const
             BGTASK_LOGI("bundle mgr service is ready!");
             dependsReady_ |= BUNDLE_MGR_READY;
             break;
+        case RES_SCHED_SYS_ABILITY_ID:
+            BGTASK_LOGI("resource_schedule_service is ready!");
+            dependsReady_ |= RES_SCHED_SYS_READY;
+            break;
         default:
             break;
     }
@@ -145,6 +150,10 @@ void BgEfficiencyResourcesMgr::OnRemoveSystemAbility(int32_t systemAbilityId, co
         case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
             BGTASK_LOGI("bundle mgr service is removed!");
             dependsReady_ &= (~BUNDLE_MGR_READY);
+            break;
+        case RES_SCHED_SYS_ABILITY_ID:
+            BGTASK_LOGI("resource_schedule_service is removed!");
+            dependsReady_ &= (~RES_SCHED_SYS_READY);
             break;
         default:
             break;
@@ -756,6 +765,11 @@ ErrCode BgEfficiencyResourcesMgr::ShellDump(const std::vector<std::string> &dump
 ErrCode BgEfficiencyResourcesMgr::ShellDumpInner(const std::vector<std::string> &dumpOption,
     std::vector<std::string> &dumpInfo)
 {
+    if (dumpOption.size() <= 1) {
+        BGTASK_LOGW("Invalid dump param number, need at least 2 params.");
+        return ERR_BGTASK_INVALID_PARAM;
+    }
+
     const std::unordered_map<std::string, std::function<void()>> dumpProcMap = {
         { DUMP_PARAM_LIST_ALL, [&] { DumpAllApplicationInfo(dumpInfo); }},
         { DUMP_PARAM_RESET_ALL, [&] { DumpResetAllResource(dumpInfo); }},

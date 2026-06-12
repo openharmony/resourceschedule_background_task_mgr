@@ -156,9 +156,10 @@ ErrCode BackgroundTaskMgrHelper::SetMaliciousAppConfig(const std::set<std::strin
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet);
 }
 
-ErrCode BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult)
+ErrCode BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult, int32_t apiVersion)
 {
-    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(appIndex, authResult);
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->CheckSpecialScenarioAuth(appIndex, authResult,
+        apiVersion);
 }
 
 ErrCode BackgroundTaskMgrHelper::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)

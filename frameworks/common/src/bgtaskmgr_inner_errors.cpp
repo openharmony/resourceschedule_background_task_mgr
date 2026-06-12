@@ -157,6 +157,10 @@ const std::unordered_map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Application signatures invalid."},
     {ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_TOO_LARGE, "Apply cpu efficiency resources failed. "
         "The cpuLevel value exceeds the max allowed by current application."},
+    {ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_FAIL, "Continuous Task verification failed. "
+        "Failed to send the banner notification."},
+    {ERR_BGTASK_CONTINUOUS_API_VERSION_FAIL, "Continuous Task verification failed. "
+        "The requested or checked API version for user authorization is incorrect."},
 };
 
 const std::unordered_map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

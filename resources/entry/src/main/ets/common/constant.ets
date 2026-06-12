@@ -151,6 +151,7 @@ export default class Constants {
 
   public static FONT_SCALE_DEFAULT = 1;
   public static FONT_SCALE_MAX = 1.8;
+  public static FONT_SCALE_MAX_PHONE = 2;
   public static MAX_DIALOG_WIDTH = 400;
 
   //pc

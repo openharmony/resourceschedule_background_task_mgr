@@ -21,6 +21,7 @@
 #include "bgtaskmgr_inner_errors.h"
 #include "continuous_task_request.h"
 #include "background_task_state_info.h"
+#include "background_common.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -239,9 +240,11 @@ public:
      * @brief check mode MODE_SPECIAL_SCENARIO_PROCESSING auth.
      * @param appIndex app index.
      * @param authResult auth result.
+     * @param apiVersion api version. since 22
      * @return Returns ERR_OK if success, else failure.
      */
-    static ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult);
+    static ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult,
+        int32_t apiVersion = API_VERSION_CHECK_SPECIAL_USER_AUTH);
 
     /**
      * @brief taskdetection check auth.

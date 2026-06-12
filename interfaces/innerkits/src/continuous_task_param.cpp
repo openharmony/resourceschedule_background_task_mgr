@@ -103,6 +103,10 @@ bool ContinuousTaskParam::ReadFromParcelNewApi(Parcel &parcel)
         BGTASK_LOGE("Failed to read the appIndex");
         return false;
     }
+    if (!parcel.ReadInt32(requestAuthApiVersion_)) {
+        BGTASK_LOGE("Failed to read the requestAuthApiVersion");
+        return false;
+    }
     return true;
 }
 
@@ -242,6 +246,10 @@ bool ContinuousTaskParam::MarshallingNewApi(Parcel &parcel) const
     }
     if (!parcel.WriteInt32(appIndex_)) {
         BGTASK_LOGE("Failed to write the appIndex_");
+        return false;
+    }
+    if (!parcel.WriteInt32(requestAuthApiVersion_)) {
+        BGTASK_LOGE("Failed to write the requestAuthApiVersion");
         return false;
     }
     return true;

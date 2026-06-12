@@ -268,16 +268,13 @@ interface ContinuousTaskRequest {
 
   requestAuthFromUser(context: @sts_type("BaseContext") Opaque, callback: (data: UserAuthResult) => void): void;
 
+  requestAuthFromUserByDialog(context: @sts_type("BaseContext") Opaque, callback: (data: UserAuthResult) => void): void;
+
   @rename("checkSpecialScenarioAuth")
   @promise checkSpecialScenarioAuthSync(context: @sts_type("BaseContext") Opaque): UserAuthResult;
-}
 
-struct BackgroundTaskSubscriber {
-  onContinuousTaskStart: (info: ContinuousTaskInfo) => void;
-
-  onContinuousTaskUpdate: (info: ContinuousTaskInfo) => void;
-
-  onContinuousTaskStop: (info: ContinuousTaskInfo) => void;
+  @rename("checkSpecialScenarioAuthResult")
+  @promise checkSpecialScenarioAuthSync2(context: @sts_type("BaseContext") Opaque): UserAuthResult;
 }
 
 function CancelSuspendDelay(requestId: i32): void;
@@ -315,10 +312,6 @@ function ResetAllEfficiencyResources(): void;
 function SetBackgroundTaskState(stateInfo: BackgroundTaskStateInfo): void;
 
 function GetBackgroundTaskState(stateInfo: BackgroundTaskStateInfo): UserAuthResult;
-
-function SubscribeContinuousTaskState(subscriber: BackgroundTaskSubscriber): void;
-
-function UnsubscribeContinuousTaskState(subscriber: BackgroundTaskSubscriber): void;
 
 @rename("startBackgroundRunning")
 @promise function StartBackgroundRunningSync2(context: @sts_type("BaseContext") Opaque,

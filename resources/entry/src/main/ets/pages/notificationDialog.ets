@@ -60,8 +60,9 @@ let storage = LocalStorage.getShared();
   .backgroundColor(Color.Transparent)
   .fontColor($r('sys.color.font_emphasize'))
   .fontSize(
-    getLimitFontSize(sourceToVp($r('sys.float.Body_L')),
-      getFontSizeScale(getContext(this) as common.UIAbilityContext))
+    getLimitFontSize(
+      Constants.TEXT_MIDDLE_FONT_SIZE,
+      getFontSizeScale(getContext(this) as common.UIAbilityContext, Constants.FONT_SCALE_MAX_PHONE))
   )
   .fontWeight(FontWeight.Medium)
   .height(Constants.BUTTON_HEIGHT)

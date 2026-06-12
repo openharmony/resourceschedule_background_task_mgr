@@ -33,6 +33,7 @@
 #include "bg_transient_task_mgr.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "bg_efficiency_resources_mgr.h"
+#include "background_common.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -101,7 +102,8 @@ public:
     ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet) override;
     ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam, const sptr<IExpiredCallback> &callback,
         int32_t &notificationId) override;
-    ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult) override;
+    ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult,
+        int32_t apiVersion = API_VERSION_REQUEST_SPECIAL_USER_AUTH) override;
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex) override;
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable) override;
     ErrCode SetBackgroundTaskState(const BackgroundTaskStateInfo &taskParam) override;
@@ -124,7 +126,7 @@ private:
     void DumpUsage(std::string &result);
     bool AllowDump();
     bool CheckCallingToken();
-    bool CheckHapCalling(bool &isHap);
+    bool CheckHapCalling(bool &isHap, uint32_t flag = 0);
     bool CheckCallingProcess();
     bool CheckAtomicService();
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;

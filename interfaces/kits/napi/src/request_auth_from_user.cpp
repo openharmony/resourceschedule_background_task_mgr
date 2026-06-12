@@ -30,6 +30,7 @@
 #include "continuous_task_param.h"
 #include "continuous_task_request.h"
 #include "js_runtime_utils.h"
+#include "background_common.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -255,7 +256,7 @@ bool SendRequest(napi_env env, const ContinuousTaskParam &taskParam,
     authCallbackInstances_.insert(callback);
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestAuthFromUser(taskParam, *callback, callbackUid);
-    if (errCode == ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_EXIST_OR_AUTHORIZED) {
+    if (errCode == ERR_BGTASK_CONTINUOUS_TRIGGER_CALLBACK) {
         // 已授权，触发回调
         return true;
     }
@@ -307,7 +308,58 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
     std::vector<uint32_t> backgroundTaskModesValue = request->GetBackgroundTaskModes();
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, backgroundTaskModesValue[0],
         nullptr, "", nullptr, "", true, backgroundTaskModesValue, -1);
-    taskParam.isByRequestObject_ = true;
+    taskParam.bgSubModeIds_ = request->GetBackgroundTaskSubmodes();
+    taskParam.appIndex_ = abilityContext->GetAbilityInfo()->appIndex;
+    std::lock_guard<std::mutex> lock(authCallbackLock_);
+    authCallbackInstances_.insert(callback);
+    int32_t notificationId = -1;
+    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+        RequestAuthFromUser(taskParam, *callback, notificationId);
+    napi_value result = nullptr;
+    napi_create_int32(env, 0, &result);
+    if (errCode == ERR_BGTASK_CONTINUOUS_TRIGGER_CALLBACK) {
+        return result;
+    }
+    if (errCode != ERR_OK) {
+        authCallbackInstances_.erase(callback);
+        Common::HandleErrCode(env, errCode, true);
+    }
+    return result;
+}
+
+napi_value RequestAuthFromUserByDialog(napi_env env, napi_callback_info info)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::RequestAuthFromUserByDialog");
+#ifdef SUPPORT_JSSTACK
+    HiviewDFX::ReportXPowerJsStackSysEvent(env, "REQUEST_AUTH_FROM_USER_BY_DIALOG");
+#endif
+    std::shared_ptr<ContinuousTaskRequest> request = std::make_shared<ContinuousTaskRequest>();
+    if (!CheckRequestAuthFromUserParam(env, info, request)) {
+        return Common::NapiGetNull(env);
+    }
+    size_t argc = REQUEST_AUTH_FORM_USER_PARAMS;
+    napi_value argv[REQUEST_AUTH_FORM_USER_PARAMS] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc != REQUEST_AUTH_FORM_USER_PARAMS) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
+        return Common::NapiGetNull(env);
+    }
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
+    if (CheckAbilityContext(env, argv[0], abilityContext) == nullptr) {
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, true);
+        return Common::NapiGetNull(env);
+    }
+    std::shared_ptr<AuthCallbackInstance> callback = nullptr;
+    if (GetExpiredCallback(env, argv[1], callback) == nullptr) {
+        BGTASK_LOGE("ExpiredCallback parse failed");
+        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, true);
+        return Common::NapiGetNull(env);
+    }
+    std::vector<uint32_t> backgroundTaskModesValue = request->GetBackgroundTaskModes();
+    ContinuousTaskParam taskParam = ContinuousTaskParam(true, backgroundTaskModesValue[0],
+        nullptr, "", nullptr, "", true, backgroundTaskModesValue, -1);
+    taskParam.requestAuthApiVersion_ = API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG;
     taskParam.bgSubModeIds_ = request->GetBackgroundTaskSubmodes();
     taskParam.appIndex_ = abilityContext->GetAbilityInfo()->appIndex;
     int32_t callbackUid = 0;

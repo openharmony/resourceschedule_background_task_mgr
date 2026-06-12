@@ -30,6 +30,8 @@
 #include "common_utils.h"
 #include "expired_callback_proxy.h"
 #include "expired_callback_stub.h"
+#include "running_process_info.h"
+#include "background_task_observer.h"
 
 using namespace testing::ext;
 
@@ -88,6 +90,8 @@ void BgContinuousTaskMgrTest::SetUpTestCase()
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->startingTaskText_), PROMPT_NUMS, "starttask_test");
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificationBtn_), PROMPT_NUMS,
+        "bannernotification_test");
     bgContinuousTaskMgr_->isSysReady_.store(true);
     std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("tdd_test_handler");
     bgContinuousTaskMgr_->handler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
@@ -1006,6 +1010,8 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_039, TestSize.Level1)
     configuration.RemoveItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificationBtn_), PROMPT_NUMS,
+        "bannernotification_test");
     EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
@@ -1938,20 +1944,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_068, TestSize.Level1)
 }
 
 /**
- * @tc.name: BgTaskManagerUnitTest_069
- * @tc.desc: test UnregisterAppStateObserver.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_069, TestSize.Level1)
-{
-    bgContinuousTaskMgr_->UnregisterAppStateObserver();
-    EXPECT_EQ(bgContinuousTaskMgr_->appStateObserver_, nullptr);
-    bgContinuousTaskMgr_->RegisterAppStateObserver();
-    EXPECT_NE(bgContinuousTaskMgr_->appStateObserver_, nullptr);
-}
-
-/**
  * @tc.name: BgTaskManagerUnitTest_071
  * @tc.desc: test GetMainAbilityLabel.
  * @tc.type: FUNC
@@ -2545,7 +2537,7 @@ HWTEST_F(BgContinuousTaskMgrTest, OnPermissionDialogButtonClick_001, TestSize.Le
     bannerNotification1->SetAuthResult(UserAuthResult::GRANTED_ONCE);
     bannerNotification1->SetAppIndex(0);
     bannerNotification1->SetUid(0);
-    std::string label = "bundleName_0_0";
+    std::string label = "default";
     bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification1);
     bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
         bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);

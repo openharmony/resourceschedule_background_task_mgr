@@ -33,6 +33,7 @@
 #include "background_task_submode.h"
 #include "background_task_mode.h"
 #include "background_task_state_info.h"
+#include "background_common.h"
 
 using namespace taihe;
 using namespace OHOS;
@@ -40,7 +41,6 @@ using namespace ohos::resourceschedule::backgroundTaskManager;
 using namespace OHOS::BackgroundTaskMgr;
 using TaskSubModeType = ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskSubmode;
 using TaskModeType = ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskMode;
-using JsBackgroundTaskSubscriberType = ::ohos::resourceschedule::backgroundTaskManager::BackgroundTaskSubscriber;
 
 namespace {
 // To be implemented.
@@ -51,7 +51,6 @@ static constexpr uint32_t BG_MODE_ID_END = 9;
 static constexpr uint32_t CONTINUOUS_TASK_CANCEL = 1 << 0;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 1 << 1;
 static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
-static constexpr uint32_t SUBSCRIBER_BACKGROUND_TASK_STATE = 1 << 3;
 static constexpr int32_t MAX_SPECIAL_TASK_NUMS = 1;
 static std::shared_ptr<BackgroundTaskMgr::AniBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
 std::mutex backgroundTaskSubscriberMutex_;
@@ -368,13 +367,15 @@ public:
         callbackPtr->SetAuthCallbackInfo(taiheCallback);
         ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
             nullptr, "", nullptr, "", true, asyncCallbackInfo->bgModes, -1);
-        taskParam.isByRequestObject_ = true;
         taskParam.bgSubModeIds_ = asyncCallbackInfo->bgSubModes;
         const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
         taskParam.appIndex_ = info->appIndex;
         int32_t notificationId = -1;
         asyncCallbackInfo->errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
             RequestAuthFromUser(taskParam, *callbackPtr, notificationId);
+        if (asyncCallbackInfo->errCode == ERR_BGTASK_CONTINUOUS_TRIGGER_CALLBACK) {
+            return;
+        }
         if (asyncCallbackInfo->errCode) {
             set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
                 Common::FindErrMsg(asyncCallbackInfo->errCode));
@@ -384,9 +385,71 @@ public:
         }
     }
 
+    void requestAuthFromUserByDialog(uintptr_t context, ::taihe::callback_view<void(
+        ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult data)> callback)
+    {
+        auto env = taihe::get_env();
+        std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
+        if (!CheckModesInner(asyncCallbackInfo.get())) {
+            BGTASK_LOGE("check mode or subMode failed");
+            set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+                Common::FindErrMsg(asyncCallbackInfo->errCode));
+            return;
+        }
+        if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
+            BGTASK_LOGE("check param failed");
+            return;
+        }
+        std::shared_ptr<OHOS::BackgroundTaskMgr::AuthCallbackType> taiheCallback =
+            std::make_shared<OHOS::BackgroundTaskMgr::AuthCallbackType>(callback);
+        std::shared_ptr<Callback> callbackPtr = std::make_shared<Callback>();
+        callbackPtr->Init();
+        callbackPtr->SetAuthCallbackInfo(taiheCallback);
+        ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
+            nullptr, "", nullptr, "", true, asyncCallbackInfo->bgModes, -1);
+        taskParam.requestAuthApiVersion_ = API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG;
+        taskParam.bgSubModeIds_ = asyncCallbackInfo->bgSubModes;
+        const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+        taskParam.appIndex_ = info->appIndex;
+        int32_t notificationId = -1;
+        asyncCallbackInfo->errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
+            RequestAuthFromUser(taskParam, *callbackPtr, notificationId);
+        if (asyncCallbackInfo->errCode == ERR_BGTASK_CONTINUOUS_TRIGGER_CALLBACK) {
+            return;
+        }
+        if (asyncCallbackInfo->errCode) {
+            set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+                Common::FindErrMsg(asyncCallbackInfo->errCode));
+            return;
+        }
+        if (!CreateUIExtension(asyncCallbackInfo->abilityContext, taskParam)) {
+            BGTASK_LOGE("CreateUIExtension failed");
+            DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam);
+            set_business_error(Common::FindErrCode(ERR_BGTASK_SYS_NOT_READY),
+                Common::FindErrMsg(ERR_BGTASK_SYS_NOT_READY));
+            return;
+        }
+        if (notificationId >= 0) {
+            std::lock_guard<std::mutex> lock(callbackLock_);
+            callbackInstances_[notificationId] = callbackPtr;
+        }
+    }
+
     ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult checkSpecialScenarioAuthSync(uintptr_t context)
     {
         auto env = taihe::get_env();
+        return GetUserAuth(env, context, API_VERSION_CHECK_SPECIAL_USER_AUTH);
+    }
+
+    ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult checkSpecialScenarioAuthSync2(uintptr_t context)
+    {
+        auto env = taihe::get_env();
+        return GetUserAuth(env, context, API_VERSION_CHECK_SPECIAL_USER_AUTH_RESULT);
+    }
+
+    ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult GetUserAuth(
+        ani_env *env, uintptr_t context, int32_t apiVersion)
+    {
         std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
         if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
             BGTASK_LOGE("check param failed");
@@ -394,7 +457,7 @@ public:
         }
         const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
         asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(info->appIndex,
-            asyncCallbackInfo->authResult);
+            asyncCallbackInfo->authResult, apiVersion);
         if (asyncCallbackInfo->errCode) {
             BGTASK_LOGE("checkSpecialScenarioAuth failed errCode: %{public}d",
                 Common::FindErrCode(asyncCallbackInfo->errCode));
@@ -1284,6 +1347,35 @@ bool CheckModeAndSubMode(ani_env *env, ohos::resourceschedule::backgroundTaskMan
     return true;
 }
 
+bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        set_business_error(
+            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
+        return false;
+    }
+    std::vector<uint32_t> backgroundTaskSubModes = asyncCallbackInfo->bgSubModes;
+    std::vector<uint32_t> backgroundTaskModes = asyncCallbackInfo->bgModes;
+    std::vector<uint32_t> modes {};
+    std::vector<uint32_t> subModes {};
+    for (uint32_t index = 0; index < backgroundTaskSubModes.size(); index++) {
+        uint32_t subMode = backgroundTaskSubModes[index];
+        subModes.push_back(subMode);
+        uint32_t mode = 0;
+        if (subMode == OHOS::BackgroundTaskMgr::BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION) {
+            mode = OHOS::BackgroundTaskMgr::BackgroundTaskMode::GetV9BackgroundModeByMode(backgroundTaskModes[index]);
+        } else {
+            mode = OHOS::BackgroundTaskMgr::BackgroundTaskMode::GetV9BackgroundModeBySubMode(subMode);
+        }
+        modes.push_back(mode);
+    }
+    asyncCallbackInfo->bgSubModes = subModes;
+    asyncCallbackInfo->bgModes = modes;
+    asyncCallbackInfo->bgMode = modes[0];
+    return true;
+}
+
 ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification StartBackgroundRunningSync3(
     uintptr_t context, ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskRequest request)
 {
@@ -1298,6 +1390,10 @@ bool CheckModeAndSubMode(ani_env *env, ohos::resourceschedule::backgroundTaskMan
         BGTASK_LOGE("check mode or subMode failed");
         set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
             Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return notification;
+    }
+    if (!TaskModeTypeConversion(asyncCallbackInfo.get())) {
+        BGTASK_LOGE("task mode conversion fail.");
         return notification;
     }
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
@@ -1349,6 +1445,10 @@ bool CheckModeAndSubMode(ani_env *env, ohos::resourceschedule::backgroundTaskMan
             Common::FindErrMsg(asyncCallbackInfo->errCode));
         return notification;
     }
+    if (!TaskModeTypeConversion(asyncCallbackInfo.get())) {
+        BGTASK_LOGE("task mode conversion fail.");
+        return notification;
+    }
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     int32_t abilityId = asyncCallbackInfo->abilityContext->GetAbilityRecordId();
@@ -1372,42 +1472,6 @@ bool CheckModeAndSubMode(ani_env *env, ohos::resourceschedule::backgroundTaskMan
     notification.notificationId = taskParam.notificationId_;
     notification.continuousTaskId = optional<int32_t>(std::in_place, taskParam.continuousTaskId_);
     return notification;
-}
-
-void SubscribeContinuousTaskState(JsBackgroundTaskSubscriberType subscriber)
-{
-    auto env = taihe::get_env();
-    std::shared_ptr<JsBackgroundTaskSubscriberType> taiheSubscriber =
-        std::make_shared<JsBackgroundTaskSubscriberType>(subscriber);
-    if (!taiheSubscriber) {
-        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM),
-            Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
-        BGTASK_LOGE("taiheSubscriber is invalid");
-        return;
-    }
-    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
-    if (!SubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE)) {
-        BGTASK_LOGE("SubscribeBackgroundTask fail.");
-        return;
-    }
-    backgroundTaskSubscriber_->AddJsSubscribeObserverObject("subscribeContinuousTaskState", taiheSubscriber);
-    backgroundTaskSubscriber_->SubscriberBgtaskSaStatusChange();
-}
-
-void UnsubscribeContinuousTaskState(JsBackgroundTaskSubscriberType subscriber)
-{
-    auto env = taihe::get_env();
-    std::shared_ptr<JsBackgroundTaskSubscriberType> taiheSubscriber =
-        std::make_shared<JsBackgroundTaskSubscriberType>(subscriber);
-    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
-    if (!backgroundTaskSubscriber_ || !taiheSubscriber) {
-        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM),
-            Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
-        BGTASK_LOGE("backgroundTaskSubscriber_ or taiheSubscriber is null, return");
-        return;
-    }
-    backgroundTaskSubscriber_->RemoveJsSubscribeObserverObject("subscribeContinuousTaskState", taiheSubscriber);
-    UnSubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE);
 }
 } // namespace
 
@@ -1445,6 +1509,4 @@ TH_EXPORT_CPP_API_ObtainAllContinuousTasksSync(ObtainAllContinuousTasksSync);
 TH_EXPORT_CPP_API_CreateContinuousTaskRequest(CreateContinuousTaskRequest);
 TH_EXPORT_CPP_API_StartBackgroundRunningSync3(StartBackgroundRunningSync3);
 TH_EXPORT_CPP_API_UpdateBackgroundRunningSync2(UpdateBackgroundRunningSync2);
-TH_EXPORT_CPP_API_SubscribeContinuousTaskState(SubscribeContinuousTaskState);
-TH_EXPORT_CPP_API_UnsubscribeContinuousTaskState(UnsubscribeContinuousTaskState);
 // NOLINTEND

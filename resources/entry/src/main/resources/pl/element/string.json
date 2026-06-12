@@ -121,7 +121,7 @@
         },
         {
             "name":"dialog_title_work_out",
-            "value":"Służy do obsługi czynności, takich jak bieganie, ćwiczenia, pływanie itp.",
+            "value":"Służy do obsługi aktywności, takich jak bieganie, ćwiczenia, pływanie itp.",
             "attr":{
                 "priority":"LT"
             }
@@ -236,6 +236,20 @@
             "value": "Zadanie NearLink jest w toku. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
             "attr": {
                 "priority": "translate"
+            }
+        },
+        {
+            "name":"notification_text_nearlink",
+            "value":"NearLink",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"text_banner_notification_allow_background_keepalive",
+            "value":"Zezwolić aplikacji %s na działanie w tle?",
+            "attr":{
+                "priority":"translate"
             }
         }
     ]
