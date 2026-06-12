@@ -843,7 +843,7 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     }
     BGTASK_LOGI("continuous task param uid %{public}d, real %{public}d", taskParam->uid_, callingUid);
     if (taskParam->isStart_) {
-        return StartBackgroundRunningForInner(taskParam, callingUid);   
+        return StartBackgroundRunningForInner(taskParam, callingUid);
     }
     return StopBackgroundRunningForInner(taskParam);
 }
