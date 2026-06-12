@@ -71,6 +71,7 @@ void BackgroundTaskMgrService::OnStart()
     AddSystemAbilityListener(SA_ID_VOIP_CALL_MANAGER);
     AddSystemAbilityListener(SA_ID_HEALTH_SPORT);
     AddSystemAbilityListener(SUSPEND_MANAGER_SYSTEM_ABILITY_ID);
+    AddSystemAbilityListener(RES_SCHED_SYS_ABILITY_ID);
     AddSystemAbilityListener(SA_ID_AAM_CONN);
 }
 
