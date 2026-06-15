@@ -99,10 +99,6 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
         return;
     }
     std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
-    if (subscriberList_.empty()) {
-        BGTASK_LOGW("Background Task Subscriber List is empty");
-        return;
-    }
     const ResourceCallbackInfo& callbackInfoRef = *callbackInfo;
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
