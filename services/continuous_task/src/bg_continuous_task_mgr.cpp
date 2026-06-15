@@ -364,29 +364,32 @@ void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::Run
     int32_t maxContinuousTaskId = -1;
 
     while (iter != continuousTaskInfosMap_.end()) {
-        bool pidIsAlive = checkPidCondition(allProcesses, iter->second->GetPid());
-        int32_t notificationId = iter->second->GetNotificationId();
+        auto record = iter->second;
+        bool pidIsAlive = checkPidCondition(allProcesses, record->GetPid());
+        int32_t notificationId = record->GetNotificationId();
         if (notificationId > maxNotificationId) {
             maxNotificationId = notificationId;
         }
-        if (iter->second->continuousTaskId_ > maxContinuousTaskId) {
-            maxContinuousTaskId = iter->second->continuousTaskId_;
+        if (record->continuousTaskId_ > maxContinuousTaskId) {
+            maxContinuousTaskId = record->continuousTaskId_;
         }
 
         if (pidIsAlive) {
-            if (iter->second->GetNotificationId() == -1) {
+            if (record->GetNotificationId() == -1) {
                 BGTASK_LOGI("notification id is -1, continue");
                 iter++;
                 continue;
             }
-            SetCachedBundleInfo(iter->second->GetUid(), iter->second->GetUserId(), iter->second->GetBundleName());
-            HandleActiveNotification(iter->second);
-            BGTASK_LOGI("restore notification id %{public}d", iter->second->GetNotificationId());
+            SetCachedBundleInfo(record->GetUid(), record->GetUserId(), record->GetBundleName());
+            HandleActiveNotification(record);
+            BGTASK_LOGI("restore uid: %{public}d, bundleName: %{public}s, notification id: %{public}d",
+                record->GetUid(), record->GetBundleName().c_str(), record->GetNotificationId());
             iter++;
         } else {
-            BGTASK_LOGI("process %{public}d die, not restore notification id %{public}d", iter->second->GetPid(),
-                iter->second->GetNotificationId());
+            BGTASK_LOGI("process %{public}d die, not restore notification id %{public}d", record->GetPid(),
+                record->GetNotificationId());
             iter = continuousTaskInfosMap_.erase(iter);
+            CancelNotification(record);
         }
     }
     if (maxNotificationId != -1) {
