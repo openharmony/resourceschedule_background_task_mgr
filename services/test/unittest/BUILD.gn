@@ -383,7 +383,9 @@ ohos_unittest("bgtask_plugin_unit_test") {
     "bgtask_plugin_test.cpp",
     "bgtask_plugin_mgr_test.cpp",
     "app_state_observer_plugin_adapter_test.cpp",
+    "audio_renderer_info_plugin_data_test.cpp",
     "audio_stream_plugin_adapter_test.cpp",
+    "event_msg_handler_plugin_adapter_test.cpp",
   ]
  
   deps = [
