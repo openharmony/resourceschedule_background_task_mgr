@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_COMMON_INCLUDE_GAME_PRE_LAUNCH_MGR_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_COMMON_INCLUDE_GAME_PRE_LAUNCH_MGR_H
 
@@ -31,13 +31,13 @@ public:
     ~GamePreLaunchMgr();
 
     /**
-     * @brief Add application uid to game pre-launch app set.
+     * @brief Add application uid to game pre-launch app uid set.
      * @param uid Application uid.
      */
     void AddGamePreLaunchApp(const int32_t uid);
 
     /**
-     * @brief Remove application uid from game pre-launch app set.
+     * @brief Remove application uid from game pre-launch app uid set.
      * @param uid Application uid.
      */
     void RemoveGamePreLaunchApp(const int32_t uid);

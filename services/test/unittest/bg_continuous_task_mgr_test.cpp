@@ -2469,14 +2469,14 @@ HWTEST_F(BgContinuousTaskMgrTest, AllowApplyContinuousTask_002, TestSize.Level1)
     record->uid_ = uid;
     record->isByRequestObject_ = true;
 
-    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->AddGamePreLaunchApp(uid);
-    EXPECT_TRUE(DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->AddGamePreLaunchApp(uid);
+    EXPECT_TRUE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid));
 
     EXPECT_EQ(bgContinuousTaskMgr_->AllowApplyContinuousTask(record),
         ERR_BGTASK_CONTINUOUS_NOT_APPLY_PRELOAD_STATE);
 
     // Clean up
-    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RemoveGamePreLaunchApp(uid);
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->RemoveGamePreLaunchApp(uid);
 }
 #endif
 
@@ -2510,16 +2510,16 @@ HWTEST_F(BgContinuousTaskMgrTest, OnAppStateChanged_001, TestSize.Level1)
  */
 HWTEST_F(BgContinuousTaskMgrTest, OnAppStateChanged_002, TestSize.Level1)
 {
-    bgContinuousTaskMgr_->isSysReady_.store(false);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
     int32_t uid = 1001;
     int32_t preloadMode = static_cast<int32_t>(AppExecFwk::PreloadMode::PRELOAD_NONE);
 
-    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->AddGamePreLaunchApp(uid);
-    EXPECT_TRUE(DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->AddGamePreLaunchApp(uid);
+    EXPECT_TRUE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid));
 
     bgContinuousTaskMgr_->OnAppStateChanged(uid,
-        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND), preloadMode);
-    EXPECT_FALSE(DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND), preloadMode);
+    EXPECT_FALSE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid));
 }
 
 /**
@@ -2530,16 +2530,19 @@ HWTEST_F(BgContinuousTaskMgrTest, OnAppStateChanged_002, TestSize.Level1)
  */
 HWTEST_F(BgContinuousTaskMgrTest, OnAppStateChanged_003, TestSize.Level1)
 {
-    bgContinuousTaskMgr_->isSysReady_.store(false);
+    bgContinuousTaskMgr_->isSysReady_.store(true);
     int32_t uid = 1002;
     int32_t preloadMode = static_cast<int32_t>(AppExecFwk::PreloadMode::GAME_PRELAUNCH);
 
-    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->AddGamePreLaunchApp(uid);
-    EXPECT_TRUE(DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->AddGamePreLaunchApp(uid);
+    EXPECT_TRUE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid));
 
     bgContinuousTaskMgr_->OnAppStateChanged(uid,
-        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND), preloadMode);
-    EXPECT_TRUE(DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND), preloadMode);
+    EXPECT_TRUE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+
+    // Clean up
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->RemoveGamePreLaunchApp(uid);
 }
 #endif
 

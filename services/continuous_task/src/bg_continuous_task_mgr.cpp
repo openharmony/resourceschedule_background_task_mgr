@@ -1228,7 +1228,7 @@ ErrCode BgContinuousTaskMgr::CheckAbilityTaskNum(const std::shared_ptr<Continuou
 ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<ContinuousTaskRecord> record)
 {
 #ifdef GAME_PRE_LAUNCH_ENABLE
-    if (DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsGamePreLaunchApp(record->GetUid())) {
+    if (DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(record->GetUid())) {
         BGTASK_LOGE("uid: %{public}d is in pre-launch state, cannot apply continuous task", record->GetUid());
         return ERR_BGTASK_CONTINUOUS_NOT_APPLY_PRELOAD_STATE;
     }
@@ -2769,11 +2769,11 @@ void BgContinuousTaskMgr::OnAppStateChanged(int32_t uid, int32_t state, int32_t 
         return;
     }
 #ifdef GAME_PRE_LAUNCH_ENABLE
-    // state = 4, preloadMode != GAME_PRELAUNCH, 游戏与启动结束
+    // state = 4, preloadMode != GAME_PRELAUNCH, 游戏预启动结束
     if (preloadMode != static_cast<int32_t>(AppExecFwk::PreloadMode::GAME_PRELAUNCH) &&
-        DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsGamePreLaunchApp(uid)) {
+        DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)) {
         BGTASK_LOGI("uid: %{public}d the game pre-launch is complete", uid);
-        DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RemoveGamePreLaunchApp(uid);
+        DelayedSingleton<GamePreLaunchMgr>::GetInstance()->RemoveGamePreLaunchApp(uid);
     }
 #endif
     appOnForeground_.erase(uid);
