@@ -62,9 +62,11 @@ BgTaskMgrServicecSrc = [
   "transient_task/src/timer_manager.cpp",
   "transient_task/src/watchdog.cpp",
   "plugin/src/app_state_observer_plugin_adapter.cpp",
+  "plugin/src/audio_renderer_info_plugin_data.cpp",
   "plugin/src/audio_stream_plugin_adapter.cpp",
   "plugin/src/bgtask_plugin.cpp",
   "plugin/src/bgtask_plugin_mgr.cpp",
+  "plugin/src/event_msg_handler_plugin_adapter.cpp",
 ]
 
 ohos_shared_library("bgtaskmgr_service") {
