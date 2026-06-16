@@ -161,6 +161,8 @@ const std::unordered_map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Failed to send the banner notification."},
     {ERR_BGTASK_CONTINUOUS_API_VERSION_FAIL, "Continuous Task verification failed. "
         "The requested or checked API version for user authorization is incorrect."},
+    {ERR_BGTASK_CONTINUOUS_NOT_APPLY_PRELOAD_STATE, "Continuous Task verification failed. "
+        "The application is in pre-launch state and cannot apply for continuous task."},
 };
 
 const std::unordered_map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

@@ -102,6 +102,11 @@ ohos_unittest("bgtask_unit_test") {
     cflags_cc += [ "-DSUPPORT_AUTH" ]
   }
 
+  defines = []
+  if (game_pre_launch_enable) {
+    defines += [ "GAME_PRE_LAUNCH_ENABLE" ]
+  }
+
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
 }
@@ -355,6 +360,11 @@ ohos_unittest("bgtask_misc_unit_test") {
     cflags_cc += [ "-DDISTRIBUTED_NOTIFICATION_ENABLE" ]
     external_deps += [ "distributed_notification_service:ans_innerkits" ]
     sources += [ "mock/mock_notification_helper.cpp" ]
+  }
+
+  defines = []
+  if (game_pre_launch_enable) {
+    defines += [ "GAME_PRE_LAUNCH_ENABLE" ]
   }
 
   subsystem_name = "resourceschedule"

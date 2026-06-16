@@ -43,3 +43,10 @@ if (!defined(global_parts_info) ||
 } else {
   distributed_notification_enable = false
 }
+
+if (defined(global_parts_info) &&
+    defined(global_parts_info.graphics_game_game_accelerate_schedule)) {
+  game_pre_launch_enable = true
+} else {
+  game_pre_launch_enable = false
+}

@@ -53,6 +53,9 @@
 #include "watchdog.h"
 #include "int_wrapper.h"
 #include "common_utils.h"
+#ifdef GAME_PRE_LAUNCH_ENABLE
+#include "game_pre_launch_mgr.h"
+#endif
 
 using namespace testing::ext;
 
@@ -180,6 +183,36 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_003, TestSize.Level2)
     appStateObserver.OnAppStateChanged(appStateData);
     EXPECT_TRUE(appStateObserver.ValidateAppStateData(appStateData));
 }
+
+#ifdef GAME_PRE_LAUNCH_ENABLE
+/**
+ * @tc.name: AppStateObserverTest_004
+ * @tc.desc: test OnAppCacheStateChanged method.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_004, TestSize.Level2)
+{
+    AppStateObserver appStateObserver;
+    int32_t uid1 = 1;
+    int32_t uid2 = 2;
+ 
+    AppExecFwk::ProcessData processData;
+    processData.uid = 1;
+    processData.pid = 1;
+    processData.bundleName = "bundleName";
+    processData.preloadMode = static_cast<int32_t>(AppExecFwk::PreloadMode::GAME_PRELAUNCH);
+    AppStateObserver.OnPrecessCreated(processData);
+    EXPECT_TRUE(DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsGamePreLaunchApp(uid1));
+    
+    processData.preloadMode = 0;
+    AppStateObserver.OnPrecessCreated(processData);
+    EXPECT_FALSE(DelayedSingleton<BgTransientTaskMgr>::GetInstance()->IsGamePreLaunchApp(uid2));
+
+    // Clean up
+    DelayedSingleton<BgTransientTaskMgr>::GetInstance()->RemoveGamePreLaunchApp(uid1);
+}
+#endif
 
 /**
  * @tc.name: BundleManagerHelperTest_001

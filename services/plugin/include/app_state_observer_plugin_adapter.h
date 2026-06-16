@@ -35,6 +35,7 @@ public:
  
 private:
     bool UnmarshallingProcessData(const nlohmann::json& payload, AppExecFwk::ProcessData& processData);
+    void OnProcessCreated(const nlohmann::json &payload);
     void OnProcessDied(const nlohmann::json &payload);
     void OnProcessStateChanged(const nlohmann::json& payload);
  

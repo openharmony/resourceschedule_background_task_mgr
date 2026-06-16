@@ -155,6 +155,11 @@ ohos_shared_library("bgtaskmgr_service") {
     cflags_cc += [ "-DHAS_OS_ACCOUNT_CAR" ]
   }
 
+  if (game_pre_launch_enable) {
+    defines += [ "GAME_PRE_LAUNCH_ENABLE" ]
+    sources += [ "common/src/game_pre_launch_mgr.cpp" ]
+  }
+
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
   version_script = "libbgtaskmgr_services.versionscript"
@@ -234,6 +239,11 @@ ohos_static_library("bgtaskmgr_service_static") {
     cflags_cc += [ "-DSUPPORT_AUTH" ]
   } else if (target_platform == "car") {
     cflags_cc += [ "-DHAS_OS_ACCOUNT_CAR" ]
+  }
+
+  if (game_pre_launch_enable) {
+    defines += [ "GAME_PRE_LAUNCH_ENABLE" ]
+    sources += [ "common/src/game_pre_launch_mgr.cpp" ]
   }
 
   subsystem_name = "resourceschedule"
