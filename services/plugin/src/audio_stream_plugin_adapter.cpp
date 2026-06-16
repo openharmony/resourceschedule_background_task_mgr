@@ -14,13 +14,15 @@
  */
 
 #include "audio_stream_plugin_adapter.h"
+#include "audio_renderer_info_plugin_data.h"
 #include "audio_info.h"
-#include "bg_continuous_task_mgr.h"
 #include "bgtaskmgr_log_wrapper.h"
 #include "bgtask_plugin_mgr.h"
-#include "common_utils.h"
 #include "res_type.h"
 #include "res_data.h"
+#include "res_sched_json_util.h"
+#include "system_ability_definition.h"
+#include "bg_continuous_task_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -45,8 +47,7 @@ bool AudioStreamPluginAdapter::SelfRegister()
     return true;
 }
 
-void AudioStreamPluginAdapter::InitCbMap(std::unordered_map<uint32_t,
-    std::unordered_map<int32_t, std::function<void(const int32_t, const nlohmann::json&)>>>& cbMap)
+void AudioStreamPluginAdapter::InitCbMap(CallBackMap &cbMap)
 {
     cbMap[ResType::RES_TYPE_AUDIO_RENDER_STATE_CHANGE] = {
         { -1, [this](const int32_t stateType, const nlohmann::json& payload) {
@@ -61,30 +62,25 @@ void AudioStreamPluginAdapter::RendererStateChange(const nlohmann::json& payload
         BGTASK_LOGE("RendererStateChange fail. json parse fail");
         return;
     }
-    BGTASK_LOGD("RendererStateChange info: %{public}s", payload.dump().c_str());
-    if (!CommonUtils::CheckJsonValue(payload, {"uid", "rendererState", "sessionId"}) ||
-        !payload.at("uid").is_string() || !payload.at("rendererState").is_number_integer() ||
-        !payload.at("sessionId").is_string()) {
+
+    int32_t uid = 0;
+    int32_t rendererState = 0;
+    int32_t sessionId = 0;
+    if (!ResCommonUtil::ParseIntParameterFromJson("uid", uid, payload) ||
+        !ResCommonUtil::ParseIntParameterFromJson("rendererState", rendererState, payload) ||
+        !ResCommonUtil::ParseIntParameterFromJson("sessionId", sessionId, payload)) {
         BGTASK_LOGE("RendererStateChange parse payload error");
         return;
     }
-    int32_t rendererState = payload.at("rendererState").get<int32_t>();
-    int32_t sessionId = std::atoi(payload.at("sessionId").get<std::string>().c_str());
-    int32_t uid = std::atoi(payload.at("uid").get<std::string>().c_str());
-    // 去重，避免同一个音频流连续两次以上都是播放状态回调
-    auto findRecord = [uid, sessionId](const auto &target) {
-        return target->uid_ == uid && target->sessionId_ == sessionId;
-    };
-    auto findRecordIter = find_if(audioPlayerInfos_.begin(), audioPlayerInfos_.end(), findRecord);
-    std::lock_guard<std::mutex> lock(pluginMutex_);
-    if (findRecordIter == audioPlayerInfos_.end() && rendererState == AudioStandard::RendererState::RENDERER_RUNNING) {
-        BgContinuousTaskMgr::GetInstance()->NotifyAudioStart(uid);
+
+    if (rendererState == AudioStandard::RendererState::RENDERER_RUNNING) {
         auto recorderInfo = std::make_shared<AudioInfo>(uid, sessionId);
-        audioPlayerInfos_.emplace_back(recorderInfo);
-        BGTASK_LOGI("uid: %{public}d, sessionId: %{public}d is play audio.", uid, sessionId);
-    } else if (findRecordIter != audioPlayerInfos_.end() &&
-        rendererState != AudioStandard::RendererState::RENDERER_RUNNING) {
-        audioPlayerInfos_.erase(findRecordIter);
+        if (AudioRendererInfoPluginData::GetInstance()->AddAudioPlayerInfo(recorderInfo)) {
+            BGTASK_LOGI("uid: %{public}d, sessionId: %{public}d is play audio.", uid, sessionId);
+            BgContinuousTaskMgr::GetInstance()->NotifyAudioStart(uid);
+        }
+    } else {
+        AudioRendererInfoPluginData::GetInstance()->RemoveAudioPlayerInfo(uid, sessionId);
         BGTASK_LOGI("uid: %{public}d, sessionId: %{public}d is not play audio.", uid, sessionId);
     }
 }
@@ -97,21 +93,12 @@ void AudioStreamPluginAdapter::Init()
 void AudioStreamPluginAdapter::Uninit()
 {
     BGTASK_LOGI("AudioStreamPluginAdapter uninit");
+    AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
 }
 
 std::string AudioStreamPluginAdapter::GetPluginName() const
 {
     return PLUGIN_NAME;
-}
-
-bool AudioStreamPluginAdapter::CheckAppIsPlaying(int32_t uid)
-{
-    std::lock_guard<std::mutex> lock(pluginMutex_);
-    auto findRecord = [uid](const auto &target) {
-        return target->uid_ == uid;
-    };
-    auto findRecordIter = find_if(audioPlayerInfos_.begin(), audioPlayerInfos_.end(), findRecord);
-    return findRecordIter != audioPlayerInfos_.end();
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
