@@ -77,10 +77,6 @@ void BackgroundTaskObserver::OnTransientTaskErr(const std::shared_ptr<TransientT
 
 void BackgroundTaskObserver::OnAppTransientTaskStart(const std::shared_ptr<TransientTaskAppInfo>& info)
 {
-    if (!info || !CheckTransientTaskAppInfo(info)) {
-        BGTASK_LOGE("info is nullptr or invalid app info!");
-        return;
-    }
     nlohmann::json payload;
     MarshallingTransientTaskAppInfo(info, payload);
     ReportDataInProcess(
@@ -89,10 +85,6 @@ void BackgroundTaskObserver::OnAppTransientTaskStart(const std::shared_ptr<Trans
 
 void BackgroundTaskObserver::OnAppTransientTaskEnd(const std::shared_ptr<TransientTaskAppInfo>& info)
 {
-    if (!info || !CheckTransientTaskAppInfo(info)) {
-        BGTASK_LOGE("info is nullptr or invalid app info!");
-        return;
-    }
     nlohmann::json payload;
     MarshallingTransientTaskAppInfo(info, payload);
     ReportDataInProcess(
@@ -172,6 +164,10 @@ void BackgroundTaskObserver::OnContinuousTaskUpdate(
 void BackgroundTaskObserver::MarshallingResourceInfo(
     const std::shared_ptr<BackgroundTaskMgr::ResourceCallbackInfo> &resourceInfo, nlohmann::json &payload)
 {
+    if (!resourceInfo) {
+        BGTASK_LOGE("resourceInfo is nullptr!");
+        return;
+    }
     payload["pid"] = resourceInfo->GetPid();
     payload["uid"] = resourceInfo->GetUid();
     payload["resourceNumber"] = resourceInfo->GetResourceNumber();
@@ -182,10 +178,6 @@ void BackgroundTaskObserver::MarshallingResourceInfo(
 void BackgroundTaskObserver::OnAppEfficiencyResourcesApply(
     const std::shared_ptr<BackgroundTaskMgr::ResourceCallbackInfo> &resourceInfo)
 {
-    if (!resourceInfo) {
-        BGTASK_LOGE("resourceInfo is nullptr!");
-        return;
-    }
     nlohmann::json payload;
     MarshallingResourceInfo(resourceInfo, payload);
     ReportDataInProcess(
@@ -197,10 +189,6 @@ void BackgroundTaskObserver::OnAppEfficiencyResourcesApply(
 void BackgroundTaskObserver::OnAppEfficiencyResourcesReset(
     const std::shared_ptr<BackgroundTaskMgr::ResourceCallbackInfo> &resourceInfo)
 {
-    if (!resourceInfo) {
-        BGTASK_LOGE("resourceInfo is nullptr!");
-        return;
-    }
     nlohmann::json payload;
     MarshallingResourceInfo(resourceInfo, payload);
     ReportDataInProcess(
@@ -212,10 +200,6 @@ void BackgroundTaskObserver::OnAppEfficiencyResourcesReset(
 void BackgroundTaskObserver::OnProcEfficiencyResourcesApply(
     const std::shared_ptr<BackgroundTaskMgr::ResourceCallbackInfo> &resourceInfo)
 {
-    if (!resourceInfo) {
-        BGTASK_LOGE("resourceInfo is nullptr!");
-        return;
-    }
     nlohmann::json payload;
     MarshallingResourceInfo(resourceInfo, payload);
     ReportDataInProcess(
@@ -227,10 +211,6 @@ void BackgroundTaskObserver::OnProcEfficiencyResourcesApply(
 void BackgroundTaskObserver::OnProcEfficiencyResourcesReset(
     const std::shared_ptr<BackgroundTaskMgr::ResourceCallbackInfo> &resourceInfo)
 {
-    if (!resourceInfo) {
-        BGTASK_LOGE("resourceInfo is nullptr!");
-        return;
-    }
     nlohmann::json payload;
     MarshallingResourceInfo(resourceInfo, payload);
     ReportDataInProcess(

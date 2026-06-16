@@ -325,10 +325,6 @@ void BgTransientTaskMgr::NotifyTransientTaskSuscriber(const shared_ptr<Transient
         BGTASK_LOGE("NotifyTransientTaskSuscriber failed, appInfo is null.");
         return;
     }
-    if (subscriberList_.empty()) {
-        BGTASK_LOGI("Transient Task Subscriber List is empty");
-        return;
-    }
     const TransientTaskAppInfo& appInfoRef = *appInfo;
     switch (type) {
         case TransientTaskEventType::TASK_START:

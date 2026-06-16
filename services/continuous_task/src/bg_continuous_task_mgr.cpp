@@ -2974,11 +2974,6 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
         return;
     }
 
-    if (bgTaskSubscribers_.empty()) {
-        BGTASK_LOGI("Background Task Subscriber List is empty");
-        return;
-    }
-
     std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo
         = std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskInfo->GetBgModeId(),
         continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName(),
