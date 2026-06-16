@@ -206,7 +206,7 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_004, TestSize.Level2)
     EXPECT_TRUE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid1));
     
     processData.preloadMode = 0;
-    appStateObserver.OnPrecessCreated(processData);
+    appStateObserver.OnProcessCreated(processData);
     EXPECT_FALSE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid2));
 
     // Clean up
