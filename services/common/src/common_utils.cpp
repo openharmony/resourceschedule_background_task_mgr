@@ -20,7 +20,7 @@ namespace OHOS {
 namespace BackgroundTaskMgr {
 bool CommonUtils::CheckJsonValue(const nlohmann::json &value, std::initializer_list<std::string> params)
 {
-    for (auto param : params) {
+    for (const auto &param : params) {
         if (value.find(param) == value.end()) {
             return false;
         }
