@@ -18,22 +18,12 @@
 
 #include <unordered_map>
 #include <functional>
-#include <mutex>
-#include <list>
 #include "singleton.h"
 #include "nlohmann/json.hpp"
 #include "bgtask_plugin.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-struct AudioInfo {
-    int32_t uid_ {-1};
-    int32_t sessionId_ {-1};
-    AudioInfo() = default;
-    AudioInfo(int32_t uid, int32_t sessionId)
-        : uid_(uid), sessionId_(sessionId) {};
-};
-
 class AudioStreamPluginAdapter final : public BgtaskPlugin,
                                        public DelayedSingleton<AudioStreamPluginAdapter> {
 public:
@@ -41,16 +31,10 @@ public:
     void Init() override;
     void Uninit() override;
     std::string GetPluginName() const override;
-    bool CheckAppIsPlaying(int32_t uid);
 
 private:
-    void InitAudioRendererStateChangeListener();
     void RendererStateChange(const nlohmann::json& payload);
-    void InitCbMap(std::unordered_map<uint32_t,
-        std::unordered_map<int32_t, std::function<void(const int32_t, const nlohmann::json&)>>>& cbMap) override;
-
-    std::list<std::shared_ptr<AudioInfo>> audioPlayerInfos_ {};
-    std::mutex pluginMutex_;
+    void InitCbMap(CallBackMap &cbMap) override;
 };
 } // namespace BackgroundTaskMgr
 } // namespace OHOS
