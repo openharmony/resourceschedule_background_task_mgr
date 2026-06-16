@@ -17,6 +17,17 @@ import Constants from './constant';
 import { MeasureOptions } from '@ohos.measure';
 import { MeasureUtils } from '@ohos.arkui.UIContext';
 import common from '@ohos.app.ability.common';
+import i18n from '@ohos.i18n';
+
+export function isUgLanguage(): boolean {
+  try {
+    let systemLanguage: string = i18n.System.getSystemLanguage();
+    return systemLanguage === 'ug' || systemLanguage === 'ug-CN';
+  } catch (err) {
+    console.error(`getSystemLanguage failed. error code: ${err?.code}, message: ${err?message}.`);
+    return false;
+  }
+}
 
 /**
  * Omit display when application name is too long

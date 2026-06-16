@@ -20,6 +20,19 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+namespace {
+// 长时任务自有hap包名
+static constexpr char BUNDLE_NAME_CONTINUOUS_TASK_RESOURCE[] = "com.ohos.backgroundtaskmgr.resources";
+// 特殊类型长时任务自定义授权弹窗Extension ability name
+static constexpr char EXTENSION_ABILITY_NAME_SPECIAL_MODE_PERMISSION_DIALOG[] = "EnableBgTaskAuthDialog";
+// 通过UEC拉起extension固定配置key
+static constexpr char TYPE_KEY_START_UIEXTENSION[] = "ability.want.params.uiExtensionType";
+// 特殊类型长时任务自定义授权弹窗-传参appIndex
+static constexpr char PERMISSION_DIALOG_PARAM_APP_INDEX[] = "appIndex";
+// 特殊类型长时任务自定义授权弹窗-传参taskMode（长时任务子类型）
+static constexpr char PERMISSION_DIALOG_PARAM_SPECIAL_SUB_MODE[] = "taskMode";
+}
+
 bool UIExtensionHelper::CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abilityContext,
     const ContinuousTaskParam &taskParam)
 {
@@ -35,6 +48,7 @@ bool UIExtensionHelper::CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::
     if (taskParam.bgSubModeIds_.size() == 0) {
         return false;
     }
+
     AAFwk::Want want;
     want.SetElementName(BUNDLE_NAME_CONTINUOUS_TASK_RESOURCE, EXTENSION_ABILITY_NAME_SPECIAL_MODE_PERMISSION_DIALOG);
     std::string typeValue = "sysDialog/common";
@@ -47,6 +61,7 @@ bool UIExtensionHelper::CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::
     uiExtCallback->SetAbilityContext(abilityContext);
     std::string bundleName = abilityContext->GetBundleName();
     uiExtCallback->SetBundleName(bundleName);
+
     Ace::ModalUIExtensionCallbacks uiExtensionCallbacks = {
         .onRelease = std::bind(&ModalExtensionCallback::OnRelease, uiExtCallback, std::placeholders::_1),
         .onResult = std::bind(&ModalExtensionCallback::OnResult, uiExtCallback,
@@ -57,6 +72,7 @@ bool UIExtensionHelper::CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::
         .onRemoteReady = std::bind(&ModalExtensionCallback::OnRemoteReady, uiExtCallback, std::placeholders::_1),
         .onDestroy = std::bind(&ModalExtensionCallback::OnDestroy, uiExtCallback),
     };
+
     Ace::ModalUIExtensionConfig config;
     config.isProhibitBack = true;
     int32_t sessionId = uiContent->CreateModalUIExtension(want, uiExtensionCallbacks, config);
@@ -144,13 +160,17 @@ void ModalExtensionCallback::SetAbilityContext(
 
 void ModalExtensionCallback::ReleaseOrErrorHandle(int32_t code)
 {
+    if (this->abilityContext_ == nullptr) {
+        BGTASK_LOGE("null abilityContext.");
+        return;
+    }
     Ace::UIContent* uiContent = this->abilityContext_->GetUIContent();
     if (uiContent == nullptr) {
         BGTASK_LOGE("null uiContent.");
         return;
     }
+
     uiContent->CloseModalUIExtension(this->sessionId_);
-    return;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
