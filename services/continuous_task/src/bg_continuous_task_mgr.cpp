@@ -1975,8 +1975,7 @@ bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, uint32_t type)
     return false;
 }
 
-void BgContinuousTaskMgr::HandleSuspendContinuousTask(
-    int32_t uid, int32_t pid, int32_t mode, const std::string &key)
+void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t mode, const std::string &key)
 {
     if (continuousTaskInfosMap_.find(key) == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("suspend TaskInfo failure, no matched task: %{public}s", key.c_str());
@@ -2081,6 +2080,7 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
         }
         BGTASK_LOGI("ActiveContinuousTask uid: %{public}d, pid: %{public}d", uid, pid);
         iter->second->suspendState_ = false;
+        iter->second->isStandby_ = false;
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_ACTIVE);
         if (iter->second->notificationId_ != -1) {
             if (notificationId == ILLEGAL_NOTIFICATION_ID ||
