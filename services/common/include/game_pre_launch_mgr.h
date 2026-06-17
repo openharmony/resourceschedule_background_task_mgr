@@ -17,7 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_COMMON_INCLUDE_GAME_PRE_LAUNCH_MGR_H
 
 #ifdef GAME_PRE_LAUNCH_ENABLE
-#include <set>
+#include <unordered_set>
 #include <memory>
 #include <mutex>
 #include "singleton.h"
@@ -50,7 +50,7 @@ public:
     bool IsGamePreLaunchApp(const int32_t uid) const;
 private:
     mutable std::mutex gamePreLaunchMutex_;
-    std::set<int32_t> gamePreLaunchAppUids_{};
+    std::unordered_set<int32_t> gamePreLaunchAppUids_{};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
