@@ -34,6 +34,7 @@
 #include "background_task_mode.h"
 #include "background_task_state_info.h"
 #include "background_common.h"
+#include "ui_extension_helper.h"
 
 using namespace taihe;
 using namespace OHOS;
@@ -422,7 +423,7 @@ public:
                 Common::FindErrMsg(asyncCallbackInfo->errCode));
             return;
         }
-        if (!CreateUIExtension(asyncCallbackInfo->abilityContext, taskParam)) {
+        if (!UIExtensionHelper::CreateUIExtension(asyncCallbackInfo->abilityContext, taskParam)) {
             BGTASK_LOGE("CreateUIExtension failed");
             DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam);
             set_business_error(Common::FindErrCode(ERR_BGTASK_SYS_NOT_READY),

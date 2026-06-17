@@ -17,6 +17,17 @@ import Constants from './constant';
 import { MeasureOptions } from '@ohos.measure';
 import { MeasureUtils } from '@ohos.arkui.UIContext';
 import common from '@ohos.app.ability.common';
+import i18n from '@ohos.i18n';
+
+export function isUgLanguage(): boolean {
+  try {
+    let systemLanguage: string = i18n.System.getSystemLanguage();
+    return systemLanguage === 'ug' || systemLanguage === 'ug-CN';
+  } catch (err) {
+    console.error(`getSystemLanguage failed, error code: ${err?.code}, message: ${err?.message}.`);
+    return false;
+  }
+}
 
 /**
  * Omit display when application name is too long
@@ -33,37 +44,22 @@ export function titleTrim(title: string): string {
   }
 }
 
-export function calOverLine(containerWidth: number, options: MeasureOptions,
-  measureUtils: MeasureUtils) : boolean {
-    let crossLineFlag: boolean = false;
-    try {
-      let textWidth = px2vp(measureUtils.measureText(options));
-      crossLineFlag = (textWidth > containerWidth);
-    } catch (err) {
-      console.error(Constants.TAG, `cal over line failed, code=${err?.code0}, msg=${err?.message}.`);
-    }
-    return crossLineFlag;
-  }
-
-export function calContainerWidth(
-  containerWidth: number,
-  options: MeasureOptions,
-  crossLineRatio: number,
+export function calContainerWidth(containerWidth: number, options: MeasureOptions, crossLineRatio: number,
   measureUtils: MeasureUtils) : string | number {
-    let targetContainerWidth: string | number = 'auto';
-    try {
-      let textWidth = px2vp(measureUtils.measureText(options));
-      let ratio = (textWidth % containerWidth) / containerWidth;
-      let crossLineFlag: boolean = (textWidth > containerWidth) && (textWidth < 2 * containerWidth);
-      if (crossLineFlag && ratio < crossLineRatio) {
-        targetContainerWidth = containerWidth / Constants.CROSS_LINE_RESIZE_PARAM;
-        console.info(Constants.TAG, 'afford condition, cal new width.');
-      }
-    } catch (err) {
-      console.error(Constants.TAG, `refresh width failed, code=${err?.code0}, msg=${err?.message}.`);
+  let targetContainerWidth: string | number = 'auto';
+  try {
+    let textWidth = px2vp(measureUtils.measureText(options));
+    let ratio = (textWidth % containerWidth) / containerWidth;
+    let crossLineFlag: boolean = (textWidth > containerWidth) && (textWidth < 2 * containerWidth);
+    if (crossLineFlag && ratio < crossLineRatio) {
+      targetContainerWidth = containerWidth / Constants.CROSS_LINE_RESIZE_PARAM;
+      console.info(Constants.TAG, 'afford condition, cal new width.');
     }
-    return targetContainerWidth;
+  } catch (err) {
+    console.error(Constants.TAG, `refresh width failed, code=${err?.code0}, msg=${err?.message}.`);
   }
+  return targetContainerWidth;
+}
 
 export function getFontSizeScale(context: common.UIAbilityContext, maxScale: number = 3.2): number {
   let fontSizeScale = context.config?.fontSizeScale;
@@ -158,39 +154,39 @@ export async function sleep(ms: number): Promise<void> {
 }
 
 /**
-   * 
-   * @param windowRect windowRect
-   * @param display display
-   * @returns true need removeWindow
-   */
-  export function shouldMoveWindow(windowRect: window.Rect, display: display.Display): boolean {
-    try {
-      if (windowRect === undefined) {
-        console.error(Constants.TAG, `windowRect is null`);
-        return false;
-      }
-      console.info(Constants.TAG, `displayW=${display.width}, displayH=${display.height}.` );
-
-      if (windowRect.width >= display.width && windowRect.height >= display.height) {
-        console.info(Constants.TAG, `windowRect >= display, no need move.`);
-        return false;
-      }
-      let windowCenterX = windowRect.left + windowRect.width / 2;
-      let windowCenterY = windowRect.top + windowRect.height / 2;
-      let minX = windowRect.width / 2;
-      let maxX = display.width - windowRect.width / 2;
-      let minY = windowRect.height / 2;
-      let maxY = display.height - windowRect.height / 2 - Constants.PC_DOCK_HEIGHT;
-
-      console.info(Constants.TAG, `windowCenterX=${windowCenterX}, windowCenterY=${windowCenterY}`);
-      console.info(Constants.TAG, `x range=[${minX}, ${maxX}], y range=[${minY}, ${maxY}]`);
-      let isXOk: boolean = windowCenterX >= minX && windowCenterX <= maxX;
-      let isYOk: boolean = windowCenterY >= minY && windowCenterY <= maxY;
-      let shouldMove = !(isXOk && isYOk);
-      console.info(Constants.TAG, `shouldMoveWindow, shouldMove=${shouldMove}`);
-      return shouldMove;
-    } catch (err) {
-      console.error(Constants.TAG, `check shouldMoveWindow failed, code=${err?.code}, msg=${err?.message}.`);
+  * 
+  * @param windowRect windowRect
+  * @param display display
+  * @returns true need removeWindow
+  */
+export function shouldMoveWindow(windowRect: window.Rect, display: display.Display): boolean {
+  try {
+    if (windowRect === undefined) {
+      console.error(Constants.TAG, `windowRect is null`);
       return false;
     }
+    console.info(Constants.TAG, `displayW=${display.width}, displayH=${display.height}.` );
+
+    if (windowRect.width >= display.width && windowRect.height >= display.height) {
+      console.info(Constants.TAG, `windowRect >= display, no need move.`);
+      return false;
+    }
+    let windowCenterX = windowRect.left + windowRect.width / 2;
+    let windowCenterY = windowRect.top + windowRect.height / 2;
+    let minX = windowRect.width / 2;
+    let maxX = display.width - windowRect.width / 2;
+    let minY = windowRect.height / 2;
+    let maxY = display.height - windowRect.height / 2 - Constants.PC_DOCK_HEIGHT;
+
+    console.info(Constants.TAG, `windowCenterX=${windowCenterX}, windowCenterY=${windowCenterY}`);
+    console.info(Constants.TAG, `x range=[${minX}, ${maxX}], y range=[${minY}, ${maxY}]`);
+    let isXOk: boolean = windowCenterX >= minX && windowCenterX <= maxX;
+    let isYOk: boolean = windowCenterY >= minY && windowCenterY <= maxY;
+    let shouldMove = !(isXOk && isYOk);
+    console.info(Constants.TAG, `shouldMoveWindow, shouldMove=${shouldMove}`);
+    return shouldMove;
+  } catch (err) {
+    console.error(Constants.TAG, `check shouldMoveWindow failed, code=${err?.code}, msg=${err?.message}.`);
+    return false;
   }
+}

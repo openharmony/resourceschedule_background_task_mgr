@@ -378,13 +378,6 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode RemoveAuthRecord(const ContinuousTaskParam &taskParam);
-
-    /**
-     * @brief notify audio start.
-     * @param uid uid.
-     * @return Returns ERR_OK if success, else failure.
-     */
-    ErrCode NotifyAudioStart(const int32_t uid);
 private:
     bool GetBackgroundTaskManagerProxy();
 

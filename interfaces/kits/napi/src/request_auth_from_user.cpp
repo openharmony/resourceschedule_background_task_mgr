@@ -31,6 +31,7 @@
 #include "continuous_task_request.h"
 #include "js_runtime_utils.h"
 #include "background_common.h"
+#include "ui_extension_helper.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -265,24 +266,22 @@ bool SendRequest(napi_env env, const ContinuousTaskParam &taskParam,
         Common::HandleErrCode(env, errCode, true);
         return false;
     }
-    // 2、没有授权，则弹窗授权
-    if (!CreateUIExtension(abilityContext, taskParam)) {
-        BGTASK_LOGE("CreateUIExtension failed");
-        // 拉起授权弹窗失败，取消已经申请的授权记录
-        DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam);
-        Common::HandleErrCode(env, ERR_BGTASK_SYS_NOT_READY, true);
-        return false;
+    if (taskParam.requestAuthApiVersion_ == API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG) {
+        // 2、没有授权，则弹窗授权
+        if (!UIExtensionHelper::CreateUIExtension(abilityContext, taskParam)) {
+            BGTASK_LOGE("CreateUIExtension failed");
+            // 拉起授权弹窗失败，取消已经申请的授权记录
+            DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam);
+            authCallbackInstances_.erase(callback);
+            Common::HandleErrCode(env, ERR_BGTASK_SYS_NOT_READY, true);
+            return false;
+        }
     }
     return true;
 }
 
-napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
+napi_value RequestAuth(napi_env env, napi_callback_info info, int32_t apiVersion)
 {
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
-        "BackgroundTaskManager::ContinuousTask::Napi::RequestAuthFromUser");
-#ifdef SUPPORT_JSSTACK
-    HiviewDFX::ReportXPowerJsStackSysEvent(env, "REQUEST_AUTH_FROM_USER");
-#endif
     std::shared_ptr<ContinuousTaskRequest> request = std::make_shared<ContinuousTaskRequest>();
     if (!CheckRequestAuthFromUserParam(env, info, request)) {
         return Common::NapiGetNull(env);
@@ -308,58 +307,7 @@ napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
     std::vector<uint32_t> backgroundTaskModesValue = request->GetBackgroundTaskModes();
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, backgroundTaskModesValue[0],
         nullptr, "", nullptr, "", true, backgroundTaskModesValue, -1);
-    taskParam.bgSubModeIds_ = request->GetBackgroundTaskSubmodes();
-    taskParam.appIndex_ = abilityContext->GetAbilityInfo()->appIndex;
-    std::lock_guard<std::mutex> lock(authCallbackLock_);
-    authCallbackInstances_.insert(callback);
-    int32_t notificationId = -1;
-    ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
-        RequestAuthFromUser(taskParam, *callback, notificationId);
-    napi_value result = nullptr;
-    napi_create_int32(env, 0, &result);
-    if (errCode == ERR_BGTASK_CONTINUOUS_TRIGGER_CALLBACK) {
-        return result;
-    }
-    if (errCode != ERR_OK) {
-        authCallbackInstances_.erase(callback);
-        Common::HandleErrCode(env, errCode, true);
-    }
-    return result;
-}
-
-napi_value RequestAuthFromUserByDialog(napi_env env, napi_callback_info info)
-{
-    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
-        "BackgroundTaskManager::ContinuousTask::Napi::RequestAuthFromUserByDialog");
-#ifdef SUPPORT_JSSTACK
-    HiviewDFX::ReportXPowerJsStackSysEvent(env, "REQUEST_AUTH_FROM_USER_BY_DIALOG");
-#endif
-    std::shared_ptr<ContinuousTaskRequest> request = std::make_shared<ContinuousTaskRequest>();
-    if (!CheckRequestAuthFromUserParam(env, info, request)) {
-        return Common::NapiGetNull(env);
-    }
-    size_t argc = REQUEST_AUTH_FORM_USER_PARAMS;
-    napi_value argv[REQUEST_AUTH_FORM_USER_PARAMS] = {nullptr};
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    if (argc != REQUEST_AUTH_FORM_USER_PARAMS) {
-        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
-        return Common::NapiGetNull(env);
-    }
-    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
-    if (CheckAbilityContext(env, argv[0], abilityContext) == nullptr) {
-        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, true);
-        return Common::NapiGetNull(env);
-    }
-    std::shared_ptr<AuthCallbackInstance> callback = nullptr;
-    if (GetExpiredCallback(env, argv[1], callback) == nullptr) {
-        BGTASK_LOGE("ExpiredCallback parse failed");
-        Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, true);
-        return Common::NapiGetNull(env);
-    }
-    std::vector<uint32_t> backgroundTaskModesValue = request->GetBackgroundTaskModes();
-    ContinuousTaskParam taskParam = ContinuousTaskParam(true, backgroundTaskModesValue[0],
-        nullptr, "", nullptr, "", true, backgroundTaskModesValue, -1);
-    taskParam.requestAuthApiVersion_ = API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG;
+    taskParam.requestAuthApiVersion_ = apiVersion;
     taskParam.bgSubModeIds_ = request->GetBackgroundTaskSubmodes();
     taskParam.appIndex_ = abilityContext->GetAbilityInfo()->appIndex;
     int32_t callbackUid = 0;
@@ -371,139 +319,24 @@ napi_value RequestAuthFromUserByDialog(napi_env env, napi_callback_info info)
     return result;
 }
 
-bool CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abilityContext,
-    const ContinuousTaskParam &taskParam)
+napi_value RequestAuthFromUser(napi_env env, napi_callback_info info)
 {
-    if (abilityContext == nullptr) {
-        BGTASK_LOGE("null context");
-        return false;
-    }
-    auto uiContent = abilityContext->GetUIContent();
-    if (uiContent == nullptr) {
-        BGTASK_LOGE("null uiContent");
-        return false;
-    }
-    if (taskParam.bgSubModeIds_.size() == 0) {
-        return false;
-    }
-    AAFwk::Want want;
-    std::string targetBundleName = "com.ohos.backgroundtaskmgr.resources";
-    std::string targetAbilityName = "EnableBgTaskAuthDialog";
-    want.SetElementName(targetBundleName, targetAbilityName);
-    std::string typeKey = "ability.want.params.uiExtensionType";
-    std::string typeValue = "sysDialog/common";
-    want.SetParam(typeKey, typeValue);
-    int32_t appIndex = abilityContext->GetAbilityInfo()->appIndex;
-    std::string bundleName = abilityContext->GetBundleName();
-    want.SetParam("appIndex", appIndex);
-    int32_t taskMode = static_cast<int32_t>(taskParam.bgSubModeIds_[0]);
-    want.SetParam("taskMode", taskMode);
-    auto uiExtCallback = std::make_shared<ModalExtensionCallback>();
-    uiExtCallback->SetAbilityContext(abilityContext);
-    uiExtCallback->SetBundleName(bundleName);
-    Ace::ModalUIExtensionCallbacks uiExtensionCallbacks = {
-        .onRelease = std::bind(&ModalExtensionCallback::OnRelease, uiExtCallback, std::placeholders::_1),
-        .onResult = std::bind(&ModalExtensionCallback::OnResult, uiExtCallback,
-            std::placeholders::_1, std::placeholders::_2),
-        .onReceive = std::bind(&ModalExtensionCallback::OnReceive, uiExtCallback, std::placeholders::_1),
-        .onError = std::bind(&ModalExtensionCallback::OnError, uiExtCallback,
-            std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
-        .onRemoteReady = std::bind(&ModalExtensionCallback::OnRemoteReady, uiExtCallback, std::placeholders::_1),
-        .onDestroy = std::bind(&ModalExtensionCallback::OnDestroy, uiExtCallback),
-    };
-    Ace::ModalUIExtensionConfig config;
-    config.isProhibitBack = true;
-    int32_t sessionId = uiContent->CreateModalUIExtension(want, uiExtensionCallbacks, config);
-    if (sessionId == 0) {
-        BGTASK_LOGE("Create component failed, sessionId is 0");
-        return false;
-    }
-    uiExtCallback->SetSessionId(sessionId);
-    return true;
-}
- 
-ModalExtensionCallback::ModalExtensionCallback()
-{}
-
-ModalExtensionCallback::~ModalExtensionCallback()
-{}
-
-/*
-* when UIExtensionAbility use terminateSelfWithResult
-*/
-void ModalExtensionCallback::OnResult(int32_t resultCode, const AAFwk::Want& result)
-{
-    BGTASK_LOGI("called OnResult");
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::RequestAuthFromUser");
+#ifdef SUPPORT_JSSTACK
+    HiviewDFX::ReportXPowerJsStackSysEvent(env, "REQUEST_AUTH_FROM_USER");
+#endif
+    return RequestAuth(env, info, API_VERSION_REQUEST_SPECIAL_USER_AUTH);
 }
 
-/*
-* when UIExtensionAbility send message to UIExtensionComponent
-*/
-void ModalExtensionCallback::OnReceive(const AAFwk::WantParams& receive)
+napi_value RequestAuthFromUserByDialog(napi_env env, napi_callback_info info)
 {
-    BGTASK_LOGI("called OnReceive");
-}
-
-/*
-* when UIExtensionAbility disconnect or use terminate or process die
-* releaseCode is 0 when process normal exit
-*/
-void ModalExtensionCallback::OnRelease(int32_t releaseCode)
-{
-    BGTASK_LOGI("called OnRelease");
-    ReleaseOrErrorHandle(releaseCode);
-}
-
-/*
-* when UIExtensionComponent init or turn to background or destroy UIExtensionAbility occur error
-*/
-void ModalExtensionCallback::OnError(int32_t code, const std::string& name, const std::string& message)
-{
-    BGTASK_LOGI("called OnError, name = %{public}s, message = %{public}s", name.c_str(), message.c_str());
-    ReleaseOrErrorHandle(code);
-}
-
-/*
-* when UIExtensionComponent connect to UIExtensionAbility, ModalUIExtensionProxy will init,
-* UIExtensionComponent can send message to UIExtensionAbility by ModalUIExtensionProxy
-*/
-void ModalExtensionCallback::OnRemoteReady(const std::shared_ptr<Ace::ModalUIExtensionProxy>& uiProxy)
-{
-    BGTASK_LOGI("called OnRemoteReady");
-}
-
-/*
-* when UIExtensionComponent destructed
-*/
-void ModalExtensionCallback::OnDestroy()
-{
-    BGTASK_LOGI("called OnDestroy");
-}
-
-void ModalExtensionCallback::SetSessionId(int32_t sessionId)
-{
-    this->sessionId_ = sessionId;
-}
-
-void ModalExtensionCallback::SetBundleName(std::string bundleName)
-{
-    this->bundleName_ = bundleName;
-}
-
-void ModalExtensionCallback::SetAbilityContext(std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abilityContext)
-{
-    this->abilityContext_ = abilityContext;
-}
-
-void ModalExtensionCallback::ReleaseOrErrorHandle(int32_t code)
-{
-    Ace::UIContent* uiContent = this->abilityContext_->GetUIContent();
-    if (uiContent == nullptr) {
-        BGTASK_LOGE("null uiContent");
-        return;
-    }
-    uiContent->CloseModalUIExtension(this->sessionId_);
-    return;
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::RequestAuthFromUserByDialog");
+#ifdef SUPPORT_JSSTACK
+    HiviewDFX::ReportXPowerJsStackSysEvent(env, "REQUEST_AUTH_FROM_USER_BY_DIALOG");
+#endif
+    return RequestAuth(env, info, API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
