@@ -24,7 +24,7 @@ export function isUgLanguage(): boolean {
     let systemLanguage: string = i18n.System.getSystemLanguage();
     return systemLanguage === 'ug' || systemLanguage === 'ug-CN';
   } catch (err) {
-    console.error(`getSystemLanguage failed. error code: ${err?.code}, message: ${err?message}.`);
+    console.error(`getSystemLanguage failed, error code: ${err?.code}, message: ${err?.message}.`);
     return false;
   }
 }
