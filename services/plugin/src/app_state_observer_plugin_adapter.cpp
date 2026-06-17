@@ -59,15 +59,29 @@ bool AppStateObserverPluginAdapter::UnmarshallingProcessData(const nlohmann::jso
     int32_t processType = 0;
     int32_t state = 0;
     int32_t extensionType = 0;
+    int32_t preloadMode = 0;
     if (!ResCommonUtil::ParseStringJsonPayloadToNumber("processType", processType, payload) ||
         !ResCommonUtil::ParseStringJsonPayloadToNumber("state", state, payload) ||
-        !ResCommonUtil::ParseStringJsonPayloadToNumber("extensionType", extensionType, payload)) {
+        !ResCommonUtil::ParseStringJsonPayloadToNumber("extensionType", extensionType, payload) ||
+        !ResCommonUtil::ParseStringJsonPayloadToNumber("preloadMode", preloadMode, payload)) {
         return false;
     }
     processData.processType = static_cast<AppExecFwk::ProcessType>(processType);
     processData.state = static_cast<AppExecFwk::AppProcessState>(state);
     processData.extensionType = static_cast<AppExecFwk::ExtensionAbilityType>(extensionType);
+    processData.preloadMode = preloadMode;
     return true;
+}
+
+void AppStateObserverPluginAdapter::OnProcessCreated(const nlohmann::json& payload)
+{
+    AppExecFwk::ProcessData processData;
+    if (!UnmarshallingProcessData(payload, processData)) {
+        return;
+    }
+    BGTASK_LOGD("OnProcessCreated, bundleName: %{public}s, uid: %{public}d, pid: %{public}d",
+        processData.bundleName.c_str(), processData.uid, processData.pid);
+    appStateObserver_->OnProcessCreated(processData);
 }
 
 void AppStateObserverPluginAdapter::OnProcessDied(const nlohmann::json& payload)
@@ -106,12 +120,15 @@ bool AppStateObserverPluginAdapter::UnmarshallingAppStateData(const nlohmann::js
     }
     int32_t state = 0;
     int32_t extensionType = 0;
+    int32_t preloadMode = 0;
     if (!ResCommonUtil::ParseIntParameterFromJson("state", state, payload) ||
-        !ResCommonUtil::ParseIntParameterFromJson("extensionType", extensionType, payload)) {
+        !ResCommonUtil::ParseIntParameterFromJson("extensionType", extensionType, payload) ||
+        !ResCommonUtil::ParseIntParameterFromJson("preloadMode", preloadMode, payload)) {
         return false;
     }
     appStateData.state = static_cast<uint32_t>(state);
     appStateData.extensionType = static_cast<AppExecFwk::ExtensionAbilityType>(extensionType);
+    appStateData.preloadMode = preloadMode;
     return true;
 }
 
@@ -195,6 +212,9 @@ void AppStateObserverPluginAdapter::InitCbMap(std::unordered_map<uint32_t,
             } },
         { ResType::ProcessStatus::PROCESS_BACKGROUND, [this](const int32_t stateType, const nlohmann::json& payload) {
                 this->OnProcessStateChanged(payload);
+            } },
+        { ResType::ProcessStatus::PROCESS_CREATED, [this](const int32_t stateType, const nlohmann::json& payload) {
+                this->OnProcessCreated(payload);
             } },
     };
 

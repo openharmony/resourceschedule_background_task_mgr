@@ -32,6 +32,9 @@
 #include "expired_callback_stub.h"
 #include "running_process_info.h"
 #include "background_task_observer.h"
+#ifdef GAME_PRE_LAUNCH_ENABLE
+#include "game_pre_launch_mgr.h"
+#endif
 
 using namespace testing::ext;
 
@@ -2452,6 +2455,31 @@ HWTEST_F(BgContinuousTaskMgrTest, AllowApplyContinuousTask_001, TestSize.Level1)
     EXPECT_EQ(bgContinuousTaskMgr_->AllowApplyContinuousTask(record), ERR_OK);
 }
 
+#ifdef GAME_PRE_LAUNCH_ENABLE
+/**
+ * @tc.name: AllowApplyContinuousTask_002
+ * @tc.desc: AllowApplyContinuousTask test with game pre-launch state.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, AllowApplyContinuousTask_002, TestSize.Level1)
+{
+    int32_t uid = 1;
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->uid_ = uid;
+    record->isByRequestObject_ = true;
+
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->AddGamePreLaunchApp(uid);
+    EXPECT_TRUE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+
+    EXPECT_EQ(bgContinuousTaskMgr_->AllowApplyContinuousTask(record),
+        ERR_BGTASK_CONTINUOUS_NOT_APPLY_PRELOAD_STATE);
+
+    // Clean up
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->RemoveGamePreLaunchApp(uid);
+}
+#endif
+
 /**
  * @tc.name: OnAppStateChanged_001
  * @tc.desc: OnAppStateChanged test.
@@ -2460,17 +2488,63 @@ HWTEST_F(BgContinuousTaskMgrTest, AllowApplyContinuousTask_001, TestSize.Level1)
  */
 HWTEST_F(BgContinuousTaskMgrTest, OnAppStateChanged_001, TestSize.Level1)
 {
+    int32_t preloadMode = static_cast<int32_t>(AppExecFwk::PreloadMode::GAME_PRELAUNCH);
     bgContinuousTaskMgr_->isSysReady_.store(false);
     bgContinuousTaskMgr_->OnAppStateChanged(1,
-        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND));
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND), preloadMode);
     bgContinuousTaskMgr_->isSysReady_.store(true);
     bgContinuousTaskMgr_->OnAppStateChanged(1,
-        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND));
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND), preloadMode);
     EXPECT_EQ(bgContinuousTaskMgr_->appOnForeground_.size(), 0);
     bgContinuousTaskMgr_->OnAppStateChanged(1,
-        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND));
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND), preloadMode);
     EXPECT_NE(bgContinuousTaskMgr_->appOnForeground_.size(), 0);
 }
+
+#ifdef GAME_PRE_LAUNCH_ENABLE
+/**
+ * @tc.name: OnAppStateChanged_002
+ * @tc.desc: OnAppStateChanged test with game preload mode.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, OnAppStateChanged_002, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    int32_t uid = 1001;
+    int32_t preloadMode = static_cast<int32_t>(AppExecFwk::PreloadMode::PRELOAD_NONE);
+
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->AddGamePreLaunchApp(uid);
+    EXPECT_TRUE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+
+    bgContinuousTaskMgr_->OnAppStateChanged(uid,
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND), preloadMode);
+    EXPECT_FALSE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+}
+
+/**
+ * @tc.name: OnAppStateChanged_003
+ * @tc.desc: OnAppStateChanged test with game preload mode still active.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, OnAppStateChanged_003, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    int32_t uid = 1002;
+    int32_t preloadMode = static_cast<int32_t>(AppExecFwk::PreloadMode::GAME_PRELAUNCH);
+
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->AddGamePreLaunchApp(uid);
+    EXPECT_TRUE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+
+    bgContinuousTaskMgr_->OnAppStateChanged(uid,
+        static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_BACKGROUND), preloadMode);
+    EXPECT_TRUE(DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid));
+
+    // Clean up
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->RemoveGamePreLaunchApp(uid);
+}
+#endif
 
 /**
  * @tc.name: DebugContinuousTaskInner_001

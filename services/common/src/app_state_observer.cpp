@@ -24,6 +24,9 @@
 #include "bg_transient_task_mgr.h"
 #include "continuous_task_log.h"
 #include "bg_efficiency_resources_mgr.h"
+#ifdef GAME_PRE_LAUNCH_ENABLE
+#include "game_pre_launch_mgr.h"
+#endif
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -47,8 +50,9 @@ void AppStateObserver::OnAppStateChanged(const AppExecFwk::AppStateData &appStat
     }
     int32_t uid = appStateData.uid;
     int32_t state = appStateData.state;
-    auto task = [uid, state]() {
-        DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAppStateChanged(uid, state);
+    int32_t preloadMode = appStateData.preloadMode;
+    auto task = [uid, state, preloadMode]() {
+        DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAppStateChanged(uid, state, preloadMode);
     };
     handler_->PostTask(task, TASK_ON_APP_STATE_CHANGED);
 }
@@ -95,6 +99,17 @@ void AppStateObserver::OnAppCacheStateChanged(const AppExecFwk::AppStateData &ap
         DelayedSingleton<BgTransientTaskMgr>::GetInstance()->OnAppCacheStateChanged(uid, pid, bundleName);
     };
     handler_->PostTask(task, TASK_ON_APP_CACHE_STATE_CHANGED);
+}
+
+void AppStateObserver::OnProcessCreated(const AppExecFwk::ProcessData &processData)
+{
+#ifdef GAME_PRE_LAUNCH_ENABLE
+    BgTaskHiTraceChain traceChain(__func__);
+    BGTASK_LOGD("process create, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
+    if (processData.preloadMode == static_cast<int32_t>(AppExecFwk::PreloadMode::GAME_PRELAUNCH)) {
+        DelayedSingleton<GamePreLaunchMgr>::GetInstance()->AddGamePreLaunchApp(processData.uid);
+    }
+#endif
 }
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)

@@ -27,6 +27,7 @@ class AppStateObserver {
 public:
     void OnAppCacheStateChanged(const AppExecFwk::AppStateData &appStateData);
     void OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData);
+    void OnProcessCreated(const AppExecFwk::ProcessData &processData);
     void OnProcessDied(const AppExecFwk::ProcessData &processData);
     void OnAppStopped(const AppExecFwk::AppStateData &appStateData);
     void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
