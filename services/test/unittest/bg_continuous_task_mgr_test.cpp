@@ -43,11 +43,11 @@ static constexpr int32_t PROMPT_NUMS = 10;
 static constexpr uint32_t LOCATION_BGMODE = 8;
 static constexpr uint32_t BLUETOOTH_INTERACTION = 16;
 static constexpr uint32_t BGMODE_WIFI_INTERACTION = 64;
-static constexpr uint32_t BGMODE_VOIP = 128;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr uint32_t BGMODE_MODE_AV_PLAYBACK_AND_RECORD = 2048;
 static constexpr uint32_t BGMODE_SPECIAL_SCENARIO_PROCESSING = 4096;
 static constexpr uint32_t BGMODE_AUDIO_PLAYBACK_ID = 2;
+static constexpr uint32_t BGMODE_AUDIO_RECORDING_ID = 3;
 static constexpr uint32_t LOCATION_BGMODE_ID = 4;
 static constexpr uint32_t BGMODE_WIFI_INTERACTION_ID = 7;
 static constexpr uint32_t BGMODE_VOIP_ID = 8;
@@ -470,11 +470,11 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_003, TestSize.Level1)
 
     continuousTaskRecord->isByRequestObject_ = true;
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_MODE_AV_PLAYBACK_AND_RECORD,
-        BGMODE_AUDIO_PLAYBACK, true, continuousTaskRecord), ERR_OK);
+        BGMODE_AUDIO_PLAYBACK_ID, true, continuousTaskRecord), ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_MODE_AV_PLAYBACK_AND_RECORD,
-        BGMODE_AUDIO_RECORDING, true, continuousTaskRecord), ERR_OK);
+        BGMODE_AUDIO_RECORDING_ID, true, continuousTaskRecord), ERR_OK);
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_MODE_AV_PLAYBACK_AND_RECORD,
-        BGMODE_VOIP, true, continuousTaskRecord), ERR_OK);
+        BGMODE_VOIP_ID, true, continuousTaskRecord), ERR_OK);
 }
 
 /**
