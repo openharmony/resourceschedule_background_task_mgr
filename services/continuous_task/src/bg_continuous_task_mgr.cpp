@@ -2038,7 +2038,7 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTaskByStandby(
     RefreshTaskRecord();
 }
 
-void BgContinuousTaskMgr::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
+void BgContinuousTaskMgr::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key, bool isStandby)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
