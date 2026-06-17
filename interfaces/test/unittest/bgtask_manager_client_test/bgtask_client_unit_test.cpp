@@ -722,6 +722,25 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: ContinuousTaskCallbackInfo_002
+ * @tc.desc: test ContinuousTaskCallbackInfo IsStandby and SetStandby.
+ * @tc.type: FUNC
+ * @tc.require: 
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_002, TestSize.Level1)
+{
+    sptr<ContinuousTaskCallbackInfo> info = sptr<ContinuousTaskCallbackInfo>(
+        new ContinuousTaskCallbackInfo(1, 1, 1, "test"));
+    EXPECT_EQ(info->IsStandby(), false);
+
+    info->SetStandby(true);
+    EXPECT_EQ(info->IsStandby(), true);
+
+    info->SetStandby(false);
+    EXPECT_EQ(info->IsStandby(), false);
+}
+
+/**
  * @tc.name: ContinuousTaskParam_001
  * @tc.desc: test ContinuousTaskParam.
  * @tc.type: FUNC

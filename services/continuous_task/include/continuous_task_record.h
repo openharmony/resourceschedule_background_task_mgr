@@ -111,6 +111,7 @@ private:
     bool audioDetectState_ {true};
     bool isStandby_ {false};
     bool audioPlayState_ {true};
+    bool isStandbySuspend_ {false};
     
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;
