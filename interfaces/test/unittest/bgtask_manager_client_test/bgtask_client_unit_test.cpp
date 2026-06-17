@@ -725,7 +725,7 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_001, TestSize.Level1)
  * @tc.name: ContinuousTaskCallbackInfo_002
  * @tc.desc: test ContinuousTaskCallbackInfo IsStandby and SetStandby.
  * @tc.type: FUNC
- * @tc.require: 
+ * @tc.require:
  */
 HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_002, TestSize.Level1)
 {
