@@ -44,98 +44,21 @@ namespace {
     // 点击公共事件只接收长时hap自己发送的
     static constexpr char BGTASK_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 }
+
 class CommonUtils {
 public:
-    static bool CheckJsonValue(const nlohmann::json &value, std::initializer_list<std::string> params)
-    {
-        for (auto param : params) {
-            if (value.find(param) == value.end()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static bool CheckExistMode(const std::vector<uint32_t> &bgModeIds, uint32_t bgMode)
-    {
-        auto iter = std::find(bgModeIds.begin(), bgModeIds.end(), bgMode);
-        return iter != bgModeIds.end();
-    }
-
-    static bool CheckExistNotification(const std::vector<int32_t> &notificaitonIds, const int32_t notificaitonId)
-    {
-        auto iter = std::find(notificaitonIds.begin(), notificaitonIds.end(), notificaitonId);
-        return iter == notificaitonIds.end();
-    }
-
-    static bool CheckModesSame(const std::vector<uint32_t> &oldBgModeIds, const std::vector<uint32_t> &newBgModeIds)
-    {
-        std::set<uint32_t> oldModesSet(oldBgModeIds.begin(), oldBgModeIds.end());
-        std::set<uint32_t> newModesSet(newBgModeIds.begin(), newBgModeIds.end());
-        return oldModesSet == newModesSet;
-    }
-
-    static std::string ModesToString(const std::vector<uint32_t> &bgmodes)
-    {
-        std::string modeStr;
-        for (const auto &mode : bgmodes) {
-            modeStr += std::to_string(mode);
-        }
-        return modeStr;
-    }
-
+    static bool CheckJsonValue(const nlohmann::json &value, std::initializer_list<std::string> params);
+    static bool CheckExistMode(const std::vector<uint32_t> &bgModeIds, uint32_t bgMode);
+    static bool CheckExistNotification(const std::vector<int32_t> &notificationIds, const int32_t notificationId);
+    static bool CheckModesSame(const std::vector<uint32_t> &oldBgModeIds, const std::vector<uint32_t> &newBgModeIds);
+    static std::string ModesToString(const std::vector<uint32_t> &bgmodes);
     static bool CheckApplyMode(const std::vector<uint32_t> &applyBgModeIds,
-        const std::vector<uint32_t> &checkBgModeIds)
-    {
-        for (const auto &mode : applyBgModeIds) {
-            auto iter = std::find(checkBgModeIds.begin(), checkBgModeIds.end(), mode);
-            if (iter == checkBgModeIds.end()) {
-                return false;
-            }
-        }
-        return true;
-    }
+        const std::vector<uint32_t> &checkBgModeIds);
+    static bool CheckExistOtherMode(const std::vector<uint32_t> &bgModeIds, uint32_t bgMode,
+        const std::set<uint32_t> &liveViewTypes);
+    static bool CheckStrToNum(const std::string &value);
+    static void SortMode(std::vector<uint32_t> &bgModeIds);
 
-    static bool CheckExistOtherMode(
-        const std::vector<uint32_t> &bgModeIds, uint32_t bgMode, const std::set<uint32_t> &liveViewTypes)
-    {
-        std::set<uint32_t> taskTypesSet(bgModeIds.begin(), bgModeIds.end());
-        std::set<uint32_t> otherTypes = liveViewTypes;
-        otherTypes.erase(bgMode);
-        for (const auto& type : otherTypes) {
-            if (taskTypesSet.find(type) != taskTypesSet.end()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    static bool CheckStrToNum(const std::string &value)
-    {
-        std::regex pattern(R"(^\d+$)");
-        return std::regex_match(value, pattern);
-    }
-
-    static void SortMode(std::vector<uint32_t> &bgModeIds)
-    {
-        std::vector<uint32_t> result;
-        std::vector<uint32_t> target = {
-            BackgroundMode::DATA_TRANSFER,
-            BackgroundMode::AUDIO_RECORDING,
-            BackgroundMode::LOCATION
-        };
-        for (const auto mode : target) {
-            if (std::find(bgModeIds.begin(), bgModeIds.end(), mode) != bgModeIds.end()) {
-                result.push_back(mode);
-            }
-        }
-        for (const auto mode : bgModeIds) {
-            if (std::find(target.begin(), target.end(), mode) == target.end()) {
-                result.push_back(mode);
-            }
-        }
-        bgModeIds = result;
-    }
 public:
     static constexpr int32_t jsonFormat_ = 4;
 };

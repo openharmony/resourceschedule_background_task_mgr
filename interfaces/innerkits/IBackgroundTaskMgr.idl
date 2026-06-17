@@ -69,5 +69,4 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void GetAllContinuousTaskApps([out] ContinuousTaskCallbackInfo[] list);
     [oneway] void SendNotificationByDeteTask([in] Set<String> taskKeys);
     void RemoveAuthRecord([in] ContinuousTaskParam taskParam);
-    [oneway] void NotifyAudioStart([in] int uid);
 }

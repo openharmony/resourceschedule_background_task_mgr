@@ -62,8 +62,8 @@
 #include "continuous_task_suspend_reason.h"
 #include "bg_continuous_task_dumper.h"
 #include "user_auth_result.h"
-#include "audio_stream_manager.h"
 #include "background_task_observer.h"
+#include "audio_renderer_info_plugin_data.h"
 
 #ifdef BGTASK_MGR_UNIT_TEST
 #define WEAK_FUNC __attribute__((weak))
@@ -1346,11 +1346,11 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
             return ret;
         }
     }
-    BGTASK_LOGI("background task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d,"
-        " abilityId %{public}d, continuousTaskId: %{public}d", continuousTaskRecord->bgModeId_,
+    BGTASK_LOGI("background task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d, "
+        "abilityId %{public}d, continuousTaskId: %{public}d, isBatchApi %{public}d", continuousTaskRecord->bgModeId_,
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
         continuousTaskRecord->isBatchApi_, continuousTaskRecord->uid_, continuousTaskRecord->abilityId_,
-        continuousTaskRecord->continuousTaskId_);
+        continuousTaskRecord->continuousTaskId_, continuousTaskRecord->isByRequestObject_);
     continuousTaskInfosMap_.emplace(taskInfoMapKey, continuousTaskRecord);
     OnContinuousTaskChanged(continuousTaskRecord, ContinuousTaskEventTriggerType::TASK_START);
     return RefreshTaskRecord();
@@ -1507,9 +1507,10 @@ void BgContinuousTaskMgr::FilterNotificationMode(const std::shared_ptr<Continuou
     for (const auto mode : modesValue) {
         if ((mode == BackgroundMode::AUDIO_PLAYBACK && isPublishAvsession) || ((mode == BackgroundMode::VOIP ||
             mode == BackgroundMode::AUDIO_RECORDING) && record->IsSystem())) {
+            BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s skip mode: %{public}d.", record->uid_,
+                record->bundleName_.c_str(), mode);
             continue;
         }
-        BGTASK_LOGD("FilterNotificationMode mode: %{public}d", mode);
         checkModes.push_back(mode);
     }
     CommonUtils::SortMode(checkModes);
@@ -1564,21 +1565,12 @@ ErrCode BgContinuousTaskMgr::SingleModeNotificationText(std::string &notificatio
     if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::BLUETOOTH_INTERACTION) &&
         CommonUtils::CheckExistMode(checkModes, BackgroundMode::AUDIO_PLAYBACK)) {
         // 只有播音类型，且播音类型要发通知
-        std::vector<std::shared_ptr<AudioStandard::AudioRendererChangeInfo>> rendererChangeInfos;
-        auto res = AudioStandard::AudioStreamManager::GetInstance()->GetCurrentRendererChangeInfos(rendererChangeInfos);
-        if (res != 0) {
-            BGTASK_LOGE("GetCurrentRendererChangeInfos failed");
-            return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
-        }
-        auto findIter = std::find_if(rendererChangeInfos.begin(), rendererChangeInfos.end(), [&](const auto &ele) {
-            return record->uid_ == ele->clientUID &&
-                ele->rendererState == AudioStandard::RendererState::RENDERER_RUNNING;
-        });
-        if (findIter == rendererChangeInfos.end() && startingTaskText_.size() > 0) {
+        bool isPlayingAudio = AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(record->uid_);
+        if (!isPlayingAudio && startingTaskText_.size() > 0) {
             // 此时应用未播音
             notificationText += startingTaskText_[0];
             record->audioPlayState_ = false;
-            BGTASK_LOGD("uid: %{public}d, bundleName: %{public}s is not playing audio.",
+            BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s is not playing audio.",
                 record->uid_, record->bundleName_.c_str());
             return ERR_OK;
         }
@@ -4331,7 +4323,6 @@ void BgContinuousTaskMgr::NotifyAudioStartInner(const int32_t uid)
     };
     auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findTask);
     if (findTaskIter == continuousTaskInfosMap_.end()) {
-        BGTASK_LOGI("uid: %{public}d no have continoustask.", uid);
         return;
     }
     string appName = GetMainAbilityLabel(findTaskIter->second->bundleName_, findTaskIter->second->userId_);
@@ -4357,9 +4348,13 @@ void BgContinuousTaskMgr::NotifyAudioStartInner(const int32_t uid)
             BGTASK_LOGE("notificationText is null.");
             return;
         }
+        task.second->audioPlayState_ = true;
         newPromptInfos.emplace(task.second->notificationLabel_, std::make_pair(appName, notificationText));
     }
-    NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
+    if (!newPromptInfos.empty()) {
+        NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
+        RefreshTaskRecord();
+    }
 }
 
 void BgContinuousTaskMgr::OnBannerNotificationActionButtonClick(const int32_t buttonType,

@@ -21,7 +21,8 @@ import {
   calContainerWidth,
   getFontSizeScale,
   sourceToVp,
-  getLimitFontSize } from '../common/utils';
+  getLimitFontSize,
+  isUgLanguage } from '../common/utils';
 import Constants from '../common/constant';
 import fs from '@ohos.file.fs';
 import configPolicy from '@ohos.configPolicy';
@@ -135,6 +136,7 @@ struct PermissionDialog {
                   .textOverflow({overflow: TextOverflow.Ellipsis})
                   .width(this.titleContainerWidth)
                   .textAlign(TextAlign.Center)
+                  .direction(isUgLanguage() ? Direction.Rtl : Direction.Ltr)
                 }
                 .margin({
                   top: Constants.DIALOG_REQ_MARGIN_TOP,

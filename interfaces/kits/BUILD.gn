@@ -17,7 +17,10 @@ import("//foundation/resourceschedule/background_task_mgr/bgtaskmgr.gni")
 cflags = []
 
 config("bgtaskmgr_public_config") {
-  include_dirs = [ "napi/include" ]
+  include_dirs = [
+    "common/include",
+    "napi/include",
+  ]
 }
 
 ohos_shared_library("backgroundtaskmanager") {
@@ -36,6 +39,7 @@ ohos_shared_library("backgroundtaskmanager") {
   ]
   sources = [
     "${bgtaskmgr_frameworks_path}/common/src/bgtaskmgr_inner_errors.cpp",
+    "common/src/ui_extension_helper.cpp",
     "napi/src/bg_continuous_task_napi_module.cpp",
     "napi/src/cancel_suspend_delay.cpp",
     "napi/src/common.cpp",
@@ -98,6 +102,7 @@ ohos_shared_library("backgroundtaskmanager_napi") {
   ]
   sources = [
     "${bgtaskmgr_frameworks_path}/common/src/bgtaskmgr_inner_errors.cpp",
+    "common/src/ui_extension_helper.cpp",
     "napi/src/bg_continuous_task_napi_module.cpp",
     "napi/src/cancel_suspend_delay.cpp",
     "napi/src/common.cpp",
