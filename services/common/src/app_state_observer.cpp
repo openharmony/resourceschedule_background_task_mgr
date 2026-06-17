@@ -117,6 +117,12 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
     BgTaskHiTraceChain traceChain(__func__);
     BGTASK_LOGD("process died, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
     OnProcessDiedEfficiencyRes(processData);
+#ifdef GAME_PRE_LAUNCH_ENABLE
+    if (DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(processData.uid)) {
+        BGTASK_LOGI("process died, uid: %{public}d the game pre-launch is delete", processData.uid);
+        DelayedSingleton<GamePreLaunchMgr>::GetInstance()->RemoveGamePreLaunchApp(processData.uid);
+    }
+#endif
 }
 
 void AppStateObserver::OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData)
