@@ -4364,7 +4364,7 @@ void BgContinuousTaskMgr::NotifyAudioStartInner(const int32_t uid)
     }
     if (!newPromptInfos.empty()) {
         NotificationTools::GetInstance()->RefreshContinuousNotifications(newPromptInfos, bgTaskUid_);
-        RefreshTaskRecord()
+        RefreshTaskRecord();
     }
 }
 
