@@ -91,6 +91,7 @@ ohos_unittest("bgtask_unit_test") {
     external_deps += [ "distributed_notification_service:ans_innerkits" ]
   }
 
+  defines = []
   if (target_platform == "phone") {
     cflags_cc += [ "-DSUPPORT_AUTH" ]
     defines = [ "FEATURE_PRODUCT_PHONE" ]
@@ -102,7 +103,6 @@ ohos_unittest("bgtask_unit_test") {
     cflags_cc += [ "-DSUPPORT_AUTH" ]
   }
 
-  defines = []
   if (game_pre_launch_enable) {
     defines += [ "GAME_PRE_LAUNCH_ENABLE" ]
   }

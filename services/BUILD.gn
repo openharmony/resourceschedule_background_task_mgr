@@ -142,6 +142,7 @@ ohos_shared_library("bgtaskmgr_service") {
     ]
   }
 
+  defines = []
   if (target_platform == "phone") {
     cflags_cc += [ "-DSUPPORT_AUTH" ]
     defines = [ "FEATURE_PRODUCT_PHONE" ]
@@ -228,6 +229,7 @@ ohos_static_library("bgtaskmgr_service_static") {
     ]
   }
 
+  defines = []
   if (target_platform == "phone") {
     cflags_cc += [ "-DSUPPORT_AUTH" ]
     defines = [ "FEATURE_PRODUCT_PHONE" ]

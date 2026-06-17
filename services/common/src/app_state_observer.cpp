@@ -101,16 +101,16 @@ void AppStateObserver::OnAppCacheStateChanged(const AppExecFwk::AppStateData &ap
     handler_->PostTask(task, TASK_ON_APP_CACHE_STATE_CHANGED);
 }
 
-#ifdef GAME_PRE_LAUNCH_ENABLE
 void AppStateObserver::OnProcessCreated(const AppExecFwk::ProcessData &processData)
 {
+#ifdef GAME_PRE_LAUNCH_ENABLE
     BgTaskHiTraceChain traceChain(__func__);
     BGTASK_LOGD("process create, uid : %{public}d, pid : %{public}d", processData.uid, processData.pid);
     if (processData.preloadMode == static_cast<int32_t>(AppExecFwk::PreloadMode::GAME_PRELAUNCH)) {
         DelayedSingleton<GamePreLaunchMgr>::GetInstance()->AddGamePreLaunchApp(processData.uid);
     }
-}
 #endif
+}
 
 void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
 {
