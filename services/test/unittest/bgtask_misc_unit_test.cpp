@@ -1107,6 +1107,47 @@ HWTEST_F(BgTaskMiscUnitTest, SystemEventObserverTest_002, TestSize.Level2)
 }
 
 /**
+ * @tc.name: BannerNotificationEventObserverTest_001
+ * @tc.desc: test BannerNotificationEventObserver class.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskMiscUnitTest, BannerNotificationEventObserverTest_001, TestSize.Level2)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(BGTASK_BANNER_NOTIFICATION_ACTION_NAME);
+    EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
+    auto bannerNotificationClickListener = std::make_shared<SystemEventObserver>(subscribeInfo);
+    EXPECT_NE(bannerNotificationClickListener, nullptr);
+    bool result = bannerNotificationClickListener->Subscribe();
+    EXPECT_TRUE(result);
+    result = bannerNotificationClickListener->Unsubscribe();
+    EXPECT_TRUE(result);
+
+    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
+    bannerNotificationClickListener->SetEventHandler(handler);
+    auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
+    bannerNotificationClickListener->SetBgContinuousTaskMgr(bgContinuousTaskMgr);
+    bgContinuousTaskMgr->bannerNotificationRecord_.clear();
+    std::shared_ptr<BannerNotificationRecord> bannerNotification1 = std::make_shared<BannerNotificationRecord>();
+    bannerNotification1->SetBundleName("bundleName");
+    bannerNotification1->SetUserId(0);
+    bannerNotification1->SetAuthResult(UserAuthResult::GRANTED_ONCE);
+    bannerNotification1->SetAppIndex(0);
+    bannerNotification1->SetUid(0);
+    std::string label = "default";
+    bgContinuousTaskMgr->bannerNotificationRecord_.emplace(label, bannerNotification1);
+
+    EventFwk::CommonEventData eventData = EventFwk::CommonEventData();
+    AAFwk::Want want = AAFwk::Want();
+    want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_RESOURCES_CHANGED);
+    eventData.SetWant(want);
+    bannerNotificationClickListener->OnReceiveEvent(eventData);
+    auto authRecordIter = bgContinuousTaskMgr->bannerNotificationRecord_.find(label);
+    EXPECT_EQ(authRecordIter->second->GetAuthResult(), 3);
+}
+
+/**
  * @tc.name: submode_notification_text_001
  * @tc.desc: test SubModeNotification class.
  * @tc.type: FUNC
