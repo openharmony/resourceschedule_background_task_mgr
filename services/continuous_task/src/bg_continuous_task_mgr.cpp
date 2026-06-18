@@ -722,6 +722,14 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
                 return ret;
             }
         }
+        if ((recordedBgMode == BGMODE_AUDIO_PLAYBACK || recordedBgMode == BGMODE_AUDIO_RECORDING ||
+            recordedBgMode == BGMODE_VOIP) && continuousTaskRecord->isByRequestObject_) {
+            uint32_t avPlayBackAndRecordMode =
+                BG_MODE_INDEX_HEAD << (BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD - 1);
+            if ((configuredBgMode & avPlayBackAndRecordMode) != 0) {
+                return ERR_OK;
+            }
+        }
         if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode &
             (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
             BGTASK_LOGE("requested background mode is not declared in config file, configuredBgMode: %{public}d",
