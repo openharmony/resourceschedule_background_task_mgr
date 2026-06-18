@@ -44,6 +44,6 @@ private:
     std::weak_ptr<AppExecFwk::EventHandler> handler_;
     std::weak_ptr<BgContinuousTaskMgr> bgContinuousTaskMgr_;
 };
-}  // namespace BackgroundTaskMgr
-}  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_COMMON_INCLUDE_BANNER_NOTIFICATION_EVENT_OBSERVER_H
+} // namespace BackgroundTaskMgr
+} // namespace OHOS
+#endif // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_COMMON_INCLUDE_BANNER_NOTIFICATION_EVENT_OBSERVER_H
