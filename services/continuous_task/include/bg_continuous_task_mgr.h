@@ -147,7 +147,7 @@ public:
     void SuspendContinuousTask(
         int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby = false);
     void SuspendContinuousAudioTask(int32_t uid);
-    void ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key, bool isStandby = false));
+    void ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key, bool isStandby = false);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void HandleRemoveTaskByMode(uint32_t mode);
