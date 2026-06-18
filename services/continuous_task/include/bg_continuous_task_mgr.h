@@ -147,7 +147,7 @@ public:
     void SuspendContinuousTask(
         int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby = false);
     void SuspendContinuousAudioTask(int32_t uid);
-    void ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
+    void ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key, bool isStandby = false);
     void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void HandleRemoveTaskByMode(uint32_t mode);
@@ -223,8 +223,7 @@ private:
     bool FormatBannerNotificationContext(const std::string &appName, std::string &bannerContent);
     bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
-    void HandleSuspendContinuousTask(
-        int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby = false);
+    void HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
     void HandleSuspendContinuousAudioTask(int32_t uid);
     void HandleActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
     void HandleActiveNotification(std::shared_ptr<ContinuousTaskRecord> record);
@@ -301,6 +300,9 @@ private:
         const std::string &type, const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord, int32_t ret);
     void ClearBgOsAccountTask(const std::vector<int32_t> &activatedOsAccountIds);
     ErrCode CancelNotification(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo);
+    void HandleSuspendContinuousTaskByStandby(int32_t uid, int32_t pid, int32_t mode, const std::string &key);
+    void HandleActiveContinuousTaskByStandby(int32_t uid, int32_t pid, const std::string &key);
+
 #ifdef HAS_OS_ACCOUNT_CAR
     void ClearBgOsAccountTaskInCar();
 #endif

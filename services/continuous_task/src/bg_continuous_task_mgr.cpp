@@ -164,6 +164,7 @@ static constexpr uint32_t BG_MODE_INDEX_HEAD = 1;
 static constexpr uint32_t BGMODE_NUMS = 10;
 static constexpr uint32_t AVSESSION_SA_UID = 6700;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 2;
+static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
 static constexpr uint32_t NOTIFY_AUDIO_PLAYBACK_DELAY_TIME = 65 * 1000;
 static constexpr uint32_t ALL_MODES = 0xFF;
 static constexpr uint32_t ABILITY_TASK_MAX_NUM = 10;
@@ -1953,12 +1954,20 @@ void BgContinuousTaskMgr::SuspendContinuousTask(
     }
     auto self = shared_from_this();
     auto task = [self, uid, pid, reason, key, isStandby]() {
-        if (self) {
-            if (self->IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND) || isStandby) {
-                self->HandleSuspendContinuousTask(uid, pid, reason, key, isStandby);
-            } else {
-                self->HandleStopContinuousTask(uid, pid, 0, key);
+        if (!self) {
+            return;
+        }
+        bool hasCallback = self->IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND);
+        if (isStandby) {
+            if (hasCallback) {
+                self->HandleSuspendContinuousTaskByStandby(uid, pid, reason, key);
             }
+            return;
+        }
+        if (hasCallback) {
+            self->HandleSuspendContinuousTask(uid, pid, reason, key);
+        } else {
+            self->HandleStopContinuousTask(uid, pid, 0, key);
         }
     };
     handler_->PostTask(task);
@@ -1975,8 +1984,7 @@ bool BgContinuousTaskMgr::IsExistCallback(int32_t uid, uint32_t type)
     return false;
 }
 
-void BgContinuousTaskMgr::HandleSuspendContinuousTask(
-    int32_t uid, int32_t pid, int32_t mode, const std::string &key, bool isStandby)
+void BgContinuousTaskMgr::HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t mode, const std::string &key)
 {
     if (continuousTaskInfosMap_.find(key) == continuousTaskInfosMap_.end()) {
         BGTASK_LOGW("suspend TaskInfo failure, no matched task: %{public}s", key.c_str());
@@ -1990,8 +1998,8 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(
         }
         BGTASK_LOGW("SuspendContinuousTask mode: %{public}d, key %{public}s", mode, key.c_str());
         iter->second->suspendState_ = true;
-        iter->second->isStandby_ = isStandby;
-        uint32_t reasonValue = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode, isStandby);
+        iter->second->isStandby_ = false;
+        uint32_t reasonValue = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode, false);
         if (reasonValue == 0) {
             iter->second->suspendReason_ = -1;
         } else {
@@ -2016,17 +2024,47 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTask(
     HandleAppContinuousTaskStop(uid);
 }
 
-void BgContinuousTaskMgr::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
+void BgContinuousTaskMgr::HandleSuspendContinuousTaskByStandby(
+    int32_t uid, int32_t pid, int32_t mode, const std::string &key)
+{
+    auto iter = continuousTaskInfosMap_.find(key);
+    if (iter == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGW("suspend TaskInfo failure, no matched task: %{public}s", key.c_str());
+        return;
+    }
+    auto& taskInfo = iter->second;
+    if (taskInfo->GetUid() != uid || taskInfo->isStandbySuspend_) {
+        BGTASK_LOGW("suspend TaskInfo failure, no matched task: %{public}s", key.c_str());
+        return;
+    }
+    BGTASK_LOGW("HandleSuspendContinuousTaskByStandby mode: %{public}d, key %{public}s, uid %{public}d",
+        mode, key.c_str(), uid);
+    taskInfo->isStandby_ = true;
+    taskInfo->isStandbySuspend_ = true;
+    uint32_t reasonValue = ContinuousTaskSuspendReason::GetSuspendReasonValue(mode, true);
+    taskInfo->suspendReason_ = (reasonValue == 0) ? -1 : static_cast<int32_t>(reasonValue);
+    OnContinuousTaskChanged(taskInfo, ContinuousTaskEventTriggerType::TASK_SUSPEND);
+    RefreshTaskRecord();
+}
+
+void BgContinuousTaskMgr::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key, bool isStandby)
 {
     if (!isSysReady_.load()) {
         BGTASK_LOGW("manager is not ready");
         return;
     }
     auto self = shared_from_this();
-    auto task = [self, uid, pid, key]() {
-        if (self) {
-            self->HandleActiveContinuousTask(uid, pid, key);
+    auto task = [self, uid, pid, key, isStandby]() {
+        if (!self) {
+            return;
         }
+        if (isStandby) {
+            if (self->IsExistCallback(uid, CONTINUOUS_TASK_ACTIVE)) {
+                self->HandleActiveContinuousTaskByStandby(uid, pid, key);
+            }
+            return;
+        }
+        self->HandleActiveContinuousTask(uid, pid, key);
     };
     handler_->PostTask(task);
 }
@@ -2051,6 +2089,7 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
         }
         BGTASK_LOGI("ActiveContinuousTask uid: %{public}d, pid: %{public}d", uid, pid);
         iter->second->suspendState_ = false;
+        iter->second->isStandby_ = false;
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_ACTIVE);
         if (iter->second->notificationId_ != -1) {
             if (notificationId == ILLEGAL_NOTIFICATION_ID ||
@@ -2064,6 +2103,20 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
                 iter->second->notificationId_ = notificationId;
             }
         }
+        RefreshTaskRecord();
+    }
+}
+
+void BgContinuousTaskMgr::HandleActiveContinuousTaskByStandby(int32_t uid, int32_t pid, const std::string &key)
+{
+    for (auto &iter : continuousTaskInfosMap_) {
+        if (iter.second->GetUid() != uid || !iter.second->isStandbySuspend_) {
+            continue;
+        }
+        BGTASK_LOGI("HandleActiveContinuousTaskByStandby uid: %{public}d, pid: %{public}d", uid, pid);
+        iter.second->isStandby_ = true;
+        iter.second->isStandbySuspend_ = false;
+        OnContinuousTaskChanged(iter.second, ContinuousTaskEventTriggerType::TASK_ACTIVE);
         RefreshTaskRecord();
     }
 }
