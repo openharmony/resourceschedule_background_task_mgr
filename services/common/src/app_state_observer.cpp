@@ -119,7 +119,6 @@ void AppStateObserver::OnProcessDied(const AppExecFwk::ProcessData &processData)
     OnProcessDiedEfficiencyRes(processData);
 #ifdef GAME_PRE_LAUNCH_ENABLE
     if (DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(processData.uid)) {
-        BGTASK_LOGI("process died, uid: %{public}d the game pre-launch is delete", processData.uid);
         DelayedSingleton<GamePreLaunchMgr>::GetInstance()->RemoveGamePreLaunchApp(processData.uid);
     }
 #endif

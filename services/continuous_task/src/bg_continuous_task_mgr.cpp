@@ -2756,16 +2756,16 @@ void BgContinuousTaskMgr::OnAppStateChanged(int32_t uid, int32_t state, int32_t 
         BGTASK_LOGW("manager is not ready");
         return;
     }
-#ifdef GAME_PRE_LAUNCH_ENABLE
-    // preloadMode != GAME_PRELAUNCH, 游戏预启动结束
-    if (preloadMode != static_cast<int32_t>(AppExecFwk::PreloadMode::GAME_PRELAUNCH) &&
-        DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)) {
-        BGTASK_LOGI("uid: %{public}d the game pre-launch is complete", uid);
-        DelayedSingleton<GamePreLaunchMgr>::GetInstance()->RemoveGamePreLaunchApp(uid);
-    }
-#endif
     if (state == static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND)) {
         appOnForeground_.insert(uid);
+#ifdef GAME_PRE_LAUNCH_ENABLE
+        // preloadMode != GAME_PRELAUNCH, 游戏预启动结束
+        if (preloadMode != static_cast<int32_t>(AppExecFwk::PreloadMode::GAME_PRELAUNCH) &&
+            DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)) {
+            BGTASK_LOGI("uid: %{public}d the game pre-launch is complete", uid);
+            DelayedSingleton<GamePreLaunchMgr>::GetInstance()->RemoveGamePreLaunchApp(uid);
+        }
+#endif
         return;
     }
 
