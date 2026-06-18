@@ -629,6 +629,8 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterSysCommEve
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_BUNDLE_RESOURCES_CHANGED);
+    // 注册横幅通知的点击事件
+    matchingSkills.AddEvent(BGTASK_BANNER_NOTIFICATION_ACTION_NAME);
     EventFwk::CommonEventSubscribeInfo commonEventSubscribeInfo(matchingSkills);
     systemEventListener_ = std::make_shared<SystemEventObserver>(commonEventSubscribeInfo);
     if (systemEventListener_ != nullptr) {
@@ -643,6 +645,7 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterBannerNoti
 {
     bool res = true;
     EventFwk::MatchingSkills matchingSkills;
+    // 注册横幅通知的点击事件
     matchingSkills.AddEvent(BGTASK_BANNER_NOTIFICATION_ACTION_NAME);
     EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
     subscribeInfo.SetPermission("ohos.permission.GRANT_SENSITIVE_PERMISSIONS");

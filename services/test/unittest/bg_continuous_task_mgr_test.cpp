@@ -2758,14 +2758,14 @@ HWTEST_F(BgContinuousTaskMgrTest, NotifyAudioStart_001, TestSize.Level1)
 
 /**
  * @tc.name: BgTaskManagerUnitTest_072
- * @tc.desc: test SystemEventObserver::OnBannerNotificationActionButtonClick.
+ * @tc.desc: test BannerNotificationEventObserver::OnBannerNotificationActionButtonClick.
  * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_072, TestSize.Level1)
 {
     bgContinuousTaskMgr_->RegisterSysCommEventListener();
-    EXPECT_NE(bgContinuousTaskMgr_->systemEventListener_, nullptr);
+    EXPECT_NE(bgContinuousTaskMgr_->bannerNotificationClickListener_, nullptr);
 }
 
 /**
