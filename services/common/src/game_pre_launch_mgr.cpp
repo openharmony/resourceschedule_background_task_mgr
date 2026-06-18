@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-#ifdef GAME_PRE_LAUNCH_ENABLE
 #include "game_pre_launch_mgr.h"
 #include "continuous_task_log.h"
 
@@ -49,4 +48,3 @@ bool GamePreLaunchMgr::IsGamePreLaunchApp(const int32_t uid) const
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // GAME_PRE_LAUNCH_ENABLE
