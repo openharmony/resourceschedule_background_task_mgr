@@ -46,6 +46,7 @@
 #include "iexpired_callback.h"
 #include "background_task_state_info.h"
 #include "dialog_event_observer.h"
+#include "banner_notification_event_observer.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -210,6 +211,7 @@ private:
     bool RegisterSysCommEventListener();
     bool RegisterConfigurationObserver();
     bool RegisterDialogClickListener();
+    bool RegisterBannerNotificationClickListener();
     bool GetNotificationPrompt();
     bool GetNotificationTextForMode(std::shared_ptr<Global::Resource::ResourceManager> &resourceManager);
     void FilterNotificationMode(const std::shared_ptr<ContinuousTaskRecord> record, std::vector<uint32_t> &checkModes);
@@ -328,6 +330,7 @@ private:
 #endif
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
     std::shared_ptr<DialogEventObserver> dialogClickListener_ {nullptr};
+    std::shared_ptr<BannerNotificationEventObserver> bannerNotificationClickListener_ {nullptr};
     sptr<AppExecFwk::IConfigurationObserver> configChangeObserver_ {nullptr};
     std::list<std::shared_ptr<SubscriberInfo>> bgTaskSubscribers_ {};
     sptr<RemoteDeathRecipient> susriberDeathRecipient_ {nullptr};

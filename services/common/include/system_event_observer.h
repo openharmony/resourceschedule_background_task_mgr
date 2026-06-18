@@ -38,9 +38,6 @@ public:
 private:
     void OnReceiveEventContinuousTask(const EventFwk::CommonEventData &eventData);
     void OnReceiveEventEfficiencyRes(const EventFwk::CommonEventData &eventData);
-    void OnBannerNotificationActionButtonClick(const std::shared_ptr<AppExecFwk::EventHandler> &handler,
- 	    const std::shared_ptr<BgContinuousTaskMgr> &bgContinuousTaskMgr,
- 	    const EventFwk::CommonEventData &eventData);
 
 private:
     std::weak_ptr<AppExecFwk::EventHandler> handler_;
