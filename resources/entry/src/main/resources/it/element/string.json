@@ -9,9 +9,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"È in corso un'attività di riproduzione audio/video. Se chiudi questa notifica, verrà terminata.",
+            "value":"Riproduzione audio/video. La chiusura di questa notifica terminerà la riproduzione.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Avvio attività…",
+            "value":"Caricamento audio/video. La chiusura di questa notifica interromperà la riproduzione.",
             "attr":{
                 "priority":"translate"
             }
