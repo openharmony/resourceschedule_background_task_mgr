@@ -9,9 +9,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Eine Audio-/Videowiedergabeaufgabe ist im Gange, durch das Schließen dieser Benachrichtigung wird sie beendet.",
+            "value":"Das Audio/Video wird wiedergegeben. Wenn Sie diese Benachrichtigung schließen, wird die Wiedergabe beendet.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Aufgabe starten …",
+            "value":"Das Audio/Video wird geladen. Wenn Sie diese Benachrichtigung schließen, wird die Wiedergabe unterbrochen.",
             "attr":{
                 "priority":"translate"
             }
