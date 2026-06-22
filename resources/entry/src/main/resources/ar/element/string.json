@@ -9,9 +9,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"هناك صوت/فيديو قيد التشغيل، وإغلاق هذا الإشعار سيؤدي إلى إنهائه.",
+            "value":"جارٍ تشغيل الصوت/الفيديو سيؤدي إغلاق هذا الإشعار إلى إنهاء التشغيل.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"جارٍ بدء المهمة…",
+            "value":"جارٍ تحميل الصوت/الفيديو. سيؤدي إغلاق هذا الإشعار إلى مقاطعة التشغيل.",
             "attr":{
                 "priority":"translate"
             }
