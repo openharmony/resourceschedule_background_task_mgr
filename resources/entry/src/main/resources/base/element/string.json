@@ -9,9 +9,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"An audio/video are currently playing. Closing this notification will end it.",
+            "value":"Playing audio/video. Closing this notification will end playback.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
