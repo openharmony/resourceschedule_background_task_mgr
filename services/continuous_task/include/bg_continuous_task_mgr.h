@@ -46,6 +46,7 @@
 #include "iexpired_callback.h"
 #include "background_task_state_info.h"
 #include "dialog_event_observer.h"
+#include "banner_notification_event_observer.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
