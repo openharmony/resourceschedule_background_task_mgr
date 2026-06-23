@@ -2767,14 +2767,52 @@ HWTEST_F(BgContinuousTaskMgrTest, NotifyAudioStart_001, TestSize.Level1)
 
 /**
  * @tc.name: BgTaskManagerUnitTest_072
- * @tc.desc: test SystemEventObserver::OnBannerNotificationActionButtonClick.
+ * @tc.desc: test BannerNotificationEventObserver::OnBannerNotificationActionButtonClick.
  * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_072, TestSize.Level1)
 {
-    bgContinuousTaskMgr_->RegisterSysCommEventListener();
-    EXPECT_NE(bgContinuousTaskMgr_->systemEventListener_, nullptr);
+    bgContinuousTaskMgr_->RegisterBannerNotificationClickListener();
+    EXPECT_NE(bgContinuousTaskMgr_->bannerNotificationClickListener_, nullptr);
+
+    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
+    std::shared_ptr<BannerNotificationRecord> bannerNotification1 = std::make_shared<BannerNotificationRecord>();
+    bannerNotification1->SetBundleName("bundleName");
+    bannerNotification1->SetUserId(0);
+    bannerNotification1->SetAuthResult(UserAuthResult::GRANTED_ONCE);
+    bannerNotification1->SetAppIndex(0);
+    bannerNotification1->SetUid(0);
+    std::string label = "default";
+    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label, bannerNotification1);
+
+    EventFwk::CommonEventData eventData;
+    bgContinuousTaskMgr_->bannerNotificationClickListener_->OnBannerNotificationActionButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+    auto authRecordIter = bgContinuousTaskMgr_->bannerNotificationRecord_.find(label);
+    EXPECT_NE(authRecordIter->second->GetAuthResult(), 4);
+
+    AAFwk::Want want;
+    want.SetParam(BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_BTN, BGTASK_BANNER_NOTIFICATION_BTN_ALLOW_ALLOWED);
+    eventData.SetWant(want);
+    bgContinuousTaskMgr_->bannerNotificationClickListener_->OnBannerNotificationActionButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+    auto authRecordIter1 = bgContinuousTaskMgr_->bannerNotificationRecord_.find(label);
+    EXPECT_NE(authRecordIter1->second->GetAuthResult(), 4);
+
+    want.SetParam(BGTASK_BANNER_NOTIFICATION_ACTION_PARAM_UID, 0);
+    eventData.SetWant(want);
+    bgContinuousTaskMgr_->bannerNotificationClickListener_->OnBannerNotificationActionButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+    auto authRecordIter2 = bgContinuousTaskMgr_->bannerNotificationRecord_.find(label);
+    EXPECT_NE(authRecordIter2->second->GetAuthResult(), 4);
+
+    want.SetParam(BGTASK_BANNER_NOTIFICATION_ACTION_LABEL, label);
+    eventData.SetWant(want);
+    bgContinuousTaskMgr_->bannerNotificationClickListener_->OnBannerNotificationActionButtonClick(
+        bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
+    auto authRecordIter3 = bgContinuousTaskMgr_->bannerNotificationRecord_.find(label);
+    EXPECT_EQ(authRecordIter3->second->GetAuthResult(), 4);
 }
 
 /**

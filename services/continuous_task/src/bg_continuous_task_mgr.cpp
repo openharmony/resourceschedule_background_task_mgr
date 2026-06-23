@@ -262,6 +262,9 @@ void BgContinuousTaskMgr::Clear()
     if (dialogClickListener_ != nullptr) {
         dialogClickListener_->Unsubscribe();
     }
+    if (bannerNotificationClickListener_ != nullptr) {
+        bannerNotificationClickListener_->Unsubscribe();
+    }
 }
 
 void BgContinuousTaskMgr::InitNecessaryState()
@@ -291,6 +294,9 @@ void BgContinuousTaskMgr::InitNecessaryState()
         return;
     }
     if (!RegisterDialogClickListener()) {
+        return;
+    }
+    if (!RegisterBannerNotificationClickListener()) {
         return;
     }
     InitRequiredResourceInfo();
@@ -632,6 +638,24 @@ __attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterSysCommEve
         systemEventListener_->SetEventHandler(handler_);
         systemEventListener_->SetBgContinuousTaskMgr(shared_from_this());
         res = systemEventListener_->Subscribe();
+    }
+    return res;
+}
+
+__attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterBannerNotificationClickListener()
+{
+    bool res = true;
+    EventFwk::MatchingSkills matchingSkills;
+    // 注册横幅通知的点击事件
+    matchingSkills.AddEvent(BGTASK_BANNER_NOTIFICATION_ACTION_NAME);
+    EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
+    subscribeInfo.SetPermission("ohos.permission.GRANT_SENSITIVE_PERMISSIONS");
+    subscribeInfo.SetThreadMode(EventFwk::CommonEventSubscribeInfo::COMMON);
+    bannerNotificationClickListener_ = std::make_shared<BannerNotificationEventObserver>(subscribeInfo);
+    if (bannerNotificationClickListener_ != nullptr) {
+        bannerNotificationClickListener_->SetEventHandler(handler_);
+        bannerNotificationClickListener_->SetBgContinuousTaskMgr(shared_from_this());
+        res = bannerNotificationClickListener_->Subscribe();
     }
     return res;
 }
