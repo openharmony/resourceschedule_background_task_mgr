@@ -9,7 +9,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Trwa zadanie odtwarzania audio/wideo. Zamknięcie tego powiadomienia spowoduje jego zakończenie.",
+            "value":"Odtwarzanie audio/wideo. Zamknięcie tego powiadomienia spowoduje zakończenie odtwarzania.",
             "attr":{
                 "priority":"LT"
             }
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Rozpoczynanie zadania…",
+            "value":"Wczytywanie plików audio/wideo. Zamknięcie tego powiadomienia spowoduje przerwanie odtwarzania.",
             "attr":{
                 "priority":"translate"
             }

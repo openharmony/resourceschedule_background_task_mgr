@@ -9,9 +9,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Bir ses/video oynatma görevi devam ediyor. Bu bildirim kapatıldığında sonlandırılacaktır.",
+            "value":"Ses/video oynatılıyor. Bu bildirimin kapatılması oynatmayı sonlandıracaktır.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -226,7 +226,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Görev başlatılıyor…",
+            "value":"Ses/video yükleniyor. Bu bildirimin kapatılması oynatmayı kesintiye uğratacaktır.",
             "attr":{
                 "priority":"translate"
             }

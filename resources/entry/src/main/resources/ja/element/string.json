@@ -9,9 +9,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"オーディオ/ビデオ再生タスクが進行中です。この通知を閉じると、タスクが終了します。",
+            "value":"オーディオ/ビデオを再生しています。この通知を閉じると、再生が終了します。",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"タスクを開始中…",
+            "value":"オーディオ/ビデオを読み込み中です。この通知を閉じると、再生が中断されます。",
             "attr":{
                 "priority":"translate"
             }

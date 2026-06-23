@@ -9,9 +9,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Một tác vụ phát âm thanh/video đang diễn ra. Thao tác đóng thông báo này sẽ kết thúc tác vụ.",
+            "value":"Đang phát âm thanh/video. Đóng thông báo này sẽ kết thúc quá trình phát lại.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Đang bắt đầu tác vụ…",
+            "value":"Đang tải âm thanh/video. Đóng thông báo này sẽ làm gián đoạn quá trình phát lại.",
             "attr":{
                 "priority":"translate"
             }

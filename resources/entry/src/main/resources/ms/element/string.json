@@ -9,9 +9,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Tugas main balik audio/video sedang berjalan. Menutup pemberitahuan ini akan menamatkannya.",
+            "value":"Memainkan audio/video. Menutup pemberitahuan ini akan menamatkan main balik.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Memulakan tugas…",
+            "value":"Memuatkan audio/video. Menutup pemberitahuan ini akan mengganggu main balik.",
             "attr":{
                 "priority":"translate"
             }

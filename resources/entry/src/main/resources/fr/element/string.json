@@ -9,7 +9,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Une tâche de lecture audio/vidéo est en cours. La fermeture de cette notification mettra fin à cette tâche.",
+            "value":"Lecture de l'audio/de la vidéo en cours. La fermeture de cette notification mettra fin à la lecture.",
             "attr":{
                 "priority":"translate"
             }
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Démarrage de la tâche en cours.",
+            "value":"Chargement de l'audio/de la vidéo en cours. Si vous fermez cette notification, la lecture est interrompue.",
             "attr":{
                 "priority":"translate"
             }

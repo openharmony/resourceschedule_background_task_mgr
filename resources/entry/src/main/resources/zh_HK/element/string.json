@@ -9,9 +9,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"正在運行影音播放任務，刪除通知後任務將停止",
+            "value":"音訊和影片播放，移除通知將中斷播放",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"任務啟動中",
+            "value":"音訊和影片正在啟動載入，移除通知將中斷播放",
             "attr":{
                 "priority":"translate"
             }

@@ -9,9 +9,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"Hay una tarea de reproducción de audio/vídeo en curso. Cerrar esta notificación hará que finalice.",
+            "value":"Reproduciendo audio/vídeo. Si cierras esta notificación, finalizará la reproducción.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"Iniciando tarea…",
+            "value":"Cargando audio/vídeo. Si cierras esta notificación, se interrumpirá la reproducción.",
             "attr":{
                 "priority":"translate"
             }

@@ -9,7 +9,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"오디오/비디오 재생 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
+            "value":"오디오/비디오를 재생 중입니다. 이 알림을 닫으면 재생이 종료됩니다.",
             "attr":{
                 "priority":"LT"
             }
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"작업 시작 중…",
+            "value":"오디오/비디오를 로드 중입니다. 이 알림을 닫으면 재생이 중단됩니다.",
             "attr":{
                 "priority":"translate"
             }
