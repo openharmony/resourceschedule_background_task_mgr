@@ -23,6 +23,7 @@
 #include "background_task_subscriber_proxy.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_subscriber.h"
+#include "bg_continuous_task_dumper.h"
 #include "bg_continuous_task_mgr.h"
 #include "common_event_support.h"
 #include "want_agent.h"
