@@ -979,55 +979,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_038, TestSize.Level1)
 }
 
 /**
- * @tc.name: BgTaskManagerUnitTest_039
- * @tc.desc: test OnConfigurationChanged.
- * @tc.type: FUNC
- * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_039, TestSize.Level1)
-{
-    AppExecFwk::Configuration configuration;
-    bgContinuousTaskMgr_->isSysReady_.store(false);
-    bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
-    bgContinuousTaskMgr_->isSysReady_.store(true);
-    // 构造长时任务信息
-    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord1->bgModeIds_ = {1, 2};
-    continuousTaskRecord1->bgModeId_ = TEST_NUM_ONE;
-    continuousTaskRecord1->isNewApi_ = true;
-
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord2->bgModeId_ = INVALID_BGMODE_ID;
-    continuousTaskRecord1->isNewApi_ = true;
-
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
-    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
-    // 构造横幅通知信息
-    std::shared_ptr<BannerNotificationRecord> bannerNotification1 = std::make_shared<BannerNotificationRecord>();
-    bannerNotification1->SetBundleName("bundleName1");
-    bannerNotification1->SetUserId(100);
-    std::string label1 = "notificationLabel1";
-    std::shared_ptr<BannerNotificationRecord> bannerNotification2 = std::make_shared<BannerNotificationRecord>();
-    bannerNotification2->SetBundleName("bundleName2");
-    bannerNotification2->SetUserId(200);
-    std::string label2 = "notificationLabel2";
-    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label1, bannerNotification1);
-    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label2, bannerNotification2);
-    // 模拟切语言
-    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "1234");
-    // 系统语言配置更新
-    bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
-    configuration.RemoveItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificationBtn_), PROMPT_NUMS,
-        "bannernotification_test");
-    EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
-}
-
-/**
  * @tc.name: BgTaskManagerUnitTest_043
  * @tc.desc: test RequestBackgroundRunningForInner.
  * @tc.type: FUNC
@@ -1995,6 +1946,10 @@ HWTEST_F(BgContinuousTaskMgrTest, BannerNotificationRecord_001, TestSize.Level1)
     EXPECT_EQ(bannerNotification->GetAuthResult(), 1);
     EXPECT_EQ(bannerNotification->GetUserId(), 1);
     EXPECT_EQ(bannerNotification->GetAppIndex(), 1);
+    std::string data = bannerNotification->ParseToJsonStr();
+    nlohmann::json recordJson = nlohmann::json::parse(data, nullptr, false);
+    auto ret = bannerNotification->ParseFromJson(recordJson);
+    EXPECT_TRUE(ret);
 }
 
 /**

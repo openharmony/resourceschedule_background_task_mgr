@@ -691,6 +691,8 @@ HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_001, TestSize.Level2)
     auto continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskInfosMap1.emplace("key", continuousTaskRecord);
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap1);
+    std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> bannerNotificationRecord;
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreAuthRecord(bannerNotificationRecord);
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap2;
     EXPECT_EQ(DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreTaskRecord(continuousTaskInfosMap2),
         ERR_OK);

@@ -40,7 +40,6 @@
 #include "ibackground_task_subscriber.h"
 #include "remote_death_recipient.h"
 #include "system_event_observer.h"
-#include "config_change_observer.h"
 #include "want.h"
 #include "banner_notification_record.h"
 #include "iexpired_callback.h"
@@ -149,7 +148,6 @@ public:
         int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby = false);
     void SuspendContinuousAudioTask(int32_t uid);
     void ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key, bool isStandby = false);
-    void OnConfigurationChanged(const AppExecFwk::Configuration &configuration);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     void HandleRemoveTaskByMode(uint32_t mode);
     void OnBannerNotificationActionButtonClick(const int32_t buttonType, const int32_t uid,
@@ -209,7 +207,6 @@ private:
     bool AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool RegisterNotificationSubscriber();
     bool RegisterSysCommEventListener();
-    bool RegisterConfigurationObserver();
     bool RegisterDialogClickListener();
     bool RegisterBannerNotificationClickListener();
     bool GetNotificationPrompt();
@@ -333,7 +330,6 @@ private:
     std::shared_ptr<SystemEventObserver> systemEventListener_ {nullptr};
     std::shared_ptr<DialogEventObserver> dialogClickListener_ {nullptr};
     std::shared_ptr<BannerNotificationEventObserver> bannerNotificationClickListener_ {nullptr};
-    sptr<AppExecFwk::IConfigurationObserver> configChangeObserver_ {nullptr};
     std::list<std::shared_ptr<SubscriberInfo>> bgTaskSubscribers_ {};
     sptr<RemoteDeathRecipient> susriberDeathRecipient_ {nullptr};
     std::unordered_map<int32_t, CachedBundleInfo> cachedBundleInfos_ {};
