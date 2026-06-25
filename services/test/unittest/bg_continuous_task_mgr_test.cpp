@@ -3218,7 +3218,7 @@ HWTEST_F(BgContinuousTaskMgrTest, DebugContinuousTask_001, TestSize.Level3)
     dumpOption.emplace_back("1");
     bgContinuousTaskMgr_->isSysReady_.store(true);
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
-    BgContinuousTaskDumper::GetInstance()->DumpGetTask(dumpOption, dumpInfo);
+    BgContinuousTaskDumper::GetInstance()->DebugContinuousTask(dumpOption, dumpInfo);
     EXPECT_EQ(dumpInfo.size(), 1);
 }
 }  // namespace BackgroundTaskMgr
