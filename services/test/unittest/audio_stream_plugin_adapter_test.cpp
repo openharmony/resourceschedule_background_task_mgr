@@ -101,6 +101,7 @@ HWTEST_F(AudioStreamPluginAdapterTest, AudioStreamPluginAdapterTest_004, TestSiz
 {
     auto adapter = AudioStreamPluginAdapter::GetInstance();
     auto audioInfo = std::make_shared<AudioInfo>(1001, 1);
+    adapter->Init();
     AudioRendererInfoPluginData::GetInstance()->AddAudioPlayerInfo(audioInfo);
     adapter->Uninit();
     EXPECT_FALSE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1001));
