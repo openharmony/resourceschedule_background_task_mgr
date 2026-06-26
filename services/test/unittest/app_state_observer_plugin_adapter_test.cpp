@@ -20,6 +20,9 @@
 #include "process_data.h"
 #include "app_state_data.h"
 #include "ability_state_data.h"
+#ifdef GAME_PRE_LAUNCH_ENABLE
+#include "game_pre_launch_mgr.h"
+#endif
 
 using namespace testing::ext;
 
@@ -74,6 +77,7 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_00
     EXPECT_EQ(processData.bundleName, "testBundle");
     EXPECT_EQ(processData.pid, 123);
     EXPECT_EQ(processData.uid, 456);
+    adapter->Uninit();
 }
 
 /**
@@ -335,5 +339,114 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_01
     AppExecFwk::AbilityStateData abilityStateData;
     EXPECT_FALSE(adapter->UnmarshallingAbilityStateData(payload, abilityStateData));
 }
+
+#ifdef GAME_PRE_LAUNCH_ENABLE
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_015
+ * @tc.desc: test valid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_015, TestSize.Level2)
+{
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->gamePreLaunchAppUids_.clear();
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"},
+        {"pid", "123"},
+        {"uid", "456"},
+        {"renderUid", "789"},
+        {"processType", "0"},
+        {"state", "1"},
+        {"extensionType", "2"},
+        {"isKeepAlive", "0"},
+        {"isTestMode", "0"},
+        {"hostPid", "0"},
+        {"imageProcessType", "0"},
+        {"preloadMode", "0"}
+    };
+    adapter->OnProcessCreated(payload);
+    adapter->OnProcessStateChanged(payload);
+    adapter->OnAppCacheStateChanged(payload);
+    int32_t uid = 456;
+    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)
+    EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_016
+ * @tc.desc: test invalid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_016, TestSize.Level2)
+{
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->gamePreLaunchAppUids_.clear();
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"}
+    };
+    adapter->OnProcessCreated(payload);
+    adapter->OnProcessStateChanged(payload);
+    adapter->OnAppCacheStateChanged(payload);
+    int32_t uid = 456;
+    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)
+    EXPECT_FALSE(ret);
+}
+
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_017
+ * @tc.desc: test valid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_017, TestSize.Level2)
+{
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->gamePreLaunchAppUids_.clear();
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"},
+        {"pid", "123"},
+        {"uid", "456"},
+        {"renderUid", "789"},
+        {"processType", "0"},
+        {"state", "1"},
+        {"extensionType", "2"},
+        {"isKeepAlive", "0"},
+        {"isTestMode", "0"},
+        {"hostPid", "0"},
+        {"imageProcessType", "0"},
+        {"preloadMode", "0"}
+    };
+    adapter->OnProcessDied(payload);
+    adapter->OnAbilityStateChanged(payload);
+    adapter->OnAppStopped(payload);
+    adapter->OnAppStateChanged(payload);
+    int32_t uid = 456;
+    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)
+    EXPECT_TRUE(ret);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_018
+ * @tc.desc: test invalid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_018, TestSize.Level2)
+{
+    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->gamePreLaunchAppUids_.clear();
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"}
+    };
+    adapter->OnProcessDied(payload);
+    adapter->OnAbilityStateChanged(payload);
+    adapter->OnAppStopped(payload);
+    adapter->OnAppStateChanged(payload);
+    int32_t uid = 456;
+    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)
+    EXPECT_TRUE(ret);
+}
+#endif
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

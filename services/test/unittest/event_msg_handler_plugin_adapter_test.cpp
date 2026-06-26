@@ -55,7 +55,9 @@ public:
 HWTEST_F(EventMsgHandlerPluginAdapterTest, EventMsgHandlerPluginAdapterTest_001, TestSize.Level2)
 {
     auto adapter = EventMsgHandlerPluginAdapter::GetInstance();
+    adapter->Init();
     EXPECT_EQ(adapter->GetPluginName(), "EventMsgHandlerPluginAdapter");
+    adapter->Uninit();
 }
 
 /**

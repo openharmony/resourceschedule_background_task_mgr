@@ -17,10 +17,14 @@
 #include <gtest/gtest.h>
 #include "audio_renderer_info_plugin_data.h"
 #include "audio_info.h"
+#include "audio_stream_manager.h"
 
 using namespace testing::ext;
 
 namespace OHOS {
+
+void BgMockGetCurrentRendererChangeInfos(int32_t mockRet);
+
 namespace BackgroundTaskMgr {
 
 class AudioRendererInfoPluginDataTest : public testing::Test {
@@ -164,6 +168,26 @@ HWTEST_F(AudioRendererInfoPluginDataTest, AudioRendererInfoPluginDataTest_009, T
     AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
     EXPECT_FALSE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1001));
     EXPECT_FALSE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1002));
+}
+
+/**
+ * @tc.name: AudioRendererInfoPluginDataTest_010
+ * @tc.desc: test AfterAddSaListener method with empty list
+ * @tc.type: FUNC
+ */
+HWTEST_F(AudioRendererInfoPluginDataTest, AudioRendererInfoPluginDataTest_010, TestSize.Level2)
+{
+    BgMockGetCurrentRendererChangeInfos(-1);
+    AudioRendererInfoPluginData::GetInstance()->AfterAddSaListener();
+    EXPECT_FALSE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1));
+
+    BgMockGetCurrentRendererChangeInfos(0);
+    AudioRendererInfoPluginData::GetInstance()->AfterAddSaListener();
+    EXPECT_FALSE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1));
+
+    BgMockGetCurrentRendererChangeInfos(1);
+    AudioRendererInfoPluginData::GetInstance()->AfterAddSaListener();
+    EXPECT_TRUE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1));
 }
 } // namespace BackgroundTaskMgr
 } // namespace OHOS

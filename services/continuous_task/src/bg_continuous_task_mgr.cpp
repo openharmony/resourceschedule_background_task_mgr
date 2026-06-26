@@ -290,9 +290,6 @@ void BgContinuousTaskMgr::InitNecessaryState()
     if (!RegisterSysCommEventListener()) {
         return;
     }
-    if (!RegisterConfigurationObserver()) {
-        return;
-    }
     if (!RegisterDialogClickListener()) {
         return;
     }
@@ -484,21 +481,6 @@ bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
     }
 #endif
     return res;
-}
-
-__attribute__((no_sanitize("cfi"))) bool BgContinuousTaskMgr::RegisterConfigurationObserver()
-{
-    configChangeObserver_ = sptr<AppExecFwk::IConfigurationObserver>(
-        new (std::nothrow) ConfigChangeObserver(handler_, shared_from_this()));
-    if (!configChangeObserver_) {
-        BGTASK_LOGE("configChangeObserver is null.");
-        return false;
-    }
-    if (!AppMgrHelper::GetInstance()->SubscribeConfigurationObserver(configChangeObserver_)) {
-        BGTASK_LOGE("SubscribeConfigurationObserver error.");
-        return false;
-    }
-    return true;
 }
 
 std::shared_ptr<Global::Resource::ResourceManager> BgContinuousTaskMgr::GetBundleResMgr(
@@ -3253,20 +3235,6 @@ std::string BgContinuousTaskMgr::GetMainAbilityLabel(const std::string &bundleNa
         mainAbilityLabel = bundleResourceInfo.label;
     }
     return mainAbilityLabel;
-}
-
-void BgContinuousTaskMgr::OnConfigurationChanged(const AppExecFwk::Configuration &configuration)
-{
-    BgTaskHiTraceChain traceChain(__func__);
-    if (!isSysReady_.load()) {
-        BGTASK_LOGW("manager is not ready");
-        return;
-    }
-    std::string languageChange = configuration.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    if (languageChange.empty()) {
-        return;
-    }
-    BGTASK_LOGI("System language config has changed");
 }
 
 std::string BgContinuousTaskMgr::GetNotificationText(const std::shared_ptr<ContinuousTaskRecord> record)

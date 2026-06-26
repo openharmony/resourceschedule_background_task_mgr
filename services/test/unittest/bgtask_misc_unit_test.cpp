@@ -624,62 +624,6 @@ HWTEST_F(BgTaskMiscUnitTest, SuspendControllerTest_001, TestSize.Level2)
 }
 
 /**
- * @tc.name: ConfigChangeObserver_001
- * @tc.desc: test ConfigChangeObserver class.
- * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_001, TestSize.Level2)
-{
-    // Given
-    sptr<ConfigChangeObserver> configChangeObserver1 = sptr<ConfigChangeObserver>(
-        new ConfigChangeObserver(nullptr, nullptr));
-    
-    // When & Then
-    EXPECT_FALSE(configChangeObserver1->CheckExpired());
-}
-
-/**
- * @tc.name: ConfigChangeObserver_002
- * @tc.desc: test ConfigChangeObserver class.
- * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_002, TestSize.Level2)
-{
-    // Given
-    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
-    auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
-    sptr<ConfigChangeObserver> configChangeObserver2 = sptr<ConfigChangeObserver>(
-        new ConfigChangeObserver(handler, nullptr));
-
-    // When & Then
-    EXPECT_FALSE(configChangeObserver2->CheckExpired());
-}
-
-/**
- * @tc.name: ConfigChangeObserver_003
- * @tc.desc: test ConfigChangeObserver class.
- * @tc.type: FUNC
- * @tc.require: issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgTaskMiscUnitTest, ConfigChangeObserver_003, TestSize.Level2)
-{
-    // Given
-    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
-    auto bgContinuousTaskMgr = std::make_shared<BgContinuousTaskMgr>();
-    sptr<ConfigChangeObserver> configChangeObserver3 = sptr<ConfigChangeObserver>(
-        new ConfigChangeObserver(handler, bgContinuousTaskMgr));
-
-    // When & Then
-    EXPECT_TRUE(configChangeObserver3->CheckExpired());
-
-    AppExecFwk::Configuration configuration;
-    configChangeObserver3->OnConfigurationUpdated(configuration);
-    SUCCEED();
-}
-
-/**
  * @tc.name: DataStorageHelper_001
  * @tc.desc: test Watchdog class.
  * @tc.type: FUNC
@@ -691,6 +635,8 @@ HWTEST_F(BgTaskMiscUnitTest, DataStorageHelper_001, TestSize.Level2)
     auto continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
     continuousTaskInfosMap1.emplace("key", continuousTaskRecord);
     DelayedSingleton<DataStorageHelper>::GetInstance()->RefreshTaskRecord(continuousTaskInfosMap1);
+    std::unordered_map<std::string, std::shared_ptr<BannerNotificationRecord>> bannerNotificationRecord;
+    DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreAuthRecord(bannerNotificationRecord);
     std::unordered_map<std::string, std::shared_ptr<ContinuousTaskRecord>> continuousTaskInfosMap2;
     EXPECT_EQ(DelayedSingleton<DataStorageHelper>::GetInstance()->RestoreTaskRecord(continuousTaskInfosMap2),
         ERR_OK);

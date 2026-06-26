@@ -22,7 +22,6 @@ continuous_task/
 │   ├── notification_tools.h          # 通知工具
 │   ├── task_notification_subscriber.h # 通知订阅者
 │   ├── banner_notification_record.h  # 横幅通知记录
-│   ├── config_change_observer.h      # 配置变更观察者
 │   ├── bg_continuous_task_dumper.h   # Dump工具
 │   └── remote_death_recipient.h      # 远程死亡监听
 └── src/

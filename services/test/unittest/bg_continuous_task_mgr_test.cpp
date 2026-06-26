@@ -23,6 +23,7 @@
 #include "background_task_subscriber_proxy.h"
 #include "bgtaskmgr_inner_errors.h"
 #include "background_task_subscriber.h"
+#include "bg_continuous_task_dumper.h"
 #include "bg_continuous_task_mgr.h"
 #include "common_event_support.h"
 #include "want_agent.h"
@@ -976,55 +977,6 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_038, TestSize.Level1)
     dumpOption.emplace_back("key2");
     bgContinuousTaskMgr_->DumpCancelTask(dumpOption, false);
     EXPECT_NE((int32_t)dumpOption.size(), 0);
-}
-
-/**
- * @tc.name: BgTaskManagerUnitTest_039
- * @tc.desc: test OnConfigurationChanged.
- * @tc.type: FUNC
- * @tc.require: issueI5IRJK issueI4QT3W issueI4QU0V
- */
-HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_039, TestSize.Level1)
-{
-    AppExecFwk::Configuration configuration;
-    bgContinuousTaskMgr_->isSysReady_.store(false);
-    bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
-    bgContinuousTaskMgr_->isSysReady_.store(true);
-    // 构造长时任务信息
-    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord1->bgModeIds_ = {1, 2};
-    continuousTaskRecord1->bgModeId_ = TEST_NUM_ONE;
-    continuousTaskRecord1->isNewApi_ = true;
-
-    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
-    continuousTaskRecord2->bgModeId_ = INVALID_BGMODE_ID;
-    continuousTaskRecord1->isNewApi_ = true;
-
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
-    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
-    bgContinuousTaskMgr_->bannerNotificationRecord_.clear();
-    // 构造横幅通知信息
-    std::shared_ptr<BannerNotificationRecord> bannerNotification1 = std::make_shared<BannerNotificationRecord>();
-    bannerNotification1->SetBundleName("bundleName1");
-    bannerNotification1->SetUserId(100);
-    std::string label1 = "notificationLabel1";
-    std::shared_ptr<BannerNotificationRecord> bannerNotification2 = std::make_shared<BannerNotificationRecord>();
-    bannerNotification2->SetBundleName("bundleName2");
-    bannerNotification2->SetUserId(200);
-    std::string label2 = "notificationLabel2";
-    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label1, bannerNotification1);
-    bgContinuousTaskMgr_->bannerNotificationRecord_.emplace(label2, bannerNotification2);
-    // 模拟切语言
-    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "1234");
-    // 系统语言配置更新
-    bgContinuousTaskMgr_->OnConfigurationChanged(configuration);
-    configuration.RemoveItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskSubText_), PROMPT_NUMS, "bgmsubmode_test");
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->bannerNotificationBtn_), PROMPT_NUMS,
-        "bannernotification_test");
-    EXPECT_NE((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 0);
 }
 
 /**
@@ -1995,6 +1947,10 @@ HWTEST_F(BgContinuousTaskMgrTest, BannerNotificationRecord_001, TestSize.Level1)
     EXPECT_EQ(bannerNotification->GetAuthResult(), 1);
     EXPECT_EQ(bannerNotification->GetUserId(), 1);
     EXPECT_EQ(bannerNotification->GetAppIndex(), 1);
+    std::string data = bannerNotification->ParseToJsonStr();
+    nlohmann::json recordJson = nlohmann::json::parse(data, nullptr, false);
+    auto ret = bannerNotification->ParseFromJson(recordJson);
+    EXPECT_TRUE(ret);
 }
 
 /**
@@ -3163,6 +3119,107 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_084, TestSize.Level1)
     continuousTaskRecord->isStandbySuspend_ = true;
     bgContinuousTaskMgr_->ActiveContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, "key1", true);
     EXPECT_EQ(bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"]->isStandby_, true);
+}
+
+/**
+ * @tc.name: DumpGetTask_001
+ * @tc.desc: test BgContinuousTaskDumper class.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, DumpGetTask_001, TestSize.Level3)
+{
+    std::vector<std::string> dumpOption;
+    std::vector<std::string> dumpInfo;
+    BgContinuousTaskDumper::GetInstance()->DumpGetTask(dumpOption, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
+
+    dumpOption.clear();
+    dumpInfo.clear();
+    dumpOption.emplace_back("-a");
+    dumpOption.emplace_back("-C");
+    dumpOption.emplace_back("-1");
+    BgContinuousTaskDumper::GetInstance()->DumpGetTask(dumpOption, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
+    
+    dumpOption.clear();
+    dumpInfo.clear();
+    dumpOption.emplace_back("-a");
+    dumpOption.emplace_back("-C");
+    dumpOption.emplace_back("1");
+    bgContinuousTaskMgr_->isSysReady_.store(false);
+    BgContinuousTaskDumper::GetInstance()->DumpGetTask(dumpOption, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
+
+    dumpOption.clear();
+    dumpInfo.clear();
+    dumpOption.emplace_back("-a");
+    dumpOption.emplace_back("-C");
+    dumpOption.emplace_back("1");
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    BgContinuousTaskDumper::GetInstance()->DumpGetTask(dumpOption, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
+
+    dumpOption.clear();
+    dumpInfo.clear();
+    dumpOption.emplace_back("-a");
+    dumpOption.emplace_back("-C");
+    dumpOption.emplace_back("1");
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord1->bgModeId_ = TEST_NUM_TWO;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord2->uid_ = TEST_NUM_ONE;
+    continuousTaskRecord2->bgModeId_ = TEST_NUM_THREE;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    BgContinuousTaskDumper::GetInstance()->DumpGetTask(dumpOption, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 2);
+}
+
+/**
+ * @tc.name: DebugContinuousTask_001
+ * @tc.desc: test BgContinuousTaskDumper class.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, DebugContinuousTask_001, TestSize.Level3)
+{
+    std::vector<std::string> dumpOption;
+    std::vector<std::string> dumpInfo;
+    BgContinuousTaskDumper::GetInstance()->DebugContinuousTask(dumpOption, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
+
+    dumpOption.clear();
+    dumpInfo.clear();
+    dumpOption.emplace_back("-a");
+    dumpOption.emplace_back("-C");
+    dumpOption.emplace_back("DEMO");
+    dumpOption.emplace_back("apply");
+    BgContinuousTaskDumper::GetInstance()->DebugContinuousTask(dumpOption, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
+    
+    dumpOption.clear();
+    dumpInfo.clear();
+    dumpOption.emplace_back("-a");
+    dumpOption.emplace_back("-C");
+    dumpOption.emplace_back("WORKOUT");
+    dumpOption.emplace_back("DEMO");
+    BgContinuousTaskDumper::GetInstance()->DebugContinuousTask(dumpOption, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
+
+    dumpOption.clear();
+    dumpInfo.clear();
+    dumpOption.emplace_back("-a");
+    dumpOption.emplace_back("-C");
+    dumpOption.emplace_back("WORKOUT");
+    dumpOption.emplace_back("apply");
+    dumpOption.emplace_back("1");
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    BgContinuousTaskDumper::GetInstance()->DebugContinuousTask(dumpOption, dumpInfo);
+    EXPECT_EQ(dumpInfo.size(), 1);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

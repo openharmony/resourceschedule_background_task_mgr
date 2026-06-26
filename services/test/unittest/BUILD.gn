@@ -396,6 +396,7 @@ ohos_unittest("bgtask_plugin_unit_test") {
     "audio_renderer_info_plugin_data_test.cpp",
     "audio_stream_plugin_adapter_test.cpp",
     "event_msg_handler_plugin_adapter_test.cpp",
+    "mock/mock_audio_stream.cpp",
   ]
  
   deps = [
@@ -411,6 +412,7 @@ ohos_unittest("bgtask_plugin_unit_test") {
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "audio_framework:audio_client",
+    "audio_framework:audio_foundation",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
