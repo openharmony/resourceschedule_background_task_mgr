@@ -74,6 +74,7 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_00
     EXPECT_EQ(processData.bundleName, "testBundle");
     EXPECT_EQ(processData.pid, 123);
     EXPECT_EQ(processData.uid, 456);
+    adapter->Uninit();
 }
 
 /**
@@ -334,6 +335,331 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_01
     };
     AppExecFwk::AbilityStateData abilityStateData;
     EXPECT_FALSE(adapter->UnmarshallingAbilityStateData(payload, abilityStateData));
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_015
+ * @tc.desc: test OnProcessCreated method with valid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_015, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"},
+        {"pid", "123"},
+        {"uid", "456"},
+        {"renderUid", "789"},
+        {"processType", "0"},
+        {"state", "1"},
+        {"extensionType", "2"},
+        {"isKeepAlive", "0"},
+        {"isTestMode", "0"},
+        {"hostPid", "0"},
+        {"imageProcessType", "0"},
+        {"preloadMode", "0"}
+    };
+    adapter->OnProcessCreated(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_016
+ * @tc.desc: test OnProcessCreated method with invalid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_016, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"}
+    };
+    adapter->OnProcessCreated(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_017
+ * @tc.desc: test OnProcessDied method with valid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_017, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"},
+        {"pid", "123"},
+        {"uid", "456"},
+        {"renderUid", "789"},
+        {"processType", "0"},
+        {"state", "1"},
+        {"extensionType", "2"},
+        {"isKeepAlive", "0"},
+        {"isTestMode", "0"},
+        {"hostPid", "0"},
+        {"imageProcessType", "0"},
+        {"preloadMode", "0"}
+    };
+    adapter->OnProcessDied(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_018
+ * @tc.desc: test OnProcessDied method with invalid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_018, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"}
+    };
+    adapter->OnProcessDied(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_019
+ * @tc.desc: test OnProcessStateChanged method with valid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_019, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"},
+        {"pid", "123"},
+        {"uid", "456"},
+        {"renderUid", "789"},
+        {"processType", "0"},
+        {"state", "1"},
+        {"extensionType", "2"},
+        {"isKeepAlive", "0"},
+        {"isTestMode", "0"},
+        {"hostPid", "0"},
+        {"imageProcessType", "0"},
+        {"preloadMode", "0"}
+    };
+    adapter->OnProcessStateChanged(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_020
+ * @tc.desc: test OnProcessStateChanged method with invalid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_020, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"}
+    };
+    adapter->OnProcessStateChanged(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_021
+ * @tc.desc: test OnProcessStateChanged method with null decisionMaker.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_021, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"},
+        {"pid", "123"},
+        {"uid", "456"},
+        {"renderUid", "789"},
+        {"processType", "0"},
+        {"state", "1"},
+        {"extensionType", "2"},
+        {"isKeepAlive", "0"},
+        {"isTestMode", "0"},
+        {"hostPid", "0"},
+        {"imageProcessType", "0"},
+        {"preloadMode", "0"}
+    };
+    adapter->OnProcessStateChanged(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_022
+ * @tc.desc: test OnAppStateChanged method with valid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_022, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"},
+        {"pid", 123},
+        {"uid", 456},
+        {"state", 1u},
+        {"extensionType", 2u},
+        {"preloadMode", "0"}
+    };
+    adapter->OnAppStateChanged(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_023
+ * @tc.desc: test OnAppStateChanged method with invalid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_023, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"}
+    };
+    adapter->OnAppStateChanged(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_024
+ * @tc.desc: test OnAppStopped method with valid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_024, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"},
+        {"pid", 123},
+        {"uid", 456},
+        {"state", 1u},
+        {"extensionType", 2u},
+        {"preloadMode", "0"}
+    };
+    adapter->OnAppStopped(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_025
+ * @tc.desc: test OnAppStopped method with invalid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_025, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"}
+    };
+    adapter->OnAppStopped(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_026
+ * @tc.desc: test OnAppCacheStateChanged method with valid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_026, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"},
+        {"pid", 123},
+        {"uid", 456},
+        {"state", 1u},
+        {"extensionType", 2u},
+        {"preloadMode", "0"}
+    };
+    adapter->OnAppCacheStateChanged(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_027
+ * @tc.desc: test OnAppCacheStateChanged method with invalid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_027, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    nlohmann::json payload = {
+        {"bundleName", "testBundle"}
+    };
+    adapter->OnAppCacheStateChanged(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_028
+ * @tc.desc: test OnAbilityStateChanged method with valid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_028, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"pid", 123},
+        {"uid", 456},
+        {"recordId", 789},
+        {"abilityType", 1},
+        {"abilityName", "testAbility"},
+        {"abilityState", 2},
+        {"extType", 3}
+    };
+    adapter->OnAbilityStateChanged(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_029
+ * @tc.desc: test OnAbilityStateChanged method with invalid payload.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_029, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    nlohmann::json payload = {
+        {"pid", 123},
+        {"uid", 456}
+    };
+    adapter->OnAbilityStateChanged(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_030
+ * @tc.desc: test OnAbilityStateChanged method with extensionState.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_030, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"pid", 123},
+        {"uid", 456},
+        {"recordId", 789},
+        {"abilityType", 1},
+        {"abilityName", "testAbility"},
+        {"extensionState", 2},
+        {"extensionAbilityType", 3}
+    };
+    adapter->OnAbilityStateChanged(payload);
+}
+
+/**
+ * @tc.name: AppStateObserverPluginAdapterTest_031
+ * @tc.desc: test OnAbilityStateChanged method with uiExtensionState.
+ * @tc.type: FUNC
+ */
+HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_031, TestSize.Level2)
+{
+    auto adapter = AppStateObserverPluginAdapter::GetInstance();
+    adapter->Init();
+    nlohmann::json payload = {
+        {"pid", 123},
+        {"uid", 456},
+        {"recordId", 789},
+        {"abilityType", 1},
+        {"abilityName", "testAbility"},
+        {"uiExtensionState", 2},
+        {"extensionAbilityType", 3}
+    };
+    adapter->OnAbilityStateChanged(payload);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
