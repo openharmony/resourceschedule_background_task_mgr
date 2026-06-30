@@ -29,8 +29,8 @@ ohos_hap("backgroundtaskresources_hap") {
   part_name = "background_task_mgr"
   if (defined(sign_hap_py_path)) {
     certificate_profile = "${certificate_profile_path}"
-    key_alias = "HwBackgroundTaskMgr release"
-    private_key_path = "HwBackgroundTaskMgr release"
+    key_alias = "HwBackgroundTaskMgr release V2"
+    private_key_path = "HwBackgroundTaskMgr release V2"
     compatible_version = "9"
   }
 }
