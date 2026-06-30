@@ -92,6 +92,9 @@ void AppStateObserverPluginAdapter::OnProcessDied(const nlohmann::json& payload)
     }
     BGTASK_LOGD("OnProcessDied, bundleName: %{public}s, uid: %{public}d, pid: %{public}d",
         processData.bundleName.c_str(), processData.uid, processData.pid);
+    if (decisionMaker_ != nullptr) {
+        decisionMaker_->OnProcessDied(processData);
+    }
     appStateObserver_->OnProcessDied(processData);
 }
 

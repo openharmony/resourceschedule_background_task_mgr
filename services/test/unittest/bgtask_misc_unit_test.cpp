@@ -680,13 +680,13 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_004, TestSize.Level2)
         AppExecFwk::EventRunner::Create("tdd_test_handler"));
     auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
 
-    decisionMaker->pkgBgDurationMap_.clear();
     std::string name = "bundleName1";
     int32_t uid = 1;
+    decisionMaker->foregroundUidPidMap_[uid].insert(1);
     EXPECT_EQ(decisionMaker->PauseTransientTaskTimeForInner(uid, name), ERR_BGTASK_FOREGROUND);
 
     auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
-    decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
+    decisionMaker->foregroundUidPidMap_.clear();
     decisionMaker->pkgDelaySuspendInfoMap_.clear();
     EXPECT_EQ(decisionMaker->PauseTransientTaskTimeForInner(uid, name), ERR_BGTASK_NOREQUEST_TASK);
     
@@ -712,13 +712,13 @@ HWTEST_F(BgTaskMiscUnitTest, DecisionMakerTest_005, TestSize.Level2)
         AppExecFwk::EventRunner::Create("tdd_test_handler"));
     auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
 
-    decisionMaker->pkgBgDurationMap_.clear();
     std::string name = "bundleName1";
     int32_t uid = 1;
+    decisionMaker->foregroundUidPidMap_[uid].insert(1);
     EXPECT_EQ(decisionMaker->StartTransientTaskTimeForInner(uid, name), ERR_BGTASK_FOREGROUND);
 
     auto keyInfo = std::make_shared<KeyInfo>("bundleName1", 1);
-    decisionMaker->pkgBgDurationMap_[keyInfo] = TimeProvider::GetCurrentTime() - ALLOW_REQUEST_TIME_BG - 1;
+    decisionMaker->foregroundUidPidMap_.clear();
     decisionMaker->pkgDelaySuspendInfoMap_.clear();
     EXPECT_EQ(decisionMaker->StartTransientTaskTimeForInner(uid, name), ERR_BGTASK_NOREQUEST_TASK);
     
@@ -856,6 +856,38 @@ HWTEST_F(BgTaskMiscUnitTest, OnProcessStateChanged_001, TestSize.Level2)
     decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
     decisionMaker->OnProcessStateChanged(processData);
     EXPECT_EQ((int32_t)decisionMaker->pkgDelaySuspendInfoMap_.size(), 1);
+}
+
+/**
+ * @tc.name: OnProcessDied_001
+ * @tc.desc: test DecisionMaker::OnProcessDied.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskMiscUnitTest, OnProcessDied_001, TestSize.Level2)
+{
+    auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
+    auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
+    auto timerManager =
+        std::make_shared<TimerManager>(bgtaskService, AppExecFwk::EventRunner::Create("tdd_test_handler"));
+    auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
+
+    AppExecFwk::ProcessData processData;
+    processData.uid = 100001;
+    processData.pid = 100;
+    processData.bundleName = "bundleName1";
+    processData.state = AppExecFwk::AppProcessState::APP_STATE_FOREGROUND;
+    decisionMaker->OnProcessStateChanged(processData);
+    EXPECT_TRUE(decisionMaker->IsUidForeground(processData.uid));
+
+    auto keyInfo1 = std::make_shared<KeyInfo>("bundleName1", processData.uid);
+    auto pkgDelaySuspendInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName1", processData.uid, timerManager);
+    auto delayInfo = std::make_shared<DelaySuspendInfoEx>(processData.pid);
+    pkgDelaySuspendInfo->requestList_.push_back(delayInfo);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo1] = pkgDelaySuspendInfo;
+
+    decisionMaker->OnProcessDied(processData);
+    EXPECT_FALSE(decisionMaker->IsUidForeground(processData.uid));
+    EXPECT_TRUE(pkgDelaySuspendInfo->isCounting_);
 }
 
 /**
