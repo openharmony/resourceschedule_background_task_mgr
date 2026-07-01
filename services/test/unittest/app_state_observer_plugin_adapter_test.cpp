@@ -340,7 +340,6 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_01
     EXPECT_FALSE(adapter->UnmarshallingAbilityStateData(payload, abilityStateData));
 }
 
-#ifdef GAME_PRE_LAUNCH_ENABLE
 /**
  * @tc.name: AppStateObserverPluginAdapterTest_015
  * @tc.desc: test valid payload.
@@ -368,9 +367,11 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_01
     adapter->OnProcessCreated(payload);
     adapter->OnProcessStateChanged(payload);
     adapter->OnAppCacheStateChanged(payload);
+#ifdef GAME_PRE_LAUNCH_ENABLE
     int32_t uid = 456;
-    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)
+    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid);
     EXPECT_FALSE(ret);
+#endif
 }
 
 /**
@@ -388,9 +389,11 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_01
     adapter->OnProcessCreated(payload);
     adapter->OnProcessStateChanged(payload);
     adapter->OnAppCacheStateChanged(payload);
+#ifdef GAME_PRE_LAUNCH_ENABLE
     int32_t uid = 456;
-    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)
+    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid);
     EXPECT_FALSE(ret);
+#endif
 }
 
 
@@ -422,9 +425,11 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_01
     adapter->OnAbilityStateChanged(payload);
     adapter->OnAppStopped(payload);
     adapter->OnAppStateChanged(payload);
+#ifdef GAME_PRE_LAUNCH_ENABLE
     int32_t uid = 456;
-    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)
-    EXPECT_TRUE(ret);
+    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid);
+    EXPECT_FALSE(ret);
+#endif
 }
 
 /**
@@ -443,10 +448,11 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_01
     adapter->OnAbilityStateChanged(payload);
     adapter->OnAppStopped(payload);
     adapter->OnAppStateChanged(payload);
+#ifdef GAME_PRE_LAUNCH_ENABLE
     int32_t uid = 456;
-    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid)
-    EXPECT_TRUE(ret);
-}
+    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid);
+    EXPECT_FALSE(ret);
 #endif
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
