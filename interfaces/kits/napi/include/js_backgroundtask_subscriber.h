@@ -67,7 +67,7 @@ private:
  
 private:
     napi_env env_;
-    std::mutex jsObserverObjectSetLock_;
+    std::recursive_mutex jsObserverObjectSetLock_;
     std::map<std::string, std::set<std::shared_ptr<NativeReference>>> jsObserverObjectMap_;
     sptr<JsBackgroudTaskSystemAbilityStatusChange> jsSaListner_ = nullptr;
     std::atomic<bool> needRestoreSubscribeStatus_ = false;
