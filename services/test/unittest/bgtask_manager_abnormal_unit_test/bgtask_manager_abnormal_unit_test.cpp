@@ -18,10 +18,18 @@
 
 #include "background_task_mgr_service.h"
 #include "transient_task_app_info.h"
+#include "common_utils.h"
 
 using namespace testing::ext;
 
 namespace OHOS {
+
+void BgMockTokenType(int32_t mockTokenType);
+
+void BgMockIpcUid(int32_t mockUid);
+
+void BgMockAtomicService(bool mockAtomicService);
+
 namespace BackgroundTaskMgr {
 class BgTaskManagerAbnormalUnitTest : public testing::Test {
 public:
@@ -207,8 +215,24 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_008
 HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_010, TestSize.Level3)
 {
     uint32_t authResult = -1;
+    BgMockTokenType(0);
+    BgMockAtomicService(true);
     EXPECT_EQ(BackgroundTaskMgrService_->CheckSpecialScenarioAuth(0, authResult),
         ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockAtomicService(false);
+    auto ret = BackgroundTaskMgrService_->CheckSpecialScenarioAuth(0, authResult);
+    EXPECT_EQ(ret, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockTokenType(1);
+    auto ret2 = BackgroundTaskMgrService_->CheckSpecialScenarioAuth(0, authResult, 1);
+    EXPECT_EQ(ret2, ERR_BGTASK_CONTINUOUS_API_VERSION_FAIL);
+
+    auto ret3 = BackgroundTaskMgrService_->CheckSpecialScenarioAuth(0, authResult);
+    EXPECT_NE(ret3, 0);
+
+    BgMockAtomicService(true);
+    BgMockTokenType(0);
 }
 
 /**
@@ -334,8 +358,351 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_016
 {
     std::string result = "";
     BackgroundTaskMgrService_->DumpUsage(result);
+    BgMockTokenType(0);
     ContinuousTaskParam taskParam = ContinuousTaskParam();
     EXPECT_EQ(BackgroundTaskMgrService_->RemoveAuthRecord(taskParam), ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockTokenType(1);
+    EXPECT_NE(BackgroundTaskMgrService_->RemoveAuthRecord(taskParam), 0);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: CheckHapCalling_001
+ * @tc.desc: test CheckHapCalling.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, CheckHapCalling_001, TestSize.Level3)
+{
+    BgMockTokenType(1);
+    bool isHap = false;
+    auto ret = BackgroundTaskMgrService_->CheckHapCalling(isHap, 1);
+    EXPECT_FALSE(ret);
+
+    auto ret2 = BackgroundTaskMgrService_->CheckHapCalling(isHap, SUBSCRIBER_BACKGROUND_TASK_STATE);
+    EXPECT_TRUE(ret2);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: CheckCallingProcess_001
+ * @tc.desc: test CheckCallingProcess.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, CheckCallingProcess_001, TestSize.Level3)
+{
+    std::vector<std::shared_ptr<DelaySuspendInfo>> list;
+    int32_t remainingQuota = 0;
+    BackgroundTaskMgrService_->GetAllTransientTasks(remainingQuota, list);
+    std::vector<ContinuousTaskInfo> list2;
+    BackgroundTaskMgrService_->GetAllContinuousTasks(list2);
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list3;
+    BackgroundTaskMgrService_->GetAllContinuousTasks(list3, true);
+
+    auto ret = BackgroundTaskMgrService_->CheckCallingProcess();
+    EXPECT_FALSE(ret);
+
+    int32_t resUid = 1096;
+    BgMockIpcUid(resUid);
+    auto ret2 = BackgroundTaskMgrService_->CheckCallingProcess();
+    EXPECT_TRUE(ret2);
+    BgMockIpcUid(-1);
+}
+
+/**
+ * @tc.name: RequestGetContinuousTasksByUidForInner_001
+ * @tc.desc: test RequestGetContinuousTasksByUidForInner.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, RequestGetContinuousTasksByUidForInner_001, TestSize.Level3)
+{
+    int uid = 1;
+    std::vector<ContinuousTaskInfo> list;
+    auto ret = BackgroundTaskMgrService_->RequestGetContinuousTasksByUidForInner(uid, list);
+    EXPECT_NE(ret, 0);
+
+    BgMockTokenType(2);
+    std::vector<TransientTaskAppInfo> list2 {};
+    BackgroundTaskMgrService_->GetTransientTaskApps(list2);
+    std::vector<ContinuousTaskCallbackInfo> list3 {};
+    BackgroundTaskMgrService_->GetContinuousTaskApps(list3);
+    std::vector<EfficiencyResourceInfo> resourceInfoList {};
+    BackgroundTaskMgrService_->GetAllEfficiencyResources(resourceInfoList);
+    // std::vector<ResourceCallbackInfo> appList {};
+    // std::vector<ResourceCallbackInfo> procList {};
+    // BackgroundTaskMgrService_->GetEfficiencyResourcesInfos(appList, procList);
+    
+    auto ret2 = BackgroundTaskMgrService_->RequestGetContinuousTasksByUidForInner(-1, list);
+    EXPECT_NE(ret2, 0);
+
+    BackgroundTaskMgrService_->RequestGetContinuousTasksByUidForInner(uid, list);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: SetSupportedTaskKeepingProcesses_001
+ * @tc.desc: test SetSupportedTaskKeepingProcesses.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, SetSupportedTaskKeepingProcesses_001, TestSize.Level3)
+{
+    std::set<std::string> processSet;
+    processSet.insert("com.test.app");
+    auto ret = BackgroundTaskMgrService_->SetSupportedTaskKeepingProcesses(processSet);
+    EXPECT_NE(ret, 0);
+
+    BgMockTokenType(2);
+    auto ret2 = BackgroundTaskMgrService_->SetSupportedTaskKeepingProcesses(processSet);
+    EXPECT_NE(ret2, 0);
+    int32_t resUid = 1096;
+    BgMockIpcUid(resUid);
+
+    auto ret3 = BackgroundTaskMgrService_->SetSupportedTaskKeepingProcesses(processSet);
+    EXPECT_EQ(ret3, 0);
+
+    BgMockIpcUid(-1);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: SetMaliciousAppConfig_001
+ * @tc.desc: test SetMaliciousAppConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, SetMaliciousAppConfig_001, TestSize.Level3)
+{
+    std::set<std::string> maliciousAppSet;
+    auto ret = BackgroundTaskMgrService_->SetMaliciousAppConfig(maliciousAppSet);
+    EXPECT_NE(ret, 0);
+
+    BgMockTokenType(2);
+    auto ret2 = BackgroundTaskMgrService_->SetMaliciousAppConfig(maliciousAppSet);
+    EXPECT_NE(ret2, 0);
+    int32_t resUid = 1096;
+    BgMockIpcUid(resUid);
+
+    auto ret3 = BackgroundTaskMgrService_->SetMaliciousAppConfig(maliciousAppSet);
+    EXPECT_EQ(ret3, 0);
+
+    BgMockIpcUid(-1);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: RequestAuthFromUser_001
+ * @tc.desc: test RequestAuthFromUser.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, RequestAuthFromUser_001, TestSize.Level3)
+{
+    int32_t notificationId = -1;
+    ContinuousTaskParam taskParam = ContinuousTaskParam();
+    auto ret = BackgroundTaskMgrService_->RequestAuthFromUser(taskParam, nullptr, notificationId);
+    EXPECT_EQ(ret, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockAtomicService(false);
+    auto ret2 = BackgroundTaskMgrService_->RequestAuthFromUser(taskParam, nullptr, notificationId);
+    EXPECT_EQ(ret2, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockTokenType(1);
+    taskParam.requestAuthApiVersion_ = 1;
+    auto ret3 = BackgroundTaskMgrService_->RequestAuthFromUser(taskParam, nullptr, notificationId);
+    EXPECT_EQ(ret3, ERR_BGTASK_CONTINUOUS_API_VERSION_FAIL);
+
+    taskParam.requestAuthApiVersion_ = API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG;
+    auto ret4 = BackgroundTaskMgrService_->RequestAuthFromUser(taskParam, nullptr, notificationId);
+    EXPECT_NE(ret4, 0);
+
+    BgMockAtomicService(true);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: CheckTaskAuthResult_001
+ * @tc.desc: test CheckTaskAuthResult.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, CheckTaskAuthResult_001, TestSize.Level3)
+{
+    auto ret = BackgroundTaskMgrService_->CheckTaskAuthResult("", 1, 1);
+    EXPECT_EQ(ret, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockTokenType(2);
+    auto ret2 = BackgroundTaskMgrService_->CheckTaskAuthResult("", 1, 1);
+    EXPECT_EQ(ret2, ERR_BGTASK_PERMISSION_DENIED);
+
+    int32_t resUid = 1096;
+    BgMockIpcUid(resUid);
+    auto ret3 = BackgroundTaskMgrService_->CheckTaskAuthResult("", 1, 1);
+    EXPECT_NE(ret3, 0);
+
+    BgMockTokenType(0);
+    BgMockIpcUid(-1);
+}
+
+/**
+ * @tc.name: EnableContinuousTaskRequest_001
+ * @tc.desc: test EnableContinuousTaskRequest.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, EnableContinuousTaskRequest_001, TestSize.Level3)
+{
+    auto ret = BackgroundTaskMgrService_->EnableContinuousTaskRequest(1, false);
+    EXPECT_EQ(ret, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockTokenType(2);
+    auto ret2 = BackgroundTaskMgrService_->EnableContinuousTaskRequest(1, false);
+    EXPECT_EQ(ret2, ERR_BGTASK_PERMISSION_DENIED);
+
+    int32_t resUid = 1096;
+    BgMockIpcUid(resUid);
+    auto ret3 = BackgroundTaskMgrService_->EnableContinuousTaskRequest(1, false);
+    EXPECT_NE(ret3, 0);
+
+    BgMockTokenType(0);
+    BgMockIpcUid(-1);
+}
+
+/**
+ * @tc.name: SetBackgroundTaskState_001
+ * @tc.desc: test SetBackgroundTaskState.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, SetBackgroundTaskState_001, TestSize.Level3)
+{
+    BackgroundTaskStateInfo stateInfo = BackgroundTaskStateInfo();
+    BgMockAtomicService(false);
+    auto ret = BackgroundTaskMgrService_->SetBackgroundTaskState(stateInfo);
+    EXPECT_EQ(ret, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockTokenType(1);
+    auto ret2 = BackgroundTaskMgrService_->SetBackgroundTaskState(stateInfo);
+    EXPECT_EQ(ret2, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockAtomicService(true);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: GetBackgroundTaskState_001
+ * @tc.desc: test GetBackgroundTaskState.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, GetBackgroundTaskState_001, TestSize.Level3)
+{
+    BackgroundTaskStateInfo stateInfo = BackgroundTaskStateInfo();
+    BgMockAtomicService(false);
+    uint32_t authResult = 0;
+    auto ret = BackgroundTaskMgrService_->GetBackgroundTaskState(stateInfo, authResult);
+    EXPECT_EQ(ret, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockTokenType(1);
+    auto ret2 = BackgroundTaskMgrService_->GetBackgroundTaskState(stateInfo, authResult);
+    EXPECT_EQ(ret2, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockAtomicService(true);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: GetAllContinuousTasksBySystem_001
+ * @tc.desc: test GetAllContinuousTasksBySystem.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, GetAllContinuousTasksBySystem_001, TestSize.Level3)
+{
+    BgMockAtomicService(false);
+    std::vector<std::shared_ptr<ContinuousTaskInfo>> list;
+    auto ret = BackgroundTaskMgrService_->GetAllContinuousTasksBySystem(list);
+    EXPECT_EQ(ret, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockTokenType(1);
+    auto ret2 = BackgroundTaskMgrService_->GetAllContinuousTasksBySystem(list);
+    EXPECT_EQ(ret2, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockAtomicService(true);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: GetAllContinuousTaskApps_001
+ * @tc.desc: test GetAllContinuousTaskApps.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, GetAllContinuousTaskApps_001, TestSize.Level3)
+{
+    std::vector<ContinuousTaskCallbackInfo> list;
+    auto ret = BackgroundTaskMgrService_->GetAllContinuousTaskApps(list);
+    EXPECT_EQ(ret, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockTokenType(2);
+    auto ret2 = BackgroundTaskMgrService_->GetAllContinuousTaskApps(list);
+    EXPECT_EQ(ret2, ERR_BGTASK_PERMISSION_DENIED);
+
+    int32_t resUid = 1096;
+    BgMockIpcUid(resUid);
+
+    auto ret3 = BackgroundTaskMgrService_->GetAllContinuousTaskApps(list);
+    EXPECT_NE(ret3, 0);
+
+    BgMockIpcUid(-1);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrServiceAbnormalTest_017
+ * @tc.desc: test BackgroundTaskMgrServiceAbnormalTest.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_017, TestSize.Level3)
+{
+    BgMockTokenType(2);
+    int32_t resUid = 1096;
+    BgMockIpcUid(resUid);
+
+    auto ret = BackgroundTaskMgrService_->StopContinuousTask(1, 1, 1, "");
+    EXPECT_EQ(ret, 0);
+
+    auto ret2 = BackgroundTaskMgrService_->SuspendContinuousTask(1, 1, 4, "");
+    EXPECT_EQ(ret2, 0);
+
+    auto ret3 = BackgroundTaskMgrService_->ActiveContinuousTask(1, 1, "");
+    EXPECT_EQ(ret3, 0);
+
+    auto ret4 = BackgroundTaskMgrService_->AVSessionNotifyUpdateNotification(1, 1, true);
+    EXPECT_NE(ret4, 0);
+
+    auto ret5 = BackgroundTaskMgrService_->SetBgTaskConfig("", 1);
+    EXPECT_NE(ret5, 0);
+
+    auto ret6 = BackgroundTaskMgrService_->SuspendContinuousAudioTask(1);
+    EXPECT_EQ(ret6, 0);
+
+    std::set<std::string> bundleNameSet;
+    bundleNameSet.insert("com.test.app");
+    auto ret7 = BackgroundTaskMgrService_->SetSpecialExemptedProcess(bundleNameSet);
+    EXPECT_EQ(ret7, 0);
+
+    std::set<std::string> taskKeys;
+    taskKeys.insert("key");
+    auto ret8 = BackgroundTaskMgrService_->SendNotificationByDeteTask(taskKeys);
+    EXPECT_NE(ret8, 0);
+
+    BgMockIpcUid(-1);
+    BgMockTokenType(0);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
