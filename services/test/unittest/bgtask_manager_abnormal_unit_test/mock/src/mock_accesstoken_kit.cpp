@@ -36,9 +36,11 @@ namespace Security {
 namespace AccessToken {
 ATokenTypeEnum AccessTokenKit::GetTokenTypeFlag(AccessTokenID tokenID)
 {
-    if (g_mockTokenType == 1) {
+    int32_t tokenTypeHap = 1;
+    int32_t tokenTypeNative = 2;
+    if (g_mockTokenType == tokenTypeHap) {
         return TOKEN_HAP;
-    } else if (g_mockTokenType == 2) {
+    } else if (g_mockTokenType == tokenTypeNative) {
         return TOKEN_NATIVE;
     }
     return TOKEN_INVALID;

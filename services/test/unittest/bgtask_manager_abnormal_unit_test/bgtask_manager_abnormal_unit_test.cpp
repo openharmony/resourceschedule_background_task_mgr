@@ -431,9 +431,6 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, RequestGetContinuousTasksByUidForInner_0
     BackgroundTaskMgrService_->GetContinuousTaskApps(list3);
     std::vector<EfficiencyResourceInfo> resourceInfoList {};
     BackgroundTaskMgrService_->GetAllEfficiencyResources(resourceInfoList);
-    // std::vector<ResourceCallbackInfo> appList {};
-    // std::vector<ResourceCallbackInfo> procList {};
-    // BackgroundTaskMgrService_->GetEfficiencyResourcesInfos(appList, procList);
     
     auto ret2 = BackgroundTaskMgrService_->RequestGetContinuousTasksByUidForInner(-1, list);
     EXPECT_NE(ret2, 0);
