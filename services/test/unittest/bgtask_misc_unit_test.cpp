@@ -1063,7 +1063,7 @@ HWTEST_F(BgTaskMiscUnitTest, BannerNotificationEventObserverTest_001, TestSize.L
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(BGTASK_BANNER_NOTIFICATION_ACTION_NAME);
     EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
-    auto bannerNotificationClickListener = std::make_shared<SystemEventObserver>(subscribeInfo);
+    auto bannerNotificationClickListener = std::make_shared<BannerNotificationEventObserver>(subscribeInfo);
     EXPECT_NE(bannerNotificationClickListener, nullptr);
     bool result = bannerNotificationClickListener->Subscribe();
     EXPECT_TRUE(result);
