@@ -439,11 +439,6 @@ ohos_unittest("bgtask_plugin_unit_test") {
     external_deps += [ "os_account:os_account_innerkits" ]
   }
 
-  defines = []
-  if (game_pre_launch_enable) {
-    defines += [ "GAME_PRE_LAUNCH_ENABLE" ]
-  }
-
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
 }

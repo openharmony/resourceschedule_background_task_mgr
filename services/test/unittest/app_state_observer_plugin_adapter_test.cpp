@@ -72,6 +72,9 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_00
         {"imageProcessType", "0"},
         {"preloadMode", "0"}
     };
+    adapter->OnProcessCreated(payload);
+    adapter->OnProcessStateChanged(payload);
+    adapter->OnProcessDied(payload);
     AppExecFwk::ProcessData processData;
     EXPECT_TRUE(adapter->UnmarshallingProcessData(payload, processData));
     EXPECT_EQ(processData.bundleName, "testBundle");
@@ -91,6 +94,9 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_00
     nlohmann::json payload = {
         {"bundleName", "testBundle"}
     };
+    adapter->OnProcessCreated(payload);
+    adapter->OnProcessStateChanged(payload);
+    adapter->OnProcessDied(payload);
     AppExecFwk::ProcessData processData;
     EXPECT_FALSE(adapter->UnmarshallingProcessData(payload, processData));
 }
@@ -111,6 +117,9 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_00
         {"extensionType", 2u},
         {"preloadMode", "0"}
     };
+    adapter->OnAppCacheStateChanged(payload);
+    adapter->OnAppStopped(payload);
+    adapter->OnAppStateChanged(payload);
     AppExecFwk::AppStateData appStateData;
     EXPECT_TRUE(adapter->UnmarshallingAppStateData(payload, appStateData));
     EXPECT_EQ(appStateData.bundleName, "testBundle");
@@ -129,6 +138,9 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_00
     nlohmann::json payload = {
         {"bundleName", "testBundle"}
     };
+    adapter->OnAppCacheStateChanged(payload);
+    adapter->OnAppStopped(payload);
+    adapter->OnAppStateChanged(payload);
     AppExecFwk::AppStateData appStateData;
     EXPECT_FALSE(adapter->UnmarshallingAppStateData(payload, appStateData));
 }
@@ -150,6 +162,7 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_00
         {"abilityState", 2},
         {"extType", 3}
     };
+    adapter->OnAbilityStateChanged(payload);
     AppExecFwk::AbilityStateData abilityStateData;
     EXPECT_TRUE(adapter->UnmarshallingAbilityStateData(payload, abilityStateData));
     EXPECT_EQ(abilityStateData.pid, 123);
@@ -169,6 +182,7 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_00
         {"pid", 123},
         {"uid", 456}
     };
+    adapter->OnAbilityStateChanged(payload);
     AppExecFwk::AbilityStateData abilityStateData;
     EXPECT_FALSE(adapter->UnmarshallingAbilityStateData(payload, abilityStateData));
 }
@@ -338,121 +352,6 @@ HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_01
     };
     AppExecFwk::AbilityStateData abilityStateData;
     EXPECT_FALSE(adapter->UnmarshallingAbilityStateData(payload, abilityStateData));
-}
-
-/**
- * @tc.name: AppStateObserverPluginAdapterTest_015
- * @tc.desc: test valid payload.
- * @tc.type: FUNC
- */
-HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_015, TestSize.Level2)
-{
-    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->gamePreLaunchAppUids_.clear();
-    auto adapter = AppStateObserverPluginAdapter::GetInstance();
-    adapter->Init();
-    nlohmann::json payload = {
-        {"bundleName", "testBundle"},
-        {"pid", "123"},
-        {"uid", "456"},
-        {"renderUid", "789"},
-        {"processType", "0"},
-        {"state", "1"},
-        {"extensionType", "2"},
-        {"isKeepAlive", "0"},
-        {"isTestMode", "0"},
-        {"hostPid", "0"},
-        {"imageProcessType", "0"},
-        {"preloadMode", "0"}
-    };
-    adapter->OnProcessCreated(payload);
-    adapter->OnProcessStateChanged(payload);
-    adapter->OnAppCacheStateChanged(payload);
-#ifdef GAME_PRE_LAUNCH_ENABLE
-    int32_t uid = 456;
-    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid);
-    EXPECT_FALSE(ret);
-#endif
-}
-
-/**
- * @tc.name: AppStateObserverPluginAdapterTest_016
- * @tc.desc: test invalid payload.
- * @tc.type: FUNC
- */
-HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_016, TestSize.Level2)
-{
-    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->gamePreLaunchAppUids_.clear();
-    auto adapter = AppStateObserverPluginAdapter::GetInstance();
-    nlohmann::json payload = {
-        {"bundleName", "testBundle"}
-    };
-    adapter->OnProcessCreated(payload);
-    adapter->OnProcessStateChanged(payload);
-    adapter->OnAppCacheStateChanged(payload);
-#ifdef GAME_PRE_LAUNCH_ENABLE
-    int32_t uid = 456;
-    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid);
-    EXPECT_FALSE(ret);
-#endif
-}
-
-
-/**
- * @tc.name: AppStateObserverPluginAdapterTest_017
- * @tc.desc: test valid payload.
- * @tc.type: FUNC
- */
-HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_017, TestSize.Level2)
-{
-    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->gamePreLaunchAppUids_.clear();
-    auto adapter = AppStateObserverPluginAdapter::GetInstance();
-    adapter->Init();
-    nlohmann::json payload = {
-        {"bundleName", "testBundle"},
-        {"pid", "123"},
-        {"uid", "456"},
-        {"renderUid", "789"},
-        {"processType", "0"},
-        {"state", "1"},
-        {"extensionType", "2"},
-        {"isKeepAlive", "0"},
-        {"isTestMode", "0"},
-        {"hostPid", "0"},
-        {"imageProcessType", "0"},
-        {"preloadMode", "0"}
-    };
-    adapter->OnProcessDied(payload);
-    adapter->OnAbilityStateChanged(payload);
-    adapter->OnAppStopped(payload);
-    adapter->OnAppStateChanged(payload);
-#ifdef GAME_PRE_LAUNCH_ENABLE
-    int32_t uid = 456;
-    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid);
-    EXPECT_FALSE(ret);
-#endif
-}
-
-/**
- * @tc.name: AppStateObserverPluginAdapterTest_018
- * @tc.desc: test invalid payload.
- * @tc.type: FUNC
- */
-HWTEST_F(AppStateObserverPluginAdapterTest, AppStateObserverPluginAdapterTest_018, TestSize.Level2)
-{
-    DelayedSingleton<GamePreLaunchMgr>::GetInstance()->gamePreLaunchAppUids_.clear();
-    auto adapter = AppStateObserverPluginAdapter::GetInstance();
-    nlohmann::json payload = {
-        {"bundleName", "testBundle"}
-    };
-    adapter->OnProcessDied(payload);
-    adapter->OnAbilityStateChanged(payload);
-    adapter->OnAppStopped(payload);
-    adapter->OnAppStateChanged(payload);
-#ifdef GAME_PRE_LAUNCH_ENABLE
-    int32_t uid = 456;
-    auto ret = DelayedSingleton<GamePreLaunchMgr>::GetInstance()->IsGamePreLaunchApp(uid);
-    EXPECT_FALSE(ret);
-#endif
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
