@@ -42,6 +42,14 @@ taihe_shared_library("background_task_manager_ani") {
     debug = false
   }
 
+  cflags_cc = [
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fvisibility=hidden",
+    "-fstack-protector-strong",
+    "-Os",
+  ]
+
   taihe_generated_file_path = "$taihe_generated_file_path"
   subsystem_name = "$subsystem_name"
   part_name = "$part_name"
@@ -73,12 +81,9 @@ taihe_shared_library("background_task_manager_ani") {
     "ability_runtime:ani_base_context",
     "ability_runtime:ani_wantagent_common",
     "ability_runtime:napi_base_context",
-    "ability_runtime:napi_common",
-    "ability_runtime:runtime",
     "ability_runtime:wantagent_innerkits",
     "ace_engine:ace_uicontent",
     "c_utils:utils",
-    "common_event_service:cesfwk_innerkits",
     "hilog:libhilog",
     "ipc:ipc_core",
     "samgr:samgr_proxy",
