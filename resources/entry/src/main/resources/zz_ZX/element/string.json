@@ -133,12 +133,32 @@
             "value":"[TS_1194546]_audio/video playback"
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "[TS_1198127]_A NearLink task is in progress. Closing this notification will end it."
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"[TS_1198127]_A NearLink task is in progress. Closing this notification will end it."
         },
         {
-            "name": "notification_text_nearlink",
-            "value": "[TS_1207152]_NearLink"
+            "name":"entry_desc",
+            "value":"[TS_1170353]_description"
+        },
+        {
+            "name":"NotificationServiceExtAbility_label",
+            "value":"[TS_1170355]_NotificationDialog"
+        },
+        {
+            "name":"ohos_app_name",
+            "value":"[TS_972418]_Continuous task notification prompt resource"
+        },
+        {
+            "name":"ohos_bgmode_prompt_default_value",
+            "value":"[TS_972419]_Running continuous task"
+        },
+        {
+            "name":"NotificationServiceExtAbility_desc",
+            "value":"[TS_1170356]_NotificationDialog"
+        },
+        {
+            "name":"notification_text_nearlink",
+            "value":"[TS_1207152]_NearLink"
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",

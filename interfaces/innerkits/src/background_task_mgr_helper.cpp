@@ -125,9 +125,10 @@ ErrCode BackgroundTaskMgrHelper::SuspendContinuousTask(
         uid, pid, reason, key, isStandby);
 }
 
-ErrCode BackgroundTaskMgrHelper::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
+ErrCode BackgroundTaskMgrHelper::ActiveContinuousTask(
+    int32_t uid, int32_t pid, const std::string &key, bool isStandby)
 {
-    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(uid, pid, key);
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->ActiveContinuousTask(uid, pid, key, isStandby);
 }
 
 ErrCode BackgroundTaskMgrHelper::AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish)

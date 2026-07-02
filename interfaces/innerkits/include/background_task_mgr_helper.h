@@ -187,9 +187,10 @@ public:
      * @param uid app uid.
      * @param pid app pid.
      * @param key continuous task key.
+     * @param key isStandby whether it is standby send, default is false.
      * @return Returns ERR_OK if success, else failure.
      */
-    static ErrCode ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
+    static ErrCode ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key, bool isStandby = false);
 
     /**
      * @brief AVsession notify update notification.

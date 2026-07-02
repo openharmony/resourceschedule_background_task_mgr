@@ -19,7 +19,7 @@ import { MeasureUtils } from '@ohos.arkui.UIContext';
 import common from '@ohos.app.ability.common';
 import i18n from '@ohos.i18n';
 
-export function isUgLanguage(): boolean {
+export function isUgLanguange(): boolean {
   try {
     let systemLanguage: string = i18n.System.getSystemLanguage();
     return systemLanguage === 'ug' || systemLanguage === 'ug-CN';

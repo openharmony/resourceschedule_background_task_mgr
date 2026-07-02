@@ -16,8 +16,8 @@
 #include "background_mode.h"
 #include "bg_continuous_task_dumper.h"
 #include "bg_continuous_task_mgr.h"
-#include "common_utils.h"
 #include <sstream>
+#include "common_utils.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {

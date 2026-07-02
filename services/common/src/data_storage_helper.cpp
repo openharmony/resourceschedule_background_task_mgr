@@ -124,6 +124,7 @@ ErrCode DataStorageHelper::RestoreAuthRecord(std::unordered_map<std::string,
             authRecord.emplace(iter.key(), record);
         }
     }
+    RefreshAuthRecord(authRecord);
     return ERR_OK;
 }
 
@@ -250,7 +251,8 @@ bool DataStorageHelper::GetAuthRecord(UniqueFd &fd)
         BGTASK_LOGE("OnRestore fail: ReadFileDescriptor or fstat fail");
         return false;
     }
-    // 告警：在resize需要对st_size进行上界或下界判定
+    // 安全规范告警：在resize需要对statBuf.st_size进行上界或下界判定
+    // 单个记录的size大小为400，此处设置为1000个应用的记录大小
     int32_t fileSize = statBuf.st_size;
     if (fileSize > MAX_AUTH_RECORD_SIZE) {
         BGTASK_LOGE("OnRestore fail: file size exceeding the limit.");

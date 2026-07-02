@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"正在播放音訊/影片，若移除通知，將中斷播放",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {

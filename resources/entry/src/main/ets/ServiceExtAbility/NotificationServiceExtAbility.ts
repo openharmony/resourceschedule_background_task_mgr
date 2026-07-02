@@ -105,13 +105,46 @@ export class EnableBgTaskAuthDialog {
       if (deviceTypeInfo === '2in1') {
         path = EnableBgTaskAuthDialog.PC_DIALOG_PATH;
       }
-      await session.loadContent(path, this.storage);  
+
+      if (stageModel) {
+        let subWindowOpts : window.SubWindowOptions = {
+          'title': '',
+          decorEnabled: false,
+          isModal: true,
+          isTopmost: true
+        };
+        let subWindow = await extensionWindow.createSubWindowWithOptions('subWindowForHost' + Date(), subWindowOpts);
+        this.subWindow = subWindow;
+        let windowRect = extensionWindow.properties?.uiExtensionHostWindowProxyRect; 
+        console.info(TAG, `size : ${windowRect?.left} ${windowRect?.top} ${windowRect?.width}  ${windowRect?.height}`); 
+        if (windowRect.width > 0 && windowRect.height > 0) { 
+          console.log(TAG, `valid rect data`); 
+          await subWindow.moveWindowToGlobal(windowRect?.left, windowRect?.top); 
+          await subWindow.resize(windowRect?.width, windowRect?.height); 
+          this.initSubWindowSize = true; 
+        }
+        try {
+          await subWindow.setFollowParentWindowLayoutEnabled(true); 
+        } catch (err) {
+          console.error(TAG, `setFollowParentWindowLayoutEnabled failed! ${err.code} ${err.message}`);
+        }
+        await subWindow.loadContent(path, this.storage);
+        try {
+          await subWindow.hideNonSystemFloatingWindows(true);
+        } catch (err) {
+          console.error(TAG, 'subWindow hideNonSystemFloatingWindows failed!');
+        }
+        await subWindow.setWindowBackgroundColor(EnableBgTaskAuthDialog.TRANSPARANT_COLOR);
+        await subWindow.showWindow();
+      } else {
+        await session.loadContent(path, this.storage);  
         try {    
           await extensionWindow.hideNonSecureWindows(shouldHide);
         } catch (err) {
           console.error(TAG, 'window hideNonSecureWindows failed!');
         }
         await session.setWindowBackgroundColor(EnableBgTaskAuthDialog.TRANSPARANT_COLOR);
+      }
     } catch (err) {
       console.error(TAG, 'window create failed!');
       throw new Error('Failed to create window');

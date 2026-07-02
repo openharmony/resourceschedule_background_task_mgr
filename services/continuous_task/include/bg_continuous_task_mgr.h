@@ -123,7 +123,6 @@ public:
         int32_t apiVersion = API_VERSION_CHECK_SPECIAL_USER_AUTH);
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex);
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable);
-
     ErrCode SetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
     ErrCode GetBackgroundTaskState(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
     ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
@@ -165,7 +164,7 @@ public:
     void OnBundleResourcesChanged();
     void OnBundleResourcesChangedInner();
     void OnPermissionDialogButtonClickInner(int32_t authResult, int32_t bundleUid, const std::string &bundleName,
- 	  	int32_t appIndex);
+        int32_t appIndex);
     ErrCode NotifyAudioStart(const int32_t uid);
     std::shared_ptr<AppExecFwk::EventHandler> GetHandler() const;
 private:
@@ -308,11 +307,11 @@ private:
     ErrCode RemoveAuthRecordInner(const std::shared_ptr<ContinuousTaskRecord> record);
     void InitNotificationText();
     void NotifyAudioStartInner(const int32_t uid);
-    void HisysEventRequestAuth(const std::shared_ptr<BannerNotificationRecord> authRecord);
     bool InitSubNotificationRecord(const std::shared_ptr<ContinuousTaskRecord> record,
         std::shared_ptr<ContinuousTaskRecord> subRecord);
     void OnBannerNotificationActionButtonClickInner(const int32_t buttonType,
         const int32_t uid, const std::string &label);
+    void HisysEventRequestAuth(const std::shared_ptr<BannerNotificationRecord> authRecord);
 private:
     std::atomic<bool> isSysReady_ {false};
     int32_t bgTaskUid_ {-1};

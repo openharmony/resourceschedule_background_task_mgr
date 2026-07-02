@@ -141,8 +141,22 @@
             }
         },
         {
-            "name":"ohos_bgmode_prompt_nearlink",
-            "value":"NearLink görevi devam ediyor. Bu bildirim kapatılırsa görev sonlandırılır.",
+            "name":"notification_text_bluetooth_interactionn",
+            "value":"Bluetooth",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_wifi_interaction",
+            "value":"WLAN",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_voip",
+            "value":"arama",
             "attr":{
                 "priority":"translate"
             }
@@ -169,29 +183,8 @@
             }
         },
         {
-            "name":"notification_text_bluetooth_interactionn",
-            "value":"Bluetooth",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"notification_text_wifi_interaction",
-            "value":"WLAN",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"notification_text_location",
             "value":"konumlandırma",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"notification_text_voip",
-            "value":"arama",
             "attr":{
                 "priority":"translate"
             }
@@ -234,6 +227,13 @@
         {
             "name":"notification_text_audio_playbackr",
             "value":"ses/video oynatma",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"NearLink görevi devam ediyor. Bu bildirim kapatılırsa görev sonlandırılır.",
             "attr":{
                 "priority":"translate"
             }
