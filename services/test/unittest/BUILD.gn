@@ -438,7 +438,7 @@ ohos_unittest("bgtask_plugin_unit_test") {
     cflags_cc += [ "-DHAS_OS_ACCOUNT_PART" ]
     external_deps += [ "os_account:os_account_innerkits" ]
   }
- 
+
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
 }

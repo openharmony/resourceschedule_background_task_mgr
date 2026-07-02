@@ -32,6 +32,7 @@ ohos_unittest("bgtask_manager_abnormal_unit_test") {
   sources = [
     "bgtask_manager_abnormal_unit_test.cpp",
     "mock/src/mock_accesstoken_kit.cpp",
+    "mock/src/mock_ipc_calling.cpp",
     "mock/src/mock_system_ability.cpp",
   ]
 

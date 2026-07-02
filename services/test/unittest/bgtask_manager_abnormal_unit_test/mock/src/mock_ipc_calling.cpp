@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "ipc_skeleton.h"
+
+namespace OHOS {
+#ifdef CONFIG_IPC_SINGLE
+using namespace IPC_SINGLE;
+#endif
+
+namespace {
+    int32_t g_mockUid = -1;
+}
+
+void BgMockIpcUid(int32_t mockUid)
+{
+    g_mockUid = mockUid;
+}
+
+int32_t IPCSkeleton::GetCallingUid()
+{
+    if (g_mockUid != -1) {
+        return g_mockUid;
+    }
+    int32_t uid = 1;
+    return uid;
+}
+
+int32_t IPCSkeleton::GetCallingPid()
+{
+    int32_t pid = 1;
+    return pid;
+}
+}  // namespace OHOS
