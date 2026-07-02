@@ -52,6 +52,8 @@ public:
     bool IsFrontApp(const string& pkgName, int32_t uid);
     vector<int32_t> GetRequestIdListByKey(const std::shared_ptr<KeyInfo>& key);
     void OnProcessStateChanged(const AppExecFwk::ProcessData &processData);
+    void OnProcessDied(const AppExecFwk::ProcessData &processData);
+    bool IsUidForeground(int32_t uid);
     void HandleStateChange(const std::string &bundleName, int32_t uid, bool isForeground, bool isBackground);
 
 private:
@@ -71,6 +73,7 @@ private:
     ErrCode CheckQuotaTime(const std::shared_ptr<PkgDelaySuspendInfo>& pkgInfo, const std::string &name,
         int32_t uid, const std::shared_ptr<KeyInfo>& key, bool& needSetTime);
     void UpdateForegroundUidPidMap(int32_t uid, int32_t pid, bool isForeground);
+    ErrCode TryStartAccounting(int32_t uid, const std::string &bundleName);
 
     const int32_t initRequestId_ = 1;
     int32_t requestId_ {initRequestId_};

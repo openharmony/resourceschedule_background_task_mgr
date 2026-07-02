@@ -57,6 +57,34 @@ void DecisionMaker::OnProcessStateChanged(const AppExecFwk::ProcessData &process
     }
 }
 
+void DecisionMaker::OnProcessDied(const AppExecFwk::ProcessData &processData)
+{
+    UpdateForegroundUidPidMap(processData.uid, processData.pid, false);
+    if (TryStartAccounting(processData.uid, processData.bundleName) == ERR_OK) {
+        BGTASK_LOGI("%{public}s_%{public}d start accounting because pid:%{public}d died",
+            processData.bundleName.c_str(), processData.uid, processData.pid);
+    }
+}
+
+ErrCode DecisionMaker::TryStartAccounting(int32_t uid, const std::string &bundleName)
+{
+    lock_guard<mutex> lock(lock_);
+    auto key = std::make_shared<KeyInfo>(bundleName, uid);
+    auto it = pkgDelaySuspendInfoMap_.find(key);
+    if (it == pkgDelaySuspendInfoMap_.end()) {
+        BGTASK_LOGD("pkgname: %{public}s, uid: %{public}d not request transient task.", bundleName.c_str(), uid);
+        return ERR_BGTASK_NOREQUEST_TASK;
+    }
+    if (CanStartAccountingLocked(it->second)) {
+        BGTASK_LOGD("pkgname: %{public}s, uid: %{public}d start accounting", bundleName.c_str(), uid);
+        it->second->StartAccounting();
+        return ERR_OK;
+    } else {
+        BGTASK_LOGD("pkgname: %{public}s, uid: %{public}d can't start accounting", bundleName.c_str(), uid);
+        return ERR_BGTASK_FOREGROUND;
+    }
+}
+
 void DecisionMaker::UpdateForegroundUidPidMap(int32_t uid, int32_t pid, bool isForeground)
 {
     lock_guard<recursive_mutex> lock(recMutex_);
@@ -69,6 +97,12 @@ void DecisionMaker::UpdateForegroundUidPidMap(int32_t uid, int32_t pid, bool isF
             foregroundUidPidMap_.erase(uid);
         }
     }
+}
+
+bool DecisionMaker::IsUidForeground(int32_t uid)
+{
+    lock_guard<recursive_mutex> lock(recMutex_);
+    return foregroundUidPidMap_.count(uid) != 0;
 }
 
 void DecisionMaker::HandleStateChange(
@@ -195,13 +229,12 @@ ErrCode DecisionMaker::Decide(const std::shared_ptr<KeyInfo>& key, const std::sh
 
 ErrCode DecisionMaker::PauseTransientTaskTimeForInner(int32_t uid, const std::string &name)
 {
-    lock_guard<mutex> lock(lock_);
-    auto key = std::make_shared<KeyInfo>(name, uid);
-    auto itBg = pkgBgDurationMap_.find(key);
-    if (itBg == pkgBgDurationMap_.end()) {
+    if (IsUidForeground(uid)) {
         BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d is foreground applicaion.", name.c_str(), uid);
         return ERR_BGTASK_FOREGROUND;
     }
+    lock_guard<mutex> lock(lock_);
+    auto key = std::make_shared<KeyInfo>(name, uid);
     auto it = pkgDelaySuspendInfoMap_.find(key);
     if (it == pkgDelaySuspendInfoMap_.end()) {
         BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d not request transient task.", name.c_str(), uid);
@@ -214,24 +247,14 @@ ErrCode DecisionMaker::PauseTransientTaskTimeForInner(int32_t uid, const std::st
 
 ErrCode DecisionMaker::StartTransientTaskTimeForInner(int32_t uid, const std::string &name)
 {
-    lock_guard<mutex> lock(lock_);
-    auto key = std::make_shared<KeyInfo>(name, uid);
-    auto itBg = pkgBgDurationMap_.find(key);
-    if (itBg == pkgBgDurationMap_.end()) {
+    if (IsUidForeground(uid)) {
         BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d is foreground applicaion.", name.c_str(), uid);
         return ERR_BGTASK_FOREGROUND;
     }
-    auto it = pkgDelaySuspendInfoMap_.find(key);
-    if (it == pkgDelaySuspendInfoMap_.end()) {
-        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d not request transient task.", name.c_str(), uid);
-        return ERR_BGTASK_NOREQUEST_TASK;
-    }
-    auto pkgInfo = it->second;
-    if (CanStartAccountingLocked(pkgInfo)) {
-        pkgInfo->StartAccounting();
-    } else {
-        BGTASK_LOGE("pkgname: %{public}s, uid: %{public}d can't can startAccountingLocked.", name.c_str(), uid);
-        return ERR_BGTASK_FOREGROUND;
+    ErrCode ret = TryStartAccounting(uid, name);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("pkgname:%{public}s, uid:%{public}d start accounting fail:%{public}d", name.c_str(), uid, ret);
+        return ret;
     }
     return ERR_OK;
 }
@@ -343,9 +366,7 @@ bool DecisionMaker::CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspe
             uid, bundleName.c_str());
         return true;
     }
-
-    lock_guard<recursive_mutex> lock(recMutex_);
-    return foregroundUidPidMap_.count(uid) == 0;
+    return !IsUidForeground(uid);
 }
 
 int32_t DecisionMaker::GetDelayTime()

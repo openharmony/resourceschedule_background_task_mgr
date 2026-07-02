@@ -551,7 +551,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_043, TestSize.Level1)
         bundleName = SCB_BUNDLE_NAME;
         uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
     }
-    bgTransientTaskMgr_->decisionMaker_->pkgBgDurationMap_.clear();
+    bgTransientTaskMgr_->decisionMaker_->foregroundUidPidMap_[uid].insert(1);
     EXPECT_NE(bgTransientTaskMgr_->PauseTransientTaskTimeForInner(uid), ERR_OK);
 }
 
@@ -579,7 +579,7 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_044, TestSize.Level1)
         bundleName = SCB_BUNDLE_NAME;
         uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
     }
-    bgTransientTaskMgr_->decisionMaker_->pkgBgDurationMap_.clear();
+    bgTransientTaskMgr_->decisionMaker_->foregroundUidPidMap_[uid].insert(1);
     EXPECT_NE(bgTransientTaskMgr_->StartTransientTaskTimeForInner(uid), ERR_OK);
 }
 
