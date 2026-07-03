@@ -161,7 +161,7 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStart(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("HandleOnContinuousTaskStart called");
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find("subscribeContinuousTaskState");
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type");
@@ -218,7 +218,7 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskUpdate(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("HandleOnContinuousTaskUpdate called");
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find("subscribeContinuousTaskState");
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type");
@@ -276,7 +276,7 @@ void JsBackgroundTaskSubscriber::HandleSubscribeOnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("HandleSubscribeOnContinuousTaskStop called");
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find("subscribeContinuousTaskState");
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type subscribeContinuousTaskState");
@@ -308,7 +308,7 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
 {
     HandleSubscribeOnContinuousTaskStop(continuousTaskCallbackInfo);
     BGTASK_LOGI("HandleOnContinuousTaskStop called");
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find("continuousTaskCancel");
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type");
@@ -373,7 +373,7 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("HandleOnContinuousTaskSuspend called");
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find("continuousTaskSuspend");
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type: continuousTaskSuspend");
@@ -453,7 +453,7 @@ void JsBackgroundTaskSubscriber::HandleOnContinuousTaskActive(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("HandleOnContinuousTaskActive called");
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find("continuousTaskActive");
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type: continuousTaskActive");
@@ -492,7 +492,7 @@ void JsBackgroundTaskSubscriber::AddJsObserverObject(const std::string cbType, c
     if (GetObserverObject(cbType, jsObserverObject) == nullptr) {
         napi_ref ref = nullptr;
         napi_create_reference(env_, jsObserverObject, 1, &ref);
-        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+        std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
         jsObserverObjectMap_[cbType].emplace(
             std::shared_ptr<NativeReference>(reinterpret_cast<NativeReference *>(ref)));
         BGTASK_LOGI("add observer, type: %{public}s, size: %{public}d", cbType.c_str(),
@@ -510,7 +510,7 @@ std::shared_ptr<NativeReference> JsBackgroundTaskSubscriber::GetObserverObject(
         return nullptr;
     }
 
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find(cbType);
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type: %{public}s", cbType.c_str());
@@ -540,20 +540,20 @@ std::shared_ptr<NativeReference> JsBackgroundTaskSubscriber::GetObserverObject(
  
 bool JsBackgroundTaskSubscriber::IsEmpty()
 {
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     return jsObserverObjectMap_.empty();
 }
 
 bool JsBackgroundTaskSubscriber::IsTypeEmpty(const std::string &cbType)
 {
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find(cbType);
     return iter == jsObserverObjectMap_.end();
 }
 
 void JsBackgroundTaskSubscriber::RemoveJsObserverObjects(const std::string cbType)
 {
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find(cbType);
     if (iter != jsObserverObjectMap_.end()) {
         jsObserverObjectMap_.erase(cbType);
@@ -568,7 +568,7 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType
     }
     auto observer = GetObserverObject(cbType, jsObserverObject);
     if (observer != nullptr) {
-        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+        std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
         int32_t size = static_cast<int32_t>(jsObserverObjectMap_[cbType].size());
         if (size == 1) {
             jsObserverObjectMap_.erase(cbType);
