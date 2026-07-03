@@ -232,10 +232,10 @@
             }
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "هناك مهمة NearLink جارية. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
-            "attr": {
-                "priority": "translate"
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"هناك مهمة NearLink جارية. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
+            "attr":{
+                "priority":"translate"
             }
         },
         {

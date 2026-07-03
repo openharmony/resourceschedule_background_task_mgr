@@ -178,7 +178,7 @@
         },
         {
             "name":"notification_text_bluetooth_interactionn",
-            "value":"蓝牙相关",
+            "value":"蓝牙",
             "attr":{
                 "priority":"translate"
             }
@@ -192,14 +192,14 @@
         },
         {
             "name":"notification_text_wifi_interaction",
-            "value":"WLAN相关",
+            "value":"WLAN",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"notification_text_voip",
-            "value":"通话相关",
+            "value":"通话",
             "attr":{
                 "priority":"translate"
             }

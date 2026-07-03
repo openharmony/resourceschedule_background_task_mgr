@@ -232,7 +232,7 @@ public:
      * @param pid app pid.
      * @param reason continuous task suspend reason.
      * @param key continuous task key.
-     * @param key isStandby whether it is standby send, default is false.
+     * @param isStandby whether it is standby send, default is false.
      * @return Returns ERR_OK if success, else failure.
      */
     ErrCode SuspendContinuousTask(
@@ -243,9 +243,10 @@ public:
      * @param uid app uid.
      * @param pid app pid.
      * @param key continuous task key.
+     * @param isStandby whether it is standby send, default is false.
      * @return Returns ERR_OK if success, else failure.
      */
-    ErrCode ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
+    ErrCode ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key, bool isStandby = false);
 
     /**
      * @brief AVsession notify update notification.

@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"Odtwarzanie audio/wideo. Zamknięcie tego powiadomienia spowoduje zakończenie odtwarzania.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {

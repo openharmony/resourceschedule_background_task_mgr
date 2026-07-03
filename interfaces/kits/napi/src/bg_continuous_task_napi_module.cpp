@@ -1442,7 +1442,7 @@ napi_value GetAllContinuousTasks(napi_env env, napi_callback_info info, bool isT
     size_t argc = MAX_GET_ALL_CONTINUOUSTASK_PARAMS;
     napi_value argv[MAX_GET_ALL_CONTINUOUSTASK_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    
+
     if (!GetAllContinuousTasksCheckParamBeforeSubmit(env, argc, argv, isThrow, asyncCallbackInfo)) {
         callbackPtr.release();
         if (asyncCallbackInfo != nullptr) {
@@ -1854,7 +1854,7 @@ napi_value SubscribeContinuousTaskState(napi_env env, napi_callback_info info)
     backgroundTaskSubscriber_->SubscriberBgtaskSaStatusChange();
     return WrapUndefinedToJS(env);
 }
-
+ 
 napi_value UnSubscribeContinuousTaskState(napi_env env, napi_callback_info info)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
@@ -1912,12 +1912,12 @@ napi_value GetAllContinuousTasksThrow(napi_env env, napi_callback_info info)
 
 napi_value CheckSpecialScenarioAuthResult(napi_env env, napi_callback_info info)
 {
-    return CheckSpecialScenarioUserAuth(env, info, API_VERSION_CHECK_SPECIAL_USER_AUTH);
+    return CheckSpecialScenarioUserAuth(env, info, API_VERSION_CHECK_SPECIAL_USER_AUTH_RESULT);
 }
 
 napi_value CheckSpecialScenarioAuth(napi_env env, napi_callback_info info)
 {
-    return CheckSpecialScenarioUserAuth(env, info, API_VERSION_CHECK_SPECIAL_USER_AUTH_RESULT);
+    return CheckSpecialScenarioUserAuth(env, info, API_VERSION_CHECK_SPECIAL_USER_AUTH);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

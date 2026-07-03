@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"오디오/비디오를 재생 중입니다. 이 알림을 닫으면 재생이 종료됩니다.",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {

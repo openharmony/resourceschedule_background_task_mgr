@@ -118,6 +118,15 @@ static const char *g_startingTaskNotificationResNames[] = {
     "notification_text_starting_task",
 };
 
+static const char *g_btnBannerNotification[] = {
+    "btn_allow_time",
+    "btn_allow_allowed",
+};
+
+static const char *g_textBannerNotification[] = {
+    "text_banner_notification_allow_background_keepalive",
+};
+
 static const std::map<int32_t, InnerApiReqBgRunningConfig> g_innerApiReqBgRunningConfig = {
     {7022, InnerApiReqBgRunningConfig(BackgroundMode::VOIP, false)},                         // VOIP_SA
     {5520, InnerApiReqBgRunningConfig(BackgroundMode::SPECIAL_SCENARIO_PROCESSING, false)},  // CFWK_SA
@@ -127,15 +136,6 @@ static const std::map<int32_t, InnerApiReqBgRunningConfig> g_innerApiReqBgRunnin
 #else
     {7259, InnerApiReqBgRunningConfig(BackgroundMode::WORKOUT, false)},  // HEALTHSPORT_SA
 #endif
-};
-
-static const char *g_btnBannerNotification[] = {
-    "btn_allow_time",
-    "btn_allow_allowed",
-};
-
-static const char *g_textBannerNotification[] = {
-    "text_banner_notification_allow_background_keepalive",
 };
 
 static constexpr char XPOWER_HISYSEVENT_DOMAIN[] = "POWERTHERMAL";
@@ -1371,10 +1371,10 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningSubmit(std::shared_ptr<Contin
         }
     }
     BGTASK_LOGI("background task mode: %{public}u, modes %{public}s, isBatchApi %{public}d, uid %{public}d, "
-        "abilityId %{public}d, continuousTaskId: %{public}d, isBatchApi %{public}d", continuousTaskRecord->bgModeId_,
+        "abilityId %{public}d, continuousTaskId: %{public}d", continuousTaskRecord->bgModeId_,
         continuousTaskRecord->ToString(continuousTaskRecord->bgModeIds_).c_str(),
         continuousTaskRecord->isBatchApi_, continuousTaskRecord->uid_, continuousTaskRecord->abilityId_,
-        continuousTaskRecord->continuousTaskId_, continuousTaskRecord->isByRequestObject_);
+        continuousTaskRecord->continuousTaskId_);
     continuousTaskInfosMap_.emplace(taskInfoMapKey, continuousTaskRecord);
     OnContinuousTaskChanged(continuousTaskRecord, ContinuousTaskEventTriggerType::TASK_START);
     return RefreshTaskRecord();
@@ -2039,8 +2039,8 @@ void BgContinuousTaskMgr::HandleSuspendContinuousTaskByStandby(
         return;
     }
     auto& taskInfo = iter->second;
-    if (taskInfo->GetUid() != uid || taskInfo->isStandbySuspend_) {
-        BGTASK_LOGW("suspend TaskInfo failure, no matched task: %{public}s", key.c_str());
+    if (taskInfo->GetUid() != uid || taskInfo->suspendState_ || taskInfo->isStandbySuspend_) {
+        BGTASK_LOGW("suspend uid or state fail, task: %{public}s", key.c_str());
         return;
     }
     BGTASK_LOGW("HandleSuspendContinuousTaskByStandby mode: %{public}d, key %{public}s, uid %{public}d",
@@ -2117,6 +2117,7 @@ void BgContinuousTaskMgr::HandleActiveContinuousTaskByStandby(int32_t uid, int32
 {
     for (auto &iter : continuousTaskInfosMap_) {
         if (iter.second->GetUid() != uid || !iter.second->isStandbySuspend_) {
+            BGTASK_LOGW("active uid or standbySuspend fail, task: %{public}s", key.c_str());
             continue;
         }
         BGTASK_LOGI("HandleActiveContinuousTaskByStandby uid: %{public}d, pid: %{public}d", uid, pid);
@@ -3575,7 +3576,7 @@ ErrCode BgContinuousTaskMgr::CheckAuthParam(std::shared_ptr<ContinuousTaskRecord
             BGTASK_LOGE("bundleName: %{public}s module.json not deploy special type.", record->bundleName_.c_str());
             return ERR_BGTASK_CONTINUOUS_NOT_DEPLOY_SPECIAL_SCENARIO_PROCESSING;
         }
-        // 请求授权时，已经存在本次允许或始终允许授权记录，直接回调结果，API 26添加用户拒绝时直接回调结果
+        // 请求授权时，已经存在本次允许或始终允许授权记录，直接回调结果，API26添加用户拒绝时直接回调结果
         if (authResult == static_cast<int32_t>(UserAuthResult::GRANTED_ONCE) ||
             authResult == static_cast<int32_t>(UserAuthResult::GRANTED_ALWAYS) ||
             (apiVersion == API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG &&
@@ -3611,7 +3612,7 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUserInner(std::shared_ptr<Continuous
     bannerNotification->SetAppIndex(record->appIndex_);
     notificationId = record->uid_;
     if (apiVersion == API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG) {
-        // API26检查是否属于不支持场景（未配置module.json），是的话，直接回调不支持
+        // API26检查是否属于不支持场景(未配置module.json)，是的话，直接回调不支持
         if (!CheckApplySpecial(record->bundleName_, record->userId_, false)) {
             int32_t authResult = static_cast<int32_t>(UserAuthResult::NOT_SUPPORTED);
             callback->OnExpiredAuth(authResult);
@@ -3628,7 +3629,7 @@ ErrCode BgContinuousTaskMgr::RequestAuthFromUserInner(std::shared_ptr<Continuous
         ret = NotificationTools::GetInstance()->PublishBannerNotification(bannerNotification, bannerContent,
             bgTaskUid_, bannerNotificationBtn_);
         if (ret != ERR_OK) {
-            BGTASK_LOGE("uid: %{public}d send banner notification fail.", record->uid_);
+            BGTASK_LOGE("uid: %{public}d send banner notification fail, code: %{public}d.", record->uid_, ret);
             return ERR_BGTASK_CONTINUOUS_BANNER_NOTIFICATION_FAIL;
         }
         notificationId = bannerNotification->GetNotificationId();
@@ -4428,6 +4429,30 @@ void BgContinuousTaskMgr::NotifyAudioStartInner(const int32_t uid)
     }
 }
 
+ErrCode BgContinuousTaskMgr::CancelNotification(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo)
+{
+    ErrCode result = ERR_OK;
+    int32_t notificationId = continuousTaskInfo->GetNotificationId();
+    if (notificationId != -1) {
+        std::string notificationLabel = continuousTaskInfo->GetNotificationLabel();
+        auto findNotification = [notificationId, notificationLabel](const auto &target) {
+            return notificationId == target.second->notificationId_ &&
+                notificationLabel == target.second->notificationLabel_;
+        };
+        auto findNotificationIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(),
+            findNotification);
+        if (findNotificationIter == continuousTaskInfosMap_.end()) {
+            result = NotificationTools::GetInstance()->CancelNotification(notificationLabel, notificationId);
+            int32_t subNotificationId = continuousTaskInfo->GetSubNotificationId();
+            if (subNotificationId != -1 && continuousTaskInfo->isByRequestObject_) {
+                std::string subNotificationLabel = continuousTaskInfo->GetSubNotificationLabel();
+                result = NotificationTools::GetInstance()->CancelNotification(subNotificationLabel, subNotificationId);
+            }
+        }
+    }
+    return result;
+}
+
 void BgContinuousTaskMgr::OnBannerNotificationActionButtonClick(const int32_t buttonType,
     const int32_t uid, const std::string &label)
 {
@@ -4497,30 +4522,6 @@ void BgContinuousTaskMgr::HisysEventRequestAuth(const std::shared_ptr<BannerNoti
         "FUNC_NAME", std::vector<std::string>{""},
         "ERR_CODE", std::vector<int32_t>{-1},
         "ERR_MSG", std::vector<std::string>{"Request user authorization for using special type continuous tasks"});
-}
-
-ErrCode BgContinuousTaskMgr::CancelNotification(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo)
-{
-    ErrCode result = ERR_OK;
-    int32_t notificationId = continuousTaskInfo->GetNotificationId();
-    if (notificationId != -1) {
-        std::string notificationLabel = continuousTaskInfo->GetNotificationLabel();
-        auto findNotification = [notificationId, notificationLabel](const auto &target) {
-            return notificationId == target.second->notificationId_ &&
-                notificationLabel == target.second->notificationLabel_;
-        };
-        auto findNotificationIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(),
-            findNotification);
-        if (findNotificationIter == continuousTaskInfosMap_.end()) {
-            result = NotificationTools::GetInstance()->CancelNotification(notificationLabel, notificationId);
-            int32_t subNotificationId = continuousTaskInfo->GetSubNotificationId();
-            if (subNotificationId != -1 && continuousTaskInfo->isByRequestObject_) {
-                std::string subNotificationLabel = continuousTaskInfo->GetSubNotificationLabel();
-                result = NotificationTools::GetInstance()->CancelNotification(subNotificationLabel, subNotificationId);
-            }
-        }
-    }
-    return result;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

@@ -50,7 +50,6 @@ public:
     std::string GetBundleName() const;
     std::string GetAbilityName() const;
     bool IsNewApi() const;
-    // 标记是否通过内部API申请的长时任务
     bool IsFromWebview() const;
     uint32_t GetBgModeId() const;
     int32_t GetUserId() const;
@@ -82,6 +81,7 @@ private:
     pid_t pid_ {0};
     uint32_t bgModeId_ {0};
     bool isNewApi_ {false};
+    // 标记是否通过内部API申请的长时任务
     bool isFromWebview_ {false};
     // 标记通过SA申请长时任务是否需要发送通知
     bool needNotificationForInnerApi_ {false};
@@ -109,10 +109,10 @@ private:
     bool isByRequestObject_ {false};
     int32_t appIndex_ {-1};
     bool audioDetectState_ {true};
-    bool isStandby_ {false};
     bool audioPlayState_ {true};
+    bool isStandby_ {false};
     bool isStandbySuspend_ {false};
-    
+
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;
 };

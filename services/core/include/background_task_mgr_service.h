@@ -93,7 +93,7 @@ public:
     ErrCode StopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key) override;
     ErrCode SuspendContinuousTask(
         int32_t uid, int32_t pid, int32_t reason, const std::string &key, bool isStandby = false) override;
-    ErrCode ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key) override;
+    ErrCode ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key, bool isStandby = false) override;
     ErrCode AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish = false) override;
     ErrCode SetBgTaskConfig(const std::string &configData, int32_t sourceType) override;
     ErrCode SuspendContinuousAudioTask(int32_t uid) override;
@@ -103,7 +103,7 @@ public:
     ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam, const sptr<IExpiredCallback> &callback,
         int32_t &notificationId) override;
     ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult,
-        int32_t apiVersion = API_VERSION_REQUEST_SPECIAL_USER_AUTH) override;
+        int32_t apiVersion = API_VERSION_CHECK_SPECIAL_USER_AUTH) override;
     ErrCode CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex) override;
     ErrCode EnableContinuousTaskRequest(int32_t uid, bool isEnable) override;
     ErrCode SetBackgroundTaskState(const BackgroundTaskStateInfo &taskParam) override;

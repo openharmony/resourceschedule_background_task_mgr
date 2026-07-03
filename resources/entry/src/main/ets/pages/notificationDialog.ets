@@ -22,7 +22,7 @@ import {
   getFontSizeScale,
   sourceToVp,
   getLimitFontSize,
-  isUgLanguage } from '../common/utils';
+  isUgLanguange } from '../common/utils';
 import Constants from '../common/constant';
 import { EnableBgTaskAuthDialog } from '../ServiceExtAbility/NotificationServiceExtAbility';
 import { Callback} from '@ohos.base';
@@ -116,7 +116,7 @@ struct PermissionDialog {
                   .textOverflow({overflow: TextOverflow.Ellipsis})
                   .width(this.titleContainerWidth)
                   .textAlign(TextAlign.Center)
-                  .direction(isUgLanguage() ? Direction.Rtl : Direction.Ltr)
+                  .direction(isUgLanguange() ? Direction.Rtl : Direction.Ltr)
                 }
                 .margin({
                   top: Constants.DIALOG_REQ_MARGIN_TOP,

@@ -72,8 +72,8 @@ void BackgroundTaskMgrService::OnStart()
     AddSystemAbilityListener(SA_ID_VOIP_CALL_MANAGER);
     AddSystemAbilityListener(SA_ID_HEALTH_SPORT);
     AddSystemAbilityListener(SUSPEND_MANAGER_SYSTEM_ABILITY_ID);
-    AddSystemAbilityListener(RES_SCHED_SYS_ABILITY_ID);
     AddSystemAbilityListener(SA_ID_AAM_CONN);
+    AddSystemAbilityListener(RES_SCHED_SYS_ABILITY_ID);
 }
 
 void BackgroundTaskMgrService::SetReady(uint32_t flag)
@@ -564,13 +564,14 @@ ErrCode BackgroundTaskMgrService::SuspendContinuousTask(
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskMgrService::ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
+ErrCode BackgroundTaskMgrService::ActiveContinuousTask(
+    int32_t uid, int32_t pid, const std::string &key, bool isStandby)
 {
     if (!CheckCallingToken() || !CheckCallingProcess()) {
         BGTASK_LOGW("ActiveContinuousTask not allowed");
         return ERR_BGTASK_PERMISSION_DENIED;
     }
-    BgContinuousTaskMgr::GetInstance()->ActiveContinuousTask(uid, pid, key);
+    BgContinuousTaskMgr::GetInstance()->ActiveContinuousTask(uid, pid, key, isStandby);
     return ERR_OK;
 }
 
@@ -678,7 +679,7 @@ ErrCode BackgroundTaskMgrService::CheckSpecialScenarioAuth(int32_t appIndex, uin
         BGTASK_LOGE("api version: %{public}d is fail.", apiVersion);
         return ERR_BGTASK_CONTINUOUS_API_VERSION_FAIL;
     }
-    return BgContinuousTaskMgr::GetInstance()->CheckSpecialScenarioAuth(appIndex, authResult);
+    return BgContinuousTaskMgr::GetInstance()->CheckSpecialScenarioAuth(appIndex, authResult, apiVersion);
 }
 
 ErrCode BackgroundTaskMgrService::CheckTaskAuthResult(const std::string &bundleName, int32_t userId, int32_t appIndex)

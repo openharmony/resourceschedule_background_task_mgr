@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"กำลังเล่นเสียง/วิดีโอ การปิดการแจ้งเตือนนี้จะยุติการเล่น",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
@@ -232,10 +232,10 @@
             }
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "มีงาน NearLink ที่ดำเนินการอยู่ การปิดการแจ้งเตือนนี้จะเป็นการสิ้นสุดการดำเนินการ",
-            "attr": {
-                "priority": "translate"
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"มีงาน NearLink ที่ดำเนินการอยู่ การปิดการแจ้งเตือนนี้จะเป็นการสิ้นสุดการดำเนินการ",
+            "attr":{
+                "priority":"translate"
             }
         },
         {

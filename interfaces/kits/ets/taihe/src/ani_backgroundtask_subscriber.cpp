@@ -205,6 +205,10 @@ void AniBackgroundTaskSubscriber::OnContinuousTaskUpdate(
 void AniBackgroundTaskSubscriber::OnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskCallbackInfo is null");
+        return;
+    }
     BGTASK_LOGI("OnContinuousTaskStop abilityname %{public}s continuousTaskId %{public}d cancelReason %{public}d",
         continuousTaskCallbackInfo->GetAbilityName().c_str(),
         continuousTaskCallbackInfo->GetContinuousTaskId(),
@@ -251,6 +255,10 @@ void AniBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
 void AniBackgroundTaskSubscriber::OnContinuousTaskSuspend(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskCallbackInfo is null");
+        return;
+    }
     BGTASK_LOGI("OnContinuousTaskSuspend abilityname: %{public}s, continuousTaskId: %{public}d,"
         "suspendReason: %{public}d, suspendState: %{public}d", continuousTaskCallbackInfo->GetAbilityName().c_str(),
         continuousTaskCallbackInfo->GetContinuousTaskId(), continuousTaskCallbackInfo->GetSuspendReason(),
@@ -303,6 +311,10 @@ void AniBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
 void AniBackgroundTaskSubscriber::OnContinuousTaskActive(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
+    if (continuousTaskCallbackInfo == nullptr) {
+        BGTASK_LOGE("continuousTaskCallbackInfo is null");
+        return;
+    }
     BGTASK_LOGI("OnContinuousTaskActive abilityname: %{public}s, continuousTaskId: %{public}d",
         continuousTaskCallbackInfo->GetAbilityName().c_str(), continuousTaskCallbackInfo->GetContinuousTaskId());
     auto task = [self = weak_from_this(), continuousTaskCallbackInfo]() {

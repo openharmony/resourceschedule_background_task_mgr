@@ -31,6 +31,7 @@ using namespace AppExecFwk;
 using namespace OHOS::ResourceSchedule;
 namespace {
 const bool SELF_REGISTER = AppStateObserverPluginAdapter::SelfRegister();
+static constexpr int32_t RES_TYPE_EXT_ON_APP_CACHED_STATE_CHANGED = 10008;
 }
 
 bool AppStateObserverPluginAdapter::SelfRegister()
@@ -129,7 +130,7 @@ bool AppStateObserverPluginAdapter::UnmarshallingAppStateData(const nlohmann::js
         !ResCommonUtil::ParseIntParameterFromJson("preloadMode", preloadMode, payload)) {
         return false;
     }
-    appStateData.state = static_cast<uint32_t>(state);
+    appStateData.state = static_cast<int32_t>(state);
     appStateData.extensionType = static_cast<AppExecFwk::ExtensionAbilityType>(extensionType);
     appStateData.preloadMode = preloadMode;
     return true;
@@ -231,7 +232,6 @@ void AppStateObserverPluginAdapter::InitCbMap(std::unordered_map<uint32_t,
                 this->OnAppStopped(payload);
             } },
     };
-    const int RES_TYPE_EXT_ON_APP_CACHED_STATE_CHANGED = 10008;
     cbMap[RES_TYPE_EXT_ON_APP_CACHED_STATE_CHANGED] = {
         { RES_VALUE_FOR_ALL, [this](const int32_t stateType, const nlohmann::json& payload) {
                 this->OnAppCacheStateChanged(payload);
