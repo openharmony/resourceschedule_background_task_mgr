@@ -600,7 +600,7 @@ void BgEfficiencyResourcesMgr::ResetTimeOutResource(int32_t mapKey, bool isProce
         EfficiencyResourcesEventType::APP_RESOURCE_RESET;
     auto iter = infoMap.find(mapKey);
     if (iter == infoMap.end()) {
-        BGTASK_LOGI("efficiency resource does not exist");
+        BGTASK_LOGI("%{public}d not exist", mapKey);
         return;
     }
     auto &resourceRecord = iter->second;
@@ -1199,39 +1199,39 @@ ErrCode BgEfficiencyResourcesMgr::CheckIfCanApplyCpuLevel(const sptr<EfficiencyR
     if ((resourceInfo->GetResourceNumber() & ResourceType::CPU) != ResourceType::CPU) {
         // not include cpu resource type, need to set cpuLevel default
         resourceInfo->SetCpuLevel(static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT));
-        BGTASK_LOGI("%{public}s: resourceNumber %{public}u is not contains CPU, request cpuLevel %{public}d, need set"
-            "cpuLevel to default -1", __func__, resourceInfo->GetResourceNumber(), resourceInfo->GetCpuLevel());
+        BGTASK_LOGD("resourceNumber %{public}u is not contains CPU, request cpuLevel %{public}d, need set"
+            "cpuLevel to default -1", resourceInfo->GetResourceNumber(), resourceInfo->GetCpuLevel());
         return ERR_OK;
     }
 
     // compatible with default scene, app not set cpuLevel
     if (resourceInfo->GetCpuLevel() == static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT)) {
-        BGTASK_LOGI("%{public}s: default scene, app bundleName %{public}s not set cpuLevel: %{public}d", __func__,
+        BGTASK_LOGD("default scene, app bundleName %{public}s not set cpuLevel: %{public}d",
             bundleName.c_str(), resourceInfo->GetCpuLevel());
         return ERR_OK;
     }
 
     // check whether in ccm
     if (!DelayedSingleton<BgtaskConfig>::GetInstance()->CheckRequestCpuLevelBundleNameConfigured(bundleName)) {
-        BGTASK_LOGE("%{public}s: bundleName %{public}s not configured", __func__, bundleName.c_str());
+        BGTASK_LOGE("bundleName %{public}s not configured", bundleName.c_str());
         return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_NOT_ALLOW_APPLY;
     }
 
     AppExecFwk::BundleInfo bundleInfo;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
         AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, GetUserIdByUid(uid))) {
-        BGTASK_LOGE("%{public}s: get %{public}s bundle info failed", __func__, bundleName.c_str());
+        BGTASK_LOGE("get %{public}s bundle info failed", bundleName.c_str());
         return ERR_BGTASK_EFFICIENCY_RESOURCES_INVALID_BUNDLE_INFO;
     }
 
     if (!DelayedSingleton<BgtaskConfig>::GetInstance()->CheckRequestCpuLevelAppSignatures(bundleName, bundleInfo.appId,
         bundleInfo.signatureInfo.appIdentifier)) {
-        BGTASK_LOGE("%{public}s: %{public}s CheckRequestCpuLevelAppSignatures failed", __func__, bundleName.c_str());
+        BGTASK_LOGE("%{public}s CheckRequestCpuLevelAppSignatures failed", bundleName.c_str());
         return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_APP_SIGNATURES_INVALID;
     }
 
     if (!DelayedSingleton<BgtaskConfig>::GetInstance()->CheckRequestCpuLevel(bundleName, resourceInfo->GetCpuLevel())) {
-        BGTASK_LOGE("%{public}s: %{public}s CheckRequestCpuLevel failed", __func__, bundleName.c_str());
+        BGTASK_LOGE("%{public}s CheckRequestCpuLevel failed", bundleName.c_str());
         return ERR_BGTASK_EFFICIENCY_RESOURCES_CPU_LEVEL_TOO_LARGE;
     }
     return ERR_OK;
@@ -1241,17 +1241,19 @@ int32_t BgEfficiencyResourcesMgr::GetPreAppCpuLevel(int32_t uid)
 {
     const auto iter = appResourceApplyMap_.find(uid);
     if (iter == appResourceApplyMap_.end()) {
-        BGTASK_LOGD("%{public}s: uid %{public}d not found", __func__, uid);
+        BGTASK_LOGD("uid %{public}d not found", uid);
         return static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT);
     }
 
     const int32_t cpuLevel = iter->second->GetCpuLevel();
     if (!EfficiencyResourcesCpuLevel::IsCpuLevelValid(cpuLevel)) {
-        BGTASK_LOGE("%{public}s: uid %{public}d cpuLevel %{public}d invalid", __func__, uid, cpuLevel);
+        BGTASK_LOGE("uid %{public}d cpuLevel %{public}d invalid", uid, cpuLevel);
         return static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT);
     }
 
-    BGTASK_LOGI("%{public}s: uid %{public}d cpuLevel %{public}d", __func__, uid, cpuLevel);
+    if (cpuLevel != static_cast<int32_t>(EfficiencyResourcesCpuLevel::DEFAULT)) {
+        BGTASK_LOGI("uid %{public}d cpuLevel %{public}d", uid, cpuLevel);
+    }
     return cpuLevel;
 }
 
@@ -1260,7 +1262,7 @@ void BgEfficiencyResourcesMgr::RecoverResourceNumber()
     constexpr int64_t systemUpMaxDurationMs = 4 * 60 * 1000; // 4 min
     const int64_t systemUpDurationMs = TimeProvider::GetCurrentTime(ClockType::CLOCK_TYPE_BOOTTIME);
     if (systemUpDurationMs > systemUpMaxDurationMs) {
-        BGTASK_LOGI("%{public}s: system up time exceeded systemUpMaxDurationMs", __func__);
+        BGTASK_LOGI("system up time exceeded systemUpMaxDurationMs");
         return;
     }
 
