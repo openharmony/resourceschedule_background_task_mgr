@@ -49,8 +49,7 @@ void DecisionMaker::OnProcessStateChanged(const AppExecFwk::ProcessData &process
     bool isForeground = processData.state == AppExecFwk::AppProcessState::APP_STATE_FOREGROUND ||
         processData.state == AppExecFwk::AppProcessState::APP_STATE_FOCUS;
     bool isBackground = processData.state == AppExecFwk::AppProcessState::APP_STATE_BACKGROUND;
-    BGTASK_LOGI("pid: %{public}d, OnProcessState: %{public}d, isForeground: %{public}d, isBackground: %{public}d",
-        processData.pid, processData.state, isForeground, isBackground);
+    BGTASK_LOGI("pid: %{public}d, state: %{public}d", processData.pid, processData.state);
     UpdateForegroundUidPidMap(processData.uid, processData.pid, isForeground);
     if (isForeground || isBackground) {
         HandleStateChange(processData.bundleName, processData.uid, isForeground, isBackground);
@@ -115,7 +114,7 @@ void DecisionMaker::HandleStateChange(
         auto it = pkgDelaySuspendInfoMap_.find(key);
         if (it != pkgDelaySuspendInfoMap_.end()) {
             auto pkgInfo = it->second;
-            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is foreground, stop accounting",
+            BGTASK_LOGD("pkgname: %{public}s, uid: %{public}d is foreground, stop accounting",
                 bundleName.c_str(), uid);
             pkgInfo->StopAccountingAll();
         }
@@ -126,13 +125,13 @@ void DecisionMaker::HandleStateChange(
     } else if (isBackground) {
         auto it = pkgDelaySuspendInfoMap_.find(key);
         if (it == pkgDelaySuspendInfoMap_.end()) {
-            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is not in delay suspend list",
+            BGTASK_LOGD("pkgname: %{public}s, uid: %{public}d is not in delay suspend list",
                 bundleName.c_str(), uid);
             return;
         }
         auto pkgInfo = it->second;
         if (CanStartAccountingLocked(pkgInfo)) {
-            BGTASK_LOGI("pkgname: %{public}s, uid: %{public}d is background, start accounting",
+            BGTASK_LOGD("pkgname: %{public}s, uid: %{public}d is background, start accounting",
                 bundleName.c_str(), uid);
             pkgInfo->StartAccounting();
             pkgBgDurationMap_[key] = TimeProvider::GetCurrentTime();

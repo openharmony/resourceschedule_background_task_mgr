@@ -147,8 +147,8 @@ void PkgDelaySuspendInfo::UpdateQuota(bool reset)
     if (reset) {
         quota_ = INIT_QUOTA;
     }
-    BGTASK_LOGI("%{public}s Lastest quota: %{public}d, spendTime: %{public}d, isCounting: %{public}d",
-        pkg_.c_str(), quota_, spendTime_, isCounting_);
+    BGTASK_LOGI("%{public}d Lastest quota: %{public}d, spendTime: %{public}d, isCounting: %{public}d",
+        uid_, quota_, spendTime_, isCounting_);
 }
 
 int32_t PkgDelaySuspendInfo::GetModifiedTime()
