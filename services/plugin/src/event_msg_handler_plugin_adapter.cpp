@@ -16,6 +16,7 @@
 #include "event_msg_handler_plugin_adapter.h"
 #include "audio_renderer_info_plugin_data.h"
 #include "bgtaskmgr_log_wrapper.h"
+#include "bgtask_config.h"
 #include "bgtask_plugin_mgr.h"
 #include "res_type.h"
 #include "res_data.h"
@@ -50,6 +51,11 @@ void EventMsgHandlerPluginAdapter::InitCbMap(CallBackMap &cbMap)
     cbMap[ResType::RES_TYPE_OBSERVER_MANAGER_STATUS_CHANGE] = {
         {ResType::SystemAbilitySign::ADD_SYSTEM_ABILITY,
             [this](const int32_t stateType, const nlohmann::json &payload) { this->AfterAddSaListener(payload); }}};
+    cbMap[ResType::RES_TYPE_RSS_CLOUD_CONFIG_UPDATE] = {
+        {-1, [this](const int32_t stateType, const nlohmann::json &payload) {
+                this->HandleCloudConfigUpdateEvent(stateType, payload);
+            }}
+    };
 }
 
 void EventMsgHandlerPluginAdapter::AfterAddSaListener(const nlohmann::json &payload)
@@ -65,6 +71,21 @@ void EventMsgHandlerPluginAdapter::AfterAddSaListener(const nlohmann::json &payl
             instance->AfterAddSaListener();
         } else {
             BGTASK_LOGE("AudioRendererInfoPluginData instance is null");
+        }
+    }
+}
+
+void EventMsgHandlerPluginAdapter::HandleCloudConfigUpdateEvent(const int32_t stateType, const nlohmann::json &payload)
+{
+    if (stateType == SUSPEND_MANAGER_SYSTEM_ABILITY_ID) {
+        bool ret = DelayedSingleton<BgtaskConfig>::GetInstance()->UpdateSusMgrCloudConfig(payload);
+        if (!ret) {
+            BGTASK_LOGE("suspend manager cloud config update fail.");
+        }
+    } else if (stateType == BACKGROUND_TASK_MANAGER_SERVICE_ID) {
+        bool ret = DelayedSingleton<BgtaskConfig>::GetInstance()->UpdateBgMgrCloudConfig(payload);
+        if (!ret) {
+            BGTASK_LOGE("background task cloud config update fail.");
         }
     }
 }
