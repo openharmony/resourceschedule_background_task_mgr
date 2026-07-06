@@ -18,6 +18,8 @@
 #include "audio_renderer_info_plugin_data.h"
 #include "audio_info.h"
 #include "nlohmann/json.hpp"
+#include "system_ability_definition.h"
+#include "bgtask_config.h"
 
 using namespace testing::ext;
 
@@ -90,6 +92,69 @@ HWTEST_F(EventMsgHandlerPluginAdapterTest, EventMsgHandlerPluginAdapterTest_003,
     payload["saId"] = 1001; // Other service
     adapter->AfterAddSaListener(payload);
     EXPECT_TRUE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1001));
+}
+
+/**
+ * @tc.name: HandleCloudConfigUpdateEvent_001
+ * @tc.desc: test HandleCloudConfigUpdateEvent method
+ * @tc.type: FUNC
+ */
+HWTEST_F(EventMsgHandlerPluginAdapterTest, HandleCloudConfigUpdateEvent_001, TestSize.Level2)
+{
+    auto adapter = EventMsgHandlerPluginAdapter::GetInstance();
+    nlohmann::json payload;
+    adapter->HandleCloudConfigUpdateEvent(SUSPEND_MANAGER_SYSTEM_ABILITY_ID, payload);
+    std::string bundleName = "com.ohos.demo";
+    auto ret = DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName);
+    EXPECT_FALSE(ret);
+
+    adapter->HandleCloudConfigUpdateEvent(BACKGROUND_TASK_MANAGER_SERVICE_ID, payload);
+    auto ret2 = DelayedSingleton<BgtaskConfig>::GetInstance()->CheckRequestCpuLevelBundleNameConfigured(bundleName);
+    EXPECT_FALSE(ret2);
+}
+
+/**
+ * @tc.name: HandleCloudConfigUpdateEvent_002
+ * @tc.desc: test HandleCloudConfigUpdateEvent SUSPEND_MANAGER_SYSTEM_ABILITY_ID method
+ * @tc.type: FUNC
+ */
+HWTEST_F(EventMsgHandlerPluginAdapterTest, HandleCloudConfigUpdateEvent_002, TestSize.Level2)
+{
+    auto adapter = EventMsgHandlerPluginAdapter::GetInstance();
+    auto specialExemptedList = nlohmann::json::array();
+    nlohmann::json payload = {
+        "params" : {
+            "demo" : {}
+        }
+    }
+    adapter->HandleCloudConfigUpdateEvent(SUSPEND_MANAGER_SYSTEM_ABILITY_ID, payload);
+    std::string bundleName = "com.ohos.demo";
+    auto ret = DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName);
+    EXPECT_FALSE(ret);
+
+    nlohmann::json payload2 = {
+        "params" : {
+            "special_exempted_list" : {}
+        }
+    }
+    adapter->HandleCloudConfigUpdateEvent(SUSPEND_MANAGER_SYSTEM_ABILITY_ID, payload2);
+    auto ret2 = DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName);
+    EXPECT_FALSE(ret2);
+
+    nlohmann::json payload3 = {
+        "params" : {
+            "special_exempted_list" : [
+                "com.ohos.demo"
+            ]
+        }
+    }
+    adapter->HandleCloudConfigUpdateEvent(SUSPEND_MANAGER_SYSTEM_ABILITY_ID, payload3);
+    auto ret3 = DelayedSingleton<BgtaskConfig>::GetInstance()->IsSpecialExemptedQuatoApp(bundleName);
+    EXPECT_TRUE(ret3);
+
+    adapter->HandleCloudConfigUpdateEvent(BACKGROUND_TASK_MANAGER_SERVICE_ID, payload3);
+    auto ret4 = DelayedSingleton<BgtaskConfig>::GetInstance()->CheckRequestCpuLevelBundleNameConfigured(bundleName);
+    EXPECT_FALSE(ret4);
 }
 } // namespace BackgroundTaskMgr
 } // namespace OHOS
