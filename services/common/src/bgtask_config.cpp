@@ -368,7 +368,7 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
 
     nlohmann::json allowApplyCpuLevelBundleInfos = jsonObj[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS];
     std::lock_guard<std::mutex> lock(configMutex_);
-    bgTaskConfigFileInfo_.Clear();
+    bgTaskConfigFileInfo_.ClearCpuBundleInfo();
     for (const auto &bundleInfoJsonObj : allowApplyCpuLevelBundleInfos) {
         if (!bundleInfoJsonObj.contains(ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME) ||
             !bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME].is_string()) {
