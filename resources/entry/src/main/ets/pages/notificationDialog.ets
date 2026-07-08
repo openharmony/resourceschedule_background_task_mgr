@@ -24,8 +24,6 @@ import {
   getLimitFontSize,
   isUgLanguange } from '../common/utils';
 import Constants from '../common/constant';
-import fs from '@ohos.file.fs';
-import configPolicy from '@ohos.configPolicy';
 import { EnableBgTaskAuthDialog } from '../ServiceExtAbility/NotificationServiceExtAbility';
 import { Callback} from '@ohos.base';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
@@ -35,27 +33,9 @@ import common from '@ohos.app.ability.common';
 
 const TAG = 'BgTaskDialog_Service ';
 const mainWindowId = 'mainWindow';
-const permission: Record<string, Resource> = {
-  'label': $r('app.string.text_notification_allow_background_keepalive'),
-  'reason': $r('app.string.ohos_bgsubmode_prompt_media_process'),
-};
 const bottomPopoverTypes = ['default', 'phone'];
 
 let storage = LocalStorage.getShared();
-
-@Extend(Button) function customizeButton() {
-  .backgroundColor(Color.Transparent)
-  .fontColor($r('app.color.button_text'))
-  .fontSize(
-    getLimitFontSize(
-      Constants.TEXT_MIDDLE_FONT_SIZE,
-      getFontSizeScale(getContext(this) as common.UIAbilityContext, Constants.FONT_SCALE_MAX))
-  )
-  .fontWeight(FontWeight.Medium)
-  .height(Constants.BUTTON_HEIGHT)
-  .flexGrow(Constants.FLEX_GROW)
-  .width('50%')
-}
 
 @Extend(Button) function singleRowButton() {
   .backgroundColor(Color.Transparent)
@@ -393,25 +373,6 @@ struct PermissionDialog {
     }
   }
 
-  async registerFoldableCallback(): Promise<void> {
-    let callback: Callback<display.FoldDisplayMode> = async (data: display.FoldDisplayMode) => {
-      try {
-        let win = this.dialog.window;
-        let dis = display.getDefaultDisplaySync();
-        await win.moveWindowTo(0, 0);
-        await win.resize(dis.width, dis.height);
-        await this.updateStatus();
-      } catch (err) {
-        console.error(TAG, 'Failed to touch callback. Code: ${err?.code}');
-      }
-    };
-    try {
-      display.on('foldDisplayModeChange', callback);
-    } catch (err) {
-      console.error(TAG, 'Failed to register callback. Code: ${err?.code}');
-    }
-  }
-
   async aboutToDisappear(): Promise<void> {
     console.info(TAG, `aboutToDisappear`);
     this.session?.terminateSelf();
@@ -430,12 +391,4 @@ struct PermissionDialog {
       this.session?.terminateSelf();
     }
   }
-}
-
-interface NotificationConfig {
-  notificationAuthorizationWindow: NotificationAuthorizationWindow;
-}
-
-interface NotificationAuthorizationWindow {
-  isBottomPopover: boolean;
 }
