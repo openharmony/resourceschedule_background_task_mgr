@@ -26,8 +26,6 @@ import {
   sleep
 } from '../common/utils';
 import Constants from '../common/constant';
-import fs from '@ohos.file.fs';
-import configPolicy from '@ohos.configPolicy';
 import { EnableBgTaskAuthDialog } from '../ServiceExtAbility/NotificationServiceExtAbility';
 import { Callback} from '@ohos.base';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
@@ -42,27 +40,7 @@ const MASK_COLOR = '#33000000';
 const TRANSPARANT_COLOR = '#00000000';
 const EMPTY_PAGE_PATH = 'emptyPage';
 
-const permission: Record<string, Resource> = {
-  'label': $r('app.string.text_notification_allow_background_keepalive'),
-  'reason': $r('app.string.ohos_bgsubmode_prompt_media_process'),
-};
-
 let storage = LocalStorage.getShared();
-
-@Extend(Button) function customizeButton() {
-  .type(ButtonType.Normal)
-  .backgroundColor($r('sys.color.comp_background_tertiary'))
-  .fontSize(
-    getLimitFontSize(
-      sourceToVp($r('sys.float.Body_L')),
-      getFontSizeScale(getContext(this) as common.UIAbilityContext, Constants.FONT_SCALE_MAX))
-  )
-  .fontWeight(FontWeight.Medium)
-  .height(Constants.PC_BUTTON_HEIGHT)
-  .width('50%')
-  .borderRadius(Constants.PC_RDIUS_8)
-  .flexGrow(Constants.FLEX_GROW)
-}
 
 @Extend(Button) function singleRowButton() {
   .type(ButtonType.Normal)
