@@ -20,6 +20,11 @@ import type Want from '@ohos.app.ability.Want';
 import UIExtensionAbility from '@ohos.app.ability.UIExtensionAbility';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import uiExtension from '@ohos.arkui.uiExtension';
+import configPolicy from '@ohos.configPolicy';
+import fs from '@ohos.file.fs';
+import Constants from '../common/constant';
+import DisplayUtils from '../common/displayUtils';
+import { shouldMoveWindow} from '../common/utils';
 import deviceInfo  from '@ohos.deviceInfo';
 
 const TAG = 'BgTaskDialog_Service ';
