@@ -2490,6 +2490,9 @@ void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
                 RefreshTaskRecord();
                 iter++;
             } else {
+                iter->second->reason_ = FREEZE_CANCEL;
+                iter->second->detailedCancelReason_ =
+                    static_cast<int32_t>(ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING);
                 OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_CANCEL);
                 iter = continuousTaskInfosMap_.erase(iter);
                 RefreshTaskRecord();
