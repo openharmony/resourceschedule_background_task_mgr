@@ -198,9 +198,6 @@ napi_value ContinuousTaskDetailedCancelReasonInit(napi_env env, napi_value expor
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         ContinuousTaskCancelReason::SYSTEM_CANCEL_DATA_TRANSFER_LOW_SPEED), "SYSTEM_CANCEL_DATA_TRANSFER_LOW_SPEED");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
-        ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_USE_AVSESSION),
-        "SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_USE_AVSESSION");
-    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         ContinuousTaskCancelReason::SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING),
         "SYSTEM_CANCEL_AUDIO_PLAYBACK_NOT_RUNNING");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
