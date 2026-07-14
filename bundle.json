@@ -64,7 +64,8 @@
           "ets_frontend",
           "image_framework",
           "json",
-          "taihe_ffi_gen"
+          "taihe_ffi_gen",
+          "ffrt"
         ]
       },
       "build": {
