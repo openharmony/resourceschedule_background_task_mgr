@@ -87,7 +87,8 @@ taihe_shared_library("background_task_manager_ani") {
     "hilog:libhilog",
     "ipc:ipc_core",
     "samgr:samgr_proxy",
-    "eventhandler:libeventhandler"
+    "eventhandler:libeventhandler"，
+    "node:node_header_notice",
   ]
 }
 
