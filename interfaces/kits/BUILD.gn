@@ -193,6 +193,7 @@ ohos_shared_library("cj_background_task_mgr_ffi") {
       "napi:cj_bind_ffi",
       "napi:cj_bind_native",
       "samgr:samgr_proxy",
+      "node:node_header_notice",
     ]
     sources = [ "cj/background_task_mgr/background_task_mgr_ffi.cpp" ]
   } else {
