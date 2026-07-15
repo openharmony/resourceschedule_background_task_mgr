@@ -32,6 +32,7 @@ const std::string CONFIG_JSON_INDEX_TOP = "params";
 const std::string CONFIG_JSON_INDEX_SUSPEND_SECOND = "param";
 const std::string TRANSIENT_ERR_DELAYED_FROZEN_LIST = "transient_err_delayed_frozen_list";
 const std::string CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST = "continuous_task_keeping_exemption_list";
+const std::string CONTINUOUS_TASK_SPECIAL_EXEMPTED_LIST = "special_exempted_list";
 const std::string MALICIOUS_APP_BLOCKLIST = "malicious_app_blocklist";
 const std::string TRANSIENT_EXEMPTED_QUOTA = "transient_exempted_quota";
 const std::string TRANSIENT_ERR_DELAYED_FROZEN_TIME = "transient_err_delayed_frozen_time";
@@ -149,6 +150,31 @@ bool BgtaskConfig::SetCloudConfigParam(const nlohmann::json &jsonObj)
     return true;
 }
 
+bool BgtaskConfig::UpdateSusMgrCloudConfig(const nlohmann::json &payload)
+{
+    if (payload.is_null()) {
+        BGTASK_LOGE("UpdateSusMgrCloudConfig fail. json parse fail");
+        return false;
+    }
+    SetCloudConfigParam(payload);
+    return true;
+}
+
+bool BgtaskConfig::UpdateBgMgrCloudConfig(const nlohmann::json &payload)
+{
+    if (payload.is_null()) {
+        BGTASK_LOGE("UpdateBgMgrCloudConfig fail. json parse fail");
+        return false;
+    }
+    if (!payload.contains(CONFIG_JSON_INDEX_TOP) || !payload[CONFIG_JSON_INDEX_TOP].is_object()) {
+        BGTASK_LOGE("no key %{public}s", CONFIG_JSON_INDEX_TOP.c_str());
+        return false;
+    }
+    nlohmann::json params = payload[CONFIG_JSON_INDEX_TOP];
+    ParseCpuEfficiencyResourceApplyBundleInfos(params);
+    return true;
+}
+
 void BgtaskConfig::SetTransientTaskParam(const nlohmann::json &jsonObj)
 {
     if (jsonObj.contains(TRANSIENT_ERR_DELAYED_FROZEN_LIST) &&
@@ -206,6 +232,22 @@ void BgtaskConfig::SetContinuousTaskParam(const nlohmann::json &jsonObj)
         }
     } else {
         BGTASK_LOGW("no key %{public}s", MALICIOUS_APP_BLOCKLIST.c_str());
+    }
+    if (jsonObj.contains(CONTINUOUS_TASK_SPECIAL_EXEMPTED_LIST) &&
+        jsonObj[CONTINUOUS_TASK_SPECIAL_EXEMPTED_LIST].is_array()) {
+        nlohmann::json appArraySpecial = jsonObj[CONTINUOUS_TASK_SPECIAL_EXEMPTED_LIST];
+        specialExemptedQuatoList_.clear();
+        for (const auto &app : appArraySpecial) {
+            if (!app.is_string()) {
+                continue;
+            }
+            specialExemptedQuatoList_.insert(app);
+        }
+        for (const auto &appName : specialExemptedQuatoList_) {
+            BGTASK_LOGI("specialExemptedQuatoList_ appName: %{public}s", appName.c_str());
+        }
+    } else {
+        BGTASK_LOGW("no key %{public}s", CONTINUOUS_TASK_SPECIAL_EXEMPTED_LIST.c_str());
     }
 }
 
@@ -313,7 +355,7 @@ void BgtaskConfig::ParseBundleSignature(const nlohmann::json &jsonObj)
     ResourceSchedule::ResSchedSignatureValidator::GetInstance().AddSignatureConfig(configs);
 }
 
-bool BgtaskConfig::CheckSignature(const std::string &bundlename) const
+bool WEAK_FUNC BgtaskConfig::CheckSignature(const std::string &bundlename) const
 {
     return ResourceSchedule::ResSchedSignatureValidator::GetInstance().CheckSignatureByBundleName(bundlename) ==
            ResourceSchedule::SignatureCheckResult::CHECK_OK;
@@ -333,6 +375,7 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
 
     nlohmann::json allowApplyCpuLevelBundleInfos = jsonObj[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS];
     std::lock_guard<std::mutex> lock(configMutex_);
+    bgTaskConfigFileInfo_.ClearCpuBundleInfo();
     for (const auto &bundleInfoJsonObj : allowApplyCpuLevelBundleInfos) {
         if (!bundleInfoJsonObj.contains(ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME) ||
             !bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME].is_string()) {

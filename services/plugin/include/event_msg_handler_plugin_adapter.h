@@ -33,6 +33,7 @@ public:
 private:
     void InitCbMap(CallBackMap &cbMap) override;
     void AfterAddSaListener(const nlohmann::json &payload);
+    void HandleCloudConfigUpdateEvent(const int32_t stateType, const nlohmann::json &payload);
 };
 
 } // namespace BackgroundTaskMgr

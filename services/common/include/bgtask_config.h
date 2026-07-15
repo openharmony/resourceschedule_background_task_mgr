@@ -43,6 +43,8 @@ public:
     bool CheckRequestCpuLevel(const std::string &bundleName, int32_t cpuLevel);
     void SetSpecialExemptedProcess(const std::set<std::string> &bundleNameSet);
     bool IsSpecialExemptedQuatoApp(const std::string &bundleName);
+    bool UpdateSusMgrCloudConfig(const nlohmann::json &payload);
+    bool UpdateBgMgrCloudConfig(const nlohmann::json &payload);
 
 private:
     void LoadConfigFile();
