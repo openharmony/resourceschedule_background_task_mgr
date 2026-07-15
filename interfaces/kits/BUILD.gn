@@ -72,6 +72,7 @@ ohos_shared_library("backgroundtaskmanager") {
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "napi:ace_napi",
+    "node:node_header_notice",
     "samgr:samgr_proxy",
   ]
 
@@ -137,6 +138,7 @@ ohos_shared_library("backgroundtaskmanager_napi") {
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "napi:ace_napi",
+    "node:node_header_notice",
     "samgr:samgr_proxy",
   ]
 
@@ -187,6 +189,7 @@ ohos_shared_library("cj_background_task_mgr_ffi") {
       "hitrace:hitrace_meter",
       "ipc:ipc_single",
       "napi:ace_napi",
+      "node:node_header_notice",
       "napi:cj_bind_ffi",
       "napi:cj_bind_native",
       "samgr:samgr_proxy",
@@ -253,6 +256,7 @@ ohos_shared_library("transient_task") {
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "napi:ace_napi",
+    "node:node_header_notice",
     "napi:cj_bind_ffi",
     "napi:cj_bind_native",
     "samgr:samgr_proxy",
