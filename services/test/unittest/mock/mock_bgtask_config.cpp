@@ -33,7 +33,7 @@ bool BgtaskConfig::CheckRequestCpuLevel(const std::string &bundleName, int32_t c
     return cpuLevel <= EfficiencyResourcesCpuLevel::MEDIUM_CPU;
 }
 
-bool BgtaskConfig::CheckSignature(const std::string &bundleName)
+bool BgtaskConfig::CheckSignature(const std::string &bundlename) const
 {
     return true;
 }

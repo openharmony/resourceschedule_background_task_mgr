@@ -145,7 +145,6 @@ bool BgtaskConfig::SetCloudConfigParam(const nlohmann::json &jsonObj)
         std::lock_guard<std::mutex> lock(configMutex_);
         SetTransientTaskParam(params);
         SetContinuousTaskParam(params);
-        ParseCpuEfficiencyResourceApplyBundleInfos(params);
     }
     ParseBundleSignature(params);
     return true;
@@ -167,7 +166,12 @@ bool BgtaskConfig::UpdateBgMgrCloudConfig(const nlohmann::json &payload)
         BGTASK_LOGE("UpdateBgMgrCloudConfig fail. json parse fail");
         return false;
     }
-    SetCloudConfigParam(payload);
+    if (!jsonObj.contains(CONFIG_JSON_INDEX_TOP) || !jsonObj[CONFIG_JSON_INDEX_TOP].is_object()) {
+        BGTASK_LOGE("no key %{public}s", CONFIG_JSON_INDEX_TOP.c_str());
+        return false;
+    }
+    nlohmann::json params = jsonObj[CONFIG_JSON_INDEX_TOP];
+    ParseCpuEfficiencyResourceApplyBundleInfos(params);
     return true;
 }
 
@@ -234,6 +238,9 @@ void BgtaskConfig::SetContinuousTaskParam(const nlohmann::json &jsonObj)
         nlohmann::json appArraySpecial = jsonObj[CONTINUOUS_TASK_SPECIAL_EXEMPTED_LIST];
         specialExemptedQuatoList_.clear();
         for (const auto &app : appArraySpecial) {
+            if (!app.is_string()) {
+                continue;
+            }
             specialExemptedQuatoList_.insert(app);
         }
         for (const auto &appName : specialExemptedQuatoList_) {
