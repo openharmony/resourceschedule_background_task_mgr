@@ -166,11 +166,11 @@ bool BgtaskConfig::UpdateBgMgrCloudConfig(const nlohmann::json &payload)
         BGTASK_LOGE("UpdateBgMgrCloudConfig fail. json parse fail");
         return false;
     }
-    if (!jsonObj.contains(CONFIG_JSON_INDEX_TOP) || !jsonObj[CONFIG_JSON_INDEX_TOP].is_object()) {
+    if (!payload.contains(CONFIG_JSON_INDEX_TOP) || !payload[CONFIG_JSON_INDEX_TOP].is_object()) {
         BGTASK_LOGE("no key %{public}s", CONFIG_JSON_INDEX_TOP.c_str());
         return false;
     }
-    nlohmann::json params = jsonObj[CONFIG_JSON_INDEX_TOP];
+    nlohmann::json params = payload[CONFIG_JSON_INDEX_TOP];
     ParseCpuEfficiencyResourceApplyBundleInfos(params);
     return true;
 }
