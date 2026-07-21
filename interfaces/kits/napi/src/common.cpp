@@ -630,7 +630,7 @@ bool Common::GetBackgroundTaskModesFromArray(napi_env env, napi_value arrayValue
     if (napi_is_array(env, arrayValue, &boolValue) != napi_ok || boolValue == false) {
         return boolValue;
     }
-    uint32_t length;
+    uint32_t length = 0;
     napi_get_array_length(env, arrayValue, &length);
     std::vector<uint32_t> backgroundTaskModes {};
     for (uint32_t i = 0; i < length; i++) {
@@ -678,7 +678,7 @@ bool Common::GetBackgroundTaskSubmodesFromArray(napi_env env, napi_value arrayVa
     if (napi_is_array(env, arrayValue, &boolValue) != napi_ok || boolValue == false) {
         return boolValue;
     }
-    uint32_t length;
+    uint32_t length = 0;
     napi_get_array_length(env, arrayValue, &length);
     std::vector<uint32_t> backgroundTaskSubModes {};
     for (uint32_t i = 0; i < length; i++) {
