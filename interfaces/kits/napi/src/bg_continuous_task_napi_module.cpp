@@ -471,16 +471,16 @@ napi_value StartBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncC
         BGTASK_LOGE("param is nullptr");
         return nullptr;
     }
+    if (!StartBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow)) {
+        BGTASK_LOGE("start bgytask check param fail.");
+        return nullptr;
+    }
     napi_value resourceName;
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     napi_deferred deferred;
     napi_value promise {nullptr};
     NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
     asyncCallbackInfo->deferred = deferred;
-    if (!StartBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
-        BGTASK_LOGE("start bgytask check param fail.");
-        return nullptr;
-    }
     NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
@@ -1023,6 +1023,9 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
         BGTASK_LOGE("param is nullptr");
         return nullptr;
     }
+    if (!StopBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow)) {
+        return nullptr;
+    }
     napi_value resourceName {nullptr};
     napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
     napi_deferred deferred;
@@ -1030,10 +1033,6 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
     napi_create_promise(env, &deferred, &promise);
 
     asyncCallbackInfo->deferred = deferred;
-    if (!StopBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
-        return nullptr;
-    }
-
     napi_create_async_work(
         env,
         nullptr,
@@ -1067,6 +1066,9 @@ napi_value StopBackgroundRunningByTaskIdPromise(napi_env env, AsyncCallbackInfo 
         BGTASK_LOGE("param is nullptr");
         return nullptr;
     }
+    if (!StopBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow)) {
+        return nullptr;
+    }
     napi_value resourceName {nullptr};
     napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
     napi_deferred deferred;
@@ -1074,9 +1076,6 @@ napi_value StopBackgroundRunningByTaskIdPromise(napi_env env, AsyncCallbackInfo 
     napi_create_promise(env, &deferred, &promise);
 
     asyncCallbackInfo->deferred = deferred;
-    if (!StopBackgroundRunningCheckParam(env, asyncCallbackInfo, isThrow) && isThrow) {
-        return nullptr;
-    }
     napi_create_async_work(
         env,
         nullptr,
@@ -1373,7 +1372,6 @@ void GetAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status, v
         result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);
         NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
     }
-    callbackPtr.release();
 }
 
 napi_value GetAllContinuousTasksPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, bool isThrow)
@@ -1580,7 +1578,6 @@ void CheckSpecialScenarioAuthPromiseCompletedCB(napi_env env, napi_status status
         result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);
         NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
     }
-    callbackPtr.release();
 }
 
 napi_value CheckSpecialScenarioAuthPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
@@ -1777,7 +1774,6 @@ void ObtainAllContinuousTasksPromiseCompletedCB(napi_env env, napi_status status
         result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);
         NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
     }
-    callbackPtr.release();
 }
 
 napi_value ObtainAllContinuousTasksPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
