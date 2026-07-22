@@ -3336,9 +3336,9 @@ HWTEST_F(BgContinuousTaskMgrTest, InitSubNotificationRecord_001, TestSize.Level1
     EXPECT_FALSE(ret);
 
     std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
-    record->bgModeIds.push_back(1);
-    record->bgModeIds.push_back(2);
-    record->bgModeIds.push_back(4);
+    record->bgModeIds_.push_back(1);
+    record->bgModeIds_.push_back(2);
+    record->bgModeIds_.push_back(4);
     record->bgSubModeIds_.push_back(1);
     record->bgSubModeIds_.push_back(1);
     record->bgSubModeIds_.push_back(1);
