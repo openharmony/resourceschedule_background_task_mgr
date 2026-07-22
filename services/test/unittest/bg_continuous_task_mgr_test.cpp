@@ -1930,6 +1930,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_071, TestSize.Level1)
  */
 HWTEST_F(BgContinuousTaskMgrTest, BannerNotificationRecord_001, TestSize.Level1)
 {
+    bgContinuousTaskMgr_->HisysEventRequestAuth(nullptr);
     std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>();
     bannerNotification->SetBundleName("bundleName");
     bannerNotification->SetNotificationLabel("notificationLabel");
@@ -1949,8 +1950,43 @@ HWTEST_F(BgContinuousTaskMgrTest, BannerNotificationRecord_001, TestSize.Level1)
     EXPECT_EQ(bannerNotification->GetAppIndex(), 1);
     std::string data = bannerNotification->ParseToJsonStr();
     nlohmann::json recordJson = nlohmann::json::parse(data, nullptr, false);
+    bgContinuousTaskMgr_->HisysEventRequestAuth(bannerNotification);
     auto ret = bannerNotification->ParseFromJson(recordJson);
     EXPECT_TRUE(ret);
+}
+
+/**
+ * @tc.name: BannerNotificationRecord_002
+ * @tc.desc: BannerNotificationRecord test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, BannerNotificationRecord_002, TestSize.Level1)
+{
+    std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>(
+        "bundleName", 1, 1, "label", "appName");
+    nlohmann::json root;
+    auto ret = bannerNotification->ParseFromJson(root);
+    EXPECT_FALSE(ret);
+
+    auto root2 = nlohmann::json::array();
+    ret = bannerNotification->ParseFromJson(root2);
+    EXPECT_FALSE(ret);
+
+    auto root3 = nlohmann::json::object();
+    ret = bannerNotification->ParseFromJson(root3);
+    EXPECT_FALSE(ret);
+
+    root3["bundleName"] = "bundleName";
+    root3["uid"] = 1;
+    root3["notificationId"] = 1;
+    root3["notificationLabel"] = "notificationLabel";
+    root3["appName"] = "appName";
+    root3["authResult"] = 3;
+    root3["userId"] = 0;
+    root3["appIndex"] = "1";
+    ret = bannerNotification->ParseFromJson(root3);
+    EXPECT_FALSE(ret);
 }
 
 /**
@@ -2699,9 +2735,11 @@ HWTEST_F(BgContinuousTaskMgrTest, NotifyAudioStart_001, TestSize.Level1)
     bgContinuousTaskMgr_->isSysReady_.store(false);
     int32_t uid = 1;
     EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_BGTASK_SYS_NOT_READY);
+
     bgContinuousTaskMgr_->isSysReady_.store(true);
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
+
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord1->abilityName_ = "abilityName";
     continuousTaskRecord1->uid_ = 1;
@@ -2715,9 +2753,73 @@ HWTEST_F(BgContinuousTaskMgrTest, NotifyAudioStart_001, TestSize.Level1)
     info->abilityName_ = "wantAgentAbilityName";
     continuousTaskRecord1->wantAgentInfo_ = info;
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
+
+    continuousTaskRecord1->audioPlayState_ = false;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
+
+
+            bgContinuousTaskMgr_->continuousTaskText_.clear();
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmmode_test");
+}
+
+/**
+ * @tc.name: NotifyAudioStart_002
+ * @tc.desc: NotifyAudioStart test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, NotifyAudioStart_002, TestSize.Level1)
+{
+    int32_t uid = 1;
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord1->abilityName_ = "abilityName";
+    continuousTaskRecord1->uid_ = 1;
+    continuousTaskRecord1->bgModeId_ = BGMODE_AUDIO_PLAYBACK_ID;
+    continuousTaskRecord1->bgModeIds_.push_back(BGMODE_AUDIO_PLAYBACK_ID);
+    continuousTaskRecord1->notificationId_ = 1;
+    continuousTaskRecord1->continuousTaskId_ = 1;
+    continuousTaskRecord1->abilityId_ = 1;
+    std::shared_ptr<WantAgentInfo> info = std::make_shared<WantAgentInfo>();
+    info->bundleName_ = "wantAgentBundleName";
+    info->abilityName_ = "wantAgentAbilityName";
+    continuousTaskRecord1->wantAgentInfo_ = info;
+    continuousTaskRecord1->audioPlayState_ = false;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord2 = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord2->abilityName_ = "abilityName";
+    continuousTaskRecord2->uid_ = 1;
+    continuousTaskRecord2->bgModeId_ = BGMODE_AUDIO_PLAYBACK_ID;
+    continuousTaskRecord2->bgModeIds_.push_back(BGMODE_AUDIO_PLAYBACK_ID);
+    continuousTaskRecord2->notificationId_ = 1;
+    continuousTaskRecord2->continuousTaskId_ = 1;
+    continuousTaskRecord2->abilityId_ = 1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
+
+    continuousTaskRecord2->audioPlayState_ = false;
+    continuousTaskRecord2->notificationId_ = -1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
+
+    continuousTaskRecord2->notificationId_ = 1;
+    continuousTaskRecord2->uid_ = 2;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key2"] = continuousTaskRecord2;
+    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
+
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     bgContinuousTaskMgr_->continuousTaskText_.clear();
     EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
-    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmmode_test");
+
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "");
+    EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
+
+    bgContinuousTaskMgr_->continuousTaskText_.clear();
+    std::fill_n(std::back_inserter(bgContinuousTaskMgr_->continuousTaskText_), PROMPT_NUMS, "bgmode_test");
     EXPECT_EQ(bgContinuousTaskMgr_->NotifyAudioStart(uid), ERR_OK);
 }
 
@@ -3220,6 +3322,32 @@ HWTEST_F(BgContinuousTaskMgrTest, DebugContinuousTask_001, TestSize.Level3)
     bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
     BgContinuousTaskDumper::GetInstance()->DebugContinuousTask(dumpOption, dumpInfo);
     EXPECT_EQ(dumpInfo.size(), 1);
+}
+
+/**
+ * @tc.name: InitSubNotificationRecord_001
+ * @tc.desc: test InitSubNotificationRecord.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, InitSubNotificationRecord_001, TestSize.Level1)
+{
+    auto ret = bgContinuousTaskMgr_->InitSubNotificationRecord(nullptr, nullptr);
+    EXPECT_FALSE(ret);
+
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->bgModeIds_.push_back(1);
+    record->bgModeIds_.push_back(2);
+    record->bgModeIds_.push_back(4);
+    record->bgSubModeIds_.push_back(1);
+    record->bgSubModeIds_.push_back(1);
+    record->bgSubModeIds_.push_back(1);
+    ret = bgContinuousTaskMgr_->InitSubNotificationRecord(record, nullptr);
+    EXPECT_FALSE(ret);
+
+    std::shared_ptr<ContinuousTaskRecord> subRecord = std::make_shared<ContinuousTaskRecord>();
+    ret = bgContinuousTaskMgr_->InitSubNotificationRecord(record, subRecord);
+    EXPECT_TRUE(ret);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
