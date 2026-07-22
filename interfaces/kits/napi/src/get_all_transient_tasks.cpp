@@ -75,7 +75,6 @@ void GetAllTransientTasksPromiseCompletedCB(napi_env env, napi_status status, vo
         result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);
         NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
     }
-    callbackPtr.release();
 }
 
 napi_value GetAllTransientTasksPromise(napi_env env, AsyncCallbackInfoGetAllTransientTasks *asyncCallbackInfo,
