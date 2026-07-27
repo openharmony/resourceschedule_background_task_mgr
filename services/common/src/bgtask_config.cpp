@@ -17,6 +17,7 @@
 #include "data_storage_helper.h"
 #include "res_sched_signature_validator.h"
 #include "bgtaskmgr_log_wrapper.h"
+#include "efficiency_resources_cpu_level.h"
 
 #ifdef BGTASK_MGR_UNIT_TEST
 #define WEAK_FUNC __attribute__((weak))
@@ -117,6 +118,9 @@ bool BgtaskConfig::AddExemptedQuatoData(const std::string &configData, int32_t s
         std::lock_guard<std::mutex> lock(configMutex_);
         transientTaskExemptedQuatoList_.clear();
         for (const auto &app : appArray) {
+            if (!app.is_string()) {
+                continue;
+            }
             transientTaskExemptedQuatoList_.insert(app);
         }
         for (const auto &appName : transientTaskExemptedQuatoList_) {
@@ -182,6 +186,9 @@ void BgtaskConfig::SetTransientTaskParam(const nlohmann::json &jsonObj)
         nlohmann::json appArray = jsonObj[TRANSIENT_ERR_DELAYED_FROZEN_LIST];
         transientTaskCloudExemptedQuatoList_.clear();
         for (const auto &app : appArray) {
+            if (!app.is_string()) {
+                continue;
+            }
             transientTaskCloudExemptedQuatoList_.insert(app);
         }
         for (const auto &appName : transientTaskCloudExemptedQuatoList_) {
@@ -212,6 +219,9 @@ void BgtaskConfig::SetContinuousTaskParam(const nlohmann::json &jsonObj)
         nlohmann::json appArrayTaskKeeping = jsonObj[CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST];
         taskKeepingExemptedQuatoList_.clear();
         for (const auto &app : appArrayTaskKeeping) {
+            if (!app.is_string()) {
+                continue;
+            }
             taskKeepingExemptedQuatoList_.insert(app);
         }
         for (const auto &appName : taskKeepingExemptedQuatoList_) {
@@ -225,6 +235,9 @@ void BgtaskConfig::SetContinuousTaskParam(const nlohmann::json &jsonObj)
         nlohmann::json appArrayMalicious = jsonObj[MALICIOUS_APP_BLOCKLIST];
         maliciousAppBlocklist_.clear();
         for (const auto &app : appArrayMalicious) {
+            if (!app.is_string()) {
+                continue;
+            }
             maliciousAppBlocklist_.insert(app);
         }
         for (const auto &appName : maliciousAppBlocklist_) {
@@ -387,6 +400,10 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
             BGTASK_LOGE("prop %{public}s invalid", ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL.c_str());
             continue;
         }
+        int32_t cpuLevel = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL].get<int32_t>();
+        if (cpuLevel < EfficiencyResourcesCpuLevel::SMALL_CPU || cpuLevel > EfficiencyResourcesCpuLevel::LARGE_CPU) {
+            continue;
+        }
         if (!bundleInfoJsonObj.contains(ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES) ||
             !bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES].is_array()) {
             BGTASK_LOGE("prop %{public}s invalid", ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES.c_str());
@@ -403,7 +420,6 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
             appSignatures.push_back(appSign.get<std::string>());
         }
         std::string bundleName = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME].get<std::string>();
-        int32_t cpuLevel = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL].get<int32_t>();
         bgTaskConfigFileInfo_.AddCpuLevelConfigInfo({bundleName, appSignatures, cpuLevel});
     }
     for (const auto &[bundleName, info] : bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap()) {
