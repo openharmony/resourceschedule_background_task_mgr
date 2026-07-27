@@ -925,6 +925,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     continuousTaskRecord->fullTokenId_ = fullTokenId;
     continuousTaskRecord->needNotificationForInnerApi_ = g_innerApiReqBgRunningConfig.count(callingUid) ?
         g_innerApiReqBgRunningConfig.at(callingUid).needNotification_ : false;
+    if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
+        continuousTaskRecord->needNotificationForInnerApi_ = true;
+    }
 
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::StartBackgroundRunningInner");
