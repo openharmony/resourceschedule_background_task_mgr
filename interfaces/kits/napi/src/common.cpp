@@ -32,8 +32,6 @@ const int32_t INVALID_CONTINUOUSTASK_ID = -2;
 const int32_t INVALID_MODE_ID = -1;
 static constexpr int32_t MIN_PROGRESS_VALUE = 0;
 static constexpr int32_t MAX_PROGRESS_VALUE = 100;
-static constexpr int32_t MIN_PROGRESS_VALUE = 0;
-static constexpr int32_t MAX_PROGRESS_VALUE = 100;
 
 AsyncWorkData::AsyncWorkData(napi_env napiEnv)
 {
