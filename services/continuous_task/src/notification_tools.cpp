@@ -19,6 +19,7 @@
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
 #include "notification_helper.h"
 #include "want_agent_helper.h"
+#include "notification_template.h"
 #endif
 #include "continuous_task_log.h"
 #include "string_wrapper.h"
@@ -45,6 +46,10 @@ constexpr int TYPE_CODE_VOIP = 0;
 constexpr int TYPE_CODE_AUDIO_RECORDING = 7;
 constexpr int TYPE_CODE_DATA_TANSFER = 8;
 constexpr int BANNER_NOTIFICATION_CONTROL_FLAG = 1 << 9;
+static constexpr uint32_t SOUND_FLAG = 1 << 0;
+static constexpr uint32_t VIBRATION_FLAG = 1 << 4;
+static constexpr int32_t MIN_PROGRESS_VALUE = 0;
+static constexpr int32_t MAX_PROGRESS_VALUE = 100;
 #endif
 }
 
@@ -93,6 +98,32 @@ Notification::NotificationRequest CreateNotificationRequest(
     notificationRequest.SetOwnerUid(continuousTaskRecord->GetUid());
     return notificationRequest;
 }
+
+static void setProgressNotification(const std::shared_ptr<ProgressInfo> &progressInfo,
+    Notification::NotificationRequest& notificationRequest)
+{
+    BGTASK_LOGE("zsh GetProgressValue != -1");
+    auto notificationTemplate = std::make_shared<Notification::NotificationTemplate>();
+    notificationTemplate->SetTemplateName("downloadTemplate");
+    auto templateData = std::make_shared<AAFwk::WantParams>();
+    templateData->SetParam("title", AAFwk::String::Box(progressInfo->GetTitle()));
+    templateData->SetParam("fileName", AAFwk::String::Box(progressInfo->GetFileName()));
+    if (progressInfo->GetProgressValue() >= MIN_PROGRESS_VALUE &&
+        progressInfo->GetProgressValue() < MAX_PROGRESS_VALUE) {
+        templateData->SetParam("progressValue", AAFwk::Integer::Box(progressInfo->GetProgressValue()));
+    } else if (progressInfo->GetProgressValue() == MAX_PROGRESS_VALUE) {
+        templateData->SetParam("progressValue", AAFwk::Integer::Box(MAX_PROGRESS_VALUE));
+        if (progressInfo->IsMute()) {
+            BGTASK_LOGE("zsh Mute");
+            notificationRequest.SetNotificationControlFlags(SOUND_FLAG | VIBRATION_FLAG);
+        }
+    } else {
+        templateData->SetParam("progressValue", AAFwk::Integer::Box(MAX_PROGRESS_VALUE));
+        notificationRequest.SetNotificationControlFlags(SOUND_FLAG | VIBRATION_FLAG);
+    }
+    notificationTemplate->SetTemplateData(templateData);
+    notificationRequest.SetTemplate(notificationTemplate);
+}
 #endif
 
 WEAK_FUNC ErrCode NotificationTools::PublishNotification(
@@ -128,6 +159,9 @@ WEAK_FUNC ErrCode NotificationTools::PublishNotification(
         BACKGROUND_MODE_DATA_TANSFER) != continuousTaskRecord->bgModeIds_.end()) {
         notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
         notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
+        if (continuousTaskRecord->progressInfo_ != nullptr) {
+            setProgressNotification(continuousTaskRecord->progressInfo_, notificationRequest);
+        }
     } else {
         notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::OTHER);
         notificationRequest.GetContent()->ResetToBasicContent();
@@ -296,6 +330,9 @@ WEAK_FUNC ErrCode NotificationTools::PublishMainNotification(const std::shared_p
     notificationRequest.SetUpdateByOwnerAllowed(true);
     notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
     notificationRequest.SetLabel(notificationLabel);
+    if (mainRecord->progressInfo_) {
+        setProgressNotification(mainRecord->progressInfo_, notificationRequest);
+    }
     if (mainRecord->GetNotificationId() == -1) {
         notificationRequest.SetNotificationId(++notificationIdIndex_);
     } else {

@@ -20,6 +20,7 @@
 #include "nlohmann/json.hpp"
 #include "parcel.h"
 #include "want_agent.h"
+#include "progress_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -112,6 +113,7 @@ private:
     bool audioPlayState_ {true};
     bool isStandby_ {false};
     bool isStandbySuspend_ {false};
+    std::shared_ptr<ProgressInfo> progressInfo_ {nullptr};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

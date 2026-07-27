@@ -209,6 +209,10 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["isStandby"] = isStandby_;
     root["audioPlayState"] = audioPlayState_;
     root["isStandbySuspend"] = isStandbySuspend_;
+    if (progressInfo_ != nullptr) {
+        nlohmann::json progressJson = nlohmann::json::parse(progressInfo_->ParseToJsonStr());
+        root["progressInfo"] = progressJson;
+    }
     return root.dump(CommonUtils::jsonFormat_);
 }
 
@@ -258,6 +262,13 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
     }
     if (value.contains("notificationId") && value["notificationId"].is_number_integer()) {
         this->notificationId_ = value.at("notificationId").get<int32_t>();
+    }
+    if (value.contains("progressInfo") && value["progressInfo"].is_object()) {
+        this->progressInfo_ = std::make_shared<ProgressInfo>();
+        if (!this->progressInfo_->ParseFromJson(value["progressInfo"])) {
+            BGTASK_LOGE("parse progressInfo from json failed");
+            this->progressInfo_ = nullptr;
+        }
     }
     return true;
 }

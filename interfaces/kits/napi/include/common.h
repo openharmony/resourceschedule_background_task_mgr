@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -148,6 +148,13 @@ public:
 
     static napi_value GetNapiCallBackInfo(napi_env &env,
         const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskInfo);
+    
+    static napi_value getNamedProperty(const napi_env &env, napi_value &object, const std::string &propertyName);
+
+    static bool GetprogressInfo(napi_env env, napi_value objValue, const std::shared_ptr<ProgressInfo> &progressInfo);
+
+    static bool GetprogressInfoParam(
+        napi_env env, napi_value objValue, const std::shared_ptr<ProgressInfo> &progressInfo);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

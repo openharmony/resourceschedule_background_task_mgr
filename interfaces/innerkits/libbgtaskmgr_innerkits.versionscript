@@ -36,6 +36,8 @@
     *UserAuthResult*;
     *BackgroundTaskStateInfo*;
     *IsCpuLevelValid*;
+    *DataTransferProgress*;
+    *ProgressInfo*;
   local:
     *;
 };

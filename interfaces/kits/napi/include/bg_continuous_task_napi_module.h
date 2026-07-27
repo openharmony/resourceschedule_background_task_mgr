@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@ napi_value GetBackgroundTaskState(napi_env env, napi_callback_info info);
 napi_value ObtainAllContinuousTasks(napi_env env, napi_callback_info info);
 napi_value SubscribeContinuousTaskState(napi_env env, napi_callback_info info);
 napi_value UnSubscribeContinuousTaskState(napi_env env, napi_callback_info info);
+napi_value UpdateDataTransferProgress(napi_env env, napi_callback_info info);
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_NAPI_INCLUDE_CANCEL_SUSPEND_DELAY_H

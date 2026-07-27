@@ -35,6 +35,7 @@
 #include "background_task_state_info.h"
 #include "background_common.h"
 #include "ui_extension_helper.h"
+#include "data_transfer_progress.h"
 
 using namespace taihe;
 using namespace OHOS;
@@ -53,6 +54,8 @@ static constexpr uint32_t CONTINUOUS_TASK_CANCEL = 1 << 0;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 1 << 1;
 static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
 static constexpr int32_t MAX_SPECIAL_TASK_NUMS = 1;
+static constexpr int32_t MIN_PROGRESS_VALUE = 0;
+static constexpr int32_t MAX_PROGRESS_VALUE = 100;
 static std::shared_ptr<BackgroundTaskMgr::AniBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
 std::mutex backgroundTaskSubscriberMutex_;
 
@@ -316,6 +319,22 @@ public:
         }
     }
 
+    optional<::ohos::resourceschedule::backgroundTaskManager::ProgressInfo> getProgressInfo()
+    {
+        if (progressInfo_.has_value()) {
+            return optional<::ohos::resourceschedule::backgroundTaskManager::ProgressInfo>(
+                std::in_place, progressInfo_.value());
+        }
+        return {};
+    }
+
+    void setProgressInfo(optional<::ohos::resourceschedule::backgroundTaskManager::ProgressInfo> progressInfo)
+    {
+        if (progressInfo.has_value()) {
+            progressInfo_ = progressInfo.value();
+        }
+    }
+
     bool isModeSupported()
     {
         if (backgroundTaskModes_.size() == 0) {
@@ -550,6 +569,7 @@ public:
     std::vector<uint32_t> backgroundTaskModes_ {};
     ::taihe::array_view<TaskSubModeType> taiheBackgroundTaskSubmodes_;
     ::taihe::array_view<TaskModeType> taiheBackgroundTaskModes_;
+    std::optional<::ohos::resourceschedule::backgroundTaskManager::ProgressInfo> progressInfo_ {};
 };
 
 void CancelSuspendDelay(int32_t requestId)
@@ -1377,24 +1397,62 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
     return true;
 }
 
+std::shared_ptr<OHOS::BackgroundTaskMgr::ProgressInfo> GetProgressInfoParam(
+    const ::ohos::resourceschedule::backgroundTaskManager::ProgressInfo &progressInfoData)
+{
+    auto progressInfo = std::make_shared<OHOS::BackgroundTaskMgr::ProgressInfo>();
+    progressInfo->SetTitle(std::string(progressInfoData.title));
+    progressInfo->SetFileName(std::string(progressInfoData.fileName));
+    if (progressInfoData.progressValue.has_value()) {
+        int32_t progressValue = progressInfoData.progressValue.value();
+        if (progressValue < MIN_PROGRESS_VALUE || progressValue > MAX_PROGRESS_VALUE) {
+            BGTASK_LOGE("progressValue %{public}d out of range [0, 100]", progressValue);
+            set_business_error(Common::FindErrCode(ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID),
+                Common::FindErrMsg(ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID));
+            return nullptr;
+        }
+        progressInfo->SetProgressValue(progressValue);
+    }
+    if (progressInfoData.isMute.has_value()) {
+        progressInfo->SetIsMute(progressInfoData.isMute.value());
+    }
+    return progressInfo;
+}
+
+bool CheckRequestParams(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackInfo, uintptr_t context,
+    ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskRequest request)
+{
+    if (asyncCallbackInfo == nullptr) {
+        BGTASK_LOGE("asyncCallbackInfo is nullptr");
+        set_business_error(
+            Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM), Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
+        return false;
+    }
+    if (!CheckParam(env, asyncCallbackInfo, context)) {
+        BGTASK_LOGE("check param failed");
+        return false;
+    }
+    if (!CheckModeAndSubMode(env, request, asyncCallbackInfo)) {
+        BGTASK_LOGE("check mode or subMode failed");
+        set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+            Common::FindErrMsg(asyncCallbackInfo->errCode));
+        return false;
+    }
+    if (!TaskModeTypeConversion(asyncCallbackInfo)) {
+        BGTASK_LOGE("task mode conversion fail.");
+        return false;
+    } 
+    return true;
+}
+
 ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification StartBackgroundRunningSync3(
     uintptr_t context, ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskRequest request)
 {
     auto env = taihe::get_env();
     std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
     ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification notification;
-    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
-        BGTASK_LOGE("check param failed");
-        return notification;
-    }
-    if (!CheckModeAndSubMode(env, request, asyncCallbackInfo.get())) {
-        BGTASK_LOGE("check mode or subMode failed");
-        set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
-            Common::FindErrMsg(asyncCallbackInfo->errCode));
-        return notification;
-    }
-    if (!TaskModeTypeConversion(asyncCallbackInfo.get())) {
-        BGTASK_LOGE("task mode conversion fail.");
+    if (!CheckRequestParams(env, asyncCallbackInfo.get(), context, request)) {
+        BGTASK_LOGE("check request param failed");
         return notification;
     }
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
@@ -1408,6 +1466,13 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
     taskParam.isByRequestObject_ = true;
     taskParam.isCombinedTaskNotification_ = requetImpl->combinedTaskNotification_;
     taskParam.combinedNotificationTaskId_ = requetImpl->continuousTaskId_;
+    if (requetImpl->getProgressInfo().has_value()) {
+        taskParam.progressInfo_ = GetProgressInfoParam(requetImpl->getProgressInfo().value());
+        if (taskParam.progressInfo_ == nullptr) {
+            BGTASK_LOGE("progressInfo_ fail.");
+            return notification;
+        }
+    }
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
     asyncCallbackInfo->continuousTaskId = taskParam.continuousTaskId_;
@@ -1438,16 +1503,8 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
     }
     auto env = taihe::get_env();
     std::unique_ptr<ContinuousTaskCallbackInfo> asyncCallbackInfo = std::make_unique<ContinuousTaskCallbackInfo>();
-    if (!CheckParam(env, asyncCallbackInfo.get(), context)) {
-        return notification;
-    }
-    if (!CheckModeAndSubMode(env, request, asyncCallbackInfo.get())) {
-        set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
-            Common::FindErrMsg(asyncCallbackInfo->errCode));
-        return notification;
-    }
-    if (!TaskModeTypeConversion(asyncCallbackInfo.get())) {
-        BGTASK_LOGE("task mode conversion fail.");
+    if (!CheckRequestParams(env, asyncCallbackInfo.get(), context, request)) {
+        BGTASK_LOGE("check request param failed");
         return notification;
     }
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
@@ -1459,6 +1516,14 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
     taskParam.isCombinedTaskNotification_ = requetImpl->combinedTaskNotification_;
     taskParam.updateTaskId_ = requetImpl->continuousTaskId_;
     taskParam.isByRequestObject_ = true;
+    if (requetImpl->getProgressInfo().has_value()) {
+        BGTASK_LOGE("progressInfo_ has value.");
+        taskParam.progressInfo_ = GetProgressInfoParam(requetImpl->getProgressInfo().value());
+        if (taskParam.progressInfo_ == nullptr) {
+            BGTASK_LOGE("progressInfo_ fail.");
+            return notification;
+        }
+    }
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam);
     if (asyncCallbackInfo->errCode) {
         set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
@@ -1473,6 +1538,48 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
     notification.notificationId = taskParam.notificationId_;
     notification.continuousTaskId = optional<int32_t>(std::in_place, taskParam.continuousTaskId_);
     return notification;
+}
+
+void UpdateDataTransferProgress(
+    uintptr_t context, ::ohos::resourceschedule::backgroundTaskManager::DataTransferProgress progressInfoData)
+{
+    BGTASK_LOGE("zsh UpdateDataTransferProgress  begin");
+    auto env = taihe::get_env();
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
+    if (GetAbilityContext(env, reinterpret_cast<ani_object>(context), abilityContext) != ANI_OK) {
+        BGTASK_LOGE("get ability context failed");
+        set_business_error(Common::FindErrCode(ERR_CONTEXT_NULL_OR_TYPE_ERR),
+            Common::FindErrMsg(ERR_CONTEXT_NULL_OR_TYPE_ERR));
+        return;
+    }
+    if (progressInfoData.continuousTaskId < 0) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM),
+            Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
+        return;
+    }
+
+    OHOS::BackgroundTaskMgr::DataTransferProgress progressInfo;
+    progressInfo.SetContinuousTaskId(progressInfoData.continuousTaskId);
+    if (progressInfoData.wantAgent.has_value()) {
+        std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent {nullptr};
+        ani_object wantAgentObj = reinterpret_cast<ani_object>(progressInfoData.wantAgent.value());
+        GetWantAgent(env, wantAgentObj, wantAgent);
+        progressInfo.SetWantAgent(wantAgent);
+    }
+
+    auto progressInfoInner = GetProgressInfoParam(progressInfoData.progressInfo);
+    if (progressInfoInner == nullptr) {
+        set_business_error(Common::FindErrCode(ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID),
+            Common::FindErrMsg(ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID));
+        return;
+    }
+    progressInfo.SetProgressInfo(progressInfoInner);
+
+    ErrCode errCode = BackgroundTaskMgrHelper::RequestUpdateDataTransferProgress(progressInfo);
+    if (errCode) {
+        BGTASK_LOGE("UpdateDataTransferProgress fail errCode: %{public}d", Common::FindErrCode(errCode));
+        set_business_error(Common::FindErrCode(errCode), Common::FindErrMsg(errCode));
+    }
 }
 } // namespace
 

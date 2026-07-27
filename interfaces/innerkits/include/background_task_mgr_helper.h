@@ -22,6 +22,7 @@
 #include "continuous_task_request.h"
 #include "background_task_state_info.h"
 #include "background_common.h"
+#include "data_transfer_progress.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -306,6 +307,14 @@ public:
      * @return Returns ERR_OK if success, else failure.
      */
     static ErrCode SendNotificationByDeteTask(const std::set<std::string> &taskKeys);
+
+    /**
+     * @brief Request service to update progress info for DATA_TRANSFER continuous task.
+     *
+     * @param progressInfo Progress info params.
+     * @return ERR_OK if success, else fail.
+     */
+    static ErrCode RequestUpdateDataTransferProgress(DataTransferProgress &progressInfo);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

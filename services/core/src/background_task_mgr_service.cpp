@@ -327,6 +327,19 @@ ErrCode BackgroundTaskMgrService::GetAllContinuousTasks(
     return BgContinuousTaskMgr::GetInstance()->GetAllContinuousTasks(list, includeSuspended);
 }
 
+ErrCode BackgroundTaskMgrService::UpdateDataTransferProgress(const DataTransferProgress &progressInfo)
+{
+    if (CheckAtomicService()) {
+        pid_t callingPid = IPCSkeleton::GetCallingPid();
+        pid_t callingUid = IPCSkeleton::GetCallingUid();
+        BGTASK_LOGE("uid %{public}d pid %{public}d Check atomisc service fail, UpdateDataTransferProgress not allowed",
+            callingUid, callingPid);
+        return ERR_BGTASK_PERMISSION_DENIED;
+    }
+    auto paramPtr = sptr<DataTransferProgress>(new DataTransferProgress(progressInfo));
+    return BgContinuousTaskMgr::GetInstance()->UpdateDataTransferProgress(paramPtr);
+}
+
 ErrCode BackgroundTaskMgrService::GetTransientTaskApps(std::vector<TransientTaskAppInfo> &list)
 {
     BgTaskHiTraceChain traceChain(__func__);

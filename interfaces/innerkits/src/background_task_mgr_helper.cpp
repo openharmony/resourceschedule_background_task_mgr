@@ -203,5 +203,10 @@ ErrCode BackgroundTaskMgrHelper::SendNotificationByDeteTask(const std::set<std::
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SendNotificationByDeteTask(taskKeys);
 }
+
+ErrCode BackgroundTaskMgrHelper::RequestUpdateDataTransferProgress(DataTransferProgress &progressInfo)
+{
+    return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestUpdateDataTransferProgress(progressInfo);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
