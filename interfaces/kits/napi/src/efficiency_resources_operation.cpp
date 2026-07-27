@@ -21,6 +21,7 @@
 #include "background_task_manager.h"
 #include "efficiency_resource_info.h"
 #include "efficiency_resource_log.h"
+#include "bgtaskmgr_inner_errors.h"
 #include "hitrace_meter.h"
 
 namespace OHOS {
@@ -207,21 +208,39 @@ void GetAllEfficiencyResourcesCompletedCB(napi_env env, napi_status status, void
     std::unique_ptr<AsyncCallbackInfoGetAllEfficiencyResources> callbackPtr {asyncCallbackInfo};
     napi_value result = nullptr;
     if (asyncCallbackInfo->errCode == ERR_OK) {
-        NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
+        napi_status createStatus = napi_create_array(env, &result);
+        if (createStatus != napi_ok) {
+            BGTASK_LOGE("napi_create_array failed: %{public}d", createStatus);
+            result = Common::GetCallbackErrorValue(env, ERR_BGTASK_SYS_NOT_READY, "");
+            napi_reject_deferred(env, asyncCallbackInfo->deferred, result)
+            return;
+        }
         if (asyncCallbackInfo->efficiencyResourceInfoList.size() > 0) {
             uint32_t count = 0;
             for (const auto &efficiencyResourceTaskInfo : asyncCallbackInfo->efficiencyResourceInfoList) {
                 napi_value napiWork = Common::GetNapiEfficiencyResourcesInfo(env, efficiencyResourceTaskInfo);
-                NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, count, napiWork));
+                napi_status setElementStatus = napi_set_element(env, result, count, napiWork);
+                if (setElementStatus != napi_ok) {
+                    BGTASK_LOGE("napi_set_element failed: %{public}d", setElementStatus);
+                    result = Common::GetCallbackErrorValue(env, ERR_BGTASK_SYS_NOT_READY, "");
+                    napi_reject_deferred(env, asyncCallbackInfo->deferred, result)
+                    return;
+                }
                 count++;
             }
         }
-        NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result));
+        napi_status resolveStatus = napi_resolve_deferred(env, asyncCallbackInfo->deferred, result);
+        if (resolveStatus != napi_ok) {
+            BGTASK_LOGE("napi_resolve_deferred failed: %{public}d", resolveStatus);
+        }
     } else {
         std::string errMsg = Common::FindErrMsg(env, asyncCallbackInfo->errCode);
         int32_t errCodeInfo = Common::FindErrCode(env, asyncCallbackInfo->errCode);
         result = Common::GetCallbackErrorValue(env, errCodeInfo, errMsg);
-        NAPI_CALL_RETURN_VOID(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result));
+        napi_status rejectStatus = napi_reject_deferred(env, asyncCallbackInfo->deferred, result);
+        if (rejectStatus != napi_ok) {
+            BGTASK_LOGE("napi_reject_deferred failed: %{public}d", rejectStatus);
+        }
     }
 }
 
@@ -243,14 +262,27 @@ napi_value GetAllEfficiencyResources(napi_env env, napi_callback_info info)
     Common::PaddingAsyncWorkData(env, callback, *asyncCallbackInfo, promise);
 
     napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "GetAllEfficiencyResources", NAPI_AUTO_LENGTH, &resourceName));
+    napi_status status = napi_create_string_latin1(env, "GetAllEfficiencyResources", NAPI_AUTO_LENGTH, &resourceName);
+    if (status != napi_ok) {
+        BGTASK_LOGE("napi_create_string_latin1 failed, status: %{public}d", status);
+        return Common::JSParaError(env, callback);
+    }
 
-    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName,
+    status = napi_create_async_work(env, nullptr, resourceName,
         GetAllEfficiencyResourcesExecuteCB,
         GetAllEfficiencyResourcesCompletedCB,
-        static_cast<AsyncCallbackInfoGetAllEfficiencyResources *>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
+        static_cast<AsyncCallbackInfoGetAllEfficiencyResources *>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork);
+    if (status != napi_ok) {
+        BGTASK_LOGE("napi_create_async_work failed, status: %{public}d", status);
+        return Common::JSParaError(env, callback);
+    }
 
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+    status = napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+    if (status != napi_ok) {
+        BGTASK_LOGE("napi_queue_async_work failed, status: %{public}d", status);
+        napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
+        return Common::JSParaError(env, callback);
+    }
     if (asyncCallbackInfo->isCallback) {
         callbackPtr.release();
         return Common::NapiGetNull(env);

@@ -488,11 +488,14 @@ void JsBackgroundTaskSubscriber::AddJsObserverObject(const std::string cbType, c
         BGTASK_LOGI("null observer");
         return;
     }
- 
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     if (GetObserverObject(cbType, jsObserverObject) == nullptr) {
         napi_ref ref = nullptr;
-        napi_create_reference(env_, jsObserverObject, 1, &ref);
-        std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
+        napi_status status = napi_create_reference(env_, jsObserverObject, 1, &ref);
+        if (status != napi_ok) {
+            BGTASK_LOGI("napi_create_reference failed: %{public}d", status);
+        return;
+        }
         jsObserverObjectMap_[cbType].emplace(
             std::shared_ptr<NativeReference>(reinterpret_cast<NativeReference *>(ref)));
         BGTASK_LOGI("add observer, type: %{public}s, size: %{public}d", cbType.c_str(),
@@ -510,7 +513,6 @@ std::shared_ptr<NativeReference> JsBackgroundTaskSubscriber::GetObserverObject(
         return nullptr;
     }
 
-    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = jsObserverObjectMap_.find(cbType);
     if (iter == jsObserverObjectMap_.end()) {
         BGTASK_LOGW("null callback Type: %{public}s", cbType.c_str());
@@ -566,9 +568,9 @@ void JsBackgroundTaskSubscriber::RemoveJsObserverObject(const std::string cbType
         BGTASK_LOGI("null observer");
         return;
     }
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto observer = GetObserverObject(cbType, jsObserverObject);
     if (observer != nullptr) {
-        std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
         int32_t size = static_cast<int32_t>(jsObserverObjectMap_[cbType].size());
         if (size == 1) {
             jsObserverObjectMap_.erase(cbType);

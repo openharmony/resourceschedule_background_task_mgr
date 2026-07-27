@@ -80,7 +80,7 @@ private:
     };
  
 private:
-    std::mutex jsObserverObjectSetLock_;
+    std::recursive_mutex jsObserverObjectSetLock_;
     std::map<std::string, std::set<std::shared_ptr<callback<void(const ContinuousTaskCancelInfo&)>>>> cancelCallbacks_;
     std::map<std::string, std::set<std::shared_ptr<callback<void(const ContinuousTaskActiveInfo&)>>>> activeCallbacks_;
     std::map<std::string, std::set<std::shared_ptr<callback<void(

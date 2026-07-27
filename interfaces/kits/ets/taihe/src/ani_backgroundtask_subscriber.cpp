@@ -233,7 +233,7 @@ void AniBackgroundTaskSubscriber::HandleOnContinuousTaskStop(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("HandleOnContinuousTaskStop called");
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = cancelCallbacks_.find("continuousTaskCancel");
     if (iter == cancelCallbacks_.end()) {
         BGTASK_LOGW("null callback Type");
@@ -282,7 +282,7 @@ void AniBackgroundTaskSubscriber::HandleOnContinuousTaskSuspend(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("HandleOnContinuousTaskSuspend called");
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = suspendCallbacks_.find("continuousTaskSuspend");
     if (iter == suspendCallbacks_.end()) {
         BGTASK_LOGW("null callback Type: continuousTaskSuspend");
@@ -336,7 +336,7 @@ void AniBackgroundTaskSubscriber::HandleOnContinuousTaskActive(
     const std::shared_ptr<ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
     BGTASK_LOGI("HandleOnContinuousTaskActive called");
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto iter = activeCallbacks_.find("continuousTaskActive");
     if (iter == activeCallbacks_.end()) {
         BGTASK_LOGW("null callback Type: continuousTaskActive");
@@ -359,8 +359,8 @@ void AniBackgroundTaskSubscriber::AddCancelObserverObject(const std::string& cbT
         BGTASK_LOGI("null observer");
         return;
     }
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     if (GetCancelObserverObject(cbType, taiheCallback) == nullptr) {
-        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
         cancelCallbacks_[cbType].emplace(taiheCallback);
         BGTASK_LOGI("add observer, type: %{public}s, size: %{public}d", cbType.c_str(),
             static_cast<int32_t>(cancelCallbacks_[cbType].size()));
@@ -376,7 +376,6 @@ std::shared_ptr<callback<void(const ContinuousTaskCancelInfo&)>> AniBackgroundTa
         BGTASK_LOGI("null observer");
         return nullptr;
     }
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
     auto iter = cancelCallbacks_.find(cbType);
     if (iter == cancelCallbacks_.end()) {
         BGTASK_LOGW("null callback Type: %{public}s", cbType.c_str());
@@ -402,10 +401,9 @@ void AniBackgroundTaskSubscriber::RemoveCancelObserverObject(
         BGTASK_LOGI("null observer");
         return;
     }
- 
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto observer = GetCancelObserverObject(cbType, taiheCallback);
     if (observer != nullptr) {
-        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
         cancelCallbacks_[cbType].erase(observer);
         if (cancelCallbacks_[cbType].empty()) {
             cancelCallbacks_.erase(cbType);
@@ -420,8 +418,8 @@ void AniBackgroundTaskSubscriber::AddSuspendObserverObject(const std::string& cb
         BGTASK_LOGI("null observer");
         return;
     }
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     if (GetSuspendObserverObject(cbType, taiheCallback) == nullptr) {
-        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
         suspendCallbacks_[cbType].emplace(taiheCallback);
         BGTASK_LOGI("add observer, type: %{public}s, size: %{public}d", cbType.c_str(),
             static_cast<int32_t>(suspendCallbacks_[cbType].size()));
@@ -437,7 +435,6 @@ std::shared_ptr<callback<void(const ContinuousTaskSuspendInfo&)>> AniBackgroundT
         BGTASK_LOGI("null observer");
         return nullptr;
     }
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
     auto iter = suspendCallbacks_.find(cbType);
     if (iter == suspendCallbacks_.end()) {
         BGTASK_LOGW("null callback Type: %{public}s", cbType.c_str());
@@ -463,10 +460,9 @@ void AniBackgroundTaskSubscriber::RemoveSuspendObserverObject(const std::string&
         BGTASK_LOGI("null observer");
         return;
     }
- 
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto observer = GetSuspendObserverObject(cbType, taiheCallback);
     if (observer != nullptr) {
-        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
         suspendCallbacks_[cbType].erase(observer);
         if (suspendCallbacks_[cbType].empty()) {
             suspendCallbacks_.erase(cbType);
@@ -481,8 +477,8 @@ void AniBackgroundTaskSubscriber::AddActiveObserverObject(const std::string& cbT
         BGTASK_LOGI("null observer");
         return;
     }
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     if (GetActiveObserverObject(cbType, taiheCallback) == nullptr) {
-        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
         activeCallbacks_[cbType].emplace(taiheCallback);
         BGTASK_LOGI("add observer, type: %{public}s, size: %{public}d", cbType.c_str(),
             static_cast<int32_t>(activeCallbacks_[cbType].size()));
@@ -498,7 +494,6 @@ std::shared_ptr<callback<void(const ContinuousTaskActiveInfo&)>> AniBackgroundTa
         BGTASK_LOGI("null observer");
         return nullptr;
     }
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
     auto iter = activeCallbacks_.find(cbType);
     if (iter == activeCallbacks_.end()) {
         BGTASK_LOGW("null callback Type: %{public}s", cbType.c_str());
@@ -524,10 +519,9 @@ void AniBackgroundTaskSubscriber::RemoveActiveObserverObject(const std::string& 
         BGTASK_LOGI("null observer");
         return;
     }
- 
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     auto observer = GetActiveObserverObject(cbType, taiheCallback);
     if (observer != nullptr) {
-        std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
         activeCallbacks_[cbType].erase(observer);
         if (activeCallbacks_[cbType].empty()) {
             activeCallbacks_.erase(cbType);
@@ -537,13 +531,13 @@ void AniBackgroundTaskSubscriber::RemoveActiveObserverObject(const std::string& 
 
 bool AniBackgroundTaskSubscriber::IsEmpty()
 {
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     return cancelCallbacks_.empty() && suspendCallbacks_.empty() && activeCallbacks_.empty();
 }
 
 void AniBackgroundTaskSubscriber::RemoveJsObserverObjects(const std::string& cbType)
 {
-    std::lock_guard<std::mutex> lock(jsObserverObjectSetLock_);
+    std::lock_guard<std::recursive_mutex> lock(jsObserverObjectSetLock_);
     if (cbType == "continuousTaskCancel") {
         cancelCallbacks_.clear();
     } else if (cbType == "continuousTaskSuspend") {

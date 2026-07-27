@@ -631,7 +631,9 @@ bool Common::GetBackgroundTaskModesFromArray(napi_env env, napi_value arrayValue
         return boolValue;
     }
     uint32_t length = 0;
-    napi_get_array_length(env, arrayValue, &length);
+    if (napi_get_array_length(env, arrayValue, &length) != napi_ok) {
+        return false;
+    }
     std::vector<uint32_t> backgroundTaskModes {};
     for (uint32_t i = 0; i < length; i++) {
         napi_value napiMode;
@@ -640,7 +642,9 @@ bool Common::GetBackgroundTaskModesFromArray(napi_env env, napi_value arrayValue
         } else {
             int32_t intValue = INVALID_MODE_ID;
             napi_valuetype valueType = napi_undefined;
-            napi_typeof(env, napiMode, &valueType);
+            if (napi_typeof(env, napiMode, &valueType) != napi_ok) {
+                return false;
+            }
             if (valueType == napi_undefined) {
                 return false;
             } else if (valueType != napi_number) {
@@ -679,7 +683,9 @@ bool Common::GetBackgroundTaskSubmodesFromArray(napi_env env, napi_value arrayVa
         return boolValue;
     }
     uint32_t length = 0;
-    napi_get_array_length(env, arrayValue, &length);
+    if (napi_get_array_length(env, arrayValue, &length) != napi_ok) {
+        return false;
+    }
     std::vector<uint32_t> backgroundTaskSubModes {};
     for (uint32_t i = 0; i < length; i++) {
         napi_value napiSubMode;

@@ -69,6 +69,7 @@ static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
 static constexpr uint32_t SUBSCRIBER_BACKGROUND_TASK_STATE = 1 << 3;
 static constexpr char SUBSCRIBER_BACKGROUND_TASK_STATE_TYPE[] = "subscribeContinuousTaskState";
 static std::shared_ptr<JsBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
+std::mutex backgroundTaskSubscriberMutex_;
 static std::vector<std::string> g_backgroundModes = {
     "dataTransfer",
     "audioPlayback",
@@ -481,14 +482,29 @@ napi_value StartBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncC
     napi_value promise {nullptr};
     NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
     asyncCallbackInfo->deferred = deferred;
-    NAPI_CALL(env, napi_create_async_work(env,
+    napi_status status = napi_create_async_work(env,
         nullptr,
         resourceName,
         StartBackgroundRunningExecuteCB,
         PromiseCompletedCB,
         static_cast<void *>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+        &asyncCallbackInfo->asyncWork);
+    if (status != napi_ok) {
+        BGTASK_LOGE("napi_create_async_work failed: %{public}d", status);
+        napi_value errResult = Common::GetCallbackErrorValue(env, ERR_BGTASK_SYS_NOT_READY, "");
+        napi_reject_deferred(env, deferred, errResult);
+        delete asyncCallbackInfo;
+        return promise;
+    }
+    status = napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+    if (status != napi_ok) {
+        BGTASK_LOGE("napi_queue_async_work failed: %{public}d", status);
+        napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
+        napi_value errResult = Common::GetCallbackErrorValue(env, ERR_BGTASK_SYS_NOT_READY, "");
+        napi_reject_deferred(env, deferred, errResult);
+        delete asyncCallbackInfo;
+        return promise;
+    }
     return promise;
 }
 
@@ -1033,7 +1049,7 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
     napi_create_promise(env, &deferred, &promise);
 
     asyncCallbackInfo->deferred = deferred;
-    napi_create_async_work(
+    napi_status status = napi_create_async_work(
         env,
         nullptr,
         resourceName,
@@ -1041,7 +1057,22 @@ napi_value StopBackgroundRunningPromise(napi_env env, AsyncCallbackInfo *asyncCa
         PromiseCompletedCB,
         static_cast<void *>(asyncCallbackInfo),
         &asyncCallbackInfo->asyncWork);
-    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+    if (status != napi_ok) {
+        BGTASK_LOGE("napi_create_async_work failed: %{public}d", status);
+        napi_value errResult = Common::GetCallbackErrorValue(env, ERR_BGTASK_SYS_NOT_READY, "");
+        napi_reject_deferred(env, deferred, errResult);
+        delete asyncCallbackInfo;
+        return promise;
+    }
+    status = napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+    if (status != napi_ok) {
+        BGTASK_LOGE("napi_queue_async_work failed: %{public}d", status);
+        napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
+        napi_value errResult = Common::GetCallbackErrorValue(env, ERR_BGTASK_SYS_NOT_READY, "");
+        napi_reject_deferred(env, deferred, errResult);
+        delete asyncCallbackInfo;
+        return promise;
+    }
     return promise;
 }
 
@@ -1279,6 +1310,7 @@ napi_value OnOnContinuousTaskCallback(napi_env env, napi_callback_info info)
         type = CONTINUOUS_TASK_ACTIVE;
     }
     BGTASK_LOGD("SubscribeBackgroundTask type: %{public}s, type: %{public}d", typeString.c_str(), type);
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!SubscribeBackgroundTask(env, type)) {
         return WrapUndefinedToJS(env);
     }
@@ -1297,6 +1329,7 @@ napi_value OffOnContinuousTaskCallback(napi_env env, napi_callback_info info)
         Common::HandleParamErr(env, ERR_BGTASK_INVALID_PARAM, true);
         return WrapUndefinedToJS(env);
     }
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!backgroundTaskSubscriber_) {
         BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return WrapUndefinedToJS(env);
@@ -1308,7 +1341,7 @@ napi_value OffOnContinuousTaskCallback(napi_env env, napi_callback_info info)
     }
  
     uint32_t type = 0;
-    if (backgroundTaskSubscriber_-> IsTypeEmpty(typeString)) {
+    if (backgroundTaskSubscriber_->IsTypeEmpty(typeString)) {
         if (typeString == "continuousTaskCancel") {
             type = CONTINUOUS_TASK_CANCEL;
         } else if (typeString == "continuousTaskSuspend") {
@@ -1843,6 +1876,7 @@ napi_value SubscribeContinuousTaskState(napi_env env, napi_callback_info info)
         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, true);
         return WrapVoidToJS(env);
     }
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!SubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE)) {
         return WrapUndefinedToJS(env);
     }
@@ -1867,6 +1901,7 @@ napi_value UnSubscribeContinuousTaskState(napi_env env, napi_callback_info info)
         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, true);
         return WrapVoidToJS(env);
     }
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!backgroundTaskSubscriber_) {
         BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return WrapUndefinedToJS(env);
