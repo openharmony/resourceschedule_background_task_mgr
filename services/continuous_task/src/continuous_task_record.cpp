@@ -171,6 +171,11 @@ int32_t ContinuousTaskRecord::GetAppIndex() const
     return appIndex_;
 }
 
+std::shared_ptr<ProgressInfo> ContinuousTaskRecord::GetProgressInfo() const
+{
+    return progressInfo_;
+}
+
 std::string ContinuousTaskRecord::ParseToJsonStr()
 {
     nlohmann::json root;
@@ -211,7 +216,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["isStandbySuspend"] = isStandbySuspend_;
     if (progressInfo_ != nullptr) {
         nlohmann::json progressJson = nlohmann::json::parse(progressInfo_->ParseToJsonStr());
-        if (!recordJson.is_discarded()) {
+        if (!progressJson.is_discarded()) {
             root["progressInfo"] = progressJson;
         }
     }

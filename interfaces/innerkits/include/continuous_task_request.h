@@ -110,7 +110,7 @@ public:
      *
      * @param progressInfo Progress info.
      */
-    void SetProgressInfo(const std::shared_ptr<ProgressInfo> &progressInfo);
+    void SetProgressInfo(const std::shared_ptr<ProgressInfo> progressInfo);
 private:
     bool ReadFromParcel(Parcel& in);
 

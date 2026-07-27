@@ -59,7 +59,7 @@ struct DataTransferProgress : public Parcelable {
      *
      * @param wantAgent Want agent.
      */
-    void SetWantAgent(const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent);
+    void SetWantAgent(const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent);
 
     /**
      * @brief Get progress info.
@@ -73,7 +73,7 @@ struct DataTransferProgress : public Parcelable {
      *
      * @param progressInfo Progress info.
      */
-    void SetProgressInfo(const std::shared_ptr<ProgressInfo> &progressInfo);
+    void SetProgressInfo(const std::shared_ptr<ProgressInfo> progressInfo);
 
     bool Marshalling(Parcel& out) const override;
     static DataTransferProgress* Unmarshalling(Parcel& in);

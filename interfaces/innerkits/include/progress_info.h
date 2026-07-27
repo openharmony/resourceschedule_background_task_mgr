@@ -17,12 +17,12 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_INNERKITS_INCLUDE_PROGRESS_INFO_H
 
 #include <string>
-
 #include "nlohmann/json.hpp"
 #include "parcel.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
+static constexpr int32_t jsonFormat_ = 4;
 struct ProgressInfo : public Parcelable {
     ProgressInfo() = default;
     ProgressInfo(const std::string &title, const std::string &fileName, int32_t progressValue, bool isMute)

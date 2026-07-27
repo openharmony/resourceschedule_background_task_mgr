@@ -99,36 +99,6 @@ Notification::NotificationRequest CreateNotificationRequest(
     return notificationRequest;
 }
 
-Notification::NotificationRequest CreateSingleModeNotificationRequest(
-    const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
-    const std::string &appName, const std::string &prompt, int32_t serviceUid)
-{
-    std::shared_ptr<Notification::NotificationLocalLiveViewContent> liveContent
-        = std::make_shared<Notification::NotificationLocalLiveViewContent>();
-    liveContent->SetTitle(appName);
-    liveContent->SetText(prompt);
-    if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
-        BACKGROUND_MODE_DATA_TANSFER) != continuousTaskRecord->bgModeIds_.end()) {
-        liveContent->SetType(TYPE_CODE_DATA_TANSFER);
-    } else if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
-        BACKGROUND_MODE_AUDIO_RECORDING) != continuousTaskRecord->bgModeIds_.end()) {
-        liveContent->SetType(TYPE_CODE_AUDIO_RECORDING);
-    } else if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
-        BACKGROUND_MODE_VOIP) != continuousTaskRecord->bgModeIds_.end()) {
-        liveContent->SetType(TYPE_CODE_VOIP);
-    }
-
-    std::shared_ptr<AAFwk::WantParams> extraInfo = std::make_shared<AAFwk::WantParams>();
-    extraInfo->SetParam("abilityName", AAFwk::String::Box(continuousTaskRecord->abilityName_));
-
-    std::string notificationLabel = CreateNotificationLabel(continuousTaskRecord->uid_,
-        continuousTaskRecord->abilityName_, continuousTaskRecord->abilityId_,
-        continuousTaskRecord->isByRequestObject_, continuousTaskRecord->continuousTaskId_);
-
-    return CreateNotificationRequest(
-        continuousTaskRecord, liveContent, extraInfo, serviceUid, notificationLabel);
-}
-
 static void SetProgressNotification(const std::shared_ptr<ProgressInfo> &progressInfo,
     Notification::NotificationRequest& notificationRequest)
 {
@@ -156,23 +126,16 @@ static void SetProgressNotification(const std::shared_ptr<ProgressInfo> &progres
     notificationTemplate->SetTemplateData(templateData);
     notificationRequest.SetTemplate(notificationTemplate);
 }
-#endif
 
-WEAK_FUNC ErrCode NotificationTools::PublishNotification(
-    const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
-    const std::string &appName, const std::string &prompt, int32_t serviceUid)
+static void SetNotificationSlotType(const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
+    Notification::NotificationRequest& notificationRequest, bool isDataTransfer)
 {
-#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
-    Notification::NotificationRequest notificationRequest =
-        CreateSingleModeNotificationRequest(continuousTaskRecord, appName, prompt, serviceUid);
-    std::string notificationLabel = notificationRequest.GetLabel();
-
-    if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
-        BACKGROUND_MODE_DATA_TANSFER) != continuousTaskRecord->bgModeIds_.end()) {
+    if (isDataTransfer) {
         notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
         notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
-        if (continuousTaskRecord->progressInfo_ != nullptr) {
-            setProgressNotification(continuousTaskRecord->progressInfo_, notificationRequest);
+        auto progressInfo = continuousTaskRecord->GetProgressInfo();
+        if (progressInfo != nullptr) {
+            SetProgressNotification(progressInfo, notificationRequest);
         }
     } else {
         notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::OTHER);
@@ -180,6 +143,41 @@ WEAK_FUNC ErrCode NotificationTools::PublishNotification(
         notificationRequest.SetUnremovable(true);
         notificationRequest.SetTapDismissed(false);
     }
+}
+#endif
+
+WEAK_FUNC ErrCode NotificationTools::PublishNotification(
+    const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
+    const std::string &appName, const std::string &prompt, int32_t serviceUid)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    std::shared_ptr<Notification::NotificationLocalLiveViewContent> liveContent
+        = std::make_shared<Notification::NotificationLocalLiveViewContent>();
+    liveContent->SetTitle(appName);
+    liveContent->SetText(prompt);
+    bool isDataTransfer = false;
+    if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
+        BACKGROUND_MODE_DATA_TANSFER) != continuousTaskRecord->bgModeIds_.end()) {
+        liveContent->SetType(TYPE_CODE_DATA_TANSFER);
+        isDataTransfer = true;
+    } else if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
+        BACKGROUND_MODE_AUDIO_RECORDING) != continuousTaskRecord->bgModeIds_.end()) {
+        liveContent->SetType(TYPE_CODE_AUDIO_RECORDING);
+    } else if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
+        BACKGROUND_MODE_VOIP) != continuousTaskRecord->bgModeIds_.end()) {
+        liveContent->SetType(TYPE_CODE_VOIP);
+    }
+
+    std::shared_ptr<AAFwk::WantParams> extraInfo = std::make_shared<AAFwk::WantParams>();
+    extraInfo->SetParam("abilityName", AAFwk::String::Box(continuousTaskRecord->abilityName_));
+
+    std::string notificationLabel = CreateNotificationLabel(continuousTaskRecord->uid_,
+        continuousTaskRecord->abilityName_, continuousTaskRecord->abilityId_,
+        continuousTaskRecord->isByRequestObject_, continuousTaskRecord->continuousTaskId_);
+
+    Notification::NotificationRequest notificationRequest = CreateNotificationRequest(
+        continuousTaskRecord, liveContent, extraInfo, serviceUid, notificationLabel);
+    SetNotificationSlotType(continuousTaskRecord, notificationRequest, isDataTransfer);
     if (continuousTaskRecord->GetNotificationId() == -1) {
         notificationRequest.SetNotificationId(++notificationIdIndex_);
     } else {

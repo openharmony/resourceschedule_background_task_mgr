@@ -14,7 +14,6 @@
  */
 
 #include "data_transfer_progress.h"
-
 #include "bgtaskmgr_log_wrapper.h"
 
 namespace OHOS {
@@ -36,7 +35,7 @@ std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> DataTransferProgress::GetW
 }
 
 void DataTransferProgress::SetWantAgent(
-    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent)
+    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent)
 {
     wantAgent_ = wantAgent;
 }
@@ -46,7 +45,7 @@ std::shared_ptr<ProgressInfo> DataTransferProgress::GetProgressInfo() const
     return progressInfo_;
 }
 
-void DataTransferProgress::SetProgressInfo(const std::shared_ptr<ProgressInfo> &progressInfo)
+void DataTransferProgress::SetProgressInfo(const std::shared_ptr<ProgressInfo> progressInfo)
 {
     progressInfo_ = progressInfo;
 }
@@ -125,11 +124,11 @@ std::string DataTransferProgress::ParseToJsonStr() const
     root["continuousTaskId"] = continuousTaskId_;
     if (progressInfo_ != nullptr) {
         nlohmann::json progressJson = nlohmann::json::parse(progressInfo_->ParseToJsonStr());
-        if (!recordJson.is_discarded()) {
+        if (!progressJson.is_discarded()) {
             root["progressInfo"] = progressJson;
         }
     }
-    return root.dump(CommonUtils::jsonFormat_);
+    return root.dump(jsonFormat_, ' ', false, nlohmann::json::error_handler_t::replace);
 }
 
 bool DataTransferProgress::ParseFromJson(const nlohmann::json &value)
