@@ -42,6 +42,8 @@
 #include "token_setproc.h"
 #include "transient_task_app_info.h"
 #include "user_auth_result.h"
+#include "progress_info.h"
+#include "data_transfer_progress.h"
 
 using namespace testing::ext;
 
@@ -1422,6 +1424,17 @@ HWTEST_F(BgTaskClientUnitTest, SendNotificationByDeteTask_001, TestSize.Level1)
 {
     std::set<std::string> taskKeys;
     EXPECT_EQ(BackgroundTaskMgrHelper::SendNotificationByDeteTask(taskKeys), ERR_OK);
+}
+
+/**
+ * @tc.name: RequestUpdateDataTransferProgress_001
+ * @tc.desc: test RequestUpdateDataTransferProgress interface.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, RequestUpdateDataTransferProgress_001, TestSize.Level0)
+{
+    DataTransferProgress progress;
+    EXPECT_NE(BackgroundTaskMgrHelper::RequestUpdateDataTransferProgress(progress), ERR_OK);
 }
 }
 }

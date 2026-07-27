@@ -164,9 +164,10 @@ const std::unordered_map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
     {ERR_BGTASK_CONTINUOUS_NOT_APPLY_PRELOAD_STATE, "Continuous Task verification failed. "
         "The application is in pre-launch state and cannot apply for continuous task."},
     {ERR_BGTASK_CONTINUOUS_NOT_DATA_TRANSFER,
-        "Continuous Task verification failed. updateDataTransferProgress only supports DATA_TRANSFER mode."},
+        "Notification verification failed for a continuous task. "
+        "updateDataTransferProgress only supports DATA_TRANSFER mode."},
     {ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID,
-        "Continuous Task verification failed. The progress info is invalid."},
+        "Notification verification failed for a continuous task. The progress info is invalid."},
 };
 
 const std::unordered_map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {

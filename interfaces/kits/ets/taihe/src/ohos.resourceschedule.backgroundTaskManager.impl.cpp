@@ -1543,7 +1543,6 @@ bool CheckRequestParams(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackI
 void UpdateDataTransferProgress(
     uintptr_t context, ::ohos::resourceschedule::backgroundTaskManager::DataTransferProgress progressInfoData)
 {
-    BGTASK_LOGE("zsh UpdateDataTransferProgress  begin");
     auto env = taihe::get_env();
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
     if (GetAbilityContext(env, reinterpret_cast<ani_object>(context), abilityContext) != ANI_OK) {

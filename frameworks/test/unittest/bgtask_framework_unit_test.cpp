@@ -38,6 +38,8 @@
 #include "resource_callback_info.h"
 #include "singleton.h"
 #include "transient_task_app_info.h"
+#include "continuous_task_request.h"
+#include "data_transfer_progress.h"
 
 using namespace testing::ext;
 
@@ -1147,6 +1149,20 @@ HWTEST_F(BgTaskFrameworkUnitTest, RemoveAuthRecord_001, TestSize.Level1)
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
     ContinuousTaskParam taskParam = ContinuousTaskParam();
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam),
+        ERR_BGTASK_SERVICE_NOT_CONNECTED);
+}
+
+/**
+ * @tc.name: RequestUpdateDataTransferProgress_001
+ * @tc.desc: test RequestUpdateDataTransferProgress.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskFrameworkUnitTest, RequestUpdateDataTransferProgress_001, TestSize.Level1)
+{
+    DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
+    SystemAbilityManagerClient::GetInstance().action_ = "set_null";
+    DataTransferProgress progressInfo;
+    EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestUpdateDataTransferProgress(progressInfo),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 }
 }

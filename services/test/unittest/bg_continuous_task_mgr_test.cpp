@@ -33,6 +33,8 @@
 #include "expired_callback_stub.h"
 #include "running_process_info.h"
 #include "background_task_observer.h"
+#include "progress_info.h"
+#include "data_transfer_progress.h"
 #ifdef GAME_PRE_LAUNCH_ENABLE
 #include "game_pre_launch_mgr.h"
 #endif
@@ -3348,6 +3350,222 @@ HWTEST_F(BgContinuousTaskMgrTest, InitSubNotificationRecord_001, TestSize.Level1
     std::shared_ptr<ContinuousTaskRecord> subRecord = std::make_shared<ContinuousTaskRecord>();
     ret = bgContinuousTaskMgr_->InitSubNotificationRecord(record, subRecord);
     EXPECT_TRUE(ret);
+}
+
+/**
+ * @tc.name: UpdateDataTransferProgress_001
+ * @tc.desc: test UpdateDataTransferProgress with invalid taskId.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, UpdateDataTransferProgress_001, TestSize.Level1)
+{
+    sptr<DataTransferProgress> progress = new (std::nothrow) DataTransferProgress();
+    progress->SetContinuousTaskId(-1);
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("test");
+    progress->SetProgressInfo(progressInfo);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateDataTransferProgress(progress),
+        (int32_t)ERR_BGTASK_CONTINUOUS_TASKID_INVALID);
+}
+
+/**
+ * @tc.name: UpdateDataTransferProgress_002
+ * @tc.desc: test UpdateDataTransferProgress with null progressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, UpdateDataTransferProgress_002, TestSize.Level1)
+{
+    sptr<DataTransferProgress> progress = new (std::nothrow) DataTransferProgress();
+    progress->SetContinuousTaskId(1);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateDataTransferProgress(progress),
+        (int32_t)ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID);
+}
+
+/**
+ * @tc.name: UpdateDataTransferProgress_003
+ * @tc.desc: test UpdateDataTransferProgress when task not exist.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, UpdateDataTransferProgress_003, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    sptr<DataTransferProgress> progress = new (std::nothrow) DataTransferProgress();
+    progress->SetContinuousTaskId(1);
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("download");
+    progress->SetProgressInfo(progressInfo);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateDataTransferProgress(progress),
+        (int32_t)ERR_BGTASK_OBJECT_NOT_EXIST);
+}
+
+/**
+ * @tc.name: UpdateDataTransferProgress_004
+ * @tc.desc: test UpdateDataTransferProgress when task is not DATA_TRANSFER mode.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, UpdateDataTransferProgress_004, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {2}, 1);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
+
+    int32_t taskId = -1;
+    for (auto &iter : bgContinuousTaskMgr_->continuousTaskInfosMap_) {
+        taskId = iter.second->continuousTaskId_;
+    }
+    EXPECT_NE(taskId, -1);
+
+    sptr<DataTransferProgress> progress = new (std::nothrow) DataTransferProgress();
+    progress->SetContinuousTaskId(taskId);
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("download");
+    progress->SetProgressInfo(progressInfo);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateDataTransferProgress(progress),
+        (int32_t)ERR_BGTASK_CONTINUOUS_NOT_DATA_TRANSFER);
+}
+
+/**
+ * @tc.name: UpdateDataTransferProgress_005
+ * @tc.desc: test UpdateDataTransferProgress with valid DATA_TRANSFER task.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, UpdateDataTransferProgress_005, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1}, 1);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
+
+    int32_t taskId = -1;
+    std::shared_ptr<ContinuousTaskRecord> record;
+    for (auto &iter : bgContinuousTaskMgr_->continuousTaskInfosMap_) {
+        taskId = iter.second->continuousTaskId_;
+        record = iter.second;
+    }
+    EXPECT_NE(taskId, -1);
+    EXPECT_EQ(record->progressInfo_, nullptr);
+
+    sptr<DataTransferProgress> progress = new (std::nothrow) DataTransferProgress();
+    progress->SetContinuousTaskId(taskId);
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("downloading");
+    progressInfo->SetFileName("video.mp4");
+    progressInfo->SetProgressValue(50);
+    progressInfo->SetIsMute(true);
+    progress->SetProgressInfo(progressInfo);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateDataTransferProgress(progress), (int32_t)ERR_OK);
+
+    EXPECT_EQ(record->progressInfo_->GetTitle(), "downloading");
+    EXPECT_EQ(record->progressInfo_->GetProgressValue(), 50);
+    EXPECT_TRUE(record->progressInfo_->IsMute());
+}
+
+/**
+ * @tc.name: UpdateDataTransferProgress_006
+ * @tc.desc: test UpdateDataTransferProgress update progressInfo twice.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, UpdateDataTransferProgress_006, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1}, 1);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
+
+    int32_t taskId = -1;
+    std::shared_ptr<ContinuousTaskRecord> record;
+    for (auto &iter : bgContinuousTaskMgr_->continuousTaskInfosMap_) {
+        taskId = iter.second->continuousTaskId_;
+        record = iter.second;
+    }
+    EXPECT_NE(taskId, -1);
+
+    sptr<DataTransferProgress> progress1 = new (std::nothrow) DataTransferProgress();
+    progress1->SetContinuousTaskId(taskId);
+    auto info1 = std::make_shared<ProgressInfo>();
+    info1->SetTitle("downloading");
+    info1->SetProgressValue(30);
+    info1->SetIsMute(true);
+    progress1->SetProgressInfo(info1);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateDataTransferProgress(progress1), (int32_t)ERR_OK);
+    EXPECT_EQ(record->progressInfo_->GetProgressValue(), 30);
+
+    sptr<DataTransferProgress> progress2 = new (std::nothrow) DataTransferProgress();
+    progress2->SetContinuousTaskId(taskId);
+    auto info2 = std::make_shared<ProgressInfo>();
+    info2->SetTitle("downloading");
+    info2->SetProgressValue(100);
+    info2->SetIsMute(false);
+    progress2->SetProgressInfo(info2);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateDataTransferProgress(progress2), (int32_t)ERR_OK);
+    EXPECT_EQ(record->progressInfo_->GetProgressValue(), 100);
+    EXPECT_FALSE(record->progressInfo_->IsMute());
+}
+
+/**
+ * @tc.name: ContinuousTaskRecord_ProgressInfo_Json_001
+ * @tc.desc: test ContinuousTaskRecord JSON round-trip with progressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, ContinuousTaskRecord_ProgressInfo_Json_001, TestSize.Level1)
+{
+    auto record = CreateTestTaskRecord(100, "com.test", "MainAbility", 1);
+    record->progressInfo_ = std::make_shared<ProgressInfo>();
+    record->progressInfo_->SetTitle("downloading");
+    record->progressInfo_->SetFileName("pkg.zip");
+    record->progressInfo_->SetProgressValue(60);
+    record->progressInfo_->SetIsMute(true);
+
+    std::string jsonStr = record->ParseToJsonStr();
+    EXPECT_NE(jsonStr.find("\"progressInfo\""), std::string::npos);
+
+    nlohmann::json root = nlohmann::json::parse(jsonStr);
+    auto readRecord = std::make_shared<ContinuousTaskRecord>();
+    EXPECT_TRUE(readRecord->ParseFromJson(root));
+    EXPECT_EQ(readRecord->progressInfo_->GetTitle(), "downloading");
+    EXPECT_EQ(readRecord->progressInfo_->GetProgressValue(), 60);
+    EXPECT_TRUE(readRecord->progressInfo_->IsMute());
+}
+
+/**
+ * @tc.name: ContinuousTaskRecord_ProgressInfo_Json_002
+ * @tc.desc: test ContinuousTaskRecord JSON without progressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, ContinuousTaskRecord_ProgressInfo_Json_002, TestSize.Level1)
+{
+    auto record = CreateTestTaskRecord(100, "com.test", "MainAbility", 1);
+    EXPECT_EQ(record->progressInfo_, nullptr);
+
+    std::string jsonStr = record->ParseToJsonStr();
+    EXPECT_EQ(jsonStr.find("\"progressInfo\""), std::string::npos);
+
+    nlohmann::json root = nlohmann::json::parse(jsonStr);
+    auto readRecord = std::make_shared<ContinuousTaskRecord>();
+    EXPECT_TRUE(readRecord->ParseFromJson(root));
+    EXPECT_EQ(readRecord->progressInfo_, nullptr);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

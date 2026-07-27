@@ -626,7 +626,7 @@ ErrCode BackgroundTaskManager::RequestUpdateDataTransferProgress(DataTransferPro
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
 
-    return = proxy_->UpdateDataTransferProgress(progressInfo);
+    return proxy_->UpdateDataTransferProgress(progressInfo);
 }
 
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)

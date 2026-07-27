@@ -50,6 +50,8 @@ public:
         int32_t serviceUid);
     std::string CreateBannerNotificationLabel(const std::string &bundleName, int32_t userId,
         int32_t appIndex);
+    void setNotificationRequest(const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
+        Notification::NotificationRequest& notificationRequest);
 
 private:
     static int32_t notificationIdIndex_;

@@ -127,7 +127,7 @@ std::string ProgressInfo::ParseToJsonStr() const
     root["fileName"] = fileName_;
     root["progressValue"] = progressValue_;
     root["isMute"] = isMute_;
-    return root.dump();
+    return root.dump(CommonUtils::jsonFormat_);
 }
 
 bool ProgressInfo::ParseFromJson(const nlohmann::json &value)

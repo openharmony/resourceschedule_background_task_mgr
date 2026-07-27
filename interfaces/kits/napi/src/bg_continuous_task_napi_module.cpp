@@ -1902,7 +1902,6 @@ bool GetDataTransferProgress(napi_env env, napi_value objValue, DataTransferProg
     if (wantAgentValue) {
         std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent = nullptr;
         if (GetWantAgent(env, wantAgentValue, wantAgent)) {
-            BGTASK_LOGE("progressInfo param wantAgentValue2");
             progressInfo.SetWantAgent(wantAgent);
         }
     }

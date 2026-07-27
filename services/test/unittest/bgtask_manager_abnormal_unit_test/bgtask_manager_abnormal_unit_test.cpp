@@ -19,6 +19,7 @@
 #include "background_task_mgr_service.h"
 #include "transient_task_app_info.h"
 #include "common_utils.h"
+#include "data_transfer_progress.h"
 
 using namespace testing::ext;
 
@@ -697,6 +698,27 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, BackgroundTaskMgrServiceAbnormalTest_017
     taskKeys.insert("key");
     auto ret8 = BackgroundTaskMgrService_->SendNotificationByDeteTask(taskKeys);
     EXPECT_NE(ret8, 0);
+
+    BgMockIpcUid(-1);
+    BgMockTokenType(0);
+}
+
+/**
+ * @tc.name: UpdateDataTransferProgress_001
+ * @tc.desc: test UpdateDataTransferProgress permission denied.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, UpdateDataTransferProgress_001, TestSize.Level3)
+{
+    DataTransferProgress progress;
+    auto ret = BackgroundTaskMgrService_->UpdateDataTransferProgress(progress);
+    EXPECT_EQ(ret, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockTokenType(2);
+    int32_t resUid = 1096;
+    BgMockIpcUid(resUid);
+    auto ret2 = BackgroundTaskMgrService_->UpdateDataTransferProgress(progress);
+    EXPECT_NE(ret2, ERR_OK);
 
     BgMockIpcUid(-1);
     BgMockTokenType(0);

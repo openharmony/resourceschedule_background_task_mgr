@@ -125,9 +125,11 @@ std::string DataTransferProgress::ParseToJsonStr() const
     root["continuousTaskId"] = continuousTaskId_;
     if (progressInfo_ != nullptr) {
         nlohmann::json progressJson = nlohmann::json::parse(progressInfo_->ParseToJsonStr());
-        root["progressInfo"] = progressJson;
+        if (!recordJson.is_discarded()) {
+            root["progressInfo"] = progressJson;
+        }
     }
-    return root.dump();
+    return root.dump(CommonUtils::jsonFormat_);
 }
 
 bool DataTransferProgress::ParseFromJson(const nlohmann::json &value)

@@ -99,38 +99,10 @@ Notification::NotificationRequest CreateNotificationRequest(
     return notificationRequest;
 }
 
-static void setProgressNotification(const std::shared_ptr<ProgressInfo> &progressInfo,
-    Notification::NotificationRequest& notificationRequest)
-{
-    BGTASK_LOGE("zsh GetProgressValue != -1");
-    auto notificationTemplate = std::make_shared<Notification::NotificationTemplate>();
-    notificationTemplate->SetTemplateName("downloadTemplate");
-    auto templateData = std::make_shared<AAFwk::WantParams>();
-    templateData->SetParam("title", AAFwk::String::Box(progressInfo->GetTitle()));
-    templateData->SetParam("fileName", AAFwk::String::Box(progressInfo->GetFileName()));
-    if (progressInfo->GetProgressValue() >= MIN_PROGRESS_VALUE &&
-        progressInfo->GetProgressValue() < MAX_PROGRESS_VALUE) {
-        templateData->SetParam("progressValue", AAFwk::Integer::Box(progressInfo->GetProgressValue()));
-    } else if (progressInfo->GetProgressValue() == MAX_PROGRESS_VALUE) {
-        templateData->SetParam("progressValue", AAFwk::Integer::Box(MAX_PROGRESS_VALUE));
-        if (progressInfo->IsMute()) {
-            BGTASK_LOGE("zsh Mute");
-            notificationRequest.SetNotificationControlFlags(SOUND_FLAG | VIBRATION_FLAG);
-        }
-    } else {
-        templateData->SetParam("progressValue", AAFwk::Integer::Box(MAX_PROGRESS_VALUE));
-        notificationRequest.SetNotificationControlFlags(SOUND_FLAG | VIBRATION_FLAG);
-    }
-    notificationTemplate->SetTemplateData(templateData);
-    notificationRequest.SetTemplate(notificationTemplate);
-}
-#endif
-
-WEAK_FUNC ErrCode NotificationTools::PublishNotification(
+Notification::NotificationRequest CreateSingleModeNotificationRequest(
     const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
     const std::string &appName, const std::string &prompt, int32_t serviceUid)
 {
-#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     std::shared_ptr<Notification::NotificationLocalLiveViewContent> liveContent
         = std::make_shared<Notification::NotificationLocalLiveViewContent>();
     liveContent->SetTitle(appName);
@@ -153,8 +125,48 @@ WEAK_FUNC ErrCode NotificationTools::PublishNotification(
         continuousTaskRecord->abilityName_, continuousTaskRecord->abilityId_,
         continuousTaskRecord->isByRequestObject_, continuousTaskRecord->continuousTaskId_);
 
-    Notification::NotificationRequest notificationRequest = CreateNotificationRequest(
+    return CreateNotificationRequest(
         continuousTaskRecord, liveContent, extraInfo, serviceUid, notificationLabel);
+}
+
+static void SetProgressNotification(const std::shared_ptr<ProgressInfo> &progressInfo,
+    Notification::NotificationRequest& notificationRequest)
+{
+    if (!progressInfo) {
+        BGTASK_LOGE("progressInfo is nullptr");
+        return;
+    }
+    auto notificationTemplate = std::make_shared<Notification::NotificationTemplate>();
+    notificationTemplate->SetTemplateName("downloadTemplate");
+    auto templateData = std::make_shared<AAFwk::WantParams>();
+    templateData->SetParam("title", AAFwk::String::Box(progressInfo->GetTitle()));
+    templateData->SetParam("fileName", AAFwk::String::Box(progressInfo->GetFileName()));
+    if (progressInfo->GetProgressValue() >= MIN_PROGRESS_VALUE &&
+        progressInfo->GetProgressValue() < MAX_PROGRESS_VALUE) {
+        templateData->SetParam("progressValue", AAFwk::Integer::Box(progressInfo->GetProgressValue()));
+    } else if (progressInfo->GetProgressValue() == MAX_PROGRESS_VALUE) {
+        templateData->SetParam("progressValue", AAFwk::Integer::Box(MAX_PROGRESS_VALUE));
+        if (progressInfo->IsMute()) {
+            notificationRequest.SetNotificationControlFlags(SOUND_FLAG | VIBRATION_FLAG);
+        }
+    } else {
+        templateData->SetParam("progressValue", AAFwk::Integer::Box(MAX_PROGRESS_VALUE));
+        notificationRequest.SetNotificationControlFlags(SOUND_FLAG | VIBRATION_FLAG);
+    }
+    notificationTemplate->SetTemplateData(templateData);
+    notificationRequest.SetTemplate(notificationTemplate);
+}
+#endif
+
+WEAK_FUNC ErrCode NotificationTools::PublishNotification(
+    const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
+    const std::string &appName, const std::string &prompt, int32_t serviceUid)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    Notification::NotificationRequest notificationRequest =
+        CreateSingleModeNotificationRequest(continuousTaskRecord, appName, prompt, serviceUid);
+    std::string notificationLabel = notificationRequest.GetLabel();
+
     if (std::find(continuousTaskRecord->bgModeIds_.begin(), continuousTaskRecord->bgModeIds_.end(),
         BACKGROUND_MODE_DATA_TANSFER) != continuousTaskRecord->bgModeIds_.end()) {
         notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
@@ -331,7 +343,7 @@ WEAK_FUNC ErrCode NotificationTools::PublishMainNotification(const std::shared_p
     notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
     notificationRequest.SetLabel(notificationLabel);
     if (mainRecord->progressInfo_) {
-        setProgressNotification(mainRecord->progressInfo_, notificationRequest);
+        SetProgressNotification(mainRecord->progressInfo_, notificationRequest);
     }
     if (mainRecord->GetNotificationId() == -1) {
         notificationRequest.SetNotificationId(++notificationIdIndex_);

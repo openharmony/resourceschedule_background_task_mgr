@@ -1155,7 +1155,7 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
         return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE;
     }
     if (taskParam->progressInfo_ != nullptr) {
-        BGTASK_LOGE("have mode: DATA_TRANSFER, not support update, taskId: %{public}d", continuousTaskId);
+        BGTASK_LOGE("not support progressInfo, taskId: %{public}d", continuousTaskId);
         return ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID;
     }
     if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::SPECIAL_SCENARIO_PROCESSING) &&
@@ -1260,6 +1260,9 @@ ErrCode BgContinuousTaskMgr::UpdateDataTransferProgressInner(int32_t uid,
         return ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID;
     }
     auto findTask = [continuousTaskId, uid](const auto &target) {
+        if (!target.second) {
+            return false;
+        }
         return continuousTaskId == target.second->continuousTaskId_ && target.second->uid_ == uid;
     };
     auto iter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findTask);
@@ -1281,8 +1284,7 @@ ErrCode BgContinuousTaskMgr::UpdateDataTransferProgressInner(int32_t uid,
         BGTASK_LOGE("update dataTransfer progress failed, taskId: %{public}d", continuousTaskId);
         return ret;
     }
-    RefreshTaskRecord();
-    return ERR_OK;
+    return RefreshTaskRecord();
 }
 
 ErrCode BgContinuousTaskMgr::CheckAbilityTaskNum(const std::shared_ptr<ContinuousTaskRecord> record)

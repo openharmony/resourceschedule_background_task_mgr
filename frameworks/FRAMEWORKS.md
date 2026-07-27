@@ -60,6 +60,7 @@ frameworks/
 | `GetAllContinuousTasks` | 查询已申请的长时任务 |
 | `OnOnContinuousTaskCallback` | 注册长时任务回调，监听取消/暂停/激活事件 |
 | `OffOnContinuousTaskCallback` | 取消注册长时任务回调 |
+| `UpdateDataTransferProgres` | 更新长时任务通知，仅支持DATA_TRANSFER类型长时任务 |
 
 ### 4.3 能效资源 API
 
