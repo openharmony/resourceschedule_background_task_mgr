@@ -1914,12 +1914,6 @@ bool GetDataTransferProgress(napi_env env, napi_value objValue, DataTransferProg
         return false;
     }
     progressInfo.SetProgressInfo(progressInfoInner);
-
-    BGTASK_LOGD("GetDataTransferProgress: continuousTaskId=%{public}d, wantAgent=%{public}p, "
-        "progressInfo=[title=%{public}s, fileName=%{public}s, progressValue=%{public}d, isMute=%{public}d]",
-        progressInfo.GetContinuousTaskId(), progressInfo.GetWantAgent().get(),
-        progressInfo.GetProgressInfo()->GetTitle().c_str(), progressInfo.GetProgressInfo()->GetFileName().c_str(),
-        progressInfo.GetProgressInfo()->GetProgressValue(), progressInfo.GetProgressInfo()->IsMute());
     return true;
 }
 

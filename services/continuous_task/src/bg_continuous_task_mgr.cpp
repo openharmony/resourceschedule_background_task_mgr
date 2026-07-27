@@ -1234,13 +1234,17 @@ ErrCode BgContinuousTaskMgr::UpdateDataTransferProgress(const sptr<DataTransferP
     }
 
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
-        "BackgroundTaskManager::ContinuousTask::Service::UpdateDataTransferProgress");
-    ErrCode ret = ERR_OK;
+        "BackgroundTaskManager::ContinuousTask::Service::UpdateDataTransferProgressInner");
     auto self = shared_from_this();
-    handler_->PostSyncTask([self, callingUid, progressInfo, &ret]() {
-        ret = self->UpdateDataTransferProgressInner(callingUid, progressInfo);
+    handler_->PostSyncTask([self, callingUid, progressInfo, &result]() {
+        if (!self) {
+            BGTASK_LOGE("self is null");
+            result = ERR_BGTASK_SERVICE_INNER_ERROR;
+            return;
+        }
+        result = self->UpdateDataTransferProgressInner(callingUid, progressInfo);
     }, AppExecFwk::EventQueue::Priority::HIGH);
-    return ret;
+    return result;
 }
 
 ErrCode BgContinuousTaskMgr::UpdateDataTransferProgressInner(int32_t uid,
@@ -1274,7 +1278,7 @@ ErrCode BgContinuousTaskMgr::UpdateDataTransferProgressInner(int32_t uid,
     record->progressInfo_ = progressInfo->GetProgressInfo();
     ErrCode ret = SendContinuousTaskNotification(record);
     if (ret != ERR_OK) {
-        BGTASK_LOGE("update progress notification failed, taskId: %{public}d", continuousTaskId);
+        BGTASK_LOGE("update dataTransfer progress failed, taskId: %{public}d", continuousTaskId);
         return ret;
     }
     RefreshTaskRecord();
