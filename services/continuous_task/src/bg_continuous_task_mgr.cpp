@@ -1243,7 +1243,7 @@ ErrCode BgContinuousTaskMgr::UpdateDataTransferProgress(const sptr<DataTransferP
             return;
         }
         result = self->UpdateDataTransferProgressInner(callingUid, progressInfo);
-    }, AppExecFwk::EventQueue::Priority::HIGH);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
     return result;
 }
 
