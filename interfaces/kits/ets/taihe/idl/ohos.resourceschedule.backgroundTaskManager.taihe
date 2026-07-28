@@ -382,4 +382,4 @@ function CreateContinuousTaskRequest(): ContinuousTaskRequest;
   context: @sts_type("BaseContext") Opaque, request: ContinuousTaskRequest): ContinuousTaskNotification;
 
 function UpdateDataTransferProgress(
-context: @sts_type("BaseContext") Opaque, progressInfo: DataTransferProgress): void;
+  context: @sts_type("BaseContext") Opaque, progressInfo: DataTransferProgress): void;
