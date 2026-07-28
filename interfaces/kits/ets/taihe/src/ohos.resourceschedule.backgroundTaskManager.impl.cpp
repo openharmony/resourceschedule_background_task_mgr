@@ -1311,7 +1311,6 @@ bool CheckModeAndSubMode(ani_env *env, ohos::resourceschedule::backgroundTaskMan
 {
     auto requetImpl = reinterpret_cast<ContinuousTaskRequestImpl*>(request->GetInner());
     if (requetImpl == nullptr) {
-        BGTASK_LOGE("requetImpl is nullptr");
         asyncCallbackInfo->errCode = ERR_BGTASK_CHECK_TASK_PARAM;
         return false;
     }
@@ -1406,7 +1405,6 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
         return notification;
     }
     if (!TaskModeTypeConversion(asyncCallbackInfo.get())) {
-        BGTASK_LOGE("task mode conversion fail.");
         return notification;
     }
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
@@ -1414,7 +1412,6 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
     int32_t abilityId = asyncCallbackInfo->abilityContext->GetAbilityRecordId();
     auto requetImpl = reinterpret_cast<ContinuousTaskRequestImpl*>(request->GetInner());
     if (requetImpl == nullptr) {
-        BGTASK_LOGE("requetImpl is nullptr");
         set_business_error(Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM),
             Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
         return notification;
@@ -1450,7 +1447,6 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
     ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification notification;
     auto requetImpl = reinterpret_cast<ContinuousTaskRequestImpl*>(request->GetInner());
     if (requetImpl == nullptr) {
-        BGTASK_LOGE("requetImpl is nullptr");
         set_business_error(Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM),
             Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
         return notification;
@@ -1471,7 +1467,6 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
         return notification;
     }
     if (!TaskModeTypeConversion(asyncCallbackInfo.get())) {
-        BGTASK_LOGE("task mode conversion fail.");
         return notification;
     }
     sptr<IRemoteObject> token = asyncCallbackInfo->abilityContext->GetToken();
