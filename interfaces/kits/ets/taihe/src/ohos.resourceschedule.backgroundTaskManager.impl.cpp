@@ -1441,7 +1441,7 @@ bool CheckRequestParams(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackI
     if (!TaskModeTypeConversion(asyncCallbackInfo)) {
         BGTASK_LOGE("task mode conversion fail.");
         return false;
-    } 
+    }
     return true;
 }
 
