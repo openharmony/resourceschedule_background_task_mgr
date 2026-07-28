@@ -247,14 +247,25 @@ bool CheckRequestAuthFromUserParam(napi_env env, napi_callback_info info,
     return true;
 }
 
+void AddCallback(const std::shared_ptr<AuthCallbackInstance> &callback)
+{
+    std::lock_guard<std::mutex> lock(authCallbackLock_);
+    authCallbackInstances_.insert(callback);
+}
+
+void RemoveCallback(const std::shared_ptr<AuthCallbackInstance> &callback)
+{
+    std::lock_guard<std::mutex> lock(authCallbackLock_);
+    authCallbackInstances_.erase(callback);
+}
+
 bool SendRequest(napi_env env, const ContinuousTaskParam &taskParam,
     const std::shared_ptr<AuthCallbackInstance> callback,
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext, int32_t &callbackUid)
 {
     // 进行权限请求弹窗处理
     // 1、查询是否已经授权
-    std::lock_guard<std::mutex> lock(authCallbackLock_);
-    authCallbackInstances_.insert(callback);
+    AddCallback(callback);
     ErrCode errCode = DelayedSingleton<BackgroundTaskManager>::GetInstance()->
         RequestAuthFromUser(taskParam, *callback, callbackUid);
     if (errCode == ERR_BGTASK_CONTINUOUS_TRIGGER_CALLBACK) {
@@ -262,7 +273,7 @@ bool SendRequest(napi_env env, const ContinuousTaskParam &taskParam,
         return true;
     }
     if (errCode != ERR_OK) {
-        authCallbackInstances_.erase(callback);
+        RemoveCallback(callback);
         Common::HandleErrCode(env, errCode, true);
         return false;
     }
@@ -272,7 +283,7 @@ bool SendRequest(napi_env env, const ContinuousTaskParam &taskParam,
             BGTASK_LOGE("CreateUIExtension failed");
             // 拉起授权弹窗失败，取消已经申请的授权记录
             DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam);
-            authCallbackInstances_.erase(callback);
+            RemoveCallback(callback);
             Common::HandleErrCode(env, ERR_BGTASK_SYS_NOT_READY, true);
             return false;
         }

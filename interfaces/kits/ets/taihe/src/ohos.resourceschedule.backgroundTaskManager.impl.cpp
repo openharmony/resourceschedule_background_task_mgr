@@ -457,6 +457,13 @@ public:
             return ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
         }
         const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
+        if (info == nullptr) {
+            BGTASK_LOGE("ability info is nullptr");
+            asyncCallbackInfo->errCode = ERR_ABILITY_INFO_EMPTY;
+            set_business_error(Common::FindErrCode(asyncCallbackInfo->errCode),
+                Common::FindErrMsg(asyncCallbackInfo->errCode));
+            return ::ohos::resourceschedule::backgroundTaskManager::UserAuthResult::key_t::NOT_DETERMINED;
+        }
         asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::CheckSpecialScenarioAuth(info->appIndex,
             asyncCallbackInfo->authResult, apiVersion);
         if (asyncCallbackInfo->errCode) {
@@ -1303,6 +1310,11 @@ bool CheckModeAndSubMode(ani_env *env, ohos::resourceschedule::backgroundTaskMan
     ContinuousTaskCallbackInfo *asyncCallbackInfo)
 {
     auto requetImpl = reinterpret_cast<ContinuousTaskRequestImpl*>(request->GetInner());
+    if (requetImpl == nullptr) {
+        BGTASK_LOGE("requetImpl is nullptr");
+        asyncCallbackInfo->errCode = ERR_BGTASK_CHECK_TASK_PARAM;
+        return false;
+    }
     std::vector<uint32_t> modes = requetImpl->backgroundTaskModes_;
     std::vector<uint32_t> subModes = requetImpl->backgroundTaskSubmodes_;
     if (modes.size() == 0 || subModes.size() == 0) {
@@ -1401,6 +1413,12 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
     const std::shared_ptr<AppExecFwk::AbilityInfo> info = asyncCallbackInfo->abilityContext->GetAbilityInfo();
     int32_t abilityId = asyncCallbackInfo->abilityContext->GetAbilityRecordId();
     auto requetImpl = reinterpret_cast<ContinuousTaskRequestImpl*>(request->GetInner());
+    if (requetImpl == nullptr) {
+        BGTASK_LOGE("requetImpl is nullptr");
+        set_business_error(Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM),
+            Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
+        return notification;
+    }
     ContinuousTaskParam taskParam = ContinuousTaskParam(true, asyncCallbackInfo->bgMode,
         requetImpl->wantAgent_, info->name, token, "", true, asyncCallbackInfo->bgModes, abilityId);
     taskParam.appIndex_ = info->appIndex;
@@ -1431,6 +1449,12 @@ bool TaskModeTypeConversion(ContinuousTaskCallbackInfo *asyncCallbackInfo)
 {
     ::ohos::resourceschedule::backgroundTaskManager::ContinuousTaskNotification notification;
     auto requetImpl = reinterpret_cast<ContinuousTaskRequestImpl*>(request->GetInner());
+    if (requetImpl == nullptr) {
+        BGTASK_LOGE("requetImpl is nullptr");
+        set_business_error(Common::FindErrCode(ERR_BGTASK_CHECK_TASK_PARAM),
+            Common::FindErrMsg(ERR_BGTASK_CHECK_TASK_PARAM));
+        return notification;
+    }
     if (requetImpl->continuousTaskId_ < 0) {
         set_business_error(Common::FindErrCode(ERR_BGTASK_CONTINUOUS_TASKID_INVALID),
             Common::FindErrMsg(ERR_BGTASK_CONTINUOUS_TASKID_INVALID));

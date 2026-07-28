@@ -37,6 +37,8 @@ public:
 
 private:
     void DeleteNapiRef();
+    void AddCallback(const std::shared_ptr<AuthCallbackInstance> &callback);
+    void RemoveCallback(const std::shared_ptr<AuthCallbackInstance> &callback);
     struct CallbackInfo {
         napi_env env = nullptr;
         napi_ref ref = nullptr;

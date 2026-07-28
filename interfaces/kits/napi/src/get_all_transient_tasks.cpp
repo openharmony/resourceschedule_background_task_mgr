@@ -90,14 +90,25 @@ napi_value GetAllTransientTasksPromise(napi_env env, AsyncCallbackInfoGetAllTran
     napi_value promise {nullptr};
     NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
     asyncCallbackInfo->deferred = deferred;
-    NAPI_CALL(env, napi_create_async_work(env,
+    napi_status status = napi_create_async_work(env,
         nullptr,
         resourceName,
         GetAllTransientTasksExecuteCB,
         GetAllTransientTasksPromiseCompletedCB,
         static_cast<void *>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+        &asyncCallbackInfo->asyncWork);
+    if (status != napi_ok) {
+        BGTASK_LOGE("napi_create_async_work failed");
+        delete asyncCallbackInfo;
+        return nullptr;
+    }
+    status = napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+    if (status != napi_ok) {
+        BGTASK_LOGE("napi_queue_async_work failed");
+        napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
+        delete asyncCallbackInfo;
+        return nullptr;
+    }
     return promise;
 }
 
