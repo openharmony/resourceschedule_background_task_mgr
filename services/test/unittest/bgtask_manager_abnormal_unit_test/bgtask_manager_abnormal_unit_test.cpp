@@ -723,5 +723,22 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, UpdateDataTransferProgress_001, TestSize
     BgMockIpcUid(-1);
     BgMockTokenType(0);
 }
+
+/**
+ * @tc.name: UpdateDataTransferProgress_002
+ * @tc.desc: test UpdateDataTransferProgress atomic service rejection.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskManagerAbnormalUnitTest, UpdateDataTransferProgress_002, TestSize.Level3)
+{
+    DataTransferProgress progress;
+    BgMockTokenType(2);
+    BgMockAtomicService(true);
+    auto ret = BackgroundTaskMgrService_->UpdateDataTransferProgress(progress);
+    EXPECT_EQ(ret, ERR_BGTASK_PERMISSION_DENIED);
+
+    BgMockAtomicService(false);
+    BgMockTokenType(0);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

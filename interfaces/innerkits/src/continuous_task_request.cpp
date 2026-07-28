@@ -185,7 +185,7 @@ std::shared_ptr<ProgressInfo> ContinuousTaskRequest::GetProgressInfo() const
     return progressInfo_;
 }
 
-void ContinuousTaskRequest::SetProgressInfo(const std::shared_ptr<ProgressInfo> progressInfo)
+void ContinuousTaskRequest::SetProgressInfo(const std::shared_ptr<ProgressInfo> &progressInfo)
 {
     progressInfo_ = progressInfo;
 }

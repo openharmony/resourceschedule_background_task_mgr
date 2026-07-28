@@ -35,7 +35,7 @@ std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> DataTransferProgress::GetW
 }
 
 void DataTransferProgress::SetWantAgent(
-    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent)
+    const std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> &wantAgent)
 {
     wantAgent_ = wantAgent;
 }
@@ -45,7 +45,7 @@ std::shared_ptr<ProgressInfo> DataTransferProgress::GetProgressInfo() const
     return progressInfo_;
 }
 
-void DataTransferProgress::SetProgressInfo(const std::shared_ptr<ProgressInfo> progressInfo)
+void DataTransferProgress::SetProgressInfo(const std::shared_ptr<ProgressInfo> &progressInfo)
 {
     progressInfo_ = progressInfo;
 }

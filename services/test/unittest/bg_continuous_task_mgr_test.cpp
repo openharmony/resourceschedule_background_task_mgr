@@ -3567,5 +3567,156 @@ HWTEST_F(BgContinuousTaskMgrTest, ContinuousTaskRecord_ProgressInfo_Json_002, Te
     EXPECT_TRUE(readRecord->ParseFromJson(root));
     EXPECT_EQ(readRecord->progressInfo_, nullptr);
 }
+
+/**
+ * @tc.name: UpdateDataTransferProgress_007
+ * @tc.desc: test UpdateDataTransferProgress with WantAgent update.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, UpdateDataTransferProgress_007, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["ability1"] = CONFIGURE_ALL_MODES;
+    info.appName_ = "Entry";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(1, info);
+
+    sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam(true, 0,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1}, 1);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->StartBackgroundRunning(taskParam), (int32_t)ERR_OK);
+
+    int32_t taskId = -1;
+    std::shared_ptr<ContinuousTaskRecord> record;
+    for (auto &iter : bgContinuousTaskMgr_->continuousTaskInfosMap_) {
+        taskId = iter.second->continuousTaskId_;
+        record = iter.second;
+    }
+    EXPECT_NE(taskId, -1);
+
+    auto newWantAgent = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
+    sptr<DataTransferProgress> progress = new (std::nothrow) DataTransferProgress();
+    progress->SetContinuousTaskId(taskId);
+    progress->SetWantAgent(newWantAgent);
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("downloading");
+    progressInfo->SetFileName("video.mp4");
+    progressInfo->SetProgressValue(50);
+    progress->SetProgressInfo(progressInfo);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateDataTransferProgress(progress), (int32_t)ERR_OK);
+    EXPECT_EQ(record->wantAgent_, newWantAgent);
+    EXPECT_EQ(record->progressInfo_->GetProgressValue(), 50);
+}
+
+/**
+ * @tc.name: SendContinuousTaskNotification_DataTransfer_001
+ * @tc.desc: test SendContinuousTaskNotification with DATA_TRANSFER mode and progressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SendContinuousTaskNotification_DataTransfer_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.appName_ = "TestApp";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(100, info);
+
+    auto record = CreateTestTaskRecord(100, "com.test", "MainAbility", BackgroundMode::DATA_TRANSFER);
+    record->isByRequestObject_ = true;
+    record->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
+    record->progressInfo_ = std::make_shared<ProgressInfo>();
+    record->progressInfo_->SetTitle("downloading");
+    record->progressInfo_->SetFileName("file.zip");
+    record->progressInfo_->SetProgressValue(50);
+    record->progressInfo_->SetIsMute(false);
+
+    EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(record), ERR_OK);
+}
+
+/**
+ * @tc.name: SendContinuousTaskNotification_DataTransfer_002
+ * @tc.desc: test SendContinuousTaskNotification with DATA_TRANSFER mode, progressValue=100 and mute=true.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SendContinuousTaskNotification_DataTransfer_002, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.appName_ = "TestApp";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(100, info);
+
+    auto record = CreateTestTaskRecord(100, "com.test", "MainAbility", BackgroundMode::DATA_TRANSFER);
+    record->isByRequestObject_ = true;
+    record->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
+    record->progressInfo_ = std::make_shared<ProgressInfo>();
+    record->progressInfo_->SetTitle("complete");
+    record->progressInfo_->SetFileName("file.zip");
+    record->progressInfo_->SetProgressValue(100);
+    record->progressInfo_->SetIsMute(true);
+
+    EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(record), ERR_OK);
+}
+
+/**
+ * @tc.name: SendContinuousTaskNotification_DataTransfer_003
+ * @tc.desc: test SendContinuousTaskNotification with DATA_TRANSFER mode and progressValue default (-1).
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SendContinuousTaskNotification_DataTransfer_003, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.appName_ = "TestApp";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(100, info);
+
+    auto record = CreateTestTaskRecord(100, "com.test", "MainAbility", BackgroundMode::DATA_TRANSFER);
+    record->isByRequestObject_ = true;
+    record->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
+    record->progressInfo_ = std::make_shared<ProgressInfo>();
+    record->progressInfo_->SetTitle("default");
+    record->progressInfo_->SetFileName("file.zip");
+    // progressValue defaults to -1
+
+    EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(record), ERR_OK);
+}
+
+/**
+ * @tc.name: SendContinuousTaskNotification_DataTransfer_004
+ * @tc.desc: test SendContinuousTaskNotification with DATA_TRANSFER mode without progressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SendContinuousTaskNotification_DataTransfer_004, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.appName_ = "TestApp";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(100, info);
+
+    auto record = CreateTestTaskRecord(100, "com.test", "MainAbility", BackgroundMode::DATA_TRANSFER);
+    record->isByRequestObject_ = true;
+    record->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
+    EXPECT_EQ(record->progressInfo_, nullptr);
+
+    EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(record), ERR_OK);
+}
+
+/**
+ * @tc.name: SendContinuousTaskNotification_NonDataTransfer_001
+ * @tc.desc: test SendContinuousTaskNotification with non-DATA_TRANSFER mode (no progressInfo path).
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SendContinuousTaskNotification_NonDataTransfer_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.appName_ = "TestApp";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(100, info);
+
+    auto record = CreateTestTaskRecord(100, "com.test", "MainAbility", 2);
+    record->isByRequestObject_ = true;
+    record->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
+
+    EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(record), ERR_OK);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
