@@ -96,7 +96,7 @@ napi_value GetAllTransientTasksPromise(napi_env env, AsyncCallbackInfoGetAllTran
         GetAllTransientTasksExecuteCB,
         GetAllTransientTasksPromiseCompletedCB,
         static_cast<void *>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork);
+        &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     return promise;
 }
