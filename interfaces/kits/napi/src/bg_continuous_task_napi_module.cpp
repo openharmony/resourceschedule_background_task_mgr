@@ -69,6 +69,7 @@ static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
 static constexpr uint32_t SUBSCRIBER_BACKGROUND_TASK_STATE = 1 << 3;
 static constexpr char SUBSCRIBER_BACKGROUND_TASK_STATE_TYPE[] = "subscribeContinuousTaskState";
 static std::shared_ptr<JsBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
+std::mutex backgroundTaskSubscriberMutex_;
 static std::vector<std::string> g_backgroundModes = {
     "dataTransfer",
     "audioPlayback",
@@ -1279,6 +1280,7 @@ napi_value OnOnContinuousTaskCallback(napi_env env, napi_callback_info info)
         type = CONTINUOUS_TASK_ACTIVE;
     }
     BGTASK_LOGD("SubscribeBackgroundTask type: %{public}s, type: %{public}d", typeString.c_str(), type);
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!SubscribeBackgroundTask(env, type)) {
         return WrapUndefinedToJS(env);
     }
@@ -1297,6 +1299,7 @@ napi_value OffOnContinuousTaskCallback(napi_env env, napi_callback_info info)
         Common::HandleParamErr(env, ERR_BGTASK_INVALID_PARAM, true);
         return WrapUndefinedToJS(env);
     }
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!backgroundTaskSubscriber_) {
         BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return WrapUndefinedToJS(env);
@@ -1308,7 +1311,7 @@ napi_value OffOnContinuousTaskCallback(napi_env env, napi_callback_info info)
     }
  
     uint32_t type = 0;
-    if (backgroundTaskSubscriber_-> IsTypeEmpty(typeString)) {
+    if (backgroundTaskSubscriber_->IsTypeEmpty(typeString)) {
         if (typeString == "continuousTaskCancel") {
             type = CONTINUOUS_TASK_CANCEL;
         } else if (typeString == "continuousTaskSuspend") {
@@ -1843,6 +1846,7 @@ napi_value SubscribeContinuousTaskState(napi_env env, napi_callback_info info)
         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, true);
         return WrapVoidToJS(env);
     }
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!SubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE)) {
         return WrapUndefinedToJS(env);
     }
@@ -1867,6 +1871,7 @@ napi_value UnSubscribeContinuousTaskState(napi_env env, napi_callback_info info)
         Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_CALLBACK_NULL_OR_TYPE_ERR, true);
         return WrapVoidToJS(env);
     }
+    std::lock_guard<std::mutex> lock(backgroundTaskSubscriberMutex_);
     if (!backgroundTaskSubscriber_) {
         BGTASK_LOGE("backgroundTaskSubscriber_ is null, return");
         return WrapUndefinedToJS(env);
