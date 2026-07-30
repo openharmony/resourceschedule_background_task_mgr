@@ -93,11 +93,17 @@ void DialogEventObserver::OnPermissionDialogButtonClick(
     }
     int32_t bundleUid = -1;
     if (want.HasParameter("bundleUid")) {
-        bundleUid = std::atoi(want.GetStringParam("bundleUid").c_str());
+        std::string bundleUidStr = want.GetStringParam("bundleUid");
+        if (CommonUtils::CheckStrToNum(bundleUidStr)) {
+            bundleUid = std::atoi(bundleUidStr.c_str());
+        }
     }
     int32_t appIndex = -1;
     if (want.HasParameter("appIndex")) {
-        appIndex = std::atoi(want.GetStringParam("appIndex").c_str());
+        std::string appIndexStr = want.GetStringParam("appIndex");
+        if (CommonUtils::CheckStrToNum(appIndexStr)) {
+            appIndex = std::atoi(appIndexStr.c_str());
+        }
     }
     if (appIndex == -1 || bundleUid == -1 || bundleName == "" || authResult < 0) {
         BGTASK_LOGE("OnPermissionDialogButtonClick get param fail.");

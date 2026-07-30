@@ -342,7 +342,6 @@ int32_t DecisionMaker::GetQuota(const std::shared_ptr<KeyInfo>& key)
 
 bool DecisionMaker::IsFrontApp(const string& pkgName, int32_t uid)
 {
-    lock_guard<mutex> lock(lock_);
     vector<AppExecFwk::AppStateData> fgAppList;
     if (!AppMgrHelper::GetInstance()->GetForegroundApplications(fgAppList)) {
         BGTASK_LOGE("GetForegroundApplications failed");
