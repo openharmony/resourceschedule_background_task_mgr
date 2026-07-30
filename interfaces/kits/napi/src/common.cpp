@@ -687,11 +687,11 @@ bool Common::GetContinuousTaskRequest(napi_env env, napi_value objValue,
     }
 
     // Get progressInfo.
-    auto progressInfo = std::make_shared<ProgressInfo>();
     bool hasNamedProperty = false;
     if (napi_has_named_property(env, objValue, "progressInfo", &hasNamedProperty) != napi_ok || !hasNamedProperty) {
         return true;
     }
+    auto progressInfo = std::make_shared<ProgressInfo>();
     if (GetprogressInfo(env, objValue, progressInfo)) {
         request->SetProgressInfo(progressInfo);
     } else {

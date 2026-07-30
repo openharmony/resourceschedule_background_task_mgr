@@ -387,7 +387,7 @@ public:
      * @param progressInfo Progress info params.
      * @return ERR_OK if success, else fail.
      */
-    ErrCode RequestUpdateDataTransferProgress(DataTransferProgress &progressInfo);
+    ErrCode RequestUpdateDataTransferProgress(const DataTransferProgress &progressInfo);
 private:
     bool GetBackgroundTaskManagerProxy();
 

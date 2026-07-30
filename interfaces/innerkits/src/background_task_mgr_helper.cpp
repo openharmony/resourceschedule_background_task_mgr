@@ -204,7 +204,7 @@ ErrCode BackgroundTaskMgrHelper::SendNotificationByDeteTask(const std::set<std::
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SendNotificationByDeteTask(taskKeys);
 }
 
-ErrCode BackgroundTaskMgrHelper::RequestUpdateDataTransferProgress(DataTransferProgress &progressInfo)
+ErrCode BackgroundTaskMgrHelper::RequestUpdateDataTransferProgress(const DataTransferProgress &progressInfo)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->RequestUpdateDataTransferProgress(progressInfo);
 }

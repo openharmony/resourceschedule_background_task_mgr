@@ -618,7 +618,7 @@ ErrCode BackgroundTaskManager::RemoveAuthRecord(const ContinuousTaskParam &taskP
     return proxy_->RemoveAuthRecord(taskParam);
 }
 
-ErrCode BackgroundTaskManager::RequestUpdateDataTransferProgress(DataTransferProgress &progressInfo)
+ErrCode BackgroundTaskManager::RequestUpdateDataTransferProgress(const DataTransferProgress &progressInfo)
 {
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Mgr::RequestUpdateDataTransferProgress");

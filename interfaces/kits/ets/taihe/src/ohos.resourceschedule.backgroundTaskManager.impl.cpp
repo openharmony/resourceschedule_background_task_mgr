@@ -1469,7 +1469,6 @@ bool CheckRequestParams(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackI
     if (requetImpl->getProgressInfo().has_value()) {
         taskParam.progressInfo_ = GetProgressInfoParam(requetImpl->getProgressInfo().value());
         if (taskParam.progressInfo_ == nullptr) {
-            BGTASK_LOGE("progressInfo_ fail.");
             return notification;
         }
     }
@@ -1517,10 +1516,8 @@ bool CheckRequestParams(ani_env *env, ContinuousTaskCallbackInfo *asyncCallbackI
     taskParam.updateTaskId_ = requetImpl->continuousTaskId_;
     taskParam.isByRequestObject_ = true;
     if (requetImpl->getProgressInfo().has_value()) {
-        BGTASK_LOGE("progressInfo_ has value.");
         taskParam.progressInfo_ = GetProgressInfoParam(requetImpl->getProgressInfo().value());
         if (taskParam.progressInfo_ == nullptr) {
-            BGTASK_LOGE("progressInfo_ fail.");
             return notification;
         }
     }

@@ -123,7 +123,7 @@ std::string DataTransferProgress::ParseToJsonStr() const
     nlohmann::json root;
     root["continuousTaskId"] = continuousTaskId_;
     if (progressInfo_ != nullptr) {
-        nlohmann::json progressJson = nlohmann::json::parse(progressInfo_->ParseToJsonStr());
+        nlohmann::json progressJson = nlohmann::json::parse(progressInfo_->ParseToJsonStr(), nullptr, false);
         if (!progressJson.is_discarded()) {
             root["progressInfo"] = progressJson;
         }

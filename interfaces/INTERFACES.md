@@ -58,7 +58,7 @@ interfaces/
 | `continuous_task_callback_info.h` | 长时任务回调信息 |
 | `resource_type.h` | 资源类型定义 |
 | `data_transfer_progress.h` | 要更新得长时任务通知信息 |
-| `progress_info.cpp.h` | 通知信息 |
+| `progress_info.h` | 通知信息 |
 
 ## 5. 外部 API（kits）
 

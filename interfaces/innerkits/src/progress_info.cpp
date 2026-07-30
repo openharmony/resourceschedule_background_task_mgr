@@ -136,15 +136,19 @@ bool ProgressInfo::ParseFromJson(const nlohmann::json &value)
         BGTASK_LOGE("progressInfo json is invalid");
         return false;
     }
-    if (!value["title"].is_string() || !value["fileName"].is_string() ||
-        !value["progressValue"].is_number_integer() || !value["isMute"].is_boolean()) {
+    if (!value.contains("title") || !value["title"].is_string() ||
+        !value.contains("fileName") || !value["fileName"].is_string()) {    
         BGTASK_LOGE("progressInfo json field type mismatch");
         return false;
     }
     title_ = value.at("title").get<std::string>();
     fileName_ = value.at("fileName").get<std::string>();
-    progressValue_ = value.at("progressValue").get<int32_t>();
-    isMute_ = value.at("isMute").get<bool>();
+    if (value.contains("progressValue") && value["progressValue"].is_number_integer()) {
+        progressValue_ = value.at("progressValue").get<int32_t>();
+    }
+    if (value.contains("isMute") && value["isMute"].is_boolean()) {
+        isMute_ = value.at("isMute").get<bool>();
+    }
     return true;
 }
 }  // namespace BackgroundTaskMgr

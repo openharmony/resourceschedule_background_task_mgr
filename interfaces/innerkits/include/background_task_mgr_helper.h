@@ -314,7 +314,7 @@ public:
      * @param progressInfo Progress info params.
      * @return ERR_OK if success, else fail.
      */
-    static ErrCode RequestUpdateDataTransferProgress(DataTransferProgress &progressInfo);
+    static ErrCode RequestUpdateDataTransferProgress(const DataTransferProgress &progressInfo);
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
