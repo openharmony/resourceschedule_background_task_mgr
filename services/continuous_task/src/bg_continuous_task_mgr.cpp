@@ -925,6 +925,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     continuousTaskRecord->fullTokenId_ = fullTokenId;
     continuousTaskRecord->needNotificationForInnerApi_ = g_innerApiReqBgRunningConfig.count(callingUid) ?
         g_innerApiReqBgRunningConfig.at(callingUid).needNotification_ : false;
+    if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
+        continuousTaskRecord->needNotificationForInnerApi_ = true;
+    }
 
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::StartBackgroundRunningInner");
@@ -3162,8 +3165,8 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
         cachedBundleInfos_.erase(uid);
         auto iterAuth = bannerNotificationRecord_.begin();
         while (iterAuth != bannerNotificationRecord_.end()) {
-            if (iterAuth->second->GetUserId() != userId || iterAuth->second->GetBundleName() != bundleName ||
-                iterAuth->second->GetAppIndex() != appIndex) {
+            if (iterAuth->second == nullptr || iterAuth->second->GetUserId() != userId ||
+                iterAuth->second->GetBundleName() != bundleName || iterAuth->second->GetAppIndex() != appIndex) {
                 iterAuth++;
                 continue;
             }
@@ -3175,18 +3178,18 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
         cachedBundleInfos_.erase(uid);
         auto iter = continuousTaskInfosMap_.begin();
         while (iter != continuousTaskInfosMap_.end()) {
-            if (iter->second->GetUid() == uid) {
-                auto record = iter->second;
-                record->reason_ = SYSTEM_CANCEL;
-                OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
-                NotificationTools::GetInstance()->CancelNotification(
-                    record->GetNotificationLabel(), record->GetNotificationId());
-                iter = continuousTaskInfosMap_.erase(iter);
-                HandleAppContinuousTaskStop(uid);
-                RefreshTaskRecord();
-            } else {
+            if (iter->second == nullptr || iter->second->GetUid() != uid) {
                 iter++;
+                continue;
             }
+            auto record = iter->second;
+            record->reason_ = SYSTEM_CANCEL;
+            OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_CANCEL);
+            NotificationTools::GetInstance()->CancelNotification(
+                record->GetNotificationLabel(), record->GetNotificationId());
+            iter = continuousTaskInfosMap_.erase(iter);
+            HandleAppContinuousTaskStop(uid);
+            RefreshTaskRecord();
         }
     } else {
         BGTASK_LOGW("get unregister common event!");
@@ -3522,9 +3525,11 @@ ErrCode BgContinuousTaskMgr::SendLiveViewAndOtherNotification(std::shared_ptr<Co
         if (mode == BackgroundMode::DATA_TRANSFER) {
             continue;
         }
-        uint32_t subMode = record->bgSubModeIds_[index];
         subRecord->bgModeIds_.push_back(mode);
-        subRecord->bgSubModeIds_.push_back(subMode);
+        if (index < record->bgSubModeIds_.size()) {
+            uint32_t subMode = record->bgSubModeIds_[index];
+            subRecord->bgSubModeIds_.push_back(subMode);
+        }
     }
     subRecord->bgModeId_ = subRecord->bgModeIds_[0];
     ret = SendNotification(subRecord, record, appName, true);
@@ -4248,9 +4253,11 @@ bool BgContinuousTaskMgr::InitSubNotificationRecord(const std::shared_ptr<Contin
         if (mode == BackgroundMode::DATA_TRANSFER) {
             continue;
         }
-        uint32_t subMode = record->bgSubModeIds_[index];
         subRecord->bgModeIds_.push_back(mode);
-        subRecord->bgSubModeIds_.push_back(subMode);
+        if (index < record->bgSubModeIds_.size()) {
+            uint32_t subMode = record->bgSubModeIds_[index];
+            subRecord->bgSubModeIds_.push_back(subMode);
+        }
     }
     if (!subRecord->bgSubModeIds_.empty()) {
         subRecord->bgModeId_ = subRecord->bgModeIds_[0];

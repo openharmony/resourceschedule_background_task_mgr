@@ -82,7 +82,9 @@ void AppStateObserverPluginAdapter::OnProcessCreated(const nlohmann::json& paylo
     }
     BGTASK_LOGD("OnProcessCreated, bundleName: %{public}s, uid: %{public}d, pid: %{public}d",
         processData.bundleName.c_str(), processData.uid, processData.pid);
-    appStateObserver_->OnProcessCreated(processData);
+    if (appStateObserver_ != nullptr) {
+        appStateObserver_->OnProcessCreated(processData);
+    }
 }
 
 void AppStateObserverPluginAdapter::OnProcessDied(const nlohmann::json& payload)
@@ -96,7 +98,9 @@ void AppStateObserverPluginAdapter::OnProcessDied(const nlohmann::json& payload)
     if (decisionMaker_ != nullptr) {
         decisionMaker_->OnProcessDied(processData);
     }
-    appStateObserver_->OnProcessDied(processData);
+    if (appStateObserver_ != nullptr) {
+        appStateObserver_->OnProcessDied(processData);
+    }
 }
 
 void AppStateObserverPluginAdapter::OnProcessStateChanged(const nlohmann::json& payload)
@@ -144,7 +148,9 @@ void AppStateObserverPluginAdapter::OnAppStateChanged(const nlohmann::json& payl
     }
     BGTASK_LOGD("OnAppStateChanged, bundleName: %{public}s, uid: %{public}d, pid: %{public}d",
         appStateData.bundleName.c_str(), appStateData.uid, appStateData.pid);
-    appStateObserver_->OnAppStateChanged(appStateData);
+    if (appStateObserver_ != nullptr) {
+        appStateObserver_->OnAppStateChanged(appStateData);
+    }
 }
 
 void AppStateObserverPluginAdapter::OnAppStopped(const nlohmann::json &payload)
@@ -155,7 +161,9 @@ void AppStateObserverPluginAdapter::OnAppStopped(const nlohmann::json &payload)
     }
     BGTASK_LOGD("OnAppStopped, bundleName: %{public}s, uid: %{public}d, pid: %{public}d",
         appStateData.bundleName.c_str(), appStateData.uid, appStateData.pid);
-    appStateObserver_->OnAppStopped(appStateData);
+    if (appStateObserver_ != nullptr) {
+        appStateObserver_->OnAppStopped(appStateData);
+    }
 }
 
 void AppStateObserverPluginAdapter::OnAppCacheStateChanged(const nlohmann::json &payload)
@@ -166,7 +174,9 @@ void AppStateObserverPluginAdapter::OnAppCacheStateChanged(const nlohmann::json 
     }
     BGTASK_LOGD("OnAppCacheStateChanged, bundleName: %{public}s, uid: %{public}d, pid: %{public}d",
         appStateData.bundleName.c_str(), appStateData.uid, appStateData.pid);
-    appStateObserver_->OnAppCacheStateChanged(appStateData);
+    if (appStateObserver_ != nullptr) {
+        appStateObserver_->OnAppCacheStateChanged(appStateData);
+    }
 }
 
 bool AppStateObserverPluginAdapter::UnmarshallingAbilityStateData(const nlohmann::json &payload,
@@ -201,7 +211,9 @@ void AppStateObserverPluginAdapter::OnAbilityStateChanged(const nlohmann::json &
 
     BGTASK_LOGD("uid:%{public}d pid:%{public}d name:%{public}s abilityState:%{public}d", abilityStateData.uid,
         abilityStateData.pid, abilityStateData.abilityName.c_str(), abilityStateData.abilityState);
-    appStateObserver_->OnAbilityStateChanged(abilityStateData);
+    if (appStateObserver_ != nullptr) {
+        appStateObserver_->OnAbilityStateChanged(abilityStateData);
+    }
 }
 
 void AppStateObserverPluginAdapter::InitCbMap(std::unordered_map<uint32_t,
