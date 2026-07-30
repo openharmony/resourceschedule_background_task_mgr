@@ -4183,7 +4183,7 @@ bool BgContinuousTaskMgr::InitSubNotificationRecord(const std::shared_ptr<Contin
             continue;
         }
         subRecord->bgModeIds_.push_back(mode);
-        if (index < bgModeIds_.size()) {
+        if (index < record->bgSubModeIds_.size()) {
             uint32_t subMode = record->bgSubModeIds_[index];
             subRecord->bgSubModeIds_.push_back(subMode);
         }
