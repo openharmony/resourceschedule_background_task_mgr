@@ -98,38 +98,34 @@ void ResourcesSubscriberMgr::OnResourceChanged(const std::shared_ptr<ResourceCal
         BGTASK_LOGW("ResourceCallbackInfo is null");
         return;
     }
-    std::vector<sptr<IBackgroundTaskSubscriber>> snapshot;
-    {
-        std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
-        snapshot.assign(subscriberList_.begin(), subscriberList_.end());
-    }
+    std::lock_guard<std::mutex> subcriberLock(subscriberLock_);
     const ResourceCallbackInfo& callbackInfoRef = *callbackInfo;
     switch (type) {
         case EfficiencyResourcesEventType::APP_RESOURCE_APPLY:
             BGTASK_LOGD("start callback function of app resources application");
             BackgroundTaskObserver::GetInstance().OnAppEfficiencyResourcesApply(callbackInfo);
-            for (auto iter = snapshot.begin(); iter != snapshot.end(); ++iter) {
+            for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
                 (*iter)->OnAppEfficiencyResourcesApply(callbackInfoRef);
             }
             break;
         case EfficiencyResourcesEventType::RESOURCE_APPLY:
             BGTASK_LOGD("start callback function of proc resources application");
             BackgroundTaskObserver::GetInstance().OnProcEfficiencyResourcesApply(callbackInfo);
-            for (auto iter = snapshot.begin(); iter != snapshot.end(); ++iter) {
+            for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
                 (*iter)->OnProcEfficiencyResourcesApply(callbackInfoRef);
             }
             break;
         case EfficiencyResourcesEventType::APP_RESOURCE_RESET:
             BGTASK_LOGD("start callback function of app resources reset");
             BackgroundTaskObserver::GetInstance().OnAppEfficiencyResourcesReset(callbackInfo);
-            for (auto iter = snapshot.begin(); iter != snapshot.end(); ++iter) {
+            for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
                 (*iter)->OnAppEfficiencyResourcesReset(callbackInfoRef);
             }
             break;
         case EfficiencyResourcesEventType::RESOURCE_RESET:
             BGTASK_LOGD("start callback function of proc resources reset");
             BackgroundTaskObserver::GetInstance().OnProcEfficiencyResourcesReset(callbackInfo);
-            for (auto iter = snapshot.begin(); iter != snapshot.end(); ++iter) {
+            for (auto iter = subscriberList_.begin(); iter != subscriberList_.end(); ++iter) {
                 (*iter)->OnProcEfficiencyResourcesReset(callbackInfoRef);
             }
             break;
