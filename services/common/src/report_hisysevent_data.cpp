@@ -23,7 +23,7 @@ constexpr int64_t SEC_TO_MILLISEC = 1000;
 bool EfficiencyResourceApplyReportHisysEvent::AddData(const sptr<EfficiencyResourceInfo> &resourceInfo,
     const std::shared_ptr<ResourceCallbackInfo> &callbackInfo)
 {
-    if (length_ == MAX_EFFICIENTCY_RESOURCE_HISYSEVCENT_DATA_LENGTH) {
+    if (length_ == MAX_EFFICIENTCY_RESOURCE_HISYSEVCENT_DATA_LENGTH || resourceInfo == nullptr) {
         return false;
     }
     appUid_.push_back(callbackInfo->GetUid());
@@ -55,7 +55,7 @@ void EfficiencyResourceApplyReportHisysEvent::ClearData()
 bool EfficiencyResourceResetReportHisysEvent::AddData(const std::shared_ptr<ResourceCallbackInfo> &callbackInfo,
     EfficiencyResourcesEventType type)
 {
-    if (length_ == MAX_EFFICIENTCY_RESOURCE_HISYSEVCENT_DATA_LENGTH) {
+    if (length_ == MAX_EFFICIENTCY_RESOURCE_HISYSEVCENT_DATA_LENGTH || callbackInfo == nullptr) {
         return false;
     }
     appUid_.push_back(callbackInfo->GetUid());
