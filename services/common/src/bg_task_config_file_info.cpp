@@ -77,9 +77,9 @@ const std::unordered_map<std::string, CpuLevelConfigInfo>& BgTaskConfigFileInfo:
     return allowApplyCpuBundleInfoMap_;
 }
 
-void BgTaskConfigFileInfo::ClearCpuBundleInfo()
+void BgTaskConfigFileInfo::ReplaceCpuBundleInfo(const std::unordered_map<std::string, CpuLevelConfigInfo> &newMap)
 {
-    allowApplyCpuBundleInfoMap_.clear();
+    allowApplyCpuBundleInfoMap_ = std::move(newMap);
 }
 } // namespace BackgroundTaskMgr
 } // namespace OHOS

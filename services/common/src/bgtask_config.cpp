@@ -410,9 +410,9 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
     }
     {
         std::lock_guard<std::mutex> lock(configMutex_);
+        bgTaskConfigFileInfo_.ReplaceCpuBundleInfo(newMap);
         for (const auto &[bundleName, info] : newMap) {
             BGTASK_LOGI("bundleName %{public}s, cpuLevel %{public}d", bundleName.c_str(), info.cpuLevel);
-            bgTaskConfigFileInfo_.AddCpuLevelConfigInfo(info);
         }
     }
 }
