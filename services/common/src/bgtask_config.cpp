@@ -156,7 +156,10 @@ bool BgtaskConfig::UpdateSusMgrCloudConfig(const nlohmann::json &payload)
         BGTASK_LOGE("UpdateSusMgrCloudConfig fail. json parse fail");
         return false;
     }
-    SetCloudConfigParam(payload);
+    {
+        std::lock_guard<std::mutex> lock(configMutex_);
+        SetCloudConfigParam(payload);
+    }
     return true;
 }
 
@@ -374,8 +377,7 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
     }
 
     nlohmann::json allowApplyCpuLevelBundleInfos = jsonObj[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS];
-    std::lock_guard<std::mutex> lock(configMutex_);
-    bgTaskConfigFileInfo_.ClearCpuBundleInfo();
+    std::unordered_map<std::string, CpuLevelConfigInfo> newMap;
     for (const auto &bundleInfoJsonObj : allowApplyCpuLevelBundleInfos) {
         if (!bundleInfoJsonObj.contains(ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME) ||
             !bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME].is_string()) {
@@ -404,11 +406,14 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
         }
         std::string bundleName = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME].get<std::string>();
         int32_t cpuLevel = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_CPU_LEVEL].get<int32_t>();
-        bgTaskConfigFileInfo_.AddCpuLevelConfigInfo({bundleName, appSignatures, cpuLevel});
+        newMap[bundleName] = {bundleName, appSignatures, cpuLevel}
     }
-    for (const auto &[bundleName, info] : bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap()) {
-        BGTASK_LOGI("%{public}s: bundleName %{public}s, cpuLevel %{public}d", __func__, bundleName.c_str(),
-            info.cpuLevel);
+    {
+        std::lock_guard<std::mutex> lock(configMutex_);
+        for (const auto &[bundleName, info] : newMap) {
+            BGTASK_LOGI("bundleName %{public}s, cpuLevel %{public}d", bundleName.c_str(), info.cpuLevel);
+            bgTaskConfigFileInfo_.AddCpuLevelConfigInfo(info);
+        }
     }
 }
 
