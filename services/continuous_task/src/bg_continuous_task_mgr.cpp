@@ -3109,6 +3109,7 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
         while (iter != continuousTaskInfosMap_.end()) {
             if (iter->second == nullptr || iter->second->GetUid() != uid) {
                 iter++;
+                continue;
             }
             auto record = iter->second;
             record->reason_ = SYSTEM_CANCEL;
@@ -3454,7 +3455,7 @@ ErrCode BgContinuousTaskMgr::SendLiveViewAndOtherNotification(std::shared_ptr<Co
             continue;
         }
         subRecord->bgModeIds_.push_back(mode);
-        if (index < bgModeIds_.size()) {
+        if (index < record->bgSubModeIds_.size()) {
             uint32_t subMode = record->bgSubModeIds_[index];
             subRecord->bgSubModeIds_.push_back(subMode);
         }

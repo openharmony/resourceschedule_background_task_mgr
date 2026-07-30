@@ -107,7 +107,7 @@ ErrCode DataStorageHelper::RestoreAuthRecord(std::unordered_map<std::string,
         BGTASK_LOGE("bannerNotification parse json value from file fail.");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
-    if (jsonObj.is_null() || !jsonObj.is_object())) {
+    if (root.is_null() || !root.is_object())) {
         BGTASK_LOGW("check jsonObj value failed.");
         return ERR_BGTASK_DATA_STORAGE_ERR;
     }
