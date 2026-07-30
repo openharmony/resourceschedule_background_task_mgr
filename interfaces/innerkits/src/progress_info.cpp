@@ -137,7 +137,7 @@ bool ProgressInfo::ParseFromJson(const nlohmann::json &value)
         return false;
     }
     if (!value.contains("title") || !value["title"].is_string() ||
-        !value.contains("fileName") || !value["fileName"].is_string()) {    
+        !value.contains("fileName") || !value["fileName"].is_string()) {
         BGTASK_LOGE("progressInfo json field type mismatch");
         return false;
     }
