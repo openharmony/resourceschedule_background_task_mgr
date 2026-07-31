@@ -19,6 +19,7 @@ sequenceable continuous_task_info..OHOS.BackgroundTaskMgr.ContinuousTaskInfo;
 sequenceable continuous_task_param..OHOS.BackgroundTaskMgr.ContinuousTaskParam;
 sequenceable continuous_task_param..OHOS.BackgroundTaskMgr.ContinuousTaskParamForInner;
 sequenceable continuous_task_request..OHOS.BackgroundTaskMgr.ContinuousTaskRequest;
+sequenceable data_transfer_progress..OHOS.BackgroundTaskMgr.DataTransferProgress;
 sequenceable delay_suspend_info..OHOS.BackgroundTaskMgr.DelaySuspendInfo;
 sequenceable efficiency_resource_info..OHOS.BackgroundTaskMgr.EfficiencyResourceInfo;
 sequenceable resource_callback_info..OHOS.BackgroundTaskMgr.ResourceCallbackInfo;
@@ -69,4 +70,5 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskMgr {
     void GetAllContinuousTaskApps([out] ContinuousTaskCallbackInfo[] list);
     [oneway] void SendNotificationByDeteTask([in] Set<String> taskKeys);
     void RemoveAuthRecord([in] ContinuousTaskParam taskParam);
+    void UpdateDataTransferProgress([in] DataTransferProgress progressInfo);
 }

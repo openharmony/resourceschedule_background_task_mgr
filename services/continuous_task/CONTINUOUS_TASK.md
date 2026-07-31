@@ -47,6 +47,7 @@ continuous_task/
 | `SuspendContinuousTask` | 暂停任务 |
 | `ActiveContinuousTask` | 恢复任务 |
 | `RequestAuthFromUser` | 请求用户授权 |
+| `UpdateDataTransferProgress` | 更新长时任务通知，仅支持DATA_TRANSFER类型长时任务 |
 
 ### 3.2 ContinuousTaskRecord
 
@@ -89,6 +90,7 @@ continuous_task/
 | `isByRequestObject_` | `bool` | 是否通过ContinuousTaskRequest对象申请，新API调用方式 |
 | `appIndex_` | `int32_t` | 应用索引，多实例应用中区分不同实例 |
 | `audioDetectState_` | `bool` | 音频检测状态，标记是否启用音频活动检测机制 |
+| `progressInfo_` | `std::shared_ptr<ProgressInfo>` | 申请长时任务包含得通知信息，用来区分发送通知得类型及样式 |
 
 ### 3.3 NotificationTools
 

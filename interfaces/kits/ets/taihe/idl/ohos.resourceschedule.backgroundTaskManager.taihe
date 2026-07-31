@@ -100,6 +100,19 @@ struct ContinuousTaskActiveInfo {
   id: i32;
 }
 
+struct ProgressInfo {
+  title: String;
+  fileName: String;
+  progressValue: Optional<i32>;
+  isMute: Optional<bool>;
+}
+
+struct DataTransferProgress {
+  continuousTaskId: i32;
+  wantAgent: Optional<@sts_type("WantAgent") Opaque>;
+  progressInfo: ProgressInfo;
+}
+
 enum ContinuousTaskSuspendReason : i32 {
   SYSTEM_SUSPEND_DATA_TRANSFER_LOW_SPEED = 4,
   SYSTEM_SUSPEND_AUDIO_PLAYBACK_NOT_USE_AVSESSION = 5,
@@ -261,6 +274,12 @@ interface ContinuousTaskRequest {
   @set("continuousTaskId")
   setContinuousTaskId(continuousTaskId: Optional<i32>): void;
 
+  @get("progressInfo")
+  getProgressInfo(): Optional<ProgressInfo>;
+
+  @set("progressInfo")
+  setProgressInfo(progressInfo: Optional<ProgressInfo>): void;
+
   GetInner(): i64;
 
   isModeSupported(): bool;
@@ -361,3 +380,6 @@ function CreateContinuousTaskRequest(): ContinuousTaskRequest;
 @rename("updateBackgroundRunning")
 @promise function UpdateBackgroundRunningSync2(
   context: @sts_type("BaseContext") Opaque, request: ContinuousTaskRequest): ContinuousTaskNotification;
+
+function UpdateDataTransferProgress(
+  context: @sts_type("BaseContext") Opaque, progressInfo: DataTransferProgress): void;

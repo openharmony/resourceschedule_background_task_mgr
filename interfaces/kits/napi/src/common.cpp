@@ -30,6 +30,8 @@ const uint32_t EXPIRE_CALLBACK_PARAM_NUM = 1;
 const uint32_t ASYNC_CALLBACK_PARAM_NUM = 2;
 const int32_t INVALID_CONTINUOUSTASK_ID = -2;
 const int32_t INVALID_MODE_ID = -1;
+static constexpr int32_t MIN_PROGRESS_VALUE = 0;
+static constexpr int32_t MAX_PROGRESS_VALUE = 100;
 
 AsyncWorkData::AsyncWorkData(napi_env napiEnv)
 {
@@ -576,6 +578,82 @@ napi_value Common::GetNapiEfficiencyResourcesInfo(const napi_env &env,
     return napiInfo;
 }
 
+napi_value Common::getNamedProperty(const napi_env &env, napi_value &object, const std::string &propertyName)
+{
+    bool hasNamedProperty = false;
+    napi_value objectValue = nullptr;
+    if (napi_has_named_property(env, object, propertyName.c_str(), &hasNamedProperty) != napi_ok || !hasNamedProperty) {
+        BGTASK_LOGW("propertyName: %{public}s not exist", propertyName.c_str());
+        return nullptr;
+    }
+    napi_status status = napi_get_named_property(env, object, propertyName.c_str(), &objectValue);
+    if (status != napi_ok) {
+        BGTASK_LOGE("get propertyName: %{public}s failed", propertyName.c_str());
+        return nullptr;
+    }
+    return objectValue;
+}
+
+bool Common::GetprogressInfoParam(napi_env env, napi_value objValue, const std::shared_ptr<ProgressInfo> &progressInfo)
+{
+    napi_value titleValue = getNamedProperty(env, objValue, "title");
+    if (titleValue == nullptr) {
+        return false;
+    }
+    std::string title {""};
+    if (!GetStringValue(env, titleValue, title)) {
+        BGTASK_LOGE("get title failed");
+        return false;
+    }
+    progressInfo->SetTitle(title);
+
+    napi_value fileNameValue = getNamedProperty(env, objValue, "fileName");
+    if (fileNameValue == nullptr) {
+        return false;
+    }
+    std::string fileName {""};
+    if (!GetStringValue(env, fileNameValue, fileName)) {
+        BGTASK_LOGE("get fileName failed");
+        return false;
+    }
+    progressInfo->SetFileName(fileName);
+
+    napi_value isProgressValue = getNamedProperty(env, objValue, "progressValue");
+    if (isProgressValue) {
+        int32_t progressValue = -1;
+        if (GetInt32NumberValue(env, isProgressValue, progressValue)) {
+            if (progressValue < MIN_PROGRESS_VALUE || progressValue > MAX_PROGRESS_VALUE) {
+                BGTASK_LOGE("progressValue %{public}d out of range [0, 100]", progressValue);
+                Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID, true);
+                return false;
+            }
+            progressInfo->SetProgressValue(progressValue);
+        }
+    }
+
+    bool isMute = GetBoolProperty(env, objValue, "isMute");
+    progressInfo->SetIsMute(isMute);
+    return true;
+}
+
+bool Common::GetprogressInfo(napi_env env, napi_value objValue, const std::shared_ptr<ProgressInfo> &progressInfo)
+{
+    if (progressInfo == nullptr) {
+        return false;
+    }
+    napi_value progressInfoValue = getNamedProperty(env, objValue, "progressInfo");
+    if (progressInfoValue == nullptr) {
+        return false;
+    }
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, progressInfoValue, &valueType);
+    if (valueType != napi_object) {
+        BGTASK_LOGE("progressInfo param is not object");
+        return false;
+    }
+    return GetprogressInfoParam(env, progressInfoValue, progressInfo);
+}
+
 bool Common::GetContinuousTaskRequest(napi_env env, napi_value objValue,
     std::shared_ptr<ContinuousTaskRequest> &request)
 {
@@ -606,6 +684,18 @@ bool Common::GetContinuousTaskRequest(napi_env env, napi_value objValue,
     bool combinedTaskNotification = GetBoolProperty(env, objValue, "combinedTaskNotification");
     if (combinedTaskNotification) {
         request->SetCombinedTaskNotification(combinedTaskNotification);
+    }
+
+    // Get progressInfo.
+    bool hasNamedProperty = false;
+    if (napi_has_named_property(env, objValue, "progressInfo", &hasNamedProperty) != napi_ok || !hasNamedProperty) {
+        return true;
+    }
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    if (GetprogressInfo(env, objValue, progressInfo)) {
+        request->SetProgressInfo(progressInfo);
+    } else {
+        return false;
     }
     return true;
 }

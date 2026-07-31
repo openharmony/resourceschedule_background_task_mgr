@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,6 +60,7 @@ napi_value BackgroundTaskMgrInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("unsubscribeContinuousTaskState", UnSubscribeContinuousTaskState),
         DECLARE_NAPI_FUNCTION("on", OnOnContinuousTaskCallback),
         DECLARE_NAPI_FUNCTION("off", OffOnContinuousTaskCallback),
+        DECLARE_NAPI_FUNCTION("updateDataTransferProgress", UpdateDataTransferProgress),
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));

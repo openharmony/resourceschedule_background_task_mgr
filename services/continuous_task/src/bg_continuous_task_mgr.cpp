@@ -1006,6 +1006,7 @@ void BgContinuousTaskMgr::InitRecordParam(std::shared_ptr<ContinuousTaskRecord> 
     continuousTaskRecord->combinedNotificationTaskId_ = taskParam->combinedNotificationTaskId_;
     continuousTaskRecord->isByRequestObject_ = taskParam->isByRequestObject_;
     continuousTaskRecord->appIndex_ = taskParam->appIndex_;
+    continuousTaskRecord->progressInfo_ = taskParam->progressInfo_;
 }
 
 ErrCode BgContinuousTaskMgr::CheckSubMode(const std::shared_ptr<AAFwk::Want> want,
@@ -1156,6 +1157,10 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
         BGTASK_LOGE("have mode: DATA_TRANSFER, not support update, taskId: %{public}d", continuousTaskId);
         return ERR_BGTASK_CONTINUOUS_DATA_TRANSFER_NOT_UPDATE;
     }
+    if (taskParam->progressInfo_ != nullptr) {
+        BGTASK_LOGE("not support progressInfo, taskId: %{public}d", continuousTaskId);
+        return ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID;
+    }
     if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::SPECIAL_SCENARIO_PROCESSING) &&
         taskParam->isCombinedTaskNotification_) {
         BGTASK_LOGE("have mode: SPECIAL_SCENARIO_PROCESSING, not support merge, taskId: %{public}d",
@@ -1219,6 +1224,69 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningInner(const std::string &tas
     OnContinuousTaskChanged(continuousTaskRecord, ContinuousTaskEventTriggerType::TASK_UPDATE);
     taskParam->notificationId_ = continuousTaskRecord->GetNotificationId();
     taskParam->continuousTaskId_ = continuousTaskRecord->GetContinuousTaskId();
+    return RefreshTaskRecord();
+}
+
+ErrCode BgContinuousTaskMgr::UpdateDataTransferProgress(const sptr<DataTransferProgress> &progressInfo)
+{
+    BgTaskHiTraceChain traceChain(__func__);
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    ErrCode result = CheckIsSysReadyAndPermission(callingUid);
+    if (result != ERR_OK) {
+        return result;
+    }
+
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Service::UpdateDataTransferProgressInner");
+    auto self = shared_from_this();
+    handler_->PostSyncTask([self, callingUid, progressInfo, &result]() {
+        if (!self) {
+            BGTASK_LOGE("self is null");
+            result = ERR_BGTASK_SERVICE_INNER_ERROR;
+            return;
+        }
+        result = self->UpdateDataTransferProgressInner(callingUid, progressInfo);
+        }, AppExecFwk::EventQueue::Priority::HIGH);
+    return result;
+}
+
+ErrCode BgContinuousTaskMgr::UpdateDataTransferProgressInner(int32_t uid,
+    const sptr<DataTransferProgress> &progressInfo)
+{
+    int32_t continuousTaskId = progressInfo->GetContinuousTaskId();
+    if (continuousTaskId < 0) {
+        BGTASK_LOGE("invalid taskId: %{public}d", continuousTaskId);
+        return ERR_BGTASK_CONTINUOUS_TASKID_INVALID;
+    }
+    if (progressInfo->GetProgressInfo() == nullptr) {
+        BGTASK_LOGE("progress info is invalid, taskId: %{public}d", continuousTaskId);
+        return ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID;
+    }
+    auto findTask = [continuousTaskId, uid](const auto &target) {
+        if (!target.second) {
+            return false;
+        }
+        return continuousTaskId == target.second->continuousTaskId_ && target.second->uid_ == uid;
+    };
+    auto iter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findTask);
+    if (iter == continuousTaskInfosMap_.end()) {
+        BGTASK_LOGE("uid: %{public}d not have task, taskId: %{public}d", uid, continuousTaskId);
+        return ERR_BGTASK_OBJECT_NOT_EXIST;
+    }
+    auto record = iter->second;
+    if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+        BGTASK_LOGE("task is not DATA_TRANSFER mode, taskId: %{public}d", continuousTaskId);
+        return ERR_BGTASK_CONTINUOUS_NOT_DATA_TRANSFER;
+    }
+    if (progressInfo->GetWantAgent() != nullptr) {
+        record->wantAgent_ = progressInfo->GetWantAgent();
+    }
+    record->progressInfo_ = progressInfo->GetProgressInfo();
+    ErrCode ret = SendContinuousTaskNotification(record);
+    if (ret != ERR_OK) {
+        BGTASK_LOGE("update dataTransfer progress failed, taskId: %{public}d", continuousTaskId);
+        return ret;
+    }
     return RefreshTaskRecord();
 }
 

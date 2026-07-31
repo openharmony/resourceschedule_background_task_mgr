@@ -41,6 +41,7 @@
 #include "resource_callback_info.h"
 #include "singleton.h"
 #include "transient_task_app_info.h"
+#include "data_transfer_progress.h"
 
 using namespace testing::ext;
 
@@ -687,6 +688,32 @@ HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_021
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
     MessageParcelHelper::BgTaskFwkAbnormalSetWriteInt32WithParamFlag(false);
     EXPECT_EQ(backgroundTaskMgrProxy.IsModeSupported(taskParam), ERR_INVALID_DATA);
+}
+
+/**
+ * @tc.name: BackgroundTaskMgrProxyAbnormalTest_022
+ * @tc.desc: test UpdateDataTransferProgress abnormal.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskFrameworkAbnormalUnitTest, BackgroundTaskMgrProxyAbnormalTest_022, TestSize.Level2)
+{
+    BackgroundTaskMgrProxy backgroundTaskMgrProxy = BackgroundTaskMgrProxy(nullptr);
+    DataTransferProgress progress;
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.UpdateDataTransferProgress(progress), ERR_INVALID_VALUE);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteInterfaceTokenFlag(true);
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteParcelableFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.UpdateDataTransferProgress(progress), ERR_INVALID_DATA);
+
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteParcelableFlag(true);
+    BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(0);
+    EXPECT_EQ(backgroundTaskMgrProxy.UpdateDataTransferProgress(progress), ERR_INVALID_DATA);
+
+    BgTaskMgrProxyHelper::BgTaskFwkAbnormalSetBgTaskMgrProxyInnerTransactFlag(1);
+    MessageParcelHelper::BgTaskFwkAbnormalSetWriteReadInt32WithParamFlag(false);
+    EXPECT_EQ(backgroundTaskMgrProxy.UpdateDataTransferProgress(progress), ERR_INVALID_DATA);
 }
 }
 }

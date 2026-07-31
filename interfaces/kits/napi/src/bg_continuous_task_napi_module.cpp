@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +40,7 @@
 #include "js_runtime_utils.h"
 #include "background_task_state_info.h"
 #include "background_common.h"
+#include "data_transfer_progress.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -67,6 +68,7 @@ static constexpr uint32_t CONTINUOUS_TASK_CANCEL = 1 << 0;
 static constexpr uint32_t CONTINUOUS_TASK_SUSPEND = 1 << 1;
 static constexpr uint32_t CONTINUOUS_TASK_ACTIVE = 1 << 2;
 static constexpr uint32_t SUBSCRIBER_BACKGROUND_TASK_STATE = 1 << 3;
+static constexpr uint32_t UPDATE_PROGRESS_INFO_PARAMS = 2;
 static constexpr char SUBSCRIBER_BACKGROUND_TASK_STATE_TYPE[] = "subscribeContinuousTaskState";
 static std::shared_ptr<JsBackgroundTaskSubscriber> backgroundTaskSubscriber_ = nullptr;
 std::mutex backgroundTaskSubscriberMutex_;
@@ -277,6 +279,7 @@ void UpdateBackgroundRunningByRequestExecuteCB(napi_env env, void *data)
     taskParam.isCombinedTaskNotification_ = asyncCallbackInfo->request->IsCombinedTaskNotification();
     taskParam.updateTaskId_ = asyncCallbackInfo->request->GetContinuousTaskId();
     taskParam.bgSubModeIds_ = asyncCallbackInfo->request->GetBackgroundTaskSubmodes();
+    taskParam.progressInfo_ = asyncCallbackInfo->request->GetProgressInfo();
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestUpdateBackgroundRunning(taskParam);
     asyncCallbackInfo->bgModes = backgroundTaskModes;
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
@@ -852,6 +855,7 @@ void StartBackgroundRunningByRequestExecuteCB(napi_env env, void *data)
     taskParam.combinedNotificationTaskId_ = asyncCallbackInfo->request->GetContinuousTaskId();
     taskParam.bgSubModeIds_ = asyncCallbackInfo->request->GetBackgroundTaskSubmodes();
     taskParam.appIndex_ = info->appIndex;
+    taskParam.progressInfo_ = asyncCallbackInfo->request->GetProgressInfo();
     asyncCallbackInfo->errCode = BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
     asyncCallbackInfo->bgModes = backgroundTaskModes;
     asyncCallbackInfo->notificationId = taskParam.notificationId_;
@@ -1879,6 +1883,76 @@ napi_value UnSubscribeContinuousTaskState(napi_env env, napi_callback_info info)
     backgroundTaskSubscriber_->RemoveJsObserverObject(SUBSCRIBER_BACKGROUND_TASK_STATE_TYPE, argv[INDEX_ZERO]);
     UnSubscribeBackgroundTask(env, SUBSCRIBER_BACKGROUND_TASK_STATE, SUBSCRIBER_BACKGROUND_TASK_STATE_TYPE);
     return WrapUndefinedToJS(env);
+}
+
+bool GetDataTransferProgress(napi_env env, napi_value objValue, DataTransferProgress &progressInfo)
+{
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, objValue, &valueType);
+    if (valueType != napi_object) {
+        BGTASK_LOGE("DataTransferProgress param is not object");
+        return false;
+    }
+
+    // continuousTaskId
+    int32_t continuousTaskId = Common::GetIntProperty(env, objValue, "continuousTaskId");
+    if (continuousTaskId != -1) {
+        progressInfo.SetContinuousTaskId(continuousTaskId);
+    } else {
+        return false;
+    }
+
+    // wantAgent
+    napi_value wantAgentValue = Common::getNamedProperty(env, objValue, "wantAgent");
+    if (wantAgentValue) {
+        std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent = nullptr;
+        if (GetWantAgent(env, wantAgentValue, wantAgent)) {
+            progressInfo.SetWantAgent(wantAgent);
+        }
+    }
+
+    // progressInfo
+    auto progressInfoInner = std::make_shared<ProgressInfo>();
+    if (!Common::GetprogressInfo(env, objValue, progressInfoInner)) {
+        BGTASK_LOGE("progressInfo param invalid");
+        return false;
+    }
+    progressInfo.SetProgressInfo(progressInfoInner);
+    return true;
+}
+
+napi_value UpdateDataTransferProgress(napi_env env, napi_callback_info info)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Napi::UpdateDataTransferProgress");
+
+    size_t argc = UPDATE_PROGRESS_INFO_PARAMS;
+    napi_value argv[UPDATE_PROGRESS_INFO_PARAMS] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc != UPDATE_PROGRESS_INFO_PARAMS) {
+        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
+        return WrapVoidToJS(env);
+    }
+    // context
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
+    if (GetAbilityContext(env, argv[0], abilityContext) == nullptr) {
+        BGTASK_LOGE("Get ability context failed");
+        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, true);
+        return WrapVoidToJS(env);
+    }
+
+    // DataTransferProgress
+    DataTransferProgress progressInfo;
+    if (!GetDataTransferProgress(env, argv[1], progressInfo)) {
+        Common::HandleParamErr(env, ERR_BGTASK_INVALID_PARAM, true);
+        return WrapVoidToJS(env);
+    }
+
+    ErrCode errCode = BackgroundTaskMgrHelper::RequestUpdateDataTransferProgress(progressInfo);
+    if (errCode != ERR_OK) {
+        Common::HandleErrCode(env, errCode, true);
+    }
+    return WrapVoidToJS(env);
 }
 
 napi_value StartBackgroundRunning(napi_env env, napi_callback_info info)

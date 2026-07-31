@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,6 +63,17 @@ bool ContinuousTaskRequest::Marshalling(Parcel& out) const
         BGTASK_LOGE("Failed to write isBuildByRequest");
         return false;
     }
+    bool progressValid = progressInfo_ != nullptr;
+    if (!out.WriteBool(progressValid)) {
+        BGTASK_LOGE("Failed to write progressInfo valid flag");
+        return false;
+    }
+    if (progressValid) {
+        if (!out.WriteParcelable(progressInfo_.get())) {
+            BGTASK_LOGE("Failed to write progressInfo");
+            return false;
+        }
+    }
     return true;
 }
 
@@ -96,6 +107,14 @@ bool ContinuousTaskRequest::ReadFromParcel(Parcel& in)
     if (!in.ReadBool(isBuildByRequest_)) {
         BGTASK_LOGE("read parcel isBuildByRequest error");
         return false;
+    }
+    bool progressValid = in.ReadBool();
+    if (progressValid) {
+        progressInfo_ = std::shared_ptr<ProgressInfo>(in.ReadParcelable<ProgressInfo>());
+        if (!progressInfo_) {
+            BGTASK_LOGE("read parcel progressInfo error");
+            return false;
+        }
     }
     return true;
 }
@@ -159,6 +178,16 @@ void ContinuousTaskRequest::SetBackgroundTaskMode(const std::vector<uint32_t> &b
 void ContinuousTaskRequest::SetBackgroundTaskSubMode(const std::vector<uint32_t> &backgroundTaskSubMode)
 {
     backgroundTaskSubmodes_ = backgroundTaskSubMode;
+}
+
+std::shared_ptr<ProgressInfo> ContinuousTaskRequest::GetProgressInfo() const
+{
+    return progressInfo_;
+}
+
+void ContinuousTaskRequest::SetProgressInfo(const std::shared_ptr<ProgressInfo> &progressInfo)
+{
+    progressInfo_ = progressInfo;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

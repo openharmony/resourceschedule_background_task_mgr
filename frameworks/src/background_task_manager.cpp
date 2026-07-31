@@ -618,6 +618,17 @@ ErrCode BackgroundTaskManager::RemoveAuthRecord(const ContinuousTaskParam &taskP
     return proxy_->RemoveAuthRecord(taskParam);
 }
 
+ErrCode BackgroundTaskManager::RequestUpdateDataTransferProgress(const DataTransferProgress &progressInfo)
+{
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS,
+        "BackgroundTaskManager::ContinuousTask::Mgr::RequestUpdateDataTransferProgress");
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN
+
+    return proxy_->UpdateDataTransferProgress(progressInfo);
+}
+
 BackgroundTaskManager::BgTaskMgrDeathRecipient::BgTaskMgrDeathRecipient(BackgroundTaskManager &backgroundTaskManager)
     : backgroundTaskManager_(backgroundTaskManager) {}
 

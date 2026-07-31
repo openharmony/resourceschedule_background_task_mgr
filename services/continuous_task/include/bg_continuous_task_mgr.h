@@ -46,6 +46,7 @@
 #include "background_task_state_info.h"
 #include "dialog_event_observer.h"
 #include "banner_notification_event_observer.h"
+#include "data_transfer_progress.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -107,6 +108,7 @@ public:
     ErrCode RequestBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode RequestGetContinuousTasksByUidForInner(int32_t uid,
         std::vector<std::shared_ptr<ContinuousTaskInfo>> &list);
+    ErrCode UpdateDataTransferProgress(const sptr<DataTransferProgress> &progressInfo);
     ErrCode AddSubscriber(const std::shared_ptr<SubscriberInfo> subscriberInfo);
     ErrCode RemoveSubscriber(const sptr<IBackgroundTaskSubscriber> &subscriber, uint32_t flag = 0);
     ErrCode ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
@@ -182,6 +184,7 @@ private:
     ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
     ErrCode GetAllContinuousTasksInner(int32_t uid, std::vector<std::shared_ptr<ContinuousTaskInfo>> &list,
         bool includeSuspended = true, bool exemptUid = false);
+    ErrCode UpdateDataTransferProgressInner(int32_t uid, const sptr<DataTransferProgress> &progressInfo);
     ErrCode CheckIsSysReadyAndPermission(int32_t callingUid);
     ErrCode AddSubscriberInner(const std::shared_ptr<SubscriberInfo> subscriberInfo);
     ErrCode RemoveSubscriberInner(const sptr<IBackgroundTaskSubscriber> &subscriber, uint32_t flag = 0);

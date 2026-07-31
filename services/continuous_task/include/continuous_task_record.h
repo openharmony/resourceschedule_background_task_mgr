@@ -20,6 +20,7 @@
 #include "nlohmann/json.hpp"
 #include "parcel.h"
 #include "want_agent.h"
+#include "progress_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -68,6 +69,7 @@ public:
     std::string GetSubNotificationLabel() const;
     int32_t GetSubNotificationId() const;
     int32_t GetAppIndex() const;
+    std::shared_ptr<ProgressInfo> GetProgressInfo() const;
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
@@ -112,6 +114,7 @@ private:
     bool audioPlayState_ {true};
     bool isStandby_ {false};
     bool isStandbySuspend_ {false};
+    std::shared_ptr<ProgressInfo> progressInfo_ {nullptr};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

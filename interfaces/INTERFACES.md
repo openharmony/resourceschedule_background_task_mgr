@@ -57,6 +57,8 @@ interfaces/
 | `continuous_task_suspend_reason.h` | 长时任务暂停原因 |
 | `continuous_task_callback_info.h` | 长时任务回调信息 |
 | `resource_type.h` | 资源类型定义 |
+| `data_transfer_progress.h` | 要更新得长时任务通知信息 |
+| `progress_info.h` | 通知信息 |
 
 ## 5. 外部 API（kits）
 
@@ -107,6 +109,7 @@ interfaces/
 | `bg_continuous_task_napi_module.cpp` | `CheckSpecialScenarioAuth` | 特殊场景授权检查 |
 | `bg_continuous_task_napi_module.cpp` | `SetBackgroundTaskState` | 设置后台任务状态 |
 | `bg_continuous_task_napi_module.cpp` | `GetBackgroundTaskState` | 获取后台任务状态 |
+| `bg_continuous_task_napi_module.cpp` | `UpdateDataTransferProgress` | 更新长时任务通知，仅支持DATA_TRANSFER类型长时任务 |
 
 #### 5.2.4 能效资源 API
 

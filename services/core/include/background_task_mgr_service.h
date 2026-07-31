@@ -79,6 +79,7 @@ public:
     ErrCode GetAllContinuousTasks(std::vector<ContinuousTaskInfo> &list) override;
     ErrCode GetAllContinuousTasks(
         std::vector<std::shared_ptr<ContinuousTaskInfo>> &list, bool includeSuspended) override;
+    ErrCode UpdateDataTransferProgress(const DataTransferProgress &progressInfo) override;
     ErrCode SubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber, uint32_t flag) override;
     ErrCode UnsubscribeBackgroundTask(const sptr<IBackgroundTaskSubscriber>& subscriber, uint32_t flag = 0) override;
     ErrCode GetTransientTaskApps(std::vector<TransientTaskAppInfo> &list) override;

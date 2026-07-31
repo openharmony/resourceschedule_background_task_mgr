@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@
 
 #include "parcel.h"
 #include "want_agent.h"
+#include "progress_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -97,6 +98,19 @@ public:
     bool IsCombinedTaskNotification() const;
     void SetBackgroundTaskMode(const std::vector<uint32_t> &backgroundTaskMode);
     void SetBackgroundTaskSubMode(const std::vector<uint32_t> &backgroundTaskSubMode);
+    /**
+     * @brief Get progress info.
+     *
+     * @return Progress info.
+     */
+    std::shared_ptr<ProgressInfo> GetProgressInfo() const;
+
+    /**
+     * @brief Set progress info.
+     *
+     * @param progressInfo Progress info.
+     */
+    void SetProgressInfo(const std::shared_ptr<ProgressInfo> &progressInfo);
 private:
     bool ReadFromParcel(Parcel& in);
 
@@ -106,6 +120,7 @@ private:
     bool combinedTaskNotification_ {false};
     int32_t continuousTaskId_ {-1};
     bool isBuildByRequest_ {false};
+    std::shared_ptr<ProgressInfo> progressInfo_ {nullptr};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

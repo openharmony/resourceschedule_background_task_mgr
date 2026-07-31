@@ -42,6 +42,8 @@
 #include "token_setproc.h"
 #include "transient_task_app_info.h"
 #include "user_auth_result.h"
+#include "progress_info.h"
+#include "data_transfer_progress.h"
 
 using namespace testing::ext;
 
@@ -1422,6 +1424,220 @@ HWTEST_F(BgTaskClientUnitTest, SendNotificationByDeteTask_001, TestSize.Level1)
 {
     std::set<std::string> taskKeys;
     EXPECT_EQ(BackgroundTaskMgrHelper::SendNotificationByDeteTask(taskKeys), ERR_OK);
+}
+
+/**
+ * @tc.name: RequestUpdateDataTransferProgress_001
+ * @tc.desc: test RequestUpdateDataTransferProgress interface.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, RequestUpdateDataTransferProgress_001, TestSize.Level0)
+{
+    DataTransferProgress progress;
+    EXPECT_NE(BackgroundTaskMgrHelper::RequestUpdateDataTransferProgress(progress), ERR_OK);
+}
+
+/**
+ * @tc.name: ContinuousTaskParam_ProgressInfo_001
+ * @tc.desc: test ContinuousTaskParam parcel round-trip with progressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskParam_ProgressInfo_001, TestSize.Level1)
+{
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("downloading");
+    progressInfo->SetFileName("file.zip");
+    progressInfo->SetProgressValue(50);
+    progressInfo->SetIsMute(true);
+
+    sptr<ContinuousTaskParam> param = new ContinuousTaskParam(true, 1,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1}, 1);
+    param->progressInfo_ = progressInfo;
+
+    Parcel parcel;
+    EXPECT_TRUE(param->Marshalling(parcel));
+    auto deserialized = ContinuousTaskParam::Unmarshalling(parcel);
+    EXPECT_EQ(deserialized->progressInfo_ != nullptr, true);
+    EXPECT_EQ(deserialized->progressInfo_->GetTitle(), "downloading");
+    EXPECT_EQ(deserialized->progressInfo_->GetFileName(), "file.zip");
+    EXPECT_EQ(deserialized->progressInfo_->GetProgressValue(), 50);
+    EXPECT_EQ(deserialized->progressInfo_->IsMute(), true);
+}
+
+/**
+ * @tc.name: ContinuousTaskParam_ProgressInfo_002
+ * @tc.desc: test ContinuousTaskParam parcel round-trip without progressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskParam_ProgressInfo_002, TestSize.Level1)
+{
+    sptr<ContinuousTaskParam> param = new ContinuousTaskParam(true, 1,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(),
+        "ability1", nullptr, "Entry", true, {1}, 1);
+    EXPECT_EQ(param->progressInfo_, nullptr);
+
+    Parcel parcel;
+    EXPECT_TRUE(param->Marshalling(parcel));
+    auto deserialized = ContinuousTaskParam::Unmarshalling(parcel);
+    EXPECT_EQ(deserialized->progressInfo_, nullptr);
+}
+
+/**
+ * @tc.name: ContinuousTaskRequest_ProgressInfo_001
+ * @tc.desc: test ContinuousTaskRequest parcel round-trip with progressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskRequest_ProgressInfo_001, TestSize.Level1)
+{
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("uploading");
+    progressInfo->SetFileName("doc.pdf");
+    progressInfo->SetProgressValue(75);
+    progressInfo->SetIsMute(false);
+
+    std::shared_ptr<ContinuousTaskRequest> request = std::make_shared<ContinuousTaskRequest>(
+        std::vector<uint32_t>{1}, std::vector<uint32_t>{1},
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(), true, 10, true);
+    request->SetProgressInfo(progressInfo);
+
+    MessageParcel parcel;
+    EXPECT_TRUE(request->Marshalling(parcel));
+    auto deserialized = ContinuousTaskRequest::Unmarshalling(parcel);
+    EXPECT_NE(deserialized->GetProgressInfo(), nullptr);
+    EXPECT_EQ(deserialized->GetProgressInfo()->GetTitle(), "uploading");
+    EXPECT_EQ(deserialized->GetProgressInfo()->GetFileName(), "doc.pdf");
+    EXPECT_EQ(deserialized->GetProgressInfo()->GetProgressValue(), 75);
+    EXPECT_EQ(deserialized->GetProgressInfo()->IsMute(), false);
+}
+
+/**
+ * @tc.name: ContinuousTaskRequest_ProgressInfo_002
+ * @tc.desc: test ContinuousTaskRequest parcel round-trip without progressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskRequest_ProgressInfo_002, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRequest> request = std::make_shared<ContinuousTaskRequest>(
+        std::vector<uint32_t>{1}, std::vector<uint32_t>{1},
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(), true, 10, true);
+    EXPECT_EQ(request->GetProgressInfo(), nullptr);
+
+    MessageParcel parcel;
+    EXPECT_TRUE(request->Marshalling(parcel));
+    auto deserialized = ContinuousTaskRequest::Unmarshalling(parcel);
+    EXPECT_EQ(deserialized->GetProgressInfo(), nullptr);
+}
+
+/**
+ * @tc.name: ContinuousTaskRequest_GetSetProgressInfo_001
+ * @tc.desc: test ContinuousTaskRequest GetProgressInfo and SetProgressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskRequest_GetSetProgressInfo_001, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRequest> request = std::make_shared<ContinuousTaskRequest>();
+    EXPECT_EQ(request->GetProgressInfo(), nullptr);
+
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("test");
+    progressInfo->SetFileName("test.bin");
+    progressInfo->SetProgressValue(30);
+    progressInfo->SetIsMute(true);
+    request->SetProgressInfo(progressInfo);
+
+    EXPECT_NE(request->GetProgressInfo(), nullptr);
+    EXPECT_EQ(request->GetProgressInfo()->GetTitle(), "test");
+    EXPECT_EQ(request->GetProgressInfo()->GetFileName(), "test.bin");
+    EXPECT_EQ(request->GetProgressInfo()->GetProgressValue(), 30);
+    EXPECT_EQ(request->GetProgressInfo()->IsMute(), true);
+}
+
+/**
+ * @tc.name: ProgressInfo_001
+ * @tc.desc: test ProgressInfo parcel round-trip.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, ProgressInfo_001, TestSize.Level1)
+{
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("downloading");
+    progressInfo->SetFileName("archive.tar");
+    progressInfo->SetProgressValue(42);
+    progressInfo->SetIsMute(true);
+
+    Parcel parcel;
+    EXPECT_TRUE(progressInfo->Marshalling(parcel));
+    auto deserialized = ProgressInfo::Unmarshalling(parcel);
+    EXPECT_EQ(deserialized->GetTitle(), "downloading");
+    EXPECT_EQ(deserialized->GetFileName(), "archive.tar");
+    EXPECT_EQ(deserialized->GetProgressValue(), 42);
+    EXPECT_EQ(deserialized->IsMute(), true);
+}
+
+/**
+ * @tc.name: ProgressInfo_002
+ * @tc.desc: test ProgressInfo JSON round-trip.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, ProgressInfo_002, TestSize.Level1)
+{
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("uploading");
+    progressInfo->SetFileName("data.csv");
+    progressInfo->SetProgressValue(88);
+    progressInfo->SetIsMute(false);
+
+    std::string jsonStr = progressInfo->ParseToJsonStr();
+    auto readInfo = std::make_shared<ProgressInfo>();
+    EXPECT_TRUE(readInfo->ParseFromJson(nlohmann::json::parse(jsonStr)));
+    EXPECT_EQ(readInfo->GetTitle(), "uploading");
+    EXPECT_EQ(readInfo->GetFileName(), "data.csv");
+    EXPECT_EQ(readInfo->GetProgressValue(), 88);
+    EXPECT_EQ(readInfo->IsMute(), false);
+}
+
+/**
+ * @tc.name: DataTransferProgress_001
+ * @tc.desc: test DataTransferProgress parcel round-trip with progressInfo.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, DataTransferProgress_001, TestSize.Level1)
+{
+    auto progressInfo = std::make_shared<ProgressInfo>();
+    progressInfo->SetTitle("downloading");
+    progressInfo->SetFileName("video.mp4");
+    progressInfo->SetProgressValue(75);
+    progressInfo->SetIsMute(false);
+
+    DataTransferProgress progress(10, std::make_shared<AbilityRuntime::WantAgent::WantAgent>(), progressInfo);
+
+    Parcel parcel;
+    EXPECT_TRUE(progress.Marshalling(parcel));
+    auto deserialized = DataTransferProgress::Unmarshalling(parcel);
+    EXPECT_EQ(deserialized->GetContinuousTaskId(), 10);
+    EXPECT_NE(deserialized->GetWantAgent(), nullptr);
+    EXPECT_NE(deserialized->GetProgressInfo(), nullptr);
+    EXPECT_EQ(deserialized->GetProgressInfo()->GetTitle(), "downloading");
+    EXPECT_EQ(deserialized->GetProgressInfo()->GetProgressValue(), 75);
+}
+
+/**
+ * @tc.name: DataTransferProgress_002
+ * @tc.desc: test DataTransferProgress parcel round-trip without progressInfo and wantAgent.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgTaskClientUnitTest, DataTransferProgress_002, TestSize.Level1)
+{
+    DataTransferProgress progress;
+    progress.SetContinuousTaskId(5);
+
+    Parcel parcel;
+    EXPECT_TRUE(progress.Marshalling(parcel));
+    auto deserialized = DataTransferProgress::Unmarshalling(parcel);
+    EXPECT_EQ(deserialized->GetContinuousTaskId(), 5);
+    EXPECT_EQ(deserialized->GetWantAgent(), nullptr);
+    EXPECT_EQ(deserialized->GetProgressInfo(), nullptr);
 }
 }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -106,6 +106,14 @@ bool ContinuousTaskParam::ReadFromParcelNewApi(Parcel &parcel)
     if (!parcel.ReadInt32(requestAuthApiVersion_)) {
         BGTASK_LOGE("Failed to read the requestAuthApiVersion");
         return false;
+    }
+    bool progressValid = parcel.ReadBool();
+    if (progressValid) {
+        progressInfo_ = std::shared_ptr<ProgressInfo>(parcel.ReadParcelable<ProgressInfo>());
+        if (!progressInfo_) {
+            BGTASK_LOGE("Failed to read progressInfo");
+            return false;
+        }
     }
     return true;
 }
@@ -251,6 +259,17 @@ bool ContinuousTaskParam::MarshallingNewApi(Parcel &parcel) const
     if (!parcel.WriteInt32(requestAuthApiVersion_)) {
         BGTASK_LOGE("Failed to write the requestAuthApiVersion");
         return false;
+    }
+    bool progressValid = progressInfo_ != nullptr;
+    if (!parcel.WriteBool(progressValid)) {
+        BGTASK_LOGE("Failed to write progressInfo valid flag");
+        return false;
+    }
+    if (progressValid) {
+        if (!parcel.WriteParcelable(progressInfo_.get())) {
+            BGTASK_LOGE("Failed to write progressInfo");
+            return false;
+        }
     }
     return true;
 }

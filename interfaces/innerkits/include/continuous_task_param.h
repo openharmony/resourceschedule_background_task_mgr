@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@
 #include "refbase.h"
 #include "want_agent.h"
 #include "background_common.h"
+#include "progress_info.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -46,6 +47,7 @@ struct ContinuousTaskParam : public Parcelable {
     int32_t requestAuthApiVersion_ {API_VERSION_REQUEST_SPECIAL_USER_AUTH}; // 特殊类型长时任务请求用户授权API版本，起始22
     int32_t notificationId_ {-1}; // out
     int32_t continuousTaskId_ {-1}; // out
+    std::shared_ptr<ProgressInfo> progressInfo_ {nullptr};
 
     ContinuousTaskParam() = default;
     ContinuousTaskParam(bool isNewApi, uint32_t bgModeId,
