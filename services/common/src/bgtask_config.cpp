@@ -417,7 +417,7 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
             appSignatures.push_back(appSign.get<std::string>());
         }
         std::string bundleName = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME].get<std::string>();
-        newMap[bundleName] = {bundleName, appSignatures, cpuLevel}
+        newMap[bundleName] = {bundleName, appSignatures, cpuLevel};
     }
     {
         for (const auto &[bundleName, info] : newMap) {
