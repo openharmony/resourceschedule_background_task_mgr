@@ -377,7 +377,6 @@ bool WEAK_FUNC BgtaskConfig::CheckSignature(const std::string &bundlename) const
 void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::json &jsonObj)
 {
     if (jsonObj.is_null() || jsonObj.empty()) {
-        BGTASK_LOGE("%{public}s jsonObj null", __func__);
         return;
     }
     if (!jsonObj.contains(CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS) ||
@@ -387,8 +386,7 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
     }
 
     nlohmann::json allowApplyCpuLevelBundleInfos = jsonObj[CPU_EFFICIENCY_RESOURCE_ALLOW_APPLY_BUNDLE_INFOS];
-    std::lock_guard<std::mutex> lock(configMutex_);
-    bgTaskConfigFileInfo_.ClearCpuBundleInfo();
+    std::unordered_map<std::string, CpuLevelConfigInfo> newMap;
     for (const auto &bundleInfoJsonObj : allowApplyCpuLevelBundleInfos) {
         if (!bundleInfoJsonObj.contains(ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME) ||
             !bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME].is_string()) {
@@ -414,17 +412,19 @@ void BgtaskConfig::ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::js
         nlohmann::json signArrayJsonObj = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES];
         for (const auto &appSign : signArrayJsonObj) {
             if (!appSign.is_string()) {
-                BGTASK_LOGE("prop %{public}s value invalid", ALLOW_APPLY_BUNDLE_INFO_APP_SIGNATURES.c_str());
                 continue;
             }
             appSignatures.push_back(appSign.get<std::string>());
         }
         std::string bundleName = bundleInfoJsonObj[ALLOW_APPLY_BUNDLE_INFO_BUNDLE_NAME].get<std::string>();
-        bgTaskConfigFileInfo_.AddCpuLevelConfigInfo({bundleName, appSignatures, cpuLevel});
+        newMap[bundleName] = {bundleName, appSignatures, cpuLevel};
     }
-    for (const auto &[bundleName, info] : bgTaskConfigFileInfo_.GetAllowApplyCpuBundleInfoMap()) {
-        BGTASK_LOGI("%{public}s: bundleName %{public}s, cpuLevel %{public}d", __func__, bundleName.c_str(),
-            info.cpuLevel);
+    {
+        for (const auto &[bundleName, info] : newMap) {
+            BGTASK_LOGI("bundleName %{public}s, cpuLevel %{public}d", bundleName.c_str(), info.cpuLevel);
+        }
+        std::lock_guard<std::mutex> lock(configMutex_);
+        bgTaskConfigFileInfo_.ReplaceCpuBundleInfo(newMap);
     }
 }
 
