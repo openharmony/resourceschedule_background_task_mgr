@@ -2586,12 +2586,12 @@ HWTEST_F(BgContinuousTaskMgrTest, OnPermissionDialogButtonClick_001, TestSize.Le
         bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
 
     AAFwk::Want want;
-    want.SetParam("appIndex", 0);
+    want.SetParam("appIndex", std::to_string(0));
     eventData.SetWant(want);
     bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
         bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
 
-    want.SetParam("bundleUid", 0);
+    want.SetParam("bundleUid", std::to_string(0));
     eventData.SetWant(want);
     bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
         bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
@@ -2619,6 +2619,7 @@ HWTEST_F(BgContinuousTaskMgrTest, OnPermissionDialogButtonClick_001, TestSize.Le
     bgContinuousTaskMgr_->dialogClickListener_->OnPermissionDialogButtonClick(
         bgContinuousTaskMgr_->handler_, bgContinuousTaskMgr_, eventData);
 
+    SleepForFC();
     auto authRecordIter = bgContinuousTaskMgr_->bannerNotificationRecord_.find(label);
     EXPECT_EQ(authRecordIter->second->GetAuthResult(), 2);
 }
