@@ -206,7 +206,8 @@ private:
     bool AddAppNameInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
     bool CheckProcessUidInfo(const std::vector<AppExecFwk::RunningProcessInfo> &allProcesses, int32_t uid);
     uint32_t GetBackgroundModeInfo(int32_t uid, const std::string &abilityName);
-    bool AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo);
+    bool AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bundleInfo, CachedBundleInfo &cachedBundleInfo,
+        const std::shared_ptr<ContinuousTaskRecord> &record);
     bool RegisterNotificationSubscriber();
     bool RegisterSysCommEventListener();
     bool RegisterDialogClickListener();
@@ -222,7 +223,7 @@ private:
     ErrCode SingleModeNotificationText(std::string &notificationText, const std::vector<uint32_t> &checkModes,
         const std::string &mergeBlueNotificationText, const std::shared_ptr<ContinuousTaskRecord> record);
     bool FormatBannerNotificationContext(const std::string &appName, std::string &bannerContent);
-    bool SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName);
+    bool SetCachedBundleInfo(const std::shared_ptr<ContinuousTaskRecord> &record);
     void HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key);
     void HandleSuspendContinuousTask(int32_t uid, int32_t pid, int32_t reason, const std::string &key);
     void HandleSuspendContinuousAudioTask(int32_t uid);
@@ -303,6 +304,7 @@ private:
     ErrCode CancelNotification(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo);
     void HandleSuspendContinuousTaskByStandby(int32_t uid, int32_t pid, int32_t mode, const std::string &key);
     void HandleActiveContinuousTaskByStandby(int32_t uid, int32_t pid, const std::string &key);
+    std::string GetAbilityNamePid(const sptr<ContinuousTaskParamForInner> &taskParam, int32_t pid);
 
 #ifdef HAS_OS_ACCOUNT_CAR
     void ClearBgOsAccountTaskInCar();

@@ -424,9 +424,15 @@ HWTEST_F(BgContinuousTaskMgrTest, UnsubscribeContinuousTask_001, TestSize.Level1
 HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_002, TestSize.Level1)
 {
     bgContinuousTaskMgr_->cachedBundleInfos_.clear();
-    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(1, 1, "false-test"));
-    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(1, 1, "empty-info"));
-    EXPECT_TRUE(bgContinuousTaskMgr_->SetCachedBundleInfo(1, 1, "valid"));
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->uid_ = 1;
+    continuousTaskRecord->userId_ = 1;
+    continuousTaskRecord->bundleName_ = "false-test";
+    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(continuousTaskRecord));
+    continuousTaskRecord->bundleName_ = "empty-info";
+    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(continuousTaskRecord));
+    continuousTaskRecord->bundleName_ = "valid";
+    EXPECT_TRUE(bgContinuousTaskMgr_->SetCachedBundleInfo(continuousTaskRecord));
 }
 
 /**

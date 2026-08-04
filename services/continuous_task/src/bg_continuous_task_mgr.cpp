@@ -67,6 +67,8 @@
 #ifdef GAME_PRE_LAUNCH_ENABLE
 #include "game_pre_launch_mgr.h"
 #endif
+#include "ability_manager_client.h"
+#include "ability_running_info.h"
 
 #ifdef BGTASK_MGR_UNIT_TEST
 #define WEAK_FUNC __attribute__((weak))
@@ -387,7 +389,7 @@ void BgContinuousTaskMgr::CheckPersistenceData(const std::vector<AppExecFwk::Run
                 iter++;
                 continue;
             }
-            SetCachedBundleInfo(record->GetUid(), record->GetUserId(), record->GetBundleName());
+            SetCachedBundleInfo(record);
             HandleActiveNotification(record);
             BGTASK_LOGI("restore uid: %{public}d, bundleName: %{public}s, notification id: %{public}d",
                 record->GetUid(), record->GetBundleName().c_str(), record->GetNotificationId());
@@ -661,13 +663,16 @@ int32_t BgContinuousTaskMgr::GetBgTaskUid()
     return bgTaskUid_;
 }
 
-bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId, const std::string &bundleName)
+bool BgContinuousTaskMgr::SetCachedBundleInfo(const std::shared_ptr<ContinuousTaskRecord> &record)
 {
+    int32_t uid = record->uid_;
     if (cachedBundleInfos_.count(uid)) {
         return true;
     }
     BgTaskHiTraceChain traceChain(__func__);
     AppExecFwk::BundleInfo bundleInfo;
+    int32_t userId = record->userId_;
+    std::string bundleName = record->bundleName_;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
         AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId)) {
         BGTASK_LOGE("get bundle info: %{public}s failure!", bundleName.c_str());
@@ -676,7 +681,7 @@ bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId, const
 
     CachedBundleInfo cachedBundleInfo = CachedBundleInfo();
     cachedBundleInfo.appName_ = GetMainAbilityLabel(bundleName, userId);
-    if (AddAbilityBgModeInfos(bundleInfo, cachedBundleInfo)) {
+    if (AddAbilityBgModeInfos(bundleInfo, cachedBundleInfo, record)) {
         cachedBundleInfos_.emplace(uid, cachedBundleInfo);
         return true;
     }
@@ -684,7 +689,7 @@ bool BgContinuousTaskMgr::SetCachedBundleInfo(int32_t uid, int32_t userId, const
 }
 
 bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bundleInfo,
-    CachedBundleInfo &cachedBundleInfo)
+    CachedBundleInfo &cachedBundleInfo, const std::shared_ptr<ContinuousTaskRecord> &record)
 {
     for (auto abilityInfo : bundleInfo.abilityInfos) {
         if (abilityInfo.backgroundModes != INVALID_BGMODE) {
@@ -695,6 +700,10 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
         }
     }
     if (cachedBundleInfo.abilityBgMode_.empty()) {
+        if (record->needNotificationForInnerApi_) {
+            cachedBundleInfo.abilityBgMode_.emplace(record->abilityName_, BackgroundMode::AUDIO_PLAYBACK);
+            return true;
+        }
         return false;
     }
     return true;
@@ -896,6 +905,24 @@ ErrCode BgContinuousTaskMgr::RequestGetContinuousTasksByUidForInner(int32_t uid,
     return result;
 }
 
+std::string BgContinuousTaskMgr::GetAbilityNamePid(const sptr<ContinuousTaskParamForInner> &taskParam, int32_t pid)
+{
+    std::vector<AAFwk::AbilityRunningInfo> infos;
+    ErrCode result = AAFwk::AbilityManagerClient::GetInstance()->GetAbilityRunningInfos(infos);
+    if (result != ERR_OK) {
+        BGTASK_LOGE("GetAbilityRunningInfos failed");
+        return "Webview" + std::to_string(taskParam->bgModeId_);
+    }
+
+    for (const auto &info : infos) {
+        if (info.pid == pid && info.uid == taskParam->uid_) {
+            std::string abilityName = info.ability.GetAbilityName();
+            return abilityName;
+        }
+    }
+    return "Webview" + std::to_string(taskParam->bgModeId_);
+}
+
 ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam,
     const int32_t callingUid)
 {
@@ -908,7 +935,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     }
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
-    std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
+    std::string abilityName = GetAbilityNamePid(taskParam, callingPid);
     int32_t userId = -1;
 
 #ifdef HAS_OS_ACCOUNT_PART
@@ -1381,8 +1408,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
         return ERR_BGTASK_OBJECT_EXISTS;
     }
     if (!continuousTaskRecord->isFromWebview_ || continuousTaskRecord->needNotificationForInnerApi_) {
-        SetCachedBundleInfo(continuousTaskRecord->uid_, continuousTaskRecord->userId_,
-            continuousTaskRecord->bundleName_);
+        SetCachedBundleInfo(continuousTaskRecord);
     }
     return StartBackgroundRunningSubmit(continuousTaskRecord, taskInfoMapKey);
 }
@@ -1785,7 +1811,11 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<Continuous
     ErrCode result = ERR_OK;
     int32_t uid = taskParam->uid_;
     int32_t abilityId = taskParam->abilityId_;
-    std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
+    if (taskParam->GetPid() != 0) {
+        callingPid = taskParam->GetPid();
+    }
+    std::string abilityName = GetAbilityNamePid(taskParam, callingPid);
 
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::StopBackgroundRunningInner");

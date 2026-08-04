@@ -176,6 +176,11 @@ std::shared_ptr<ProgressInfo> ContinuousTaskRecord::GetProgressInfo() const
     return progressInfo_;
 }
 
+bool ContinuousTaskRecord::NeedNotificationForInnerApi() const
+{
+    return needNotificationForInnerApi_;
+}
+
 std::string ContinuousTaskRecord::ParseToJsonStr()
 {
     nlohmann::json root;

@@ -70,6 +70,7 @@ public:
     int32_t GetSubNotificationId() const;
     int32_t GetAppIndex() const;
     std::shared_ptr<ProgressInfo> GetProgressInfo() const;
+    bool NeedNotificationForInnerApi() const;
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
