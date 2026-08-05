@@ -954,7 +954,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
         g_innerApiReqBgRunningConfig.at(callingUid).needNotification_ : false;
     if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
         continuousTaskRecord->needNotificationForInnerApi_ = true;
-        continuousTaskRecord->abilityName = GetAbilityNamePid(taskParam, callingPid);
+        continuousTaskRecord->abilityName_ = GetAbilityNamePid(taskParam, callingPid);
         continuousTaskRecord->isFromComponent_ = true;
     }
 
@@ -1808,7 +1808,8 @@ ErrCode BgContinuousTaskMgr::CheckSpecialNotificationText(std::string &notificat
     return ERR_BGTASK_NOTIFICATION_VERIFY_FAILED;
 }
 
-ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam)
+ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(
+    const sptr<ContinuousTaskParamForInner> &taskParam, int32_t callingUid)
 {
     ErrCode result = ERR_OK;
     int32_t uid = taskParam->uid_;

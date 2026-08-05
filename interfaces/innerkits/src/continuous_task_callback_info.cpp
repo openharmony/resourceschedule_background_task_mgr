@@ -220,12 +220,12 @@ void ContinuousTaskCallbackInfo::SetStandby(const bool isStandby)
     isStandby_ = isStandby;
 }
 
-bool IsFromComponent() const
+bool ContinuousTaskCallbackInfo::IsFromComponent() const
 {
     return isFromComponent_;
 }
  
-void SetFromComponent(const bool isFromComponent)
+void ContinuousTaskCallbackInfo::SetFromComponent(const bool isFromComponent)
 {
     isFromComponent_ = isFromComponent;
 }
