@@ -3725,5 +3725,108 @@ HWTEST_F(BgContinuousTaskMgrTest, SendContinuousTaskNotification_NonDataTransfer
 
     EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(record), ERR_OK);
 }
+
+/**
+ * @tc.name: NeedNotification_001
+ * @tc.desc: ContinuousTaskRecord test.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, NeedNotification_001, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    EXPECT_FALSE(continuousTaskRecord->NeedNotificationForInnerApi());
+    EXPECT_FALSE(continuousTaskRecord->IsFromComponent());
+    continuousTaskRecord->needNotificationForInnerApi_ = true;
+    continuousTaskRecord->isFromComponent_ = true;
+    EXPECT_TRUE(continuousTaskRecord->NeedNotificationForInnerApi());
+    EXPECT_TRUE(continuousTaskRecord->IsFromComponent());
+}
+
+/**
+ * @tc.name: SetCachedBundleInfo_InnerApiComponent_001
+ * @tc.desc: test SetCachedBundleInfo with needNotificationForInnerApi and isFromComponent when abilityBgMode is empty.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SetCachedBundleInfo_InnerApiComponent_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->uid_ = 1;
+    continuousTaskRecord->userId_ = 1;
+    continuousTaskRecord->bundleName_ = "empty-info";
+    continuousTaskRecord->abilityName_ = "TestAbility";
+    // needNotificationForInnerApi_=false, isFromComponent_=false, empty abilities should fail
+    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(continuousTaskRecord));
+
+    // needNotificationForInnerApi_=true but isFromComponent_=false, should still fail
+    continuousTaskRecord->needNotificationForInnerApi_ = true;
+    continuousTaskRecord->isFromComponent_ = false;
+    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(continuousTaskRecord));
+
+    // needNotificationForInnerApi_=false but isFromComponent_=true, should still fail
+    continuousTaskRecord->needNotificationForInnerApi_ = false;
+    continuousTaskRecord->isFromComponent_ = true;
+    EXPECT_FALSE(bgContinuousTaskMgr_->SetCachedBundleInfo(continuousTaskRecord));
+
+    // both true, should succeed even with empty abilityInfos
+    continuousTaskRecord->needNotificationForInnerApi_ = true;
+    continuousTaskRecord->isFromComponent_ = true;
+    EXPECT_TRUE(bgContinuousTaskMgr_->SetCachedBundleInfo(continuousTaskRecord));
+    EXPECT_EQ(bgContinuousTaskMgr_->cachedBundleInfos_.count(1), 1u);
+    EXPECT_EQ(bgContinuousTaskMgr_->cachedBundleInfos_[1].abilityBgMode_.count("TestAbility"), 1u);
+    EXPECT_EQ(bgContinuousTaskMgr_->cachedBundleInfos_[1].abilityBgMode_["TestAbility"],
+        static_cast<uint32_t>(BackgroundMode::AUDIO_PLAYBACK));
+}
+
+/**
+ * @tc.name: SetCachedBundleInfo_InnerApiComponent_002
+ * @tc.desc: test SetCachedBundleInfo with needNotificationForInnerApi and valid bundle.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SetCachedBundleInfo_InnerApiComponent_002, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord = std::make_shared<ContinuousTaskRecord>();
+    continuousTaskRecord->uid_ = 1;
+    continuousTaskRecord->userId_ = 1;
+    continuousTaskRecord->bundleName_ = "valid";
+    continuousTaskRecord->abilityName_ = "TestAbility";
+    // valid bundle with abilities, needNotificationForInnerApi/isFromComponent not needed
+    EXPECT_TRUE(bgContinuousTaskMgr_->SetCachedBundleInfo(continuousTaskRecord));
+    EXPECT_NE(bgContinuousTaskMgr_->cachedBundleInfos_[1].abilityBgMode_.size(), 0u);
+}
+
+/**
+ * @tc.name: SendContinuousTaskNotification_InnerApiComponent_001
+ * @tc.desc: test SendContinuousTaskNotification with NeedNotificationForInnerApi and IsFromComponent.
+ * @tc.type: FUNC
+ */
+HWTEST_F(BgContinuousTaskMgrTest, SendContinuousTaskNotification_InnerApiComponent_001, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->cachedBundleInfos_.clear();
+    CachedBundleInfo info = CachedBundleInfo();
+    info.abilityBgMode_["abilityName"] = 2;
+    info.appName_ = "appName";
+    bgContinuousTaskMgr_->cachedBundleInfos_.emplace(100, info);
+
+    auto record = CreateTestTaskRecord(100, "com.test", "MainAbility", BackgroundMode::AUDIO_PLAYBACK);
+    record->isNewApi_ = true;
+    record->isByRequestObject_ = true;
+    record->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
+
+    // Neither needNotificationForInnerApi nor isFromComponent, should use record's wantAgent
+    EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(record), ERR_OK);
+
+    // needNotificationForInnerApi=true but isFromComponent=false, should still use record's wantAgent
+    record->needNotificationForInnerApi_ = true;
+    record->isFromComponent_ = false;
+    EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(record), ERR_OK);
+
+    // both true, should use CreateStartAbilityWantAgent path
+    record->needNotificationForInnerApi_ = true;
+    record->isFromComponent_ = true;
+    EXPECT_EQ(bgContinuousTaskMgr_->SendContinuousTaskNotification(record), ERR_OK);
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
