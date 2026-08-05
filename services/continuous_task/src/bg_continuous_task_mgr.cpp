@@ -700,7 +700,7 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
         }
     }
     if (cachedBundleInfo.abilityBgMode_.empty()) {
-        if (record->needNotificationForInnerApi_) {
+        if (record->needNotificationForInnerApi_ && record->isFromComponent_) {
             cachedBundleInfo.abilityBgMode_.emplace(record->abilityName_, BackgroundMode::AUDIO_PLAYBACK);
             return true;
         }
@@ -870,7 +870,7 @@ ErrCode BgContinuousTaskMgr::RequestBackgroundRunningForInner(const sptr<Continu
     if (taskParam->isStart_) {
         return StartBackgroundRunningForInner(taskParam, callingUid);
     }
-    return StopBackgroundRunningForInner(taskParam);
+    return StopBackgroundRunningForInner(taskParam, callingUid);
 }
 
 bool BgContinuousTaskMgr::CheckPermissionForInner(const sptr<ContinuousTaskParamForInner> &taskParam,
@@ -935,7 +935,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     }
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
-    std::string abilityName = GetAbilityNamePid(taskParam, callingPid);
+    std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
     int32_t userId = -1;
 
 #ifdef HAS_OS_ACCOUNT_PART
@@ -954,6 +954,8 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
         g_innerApiReqBgRunningConfig.at(callingUid).needNotification_ : false;
     if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
         continuousTaskRecord->needNotificationForInnerApi_ = true;
+        continuousTaskRecord->abilityName = GetAbilityNamePid(taskParam, callingPid);
+        continuousTaskRecord->isFromComponent_ = true;
     }
 
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
@@ -1811,12 +1813,15 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(const sptr<Continuous
     ErrCode result = ERR_OK;
     int32_t uid = taskParam->uid_;
     int32_t abilityId = taskParam->abilityId_;
-    pid_t callingPid = IPCSkeleton::GetCallingPid();
-    if (taskParam->GetPid() != 0) {
-        callingPid = taskParam->GetPid();
+    std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
+    if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
+        pid_t callingPid = IPCSkeleton::GetCallingPid();
+        if (taskParam->GetPid() != 0) {
+            callingPid = taskParam->GetPid();
+        }
+        abilityName = GetAbilityNamePid(taskParam, callingPid);
     }
-    std::string abilityName = GetAbilityNamePid(taskParam, callingPid);
-
+    
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::StopBackgroundRunningInner");
     handler_->PostSyncTask([this, uid, abilityName, abilityId, &result]() {
@@ -2976,7 +2981,7 @@ bool BgContinuousTaskMgr::CanNotifyHap(const std::shared_ptr<SubscriberInfo> sub
 {
     if (subscriberInfo->isHap_ && subscriberInfo->uid_ == callbackInfo->GetCreatorUid() &&
         (callbackInfo->GetCancelReason() == REMOVE_NOTIFICATION_CANCEL ||
-        callbackInfo->GetCancelReason() == FREEZE_CANCEL)) {
+        callbackInfo->GetCancelReason() == FREEZE_CANCEL) && !callbackInfo->IsFromComponent()) {
         return true;
     }
     return false;
@@ -3175,6 +3180,7 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
         continuousTaskCallbackInfo->SetWantAgentAbilityName(continuousTaskInfo->wantAgentInfo_->abilityName_);
     }
     continuousTaskCallbackInfo->SetStandby(continuousTaskInfo->isStandby_);
+    continuousTaskCallbackInfo->SetFromComponent(continuousTaskInfo->isFromComponent_);
     NotifySubscribers(changeEventType, continuousTaskCallbackInfo);
     ReportHisysEvent(changeEventType, continuousTaskInfo);
 }
@@ -3498,7 +3504,7 @@ ErrCode BgContinuousTaskMgr::DebugContinuousTaskInner(const sptr<ContinuousTaskP
     if (taskParam->isStart_) {
         return StartBackgroundRunningForInner(taskParam, 0);
     }
-    return StopBackgroundRunningForInner(taskParam);
+    return StopBackgroundRunningForInner(taskParam, 0);
 }
 
 ErrCode BgContinuousTaskMgr::SendNotification(const std::shared_ptr<ContinuousTaskRecord> subRecord,

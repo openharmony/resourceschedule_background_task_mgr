@@ -1003,7 +1003,7 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_043, TestSize.Level1)
         new ContinuousTaskParamForInner(1, 1, true));
     EXPECT_EQ(bgContinuousTaskMgr_->StartBackgroundRunningForInner(taskParam, 200200), ERR_OK);
     taskParam->isStart_ = false;
-    EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunningForInner(taskParam), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->StopBackgroundRunningForInner(taskParam, 200200), ERR_OK);
 }
 
 /**

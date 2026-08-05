@@ -181,7 +181,7 @@ private:
         const int32_t callingUid);
     ErrCode StopBackgroundRunningInner(int32_t uid, const std::string &abilityName, int32_t abilityId,
         int32_t continuousTaskId = -1);
-    ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam);
+    ErrCode StopBackgroundRunningForInner(const sptr<ContinuousTaskParamForInner> &taskParam, int32_t callingUid);
     ErrCode GetAllContinuousTasksInner(int32_t uid, std::vector<std::shared_ptr<ContinuousTaskInfo>> &list,
         bool includeSuspended = true, bool exemptUid = false);
     ErrCode UpdateDataTransferProgressInner(int32_t uid, const sptr<DataTransferProgress> &progressInfo);

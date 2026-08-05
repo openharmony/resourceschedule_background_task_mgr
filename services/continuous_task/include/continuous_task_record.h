@@ -71,6 +71,7 @@ public:
     int32_t GetAppIndex() const;
     std::shared_ptr<ProgressInfo> GetProgressInfo() const;
     bool NeedNotificationForInnerApi() const;
+    bool IsFromComponent() const;
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
@@ -116,6 +117,8 @@ private:
     bool isStandby_ {false};
     bool isStandbySuspend_ {false};
     std::shared_ptr<ProgressInfo> progressInfo_ {nullptr};
+    // 标记是否通过组件申请的长时任务
+    bool isFromComponent_ {false};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

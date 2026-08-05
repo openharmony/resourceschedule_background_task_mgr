@@ -109,7 +109,7 @@ Notification::NotificationRequest CreateNotificationRequest(
     notificationRequest.SetIsAgentNotification(true);
     notificationRequest.SetUpdateByOwnerAllowed(true);
     notificationRequest.SetLabel(notificationLabel);
-    if (continuousTaskRecord->NeedNotificationForInnerApi()) {
+    if (continuousTaskRecord->NeedNotificationForInnerApi() && continuousTaskRecord->IsFromComponent()) {
         auto wantAgent = CreateStartAbilityWantAgent(continuousTaskRecord);
         notificationRequest.SetWantAgent(wantAgent);
     } else {
