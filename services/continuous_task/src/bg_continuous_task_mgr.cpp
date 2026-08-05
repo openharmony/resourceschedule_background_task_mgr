@@ -3163,6 +3163,9 @@ void BgContinuousTaskMgr::OnBundleInfoChanged(const std::string &action, const s
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REPLACED) {
         cachedBundleInfos_.erase(uid);
+        if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED) {
+            return;
+        }
         auto iterAuth = bannerNotificationRecord_.begin();
         while (iterAuth != bannerNotificationRecord_.end()) {
             if (iterAuth->second == nullptr || iterAuth->second->GetUserId() != userId ||
