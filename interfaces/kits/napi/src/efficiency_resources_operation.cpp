@@ -184,7 +184,7 @@ napi_value ResetAllEfficiencyResources(napi_env env, napi_callback_info info)
     return Common::NapiGetNull(env);
 }
 
-void GetAllEfficiencyResourcesAsyncWork(napi_env env, void *data)
+void GetAllEfficiencyResourcesExecuteCB(napi_env env, void *data)
 {
     AsyncCallbackInfoGetAllEfficiencyResources *asyncCallbackInfo =
     static_cast<AsyncCallbackInfoGetAllEfficiencyResources *>(data);
@@ -196,7 +196,7 @@ void GetAllEfficiencyResourcesAsyncWork(napi_env env, void *data)
         GetAllEfficiencyResources(asyncCallbackInfo->efficiencyResourceInfoList);
 }
 
-void GetAllEfficiencyResourcesAsyncWork(napi_env env, napi_status status, void *data)
+void GetAllEfficiencyResourcesCompletedCB(napi_env env, napi_status status, void *data)
 {
     AsyncCallbackInfoGetAllEfficiencyResources *asyncCallbackInfo =
         static_cast<AsyncCallbackInfoGetAllEfficiencyResources *>(data);
@@ -204,6 +204,7 @@ void GetAllEfficiencyResourcesAsyncWork(napi_env env, napi_status status, void *
         BGTASK_LOGE("asyncCallbackInfo is nullptr");
         return;
     }
+    std::unique_ptr<AsyncCallbackInfoGetAllEfficiencyResources> callbackPtr {asyncCallbackInfo};
     napi_value result = nullptr;
     if (asyncCallbackInfo->errCode == ERR_OK) {
         NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &result));
@@ -245,12 +246,8 @@ napi_value GetAllEfficiencyResources(napi_env env, napi_callback_info info)
     NAPI_CALL(env, napi_create_string_latin1(env, "GetAllEfficiencyResources", NAPI_AUTO_LENGTH, &resourceName));
 
     NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName,
-        [](napi_env env, void *data) {
-            GetAllEfficiencyResourcesAsyncWork(env, data);
-        },
-        [](napi_env env, napi_status status, void *data) {
-            GetAllEfficiencyResourcesAsyncWork(env, status, data);
-        },
+        GetAllEfficiencyResourcesExecuteCB,
+        GetAllEfficiencyResourcesCompletedCB,
         static_cast<AsyncCallbackInfoGetAllEfficiencyResources *>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
 
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
