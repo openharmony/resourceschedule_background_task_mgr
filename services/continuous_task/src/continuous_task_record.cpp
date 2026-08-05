@@ -247,8 +247,8 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["isCombinedTaskNotification"].is_boolean() || !value["combinedNotificationTaskId"].is_number_integer()
         || !value["isByRequestObject"].is_boolean() || !value["subNotificationLabel"].is_string()
         || !value["subNotificationId"].is_number_integer() || !value["appIndex"].is_number_integer()
-        || !value["detailedCancelReason"].is_number_integer() || !value["isStandby"].is_boolean()
-        || !value["audioPlayState"].is_boolean() || !value["isStandbySuspend"].is_boolean()
+        || !value["detailedCancelReason"].is_number_integer() || !value["audioPlayState"].is_boolean()
+        || !value["isStandby"].is_boolean() || !value["isStandbySuspend"].is_boolean()
         || !value["isFromComponent"].is_boolean();
 }
 
@@ -258,7 +258,7 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
         "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel",
         "isSystem", "continuousTaskId", "abilityId", "suspendState", "suspendReason", "isCombinedTaskNotification",
         "combinedNotificationTaskId", "isByRequestObject", "subNotificationLabel", "subNotificationId", "appIndex",
-        "detailedCancelReason", "isStandby", "audioPlayState", "needSendNotificationForInnerApi",
+        "detailedCancelReason", "audioPlayState", "isStandby", "needSendNotificationForInnerApi",
         "isStandbySuspend", "isFromComponent"})) {
         BGTASK_LOGE("continuoustaskrecord no key");
         return false;
