@@ -309,7 +309,7 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     wantAgentAbilityName_ = Str16ToStr8(u16WantAgentAbilityName);
     READ_PARCEL_WITH_RET(parcel, Bool, cancelCallBackSelf_, false);
     READ_PARCEL_WITH_RET(parcel, Bool, isStandby_, false);
-    WRITE_PARCEL_WITH_RET(parcel, Bool, isFromComponent_, false);
+    READ_PARCEL_WITH_RET(parcel, Bool, isFromComponent_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr
