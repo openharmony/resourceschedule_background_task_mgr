@@ -905,8 +905,12 @@ ErrCode BgContinuousTaskMgr::RequestGetContinuousTasksByUidForInner(int32_t uid,
     return result;
 }
 
-std::string BgContinuousTaskMgr::GetAbilityNamePid(const sptr<ContinuousTaskParamForInner> &taskParam, int32_t pid)
+std::string BgContinuousTaskMgr::GetAbilityNamePid(
+    const sptr<ContinuousTaskParamForInner> &taskParam, int32_t pid, int32_t callingUid)
 {
+    if (callingUid != taskParam->uid_ || taskParam->bgModeId_ != BackgroundMode::AUDIO_PLAYBACK) {
+        return "Webview" + std::to_string(taskParam->bgModeId_);
+    }
     std::vector<AAFwk::AbilityRunningInfo> infos;
     ErrCode result = AAFwk::AbilityManagerClient::GetInstance()->GetAbilityRunningInfos(infos);
     if (result != ERR_OK) {
@@ -935,7 +939,7 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     }
     uint64_t fullTokenId = IPCSkeleton::GetCallingFullTokenID();
     std::string bundleName = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
-    std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
+    std::string abilityName = GetAbilityNamePid(taskParam, callingPid, callingUid);
     int32_t userId = -1;
 
 #ifdef HAS_OS_ACCOUNT_PART
@@ -954,7 +958,6 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
         g_innerApiReqBgRunningConfig.at(callingUid).needNotification_ : false;
     if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
         continuousTaskRecord->needNotificationForInnerApi_ = true;
-        continuousTaskRecord->abilityName_ = GetAbilityNamePid(taskParam, callingPid);
         continuousTaskRecord->isFromComponent_ = true;
     }
 
@@ -1814,14 +1817,10 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(
     ErrCode result = ERR_OK;
     int32_t uid = taskParam->uid_;
     int32_t abilityId = taskParam->abilityId_;
-    std::string abilityName = "Webview" + std::to_string(taskParam->bgModeId_);
-    if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
-        pid_t callingPid = IPCSkeleton::GetCallingPid();
-        if (taskParam->GetPid() != 0) {
-            callingPid = taskParam->GetPid();
-        }
-        abilityName = GetAbilityNamePid(taskParam, callingPid);
+    if (taskParam->GetPid() != 0) {
+        callingPid = taskParam->GetPid();
     }
+    std::string abilityName = GetAbilityNamePid(taskParam, callingPid, callingUid);
     
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::StopBackgroundRunningInner");
@@ -2980,10 +2979,14 @@ uint32_t BgContinuousTaskMgr::GetModeNumByTypeIds(const std::vector<uint32_t> &t
 bool BgContinuousTaskMgr::CanNotifyHap(const std::shared_ptr<SubscriberInfo> subscriberInfo,
     const std::shared_ptr<ContinuousTaskCallbackInfo> &callbackInfo)
 {
-    if (subscriberInfo->isHap_ && subscriberInfo->uid_ == callbackInfo->GetCreatorUid() &&
-        (callbackInfo->GetCancelReason() == REMOVE_NOTIFICATION_CANCEL ||
-        callbackInfo->GetCancelReason() == FREEZE_CANCEL) && !callbackInfo->IsFromComponent()) {
-        return true;
+    if (subscriberInfo->isHap_ && subscriberInfo->uid_ == callbackInfo->GetCreatorUid()) {
+        if (callbackInfo->GetCancelReason() == REMOVE_NOTIFICATION_CANCEL && callbackInfo->IsFromComponent()) {
+            return false;
+        }
+        if (callbackInfo->GetCancelReason() == REMOVE_NOTIFICATION_CANCEL ||
+            callbackInfo->GetCancelReason() == FREEZE_CANCEL) {
+            return true;
+        }
     }
     return false;
 }
