@@ -330,7 +330,7 @@ void ContinuousTaskRecord::SetRecordValue(const nlohmann::json &value)
     this->isStandby_ = value.at("isStandby").get<bool>();
     this->audioPlayState_ = value.at("audioPlayState").get<bool>();
     this->isStandbySuspend_ = value.at("isStandbySuspend").get<bool>();
-    this->isStandbySuspend_ = value.at("isFromComponent").get<bool>();
+    this->isFromComponent_ = value.at("isFromComponent").get<bool>();
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
