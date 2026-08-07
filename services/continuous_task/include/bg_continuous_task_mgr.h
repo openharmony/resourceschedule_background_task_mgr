@@ -304,7 +304,7 @@ private:
     ErrCode CancelNotification(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo);
     void HandleSuspendContinuousTaskByStandby(int32_t uid, int32_t pid, int32_t mode, const std::string &key);
     void HandleActiveContinuousTaskByStandby(int32_t uid, int32_t pid, const std::string &key);
-    std::string GetAbilityNamePid(const sptr<ContinuousTaskParamForInner> &taskParam, int32_t pid， int32_t callingUid);
+    std::string GetAbilityNamePid(const sptr<ContinuousTaskParamForInner> &taskParam, int32_t pid, int32_t callingUid);
 
 #ifdef HAS_OS_ACCOUNT_CAR
     void ClearBgOsAccountTaskInCar();
