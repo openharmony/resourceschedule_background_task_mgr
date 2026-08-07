@@ -1817,6 +1817,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(
     ErrCode result = ERR_OK;
     int32_t uid = taskParam->uid_;
     int32_t abilityId = taskParam->abilityId_;
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
     if (taskParam->GetPid() != 0) {
         callingPid = taskParam->GetPid();
     }
