@@ -124,7 +124,7 @@ ErrCode DataStorageHelper::RestoreAuthRecord(std::unordered_map<std::string,
                 oldRecord->GetAppIndex() == record->GetAppIndex();
         };
         auto findRecordIter = find_if(authRecord.begin(), authRecord.end(), findRecord);
-        if (findRecordIter == authRecord.end()) {
+        if (findRecordIter == authRecord.end() && record->GetAuthResult() != UserAuthResult::NOT_DETERMINED) {
             authRecord.emplace(iter.key(), record);
         }
     }
