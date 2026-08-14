@@ -200,11 +200,11 @@ ErrCode DataStorageHelper::OnBackup(MessageParcel& data, MessageParcel& reply)
         BGTASK_LOGE("Fail to open file: %{private}s, errno: %{public}s", tmpPath, strerror(errno));
         replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
     }
-    UniqueFd fd(-1);
+    int32_t fd = -1;
     if (file != nullptr) {
-        fd = UniqueFd(fileno(file));
+        fd = fileno(file);
     }
-    if (fd.Get() < 0) {
+    if (fd < 0) {
         BGTASK_LOGE("OnBackup open fail.");
         replyCode = SetReplyCode(EXTENSION_ERROR_CODE);
     }
