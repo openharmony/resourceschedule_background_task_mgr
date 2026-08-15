@@ -24,6 +24,7 @@
 #include "bg_transient_task_mgr.h"
 #include "continuous_task_log.h"
 #include "bg_efficiency_resources_mgr.h"
+#include "bgtask_data_mgr.h"
 #ifdef GAME_PRE_LAUNCH_ENABLE
 #include "game_pre_launch_mgr.h"
 #endif
@@ -141,6 +142,7 @@ void AppStateObserver::OnAppStopped(const AppExecFwk::AppStateData &appStateData
     }
     auto uid = appStateData.uid;
     auto bundleName = appStateData.bundleName;
+    BgtaskDataMgr::GetInstance()->OnAppStopped(uid);
     auto task = [uid]() {
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAppStopped(uid);
     };

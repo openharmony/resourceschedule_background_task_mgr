@@ -63,7 +63,7 @@
 #include "bg_continuous_task_dumper.h"
 #include "user_auth_result.h"
 #include "background_task_observer.h"
-#include "audio_renderer_info_plugin_data.h"
+#include "bgtask_data_mgr.h"
 #ifdef GAME_PRE_LAUNCH_ENABLE
 #include "game_pre_launch_mgr.h"
 #endif
@@ -1689,7 +1689,7 @@ ErrCode BgContinuousTaskMgr::SingleModeNotificationText(std::string &notificatio
     if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::BLUETOOTH_INTERACTION) &&
         CommonUtils::CheckExistMode(checkModes, BackgroundMode::AUDIO_PLAYBACK)) {
         // 只有播音类型，且播音类型要发通知
-        bool isPlayingAudio = AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(record->uid_);
+        bool isPlayingAudio = BgtaskDataMgr::GetInstance()->CheckAppIsPlaying(record->uid_);
         if (!isPlayingAudio && startingTaskText_.size() > 0) {
             // 此时应用未播音
             notificationText += startingTaskText_[0];

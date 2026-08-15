@@ -14,7 +14,7 @@
  */
 
 #include "audio_stream_plugin_adapter.h"
-#include "audio_renderer_info_plugin_data.h"
+#include "bgtask_data_mgr.h"
 #include "audio_info.h"
 #include "bgtaskmgr_log_wrapper.h"
 #include "bgtask_plugin_mgr.h"
@@ -75,12 +75,12 @@ void AudioStreamPluginAdapter::RendererStateChange(const nlohmann::json& payload
 
     if (rendererState == AudioStandard::RendererState::RENDERER_RUNNING) {
         auto recorderInfo = std::make_shared<AudioInfo>(uid, sessionId);
-        if (AudioRendererInfoPluginData::GetInstance()->AddAudioPlayerInfo(recorderInfo)) {
+        if (BgtaskDataMgr::GetInstance()->AddAudioPlayerInfo(recorderInfo)) {
             BGTASK_LOGI("uid: %{public}d, sessionId: %{public}d is play audio.", uid, sessionId);
             BgContinuousTaskMgr::GetInstance()->NotifyAudioStart(uid);
         }
     } else {
-        AudioRendererInfoPluginData::GetInstance()->RemoveAudioPlayerInfo(uid, sessionId);
+        BgtaskDataMgr::GetInstance()->RemoveAudioPlayerInfo(uid, sessionId);
         BGTASK_LOGI("uid: %{public}d, sessionId: %{public}d is not play audio.", uid, sessionId);
     }
 }
@@ -93,7 +93,7 @@ void AudioStreamPluginAdapter::Init()
 void AudioStreamPluginAdapter::Uninit()
 {
     BGTASK_LOGI("AudioStreamPluginAdapter uninit");
-    AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
+    BgtaskDataMgr::GetInstance()->ClearAll();
 }
 
 std::string AudioStreamPluginAdapter::GetPluginName() const
