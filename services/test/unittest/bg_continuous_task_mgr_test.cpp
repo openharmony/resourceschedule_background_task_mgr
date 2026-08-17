@@ -2169,20 +2169,23 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckLiveViewInfo_001, TestSize.Level1)
 HWTEST_F(BgContinuousTaskMgrTest, CheckLiveViewInfo_002, TestSize.Level1)
 {
     bgContinuousTaskMgr_->isSysReady_.store(true);
-    int32_t uid = 1;
+    bgContinuousTaskMgr_->liveViewInfo_.clear();
+    int32_t uid = 100;
+
     std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
     record->uid_ = uid;
-    EXPECT_FALSE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
 
-    bgContinuousTaskMgr_->SetLiveViewInfo(uid, true, "NAVIGATION");
-   
-    record->bgModeId_ = 4;
-    record->bgModeIds_.clear();
-    record->bgModeIds_.push_back(4);
+    // --- PROGRESS + SPECIAL_SCENARIO_PROCESSING ---
+    bgContinuousTaskMgr_->SetLiveViewInfo(uid, true, "PROGRESS");
+
+    // SPECIAL_SCENARIO_PROCESSING only -> suppressed
+    record->bgModeIds_ = {BackgroundMode::SPECIAL_SCENARIO_PROCESSING};
     EXPECT_TRUE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
-    record->bgModeIds_.push_back(2);
+    // SPECIAL_SCENARIO_PROCESSING + non-liveViewType (WORKOUT) -> still suppressed
+    record->bgModeIds_ = {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, BackgroundMode::AUDIO_PLAYBACK};
     EXPECT_TRUE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
-    record->bgModeIds_.push_back(3);
+    // SPECIAL_SCENARIO_PROCESSING + other liveViewType (LOCATION) -> NOT suppressed
+    record->bgModeIds_ = {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, BackgroundMode::LOCATION};
     EXPECT_FALSE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
 }
 
