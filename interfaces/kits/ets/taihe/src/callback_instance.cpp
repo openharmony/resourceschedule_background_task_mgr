@@ -69,6 +69,10 @@ void Callback::OnExpiredAuth(int32_t authResult)
             break;
     }
     (*authCallback_)(authResultRet);
+    auto modalExtCallback = DelayedSingleton<UIExtensionHelper>::GetInstance()->GetModalExtensionCallback();
+    if (modalExtCallback != nullptr) {
+        modalExtCallback->ReleaseOrErrorHandle(0);
+    }
 }
 
 void Callback::SetCallbackInfo(
