@@ -25,12 +25,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-class UIExtensionHelper : public DelayedSingleton<UIExtensionHelper> {
-public:
-    static bool CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abilityContext,
-        const ContinuousTaskParam &taskParam);
-};
-
 class ModalExtensionCallback {
 public:
     ModalExtensionCallback();
@@ -50,6 +44,17 @@ private:
     int32_t sessionId_ = 0;
     std::string bundleName_ {""};
     std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abilityContext_ {nullptr};
+};
+
+class UIExtensionHelper : public DelayedSingleton<UIExtensionHelper> {
+public:
+    bool CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::AbilityContext> abilityContext,
+        const ContinuousTaskParam &taskParam);
+    std::shared_ptr<ModalExtensionCallback> GetModalExtensionCallback();
+    void SetModalExtensionCallback(std::shared_ptr<ModalExtensionCallback> modalExtCallback);
+
+private:
+    std::shared_ptr<ModalExtensionCallback> modalExtCallback_ {nullptr};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
