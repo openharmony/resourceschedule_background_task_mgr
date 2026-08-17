@@ -3955,7 +3955,7 @@ void BgContinuousTaskMgr::HandleAuthExpiredCallbackDeathInner(const wptr<IRemote
         BGTASK_LOGD("key: %{public}s no have auth record.", key.c_str());
         return;
     }
-    int notificationId = findRecordIter->second->GetNotificationId();
+    int32_t notificationId = findRecordIter->second->GetNotificationId();
     if (notificationId != -1) {
         NotificationTools::GetInstance()->CancelNotification(key, notificationId);
     }
@@ -4007,6 +4007,7 @@ ErrCode BgContinuousTaskMgr::SetBackgroundTaskStateInner(std::shared_ptr<Backgro
             bundleName == target.second->GetBundleName();
     };
     auto findRecordIter = find_if(bannerNotificationRecord_.begin(), bannerNotificationRecord_.end(), findRecord);
+    std::string key = NotificationTools::GetInstance()->CreateBannerNotificationLabel(bundleName, userId, appIndex);
     if (findRecordIter == bannerNotificationRecord_.end()) {
         // 不存在，新增:例如直接在设置里关闭了权限开关
         std::shared_ptr<BannerNotificationRecord> bannerNotification = std::make_shared<BannerNotificationRecord>();
@@ -4014,8 +4015,6 @@ ErrCode BgContinuousTaskMgr::SetBackgroundTaskStateInner(std::shared_ptr<Backgro
         bannerNotification->SetUserId(userId);
         bannerNotification->SetAppIndex(appIndex);
         bannerNotification->SetAuthResult(authResult);
-        std::string key = NotificationTools::GetInstance()->CreateBannerNotificationLabel(bundleName,
-            userId, appIndex);
         BGTASK_LOGI("insert auth record, key: %{public}s, auth value: %{public}d.", key.c_str(), authResult);
         bannerNotificationRecord_.emplace(key, bannerNotification);
     } else {
@@ -4023,6 +4022,19 @@ ErrCode BgContinuousTaskMgr::SetBackgroundTaskStateInner(std::shared_ptr<Backgro
         BGTASK_LOGI("update auth record, bundleName: %{public}s, userId: %{public}d, appIndex: %{public}d,"
             " new auth value: %{public}d.", bundleName.c_str(), userId, appIndex, authResult);
         findRecordIter->second->SetAuthResult(authResult);
+        auto callbackIter = expiredCallbackMap_.find(key);
+        if (callbackIter != expiredCallbackMap_.end()) {
+            callbackIter->second->OnExpiredAuth(authResult);
+            auto remote = callbackIter->second->AsObject();
+            if (remote != nullptr) {
+                remote->RemoveDeathRecipient(authCallbackDeathRecipient_);
+            }
+            expiredCallbackMap_.erase(callbackIter);
+        }
+        int32_t notificationId = findRecordIter->second->GetNotificationId();
+        if (notificationId != -1) {
+            NotificationTools::GetInstance()->CancelNotification(key, notificationId);
+        }
     }
     RefreshAuthRecord();
     return ERR_OK;
