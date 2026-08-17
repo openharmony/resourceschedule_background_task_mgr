@@ -2161,6 +2161,32 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckLiveViewInfo_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: CheckLiveViewInfo_002
+ * @tc.desc: CheckLiveViewInfo test.
+ * @tc.type: FUNC
+ * @tc.require: 788
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CheckLiveViewInfo_002, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    int32_t uid = 1;
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->uid_ = uid;
+    EXPECT_FALSE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+
+    bgContinuousTaskMgr_->SetLiveViewInfo(uid, true, "NAVIGATION");
+   
+    record->bgModeId_ = 4;
+    record->bgModeIds_.clear();
+    record->bgModeIds_.push_back(4);
+    EXPECT_TRUE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+    record->bgModeIds_.push_back(2);
+    EXPECT_TRUE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+    record->bgModeIds_.push_back(3);
+    EXPECT_FALSE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+}
+
+/**
  * @tc.name: CancelBgTaskNotification_001
  * @tc.desc: CancelBgTaskNotification test.
  * @tc.type: FUNC

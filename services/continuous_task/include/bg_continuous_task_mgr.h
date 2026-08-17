@@ -155,7 +155,6 @@ public:
         const std::string &label);
     void HandleAuthExpiredCallbackDeath(const wptr<IRemoteObject> &remote);
     void SetLiveViewInfo(int32_t uid, bool isLiveViewPublish, const std::string &eventName);
-    bool CheckLiveViewInfoModes(std::shared_ptr<ContinuousTaskRecord> record);
     bool CheckLiveViewInfo(std::shared_ptr<ContinuousTaskRecord> record);
     void CancelBgTaskNotification(int32_t uid);
     void SendNotificationByLiveViewCancel(int32_t uid);
