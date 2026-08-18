@@ -741,6 +741,25 @@ HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_002, TestSize.Level1)
 }
 
 /**
+ * @tc.name: ContinuousTaskCallbackInfo_003
+ * @tc.desc: test ContinuousTaskCallbackInfo IsFromComponent and SetFromComponent.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTaskClientUnitTest, ContinuousTaskCallbackInfo_003, TestSize.Level1)
+{
+    sptr<ContinuousTaskCallbackInfo> info = sptr<ContinuousTaskCallbackInfo>(
+        new ContinuousTaskCallbackInfo(1, 1, 1, "test"));
+    EXPECT_EQ(info->IsFromComponent(), false);
+
+    info->SetFromComponent(true);
+    EXPECT_EQ(info->IsFromComponent(), true);
+
+    info->SetFromComponent(false);
+    EXPECT_EQ(info->IsFromComponent(), false);
+}
+
+/**
  * @tc.name: ContinuousTaskParam_001
  * @tc.desc: test ContinuousTaskParam.
  * @tc.type: FUNC

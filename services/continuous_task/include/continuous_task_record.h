@@ -68,6 +68,8 @@ public:
     std::string GetSubNotificationLabel() const;
     int32_t GetSubNotificationId() const;
     int32_t GetAppIndex() const;
+    bool NeedNotificationForInnerApi() const;
+ 	bool IsFromComponent() const;
 
 private:
     std::vector<uint32_t> ToVector(std::string &str);
@@ -112,6 +114,8 @@ private:
     bool audioPlayState_ {true};
     bool isStandby_ {false};
     bool isStandbySuspend_ {false};
+    // 标记是否通过组件申请的长时任务
+ 	bool isFromComponent_ {false};
 
     friend class BgContinuousTaskMgr;
     friend class NotificationTools;

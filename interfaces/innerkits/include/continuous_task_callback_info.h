@@ -247,6 +247,10 @@ public:
  
     void SetStandby(const bool isStandby);
 
+    bool IsFromComponent() const;
+ 	  
+ 	void SetFromComponent(const bool isFromComponent);
+
     /**
      * @brief Marshals a purpose into a parcel.
      *
@@ -284,6 +288,7 @@ private:
     std::string wantAgentAbilityName_ {""};
     bool cancelCallBackSelf_ {false};
     bool isStandby_ {false};
+    bool isFromComponent_ {false};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

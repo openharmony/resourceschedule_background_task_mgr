@@ -171,6 +171,16 @@ int32_t ContinuousTaskRecord::GetAppIndex() const
     return appIndex_;
 }
 
+bool ContinuousTaskRecord::NeedNotificationForInnerApi() const
+{
+    return needNotificationForInnerApi_;
+}
+ 	 
+bool ContinuousTaskRecord::IsFromComponent() const
+{
+    return isFromComponent_;
+}
+
 std::string ContinuousTaskRecord::ParseToJsonStr()
 {
     nlohmann::json root;
@@ -209,6 +219,7 @@ std::string ContinuousTaskRecord::ParseToJsonStr()
     root["isStandby"] = isStandby_;
     root["audioPlayState"] = audioPlayState_;
     root["isStandbySuspend"] = isStandbySuspend_;
+    root["isFromComponent"] = isFromComponent_;
     return root.dump(CommonUtils::jsonFormat_);
 }
 
@@ -225,8 +236,9 @@ bool CheckContinuousRecod(const nlohmann::json &value)
         || !value["isCombinedTaskNotification"].is_boolean() || !value["combinedNotificationTaskId"].is_number_integer()
         || !value["isByRequestObject"].is_boolean() || !value["subNotificationLabel"].is_string()
         || !value["subNotificationId"].is_number_integer() || !value["appIndex"].is_number_integer()
-        || !value["detailedCancelReason"].is_number_integer() || !value["isStandby"].is_boolean()
-        || !value["audioPlayState"].is_boolean() || !value["isStandbySuspend"].is_boolean();
+        || !value["detailedCancelReason"].is_number_integer() || !value["audioPlayState"].is_boolean()
+        || !value["isStandby"].is_boolean() || !value["isStandbySuspend"].is_boolean()
+        || !value["isFromComponent"].is_boolean();
 }
 
 bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
@@ -235,8 +247,8 @@ bool ContinuousTaskRecord::ParseFromJson(const nlohmann::json &value)
         "abilityName", "userId", "uid", "pid", "bgModeId", "isNewApi", "isFromWebview", "notificationLabel",
         "isSystem", "continuousTaskId", "abilityId", "suspendState", "suspendReason", "isCombinedTaskNotification",
         "combinedNotificationTaskId", "isByRequestObject", "subNotificationLabel", "subNotificationId", "appIndex",
-        "detailedCancelReason", "isStandby", "audioPlayState", "needSendNotificationForInnerApi",
-        "isStandbySuspend"})) {
+        "detailedCancelReason", "audioPlayState", "isStandby", "needSendNotificationForInnerApi",
+        "isStandbySuspend", "isFromComponent"})) {
         BGTASK_LOGE("continuoustaskrecord no key");
         return false;
     }
@@ -300,6 +312,7 @@ void ContinuousTaskRecord::SetRecordValue(const nlohmann::json &value)
     this->isStandby_ = value.at("isStandby").get<bool>();
     this->audioPlayState_ = value.at("audioPlayState").get<bool>();
     this->isStandbySuspend_ = value.at("isStandbySuspend").get<bool>();
+    this->isFromComponent_ = value.at("isFromComponent").get<bool>();
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
