@@ -236,7 +236,7 @@ public:
      * @param maliciousAppSet malicious app set.
      * @return Returns ERR_OK if success, else failure.
      */
-    static ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet);
+    static ErrCode SetMaliciousAppConfig(const std::map<std::string, uint32_t> &maliciousAppSet);
 
     /**
      * @brief check mode MODE_SPECIAL_SCENARIO_PROCESSING auth.

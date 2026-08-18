@@ -985,7 +985,7 @@ HWTEST_F(BgTaskFrameworkUnitTest, SetMaliciousAppConfig_001, TestSize.Level1)
 {
     DelayedSingleton<BackgroundTaskManager>::GetInstance()->proxy_ = nullptr;
     SystemAbilityManagerClient::GetInstance().action_ = "set_null";
-    std::set<std::string> maliciousAppSet;
+    std::map<std::string, uint32_t> maliciousAppSet;
     EXPECT_EQ(DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet),
         ERR_BGTASK_SERVICE_NOT_CONNECTED);
 

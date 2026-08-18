@@ -100,7 +100,7 @@ public:
     ErrCode SuspendContinuousAudioTask(int32_t uid) override;
     ErrCode IsModeSupported(const ContinuousTaskParam &taskParam) override;
     ErrCode SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet) override;
-    ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet) override;
+    ErrCode SetMaliciousAppConfig(const std::map<std::string, uint32_t> &maliciousAppSet) override;
     ErrCode RequestAuthFromUser(const ContinuousTaskParam &taskParam, const sptr<IExpiredCallback> &callback,
         int32_t &notificationId) override;
     ErrCode CheckSpecialScenarioAuth(int32_t appIndex, uint32_t &authResult,

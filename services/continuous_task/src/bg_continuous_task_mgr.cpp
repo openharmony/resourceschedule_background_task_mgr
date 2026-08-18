@@ -133,6 +133,7 @@ static const std::map<int32_t, InnerApiReqBgRunningConfig> g_innerApiReqBgRunnin
     {7022, InnerApiReqBgRunningConfig(BackgroundMode::VOIP, false)},                         // VOIP_SA
     {5520, InnerApiReqBgRunningConfig(BackgroundMode::SPECIAL_SCENARIO_PROCESSING, false)},  // CFWK_SA
     {7878, InnerApiReqBgRunningConfig(BackgroundMode::AUDIO_PLAYBACK, true)},                // AUDIO_CONNECT_SA
+    {7011, InnerApiReqBgRunningConfig(BackgroundMode::NEARBY_DATA_TRANSFER, false)},         // GAME_SERVICE_SA
 #ifdef FEATURE_PRODUCT_WATCH
     {7500, InnerApiReqBgRunningConfig(BackgroundMode::WORKOUT, false)},  // HEALTHSPORT_SA
 #else
@@ -785,9 +786,6 @@ ErrCode BgContinuousTaskMgr::AllowUseSpecial(const std::shared_ptr<ContinuousTas
             return ERR_BGTASK_CONTINUOUS_SYSTEM_APP_NOT_SUPPORT_ACL;
         }
     }
-    if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_)) {
-        return ERR_BGTASK_APP_DETECTED_MALICIOUS_BEHAVIOR;
-    }
 #ifndef SUPPORT_AUTH
     return ERR_BGTASK_SPECIAL_SCENARIO_PROCESSING_NOTSUPPORT_DEVICE;
 #endif
@@ -842,7 +840,7 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
 
 ErrCode BgContinuousTaskMgr::CheckBgmodeTypeForInner(uint32_t requestedBgModeId)
 {
-    if (requestedBgModeId == INVALID_BGMODE || requestedBgModeId > BGMODE_NUMS) {
+    if (requestedBgModeId == INVALID_BGMODE || requestedBgModeId >= BackgroundMode::NEARBY_DATA_TRANSFER) {
         BGTASK_LOGE("requested background mode is not declared in config file!");
         return ERR_BGTASK_INVALID_BGMODE;
     }
@@ -1349,6 +1347,11 @@ ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<Cont
         return ERR_BGTASK_CONTINUOUS_NOT_APPLY_PRELOAD_STATE;
     }
 #endif
+    if (DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(record->bundleName_,
+        record->bgModeIds_)) {
+        BGTASK_LOGE("bundleName: %{public}s is malicious block", record->bundleName_.c_str());
+        return ERR_BGTASK_MALICIOUS_CONTINUOUSTASK;
+    }
     if (!record->isByRequestObject_) {
         return ERR_OK;
     }
@@ -2668,8 +2671,8 @@ void BgContinuousTaskMgr::DumpAllTaskInfo(std::vector<std::string> &dumpInfo)
         stream << "\t\tsuspendState: " << (iter->second->suspendState_ ? "true" : "false") << "\n";
         stream << "\t\tisFromWebview: " << (iter->second->IsFromWebview() ? "true" : "false") << "\n";
         stream << "\t\tisFromNewApi: " << (iter->second->IsNewApi() ? "true" : "false") << "\n";
-        stream << "\t\tbackgroundMode: " << g_continuousTaskModeName[GetBgModeNameIndex(
-            iter->second->GetBgModeId(), iter->second->IsNewApi())] << "\n";
+        stream << "\t\tbackgroundMode: " << BackgroundMode::GetBackgroundModeStr(
+            iter->second->GetBgModeId()) << "\n";
         stream << "\t\tisBatchApi: " << (iter->second->isBatchApi_ ? "true" : "false") << "\n";
         stream << "\t\tbackgroundModes: " << iter->second->ToString(iter->second->bgModeIds_) << "\n";
         stream << "\t\tbackgroundSubModes: " << iter->second->ToString(iter->second->bgSubModeIds_) << "\n";
@@ -3493,6 +3496,13 @@ void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const s
             {
                 BGTASK_LOGI("remove aam connection system ability, systemAbilityId: %{public}d", systemAbilityId);
                 auto task = [this]() { this->HandleRemoveTaskByMode(BackgroundMode::AUDIO_PLAYBACK); };
+                handler_->PostTask(task);
+            }
+            break;
+        case SA_ID_GAME_SERVICE:
+            {
+                BGTASK_LOGI("remove game service system ability, systemAbilityId: %{public}d", systemAbilityId);
+                auto task = [this]() { this->HandleRemoveTaskByMode(BackgroundMode::NEARBY_DATA_TRANSFER); };
                 handler_->PostTask(task);
             }
             break;

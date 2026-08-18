@@ -24,10 +24,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-namespace {
-    static constexpr uint32_t CONTINUOUS_TASK_MODE_LENGTH = 15;
-}
-extern const char *g_continuousTaskModeName[CONTINUOUS_TASK_MODE_LENGTH];
 
 // stop task reason
 enum : int32_t {

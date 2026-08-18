@@ -292,7 +292,7 @@ public:
      * @param maliciousAppSet malicious app set.
      * @return Returns ERR_OK if success, else failure.
      */
-    ErrCode SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet);
+    ErrCode SetMaliciousAppConfig(const std::map<std::string, uint32_t> &maliciousAppSet);
 
     /**
      * @brief request mode MODE_SPECIAL_SCENARIO_PROCESSING auth.

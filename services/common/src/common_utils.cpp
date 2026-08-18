@@ -108,5 +108,16 @@ void CommonUtils::SortMode(std::vector<uint32_t> &bgModeIds)
     }
     bgModeIds = result;
 }
+
+bool CommonUtils::CheckBlockMode(const std::vector<uint32_t> &applyBgModeIds, uint32_t blockMode)
+{
+    for (const auto &mode : applyBgModeIds) {
+        int32_t flag = 1 << (mode - 1);
+        if ((blockMode & flag) != 0) {
+            return true;
+        }
+    }
+    return false;
+}
 }  // namespace SuspendManager
 }  // namespace OHOS

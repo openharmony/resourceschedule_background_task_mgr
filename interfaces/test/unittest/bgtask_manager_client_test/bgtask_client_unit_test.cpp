@@ -62,7 +62,8 @@ constexpr int32_t TASK_KEEPING_ID = 9;
 constexpr int32_t WORKOUT = 10;
 constexpr int32_t SPECIAL_SCENARIO_PROCESSING = 13;
 constexpr int32_t NEARLINK = 14;
-constexpr int32_t END = 15;
+constexpr int32_t NEARBY_DATA_TRANSFER_ID = 15;
+constexpr int32_t END = 16;
 constexpr int32_t SLEEP_TIME = 500;
 constexpr int32_t RSS_UID = 1096;
 constexpr uint32_t CPU_TYPE = 1;
@@ -311,6 +312,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundMode_001, TestSize.Level0)
     EXPECT_EQ(TASK_KEEPING_ID, (int32_t)BackgroundMode::TASK_KEEPING);
     EXPECT_EQ(WORKOUT, (int32_t)BackgroundMode::WORKOUT);
     EXPECT_EQ(SPECIAL_SCENARIO_PROCESSING, (int32_t)BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
+    EXPECT_EQ(NEARBY_DATA_TRANSFER_ID, (int32_t)BackgroundMode::NEARBY_DATA_TRANSFER);
     EXPECT_EQ(END, (int32_t)BackgroundMode::END);
 }
 
@@ -1243,7 +1245,7 @@ HWTEST_F(BgTaskClientUnitTest, SetSupportedTaskKeepingProcesses_001, TestSize.Le
  */
 HWTEST_F(BgTaskClientUnitTest, SetMaliciousAppConfig_001, TestSize.Level1)
 {
-    std::set<std::string> maliciousAppSet;
+    std::map<std::string, uint32_t> maliciousAppSet;
     EXPECT_EQ(BackgroundTaskMgrHelper::SetMaliciousAppConfig(maliciousAppSet), ERR_OK);
 }
 

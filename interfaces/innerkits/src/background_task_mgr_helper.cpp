@@ -152,7 +152,7 @@ ErrCode BackgroundTaskMgrHelper::SetSupportedTaskKeepingProcesses(const std::set
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetSupportedTaskKeepingProcesses(processSet);
 }
 
-ErrCode BackgroundTaskMgrHelper::SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet)
+ErrCode BackgroundTaskMgrHelper::SetMaliciousAppConfig(const std::map<std::string, uint32_t> &maliciousAppSet)
 {
     return DelayedSingleton<BackgroundTaskManager>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet);
 }

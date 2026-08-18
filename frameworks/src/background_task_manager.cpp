@@ -490,7 +490,7 @@ ErrCode BackgroundTaskManager::SetSupportedTaskKeepingProcesses(const std::set<s
     return proxy_->SetSupportedTaskKeepingProcesses(processSet);
 }
 
-ErrCode BackgroundTaskManager::SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet)
+ErrCode BackgroundTaskManager::SetMaliciousAppConfig(const std::map<std::string, uint32_t> &maliciousAppSet)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     GET_BACK_GROUND_TASK_MANAGER_PROXY_RETURN

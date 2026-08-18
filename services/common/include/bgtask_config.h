@@ -31,11 +31,12 @@ public:
     void Init();
     bool IsTransientTaskExemptedQuatoApp(const std::string &bundleName);
     bool IsTaskKeepingExemptedQuatoApp(const std::string &bundleName);
-    bool IsMaliciousAppConfig(const std::string &bundleName);
+    bool IsMaliciousAppConfig(const std::string &bundleName,
+        const std::vector<uint32_t> &applyMode = {});
     int32_t GetTransientTaskExemptedQuato();
     bool AddExemptedQuatoData(const std::string &configData, int32_t sourceType);
     void SetSupportedTaskKeepingProcesses(const std::set<std::string> &processSet);
-    void SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet);
+    void SetMaliciousAppConfig(const std::map<std::string, uint32_t> &maliciousAppSet);
 
     bool CheckRequestCpuLevelBundleNameConfigured(const std::string &bundleName);
     bool CheckRequestCpuLevelAppSignatures(const std::string &bundleName, const std::string &appId,
@@ -55,6 +56,7 @@ private:
     void SetContinuousTaskParam(const nlohmann::json &jsonObj);
     void ParseBundleSignature(const nlohmann::json &jsonObj);
     bool CheckSignature(const std::string &bundlename) const;
+    void ParseMaliciousBlock(const nlohmann::json &jsonObj);
 
     void LoadBgTaskConfigFile();
     void ParseCpuEfficiencyResourceApplyBundleInfos(const nlohmann::json &jsonObj);
@@ -64,7 +66,7 @@ private:
     std::set<std::string> transientTaskExemptedQuatoList_ {};
     std::set<std::string> transientTaskCloudExemptedQuatoList_ {};
     std::set<std::string> taskKeepingExemptedQuatoList_ {};
-    std::set<std::string> maliciousAppBlocklist_ {};
+    std::map<std::string, uint32_t> maliciousAppBlocklist_ {};
     std::set<std::string> specialExemptedQuatoList_ = {};
     int32_t transientTaskExemptedQuato_ = 10 * 1000; // 10s
     std::mutex configMutex_;

@@ -41,6 +41,8 @@ void BgContinuousTaskDumper::DebugContinuousTask(const std::vector<std::string> 
     uint32_t mode = 0;
     if (modeStr == "WORKOUT") {
         mode = BackgroundMode::WORKOUT;
+    } else if (modeStr == "NEARBY_DATA_TRANSFER") {
+        mode = BackgroundMode::NEARBY_DATA_TRANSFER;
     }
     if (mode == 0) {
         dumpInfo.emplace_back("param invaild\n");

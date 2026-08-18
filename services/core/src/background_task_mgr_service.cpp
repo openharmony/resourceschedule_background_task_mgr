@@ -73,6 +73,7 @@ void BackgroundTaskMgrService::OnStart()
     AddSystemAbilityListener(SA_ID_HEALTH_SPORT);
     AddSystemAbilityListener(SUSPEND_MANAGER_SYSTEM_ABILITY_ID);
     AddSystemAbilityListener(SA_ID_AAM_CONN);
+    AddSystemAbilityListener(SA_ID_GAME_SERVICE);
     AddSystemAbilityListener(RES_SCHED_SYS_ABILITY_ID);
 }
 
@@ -639,7 +640,7 @@ ErrCode BackgroundTaskMgrService::SetSupportedTaskKeepingProcesses(const std::se
     return ERR_OK;
 }
 
-ErrCode BackgroundTaskMgrService::SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet)
+ErrCode BackgroundTaskMgrService::SetMaliciousAppConfig(const std::map<std::string, uint32_t> &maliciousAppSet)
 {
     if (!CheckCallingToken() || !CheckCallingProcess()) {
         return ERR_BGTASK_PERMISSION_DENIED;
