@@ -112,7 +112,7 @@ void CommonUtils::SortMode(std::vector<uint32_t> &bgModeIds)
 bool CommonUtils::CheckBlockMode(const std::vector<uint32_t> &applyBgModeIds, uint32_t blockMode)
 {
     for (const auto &mode : applyBgModeIds) {
-        int32_t flag = 1 << (mode - 1);
+        uint32_t flag = 1 << (mode - 1);
         if ((blockMode & flag) != 0) {
             return true;
         }
