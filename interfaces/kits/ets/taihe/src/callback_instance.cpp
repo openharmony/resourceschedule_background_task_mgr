@@ -15,6 +15,7 @@
 
 #include "callback_instance.h"
 #include "bgtaskmgr_log_wrapper.h"
+#include "ui_extension_helper.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
