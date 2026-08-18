@@ -116,6 +116,11 @@ __attribute__((no_sanitize("cfi"))) void AuthCallbackInstance::OnExpiredAuth(int
         BGTASK_LOGE("OnExpired: Failed to SendEvent");
         dataWorker = nullptr;
         authCallbackInstances_.erase(findCallback);
+    } else {
+        auto modalExtCallback = DelayedSingleton<UIExtensionHelper>::GetInstance()->GetModalExtensionCallback();
+        if (modalExtCallback != nullptr) {
+            modalExtCallback->ReleaseOrErrorHandle(0);
+        }
     }
 }
 
@@ -279,7 +284,7 @@ bool SendRequest(napi_env env, const ContinuousTaskParam &taskParam,
     }
     if (taskParam.requestAuthApiVersion_ == API_VERSION_REQUEST_SPECIAL_USER_AUTH_BY_DIALOG) {
         // 2、没有授权，则弹窗授权
-        if (!UIExtensionHelper::CreateUIExtension(abilityContext, taskParam)) {
+        if (!DelayedSingleton<UIExtensionHelper>::GetInstance()->CreateUIExtension(abilityContext, taskParam)) {
             BGTASK_LOGE("CreateUIExtension failed");
             // 拉起授权弹窗失败，取消已经申请的授权记录
             DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam);

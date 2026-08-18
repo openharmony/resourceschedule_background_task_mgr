@@ -15,6 +15,7 @@
 
 #include "callback_instance.h"
 #include "bgtaskmgr_log_wrapper.h"
+#include "ui_extension_helper.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -69,6 +70,10 @@ void Callback::OnExpiredAuth(int32_t authResult)
             break;
     }
     (*authCallback_)(authResultRet);
+    auto modalExtCallback = DelayedSingleton<UIExtensionHelper>::GetInstance()->GetModalExtensionCallback();
+    if (modalExtCallback != nullptr) {
+        modalExtCallback->ReleaseOrErrorHandle(0);
+    }
 }
 
 void Callback::SetCallbackInfo(

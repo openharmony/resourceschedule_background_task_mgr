@@ -442,7 +442,8 @@ public:
                 Common::FindErrMsg(asyncCallbackInfo->errCode));
             return;
         }
-        if (!UIExtensionHelper::CreateUIExtension(asyncCallbackInfo->abilityContext, taskParam)) {
+        if (!DelayedSingleton<UIExtensionHelper>::GetInstance()->CreateUIExtension(
+            asyncCallbackInfo->abilityContext, taskParam)) {
             BGTASK_LOGE("CreateUIExtension failed");
             DelayedSingleton<BackgroundTaskManager>::GetInstance()->RemoveAuthRecord(taskParam);
             set_business_error(Common::FindErrCode(ERR_BGTASK_SYS_NOT_READY),

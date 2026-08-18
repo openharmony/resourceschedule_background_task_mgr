@@ -61,6 +61,7 @@ bool UIExtensionHelper::CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::
     uiExtCallback->SetAbilityContext(abilityContext);
     std::string bundleName = abilityContext->GetBundleName();
     uiExtCallback->SetBundleName(bundleName);
+    SetModalExtensionCallback(uiExtCallback);
 
     Ace::ModalUIExtensionCallbacks uiExtensionCallbacks = {
         .onRelease = std::bind(&ModalExtensionCallback::OnRelease, uiExtCallback, std::placeholders::_1),
@@ -82,6 +83,16 @@ bool UIExtensionHelper::CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::
     }
     uiExtCallback->SetSessionId(sessionId);
     return true;
+}
+
+std::shared_ptr<ModalExtensionCallback> UIExtensionHelper::GetModalExtensionCallback()
+{
+    return modalExtCallback_;
+}
+
+void UIExtensionHelper::SetModalExtensionCallback(std::shared_ptr<ModalExtensionCallback> modalExtCallback)
+{
+    modalExtCallback_ = modalExtCallback;
 }
 
 ModalExtensionCallback::ModalExtensionCallback()
@@ -169,7 +180,7 @@ void ModalExtensionCallback::ReleaseOrErrorHandle(int32_t code)
         BGTASK_LOGE("null uiContent.");
         return;
     }
-
+    BGTASK_LOGI("bundleName: %{public}s close modal uiextension", this->bundleName_.c_str());
     uiContent->CloseModalUIExtension(this->sessionId_);
 }
 }  // namespace BackgroundTaskMgr
