@@ -85,6 +85,7 @@ taihe_shared_library("background_task_manager_ani") {
     "ace_engine:ace_uicontent",
     "c_utils:utils",
     "hilog:libhilog",
+    "icu:shared_icuuc",
     "ipc:ipc_core",
     "samgr:samgr_proxy",
     "eventhandler:libeventhandler",

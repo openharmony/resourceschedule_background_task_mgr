@@ -40,6 +40,7 @@ ohos_unittest("bgtask_client_unit_test") {
     "common_event_service:cesfwk_innerkits",
     "googletest:gtest_main",
     "hilog:libhilog",
+    "icu:shared_icuuc",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]

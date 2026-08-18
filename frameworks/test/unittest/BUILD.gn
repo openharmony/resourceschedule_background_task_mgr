@@ -53,6 +53,7 @@ ohos_unittest("bgtask_framework_unit_test") {
     "common_event_service:cesfwk_innerkits",
     "googletest:gtest_main",
     "hilog:libhilog",
+    "icu:shared_icuuc",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
@@ -98,6 +99,7 @@ ohos_unittest("bgtask_framework_abnormal_unit_test") {
     "common_event_service:cesfwk_innerkits",
     "googletest:gtest_main",
     "hilog:libhilog",
+    "icu:shared_icuuc",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]

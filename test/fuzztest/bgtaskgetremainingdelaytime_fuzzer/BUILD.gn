@@ -76,6 +76,7 @@ ohos_fuzztest("BgTaskGetRemainingDelayTimeFuzzTest") {
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:libhitracechain",
+    "icu:shared_icuuc",
     "init:libbegetutil",
     "ipc:ipc_single",
     "resource_schedule_service:resschedsvc",
