@@ -16,6 +16,7 @@
 #include "background_task_mgr_service.h"
 #include "background_mode.h"
 #include "bgtask_config.h"
+#include "bgtask_data_mgr.h"
 #include "bgtask_hitrace_chain.h"
 #include "bundle_manager_helper.h"
 #include <functional>
@@ -74,6 +75,7 @@ void BackgroundTaskMgrService::OnStart()
     AddSystemAbilityListener(SUSPEND_MANAGER_SYSTEM_ABILITY_ID);
     AddSystemAbilityListener(SA_ID_AAM_CONN);
     AddSystemAbilityListener(RES_SCHED_SYS_ABILITY_ID);
+    AddSystemAbilityListener(AVSESSION_SERVICE_ID);
 }
 
 void BackgroundTaskMgrService::SetReady(uint32_t flag)
@@ -127,6 +129,7 @@ void BackgroundTaskMgrService::OnRemoveSystemAbility(int32_t systemAbilityId, co
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
     BgContinuousTaskMgr::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
+    BgtaskDataMgr::GetInstance()->OnRemoveSystemAbility(systemAbilityId);
 }
 
 void BackgroundTaskMgrService::Init()
