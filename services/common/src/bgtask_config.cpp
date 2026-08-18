@@ -305,7 +305,7 @@ void BgtaskConfig::SetSupportedTaskKeepingProcesses(const std::set<std::string> 
     }
 }
 
-bool BgtaskConfig::ParseMaliciousBlock(const nlohmann::json &payload)
+bool BgtaskConfig::ParseMaliciousBlock(const nlohmann::json &jsonObj)
 {
     if (!jsonObj.contains(MALICIOUS_APP_BLOCKLIST) || !jsonObj[MALICIOUS_APP_BLOCKLIST].is_object()) {
         BGTASK_LOGW("no key %{public}s", MALICIOUS_APP_BLOCKLIST.c_str());
