@@ -249,7 +249,7 @@ public:
 
     bool IsFromComponent() const;
  	  
- 	void SetFromComponent(const bool isFromComponent);
+    void SetFromComponent(const bool isFromComponent);
 
     /**
      * @brief Marshals a purpose into a parcel.

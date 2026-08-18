@@ -672,7 +672,7 @@ bool BgContinuousTaskMgr::SetCachedBundleInfo(const std::shared_ptr<ContinuousTa
     BgTaskHiTraceChain traceChain(__func__);
     AppExecFwk::BundleInfo bundleInfo;
     int32_t userId = record->userId_;
- 	std::string bundleName = record->bundleName_;
+    std::string bundleName = record->bundleName_;
     if (!BundleManagerHelper::GetInstance()->GetBundleInfo(bundleName,
         AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo, userId)) {
         BGTASK_LOGE("get bundle info: %{public}s failure!", bundleName.c_str());
@@ -701,9 +701,9 @@ bool BgContinuousTaskMgr::AddAbilityBgModeInfos(const AppExecFwk::BundleInfo &bu
     }
     if (cachedBundleInfo.abilityBgMode_.empty()) {
         if (record->needNotificationForInnerApi_ && record->isFromComponent_) {
- 	        cachedBundleInfo.abilityBgMode_.emplace(record->abilityName_, BackgroundMode::AUDIO_PLAYBACK);
- 	        return true;
- 	    }
+            cachedBundleInfo.abilityBgMode_.emplace(record->abilityName_, BackgroundMode::AUDIO_PLAYBACK);
+            return true;
+        }
         return false;
     }
     return true;
@@ -957,9 +957,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningForInner(const sptr<Continuou
     continuousTaskRecord->needNotificationForInnerApi_ = g_innerApiReqBgRunningConfig.count(callingUid) ?
         g_innerApiReqBgRunningConfig.at(callingUid).needNotification_ : false;
     if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
- 	    continuousTaskRecord->needNotificationForInnerApi_ = true;
- 	    continuousTaskRecord->isFromComponent_ = true;
- 	}
+        continuousTaskRecord->needNotificationForInnerApi_ = true;
+        continuousTaskRecord->isFromComponent_ = true;
+    }
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::StartBackgroundRunningInner");
     handler_->PostSyncTask([this, continuousTaskRecord, &result]() mutable {
@@ -1749,10 +1749,10 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningForInner(
     int32_t uid = taskParam->uid_;
     int32_t abilityId = taskParam->abilityId_;
     pid_t callingPid = IPCSkeleton::GetCallingPid();
- 	if (taskParam->GetPid() != 0) {
- 	    callingPid = taskParam->GetPid();
- 	}
- 	std::string abilityName = GetAbilityNamePid(taskParam, callingPid, callingUid);
+    if (taskParam->GetPid() != 0) {
+        callingPid = taskParam->GetPid();
+    }
+    std::string abilityName = GetAbilityNamePid(taskParam, callingPid, callingUid);
 
     HitraceScoped traceScoped(HITRACE_TAG_OHOS,
         "BackgroundTaskManager::ContinuousTask::Service::StopBackgroundRunningInner");
