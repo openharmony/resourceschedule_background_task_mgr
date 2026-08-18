@@ -840,7 +840,7 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
 
 ErrCode BgContinuousTaskMgr::CheckBgmodeTypeForInner(uint32_t requestedBgModeId)
 {
-    if (requestedBgModeId == INVALID_BGMODE || requestedBgModeId >= BackgroundMode::NEARBY_DATA_TRANSFER) {
+    if (requestedBgModeId == INVALID_BGMODE || requestedBgModeId > BackgroundMode::NEARBY_DATA_TRANSFER) {
         BGTASK_LOGE("requested background mode is not declared in config file!");
         return ERR_BGTASK_INVALID_BGMODE;
     }
