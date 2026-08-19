@@ -4130,16 +4130,6 @@ void BgContinuousTaskMgr::SetLiveViewInfo(int32_t uid, bool isLiveViewPublish, c
     }
 }
 
-bool BgContinuousTaskMgr::CheckLiveViewInfoModes(std::shared_ptr<ContinuousTaskRecord> record)
-{
-    if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::LOCATION) &&
-        !CommonUtils::CheckExistOtherMode(record->bgModeIds_, BackgroundMode::LOCATION, g_liveViewTypes)) {
-        BGTASK_LOGD("continuous task has liveView");
-        return true;
-    }
-    return false;
-}
-
 bool BgContinuousTaskMgr::CheckLiveViewInfo(std::shared_ptr<ContinuousTaskRecord> record)
 {
     std::lock_guard<std::mutex> lock(liveViewInfoMutex_);
