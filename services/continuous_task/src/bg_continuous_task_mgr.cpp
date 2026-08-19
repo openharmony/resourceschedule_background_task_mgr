@@ -4148,7 +4148,7 @@ bool BgContinuousTaskMgr::CheckLiveViewInfo(std::shared_ptr<ContinuousTaskRecord
         return false;
     }
     const auto &eventNames = iter->second;
-    if(eventNames.find(NAVIGATION) != eventNames.end()) {
+    if (eventNames.find(NAVIGATION) != eventNames.end()) {
         if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::LOCATION) &&
             !CommonUtils::CheckExistOtherMode(record->bgModeIds_, BackgroundMode::LOCATION, g_liveViewTypes)) {
             BGTASK_LOGD("continuous task has NAVIGATION liveView");
@@ -4156,7 +4156,7 @@ bool BgContinuousTaskMgr::CheckLiveViewInfo(std::shared_ptr<ContinuousTaskRecord
         }
     }
 
-    if(eventNames.find(PROGRESS) != eventNames.end()) {
+    if (eventNames.find(PROGRESS) != eventNames.end()) {
         if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::SPECIAL_SCENARIO_PROCESSING) &&
             !CommonUtils::CheckExistOtherMode(record->bgModeIds_,
                 BackgroundMode::SPECIAL_SCENARIO_PROCESSING, g_liveViewTypes)) {
