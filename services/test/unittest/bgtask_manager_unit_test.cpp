@@ -913,8 +913,8 @@ HWTEST_F(BgTaskManagerUnitTest, IsTaskKeepingExemptedQuatoApp_CheckSignature, Te
  */
 HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_057, TestSize.Level1)
 {
-    std::set<std::string> maliciousAppSet;
-    maliciousAppSet.insert("com.test.app");
+    std::map<std::string, uint32_t> maliciousAppSet;
+    maliciousAppSet.emplace("com.test.app", 0);
     DelayedSingleton<BgtaskConfig>::GetInstance()->SetMaliciousAppConfig(maliciousAppSet);
     EXPECT_EQ(DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.empty(), false);
 }
@@ -926,13 +926,20 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_057, TestSize.Level1)
  */
 HWTEST_F(BgTaskManagerUnitTest, IsMaliciousAppConfig_CheckSignature, TestSize.Level1)
 {
-    DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.clear();
     std::string normalBundle = "normal_bundle";
-    std::string invalidBundle = "invalid_bundle";
-    DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.insert(normalBundle);
-    DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.insert(invalidBundle);
-    EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(normalBundle));
-    EXPECT_FALSE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(invalidBundle));
+    DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.clear();
+    EXPECT_FALSE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(normalBundle));
+
+    std::vector<uint32_t> modeValue {};
+    DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.emplace(normalBundle, 0);
+    EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(normalBundle, modeValue));
+
+    modeValue.push_back(4);
+    EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(normalBundle, modeValue));
+
+    DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.clear();
+    DelayedSingleton<BgtaskConfig>::GetInstance()->maliciousAppBlocklist_.emplace(normalBundle, 8);
+    EXPECT_TRUE(DelayedSingleton<BgtaskConfig>::GetInstance()->IsMaliciousAppConfig(normalBundle, modeValue));
 }
 
 /**

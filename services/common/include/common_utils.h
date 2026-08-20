@@ -61,6 +61,7 @@ public:
         const std::set<uint32_t> &liveViewTypes);
     static bool CheckStrToNum(const std::string &value);
     static void SortMode(std::vector<uint32_t> &bgModeIds);
+    static bool CheckBlockMode(const std::vector<uint32_t> &applyBgModeIds, uint32_t blockMode);
 
 public:
     static constexpr int32_t jsonFormat_ = 4;

@@ -54,6 +54,7 @@ namespace {
     static constexpr uint32_t SA_ID_VOIP_CALL_MANAGER = 65968;
     static constexpr uint32_t SA_ID_HEALTH_SPORT = 9527;
     static constexpr uint32_t SA_ID_AAM_CONN = 65952;
+    static constexpr uint32_t SA_ID_GAME_SERVICE = 66006;
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     static constexpr int32_t CANCEL_REASON_DELETE = Notification::NotificationConstant::CANCEL_REASON_DELETE;
 #else

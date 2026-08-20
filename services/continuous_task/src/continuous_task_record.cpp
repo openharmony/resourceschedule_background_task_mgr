@@ -22,23 +22,6 @@
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
-const char *g_continuousTaskModeName[CONTINUOUS_TASK_MODE_LENGTH] = {
-    "dataTransfer",
-    "audioPlayback",
-    "audioRecording",
-    "location",
-    "bluetoothInteraction",
-    "multiDeviceConnection",
-    "wifiInteraction",
-    "voip",
-    "taskKeeping",
-    "workout",
-    "default",
-    "avPlaybackAndRecord",
-    "specialScenarioProcessing",
-    "nearlink",
-    "default",
-};
 
 ContinuousTaskRecord::ContinuousTaskRecord(const std::string &bundleName, const std::string &abilityName, int32_t uid,
     int32_t pid, uint32_t bgModeId, bool isBatchApi, const std::vector<uint32_t> &bgModeIds, int32_t abilityId)

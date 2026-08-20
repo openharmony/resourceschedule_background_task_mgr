@@ -18,6 +18,7 @@
 #include "res_sched_signature_validator.h"
 #include "bgtaskmgr_log_wrapper.h"
 #include "efficiency_resources_cpu_level.h"
+#include "common_utils.h"
 
 #ifdef BGTASK_MGR_UNIT_TEST
 #define WEAK_FUNC __attribute__((weak))
@@ -230,22 +231,7 @@ void BgtaskConfig::SetContinuousTaskParam(const nlohmann::json &jsonObj)
     } else {
         BGTASK_LOGW("no key %{public}s", CONTINUOUS_TASK_KEEPING_EXEMPTED_LIST.c_str());
     }
-    if (jsonObj.contains(MALICIOUS_APP_BLOCKLIST) &&
-        jsonObj[MALICIOUS_APP_BLOCKLIST].is_array()) {
-        nlohmann::json appArrayMalicious = jsonObj[MALICIOUS_APP_BLOCKLIST];
-        maliciousAppBlocklist_.clear();
-        for (const auto &app : appArrayMalicious) {
-            if (!app.is_string()) {
-                continue;
-            }
-            maliciousAppBlocklist_.insert(app);
-        }
-        for (const auto &appName : maliciousAppBlocklist_) {
-            BGTASK_LOGI("maliciousAppBlocklist_ appName: %{public}s", appName.c_str());
-        }
-    } else {
-        BGTASK_LOGW("no key %{public}s", MALICIOUS_APP_BLOCKLIST.c_str());
-    }
+    ParseMaliciousBlock(jsonObj);
     if (jsonObj.contains(CONTINUOUS_TASK_SPECIAL_EXEMPTED_LIST) &&
         jsonObj[CONTINUOUS_TASK_SPECIAL_EXEMPTED_LIST].is_array()) {
         nlohmann::json appArraySpecial = jsonObj[CONTINUOUS_TASK_SPECIAL_EXEMPTED_LIST];
@@ -319,24 +305,49 @@ void BgtaskConfig::SetSupportedTaskKeepingProcesses(const std::set<std::string> 
     }
 }
 
-void BgtaskConfig::SetMaliciousAppConfig(const std::set<std::string> &maliciousAppSet)
+void BgtaskConfig::ParseMaliciousBlock(const nlohmann::json &jsonObj)
+{
+    if (!jsonObj.contains(MALICIOUS_APP_BLOCKLIST) || !jsonObj[MALICIOUS_APP_BLOCKLIST].is_object()) {
+        BGTASK_LOGW("no key %{public}s", MALICIOUS_APP_BLOCKLIST.c_str());
+        return;
+    }
+    nlohmann::json bundleList = jsonObj[MALICIOUS_APP_BLOCKLIST];
+    maliciousAppBlocklist_.clear();
+    for (const auto &info : bundleList.items()) {
+        std::string bundleName = info.key();
+        if (!info.value().is_number_integer()) {
+            continue;
+        }
+        uint32_t blockMode = info.value().get<uint32_t>();
+        BGTASK_LOGI("bundleName: %{public}s block mode: %{public}d", bundleName.c_str(), blockMode);
+        maliciousAppBlocklist_.emplace(bundleName, blockMode);
+    }
+}
+
+void BgtaskConfig::SetMaliciousAppConfig(const std::map<std::string, uint32_t> &maliciousAppSet)
 {
     std::lock_guard<std::mutex> lock(configMutex_);
     maliciousAppBlocklist_.insert(maliciousAppSet.begin(), maliciousAppSet.end());
     for (const auto &item : maliciousAppBlocklist_) {
-        BGTASK_LOGI("malicious app blocklist proc: %{public}s", item.c_str());
+        BGTASK_LOGI("malicious app blocklist proc: %{public}s, blockMode: %{public}d",
+            item.first.c_str(), item.second);
     }
 }
 
-bool BgtaskConfig::IsMaliciousAppConfig(const std::string &bundleName)
+bool BgtaskConfig::IsMaliciousAppConfig(const std::string &bundleName, const std::vector<uint32_t> &applyMode)
 {
-    {
-        std::lock_guard<std::mutex> lock(configMutex_);
-        if (!maliciousAppBlocklist_.count(bundleName)) {
-            return false;
-        }
+    std::lock_guard<std::mutex> lock(configMutex_);
+    if (!maliciousAppBlocklist_.count(bundleName)) {
+        return false;
     }
-    return CheckSignature(bundleName);
+    if (applyMode.size() == 0) {
+        return true;
+    }
+    uint32_t blockMode = maliciousAppBlocklist_.at(bundleName);
+    if (blockMode == 0) {
+        return true;
+    }
+    return CommonUtils::CheckBlockMode(applyMode, blockMode);
 }
 
 void BgtaskConfig::LoadBgTaskConfigFile()

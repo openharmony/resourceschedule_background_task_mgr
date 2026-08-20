@@ -474,7 +474,7 @@ HWTEST_F(BgTaskManagerAbnormalUnitTest, SetSupportedTaskKeepingProcesses_001, Te
  */
 HWTEST_F(BgTaskManagerAbnormalUnitTest, SetMaliciousAppConfig_001, TestSize.Level3)
 {
-    std::set<std::string> maliciousAppSet;
+    std::map<std::string, uint32_t> maliciousAppSet;
     auto ret = BackgroundTaskMgrService_->SetMaliciousAppConfig(maliciousAppSet);
     EXPECT_NE(ret, 0);
 

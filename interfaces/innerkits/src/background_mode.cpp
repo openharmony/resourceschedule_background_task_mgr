@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +33,7 @@ const std::unordered_map<uint32_t, std::string> PARAM_BACKGROUND_MODE_STR_MAP = 
     {BackgroundMode::WORKOUT, "workout"},
     {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, "specialScenarioProcessing"},
     {BackgroundMode::NEARLINK, "nearlink"},
+    {BackgroundMode::NEARBY_DATA_TRANSFER, "nearbyDataTransfer"},
     {BackgroundMode::END, "end"}
 };
 
