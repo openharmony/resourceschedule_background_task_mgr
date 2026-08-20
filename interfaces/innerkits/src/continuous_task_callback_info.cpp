@@ -220,6 +220,16 @@ void ContinuousTaskCallbackInfo::SetStandby(const bool isStandby)
     isStandby_ = isStandby;
 }
 
+bool ContinuousTaskCallbackInfo::IsFromComponent() const
+{
+    return isFromComponent_;
+}
+ 	  
+void ContinuousTaskCallbackInfo::SetFromComponent(const bool isFromComponent)
+{
+    isFromComponent_ = isFromComponent;
+}
+
 bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
 {
     WRITE_PARCEL_WITH_RET(parcel, Uint32, typeId_, false);
@@ -250,6 +260,7 @@ bool ContinuousTaskCallbackInfo::Marshalling(Parcel &parcel) const
     WRITE_PARCEL_WITH_RET(parcel, String16, u16WantAgentAbilityName, false);
     WRITE_PARCEL_WITH_RET(parcel, Bool, cancelCallBackSelf_, false);
     WRITE_PARCEL_WITH_RET(parcel, Bool, isStandby_, false);
+    WRITE_PARCEL_WITH_RET(parcel, Bool, isFromComponent_, false);
     return true;
 }
 
@@ -298,6 +309,7 @@ bool ContinuousTaskCallbackInfo::ReadFromParcel(Parcel &parcel)
     wantAgentAbilityName_ = Str16ToStr8(u16WantAgentAbilityName);
     READ_PARCEL_WITH_RET(parcel, Bool, cancelCallBackSelf_, false);
     READ_PARCEL_WITH_RET(parcel, Bool, isStandby_, false);
+    READ_PARCEL_WITH_RET(parcel, Bool, isFromComponent_, false);
     return true;
 }
 }  // namespace BackgroundTaskMgr

@@ -75,6 +75,21 @@ std::string CreateNotificationLabel(int32_t uid, const std::string &abilityName,
 }
 
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+static std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> CreateStartAbilityWantAgent(
+    const std::shared_ptr<ContinuousTaskRecord>& continuousTaskRecord)
+{
+    auto want = std::make_shared<AAFwk::Want>();
+    want->SetElementName(continuousTaskRecord->GetBundleName(), continuousTaskRecord->GetBundleName());
+    std::vector<std::shared_ptr<AAFwk::Want>> wants;
+    wants.push_back(want);
+    std::vector<AbilityRuntime::WantAgent::WantAgentConstant::Flags> flags;
+    flags.push_back(AbilityRuntime::WantAgent::WantAgentConstant::Flags::UPDATE_PRESENT_FLAG);
+
+    AbilityRuntime::WantAgent::WantAgentInfo wantAgentInfo(
+        0, AbilityRuntime::WantAgent::WantAgentConstant::OperationType::START_ABILITY, flags, wants, nullptr);
+    return AbilityRuntime::WantAgent::WantAgentHelper::GetWantAgent(wantAgentInfo);
+}
+
 Notification::NotificationRequest CreateNotificationRequest(
     const std::shared_ptr<ContinuousTaskRecord>& continuousTaskRecord,
     const std::shared_ptr<Notification::NotificationLocalLiveViewContent>& liveContent,
@@ -89,7 +104,12 @@ Notification::NotificationRequest CreateNotificationRequest(
     notificationRequest.SetIsAgentNotification(true);
     notificationRequest.SetUpdateByOwnerAllowed(true);
     notificationRequest.SetLabel(notificationLabel);
-    notificationRequest.SetWantAgent(continuousTaskRecord->GetWantAgent());
+    if (continuousTaskRecord->NeedNotificationForInnerApi() && continuousTaskRecord->IsFromComponent()) {
+        auto wantAgent = CreateStartAbilityWantAgent(continuousTaskRecord);
+        notificationRequest.SetWantAgent(wantAgent);
+    } else {
+        notificationRequest.SetWantAgent(continuousTaskRecord->GetWantAgent());
+    }
     notificationRequest.SetOwnerUid(continuousTaskRecord->GetUid());
     return notificationRequest;
 }
