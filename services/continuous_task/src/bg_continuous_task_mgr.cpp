@@ -840,7 +840,7 @@ bool CheckTaskParam(const sptr<ContinuousTaskParam> &taskParam)
 
 ErrCode BgContinuousTaskMgr::CheckBgmodeTypeForInner(uint32_t requestedBgModeId)
 {
-    if (requestedBgModeId == INVALID_BGMODE || requestedBgModeId > BackgroundMode::NEARBY_DATA_TRANSFER) {
+    if (requestedBgModeId == INVALID_BGMODE || requestedBgModeId >= BackgroundMode::END) {
         BGTASK_LOGE("requested background mode is not declared in config file!");
         return ERR_BGTASK_INVALID_BGMODE;
     }
@@ -4521,7 +4521,7 @@ ErrCode BgContinuousTaskMgr::NotifyAudioStart(const int32_t uid)
 void BgContinuousTaskMgr::NotifyAudioStartInner(const int32_t uid)
 {
     auto findTask = [uid](const auto &target) {
-        return uid == target.second->uid_ && !target.second->audioPlayState_ && target.second->notificationId_ > 0;
+        return uid == target.second->uid_ && !target.second->audioPlayState_ && target.second->notificationId_ >= 0;
     };
     auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findTask);
     if (findTaskIter == continuousTaskInfosMap_.end()) {
