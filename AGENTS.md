@@ -1,78 +1,52 @@
-CODEAGENT.md
-This file provides guidance to CodeAgent when working with code in this reposity.
-
 # 后台任务管理组件开发指南
 
-本文档为 OpenHarmony 资源调度子系统后台任务管理组件的开发指南，采用渐进式披露原则组织内容。
+> 文档版本：v1.0
+> 更新时间：2026-08-19
+> 本文件为 L0 宪法 + 知识路由，仅提供项目概述与到各知识库文档的路径导航。
+> 详细内容请查阅对应层级的 docs 文档。
 
 ## 1. 项目概述
 
 **功能定位**：管理短时任务（Transient Task）、长时任务（Continuous Task）和能效资源（Efficiency Resources），为后台运行应用提供免冻结能力。
 
-**技术栈**：IPC 通信基于 IDL 自动生成的代理/桩代码。
-
 **子系统归属**：`resourceschedule` → `background_task_mgr`
 
-## 2. 目录结构
+## 2. 开发要求
 
-```
-/foundation/resourceschedule/background_task_mgr
-├── frameworks/           # 框架层 - 客户端代理实现
-│   ├── common/          # 公共工具、日志宏、错误码
-│   ├── include/         # 头文件定义
-│   ├── src/             # BackgroundTaskManager 实现
-│   └── test/            # 框架层单元测试
-│   └── [FRAMEWORKS.md](frameworks/FRAMEWORKS.md)  # 框架层开发指南
-│
-├── interfaces/           # 接口层 - API 定义
-│   ├── innerkits/       # 内部 C++ API（IDL 接口、数据模型）
-│   ├── kits/            # 外部 API（NAPI/Native Development Kit/CJ/ANI）
-│   ├── test/            # 接口层测试
-│   └── [INTERFACES.md](interfaces/INTERFACES.md)  # 接口层开发指南
-│
-├── services/             # 服务层 - 服务端实现
-│   ├── common/          # 公共服务（Helper、Observer、Config）
-│   ├── transient_task/  # 短时任务服务（延迟挂起管理）
-│   ├── continuous_task/ # 长时任务服务（后台运行管理）
-│   ├── efficiency_resources/ # 能效资源服务
-│   ├── core/            # 核心服务入口（BackgroundTaskMgrService）
-│   ├── test/            # 服务层单元测试
-│   └── [AGENTS.md](services/AGENTS.md)  # 服务层开发指南
-│
-├── test/                 # 测试层
-│   ├── fuzztest/        # 模糊测试（IPC 安全测试）
-│   ├── systemtest/      # 系统测试（Dump 功能测试）
-│
-├── sa_profile/           # 系统能力配置 → [SA_PROFILE.md](sa_profile/SA_PROFILE.md)
-├── resources/            # 国际化资源 → [RESOURCES.md](resources/RESOURCES.md)
-└── figures/              # 文档图片
-```
+1. 渐进式披露——按任务场景按需加载对应文档，禁止一次性全量加载全部知识库文档。knowledge 层在需跨模块通用知识（术语/背景/编码规范/架构）时加载，spec 层在涉及模块规格行为（配额/时机/权限/互斥等规格判定）时加载，design 层在实际设计/实现模块代码（类/方法/时序/类图）时加载。各文件具体加载场景见 §3 `知识库路由`章节中的表"加载场景"列。
+2. 代码开发需要遵循 `coding_standards.md` 中定义的编码要求
 
-## 3. 三大核心功能
+## 3. 知识库路由
 
-| 功能类型 | 服务模块 | 核心类 | 详细文档 |
-|---------|---------|--------|---------|
-| **短时任务** | `services/transient_task/` | `BgTransientTaskMgr` | [TRANSIENT_TASK.md](services/transient_task/TRANSIENT_TASK.md) |
-| **长时任务** | `services/continuous_task/` | `BgContinuousTaskMgr` | [CONTINUOUS_TASK.md](services/continuous_task/CONTINUOUS_TASK.md) |
-| **能效资源** | `services/efficiency_resources/` | `BgEfficiencyResourcesMgr` | [EFFICIENCY_RESOURCES.md](services/efficiency_resources/EFFICIENCY_RESOURCES.md) |
+知识库按文档类型组织，分三层：L1-L2 知识（`docs/knowledge/`）、L3 特性规格（`docs/spec/`）、L3 功能设计（`docs/design/`）。
+需要按照场景加载知识库文件，非必要不加载。
 
-## 4. 整体开发规范摘要
+### 3.1 知识库（L1-L2）— 跨模块通用知识
 
-| 规范项 | 要求 | 详细文档 |
-|--------|------|---------|
-| **命名空间** | `OHOS::BackgroundTaskMgr` | [frameworks/FRAMEWORKS.md](frameworks/FRAMEWORKS.md#命名规范) |
-| **错误码** | 使用 `bgtaskmgr_inner_errors.h` 定义 | [frameworks/FRAMEWORKS.md](frameworks/FRAMEWORKS.md#错误处理) |
-| **日志** | 使用 `BGTASK_LOG*` 宏 | [frameworks/FRAMEWORKS.md](frameworks/FRAMEWORKS.md#日志规范) |
-| **IPC 接口** | 修改 IDL 文件后重新生成代理/桩 | [interfaces/INTERFACES.md](interfaces/INTERFACES.md#IDL规范) |
+| 文档　　　 | 路径　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 | 内容　　　　　　　　　　　　　　　　　　　　　　　　 | 加载场景　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　|
+| ------------| --------------------------------------------------------------------------| ------------------------------------------------------| -------------------------------------------------------------------------|
+| 业务术语表 | [docs/knowledge/glossary.md](docs/knowledge/glossary.md)　　　　　　　　 | 短时/长时/能效三模块业务术语定义　　　　　　　　　　 | 遇到不熟悉的业务术语或需区分模块概念时加载　　　　　　　　　　　　　　　|
+| 业务背景　 | [docs/knowledge/business_context.md](docs/knowledge/business_context.md) | 组件定位、三大核心功能、子系统归属、组件信息　　　　 | 首次了解组件定位、三大核心功能或子系统归属时加载　　　　　　　　　　　　|
+| 编码要求　 | [docs/knowledge/coding_standards.md](docs/knowledge/coding_standards.md) | 命名空间、错误码、日志宏、IDL 接口规范、文档命名规范 | 编写或审查代码时加载（命名空间、错误码、日志、IDL 规范适用）　　　　　　|
+| 架构原则　 | [docs/knowledge/architecture.md](docs/knowledge/architecture.md)　　　　 | 三层架构、SA 概念、注册启动规格、编译方式、部署拓扑　| 编写或审查代码时，需理解三层架构、SA 注册启动、就绪状态或部署拓扑时加载 |
 
-## 5. 文档导航
+### 3.2 特性规格（L3）— 模块规格描述
 
-- **框架层开发** → [frameworks/FRAMEWORKS.md](frameworks/FRAMEWORKS.md)
-- **接口层开发** → [interfaces/INTERFACES.md](interfaces/INTERFACES.md)
-- **服务层开发** → [services/AGENTS.md](services/AGENTS.md)
-- **系统能力配置** → [sa_profile/SA_PROFILE.md](sa_profile/SA_PROFILE.md)
-- **资源配置** → [resources/RESOURCES.md](resources/RESOURCES.md)
+| 文档　　　　 | 路径　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 | 内容　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 | 加载场景　　　　　　　　　　　　　　　 |
+| --------------| ------------------------------------------------------------------------| ----------------------------------------------------------------------------| ----------------------------------------|
+| 短时任务规格 | [docs/spec/transient_task.md](docs/spec/transient_task.md)　　　　　　 | 定义、核心概念、接口说明、配额/超时约束、数据模型、innerAPI、API 演进　　　| 涉及短时任务规格行为的设计或分析时加载 |
+| 长时任务规格 | [docs/spec/continuous_task.md](docs/spec/continuous_task.md)　　　　　 | 定义、后台模式、通知规格、回调规格、互斥规则、数据模型、innerAPI、API 演进 | 涉及长时任务规格行为的设计或分析时加载 |
+| 能效资源规格 | [docs/spec/efficiency_resources.md](docs/spec/efficiency_resources.md) | 定义、资源类型、配额流程、生命周期约束、数据模型、innerAPI、API 演进　　　 | 涉及能效资源规格行为的设计或分析时加载 |
+
+### 3.3 功能设计（L3）— 模块代码实现设计
+
+| 文档　　　　　　 | 路径　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 | 内容　　　　　　　　　　　　　　　　　　　　　　　　　　　　　| 加载场景　　　　　　　　　　　　　　　　　　　　　　　　　　|
+| ------------------| ----------------------------------------------------------------------------| ---------------------------------------------------------------| -------------------------------------------------------------|
+| 公共框架代码设计 | [docs/design/overview.md](docs/design/overview.md)　　　　　　　　　　　　 | IPC 调用链、部署拓扑、三子模块交互、公共基础设施、类继承　　　| 需理解 IPC 调用链、部署拓扑、跨模块交互或公共基础设施时加载 |
+| 短时任务代码设计 | [docs/design/transient_task.md](docs/design/transient_task.md)　　　　　　 | 运行时序、知识关联、演进版本、核心类/方法、关键数据标记、类图 | 实际设计/实现短时任务代码时加载　　　　　　　　　　　　　　 |
+| 长时任务代码设计 | [docs/design/continuous_task.md](docs/design/continuous_task.md)　　　　　 | 运行时序、知识关联、演进版本、核心类/方法、关键数据标记、类图 | 实际设计/实现长时任务代码时加载　　　　　　　　　　　　　　 |
+| 能效资源代码设计 | [docs/design/efficiency_resources.md](docs/design/efficiency_resources.md) | 运行时序、配额流程、知识关联、核心类/方法、关键数据标记、类图 | 实际设计/实现能效资源代码时加载　　　　　　　　　　　　　　 |
 
 ---
 
-> 💡 **提示**：本目录文档采用渐进式披露原则，仅提供概述和导航。具体实现细节请查阅对应子目录的 `AGENTS.md` 文件。
+> 💡 **提示**：本文件为 L0 宪法，仅提供概述与路由。业务概念查阅 `docs/knowledge/`，规格查阅 `docs/spec/`，代码设计查阅 `docs/design/`。
