@@ -40,6 +40,7 @@ static constexpr uint32_t LABEL_ABILITYID_INDEX = 3;
 static constexpr uint32_t LABEL_TASKID_INDEX = 4;
 static constexpr uint32_t LABEL_BANNER_SIZE = 4;
 static constexpr char NAVIGATION[] = "NAVIGATION";
+static constexpr char PROGRESS[] = "PROGRESS";
 static constexpr int32_t CAPSULE_STATUS_ACTIVE = 1;
 }
 
@@ -72,7 +73,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         std::string eventName = "";
         int32_t capsuleStatus = 0;
         GetLiveViewExtraInfo(request, eventName, capsuleStatus);
-        if (eventName == NAVIGATION) {
+        if (eventName == NAVIGATION || eventName == PROGRESS) {
             continuousTaskMgr_->SetLiveViewInfo(creatorUid, false, eventName);
             continuousTaskMgr_->SendNotificationByLiveViewCancel(creatorUid);
         }
@@ -105,7 +106,7 @@ void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::
     std::string eventName = "";
     int32_t capsuleStatus = 0;
     GetLiveViewExtraInfo(request, eventName, capsuleStatus);
-    if (capsuleStatus == CAPSULE_STATUS_ACTIVE && eventName == NAVIGATION) {
+    if (capsuleStatus == CAPSULE_STATUS_ACTIVE && (eventName == NAVIGATION || eventName == PROGRESS)) {
         continuousTaskMgr_->SetLiveViewInfo(creatorUid, true, eventName);
         continuousTaskMgr_->CancelBgTaskNotification(creatorUid);
     }

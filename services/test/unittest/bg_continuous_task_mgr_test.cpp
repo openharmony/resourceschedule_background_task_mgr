@@ -2161,6 +2161,35 @@ HWTEST_F(BgContinuousTaskMgrTest, CheckLiveViewInfo_001, TestSize.Level1)
 }
 
 /**
+ * @tc.name: CheckLiveViewInfo_002
+ * @tc.desc: CheckLiveViewInfo test.
+ * @tc.type: FUNC
+ * @tc.require: 788
+ */
+HWTEST_F(BgContinuousTaskMgrTest, CheckLiveViewInfo_002, TestSize.Level1)
+{
+    bgContinuousTaskMgr_->isSysReady_.store(true);
+    bgContinuousTaskMgr_->liveViewInfo_.clear();
+    int32_t uid = 100;
+
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->uid_ = uid;
+
+    // --- PROGRESS + SPECIAL_SCENARIO_PROCESSING ---
+    bgContinuousTaskMgr_->SetLiveViewInfo(uid, true, "PROGRESS");
+
+    // SPECIAL_SCENARIO_PROCESSING only -> suppressed
+    record->bgModeIds_ = {BackgroundMode::SPECIAL_SCENARIO_PROCESSING};
+    EXPECT_TRUE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+    // SPECIAL_SCENARIO_PROCESSING + non-liveViewType (WORKOUT) -> still suppressed
+    record->bgModeIds_ = {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, BackgroundMode::AUDIO_PLAYBACK};
+    EXPECT_TRUE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+    // SPECIAL_SCENARIO_PROCESSING + other liveViewType (LOCATION) -> NOT suppressed
+    record->bgModeIds_ = {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, BackgroundMode::LOCATION};
+    EXPECT_FALSE(bgContinuousTaskMgr_->CheckLiveViewInfo(record));
+}
+
+/**
  * @tc.name: CancelBgTaskNotification_001
  * @tc.desc: CancelBgTaskNotification test.
  * @tc.type: FUNC

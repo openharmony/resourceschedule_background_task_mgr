@@ -153,6 +153,8 @@ static constexpr char BGMODE_PERMISSION_SPECIAL_SCENARIO[] = "ohos.permission.KE
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
 static constexpr char TASK_NOTIFY_AUDIO_PLAYBACK_SEND[] = "TaskNotifyAudioPlaybackSend";
+static constexpr char NAVIGATION[] = "NAVIGATION";
+static constexpr char PROGRESS[] = "PROGRESS";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr uint32_t BGMODE_SPECIAL_SCENARIO_PROCESSING = 4096;
@@ -4140,16 +4142,6 @@ void BgContinuousTaskMgr::SetLiveViewInfo(int32_t uid, bool isLiveViewPublish, c
     }
 }
 
-bool BgContinuousTaskMgr::CheckLiveViewInfoModes(std::shared_ptr<ContinuousTaskRecord> record)
-{
-    if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::LOCATION) &&
-        !CommonUtils::CheckExistOtherMode(record->bgModeIds_, BackgroundMode::LOCATION, g_liveViewTypes)) {
-        BGTASK_LOGD("continuous task has liveView");
-        return true;
-    }
-    return false;
-}
-
 bool BgContinuousTaskMgr::CheckLiveViewInfo(std::shared_ptr<ContinuousTaskRecord> record)
 {
     std::lock_guard<std::mutex> lock(liveViewInfoMutex_);
@@ -4157,8 +4149,22 @@ bool BgContinuousTaskMgr::CheckLiveViewInfo(std::shared_ptr<ContinuousTaskRecord
     if (iter == liveViewInfo_.end()) {
         return false;
     }
-    if (CheckLiveViewInfoModes(record)) {
-        return true;
+    const auto &eventNames = iter->second;
+    if (eventNames.find(NAVIGATION) != eventNames.end()) {
+        if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::LOCATION) &&
+            !CommonUtils::CheckExistOtherMode(record->bgModeIds_, BackgroundMode::LOCATION, g_liveViewTypes)) {
+            BGTASK_LOGD("continuous task has NAVIGATION liveView");
+            return true;
+        }
+    }
+
+    if (eventNames.find(PROGRESS) != eventNames.end()) {
+        if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::SPECIAL_SCENARIO_PROCESSING) &&
+            !CommonUtils::CheckExistOtherMode(record->bgModeIds_,
+                BackgroundMode::SPECIAL_SCENARIO_PROCESSING, g_liveViewTypes)) {
+            BGTASK_LOGD("continuous task has PROGRESS liveView");
+            return true;
+        }
     }
     return false;
 }
@@ -4172,7 +4178,7 @@ void BgContinuousTaskMgr::CancelBgTaskNotificationInner(int32_t uid)
         if (task.second->GetNotificationId() == -1) {
             continue;
         }
-        if (CheckLiveViewInfoModes(task.second)) {
+        if (CheckLiveViewInfo(task.second)) {
             NotificationTools::GetInstance()->CancelNotification(
                 task.second->GetNotificationLabel(), task.second->GetNotificationId());
             task.second->notificationId_ = -1;
