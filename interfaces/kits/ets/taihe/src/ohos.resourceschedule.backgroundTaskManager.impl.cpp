@@ -1571,8 +1571,8 @@ void UpdateDataTransferProgress(
         return;
     }
     if (progressInfoData.continuousTaskId < 0) {
-        set_business_error(Common::FindErrCode(ERR_BGTASK_INVALID_PARAM),
-            Common::FindErrMsg(ERR_BGTASK_INVALID_PARAM));
+        set_business_error(Common::FindErrCode(ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID),
+            Common::FindErrMsg(ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID));
         return;
     }
 

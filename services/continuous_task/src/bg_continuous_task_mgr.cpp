@@ -1288,7 +1288,7 @@ ErrCode BgContinuousTaskMgr::UpdateDataTransferProgressInner(int32_t uid,
     int32_t continuousTaskId = progressInfo->GetContinuousTaskId();
     if (continuousTaskId < 0) {
         BGTASK_LOGE("invalid taskId: %{public}d", continuousTaskId);
-        return ERR_BGTASK_CONTINUOUS_TASKID_INVALID;
+        return ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID;
     }
     if (progressInfo->GetProgressInfo() == nullptr) {
         BGTASK_LOGE("progress info is invalid, taskId: %{public}d", continuousTaskId);
@@ -1362,8 +1362,13 @@ ErrCode BgContinuousTaskMgr::AllowApplyContinuousTask(const std::shared_ptr<Cont
     if (ret != ERR_OK) {
         return ret;
     }
-    // 需要豁免的情况：inner接口或应用在前台
     int32_t uid = record->GetUid();
+    // 有progressInfo参数需要有DATA_TRANSFER类型
+    if (record->progressInfo_ && !CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::DATA_TRANSFER)) {
+        BGTASK_LOGE("uid: %{public}d, task is not have DATA_TRANSFER mode.", uid);
+        return ERR_BGTASK_CONTINUOUS_NOT_DATA_TRANSFER;
+    }
+    // 需要豁免的情况：inner接口或应用在前台
     if (record->IsFromWebview() || appOnForeground_.count(uid) > 0) {
         return ERR_OK;
     }

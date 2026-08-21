@@ -167,7 +167,7 @@ const std::unordered_map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "Notification verification failed for a continuous task. "
         "updateDataTransferProgress only supports DATA_TRANSFER mode."},
     {ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID,
-        "Notification verification failed for a continuous task. The progress info is invalid."},
+        "Notification verification failed for a continuous task. The updateDataTransferProgres param is invalid."},
 };
 
 const std::unordered_map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
