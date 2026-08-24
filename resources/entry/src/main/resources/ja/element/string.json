@@ -163,14 +163,14 @@
         },
         {
             "name":"notification_text_running_task_two_mode",
-            "value":"進行中のタスク（%1$s、%2$s）。この通知を閉じると、これらのタスクが終了します。",
+            "value":"タスク（%1$s、%2$s）は進行中です。この通知を閉じると、これらのタスクが終了します。",
             "attr":{
                 "priority":"LT"
             }
         },
         {
             "name":"notification_text_task_keeping",
-            "value":"計算中",
+            "value":"計算",
             "attr":{
                 "priority":"LT"
             }
@@ -198,14 +198,14 @@
         },
         {
             "name":"notification_text_running_task_three_mode",
-            "value":"進行中のタスク（%1$s、%2$s、%3$s）。この通知を閉じると、これらのタスクが終了します。",
+            "value":"タスク（%1$s、%2$s、%3$s）は進行中です。この通知を閉じると、これらのタスクが終了します。",
             "attr":{
                 "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_exceed",
-            "value":"進行中のタスク（%1$s、%2$s、%3$sなど）。この通知を閉じると、これらのタスクが終了します。",
+            "value":"タスク（%1$s、%2$s、%3$sなど）は進行中です。この通知を閉じると、これらのタスクが終了します。",
             "attr":{
                 "priority":"LT"
             }
