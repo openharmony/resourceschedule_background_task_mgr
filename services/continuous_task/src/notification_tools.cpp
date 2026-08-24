@@ -151,11 +151,12 @@ static void SetNotificationSlotType(const std::shared_ptr<ContinuousTaskRecord> 
     Notification::NotificationRequest& notificationRequest, bool isDataTransfer)
 {
     if (isDataTransfer) {
-        notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
         notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
         auto progressInfo = continuousTaskRecord->GetProgressInfo();
         if (progressInfo != nullptr) {
             SetProgressNotification(progressInfo, notificationRequest);
+        } else {
+            notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
         }
     } else {
         notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::OTHER);
@@ -356,12 +357,13 @@ WEAK_FUNC ErrCode NotificationTools::PublishMainNotification(const std::shared_p
     notificationRequest.SetOwnerUid(subRecord->GetUid());
     notificationRequest.SetInProgress(true);
     notificationRequest.SetIsAgentNotification(true);
-    notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
     notificationRequest.SetUpdateByOwnerAllowed(true);
     notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::LIVE_VIEW);
     notificationRequest.SetLabel(notificationLabel);
     if (mainRecord->progressInfo_) {
         SetProgressNotification(mainRecord->progressInfo_, notificationRequest);
+    } else {
+        notificationRequest.SetPublishDelayTime(PUBLISH_DELAY_TIME);
     }
     if (mainRecord->GetNotificationId() == -1) {
         notificationRequest.SetNotificationId(++notificationIdIndex_);

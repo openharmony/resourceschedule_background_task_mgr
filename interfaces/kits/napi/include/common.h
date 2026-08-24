@@ -97,6 +97,8 @@ public:
 
     static bool HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow);
 
+    static void HandleIntErrCode(const napi_env &env, int32_t errCode, bool isThrow);
+
     static std::string FindErrMsg(const napi_env &env, const int32_t errCode);
 
     static int32_t FindErrCode(const napi_env &env, const int32_t errCodeIn);

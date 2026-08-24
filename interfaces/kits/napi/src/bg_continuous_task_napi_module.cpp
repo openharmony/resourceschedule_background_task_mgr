@@ -1930,27 +1930,27 @@ napi_value UpdateDataTransferProgress(napi_env env, napi_callback_info info)
     napi_value argv[UPDATE_PROGRESS_INFO_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     if (argc != UPDATE_PROGRESS_INFO_PARAMS) {
-        Common::HandleParamErr(env, ERR_PARAM_NUMBER_ERR, true);
+        Common::HandleIntErrCode(env, ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID, true);
         return WrapVoidToJS(env);
     }
     // context
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext {nullptr};
     if (GetAbilityContext(env, argv[0], abilityContext) == nullptr) {
         BGTASK_LOGE("Get ability context failed");
-        Common::HandleParamErr(env, ERR_CONTEXT_NULL_OR_TYPE_ERR, true);
+        Common::HandleIntErrCode(env, ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID, true);
         return WrapVoidToJS(env);
     }
 
     // DataTransferProgress
     DataTransferProgress progressInfo;
     if (!GetDataTransferProgress(env, argv[1], progressInfo)) {
-        Common::HandleParamErr(env, ERR_BGTASK_INVALID_PARAM, true);
+        Common::HandleIntErrCode(env, ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID, true);
         return WrapVoidToJS(env);
     }
 
     ErrCode errCode = BackgroundTaskMgrHelper::RequestUpdateDataTransferProgress(progressInfo);
     if (errCode != ERR_OK) {
-        Common::HandleErrCode(env, errCode, true);
+        Common::HandleIntErrCode(env, errCode, true);
     }
     return WrapVoidToJS(env);
 }

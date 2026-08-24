@@ -318,6 +318,19 @@ bool Common::HandleParamErr(const napi_env &env, int32_t errCode, bool isThrow)
     return false;
 }
 
+void Common::HandleIntErrCode(const napi_env &env, int32_t errCode, bool isThrow)
+{
+    BGTASK_LOGD("HandleIntErrCode errCode = %{public}d, isThrow = %{public}d", errCode, isThrow);
+    if (!isThrow || errCode == ERR_OK) {
+        return;
+    }
+    std::string errMsg = FindErrMsg(env, errCode);
+    int32_t errCodeInfo = FindErrCode(env, errCode);
+    if (errMsg != "") {
+        napi_throw_business_error(env, errCodeInfo, errMsg.c_str());
+    }
+}
+
 std::string Common::FindErrMsg(const napi_env &env, const int32_t errCode)
 {
     if (errCode == ERR_OK) {
@@ -624,7 +637,7 @@ bool Common::GetprogressInfoParam(napi_env env, napi_value objValue, const std::
         if (GetInt32NumberValue(env, isProgressValue, progressValue)) {
             if (progressValue < MIN_PROGRESS_VALUE || progressValue > MAX_PROGRESS_VALUE) {
                 BGTASK_LOGE("progressValue %{public}d out of range [0, 100]", progressValue);
-                Common::HandleErrCode(env, ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID, true);
+                Common::HandleIntErrCode(env, ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID, true);
                 return false;
             }
             progressInfo->SetProgressValue(progressValue);
