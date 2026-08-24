@@ -37,7 +37,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"ກຳລັງຫຼິ້ນສຽງ/ວິດີໂອ ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸເການຫຼິ້ນຄືນ.",
+            "value":"ກຳລັງຫຼິ້ນສຽງ/ວິດີໂອ. ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດການຫຼິ້ນຄືນ.",
             "attr":{
                 "priority":"LT"
             }
@@ -156,7 +156,7 @@
         },
         {
             "name":"notification_text_voip",
-            "value":"ໂທ",
+            "value":"ການໂທ",
             "attr":{
                 "priority":"LT"
             }
@@ -170,7 +170,7 @@
         },
         {
             "name":"notification_text_task_keeping",
-            "value":"ກຳລັງຄຳນວນ",
+            "value":"ການຄຳນວນ",
             "attr":{
                 "priority":"LT"
             }
@@ -247,7 +247,7 @@
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
-            "value":"ອະນຸຍາດໃຫ້ %s ເປີດໃຊ້ໃນພື້ນຫຼັງບໍ?",
+            "value":"ອະນຸຍາດໃຫ້ %s ເຮັດວຽກໃນພື້ນຫຼັງບໍ?",
             "attr":{
                 "priority":"LT"
             }
