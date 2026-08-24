@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"جارٍ تشغيل الصوت/الفيديو سيؤدي إغلاق هذا الإشعار إلى إنهاء التشغيل.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,112 +144,112 @@
             "name":"notification_text_bluetooth_interactionn",
             "value":"البلوتوث",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_wifi_interaction",
             "value":"الشبكة اللاسلكية",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_voip",
             "value":"المكالمات الهاتفية",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_two_mode",
             "value":"المهام (%1$s و%2$s) قيد التنفيذ. سيؤدي إغلاق هذا الإشعار إلى إنهاء هذه المهام.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_task_keeping",
             "value":"الحساب",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_audio_recording",
             "value":"التسجيل",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_location",
             "value":"تحديد الموقع",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_data_transfer",
             "value":"نقل البيانات",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_three_mode",
             "value":"المهام (%1$s و%2$s و%3$s) قيد التنفيذ. سيؤدي إغلاق هذا الإشعار إلى إنهاء هذه المهام.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_exceed",
             "value":"المهام (%1$s و%2$s و%3$s وغيرها) قيد التنفيذ. سيؤدي إغلاق هذا الإشعار إلى إنهاء هذه المهام.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_multidevice_connection",
             "value":"المشاركة بين الأجهزة",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_starting_task",
             "value":"جارٍ تحميل الصوت/الفيديو. سيؤدي إغلاق هذا الإشعار إلى مقاطعة التشغيل.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_audio_playbackr",
             "value":"تشغيل الصوت/الفيديو",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_nearlink",
             "value":"هناك مهمة NearLink جارية. وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_nearlink",
             "value":"NearLink",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
             "value":"هل تسمح بتشغيل تطبيق %s في الخلفية؟",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

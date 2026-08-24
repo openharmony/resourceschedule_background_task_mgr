@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"音訊和影片播放，移除通知將中斷播放",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,21 +144,21 @@
             "name":"notification_text_bluetooth_interactionn",
             "value":"藍牙",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_wifi_interaction",
             "value":"WLAN",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_voip",
             "value":"通話",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -186,7 +186,7 @@
             "name":"notification_text_location",
             "value":"定位",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -221,7 +221,7 @@
             "name":"notification_text_starting_task",
             "value":"音訊和影片正在啟動載入，移除通知將中斷播放",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -232,24 +232,24 @@
             }
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "正在運行星閃相關任務，刪除通知後任務將停止",
-            "attr": {
-                "priority": "translate"
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"正在運行星閃相關任務，刪除通知後任務將停止",
+            "attr":{
+                "priority":"translate"
             }
         },
         {
             "name":"notification_text_nearlink",
             "value":"星閃",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
             "value":"允許「%s」執行應用程式背景長時活動？",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

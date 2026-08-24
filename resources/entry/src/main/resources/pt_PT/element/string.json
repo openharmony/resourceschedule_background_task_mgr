@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"A reproduzir áudio/vídeo. Fechar esta notificação irá terminar a reprodução.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,112 +144,112 @@
             "name":"notification_text_bluetooth_interactionn",
             "value":"Bluetooth",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_wifi_interaction",
             "value":"WLAN",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_voip",
             "value":"chamada",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_two_mode",
             "value":"Tarefas a decorrer (%1$s e %2$s). Fechar esta notificação irá terminá-las.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_task_keeping",
             "value":"computação",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_audio_recording",
             "value":"gravação",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_location",
             "value":"posicionamento",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_data_transfer",
             "value":"transferência de dados",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_three_mode",
             "value":"Tarefas a decorrer (%1$s, %2$s e %3$s). Fechar esta notificação irá terminá-las.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_exceed",
             "value":"Tarefas a decorrer (%1$s, %2$s, %3$s, etc.). Fechar esta notificação irá terminá-las.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_multidevice_connection",
             "value":"colaboração entre dispositivos",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_starting_task",
             "value":"A carregar áudio/vídeo. Fechar esta notificação irá interromper a reprodução.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_audio_playbackr",
             "value":"reprodução de áudio/vídeo",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "Está a decorrer uma tarefa NearLink. Fechar esta notificação irá terminá-la.",
-            "attr": {
-                "priority": "translate"
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"Está a decorrer uma tarefa NearLink. Fechar esta notificação irá terminá-la.",
+            "attr":{
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_nearlink",
             "value":"NearLink",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
             "value":"Permitir a execução de %s em segundo plano?",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
