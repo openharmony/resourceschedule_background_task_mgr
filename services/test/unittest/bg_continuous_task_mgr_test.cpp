@@ -3401,7 +3401,7 @@ HWTEST_F(BgContinuousTaskMgrTest, UpdateDataTransferProgress_001, TestSize.Level
     progressInfo->SetTitle("test");
     progress->SetProgressInfo(progressInfo);
     EXPECT_EQ((int32_t)bgContinuousTaskMgr_->UpdateDataTransferProgress(progress),
-        (int32_t)ERR_BGTASK_CONTINUOUS_TASKID_INVALID);
+        (int32_t)ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID);
 }
 
 /**
