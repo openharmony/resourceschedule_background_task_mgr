@@ -9,7 +9,7 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"音訊和影片播放，移除通知將中斷播放",
+            "value":"影音播放中，移除通知將中斷播放",
             "attr":{
                 "priority":"LT"
             }
@@ -219,7 +219,7 @@
         },
         {
             "name":"notification_text_starting_task",
-            "value":"音訊和影片正在啟動載入，移除通知將中斷播放",
+            "value":"影音正在啟動載入，移除通知將中斷播放",
             "attr":{
                 "priority":"LT"
             }
@@ -247,7 +247,7 @@
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
-            "value":"允許「%s」執行應用程式背景長時活動？",
+            "value":"允許「%s」執行應用程式背景長時間活動？",
             "attr":{
                 "priority":"LT"
             }
