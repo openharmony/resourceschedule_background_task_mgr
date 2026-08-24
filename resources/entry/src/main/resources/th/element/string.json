@@ -170,7 +170,7 @@
         },
         {
             "name":"notification_text_task_keeping",
-            "value":"กำลังประมวลผล",
+            "value":"การประมวลผล",
             "attr":{
                 "priority":"LT"
             }
