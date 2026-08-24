@@ -153,7 +153,6 @@ static constexpr char BGMODE_PERMISSION_SYSTEM[] = "ohos.permission.KEEP_BACKGRO
 static constexpr char BGMODE_PERMISSION_SPECIAL_SCENARIO[] = "ohos.permission.KEEP_BACKGROUND_RUNNING_SPECIAL_SCENARIO";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
-static constexpr char TASK_NOTIFY_AUDIO_PLAYBACK_SEND[] = "TaskNotifyAudioPlaybackSend";
 static constexpr char NAVIGATION[] = "NAVIGATION";
 static constexpr char PROGRESS[] = "PROGRESS";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
@@ -2431,6 +2430,11 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
     return ERR_OK;
 }
 
+std::string BgContinuousTaskMgr::GetAudioNotifyTaskName(int32_t uid)
+{
+    return "AudioNotifyTask_" + std::to_string(uid);
+}
+
 ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish)
 {
     if (!isSysReady_.load()) {
@@ -2456,7 +2460,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
                 self->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
             }
         };
-        handler_->PostTask(task, TASK_NOTIFY_AUDIO_PLAYBACK_SEND, NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
+        handler_->PostTask(task, GetAudioNotifyTaskName(uid), NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
         std::lock_guard<std::mutex> lock(delayTasksMutex_);
         delayTasks_.insert(uid);
     }
@@ -2530,7 +2534,7 @@ void BgContinuousTaskMgr::RemoveAudioPlaybackDelayTask(int32_t uid)
     if (delayTaskIter == delayTasks_.end()) {
         return;
     }
-    handler_->RemoveTask(TASK_NOTIFY_AUDIO_PLAYBACK_SEND);
+    handler_->RemoveTask(GetAudioNotifyTaskName(uid));
     delayTasks_.erase(delayTaskIter);
 }
 
@@ -4421,10 +4425,33 @@ ErrCode BgContinuousTaskMgr::SendNotificationByDeteTaskInner(const std::set<std:
         if (iter == continuousTaskInfosMap_.end()) {
             continue;
         }
-        avSessionNotification_[iter->second->GetUid()] = false;
-        HandleActiveNotification(iter->second);
+        int32_t uid = iter->second->GetUid();
+        avSessionNotification_[uid] = false;
+
+        auto task = [weak = weak_from_this(), key, uid]() {
+            auto self = weak.lock();
+            if (self) {
+                self->SendNotificationByDeteTaskDelay(key, uid);
+            }
+        };
+        handler_->PostTask(task, GetAudioNotifyTaskName(uid), NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
+        std::lock_guard<std::mutex> lock(delayTasksMutex_);
+        delayTasks_.insert(uid);
     }
     return ERR_OK;
+}
+
+void BgContinuousTaskMgr::SendNotificationByDeteTaskDelay(const std::string &taskKey, int32_t uid)
+{
+    {
+        std::lock_guard<std::mutex> lock(delayTasksMutex_);
+        delayTasks_.erase(uid);
+    }
+    auto iter = continuousTaskInfosMap_.find(taskKey);
+    if (iter == continuousTaskInfosMap_.end()) {
+        return;
+    }
+    HandleActiveNotification(iter->second);
 }
 
 void BgContinuousTaskMgr::OnPermissionDialogButtonClickInner(int32_t authResult, int32_t bundleUid,
