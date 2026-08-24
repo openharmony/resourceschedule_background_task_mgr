@@ -163,7 +163,7 @@
         },
         {
             "name":"notification_text_running_task_two_mode",
-            "value":"Tareas en curso (%1$s, %2$s). Si cierras esta notificación, estas se finalizarán.",
+            "value":"Tareas en curso (%1$s y %2$s). Si cierras esta notificación, finalizarán.",
             "attr":{
                 "priority":"LT"
             }
@@ -198,7 +198,7 @@
         },
         {
             "name":"notification_text_running_task_three_mode",
-            "value":"Tareas en curso (%1$s, %2$s, %3$s). Si cierras esta notificación, estas se finalizarán.",
+            "value":"Tareas en curso (%1$s, %2$s y %3$s). Si cierras esta notificación, finalizarán.",
             "attr":{
                 "priority":"LT"
             }
@@ -212,7 +212,7 @@
         },
         {
             "name":"notification_text_multidevice_connection",
-            "value":"colaboración entre dispositivos",
+            "value":"colab. entre dispositivos",
             "attr":{
                 "priority":"LT"
             }
@@ -226,16 +226,16 @@
         },
         {
             "name":"notification_text_audio_playbackr",
-            "value":"reproducción de audio/vídeo",
+            "value":"reprod. de audio/vídeo",
             "attr":{
                 "priority":"LT"
             }
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "Hay una tarea de NearLink en curso. Si cierras esta notificación, finalizará.",
-            "attr": {
-                "priority": "LT"
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"Hay una tarea de NearLink en curso. Si cierras esta notificación, finalizará.",
+            "attr":{
+                "priority":"LT"
             }
         },
         {
