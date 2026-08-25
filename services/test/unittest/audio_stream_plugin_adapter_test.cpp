@@ -15,7 +15,7 @@
 
 #include <gtest/gtest.h>
 #include "audio_stream_plugin_adapter.h"
-#include "audio_renderer_info_plugin_data.h"
+#include "bgtask_data_mgr.h"
 #include "audio_info.h"
 #include "nlohmann/json.hpp"
 
@@ -28,22 +28,22 @@ class AudioStreamPluginAdapterTest : public testing::Test {
 public:
     static void SetUpTestCase()
     {
-        AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
+        BgtaskDataMgr::GetInstance()->ClearAll();
     }
 
     static void TearDownTestCase()
     {
-        AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
+        BgtaskDataMgr::GetInstance()->ClearAll();
     }
 
     void SetUp() override
     {
-        AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
+        BgtaskDataMgr::GetInstance()->ClearAll();
     }
 
     void TearDown() override
     {
-        AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
+        BgtaskDataMgr::GetInstance()->ClearAll();
     }
 };
 
@@ -71,7 +71,7 @@ HWTEST_F(AudioStreamPluginAdapterTest, AudioStreamPluginAdapterTest_002, TestSiz
     payload["rendererState"] = 2; // RENDERER_RUNNING
     payload["sessionId"] = 1;
     adapter->RendererStateChange(payload);
-    EXPECT_TRUE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1001));
+    EXPECT_TRUE(BgtaskDataMgr::GetInstance()->CheckAppIsPlaying(1001));
 }
 
 /**
@@ -83,13 +83,13 @@ HWTEST_F(AudioStreamPluginAdapterTest, AudioStreamPluginAdapterTest_003, TestSiz
 {
     auto adapter = AudioStreamPluginAdapter::GetInstance();
     auto audioInfo = std::make_shared<AudioInfo>(1001, 1);
-    AudioRendererInfoPluginData::GetInstance()->AddAudioPlayerInfo(audioInfo);
+    BgtaskDataMgr::GetInstance()->AddAudioPlayerInfo(audioInfo);
     nlohmann::json payload;
     payload["uid"] = 1001;
     payload["rendererState"] = 0; // RENDERER_STOPPED
     payload["sessionId"] = 1;
     adapter->RendererStateChange(payload);
-    EXPECT_FALSE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1001));
+    EXPECT_FALSE(BgtaskDataMgr::GetInstance()->CheckAppIsPlaying(1001));
 }
 
 /**
@@ -102,9 +102,9 @@ HWTEST_F(AudioStreamPluginAdapterTest, AudioStreamPluginAdapterTest_004, TestSiz
     auto adapter = AudioStreamPluginAdapter::GetInstance();
     auto audioInfo = std::make_shared<AudioInfo>(1001, 1);
     adapter->Init();
-    AudioRendererInfoPluginData::GetInstance()->AddAudioPlayerInfo(audioInfo);
+    BgtaskDataMgr::GetInstance()->AddAudioPlayerInfo(audioInfo);
     adapter->Uninit();
-    EXPECT_FALSE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1001));
+    EXPECT_FALSE(BgtaskDataMgr::GetInstance()->CheckAppIsPlaying(1001));
 }
 } // namespace BackgroundTaskMgr
 } // namespace OHOS

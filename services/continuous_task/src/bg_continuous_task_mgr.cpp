@@ -63,7 +63,7 @@
 #include "bg_continuous_task_dumper.h"
 #include "user_auth_result.h"
 #include "background_task_observer.h"
-#include "audio_renderer_info_plugin_data.h"
+#include "bgtask_data_mgr.h"
 #ifdef GAME_PRE_LAUNCH_ENABLE
 #include "game_pre_launch_mgr.h"
 #endif
@@ -150,7 +150,6 @@ static constexpr char BGMODE_PERMISSION_SYSTEM[] = "ohos.permission.KEEP_BACKGRO
 static constexpr char BGMODE_PERMISSION_SPECIAL_SCENARIO[] = "ohos.permission.KEEP_BACKGROUND_RUNNING_SPECIAL_SCENARIO";
 static constexpr char BG_TASK_RES_BUNDLE_NAME[] = "com.ohos.backgroundtaskmgr.resources";
 static constexpr char BG_TASK_SUB_MODE_TYPE[] = "subMode";
-static constexpr char TASK_NOTIFY_AUDIO_PLAYBACK_SEND[] = "TaskNotifyAudioPlaybackSend";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr uint32_t BGMODE_SPECIAL_SCENARIO_PROCESSING = 4096;
@@ -1587,7 +1586,7 @@ ErrCode BgContinuousTaskMgr::SingleModeNotificationText(std::string &notificatio
     if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::BLUETOOTH_INTERACTION) &&
         CommonUtils::CheckExistMode(checkModes, BackgroundMode::AUDIO_PLAYBACK)) {
         // 只有播音类型，且播音类型要发通知
-        bool isPlayingAudio = AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(record->uid_);
+        bool isPlayingAudio = BgtaskDataMgr::GetInstance()->CheckAppIsPlaying(record->uid_);
         if (!isPlayingAudio && startingTaskText_.size() > 0) {
             // 此时应用未播音
             notificationText += startingTaskText_[0];
@@ -2319,6 +2318,11 @@ ErrCode BgContinuousTaskMgr::GetContinuousTaskAppsInner(std::vector<std::shared_
     return ERR_OK;
 }
 
+std::string BgContinuousTaskMgr::GetAudioNotifyTaskName(int32_t uid)
+{
+    return "AudioNotifyTask_" + std::to_string(uid);
+}
+
 ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int32_t pid, bool isPublish)
 {
     if (!isSysReady_.load()) {
@@ -2344,7 +2348,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
                 self->AVSessionNotifyUpdateNotificationInner(uid, pid, isPublish);
             }
         };
-        handler_->PostTask(task, TASK_NOTIFY_AUDIO_PLAYBACK_SEND, NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
+        handler_->PostTask(task, GetAudioNotifyTaskName(uid), NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
         std::lock_guard<std::mutex> lock(delayTasksMutex_);
         delayTasks_.insert(uid);
     }
@@ -2418,7 +2422,7 @@ void BgContinuousTaskMgr::RemoveAudioPlaybackDelayTask(int32_t uid)
     if (delayTaskIter == delayTasks_.end()) {
         return;
     }
-    handler_->RemoveTask(TASK_NOTIFY_AUDIO_PLAYBACK_SEND);
+    handler_->RemoveTask(GetAudioNotifyTaskName(uid));
     delayTasks_.erase(delayTaskIter);
 }
 
@@ -4277,10 +4281,33 @@ ErrCode BgContinuousTaskMgr::SendNotificationByDeteTaskInner(const std::set<std:
         if (iter == continuousTaskInfosMap_.end()) {
             continue;
         }
-        avSessionNotification_[iter->second->GetUid()] = false;
-        HandleActiveNotification(iter->second);
+        int32_t uid = iter->second->GetUid();
+        avSessionNotification_[uid] = false;
+
+        auto task = [weak = weak_from_this(), key, uid]() {
+            auto self = weak.lock();
+            if (self) {
+                self->SendNotificationByDeteTaskDelay(key, uid);
+            }
+        };
+        handler_->PostTask(task, GetAudioNotifyTaskName(uid), NOTIFY_AUDIO_PLAYBACK_DELAY_TIME);
+        std::lock_guard<std::mutex> lock(delayTasksMutex_);
+        delayTasks_.insert(uid);
     }
     return ERR_OK;
+}
+
+void BgContinuousTaskMgr::SendNotificationByDeteTaskDelay(const std::string &taskKey, int32_t uid)
+{
+    {
+        std::lock_guard<std::mutex> lock(delayTasksMutex_);
+        delayTasks_.erase(uid);
+    }
+    auto iter = continuousTaskInfosMap_.find(taskKey);
+    if (iter == continuousTaskInfosMap_.end()) {
+        return;
+    }
+    HandleActiveNotification(iter->second);
 }
 
 void BgContinuousTaskMgr::OnPermissionDialogButtonClickInner(int32_t authResult, int32_t bundleUid,
@@ -4395,7 +4422,7 @@ ErrCode BgContinuousTaskMgr::NotifyAudioStart(const int32_t uid)
 void BgContinuousTaskMgr::NotifyAudioStartInner(const int32_t uid)
 {
     auto findTask = [uid](const auto &target) {
-        return uid == target.second->uid_ && !target.second->audioPlayState_ && target.second->notificationId_ > 0;
+        return uid == target.second->uid_ && !target.second->audioPlayState_ && target.second->notificationId_ >= 0;
     };
     auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findTask);
     if (findTaskIter == continuousTaskInfosMap_.end()) {
