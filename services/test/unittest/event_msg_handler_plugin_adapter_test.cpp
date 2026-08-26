@@ -15,7 +15,7 @@
 
 #include <gtest/gtest.h>
 #include "event_msg_handler_plugin_adapter.h"
-#include "audio_renderer_info_plugin_data.h"
+#include "bgtask_data_mgr.h"
 #include "audio_info.h"
 #include "nlohmann/json.hpp"
 
@@ -28,22 +28,22 @@ class EventMsgHandlerPluginAdapterTest : public testing::Test {
 public:
     static void SetUpTestCase()
     {
-        AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
+        BgtaskDataMgr::GetInstance()->ClearAll();
     }
 
     static void TearDownTestCase()
     {
-        AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
+        BgtaskDataMgr::GetInstance()->ClearAll();
     }
 
     void SetUp() override
     {
-        AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
+        BgtaskDataMgr::GetInstance()->ClearAll();
     }
 
     void TearDown() override
     {
-        AudioRendererInfoPluginData::GetInstance()->ClearAudioPlayerInfo();
+        BgtaskDataMgr::GetInstance()->ClearAll();
     }
 };
 
@@ -69,11 +69,11 @@ HWTEST_F(EventMsgHandlerPluginAdapterTest, EventMsgHandlerPluginAdapterTest_002,
 {
     auto adapter = EventMsgHandlerPluginAdapter::GetInstance();
     auto audioInfo = std::make_shared<AudioInfo>(1001, 1);
-    AudioRendererInfoPluginData::GetInstance()->AddAudioPlayerInfo(audioInfo);
+    BgtaskDataMgr::GetInstance()->AddAudioPlayerInfo(audioInfo);
     nlohmann::json payload;
     payload["saId"] = 3009; // AUDIO_POLICY_SERVICE_ID
     adapter->AfterAddSaListener(payload);
-    EXPECT_FALSE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1001));
+    EXPECT_FALSE(BgtaskDataMgr::GetInstance()->CheckAppIsPlaying(1001));
 }
 
 /**
@@ -85,11 +85,30 @@ HWTEST_F(EventMsgHandlerPluginAdapterTest, EventMsgHandlerPluginAdapterTest_003,
 {
     auto adapter = EventMsgHandlerPluginAdapter::GetInstance();
     auto audioInfo = std::make_shared<AudioInfo>(1001, 1);
-    AudioRendererInfoPluginData::GetInstance()->AddAudioPlayerInfo(audioInfo);
+    BgtaskDataMgr::GetInstance()->AddAudioPlayerInfo(audioInfo);
     nlohmann::json payload;
     payload["saId"] = 1001; // Other service
     adapter->AfterAddSaListener(payload);
-    EXPECT_TRUE(AudioRendererInfoPluginData::GetInstance()->CheckAppIsPlaying(1001));
+    EXPECT_TRUE(BgtaskDataMgr::GetInstance()->CheckAppIsPlaying(1001));
+}
+
+/**
+ * @tc.name: HandleMultiDeviceCastEvent_001
+ * @tc.desc: test HandleMultiDeviceCastEvent method with start and stop state.
+ * @tc.type: FUNC
+ */
+HWTEST_F(EventMsgHandlerPluginAdapterTest, HandleMultiDeviceCastEvent_001, TestSize.Level2)
+{
+    auto adapter = EventMsgHandlerPluginAdapter::GetInstance();
+    nlohmann::json payload;
+    payload["uid"] = 1001;
+    payload["said"] = 3009;
+    payload["state"] = 1;
+    adapter->HandleMultiDeviceCastEvent(payload);
+    EXPECT_TRUE(BgtaskDataMgr::GetInstance()->IsMultiDeviceCast(1001));
+    payload["state"] = 2;
+    adapter->HandleMultiDeviceCastEvent(payload);
+    EXPECT_FALSE(BgtaskDataMgr::GetInstance()->IsMultiDeviceCast(1001));
 }
 } // namespace BackgroundTaskMgr
 } // namespace OHOS

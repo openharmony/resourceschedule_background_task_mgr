@@ -295,6 +295,8 @@ private:
     void SendAudioCallBackTaskState(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo);
     bool CheckApplySpecial(const std::string &bundleName, int32_t &userId, bool checkPermission = true);
     ErrCode SendNotificationByDeteTaskInner(const std::set<std::string> &taskKeys);
+    void SendNotificationByDeteTaskDelay(const std::string &taskKey, int32_t uid);
+    std::string GetAudioNotifyTaskName(int32_t uid);
     void ReportXpowerHisysevent(
         const std::string &type, const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord, int32_t ret);
     void ClearBgOsAccountTask(const std::vector<int32_t> &activatedOsAccountIds);
