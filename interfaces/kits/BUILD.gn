@@ -213,6 +213,8 @@ ohos_shared_library("cj_background_task_mgr_ffi") {
     defines += [ "WINDOWS_PLATFORM" ]
   }
 
+  version_script = "cj/background_task_mgr/libcj_background_task_mgr_ffi.map"
+
   innerapi_tags = [ "platformsdk" ]
   subsystem_name = "resourceschedule"
   part_name = "background_task_mgr"
