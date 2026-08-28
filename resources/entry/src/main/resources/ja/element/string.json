@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"オーディオ/ビデオを再生しています。この通知を閉じると、再生が終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,35 +144,35 @@
             "name":"notification_text_bluetooth_interactionn",
             "value":"Bluetooth",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_wifi_interaction",
             "value":"WLAN",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_voip",
             "value":"通話",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_two_mode",
-            "value":"進行中のタスク（%1$s、%2$s）。この通知を閉じると、これらのタスクが終了します。",
+            "value":"タスク（%1$s、%2$s）は進行中です。この通知を閉じると、これらのタスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_task_keeping",
-            "value":"計算中",
+            "value":"計算",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -186,70 +186,70 @@
             "name":"notification_text_location",
             "value":"測位",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_data_transfer",
             "value":"データ転送",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_three_mode",
-            "value":"進行中のタスク（%1$s、%2$s、%3$s）。この通知を閉じると、これらのタスクが終了します。",
+            "value":"タスク（%1$s、%2$s、%3$s）は進行中です。この通知を閉じると、これらのタスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_exceed",
-            "value":"進行中のタスク（%1$s、%2$s、%3$sなど）。この通知を閉じると、これらのタスクが終了します。",
+            "value":"タスク（%1$s、%2$s、%3$sなど）は進行中です。この通知を閉じると、これらのタスクが終了します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_multidevice_connection",
             "value":"デバイス間のコラボレーション",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_starting_task",
             "value":"オーディオ/ビデオを読み込み中です。この通知を閉じると、再生が中断されます。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_audio_playbackr",
             "value":"オーディオ/ビデオ再生",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "NearLinkタスクが進行中です。この通知を閉じると、タスクが終了します。",
-            "attr": {
-                "priority": "translate"
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"NearLinkタスクが進行中です。この通知を閉じると、タスクが終了します。",
+            "attr":{
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_nearlink",
             "value":"NearLink",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
             "value":"%sがバックグラウンドで実行することを許可しますか？",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

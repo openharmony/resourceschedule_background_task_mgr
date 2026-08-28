@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"ئۈن/سىن قويۇلۇۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئەتسىڭىز قويۇش ئۈزۈلۈپ قالىدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,112 +144,112 @@
             "name":"notification_text_bluetooth_interactionn",
             "value":"كۆكچىش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_wifi_interaction",
             "value":"‏WLAN",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_voip",
             "value":"چاقىرىق",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_two_mode",
             "value":"نۆۋەتتە %1$s،‏ %2$s ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز، ۋەزىپە توختاپ قالىدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_task_keeping",
             "value":"ھېسابلاش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_audio_recording",
             "value":"ئۈن/سىن ئېلىش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_location",
             "value":"ئورۇن بەلگىلەش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_data_transfer",
             "value":"مەلۇمات يوللاش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_three_mode",
             "value":"نۆۋەتتە %1$s،‏ %2$s،‏ %3$s ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز، ۋەزىپە توختاپ قالىدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_exceed",
             "value":"نۆۋەتتە %1$s،‏ %2$s،‏ %3$s قاتارلىق ۋەزىپە يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز، ۋەزىپە توختاپ قالىدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_multidevice_connection",
             "value":"تارقاق ھەمكارلىق",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_starting_task",
             "value":"ئۈن/سىن يۈكلىنىۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئەتسىڭىز قويۇش ئۈزۈلۈپ قالىدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_audio_playbackr",
             "value":"ئۈن/سىن قويۇش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "نۆۋەتتە ئۇچقۇن ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
-            "attr": {
-                "priority": "translate"
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"نۆۋەتتە ئۇچقۇن ۋەزىپىسى يۈرۈۋاتىدۇ، بۇ ئۇقتۇرۇشنى ئۆچۈرسىڭىز توختايدۇ.",
+            "attr":{
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_nearlink",
             "value":"ئۇچقۇن",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
             "value":"‏«%s» ئارقا سۇپىدا ئۇزاق مۇددەت يۈرمەكچى.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

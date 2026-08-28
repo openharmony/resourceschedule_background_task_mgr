@@ -37,9 +37,9 @@
         },
         {
             "name":"ohos_bgmode_prompt_audio_playback",
-            "value":"ກຳລັງຫຼິ້ນສຽງ/ວິດີໂອ ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸເການຫຼິ້ນຄືນ.",
+            "value":"ກຳລັງຫຼິ້ນສຽງ/ວິດີໂອ. ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດການຫຼິ້ນຄືນ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,35 +144,35 @@
             "name":"notification_text_bluetooth_interactionn",
             "value":"Bluetooth",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_wifi_interaction",
             "value":"WLAN",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_voip",
-            "value":"ໂທ",
+            "value":"ການໂທ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_two_mode",
             "value":"ໜ້າວຽກພວມດຳເນີນຢູ່ (%1$s, %2$s). ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດພວກມັນ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_task_keeping",
-            "value":"ກຳລັງຄຳນວນ",
+            "value":"ການຄຳນວນ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -186,70 +186,70 @@
             "name":"notification_text_location",
             "value":"ການຊອກຫາຕຳແໜ່ງ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_data_transfer",
             "value":"ການໂອນຂໍ້ມູນ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_three_mode",
             "value":"ໜ້າວຽກພວມດຳເນີນຢູ່ (%1$s, %2$s, %3$s). ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດພວກມັນ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_exceed",
             "value":"ໜ້າວຽກພວມດຳເນີນຢູ່ (%1$s, %2$s, %3$s ແລະ ອື່ນໆ). ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດພວກມັນ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_multidevice_connection",
             "value":"ການເຮັດວຽກຮ່ວມກັນຂ້າມອຸປະກອນ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_starting_task",
             "value":"ກຳລັງໂຫຼດສຽງ/ວິດີໂອ. ການປິດການແຈ້ງເຕືອນນີ້ຈະລົບກວນການຫຼິ້ນຄືນ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_audio_playbackr",
             "value":"ການຫຼິ້ນສຽງ/ວິດີໂອ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ohos_bgmode_prompt_nearlink",
             "value":"ໜ້າວຽກ NearLink ພວມດຳເນີນຢູ່. ການປິດການແຈ້ງເຕືອນນີ້ຈະສິ້ນສຸດມັນ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_nearlink",
             "value":"NearLink",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
-            "value":"ອະນຸຍາດໃຫ້ %s ເປີດໃຊ້ໃນພື້ນຫຼັງບໍ?",
+            "value":"ອະນຸຍາດໃຫ້ %s ເຮັດວຽກໃນພື້ນຫຼັງບໍ?",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

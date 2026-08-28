@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"오디오/비디오를 재생 중입니다. 이 알림을 닫으면 재생이 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,35 +144,35 @@
             "name":"notification_text_bluetooth_interactionn",
             "value":"블루투스",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_wifi_interaction",
             "value":"WLAN",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_voip",
             "value":"통화",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_two_mode",
             "value":"작업(%1$s, %2$s)이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_task_keeping",
             "value":"계산",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -186,70 +186,70 @@
             "name":"notification_text_location",
             "value":"포지셔닝",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_data_transfer",
             "value":"데이터 전송",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_three_mode",
             "value":"작업(%1$s, %2$s, %3$s)이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_exceed",
             "value":"작업(%1$s, %2$s, %3$s 등)이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_multidevice_connection",
             "value":"장치 간 콜라보",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_starting_task",
             "value":"오디오/비디오를 로드 중입니다. 이 알림을 닫으면 재생이 중단됩니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_audio_playbackr",
             "value":"오디오/비디오 재생",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "NearLink 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
-            "attr": {
-                "priority": "translate"
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"NearLink 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
+            "attr":{
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_nearlink",
             "value":"NearLink",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
             "value":"%s 앱의 백그라운드 실행을 허용하시겠습니까?",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

@@ -11,7 +11,7 @@
             "name":"ohos_bgmode_prompt_audio_playback",
             "value":"အော်ဒီယို/ဗီဒီယို ဖွင့်နေသည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ပြန်ဖွင့်မှုကို အဆုံးသတ်ပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,35 +144,35 @@
             "name":"notification_text_bluetooth_interactionn",
             "value":"ဘလူးတုသ်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_wifi_interaction",
             "value":"WLAN",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_voip",
             "value":"ခေါ်ဆိုမှု",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_two_mode",
             "value":"လုပ်ဆောင်နေဆဲ အလုပ်များ (%1$s၊ %2$s)။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ထိုအလုပ်များ အဆုံးသတ်သွားပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_task_keeping",
             "value":"တွက်ချက်မှု",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -186,70 +186,70 @@
             "name":"notification_text_location",
             "value":"တည်နေရာ ရှာဖွေသတ်မှတ်မှု",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_data_transfer",
             "value":"ဒေတာ လွှဲပြောင်းမှု",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_three_mode",
             "value":"လုပ်ဆောင်နေဆဲ အလုပ်များ (%1$s၊ %2$s၊ %3$s)။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ထိုအလုပ်များ အဆုံးသတ်သွားပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_running_task_exceed",
             "value":"လုပ်ဆောင်နေဆဲ အလုပ်များ (%1$s၊ %2$s၊ %3$sနှင့် နောက်ထပ်အရာများစွာ)။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ထိုအလုပ်များ အဆုံးသတ်သွားပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_multidevice_connection",
             "value":"စက်များအကြား ပူးတွဲဆောင်ရွက်မှု",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_starting_task",
             "value":"အော်ဒီယို/ဗီဒီယိုကို လုပ်ဆောင်နေသည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ပြန်ဖွင့်မှုကို ကြားဖြတ်ရပ်တန့်ပါမည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_audio_playbackr",
             "value":"အော်ဒီယို/ဗီဒီယို ပြန်ဖွင့်မှု",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
-            "name": "ohos_bgmode_prompt_nearlink",
-            "value": "NearLink အလုပ်တစ်ခုကို လုပ်ဆောင်နေဆဲဖြစ်သည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ယင်းအလုပ် အဆုံးသတ်သွားပါမည်။",
-            "attr": {
-                "priority": "translate"
+            "name":"ohos_bgmode_prompt_nearlink",
+            "value":"NearLink အလုပ်တစ်ခုကို လုပ်ဆောင်နေဆဲဖြစ်သည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ယင်းအလုပ် အဆုံးသတ်သွားပါမည်။",
+            "attr":{
+                "priority":"LT"
             }
         },
         {
             "name":"notification_text_nearlink",
             "value":"NearLink",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"text_banner_notification_allow_background_keepalive",
             "value":"%s ကို နောက်ခံတွင် လုပ်ဆောင်ခွင့်ပြုမည်လား။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
