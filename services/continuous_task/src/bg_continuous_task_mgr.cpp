@@ -719,9 +719,12 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
         if (configuredBgMode == INVALID_BGMODE) {
             BGTASK_LOGE("ability without background mode config");
             return ERR_BGMODE_NULL_OR_TYPE_ERR;
-        } else {
-            return ERR_OK;
         }
+        if (requestedBgModeId != INVALID_BGMODE) {
+            BGTASK_LOGE("invalid requestedBgModeId:%{public}u", requestedBgModeId);
+            return ERR_BGMODE_NULL_OR_TYPE_ERR;
+        }
+        return ERR_OK;
     } else {
         uint32_t recordedBgMode = BG_MODE_INDEX_HEAD << (requestedBgModeId - 1);
         if (recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION && !continuousTaskRecord->IsSystem()) {

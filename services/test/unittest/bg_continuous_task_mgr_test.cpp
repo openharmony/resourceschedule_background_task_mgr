@@ -348,6 +348,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_001, TestSize.Level1)
 {
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
+    taskParam->isNewApi_ = true;
     taskParam->appName_ = "Entry";
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     taskParam->abilityName_ = "ability1";
@@ -373,6 +374,7 @@ HWTEST_F(BgContinuousTaskMgrTest, StopBackgroundRunning_002, TestSize.Level1)
 {
     sptr<ContinuousTaskParam> taskParam = new (std::nothrow) ContinuousTaskParam();
     EXPECT_NE(taskParam, nullptr);
+    taskParam->isNewApi_ = true;
     taskParam->appName_ = "Entry";
     taskParam->wantAgent_ = std::make_shared<AbilityRuntime::WantAgent::WantAgent>();
     taskParam->abilityName_ = "ability1";
@@ -447,8 +449,9 @@ HWTEST_F(BgContinuousTaskMgrTest, BgTaskManagerUnitTest_003, TestSize.Level1)
     continuousTaskRecord->bundleName_ = "bundleName";
     continuousTaskRecord->isNewApi_ = false;
     continuousTaskRecord->isSystem_ = true;
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(0, 1, false, continuousTaskRecord), ERR_BGMODE_NULL_OR_TYPE_ERR);
-    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(1, 1, false, continuousTaskRecord), ERR_OK);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(0, 0, false, continuousTaskRecord), ERR_BGMODE_NULL_OR_TYPE_ERR);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(1, 1, false, continuousTaskRecord), ERR_BGMODE_NULL_OR_TYPE_ERR);
+    EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(1, 0, false, continuousTaskRecord), ERR_OK);
     continuousTaskRecord->isSystem_ = false;
     EXPECT_EQ(bgContinuousTaskMgr_->CheckBgmodeType(BGMODE_WIFI_INTERACTION, BGMODE_WIFI_INTERACTION_ID,
         true, continuousTaskRecord), ERR_BGTASK_NOT_SYSTEM_APP);
