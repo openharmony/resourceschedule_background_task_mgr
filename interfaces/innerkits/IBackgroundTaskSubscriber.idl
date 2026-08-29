@@ -29,10 +29,10 @@ interface OHOS.BackgroundTaskMgr.IBackgroundTaskSubscriber {
     [oneway] void OnContinuousTaskSuspend([in] ContinuousTaskCallbackInfo continuousTaskCallbackInfo);
     [oneway] void OnContinuousTaskActive([in] ContinuousTaskCallbackInfo continuousTaskCallbackInfo);
     [oneway] void OnAppContinuousTaskStop([in] int uid);
-    void OnAppEfficiencyResourcesApply([in] ResourceCallbackInfo resourceInfo);
-    void OnAppEfficiencyResourcesReset([in] ResourceCallbackInfo resourceInfo);
-    void OnProcEfficiencyResourcesApply([in] ResourceCallbackInfo resourceInfo);
-    void OnProcEfficiencyResourcesReset([in] ResourceCallbackInfo resourceInfo);
+    [oneway] void OnAppEfficiencyResourcesApply([in] ResourceCallbackInfo resourceInfo);
+    [oneway] void OnAppEfficiencyResourcesReset([in] ResourceCallbackInfo resourceInfo);
+    [oneway] void OnProcEfficiencyResourcesApply([in] ResourceCallbackInfo resourceInfo);
+    [oneway] void OnProcEfficiencyResourcesReset([in] ResourceCallbackInfo resourceInfo);
     [oneway] void OnTransientTaskErr([in] TransientTaskAppInfo info);
     void GetFlag([out] int flag);
 }
