@@ -163,7 +163,7 @@
         },
         {
             "name":"notification_text_running_task_two_mode",
-            "value":"Tâches en cours (%1$s, %2$s). La fermeture de cette notification y mettra fin.",
+            "value":"Tâches en cours (%1$s, %2$s). La fermeture de cette notification met fin à ces tâches.",
             "attr":{
                 "priority":"translate"
             }
@@ -205,7 +205,7 @@
         },
         {
             "name":"notification_text_running_task_exceed",
-            "value":"Tâches en cours (%1$s, %2$s, %3$s et plus). La fermeture de cette notification y mettra fin.",
+            "value":"Tâches en cours (%1$s, %2$s, %3$s et plus). La fermeture de cette notification met fin à ces tâches.",
             "attr":{
                 "priority":"translate"
             }
