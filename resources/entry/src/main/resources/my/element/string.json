@@ -214,7 +214,7 @@
             "name":"notification_text_multidevice_connection",
             "value":"စက်များအကြား ပူးတွဲဆောင်ရွက်မှု",
             "attr":{
-                "priority":"LT"
+                "priority":"translate"
             }
         },
         {
