@@ -30,12 +30,12 @@ public:
     void OnProcessCreated(const AppExecFwk::ProcessData &processData);
     void OnProcessDied(const AppExecFwk::ProcessData &processData);
     void OnAppStopped(const AppExecFwk::AppStateData &appStateData);
-    void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler);
     void OnAppStateChanged(const AppExecFwk::AppStateData &appStateData);
 
 private:
     bool ValidateAppStateData(const AppExecFwk::AppStateData &appStateData);
     void OnProcessDiedEfficiencyRes(const AppExecFwk::ProcessData &processData);
+    bool EnsureEventHandler();
 
 private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_ {};

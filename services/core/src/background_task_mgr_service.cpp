@@ -63,7 +63,7 @@ void BackgroundTaskMgrService::OnStart()
 {
     BgTaskHiTraceChain traceChain(__func__);
     BGTASK_LOGI("BackgroundTaskMgrService service onStart.");
-    if (state_ == ServiceRunningState::STATE_RUNNING) {
+    if (state_.load() == ServiceRunningState::STATE_RUNNING) {
         BGTASK_LOGW("Service has already started.");
         return;
     }
@@ -100,7 +100,6 @@ void BackgroundTaskMgrService::SetReady(uint32_t flag)
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
-    BgtaskPluginMgr::GetInstance().Init();
     BGTASK_LOGI("background task manager service start succeed!");
 }
 

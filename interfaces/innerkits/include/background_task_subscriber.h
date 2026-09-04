@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -163,6 +163,9 @@ public:
      * @param flag subscriber flag.
      */
     virtual void GetFlag(int32_t &flag);
+    void SetFlag(uint32_t flag, bool isSubscriber);
+    void InitCurrentCallBackType();
+    uint32_t GetCurrentCallBackType() const;
 
 private:
     class BackgroundTaskSubscriberImpl final : public BackgroundTaskSubscriberStub {
@@ -305,7 +308,8 @@ private:
 
     friend class BackgroundTaskManager;
 
-public:
+private:
+    mutable std::mutex flagLock_;
     uint32_t allCallBackTypes_ = 0; // 所有已注册的回调类型
     uint32_t currentCallBackType_ = 0; // 当前的回调类型
 };
