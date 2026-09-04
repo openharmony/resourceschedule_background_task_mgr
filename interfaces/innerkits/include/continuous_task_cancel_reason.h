@@ -37,6 +37,7 @@ public:
         SYSTEM_CANCEL_DATA_TRANSFER_NOT_UPDATE = 12,
         SYSTEM_CANCEL_VOIP_NOT_RUNNING = 13,
         SYSTEM_CANCEL_USER_UNAUTHORIZED = 14,
+        SYSTEM_CANCEL_NOT_USE_NEARLINK = 15,
     };
 };
 }  // namespace BackgroundTaskMgr

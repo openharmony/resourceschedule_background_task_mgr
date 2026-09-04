@@ -218,6 +218,8 @@ napi_value ContinuousTaskDetailedCancelReasonInit(napi_env env, napi_value expor
         ContinuousTaskCancelReason::SYSTEM_CANCEL_VOIP_NOT_RUNNING), "SYSTEM_CANCEL_VOIP_NOT_RUNNING");
     SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
         ContinuousTaskCancelReason::SYSTEM_CANCEL_USER_UNAUTHORIZED), "SYSTEM_CANCEL_USER_UNAUTHORIZED");
+    SetNamedPropertyByInteger(env, obj, static_cast<uint32_t>(
+        ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_NEARLINK), "SYSTEM_CANCEL_NOT_USE_NEARLINK");
     napi_property_descriptor exportFuncs[] = {
         DECLARE_NAPI_PROPERTY("ContinuousTaskDetailedCancelReason", obj),
     };

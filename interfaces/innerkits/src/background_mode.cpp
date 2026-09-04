@@ -46,6 +46,7 @@ const std::unordered_map<uint32_t, uint32_t> BACKGROUND_MODE_TO_CANCEL_REASON_MA
     {BackgroundMode::MULTI_DEVICE_CONNECTION, ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_MULTI_DEVICE},
     {BackgroundMode::VOIP, ContinuousTaskCancelReason::SYSTEM_CANCEL_VOIP_NOT_RUNNING},
     {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, ContinuousTaskCancelReason::SYSTEM_CANCEL_USER_UNAUTHORIZED},
+    {BackgroundMode::NEARLINK, ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_NEARLINK},
     {BackgroundMode::END, ContinuousTaskCancelReason::INVALID_REASON}
 };
 
