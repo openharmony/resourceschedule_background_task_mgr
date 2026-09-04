@@ -49,10 +49,10 @@ private:
  
     void InitCbMap(CallBackMap &cbMap) override;
     void InitAbilityCbMap(CallBackMap &cbMap);
+    bool EnsureDecisionMaker();
  
     std::shared_ptr<BackgroundTaskMgr::AppStateObserver> appStateObserver_ = nullptr;
     std::shared_ptr<BackgroundTaskMgr::DecisionMaker> decisionMaker_ = nullptr;
-    std::shared_ptr<AppExecFwk::EventHandler> handler_ {nullptr};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

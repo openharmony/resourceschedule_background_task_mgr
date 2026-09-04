@@ -284,7 +284,11 @@ void BgContinuousTaskMgr::InitNecessaryState()
         || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(RES_SCHED_SYS_ABILITY_ID) == nullptr) {
         BGTASK_LOGW("request system service is not ready yet!");
-        auto task = [this]() { this->InitNecessaryState(); };
+        auto task = [weak = weak_from_this()]() {
+            if (auto self = weak.lock()) {
+                self->InitNecessaryState();
+            }
+        };
         handler_->PostTask(task, DELAY_TIME);
         return;
     }
@@ -3485,6 +3489,18 @@ ErrCode BgContinuousTaskMgr::CheckTaskkeepingPermission(const sptr<ContinuousTas
     return ERR_OK;
 }
 
+void BgContinuousTaskMgr::PostRemoveTaskByMode(uint32_t mode)
+{
+    BGTASK_LOGI("system ability die, remove taskmode:%{public}u", mode);
+    auto task = [weak = weak_from_this(), mode]() {
+        auto self = weak.lock();
+        if (self) {
+            self->HandleRemoveTaskByMode(mode);
+        }
+    };
+    handler_->PostTask(task);
+}
+
 void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
     if (!isSysReady_.load()) {
@@ -3493,32 +3509,16 @@ void BgContinuousTaskMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const s
     }
     switch (systemAbilityId) {
         case SA_ID_VOIP_CALL_MANAGER:
-            {
-                BGTASK_LOGI("remove voip system ability, systemAbilityId: %{public}d", systemAbilityId);
-                auto task = [this]() { this->HandleRemoveTaskByMode(BackgroundMode::VOIP); };
-                handler_->PostTask(task);
-            }
+            PostRemoveTaskByMode(BackgroundMode::VOIP);
             break;
         case SA_ID_HEALTH_SPORT:
-            {
-                BGTASK_LOGI("remove healthsport system ability, systemAbilityId: %{public}d", systemAbilityId);
-                auto task = [this]() { this->HandleRemoveTaskByMode(BackgroundMode::WORKOUT); };
-                handler_->PostTask(task);
-            }
+            PostRemoveTaskByMode(BackgroundMode::WORKOUT);
             break;
         case SA_ID_AAM_CONN:
-            {
-                BGTASK_LOGI("remove aam connection system ability, systemAbilityId: %{public}d", systemAbilityId);
-                auto task = [this]() { this->HandleRemoveTaskByMode(BackgroundMode::AUDIO_PLAYBACK); };
-                handler_->PostTask(task);
-            }
+            PostRemoveTaskByMode(BackgroundMode::AUDIO_PLAYBACK);
             break;
         case SA_ID_GAME_SERVICE:
-            {
-                BGTASK_LOGI("remove game service system ability, systemAbilityId: %{public}d", systemAbilityId);
-                auto task = [this]() { this->HandleRemoveTaskByMode(BackgroundMode::NEARBY_DATA_TRANSFER); };
-                handler_->PostTask(task);
-            }
+            PostRemoveTaskByMode(BackgroundMode::NEARBY_DATA_TRANSFER);
             break;
         default:
             break;

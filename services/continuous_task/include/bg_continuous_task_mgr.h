@@ -151,7 +151,6 @@ public:
     void SuspendContinuousAudioTask(int32_t uid);
     void ActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key, bool isStandby = false);
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
-    void HandleRemoveTaskByMode(uint32_t mode);
     void OnBannerNotificationActionButtonClick(const int32_t buttonType, const int32_t uid,
         const std::string &label);
     void HandleAuthExpiredCallbackDeath(const wptr<IRemoteObject> &remote);
@@ -170,6 +169,8 @@ public:
     ErrCode NotifyAudioStart(const int32_t uid);
     std::shared_ptr<AppExecFwk::EventHandler> GetHandler() const;
 private:
+    void HandleRemoveTaskByMode(uint32_t mode);
+    void PostRemoveTaskByMode(uint32_t mode);
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
         const sptr<ContinuousTaskParam> &taskParam);

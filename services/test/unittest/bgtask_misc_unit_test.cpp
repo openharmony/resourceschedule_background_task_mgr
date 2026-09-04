@@ -140,9 +140,6 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_002, TestSize.Level2)
 {
     AppStateObserver appStateObserver;
  
-    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
-    appStateObserver.SetEventHandler(handler);
- 
     AppExecFwk::AppStateData appStateData;
     appStateData.uid = 1;
     appStateData.pid = 1;
@@ -166,9 +163,6 @@ HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_002, TestSize.Level2)
 HWTEST_F(BgTaskMiscUnitTest, AppStateObserverTest_003, TestSize.Level2)
 {
     AppStateObserver appStateObserver;
-    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(nullptr);
-    appStateObserver.SetEventHandler(handler);
- 
     AppExecFwk::AppStateData appStateData;
     appStateData.pid = 1;
     appStateData.uid = 1;

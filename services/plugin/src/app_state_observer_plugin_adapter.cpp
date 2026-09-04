@@ -95,7 +95,7 @@ void AppStateObserverPluginAdapter::OnProcessDied(const nlohmann::json& payload)
     }
     BGTASK_LOGD("OnProcessDied, bundleName: %{public}s, uid: %{public}d, pid: %{public}d",
         processData.bundleName.c_str(), processData.uid, processData.pid);
-    if (decisionMaker_ != nullptr) {
+    if (EnsureDecisionMaker()) {
         decisionMaker_->OnProcessDied(processData);
     }
     if (appStateObserver_ != nullptr) {
@@ -111,11 +111,9 @@ void AppStateObserverPluginAdapter::OnProcessStateChanged(const nlohmann::json& 
     }
     BGTASK_LOGD("OnProcessStateChanged, bundleName: %{public}s, uid: %{public}d, pid: %{public}d",
         processData.bundleName.c_str(), processData.uid, processData.pid);
-    if (decisionMaker_ == nullptr) {
-        BGTASK_LOGI("decisionMaker_ is nullptr");
-        return;
+    if (EnsureDecisionMaker()) {
+        decisionMaker_->OnProcessStateChanged(processData);
     }
-    decisionMaker_->OnProcessStateChanged(processData);
 }
 
 bool AppStateObserverPluginAdapter::UnmarshallingAppStateData(const nlohmann::json& payload,
@@ -264,18 +262,24 @@ void AppStateObserverPluginAdapter::InitAbilityCbMap(CallBackMap &cbMap)
 void AppStateObserverPluginAdapter::Init()
 {
     appStateObserver_ = std::make_shared<BackgroundTaskMgr::AppStateObserver>();
-    decisionMaker_ = DelayedSingleton<BackgroundTaskMgr::BgTransientTaskMgr>::GetInstance()->GetDecisionMaker();
-    if (!appStateObserver_ || !decisionMaker_) {
-        BGTASK_LOGE("appStateObserver_ or decisionMaker_ is null");
+    if (!appStateObserver_) {
+        BGTASK_LOGE("appStateObserver_ is null");
         return;
     }
-    auto handler = DelayedSingleton<BackgroundTaskMgr::BgContinuousTaskMgr>::GetInstance()->GetHandler();
-    if (handler == nullptr) {
-        BGTASK_LOGE("GetHandler failed, handler is null");
-        return;
-    }
-    appStateObserver_->SetEventHandler(handler);
     BGTASK_LOGI("AppStateObserverPluginAdapter init succeed");
+}
+
+bool AppStateObserverPluginAdapter::EnsureDecisionMaker()
+{
+    if (decisionMaker_) {
+        return true;
+    }
+    decisionMaker_ = DelayedSingleton<BackgroundTaskMgr::BgTransientTaskMgr>::GetInstance()->GetDecisionMaker();
+    if (decisionMaker_ == nullptr) {
+        BGTASK_LOGE("decisionMaker_ is null");
+        return false;
+    }
+    return true;
 }
 
 void AppStateObserverPluginAdapter::Uninit()

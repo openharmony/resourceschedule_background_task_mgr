@@ -55,7 +55,7 @@ void AniBackgroundTaskSubscriber::JsBackgroudTaskSystemAbilityStatusChange::OnAd
     if (!subscriber->needRestoreSubscribeStatus_) {
         return;
     }
-    subscriber->currentCallBackType_ = subscriber->allCallBackTypes_;
+    subscriber->InitCurrentCallBackType();
     ErrCode errCode = BackgroundTaskMgrHelper::SubscribeBackgroundTask(*subscriber);
     if (errCode) {
         BGTASK_LOGE("restore SubscribeBackgroundTask error");
@@ -547,21 +547,5 @@ void AniBackgroundTaskSubscriber::RemoveJsObserverObjects(const std::string& cbT
     }
 }
 
-void AniBackgroundTaskSubscriber::SetFlag(uint32_t flag, bool isSubscriber)
-{
-    std::lock_guard<std::mutex> lock(flagLock_);
-    currentCallBackType_ = flag;
-    if (isSubscriber) {
-        allCallBackTypes_ |= flag;
-    } else {
-        allCallBackTypes_ &= ~flag;
-    }
-}
-
-void AniBackgroundTaskSubscriber::GetFlag(int32_t &flag)
-{
-    std::lock_guard<std::mutex> lock(flagLock_);
-    flag = static_cast<int32_t>(allCallBackTypes_);
-}
 } // BackgroundTaskMgr
 } // OHOS

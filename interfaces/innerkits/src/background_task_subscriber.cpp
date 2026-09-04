@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,7 @@
  */
 
 #include "background_task_subscriber.h"
+#include <mutex>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -69,7 +70,34 @@ void BackgroundTaskSubscriber::OnAppEfficiencyResourcesApply(
 void BackgroundTaskSubscriber::OnAppEfficiencyResourcesReset(
     const std::shared_ptr<ResourceCallbackInfo> &resourceInfo) {}
 
-void BackgroundTaskSubscriber::GetFlag(int32_t &flag) {}
+void BackgroundTaskSubscriber::SetFlag(uint32_t flag, bool isSubscriber)
+{
+    std::lock_guard<std::mutex> lock(flagLock_);
+    currentCallBackType_ = flag;
+    if (isSubscriber) {
+        allCallBackTypes_ |= flag;
+    } else {
+        allCallBackTypes_ &= ~flag;
+    }
+}
+
+void BackgroundTaskSubscriber::GetFlag(int32_t &flag)
+{
+    std::lock_guard<std::mutex> lock(flagLock_);
+    flag = static_cast<int32_t>(allCallBackTypes_);
+}
+
+void BackgroundTaskSubscriber::InitCurrentCallBackType()
+{
+    std::lock_guard<std::mutex> lock(flagLock_);
+    currentCallBackType_ = allCallBackTypes_;
+}
+
+uint32_t BackgroundTaskSubscriber::GetCurrentCallBackType() const
+{
+    std::lock_guard<std::mutex> lock(flagLock_);
+    return currentCallBackType_;
+}
 
 const sptr<BackgroundTaskSubscriber::BackgroundTaskSubscriberImpl> BackgroundTaskSubscriber::GetImpl() const
 {

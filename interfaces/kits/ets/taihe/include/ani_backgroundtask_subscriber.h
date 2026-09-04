@@ -65,8 +65,6 @@ public:
     bool IsEmpty();
     void SubscriberBgtaskSaStatusChange();
     void UnSubscriberBgtaskSaStatusChange();
-    void SetFlag(uint32_t flag, bool isSubscriber);
-    void GetFlag(int32_t &flag) override;
  
 private:
     class JsBackgroudTaskSystemAbilityStatusChange : public SystemAbilityStatusChangeStub {
@@ -87,7 +85,6 @@ private:
         const ContinuousTaskSuspendInfo&)>>>> suspendCallbacks_;
     sptr<JsBackgroudTaskSystemAbilityStatusChange> jsSaListner_ = nullptr;
     std::atomic<bool> needRestoreSubscribeStatus_ = false;
-    std::mutex flagLock_;
 }; // AniBackgroundTaskSubscriber
 } // BackgroundTaskMgr
 } // OHOS

@@ -16,6 +16,7 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CORE_INCLUDE_BACKGROUND_TASK_MGR_SERVICE_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CORE_INCLUDE_BACKGROUND_TASK_MGR_SERVICE_H
 
+#include <atomic>
 #include <ctime>
 #include <list>
 #include <memory>
@@ -133,7 +134,7 @@ private:
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
 
 private:
-    ServiceRunningState state_ {ServiceRunningState::STATE_NOT_START};
+    std::atomic<ServiceRunningState> state_ {ServiceRunningState::STATE_NOT_START};
     std::shared_ptr<AppExecFwk::EventRunner> runner_ {nullptr};
     std::mutex readyMutex_;
     uint32_t dependsReady_ {0};

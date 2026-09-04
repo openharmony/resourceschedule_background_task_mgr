@@ -45,17 +45,15 @@ void AppStateObserver::OnAppStateChanged(const AppExecFwk::AppStateData &appStat
         appStateData.state != static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_FOREGROUND)) {
         return;
     }
-    if (!handler_) {
-        BGTASK_LOGE("handler_ null");
-        return;
-    }
     int32_t uid = appStateData.uid;
     int32_t state = appStateData.state;
     int32_t preloadMode = appStateData.preloadMode;
     auto task = [uid, state, preloadMode]() {
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAppStateChanged(uid, state, preloadMode);
     };
-    handler_->PostTask(task, TASK_ON_APP_STATE_CHANGED);
+    if (EnsureEventHandler()) {
+        handler_->PostTask(task, TASK_ON_APP_STATE_CHANGED);
+    }
 }
 
 void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData &abilityStateData)
@@ -74,21 +72,15 @@ void AppStateObserver::OnAbilityStateChanged(const AppExecFwk::AbilityStateData 
     auto task = [uid, abilityName, abilityId]() {
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAbilityStateChanged(uid, abilityName, abilityId);
     };
-    if (!handler_) {
-        BGTASK_LOGE("handler_ null");
-        return;
+    if (EnsureEventHandler()) {
+        handler_->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
     }
-    handler_->PostTask(task, TASK_ON_ABILITY_STATE_CHANGED);
 }
 
 void AppStateObserver::OnAppCacheStateChanged(const AppExecFwk::AppStateData &appStateData)
 {
     BgTaskHiTraceChain traceChain(__func__);
     if (appStateData.state != static_cast<int32_t>(AppExecFwk::ApplicationState::APP_STATE_CACHED)) {
-        return;
-    }
-    if (!handler_) {
-        BGTASK_LOGE("handler_ null");
         return;
     }
     BGTASK_LOGI("app cache, name : %{public}s,  uid : %{public}d, pid : %{public}d, state : %{public}d,",
@@ -99,7 +91,9 @@ void AppStateObserver::OnAppCacheStateChanged(const AppExecFwk::AppStateData &ap
     auto task = [uid, pid, bundleName]() {
         DelayedSingleton<BgTransientTaskMgr>::GetInstance()->OnAppCacheStateChanged(uid, pid, bundleName);
     };
-    handler_->PostTask(task, TASK_ON_APP_CACHE_STATE_CHANGED);
+    if (EnsureEventHandler()) {
+        handler_->PostTask(task, TASK_ON_APP_CACHE_STATE_CHANGED);
+    }
 }
 
 void AppStateObserver::OnProcessCreated(const AppExecFwk::ProcessData &processData)
@@ -146,9 +140,7 @@ void AppStateObserver::OnAppStopped(const AppExecFwk::AppStateData &appStateData
     auto task = [uid]() {
         DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->OnAppStopped(uid);
     };
-    if (!handler_) {
-        BGTASK_LOGE("handler_ null.");
-    } else {
+    if (EnsureEventHandler()) {
         handler_->PostTask(task, TASK_ON_APP_DIED);
     }
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->RemoveAppRecord(uid, bundleName, false);
@@ -159,9 +151,17 @@ bool AppStateObserver::ValidateAppStateData(const AppExecFwk::AppStateData &appS
     return appStateData.uid > 0 && appStateData.bundleName.size() > 0;
 }
 
-void AppStateObserver::SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler)
+bool AppStateObserver::EnsureEventHandler()
 {
-    handler_ = handler;
+    if (handler_) {
+        return true;
+    }
+    handler_ = DelayedSingleton<BgContinuousTaskMgr>::GetInstance()->GetHandler();
+    if (handler_ == nullptr) {
+        BGTASK_LOGE("handler_ is null");
+        return false;
+    }
+    return true;
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
