@@ -1,7 +1,7 @@
 # 短时任务规格
 
-> 文档版本：v1.0
-> 更新时间：2026-08-19
+> 文档版本：v1.1
+> 更新时间：2026-09-05
 
 短时任务的定义、核心概念（延迟挂起、配额、超时、requestId）、功能边界及与长时任务的区分详见 [docs/knowledge/glossary.md](../knowledge/glossary.md) 和 [docs/knowledge/business_context.md](../knowledge/business_context.md)。
 
@@ -75,6 +75,8 @@
 短时任务状态全部维护在内存中，不落盘持久化。服务重启后短时任务状态丢失，应用必须重新申请延迟挂起；模块不保证跨重启的状态延续。
 
 超时处理采用定时器加看门狗两级机制：定时器到期后先触发过期回调，随后启动看门狗宽限期（`WATCHDOG_DELAY_TIME`），宽限期内仍未取消则强制取消，避免应用长期占用后台配额。提前回调机制在到期前一定时间提前通知应用，便于应用主动收尾。
+
+守卫线程作为超时处理的第三级兜底机制：`TransientTaskGuard` 通过 `ffrt::submit` 创建 ffrt 守卫线程，每 60 分钟（`GUARD_INTERVAL_MS`）调用 `CheckAndCancelOvertimeTasks` 扫描全部活跃短时任务，对剩余时间（`GetRemainingDelayTime`）小于等于零的任务执行 `ForceCancelSuspendDelay` 主动停止。该机制防止因系统事件循环阻塞或异常导致定时器与看门狗失效时短时任务超时运行不被清理。
 
 模块通过 `isReady` 原子状态门控所有入口：服务未就绪时必须拒绝请求并返回系统未就绪错误码。依赖的服务（应用管理、公共事件、包管理、资源调度）未就绪时按固定间隔轮询重试，不阻塞初始化。
 

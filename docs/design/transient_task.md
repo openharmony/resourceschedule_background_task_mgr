@@ -1,7 +1,7 @@
 # 短时任务代码设计
 
-> 文档版本：v1.0
-> 更新时间：2026-08-19
+> 文档版本：v1.1
+> 更新时间：2026-09-05
 
 ## 上下文与场景
 
@@ -145,6 +145,7 @@ TTM -> App : 通知任务结束
 | `InputManager`　　　　| 输入事件管理，监听屏幕亮灭/电源连接 |
 | `KeyInfo`　　　　　　 | 任务键信息　　　　　　　　　　　　　|
 | `PkgDelaySuspendInfo` | 包延迟挂起信息　　　　　　　　　　　|
+| `TransientTaskGuard`  | 守卫线程，每 60 分钟检查并主动停止超时任务 |
 
 ### 事件类型
 
@@ -195,11 +196,17 @@ class PkgDelaySuspendInfo {
   +UpdateQuota()
 }
 
+class TransientTaskGuard {
+  +Start()
+  +Stop()
+}
+
 BgTransientTaskMgr --> DecisionMaker : 委托决策
 BgTransientTaskMgr --> TimerManager : 管理定时器
 BgTransientTaskMgr --> Watchdog : 监控执行
 BgTransientTaskMgr --> DeviceInfoManager : 查询设备状态
 BgTransientTaskMgr --> PkgDelaySuspendInfo : 管理配额
+BgTransientTaskMgr --> TransientTaskGuard : 守卫线程
 DeviceInfoManager --> InputManager : 获取输入事件
 @enduml
 ```
@@ -218,6 +225,8 @@ DeviceInfoManager --> InputManager : 获取输入事件
 | `quota_` | `PkgDelaySuspendInfo` | `int32_t` | 剩余配额（毫秒），按包名维度统计的可用短时任务时长，每次申请与超时均会扣减 |
 | `spendTime_` | `PkgDelaySuspendInfo` | `int32_t` | 已消耗时长（毫秒），记录该包已使用的短时任务总时长，用于配额上限判定 |
 | `isCounting_` | `PkgDelaySuspendInfo` | `bool` | 是否正在计时，标记当前包是否已有活跃短时任务正在倒计时，避免重复启动定时器 |
+| `GUARD_INTERVAL_MS` | `transient_task_guard.cpp` | `常量` | 守卫线程检查间隔，默认 60 分钟（3600000 毫秒），守卫线程周期性扫描超时任务 |
+| `running_` | `TransientTaskGuard` | `atomic<bool>` | 守卫线程运行标志，`Start` 时置 `true`，`Stop` 时置 `false` 并唤醒线程退出 |
 
 ### API 版本间差异表现
 
@@ -264,6 +273,7 @@ API20 之前应用只能通过 `requestSuspendDelay` 返回的 `DelaySuspendInfo
 - 错误码：`bgtaskmgr_inner_errors.h` 定义 `9900001`~`9900004` 段，`bgtaskmgr_inner_errors.cpp` 维护码到消息映射
 - 内存态：`BgTransientTaskMgr::keyInfoMap_`、`DecisionMaker::pkgDelaySuspendInfoMap_` 纯内存，无 `DataStorageHelper` 落盘接口
 - 超时+看门狗：`TimerManager`（继承 `EventHandler`）投递定时器；`Watchdog` 宽限 `WATCHDOG_DELAY_TIME` 后 `ForceCancelSuspendDelay`
+- 守卫线程：`TransientTaskGuard` 通过 `ffrt::submit` 创建 ffrt 守卫线程，每 60 分钟（`GUARD_INTERVAL_MS`）调用 `BgTransientTaskMgr::CheckAndCancelOvertimeTasks` 扫描全部活跃任务，对 `GetRemainingDelayTime <= 0` 的任务执行 `ForceCancelSuspendDelay`，作为定时器与看门狗的兜底机制；`CheckAndCancelOvertimeTasks` 先快照 `keyInfoMap_` 后逐项检查，避免持锁调用 `ForceCancelSuspendDelay`
 - 就绪门控：`std::atomic<bool> isReady_`，`InitNecessaryState` 轮询依赖服务（`SERVICE_WAIT_TIME` 间隔）
 - 死亡恢复：`ExpiredCallbackDeathRecipient`/`SubscriberDeathRecipient`/`HandleSuspendManagerDie`
 

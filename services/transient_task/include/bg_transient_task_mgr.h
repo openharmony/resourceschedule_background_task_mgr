@@ -39,6 +39,7 @@
 #include "ibackground_task_subscriber.h"
 #include "timer_manager.h"
 #include "transient_task_app_info.h"
+#include "transient_task_guard.h"
 #include "watchdog.h"
 
 namespace OHOS {
@@ -82,6 +83,7 @@ public:
     void OnAppCacheStateChanged(int32_t uid, int32_t pid, const std::string &bundleName);
     std::set<int32_t>& GetTransientPauseUid();
     std::shared_ptr<DecisionMaker> GetDecisionMaker();
+    void CheckAndCancelOvertimeTasks();
 
 private:
     ErrCode IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
@@ -116,6 +118,7 @@ private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
     std::mutex transientUidLock_;
     std::set<int32_t> transientPauseUid_ {};
+    std::unique_ptr<TransientTaskGuard> taskGuard_ {nullptr};
 };
 
 class SubscriberDeathRecipient final : public IRemoteObject::DeathRecipient {

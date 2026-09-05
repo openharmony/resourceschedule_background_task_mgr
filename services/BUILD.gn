@@ -61,6 +61,7 @@ BgTaskMgrServicecSrc = [
   "transient_task/src/pkg_delay_suspend_info.cpp",
   "transient_task/src/suspend_controller.cpp",
   "transient_task/src/timer_manager.cpp",
+  "transient_task/src/transient_task_guard.cpp",
   "transient_task/src/watchdog.cpp",
   "plugin/src/app_state_observer_plugin_adapter.cpp",
   "plugin/src/audio_stream_plugin_adapter.cpp",

@@ -17,8 +17,10 @@
 #include <gtest/gtest.h>
 #include <ctime>
 
+#include "background_task_mgr_service.h"
 #include "bg_transient_task_mgr.h"
 #include "background_task_subscriber.h"
+#include "transient_task_guard.h"
 
 using namespace testing::ext;
 
@@ -160,6 +162,114 @@ HWTEST_F(BgTransientTaskMgrTest, Unmarshalling_001, TestSize.Level1)
     MessageParcel data;
     std::shared_ptr<TransientTaskAppInfo> transientTaskAppInfo (TransientTaskAppInfo::Unmarshalling(data));
     EXPECT_TRUE(transientTaskAppInfo == nullptr);
+}
+
+/**
+ * @tc.name: TransientTaskGuard_001
+ * @tc.desc: test TransientTaskGuard Start and Stop.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTransientTaskMgrTest, TransientTaskGuard_001, TestSize.Level1)
+{
+    BgTransientTaskMgr mgr;
+    auto guard = std::make_unique<TransientTaskGuard>(&mgr);
+    guard->Start();
+    EXPECT_TRUE(guard->running_.load());
+    guard->Stop();
+    EXPECT_FALSE(guard->running_.load());
+}
+
+/**
+ * @tc.name: TransientTaskGuard_002
+ * @tc.desc: test TransientTaskGuard double Start is no-op.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTransientTaskMgrTest, TransientTaskGuard_002, TestSize.Level1)
+{
+    BgTransientTaskMgr mgr;
+    auto guard = std::make_unique<TransientTaskGuard>(&mgr);
+    guard->Start();
+    guard->Start();
+    EXPECT_TRUE(guard->running_.load());
+    guard->Stop();
+    EXPECT_FALSE(guard->running_.load());
+}
+
+/**
+ * @tc.name: CheckAndCancelOvertimeTasks_001
+ * @tc.desc: test CheckAndCancelOvertimeTasks with empty keyInfoMap.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTransientTaskMgrTest, CheckAndCancelOvertimeTasks_001, TestSize.Level1)
+{
+    bgTransientTaskMgr_->keyInfoMap_.clear();
+    bgTransientTaskMgr_->CheckAndCancelOvertimeTasks();
+    EXPECT_TRUE(bgTransientTaskMgr_->keyInfoMap_.empty());
+}
+
+/**
+ * @tc.name: CheckAndCancelOvertimeTasks_002
+ * @tc.desc: test CheckAndCancelOvertimeTasks does not cancel non-overtime task.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTransientTaskMgrTest, CheckAndCancelOvertimeTasks_002, TestSize.Level1)
+{
+    auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
+    auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
+    auto runner = AppExecFwk::EventRunner::Create("tdd_test_handler");
+    auto timerManager = std::make_shared<TimerManager>(bgtaskService, runner);
+    auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
+    auto watchdog = std::make_shared<Watchdog>(bgtaskService, decisionMaker, runner);
+
+    auto mgr = std::make_shared<BgTransientTaskMgr>();
+    mgr->isReady_.store(true);
+    mgr->decisionMaker_ = decisionMaker;
+    mgr->watchdog_ = watchdog;
+
+    auto keyInfo = std::make_shared<KeyInfo>("bundleName", 1, 1);
+    auto pkgInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName", 1, timerManager);
+    auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1, 1, MSEC_PER_MIN);
+    pkgInfo->requestList_.push_back(delayInfo);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo] = pkgInfo;
+    mgr->keyInfoMap_[1] = keyInfo;
+
+    mgr->CheckAndCancelOvertimeTasks();
+    EXPECT_EQ(mgr->keyInfoMap_.size(), 1);
+}
+
+/**
+ * @tc.name: CheckAndCancelOvertimeTasks_003
+ * @tc.desc: test CheckAndCancelOvertimeTasks cancels overtime task.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgTransientTaskMgrTest, CheckAndCancelOvertimeTasks_003, TestSize.Level1)
+{
+    auto deviceInfoManeger = std::make_shared<DeviceInfoManager>();
+    auto bgtaskService = sptr<BackgroundTaskMgrService>(new BackgroundTaskMgrService());
+    auto runner = AppExecFwk::EventRunner::Create("tdd_test_handler");
+    auto timerManager = std::make_shared<TimerManager>(bgtaskService, runner);
+    auto decisionMaker = std::make_shared<DecisionMaker>(timerManager, deviceInfoManeger);
+    auto watchdog = std::make_shared<Watchdog>(bgtaskService, decisionMaker, runner);
+
+    auto mgr = std::make_shared<BgTransientTaskMgr>();
+    mgr->isReady_.store(true);
+    mgr->decisionMaker_ = decisionMaker;
+    mgr->watchdog_ = watchdog;
+
+    auto keyInfo = std::make_shared<KeyInfo>("bundleName", 1, 1);
+    auto pkgInfo = std::make_shared<PkgDelaySuspendInfo>("bundleName", 1, timerManager);
+    auto delayInfo = std::make_shared<DelaySuspendInfoEx>(1, 1, 0);
+    pkgInfo->requestList_.push_back(delayInfo);
+    decisionMaker->pkgDelaySuspendInfoMap_[keyInfo] = pkgInfo;
+    mgr->keyInfoMap_[1] = keyInfo;
+
+    mgr->CheckAndCancelOvertimeTasks();
+    EXPECT_EQ(mgr->keyInfoMap_.size(), 0);
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
