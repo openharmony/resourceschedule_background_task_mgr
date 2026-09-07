@@ -142,7 +142,6 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_019, TestSize.Level0)
 {
     std::string bundleName;
     EXPECT_EQ(bgTransientTaskMgr_->IsCallingInfoLegal(-1, -1, bundleName, nullptr), ERR_BGTASK_INVALID_PID_OR_UID);
-    EXPECT_EQ(bgTransientTaskMgr_->IsCallingInfoLegal(1, 1, bundleName, nullptr), ERR_BGTASK_INVALID_BUNDLE_NAME);
     int32_t uid = GetUidByBundleName(LAUNCHER_BUNDLE_NAME, DEFAULT_USERID);
     if (uid == -1) {
         uid = GetUidByBundleName(SCB_BUNDLE_NAME, DEFAULT_USERID);
@@ -542,9 +541,6 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_043, TestSize.Level1)
     bgTransientTaskMgr_->isReady_.store(true);
     EXPECT_EQ(bgTransientTaskMgr_->PauseTransientTaskTimeForInner(uid), ERR_BGTASK_INVALID_PID_OR_UID);
 
-    uid = 1;
-    EXPECT_EQ(bgTransientTaskMgr_->PauseTransientTaskTimeForInner(uid), ERR_BGTASK_SERVICE_INNER_ERROR);
-
     std::string bundleName = LAUNCHER_BUNDLE_NAME;
     uid = GetUidByBundleName(bundleName, DEFAULT_USERID);
     if (uid == -1) {
@@ -569,9 +565,6 @@ HWTEST_F(BgTaskManagerUnitTest, BgTaskManagerUnitTest_044, TestSize.Level1)
 
     bgTransientTaskMgr_->isReady_.store(true);
     EXPECT_EQ(bgTransientTaskMgr_->StartTransientTaskTimeForInner(uid), ERR_BGTASK_INVALID_PID_OR_UID);
-
-    uid = 1;
-    EXPECT_EQ(bgTransientTaskMgr_->StartTransientTaskTimeForInner(uid), ERR_BGTASK_SERVICE_INNER_ERROR);
 
     std::string bundleName = LAUNCHER_BUNDLE_NAME;
     uid = GetUidByBundleName(bundleName, DEFAULT_USERID);

@@ -171,6 +171,7 @@ public:
 private:
     void HandleRemoveTaskByMode(uint32_t mode);
     void PostRemoveTaskByMode(uint32_t mode);
+    void ClearInner();
     ErrCode StartBackgroundRunningInner(std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecordPtr);
     ErrCode UpdateBackgroundRunningInner(const std::string &taskInfoMapKey,
         const sptr<ContinuousTaskParam> &taskParam);

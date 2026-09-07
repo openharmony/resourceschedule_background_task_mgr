@@ -86,7 +86,6 @@ public:
 private:
     ErrCode IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
         const sptr<IExpiredCallback>& callback);
-    bool GetBundleNamesForUid(int32_t uid, std::string &bundleName);
     bool VerifyCallingInfo(int32_t uid, int32_t pid);
     bool VerifyRequestIdLocked(const std::string& name, int32_t uid, int32_t requestId);
     bool CheckProcessName();

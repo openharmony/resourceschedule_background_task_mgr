@@ -255,6 +255,15 @@ std::shared_ptr<AppExecFwk::EventHandler> BgContinuousTaskMgr::GetHandler() cons
 
 void BgContinuousTaskMgr::Clear()
 {
+    if (handler_ != nullptr) {
+        handler_->PostSyncTask([this]() {
+            ClearInner();
+        });
+    }
+}
+
+void BgContinuousTaskMgr::ClearInner()
+{
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     if (subscriber_ != nullptr) {
         Notification::NotificationHelper::UnSubscribeNotification(*subscriber_);
@@ -730,6 +739,10 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
         }
         return ERR_OK;
     } else {
+        if (requestedBgModeId == INVALID_BGMODE) {
+            BGTASK_LOGE("invalid requestedBgModeId:%{public}u", requestedBgModeId);
+            return ERR_BGTASK_INVALID_BGMODE;
+        }
         uint32_t recordedBgMode = BG_MODE_INDEX_HEAD << (requestedBgModeId - 1);
         if (recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION && !continuousTaskRecord->IsSystem()) {
             BGTASK_LOGE("wifiInteraction background mode only support for system app");
@@ -753,10 +766,9 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
                 return ERR_OK;
             }
         }
-        if (requestedBgModeId == INVALID_BGMODE || (configuredBgMode &
-            (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
-            BGTASK_LOGE("requested background mode is not declared in config file, configuredBgMode: %{public}d",
-                configuredBgMode);
+        if ((configuredBgMode & (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
+            BGTASK_LOGE("requested background mode is not declared in config file, configured: %{public}d,"
+                "%{public}u", configuredBgMode, requestedBgModeId);
             return ERR_BGTASK_INVALID_BGMODE;
         }
     }

@@ -62,11 +62,14 @@ BgEfficiencyResourcesMgr::~BgEfficiencyResourcesMgr() {}
 
 void BgEfficiencyResourcesMgr::LoadResourceQuotaMgrLib()
 {
+    if (resourceQuotaMgrHandle_ != nullptr) {
+        return;
+    }
     resourceQuotaMgrHandle_ = dlopen(RESOURCE_QUOTA_MANAGER_LIB, RTLD_NOW);
     if (!resourceQuotaMgrHandle_) {
         BGTASK_LOGE("Not find resource_quota_manager lib.");
+        return;
     }
-
     BGTASK_LOGI("Load resource_quota_manager lib success.");
 }
 
@@ -297,6 +300,10 @@ bool BgEfficiencyResourcesMgr::CheckAlivedApp(int32_t uid)
 
 void BgEfficiencyResourcesMgr::Clear()
 {
+    if (resourceQuotaMgrHandle_ != nullptr) {
+        dlclose(resourceQuotaMgrHandle_);
+        resourceQuotaMgrHandle_ = nullptr;
+    }
 }
 
 bool CheckResourceInfo(const sptr<EfficiencyResourceInfo> &resourceInfo)
@@ -445,28 +452,33 @@ void BgEfficiencyResourcesMgr::ApplyResourceForPkgAndProc(int32_t uid, int32_t p
         appResourceInfo->SetResourceNumber(resourceNumber);
         appResourceInfo->SetProcess(false);
 
-        // Set the previous appCpuLevel
-        appResourceInfo->SetCpuLevel(GetPreAppCpuLevel(uid));
-        SendResourceApplyTask(uid, pid, bundleName, appResourceInfo);
+        SendResourceApplyTask(uid, pid, bundleName, appResourceInfo, true);
     }
 }
 
 void BgEfficiencyResourcesMgr::SendResourceApplyTask(int32_t uid, int32_t pid, const std::string &bundleName,
-    const sptr<EfficiencyResourceInfo> &resourceInfo)
+    const sptr<EfficiencyResourceInfo> &resourceInfo, bool needSetPreCpuLevel)
 {
-    std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
-        pid, resourceInfo->GetResourceNumber(), bundleName);
-    callbackInfo->SetCpuLevel(resourceInfo->GetCpuLevel());
-    if (resourceInfo->IsApply()) {
-        handler_->PostTask([this, callbackInfo, resourceInfo]() {
-            this->ApplyEfficiencyResourcesInner(callbackInfo, resourceInfo);
-        });
-    } else {
-        handler_->PostTask([this, callbackInfo, resourceInfo]() {
-            this->ResetEfficiencyResourcesInner(callbackInfo, resourceInfo->IsProcess(),
+    auto task = [weak = weak_from_this(), uid, pid, bundleName, resourceInfo, needSetPreCpuLevel]() {
+        auto self = weak.lock();
+        if (!self) {
+            BGTASK_LOGE("weak.lock return null");
+            return;
+        }
+        if (needSetPreCpuLevel) {
+            resourceInfo->SetCpuLevel(self->GetPreAppCpuLevel(uid));
+        }
+        std::shared_ptr<ResourceCallbackInfo> callbackInfo = std::make_shared<ResourceCallbackInfo>(uid,
+            pid, resourceInfo->GetResourceNumber(), bundleName);
+        callbackInfo->SetCpuLevel(resourceInfo->GetCpuLevel());
+        if (resourceInfo->IsApply()) {
+            self->ApplyEfficiencyResourcesInner(callbackInfo, resourceInfo);
+        } else {
+            self->ResetEfficiencyResourcesInner(callbackInfo, resourceInfo->IsProcess(),
                 CancelReason::APPLY_INTERFACE);
-        });
-    }
+        }
+    };
+    handler_->PostTask(task);
 }
 
 void BgEfficiencyResourcesMgr::ApplyEfficiencyResourcesInner(std::shared_ptr<ResourceCallbackInfo>
