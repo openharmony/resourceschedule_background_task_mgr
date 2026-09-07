@@ -246,9 +246,14 @@ public:
     ~ContinuousTaskRequestImpl()
     {}
 
-    ::taihe::array_view<TaskModeType> getBackgroundTaskModes()
+    ::taihe::array<TaskModeType> getBackgroundTaskModes()
     {
-        return taiheBackgroundTaskModes_;
+        std::vector<TaskModeType> modes;
+        for (auto &mode : backgroundTaskSubmodes_) {
+            modes.push_back(TaskModeType::from_value(mode));
+        }
+        ::taihe::array<TaskModeType> modesArr(modes);
+        return modesArr;
     }
 
     void setBackgroundTaskModes(::taihe::array_view<TaskModeType> backgroundTaskModes)
@@ -256,14 +261,18 @@ public:
         if (backgroundTaskModes.size() == 0) {
             return;
         }
-        taiheBackgroundTaskModes_ = backgroundTaskModes;
         std::vector<uint32_t> bgModesVector(backgroundTaskModes.begin(), backgroundTaskModes.end());
         backgroundTaskModes_ = bgModesVector;
     }
 
-    ::taihe::array_view<TaskSubModeType> getBackgroundTaskSubmodes()
+    ::taihe::array<TaskSubModeType> getBackgroundTaskSubmodes()
     {
-        return taiheBackgroundTaskSubmodes_;
+        std::vector<TaskSubModeType> subModes;
+        for (auto &subMode : backgroundTaskSubmodes_) {
+            subModes.push_back(TaskSubModeType::from_value(subMode));
+        }
+        ::taihe::array<TaskSubModeType> modesArr(subModes);
+        return modesArr;
     }
 
     void setBackgroundTaskSubmodes(::taihe::array_view<TaskSubModeType> backgroundTaskSubmodes)
@@ -271,7 +280,6 @@ public:
         if (backgroundTaskSubmodes.size() == 0) {
             return;
         }
-        taiheBackgroundTaskSubmodes_ = backgroundTaskSubmodes;
         std::vector<uint32_t> bgSubModesVector(backgroundTaskSubmodes.begin(), backgroundTaskSubmodes.end());
         backgroundTaskSubmodes_ = bgSubModesVector;
     }
@@ -575,8 +583,6 @@ public:
     std::shared_ptr<AbilityRuntime::WantAgent::WantAgent> wantAgent_ {nullptr};
     std::vector<uint32_t> backgroundTaskSubmodes_ {};
     std::vector<uint32_t> backgroundTaskModes_ {};
-    ::taihe::array_view<TaskSubModeType> taiheBackgroundTaskSubmodes_;
-    ::taihe::array_view<TaskModeType> taiheBackgroundTaskModes_;
     std::optional<::ohos::resourceschedule::backgroundTaskManager::ProgressInfo> progressInfo_ {};
 };
 
