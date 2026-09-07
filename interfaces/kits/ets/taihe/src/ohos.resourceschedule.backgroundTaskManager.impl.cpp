@@ -249,7 +249,7 @@ public:
     ::taihe::array<TaskModeType> getBackgroundTaskModes()
     {
         std::vector<TaskModeType> modes;
-        for (auto &mode : backgroundTaskSubmodes_) {
+        for (auto &mode : backgroundTaskModes_) {
             modes.push_back(TaskModeType::from_value(mode));
         }
         ::taihe::array<TaskModeType> modesArr(modes);
