@@ -15,21 +15,22 @@
 
 #include "transient_task_guard.h"
 
-#include <chrono>
+#include <functional>
 
 #include "ffrt.h"
 
 #include "bg_transient_task_mgr.h"
+#include "time_provider.h"
 #include "transient_task_log.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-    constexpr int32_t GUARD_INTERVAL_MS = 1 * 60 * 60 * 1000; // 60 minutes
-    constexpr int32_t STOP_WAIT_TIMEOUT_S = 5; // 5 seconds
+    constexpr int64_t GUARD_INTERVAL_MS = MSEC_PER_HOUR; // 60 minutes
 }
 
-TransientTaskGuard::TransientTaskGuard(BgTransientTaskMgr* mgr) : mgr_(mgr) {}
+TransientTaskGuard::TransientTaskGuard(std::shared_ptr<BgTransientTaskMgr> mgr)
+    : mgr_(mgr), running_(std::make_shared<std::atomic<bool>>(false)) {}
 
 TransientTaskGuard::~TransientTaskGuard()
 {
@@ -38,42 +39,32 @@ TransientTaskGuard::~TransientTaskGuard()
 
 void TransientTaskGuard::Start()
 {
-    if (running_.exchange(true)) {
+    if (running_->exchange(true)) {
         BGTASK_LOGW("TransientTaskGuard is already running");
         return;
     }
-    exitPromise_ = std::make_shared<std::promise<void>>();
-    exitFuture_ = exitPromise_->get_future();
-    auto promise = exitPromise_;
-    ffrt::submit([this, promise]() {
-        BGTASK_LOGI("TransientTaskGuard thread started");
-        while (running_.load()) {
-            std::unique_lock<std::mutex> lock(mutex_);
-            cv_.wait_for(lock, std::chrono::milliseconds(GUARD_INTERVAL_MS),
-                [this]() { return !running_.load(); });
-            lock.unlock();
-            if (!running_.load()) {
-                break;
-            }
-            mgr_->CheckAndCancelOvertimeTasks();
+    auto flag = running_;
+    auto mgr = mgr_;
+    auto task = std::make_shared<std::function<void()>>();
+    *task = [mgr, flag, task]() {
+        if (!flag->load()) {
+            return;
         }
-        BGTASK_LOGI("TransientTaskGuard thread exited");
-        promise->set_value();
-    });
+        mgr->CheckAndCancelOvertimeTasks();
+        if (!flag->load()) {
+            return;
+        }
+        ffrt::submit(*task, {}, {}, ffrt::task_attr().delay(GUARD_INTERVAL_MS));
+    };
+    ffrt::submit(*task, {}, {}, ffrt::task_attr().delay(GUARD_INTERVAL_MS));
+    BGTASK_LOGI("TransientTaskGuard started, first check after %{public}lldms",
+        static_cast<long long>(GUARD_INTERVAL_MS));
 }
 
 void TransientTaskGuard::Stop()
 {
-    if (!running_.exchange(false)) {
-        return;
-    }
-    cv_.notify_all();
-    if (exitFuture_.valid()) {
-        auto status = exitFuture_.wait_for(std::chrono::seconds(STOP_WAIT_TIMEOUT_S));
-        if (status == std::future_status::timeout) {
-            BGTASK_LOGW("TransientTaskGuard thread did not exit within %{public}ds", STOP_WAIT_TIMEOUT_S);
-        }
-    }
+    running_->store(false);
+    BGTASK_LOGI("TransientTaskGuard stopped");
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

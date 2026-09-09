@@ -17,10 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TRANSIENT_TASK_INCLUDE_TRANSIENT_TASK_GUARD_H
 
 #include <atomic>
-#include <condition_variable>
-#include <future>
 #include <memory>
-#include <mutex>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -29,18 +26,14 @@ class BgTransientTaskMgr;
 
 class TransientTaskGuard {
 public:
-    explicit TransientTaskGuard(BgTransientTaskMgr* mgr);
+    explicit TransientTaskGuard(std::shared_ptr<BgTransientTaskMgr> mgr);
     ~TransientTaskGuard();
     void Start();
     void Stop();
 
 private:
-    BgTransientTaskMgr* mgr_ {nullptr};
-    std::atomic<bool> running_ {false};
-    std::mutex mutex_;
-    std::condition_variable cv_;
-    std::shared_ptr<std::promise<void>> exitPromise_ {nullptr};
-    std::future<void> exitFuture_;
+    std::shared_ptr<BgTransientTaskMgr> mgr_ {nullptr};
+    std::shared_ptr<std::atomic<bool>> running_ {nullptr};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
