@@ -160,7 +160,7 @@ static constexpr char PROGRESS[] = "PROGRESS";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr uint32_t BGMODE_SPECIAL_SCENARIO_PROCESSING = 4096;
-static constexpr uint32_t BGMODE_USB_CONNECTION = 32769;
+static constexpr uint32_t BGMODE_USB_CONNECTION = 32768;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
@@ -778,7 +778,7 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeTypeNewApi(uint32_t configuredBgMode, ui
         }
     }
     if (recordedBgMode == BGMODE_USB_CONNECTION) {
-#ifndef SUPPORT_AUTH
+#ifndef SUPPORT_USB_CONNECTIN
         return ERR_BGTASK_CONTINUOUS_MODE_USB_NOT_SUPPORT_DEVICETYPE;
 #endif
     }
