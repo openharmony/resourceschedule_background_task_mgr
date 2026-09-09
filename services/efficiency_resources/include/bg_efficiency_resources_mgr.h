@@ -119,7 +119,7 @@ private:
     void ApplyResourceForPkgAndProc(int32_t uid, int32_t pid, const std::string &bundleName,
         const sptr<EfficiencyResourceInfo> &resourceInfo);
     void SendResourceApplyTask(int32_t uid, int32_t pid, const std::string &bundleName,
-        const sptr<EfficiencyResourceInfo> &resourceInfo);
+        const sptr<EfficiencyResourceInfo> &resourceInfo, bool needSetPreCpuLevel = false);
     bool IsServiceExtensionType(const pid_t pid);
     void LoadResourceQuotaMgrLib();
     bool CheckOrUpdateCpuApplyQuota(int32_t uid, const std::string &bundleName,

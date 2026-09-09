@@ -22,7 +22,7 @@
 #include <system_ability_definition.h>
 
 #include "accesstoken_kit.h"
-#include "bundle_mgr_proxy.h"
+#include "bundle_manager_helper.h"
 #include "common_event_data.h"
 #include "common_event_manager.h"
 #include "common_event_support.h"
@@ -124,33 +124,6 @@ void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::Ev
     BGTASK_LOGI("SetReady TRANSIENT_SERVICE_READY");
 }
 
-bool BgTransientTaskMgr::GetBundleNamesForUid(int32_t uid, std::string &bundleName)
-{
-    sptr<ISystemAbilityManager> systemMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemMgr == nullptr) {
-        BGTASK_LOGE("Fail to get system ability mgr");
-        return false;
-    }
-
-    sptr<IRemoteObject> remoteObject = systemMgr->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-    if (remoteObject == nullptr) {
-        BGTASK_LOGE("Fail to get bundle manager proxy");
-        return false;
-    }
-
-    sptr<OHOS::AppExecFwk::IBundleMgr> bundleMgrProxy = iface_cast<OHOS::AppExecFwk::IBundleMgr>(remoteObject);
-    if (bundleMgrProxy == nullptr) {
-        BGTASK_LOGE("Bundle mgr proxy is nullptr");
-        return false;
-    }
-
-    if (bundleMgrProxy->GetNameForUid(uid, bundleName) != ERR_OK) {
-        BGTASK_LOGE("Get bundle name failed");
-        return false;
-    }
-    return true;
-}
-
 ErrCode BgTransientTaskMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::string &name,
     const sptr<IExpiredCallback>& callback)
 {
@@ -159,8 +132,9 @@ ErrCode BgTransientTaskMgr::IsCallingInfoLegal(int32_t uid, int32_t pid, std::st
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
 
-    if (!GetBundleNamesForUid(uid, name)) {
-        BGTASK_LOGE("GetBundleNamesForUid fail.");
+    name = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+    if (name.empty()) {
+        BGTASK_LOGE("GetClientBundleName fail.");
         return ERR_BGTASK_INVALID_BUNDLE_NAME;
     }
 
@@ -256,9 +230,9 @@ ErrCode BgTransientTaskMgr::PauseTransientTaskTimeForInner(int32_t uid)
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
 
-    std::string name = "";
-    if (!GetBundleNamesForUid(uid, name)) {
-        BGTASK_LOGE("GetBundleNamesForUid fail, uid : %{public}d.", uid);
+    std::string name = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+    if (name.empty()) {
+        BGTASK_LOGE("GetClientBundleName fail, uid : %{public}d.", uid);
         return ERR_BGTASK_SERVICE_INNER_ERROR;
     }
 
@@ -289,9 +263,9 @@ ErrCode BgTransientTaskMgr::StartTransientTaskTimeForInner(int32_t uid)
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
 
-    std::string name = "";
-    if (!GetBundleNamesForUid(uid, name)) {
-        BGTASK_LOGE("GetBundleNamesForUid fail, uid : %{public}d.", uid);
+    std::string name = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+    if (name.empty()) {
+        BGTASK_LOGE("GetClientBundleName fail, uid : %{public}d.", uid);
         return ERR_BGTASK_SERVICE_INNER_ERROR;
     }
 
@@ -378,9 +352,9 @@ ErrCode BgTransientTaskMgr::CancelSuspendDelay(int32_t requestId)
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
 
-    std::string name = "";
-    if (!GetBundleNamesForUid(uid, name)) {
-        BGTASK_LOGW("GetBundleNamesForUid fail, uid : %{public}d.", uid);
+    std::string name = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+    if (name.empty()) {
+        BGTASK_LOGW("GetClientBundleName fail, uid : %{public}d.", uid);
         return ERR_BGTASK_SERVICE_INNER_ERROR;
     }
     BGTASK_LOGI("cancel suspend delay pkg : %{public}s, uid : %{public}d, pid : %{public}d, requestId : %{public}d",
@@ -443,9 +417,9 @@ ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &de
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
 
-    std::string name = "";
-    if (!GetBundleNamesForUid(uid, name)) {
-        BGTASK_LOGE("GetBundleNamesForUid fail.");
+    std::string name = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+    if (name.empty()) {
+        BGTASK_LOGE("GetClientBundleName fail.");
         delayTime = BG_INVALID_REMAIN_TIME;
         return ERR_BGTASK_SERVICE_INNER_ERROR;
     }
@@ -478,9 +452,9 @@ ErrCode BgTransientTaskMgr::GetAllTransientTasks(int32_t &remainingQuota,
         BGTASK_LOGE("get remain time failed, uid: %{public}d or pid: %{public}d is invalid", uid, pid);
         return ERR_BGTASK_INVALID_PID_OR_UID;
     }
-    std::string name = "";
-    if (!GetBundleNamesForUid(uid, name)) {
-        BGTASK_LOGE("GetBundleNamesForUid fail.");
+    std::string name = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+    if (name.empty()) {
+        BGTASK_LOGE("GetClientBundleName fail.");
         return ERR_BGTASK_SERVICE_INNER_ERROR;
     }
     auto keyInfo = std::make_shared<KeyInfo>(name, uid, pid);
@@ -879,9 +853,9 @@ void BgTransientTaskMgr::HandleSuspendManagerDie()
     if (!transientPauseUid_.empty()) {
         for (auto iter = transientPauseUid_.begin(); iter != transientPauseUid_.end(); iter++) {
             int32_t uid = *iter;
-            std::string name = "";
-            if (!GetBundleNamesForUid(uid, name)) {
-                BGTASK_LOGE("GetBundleNamesForUid fail, uid : %{public}d.", uid);
+            std::string name = BundleManagerHelper::GetInstance()->GetClientBundleName(uid);
+            if (name.empty()) {
+                BGTASK_LOGE("GetClientBundleName fail, uid : %{public}d.", uid);
                 continue;
             }
             ErrCode ret = decisionMaker_->StartTransientTaskTimeForInner(uid, name);
