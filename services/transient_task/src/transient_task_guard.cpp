@@ -26,7 +26,7 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-    constexpr int64_t GUARD_INTERVAL_MS = MSEC_PER_HOUR; // 60 minutes
+constexpr int64_t GUARD_INTERVAL_MS = MSEC_PER_HOUR; // 60 minutes
 }
 
 TransientTaskGuard::TransientTaskGuard(std::shared_ptr<BgTransientTaskMgr> mgr)
@@ -45,8 +45,9 @@ void TransientTaskGuard::Start()
     }
     auto flag = running_;
     auto mgr = mgr_;
-    auto task = std::make_shared<std::function<void()>>();
-    *task = [mgr, flag, task]() {
+    task_ = std::make_shared<std::function<void()>>();
+    std::weak_ptr<std::function<void()>> weakTask = task_;
+    *task_ = [mgr, flag, weakTask]() {
         if (!flag->load()) {
             return;
         }
@@ -54,9 +55,11 @@ void TransientTaskGuard::Start()
         if (!flag->load()) {
             return;
         }
-        ffrt::submit(*task, {}, {}, ffrt::task_attr().delay(GUARD_INTERVAL_MS));
+        if (auto self = weakTask.lock()) {
+            ffrt::submit(*self, {}, {}, ffrt::task_attr().delay(GUARD_INTERVAL_MS));
+        }
     };
-    ffrt::submit(*task, {}, {}, ffrt::task_attr().delay(GUARD_INTERVAL_MS));
+    ffrt::submit(*task_, {}, {}, ffrt::task_attr().delay(GUARD_INTERVAL_MS));
     BGTASK_LOGI("TransientTaskGuard started, first check after %{public}lldms",
         static_cast<long long>(GUARD_INTERVAL_MS));
 }
@@ -64,6 +67,7 @@ void TransientTaskGuard::Start()
 void TransientTaskGuard::Stop()
 {
     running_->store(false);
+    task_.reset();
     BGTASK_LOGI("TransientTaskGuard stopped");
 }
 }  // namespace BackgroundTaskMgr

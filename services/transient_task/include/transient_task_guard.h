@@ -17,6 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_TRANSIENT_TASK_INCLUDE_TRANSIENT_TASK_GUARD_H
 
 #include <atomic>
+#include <functional>
 #include <memory>
 
 namespace OHOS {
@@ -34,6 +35,7 @@ public:
 private:
     std::shared_ptr<BgTransientTaskMgr> mgr_ {nullptr};
     std::shared_ptr<std::atomic<bool>> running_ {nullptr};
+    std::shared_ptr<std::function<void()>> task_ {nullptr};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
