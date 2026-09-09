@@ -63,7 +63,8 @@ constexpr int32_t WORKOUT = 10;
 constexpr int32_t SPECIAL_SCENARIO_PROCESSING = 13;
 constexpr int32_t NEARLINK = 14;
 constexpr int32_t NEARBY_DATA_TRANSFER_ID = 15;
-constexpr int32_t END = 16;
+constexpr int32_t USB_CONNECTION_ID = 16;
+constexpr int32_t END = 17;
 constexpr int32_t SLEEP_TIME = 500;
 constexpr int32_t RSS_UID = 1096;
 constexpr uint32_t CPU_TYPE = 1;
@@ -117,7 +118,8 @@ constexpr uint32_t MODE_TASK_KEEPING = 9;
 constexpr uint32_t MODE_AV_PLAYBACK_AND_RECORD = 12;
 constexpr uint32_t MODE_SPECIAL_SCENARIO_PROCESSING = 13;
 constexpr uint32_t MODE_NEARLINK = 14;
-constexpr uint32_t MODE_END = 15;
+constexpr uint32_t MODE_USB_CONNECTION = 16;
+constexpr uint32_t MODE_END = 17;
 constexpr uint32_t SUBMODE_CAR_KEY_NORMAL_NOTIFICATION = 1;
 constexpr uint32_t SUBMODE_NORMAL_NOTIFICATION = 2;
 constexpr uint32_t SUBMODE_LIVE_VIEW_NOTIFICATION = 3;
@@ -314,6 +316,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundMode_001, TestSize.Level0)
     EXPECT_EQ(WORKOUT, (int32_t)BackgroundMode::WORKOUT);
     EXPECT_EQ(SPECIAL_SCENARIO_PROCESSING, (int32_t)BackgroundMode::SPECIAL_SCENARIO_PROCESSING);
     EXPECT_EQ(NEARBY_DATA_TRANSFER_ID, (int32_t)BackgroundMode::NEARBY_DATA_TRANSFER);
+    EXPECT_EQ(USB_CONNECTION_ID, (int32_t)BackgroundMode::USB_CONNECTION);
     EXPECT_EQ(END, (int32_t)BackgroundMode::END);
 }
 
@@ -1078,6 +1081,7 @@ HWTEST_F(BgTaskClientUnitTest, BackgroundTaskMode_001, TestSize.Level0)
     EXPECT_EQ(MODE_TASK_KEEPING, (int32_t)BackgroundTaskMode::MODE_TASK_KEEPING);
     EXPECT_EQ(MODE_AV_PLAYBACK_AND_RECORD, (int32_t)BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD);
     EXPECT_EQ(MODE_SPECIAL_SCENARIO_PROCESSING, (int32_t)BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING);
+    EXPECT_EQ(MODE_USB_CONNECTION, (int32_t)BackgroundTaskMode::MODE_USB_CONNECTION);
     EXPECT_EQ(MODE_END, (int32_t)BackgroundTaskMode::END);
     BackgroundTaskMode::GetBackgroundTaskModeStr(MODE_DATA_TRANSFER);
     BackgroundTaskMode::GetBackgroundTaskModeStr(INVALID_MODE_OR_SUBMODE);
