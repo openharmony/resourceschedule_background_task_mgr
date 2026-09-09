@@ -93,7 +93,9 @@ static const char *g_taskPromptResNames[] = {
     "ohos_bgmode_prompt_default_value",
     "ohos_bgmode_prompt_default_value",
     "ohos_bgmode_prompt_default_value",
-    "ohos_bgmode_prompt_nearlink"
+    "ohos_bgmode_prompt_nearlink",
+    "ohos_bgmode_prompt_default_value",
+    "ohos_bgmode_prompt_usb"
 };
 
 static const char *g_taskPromptResNamesSubMode[] = {
@@ -158,6 +160,7 @@ static constexpr char PROGRESS[] = "PROGRESS";
 static constexpr uint32_t SYSTEM_APP_BGMODE_WIFI_INTERACTION = 64;
 static constexpr uint32_t PC_BGMODE_TASK_KEEPING = 256;
 static constexpr uint32_t BGMODE_SPECIAL_SCENARIO_PROCESSING = 4096;
+static constexpr uint32_t BGMODE_USB_CONNECTION = 32769;
 static constexpr int32_t DELAY_TIME = 2000;
 static constexpr int32_t RECLAIM_MEMORY_DELAY_TIME = 20 * 60 * 1000;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
@@ -484,6 +487,8 @@ void BgContinuousTaskMgr::InitNotificationText()
         std::make_pair("notification_text_task_keeping", ""));
     modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::NEARLINK),
         std::make_pair("notification_text_nearlink", ""));
+    modeForNotificationText_.emplace(static_cast<uint32_t>(BackgroundMode::USB_CONNECTION),
+        std::make_pair("notification_text_usb", ""));
 }
 
 bool BgContinuousTaskMgr::RegisterNotificationSubscriber()
@@ -737,7 +742,6 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
             BGTASK_LOGE("invalid requestedBgModeId:%{public}u", requestedBgModeId);
             return ERR_BGMODE_NULL_OR_TYPE_ERR;
         }
-        return ERR_OK;
     } else {
         if (requestedBgModeId == INVALID_BGMODE) {
             BGTASK_LOGE("invalid requestedBgModeId:%{public}u", requestedBgModeId);
@@ -765,6 +769,11 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
             if ((configuredBgMode & avPlayBackAndRecordMode) != 0) {
                 return ERR_OK;
             }
+        }
+        if (recordedBgMode == BGMODE_USB_CONNECTION) {
+#ifndef SUPPORT_AUTH
+            return ERR_BGTASK_CONTINUOUS_MODE_USB_NOT_SUPPORT_DEVICETYPE;
+#endif
         }
         if ((configuredBgMode & (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
             BGTASK_LOGE("requested background mode is not declared in config file, configured: %{public}d,"

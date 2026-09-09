@@ -259,6 +259,14 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"ohos_bgmode_prompt_usb",
+            "value":"正在运行USB任务，删除通知后任务将停止"
+        },
+        {
+            "name":"notification_text_usb",
+            "value":"USB"
         }
     ]
 }

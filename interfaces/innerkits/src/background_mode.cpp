@@ -34,6 +34,7 @@ const std::unordered_map<uint32_t, std::string> PARAM_BACKGROUND_MODE_STR_MAP = 
     {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, "specialScenarioProcessing"},
     {BackgroundMode::NEARLINK, "nearlink"},
     {BackgroundMode::NEARBY_DATA_TRANSFER, "nearbyDataTransfer"},
+    {BackgroundMode::USB_CONNECTION, "usbConnection"},
     {BackgroundMode::END, "end"}
 };
 
@@ -47,6 +48,7 @@ const std::unordered_map<uint32_t, uint32_t> BACKGROUND_MODE_TO_CANCEL_REASON_MA
     {BackgroundMode::VOIP, ContinuousTaskCancelReason::SYSTEM_CANCEL_VOIP_NOT_RUNNING},
     {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, ContinuousTaskCancelReason::SYSTEM_CANCEL_USER_UNAUTHORIZED},
     {BackgroundMode::NEARLINK, ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_NEARLINK},
+    {BackgroundMode::USB_CONNECTION, ContinuousTaskCancelReason::SYSTEM_CANCEL_NOT_USE_USB},
     {BackgroundMode::END, ContinuousTaskCancelReason::INVALID_REASON}
 };
 

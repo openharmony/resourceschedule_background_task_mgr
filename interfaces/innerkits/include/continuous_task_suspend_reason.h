@@ -37,7 +37,8 @@ public:
         SYSTEM_SUSPEND_AUDIO_PLAYBACK_MUTE = 16,
         SYSTEM_SUSPEND_NEARLINK_NOT_USED = 17,
         SYSTEM_SUSPEND_NEARLINK_DATA_NOT_EXIST = 18,
-        SYSTEM_SUSPEND_USER_UNAUTHORIZED = 19
+        SYSTEM_SUSPEND_USER_UNAUTHORIZED = 19,
+        SYSTEM_SUSPEND_USB_NOT_USED = 20
     };
 
     static uint32_t GetSuspendReasonValue(const uint32_t mode, bool isStandby);
