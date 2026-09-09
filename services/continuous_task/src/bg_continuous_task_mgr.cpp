@@ -742,44 +742,50 @@ ErrCode BgContinuousTaskMgr::CheckBgmodeType(uint32_t configuredBgMode, uint32_t
             BGTASK_LOGE("invalid requestedBgModeId:%{public}u", requestedBgModeId);
             return ERR_BGMODE_NULL_OR_TYPE_ERR;
         }
-    } else {
-        if (requestedBgModeId == INVALID_BGMODE) {
-            BGTASK_LOGE("invalid requestedBgModeId:%{public}u", requestedBgModeId);
-            return ERR_BGTASK_INVALID_BGMODE;
+        return ERR_OK;
+    }
+    return CheckBgmodeTypeNewApi(configuredBgMode, requestedBgModeId, continuousTaskRecord);
+}
+
+ErrCode BgContinuousTaskMgr::CheckBgmodeTypeNewApi(uint32_t configuredBgMode, uint32_t requestedBgModeId,
+    const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord)
+{
+    if (requestedBgModeId == INVALID_BGMODE) {
+        BGTASK_LOGE("invalid requestedBgModeId:%{public}u", requestedBgModeId);
+        return ERR_BGTASK_INVALID_BGMODE;
+    }
+    uint32_t recordedBgMode = BG_MODE_INDEX_HEAD << (requestedBgModeId - 1);
+    if (recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION && !continuousTaskRecord->IsSystem()) {
+        BGTASK_LOGE("wifiInteraction background mode only support for system app");
+        return ERR_BGTASK_NOT_SYSTEM_APP;
+    }
+    if (recordedBgMode == PC_BGMODE_TASK_KEEPING && !AllowUseTaskKeeping(continuousTaskRecord)) {
+        BGTASK_LOGE("task keeping is not supported, please set param persist.sys.bgtask_support_task_keeping.");
+        return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
+    }
+    if (recordedBgMode == BGMODE_SPECIAL_SCENARIO_PROCESSING) {
+        ErrCode ret = AllowUseSpecial(continuousTaskRecord);
+        if (ret != ERR_OK) {
+            return ret;
         }
-        uint32_t recordedBgMode = BG_MODE_INDEX_HEAD << (requestedBgModeId - 1);
-        if (recordedBgMode == SYSTEM_APP_BGMODE_WIFI_INTERACTION && !continuousTaskRecord->IsSystem()) {
-            BGTASK_LOGE("wifiInteraction background mode only support for system app");
-            return ERR_BGTASK_NOT_SYSTEM_APP;
+    }
+    if ((recordedBgMode == BGMODE_AUDIO_PLAYBACK || recordedBgMode == BGMODE_AUDIO_RECORDING ||
+        recordedBgMode == BGMODE_VOIP) && continuousTaskRecord->isByRequestObject_) {
+        uint32_t avPlayBackAndRecordMode =
+            BG_MODE_INDEX_HEAD << (BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD - 1);
+        if ((configuredBgMode & avPlayBackAndRecordMode) != 0) {
+            return ERR_OK;
         }
-        if (recordedBgMode == PC_BGMODE_TASK_KEEPING && !AllowUseTaskKeeping(continuousTaskRecord)) {
-            BGTASK_LOGE("task keeping is not supported, please set param persist.sys.bgtask_support_task_keeping.");
-            return ERR_BGTASK_KEEPING_TASK_VERIFY_ERR;
-        }
-        if (recordedBgMode == BGMODE_SPECIAL_SCENARIO_PROCESSING) {
-            ErrCode ret = AllowUseSpecial(continuousTaskRecord);
-            if (ret != ERR_OK) {
-                return ret;
-            }
-        }
-        if ((recordedBgMode == BGMODE_AUDIO_PLAYBACK || recordedBgMode == BGMODE_AUDIO_RECORDING ||
-            recordedBgMode == BGMODE_VOIP) && continuousTaskRecord->isByRequestObject_) {
-            uint32_t avPlayBackAndRecordMode =
-                BG_MODE_INDEX_HEAD << (BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD - 1);
-            if ((configuredBgMode & avPlayBackAndRecordMode) != 0) {
-                return ERR_OK;
-            }
-        }
-        if (recordedBgMode == BGMODE_USB_CONNECTION) {
+    }
+    if (recordedBgMode == BGMODE_USB_CONNECTION) {
 #ifndef SUPPORT_AUTH
-            return ERR_BGTASK_CONTINUOUS_MODE_USB_NOT_SUPPORT_DEVICETYPE;
+        return ERR_BGTASK_CONTINUOUS_MODE_USB_NOT_SUPPORT_DEVICETYPE;
 #endif
-        }
-        if ((configuredBgMode & (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
-            BGTASK_LOGE("requested background mode is not declared in config file, configured: %{public}d,"
-                "%{public}u", configuredBgMode, requestedBgModeId);
-            return ERR_BGTASK_INVALID_BGMODE;
-        }
+    }
+    if ((configuredBgMode & (BG_MODE_INDEX_HEAD << (requestedBgModeId - 1))) == 0) {
+        BGTASK_LOGE("requested background mode is not declared in config file, configured: %{public}d,"
+            "%{public}u", configuredBgMode, requestedBgModeId);
+        return ERR_BGTASK_INVALID_BGMODE;
     }
     return ERR_OK;
 }

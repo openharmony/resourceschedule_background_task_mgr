@@ -236,6 +236,8 @@ private:
         ContinuousTaskEventTriggerType changeEventType);
     ErrCode CheckBgmodeType(uint32_t configuredBgMode, uint32_t requestedBgModeId, bool isNewApi,
         const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord);
+    ErrCode CheckBgmodeTypeNewApi(uint32_t configuredBgMode, uint32_t requestedBgModeId,
+        const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord);
     bool AllowUseTaskKeeping(const std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord);
     bool CheckSpecialScenarioACLPermission(uint64_t callingTokenId);
     ErrCode AllowUseSpecial(const std::shared_ptr<ContinuousTaskRecord> record);
