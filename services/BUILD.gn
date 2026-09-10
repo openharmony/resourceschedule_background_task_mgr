@@ -247,7 +247,7 @@ ohos_static_library("bgtaskmgr_service_static") {
   }
 
   defines = []
-  f (target_platform == "phone") {
+  if (target_platform == "phone") {
     cflags_cc += [
       "-DSUPPORT_AUTH",
       "-DSUPPORT_USB_CONNECTIN"
