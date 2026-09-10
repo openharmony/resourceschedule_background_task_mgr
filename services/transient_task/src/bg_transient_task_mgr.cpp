@@ -76,6 +76,7 @@ BgTransientTaskMgr::~BgTransientTaskMgr()
     if (taskGuard_ != nullptr) {
         taskGuard_->Stop();
     }
+    taskGuard_.reset();
 }
 
 void BgTransientTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
@@ -129,7 +130,7 @@ void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::Ev
     inputManager_->RegisterEventListener(decisionMaker_);
     isReady_.store(true);
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->SetReady(ServiceReadyState::TRANSIENT_SERVICE_READY);
-    taskGuard_ = std::make_unique<TransientTaskGuard>(DelayedSingleton<BgTransientTaskMgr>::GetInstance());
+    taskGuard_ = std::make_shared<TransientTaskGuard>(DelayedSingleton<BgTransientTaskMgr>::GetInstance());
     taskGuard_->Start();
     BGTASK_LOGI("SetReady TRANSIENT_SERVICE_READY");
 }

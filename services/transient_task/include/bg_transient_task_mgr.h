@@ -118,7 +118,7 @@ private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
     std::mutex transientUidLock_;
     std::set<int32_t> transientPauseUid_ {};
-    std::unique_ptr<TransientTaskGuard> taskGuard_ {nullptr};
+    std::shared_ptr<TransientTaskGuard> taskGuard_ {nullptr};
 };
 
 class SubscriberDeathRecipient final : public IRemoteObject::DeathRecipient {

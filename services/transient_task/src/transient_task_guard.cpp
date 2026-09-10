@@ -15,8 +15,6 @@
 
 #include "transient_task_guard.h"
 
-#include <functional>
-
 #include "ffrt.h"
 
 #include "bg_transient_task_mgr.h"
@@ -26,11 +24,10 @@
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
-constexpr int64_t GUARD_INTERVAL_MS = MSEC_PER_HOUR; // 60 minutes
+constexpr int64_t GUARD_INTERVAL_US = 60LL * 60 * USEC_PER_SEC; // 60 minutes
 }
 
-TransientTaskGuard::TransientTaskGuard(std::shared_ptr<BgTransientTaskMgr> mgr)
-    : mgr_(mgr), running_(std::make_shared<std::atomic<bool>>(false)) {}
+TransientTaskGuard::TransientTaskGuard(std::shared_ptr<BgTransientTaskMgr> mgr) : mgr_(mgr) {}
 
 TransientTaskGuard::~TransientTaskGuard()
 {
@@ -39,35 +36,41 @@ TransientTaskGuard::~TransientTaskGuard()
 
 void TransientTaskGuard::Start()
 {
-    if (running_->exchange(true)) {
+    if (running_.exchange(true)) {
         BGTASK_LOGW("TransientTaskGuard is already running");
         return;
     }
-    auto flag = running_;
-    auto mgr = mgr_;
-    task_ = std::make_shared<std::function<void()>>();
-    std::weak_ptr<std::function<void()>> weakTask = task_;
-    *task_ = [mgr, flag, weakTask]() {
-        if (!flag->load()) {
+    uint64_t gen = generation_.fetch_add(1) + 1;
+    ScheduleNext(gen);
+}
+
+void TransientTaskGuard::ScheduleNext(uint64_t gen)
+{
+    std::weak_ptr<TransientTaskGuard> weakSelf = shared_from_this();
+    ffrt::submit([weakSelf, gen]() {
+        auto self = weakSelf.lock();
+        if (self == nullptr) {
+            return;
+        }
+        if (!self->running_.load() || gen != self->generation_.load()) {
+            return;
+        }
+        auto mgr = self->mgr_.lock();
+        if (mgr == nullptr) {
             return;
         }
         mgr->CheckAndCancelOvertimeTasks();
-        if (!flag->load()) {
+        if (!self->running_.load() || gen != self->generation_.load()) {
             return;
         }
-        if (auto self = weakTask.lock()) {
-            ffrt::submit(*self, {}, {}, ffrt::task_attr().delay(GUARD_INTERVAL_MS));
-        }
-    };
-    ffrt::submit(*task_, {}, {}, ffrt::task_attr().delay(GUARD_INTERVAL_MS));
-    BGTASK_LOGI("TransientTaskGuard started, first check after %{public}lldms",
-        static_cast<long long>(GUARD_INTERVAL_MS));
+        self->ScheduleNext(gen);
+    }, {}, {}, ffrt::task_attr().delay(GUARD_INTERVAL_US));
 }
 
 void TransientTaskGuard::Stop()
 {
-    running_->store(false);
-    task_.reset();
+    running_.store(false);
+    generation_.fetch_add(1);
     BGTASK_LOGI("TransientTaskGuard stopped");
 }
 }  // namespace BackgroundTaskMgr

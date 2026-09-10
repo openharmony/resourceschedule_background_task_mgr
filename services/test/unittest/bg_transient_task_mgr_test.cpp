@@ -173,11 +173,11 @@ HWTEST_F(BgTransientTaskMgrTest, Unmarshalling_001, TestSize.Level1)
 HWTEST_F(BgTransientTaskMgrTest, TransientTaskGuard_001, TestSize.Level1)
 {
     auto mgr = std::make_shared<BgTransientTaskMgr>();
-    auto guard = std::make_unique<TransientTaskGuard>(mgr);
+    auto guard = std::make_shared<TransientTaskGuard>(mgr);
     guard->Start();
-    EXPECT_TRUE(guard->running_->load());
+    EXPECT_TRUE(guard->running_.load());
     guard->Stop();
-    EXPECT_FALSE(guard->running_->load());
+    EXPECT_FALSE(guard->running_.load());
 }
 
 /**
@@ -189,12 +189,12 @@ HWTEST_F(BgTransientTaskMgrTest, TransientTaskGuard_001, TestSize.Level1)
 HWTEST_F(BgTransientTaskMgrTest, TransientTaskGuard_002, TestSize.Level1)
 {
     auto mgr = std::make_shared<BgTransientTaskMgr>();
-    auto guard = std::make_unique<TransientTaskGuard>(mgr);
+    auto guard = std::make_shared<TransientTaskGuard>(mgr);
     guard->Start();
     guard->Start();
-    EXPECT_TRUE(guard->running_->load());
+    EXPECT_TRUE(guard->running_.load());
     guard->Stop();
-    EXPECT_FALSE(guard->running_->load());
+    EXPECT_FALSE(guard->running_.load());
 }
 
 /**
