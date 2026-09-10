@@ -50,17 +50,27 @@ void TransientTaskGuard::ScheduleNext(uint64_t gen)
     ffrt::submit([weakSelf, gen]() {
         auto self = weakSelf.lock();
         if (self == nullptr) {
+            BGTASK_LOGE("Guard task expired but guard already destroyed, gen: %{public}llu",
+                static_cast<unsigned long long>(gen));
             return;
         }
         if (!self->running_.load() || gen != self->generation_.load()) {
+            BGTASK_LOGE("Guard task expired but stopped or stale, running: %{public}d, gen: %{public}llu, curGen: "
+                "%{public}llu", static_cast<int>(self->running_.load()),
+                static_cast<unsigned long long>(gen), static_cast<unsigned long long>(self->generation_.load()));
             return;
         }
         auto mgr = self->mgr_.lock();
         if (mgr == nullptr) {
+            BGTASK_LOGE("Guard task expired but BgTransientTaskMgr already destroyed, gen: %{public}llu",
+                static_cast<unsigned long long>(gen));
             return;
         }
         mgr->CheckAndCancelOvertimeTasks();
         if (!self->running_.load() || gen != self->generation_.load()) {
+            BGTASK_LOGE("Guard task stopped during check, running: %{public}d, gen: %{public}llu, curGen: "
+                "%{public}llu", static_cast<int>(self->running_.load()),
+                static_cast<unsigned long long>(gen), static_cast<unsigned long long>(self->generation_.load()));
             return;
         }
         self->ScheduleNext(gen);
