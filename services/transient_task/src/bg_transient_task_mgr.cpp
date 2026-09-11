@@ -35,6 +35,7 @@
 #include "background_task_mgr_service.h"
 #include "bgtask_hitrace_chain.h"
 #include "bgtaskmgr_inner_errors.h"
+#include "hisysevent.h"
 #include "time_provider.h"
 #include "transient_task_log.h"
 #include "hitrace_meter.h"
@@ -76,7 +77,6 @@ BgTransientTaskMgr::~BgTransientTaskMgr()
     if (taskGuard_ != nullptr) {
         taskGuard_->Stop();
     }
-    taskGuard_.reset();
 }
 
 void BgTransientTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
@@ -130,7 +130,7 @@ void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::Ev
     inputManager_->RegisterEventListener(decisionMaker_);
     isReady_.store(true);
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->SetReady(ServiceReadyState::TRANSIENT_SERVICE_READY);
-    taskGuard_ = std::make_shared<TransientTaskGuard>(DelayedSingleton<BgTransientTaskMgr>::GetInstance());
+    taskGuard_ = std::make_shared<TransientTaskGuard>();
     taskGuard_->Start();
     BGTASK_LOGI("SetReady TRANSIENT_SERVICE_READY");
 }
@@ -452,6 +452,16 @@ void BgTransientTaskMgr::CheckAndCancelOvertimeTasks()
         if (remainTime <= 0) {
             BGTASK_LOGW("Transient task overtime, force cancel requestId: %{public}d, remainTime: %{public}d",
                 task.first, remainTime);
+            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "BGTASK_ERR",
+                HiviewDFX::HiSysEvent::EventType::STATISTIC,
+                "APP_UID", std::vector<int32_t>{task.second->GetUid()},
+                "APP_PID", std::vector<int32_t>{task.second->GetPid()},
+                "APP_NAME", std::vector<std::string>{task.second->GetPkg()},
+                "UIABILITY_IDENTITY", std::vector<int32_t>{-1},
+                "MODULE_NAME", std::vector<std::string>{"BgTransientTaskMgr"},
+                "FUNC_NAME", std::vector<std::string>{"CheckAndCancelOvertimeTasks"},
+                "ERR_CODE", std::vector<int32_t>{remainTime},
+                "ERR_MSG", std::vector<std::string>{"Transient task overtime, force cancelled by guard"});
             ForceCancelSuspendDelay(task.first);
         }
     }

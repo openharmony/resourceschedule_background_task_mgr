@@ -227,7 +227,6 @@ DeviceInfoManager --> InputManager : 获取输入事件
 | `isCounting_` | `PkgDelaySuspendInfo` | `bool` | 是否正在计时，标记当前包是否已有活跃短时任务正在倒计时，避免重复启动定时器 |
 | `GUARD_INTERVAL_US` | `transient_task_guard.cpp` | `常量` | 守卫线程检查间隔，默认 60 分钟（3,600,000,000 微秒），守卫线程周期性扫描超时任务 |
 | `running_` | `TransientTaskGuard` | `atomic<bool>` | 守卫线程运行标志，`Start` 时置 `true`，`Stop` 时置 `false`；短时任务到期后检查此标志决定是否继续 |
-| `generation_` | `TransientTaskGuard` | `atomic<uint64_t>` | 代际计数器，`Start`/`Stop` 时递增；短时任务携带创建时的代际值，到期后与当前值比较，不一致则退出不重调度，防止 Stop/Start 重启后旧任务链残留 |
 
 ### API 版本间差异表现
 
@@ -274,7 +273,7 @@ API20 之前应用只能通过 `requestSuspendDelay` 返回的 `DelaySuspendInfo
 - 错误码：`bgtaskmgr_inner_errors.h` 定义 `9900001`~`9900004` 段，`bgtaskmgr_inner_errors.cpp` 维护码到消息映射
 - 内存态：`BgTransientTaskMgr::keyInfoMap_`、`DecisionMaker::pkgDelaySuspendInfoMap_` 纯内存，无 `DataStorageHelper` 落盘接口
 - 超时+看门狗：`TimerManager`（继承 `EventHandler`）投递定时器；`Watchdog` 宽限 `WATCHDOG_DELAY_TIME` 后 `ForceCancelSuspendDelay`
-- 守卫线程：`TransientTaskGuard` 通过 `ffrt::submit` 创建 ffrt 守卫线程，每 60 分钟（`GUARD_INTERVAL_US`）调用 `BgTransientTaskMgr::CheckAndCancelOvertimeTasks` 扫描全部活跃任务，对 `GetRemainingDelayTime <= 0` 的任务执行 `ForceCancelSuspendDelay`，作为定时器与看门狗的兜底机制；`CheckAndCancelOvertimeTasks` 先快照 `keyInfoMap_` 后逐项检查，避免持锁调用 `ForceCancelSuspendDelay`；守卫线程通过 `generation_` 代际计数器保证 Stop/Start 重启后旧短时任务链自动失效不重调度，短时任务以 `weak_ptr` 捕获守卫对象确保可正常析构
+- 守卫线程：`TransientTaskGuard` 通过 `ffrt::submit` 创建 ffrt 守卫线程，每 60 分钟（`GUARD_INTERVAL_US`）调用 `BgTransientTaskMgr::CheckAndCancelOvertimeTasks` 扫描全部活跃任务，对 `GetRemainingDelayTime <= 0` 的任务执行 `ForceCancelSuspendDelay`，作为定时器与看门狗的兜底机制；`CheckAndCancelOvertimeTasks` 先快照 `keyInfoMap_` 后逐项检查，避免持锁调用 `ForceCancelSuspendDelay`；守卫线程通过 `running_` 标志控制启停，延迟任务到期后检查该标志决定是否继续重调度，短时任务以 `weak_ptr` 捕获守卫对象确保可正常析构
 - 就绪门控：`std::atomic<bool> isReady_`，`InitNecessaryState` 轮询依赖服务（`SERVICE_WAIT_TIME` 间隔）
 - 死亡恢复：`ExpiredCallbackDeathRecipient`/`SubscriberDeathRecipient`/`HandleSuspendManagerDie`
 

@@ -15,9 +15,10 @@
 
 #include "transient_task_guard.h"
 
-#include "ffrt.h"
+#include <ffrt.h>
 
 #include "bg_transient_task_mgr.h"
+#include "singleton.h"
 #include "time_provider.h"
 #include "transient_task_log.h"
 
@@ -26,8 +27,6 @@ namespace BackgroundTaskMgr {
 namespace {
 constexpr int64_t GUARD_INTERVAL_US = 60LL * 60 * USEC_PER_SEC; // 60 minutes
 }
-
-TransientTaskGuard::TransientTaskGuard(std::shared_ptr<BgTransientTaskMgr> mgr) : mgr_(mgr) {}
 
 TransientTaskGuard::~TransientTaskGuard()
 {
@@ -40,51 +39,50 @@ void TransientTaskGuard::Start()
         BGTASK_LOGW("TransientTaskGuard is already running");
         return;
     }
-    uint64_t gen = generation_.fetch_add(1) + 1;
-    ScheduleNext(gen);
+    ScheduleNext();
 }
 
-void TransientTaskGuard::ScheduleNext(uint64_t gen)
+void TransientTaskGuard::ScheduleNext()
 {
     std::weak_ptr<TransientTaskGuard> weakSelf = shared_from_this();
     ffrt::submit(
-        [weakSelf, gen]() {
+        [weakSelf]() {
             auto self = weakSelf.lock();
             if (self == nullptr) {
-                BGTASK_LOGE("Guard task expired but guard already destroyed, gen: %{public}llu",
-                    static_cast<unsigned long long>(gen));
+                BGTASK_LOGE("Guard task expired but guard already destroyed");
                 return;
             }
-            if (!self->running_.load() || gen != self->generation_.load()) {
-                BGTASK_LOGE("Guard task expired but stopped or stale, running: %{public}d, gen: %{public}llu, curGen: "
-                    "%{public}llu", static_cast<int>(self->running_.load()),
-                    static_cast<unsigned long long>(gen), static_cast<unsigned long long>(self->generation_.load()));
+            if (self->IsExpired()) {
+                BGTASK_LOGE("Guard task expired but stopped, running: %{public}d",
+                    static_cast<int>(self->running_.load()));
                 return;
             }
-            auto mgr = self->mgr_.lock();
+            auto mgr = DelayedSingleton<BgTransientTaskMgr>::GetInstance();
             if (mgr == nullptr) {
-                BGTASK_LOGE("Guard task expired but BgTransientTaskMgr already destroyed, gen: %{public}llu",
-                    static_cast<unsigned long long>(gen));
+                BGTASK_LOGE("Guard task expired but BgTransientTaskMgr is null");
                 return;
             }
             mgr->CheckAndCancelOvertimeTasks();
-            if (!self->running_.load() || gen != self->generation_.load()) {
-                BGTASK_LOGE("Guard task stopped during check, running: %{public}d, gen: %{public}llu, curGen: "
-                    "%{public}llu", static_cast<int>(self->running_.load()),
-                    static_cast<unsigned long long>(gen), static_cast<unsigned long long>(self->generation_.load()));
+            if (self->IsExpired()) {
+                BGTASK_LOGE("Guard task stopped during check, running: %{public}d",
+                    static_cast<int>(self->running_.load()));
                 return;
             }
-            self->ScheduleNext(gen);
+            self->ScheduleNext();
         },
         {},
         {},
         ffrt::task_attr().delay(GUARD_INTERVAL_US));
 }
 
+bool TransientTaskGuard::IsExpired() const
+{
+    return !running_.load();
+}
+
 void TransientTaskGuard::Stop()
 {
     running_.store(false);
-    generation_.fetch_add(1);
     BGTASK_LOGI("TransientTaskGuard stopped");
 }
 }  // namespace BackgroundTaskMgr
