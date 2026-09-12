@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,6 +34,7 @@ const std::unordered_map<uint32_t, std::string> PARAM_BACKGROUND_TASK_MODE_STR_M
     {BackgroundTaskMode::MODE_AV_PLAYBACK_AND_RECORD, "modeAVPlaybackAndRecord"},
     {BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING, "modeSpecialScenarioProcessing"},
     {BackgroundTaskMode::MODE_NEARLINK, "modeNearlink"},
+    {BackgroundTaskMode::MODE_USB_CONNECTION, "modeUsbConnection"},
     {BackgroundTaskMode::END, "end"}
 };
 
@@ -63,7 +64,8 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_BACKGROUND_TASK_SUBMODE_CORRE
     {BackgroundTaskMode::MODE_ALLOW_WIFI_AWARE, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
     {BackgroundTaskMode::MODE_VOIP, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
     {BackgroundTaskMode::MODE_TASK_KEEPING, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
-    {BackgroundTaskMode::MODE_NEARLINK, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION}
+    {BackgroundTaskMode::MODE_NEARLINK, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION},
+    {BackgroundTaskMode::MODE_USB_CONNECTION, BackgroundTaskSubmode::SUBMODE_NORMAL_NOTIFICATION}
 };
 
 const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_V9MODE_CORRESPONDENCE_V21MODE = {
@@ -76,7 +78,8 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_V9MODE_CORRES
     {BackgroundTaskMode::MODE_VOIP, BackgroundMode::VOIP},
     {BackgroundTaskMode::MODE_TASK_KEEPING, BackgroundMode::TASK_KEEPING},
     {BackgroundTaskMode::MODE_SPECIAL_SCENARIO_PROCESSING, BackgroundMode::SPECIAL_SCENARIO_PROCESSING},
-    {BackgroundTaskMode::MODE_NEARLINK, BackgroundMode::NEARLINK}
+    {BackgroundTaskMode::MODE_NEARLINK, BackgroundMode::NEARLINK},
+    {BackgroundTaskMode::MODE_USB_CONNECTION, BackgroundMode::USB_CONNECTION}
 };
 
 const std::unordered_map<uint32_t, uint32_t> PARAM_CONTINUOUS_TASK_V9MODE_CORRESPONDENCE_V21SUBMODE = {

@@ -1,5 +1,5 @@
  /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +38,7 @@ public:
         SYSTEM_CANCEL_VOIP_NOT_RUNNING = 13,
         SYSTEM_CANCEL_USER_UNAUTHORIZED = 14,
         SYSTEM_CANCEL_NOT_USE_NEARLINK = 15,
+        SYSTEM_CANCEL_NOT_USE_USB = 16
     };
 };
 }  // namespace BackgroundTaskMgr

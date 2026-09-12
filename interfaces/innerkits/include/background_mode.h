@@ -37,6 +37,7 @@ public:
         SPECIAL_SCENARIO_PROCESSING = 13,
         NEARLINK = 14,
         NEARBY_DATA_TRANSFER = 15,
+        USB_CONNECTION = 16,
         END,
     };
 

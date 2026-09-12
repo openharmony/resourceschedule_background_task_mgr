@@ -29,7 +29,8 @@ const std::unordered_map<uint32_t, uint32_t> PARAM_SUSPEND_REASON = {
     {BackgroundMode::MULTI_DEVICE_CONNECTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_MULTI_DEVICE_NOT_USED},
     {BackgroundMode::VOIP, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_VOIP_NOT_USED},
     {BackgroundMode::SPECIAL_SCENARIO_PROCESSING, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USER_UNAUTHORIZED},
-    {BackgroundMode::NEARLINK, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_NEARLINK_NOT_USED}
+    {BackgroundMode::NEARLINK, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_NEARLINK_NOT_USED},
+    {BackgroundMode::USB_CONNECTION, ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USB_NOT_USED}
 };
 
 const std::unordered_map<uint32_t, uint32_t> STANDBY_SUSPEND_REASON = {
@@ -71,7 +72,9 @@ const std::unordered_map<uint32_t, std::string> SUSPEND_REASON_TO_MESSAGE = {
     {ContinuousTaskSuspendReason::SYSTEM_SUSPEND_NEARLINK_DATA_NOT_EXIST,
         "No nearlink data for a period of time when request nearlink mode."},
     {ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USER_UNAUTHORIZED,
-        "User not authorized when request MODE_SPECIAL_SCENARIO_PROCESSING."}
+        "User not authorized when request MODE_SPECIAL_SCENARIO_PROCESSING."},
+    {ContinuousTaskSuspendReason::SYSTEM_SUSPEND_USB_NOT_USED,
+        "Not use USB device when request MODE_USB_CONNECTION mode."}
 };
 
 uint32_t ContinuousTaskSuspendReason::GetSuspendReasonValue(const uint32_t mode, bool isStandby)

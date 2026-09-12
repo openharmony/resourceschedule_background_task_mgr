@@ -168,6 +168,9 @@ const std::unordered_map<int32_t, std::string> SA_ERRCODE_MSG_MAP = {
         "updateDataTransferProgress only supports DATA_TRANSFER mode."},
     {ERR_BGTASK_CONTINUOUS_PROGRESS_INFO_INVALID,
         "Notification verification failed for a continuous task. The updateDataTransferProgres param is invalid."},
+    {ERR_BGTASK_CONTINUOUS_MODE_USB_NOT_SUPPORT_DEVICETYPE,
+        "The requested continuous task is not supported on this device type. "
+        "This task mode: MODE_USB_CONNECTION type do not support."}
 };
 
 const std::unordered_map<int32_t, std::string> PARAM_ERRCODE_MSG_MAP = {
