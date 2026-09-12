@@ -73,7 +73,7 @@ BgTransientTaskMgr --> DecisionMaker : 查询剩余时间
 |------|------|------|
 | 构造 | `TransientTaskGuard() = default` | 默认构造，无参数 |
 | 析构 | `~TransientTaskGuard()` | 调用 `Stop()`，保证幂等 |
-| `Start` | `void Start()` | 启动守卫线程。`exchange(true)` 保证幂等；首次启动调用 `ScheduleNext` |
+| `Start` | `void Start()` | 启动守卫线程。`exchange(true)` 保证幂等；未在运行时调用 `ScheduleNext` |
 | `Stop` | `void Stop()` | 停止守卫线程。置 `running_=false`，使已排队任务到期后不重调度 |
 | `ScheduleNext` | `void ScheduleNext()` | 提交 60 分钟延迟 ffrt 任务，任务体以 `weak_ptr` 捕获自身，到期后检查存活与运行状态，通过后执行扫描并递归提交下一轮 |
 | `IsExpired` | `bool IsExpired() const` | 返回 `!running_.load()`，用于延迟任务到期时判断是否应退出 |
@@ -93,11 +93,11 @@ BgTransientTaskMgr --> DecisionMaker : 查询剩余时间
 Start()
 ├── running_.exchange(true) 返回旧值
 │   ├── 旧值为 true → 已在运行，日志告警，return
-│   └── 旧值为 false → 首次启动，继续
+│   └── 旧值为 false → 未在运行，继续
 └── ScheduleNext()
 ```
 
-**幂等保证：** `exchange(true)` 原子操作，返回旧值。若旧值为 `true` 说明已在运行，直接返回；只有旧值为 `false`（首次启动）才继续。保证不会产生多条并发任务链。
+**幂等保证：** `exchange(true)` 原子操作，返回旧值。若旧值为 `true` 说明已在运行，直接返回；只有旧值为 `false`（未在运行）才继续。保证不会产生多条并发任务链。
 
 ### 4.2 ScheduleNext
 
