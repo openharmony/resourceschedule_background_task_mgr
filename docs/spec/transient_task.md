@@ -1,7 +1,7 @@
 # 短时任务规格
 
-> 文档版本：v1.0
-> 更新时间：2026-08-19
+> 文档版本：v1.2
+> 更新时间：2026-09-10
 
 短时任务的定义、核心概念（延迟挂起、配额、超时、requestId）、功能边界及与长时任务的区分详见 [docs/knowledge/glossary.md](../knowledge/glossary.md) 和 [docs/knowledge/business_context.md](../knowledge/business_context.md)。
 
@@ -76,6 +76,8 @@
 
 超时处理采用定时器加看门狗两级机制：定时器到期后先触发过期回调，随后启动看门狗宽限期（`WATCHDOG_DELAY_TIME`），宽限期内仍未取消则强制取消，避免应用长期占用后台配额。提前回调机制在到期前一定时间提前通知应用，便于应用主动收尾。
 
+守卫线程作为超时处理的第三级兜底机制：`TransientTaskGuard` 通过 `ffrt::submit` 创建 ffrt 守卫线程，每 60 分钟（`GUARD_INTERVAL_US`）调用 `CheckAndCancelOvertimeTasks` 扫描全部活跃短时任务，对剩余时间（`GetRemainingDelayTime`）小于等于零的任务执行 `ForceCancelSuspendDelay` 主动停止，并在强制取消前通过 `HiSysEventWrite` 上报 `BGTASK_ERR` 打点（携带 APP_UID、APP_PID、APP_NAME、MODULE_NAME、FUNC_NAME、ERR_CODE、ERR_MSG），记录守卫线程兜底清理事件。该机制防止因系统事件循环阻塞或异常导致定时器与看门狗失效时短时任务超时运行不被清理。守卫线程通过 `running_` 运行标志控制启停，延迟任务到期后检查该标志决定是否继续重调度；短时任务以 `weak_ptr` 捕获守卫对象，确保对象可随外部引用释放而正常析构。
+
 模块通过 `isReady` 原子状态门控所有入口：服务未就绪时必须拒绝请求并返回系统未就绪错误码。依赖的服务（应用管理、公共事件、包管理、资源调度）未就绪时按固定间隔轮询重试，不阻塞初始化。
 
 回调死亡恢复机制保证状态一致性：当过期回调远端死亡时清理对应记录；订阅者死亡时从订阅列表移除。
@@ -112,7 +114,7 @@ Dump 诊断入口需同时满足 ENG 模式（`const.debuggable=1`）与 `ohos.p
 
 日志：统一使用 `BGTASK_LOGD`/`BGTASK_LOGI`/`BGTASK_LOGW`/`BGTASK_LOGE`/`BGTASK_LOGF` 宏（映射 HILOG），短时任务模块专用 LOG_TAG 为 `TRANSIENT_TASK`，日志自动附加函数与行号定位信息，含隐私格式化标注。
 
-HiSysevent 事件埋点：`TRANSIENT_TASK_APPLY`（申请，携带 UID/PID/包名/任务ID/延迟时长）与 `TRANSIENT_TASK_CANCEL`（取消，携带 UID/PID/包名/任务ID），归 `STATISTIC/MINOR/PowerStats`，用于功耗统计。
+HiSysevent 事件埋点：`TRANSIENT_TASK_APPLY`（申请，携带 UID/PID/包名/任务ID/延迟时长）与 `TRANSIENT_TASK_CANCEL`（取消，携带 UID/PID/包名/任务ID），归 `STATISTIC/MINOR/PowerStats`，用于功耗统计。守卫线程兜底强制取消超时任务时上报 `BGTASK_ERR`（携带 UID/PID/包名/MODULE_NAME/FUNC_NAME/ERR_CODE=剩余时间/ERR_MSG），归 `STATISTIC/CRITICAL`，用于异常监控。
 
 Dump 诊断：经 `hidumper` 调用，`-T` 路由到短时任务，支持子命令 `All`（列出全部请求与配额）、`BATTARY_LOW`/`BATTARY_OKAY`（模拟低电量/电量恢复）、`PAUSE`/`START` 加 uid（暂停/恢复计时）、`DUMP_CANCEL`（退出 dump 模式）。
 

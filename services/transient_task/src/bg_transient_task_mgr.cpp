@@ -20,6 +20,8 @@
 #include <sstream>
 #include <system_ability.h>
 #include <system_ability_definition.h>
+#include <utility>
+#include <vector>
 
 #include "accesstoken_kit.h"
 #include "bundle_manager_helper.h"
@@ -33,6 +35,7 @@
 #include "background_task_mgr_service.h"
 #include "bgtask_hitrace_chain.h"
 #include "bgtaskmgr_inner_errors.h"
+#include "hisysevent.h"
 #include "time_provider.h"
 #include "transient_task_log.h"
 #include "hitrace_meter.h"
@@ -68,7 +71,13 @@ const std::set<std::string> SUSPEND_NATIVE_OPERATE_CALLER = {
 #endif
 
 BgTransientTaskMgr::BgTransientTaskMgr() {}
-BgTransientTaskMgr::~BgTransientTaskMgr() {}
+
+BgTransientTaskMgr::~BgTransientTaskMgr()
+{
+    if (taskGuard_ != nullptr) {
+        taskGuard_->Stop();
+    }
+}
 
 void BgTransientTaskMgr::Init(const std::shared_ptr<AppExecFwk::EventRunner>& runner)
 {
@@ -121,6 +130,8 @@ void BgTransientTaskMgr::InitNecessaryState(const std::shared_ptr<AppExecFwk::Ev
     inputManager_->RegisterEventListener(decisionMaker_);
     isReady_.store(true);
     DelayedSingleton<BackgroundTaskMgrService>::GetInstance()->SetReady(ServiceReadyState::TRANSIENT_SERVICE_READY);
+    taskGuard_ = std::make_shared<TransientTaskGuard>();
+    taskGuard_->Start();
     BGTASK_LOGI("SetReady TRANSIENT_SERVICE_READY");
 }
 
@@ -398,6 +409,37 @@ void BgTransientTaskMgr::ForceCancelSuspendDelay(int32_t requestId)
     }
     BGTASK_LOGI("force cancel suspend delay, keyInfo: %{public}s", keyInfoIter->second->ToString().c_str());
     CancelSuspendDelayLocked(requestId);
+}
+
+void BgTransientTaskMgr::CheckAndCancelOvertimeTasks()
+{
+    BGTASK_LOGI("Start checking overtime transient tasks");
+    std::vector<std::pair<int32_t, std::shared_ptr<KeyInfo>>> tasks;
+    {
+        std::lock_guard<std::mutex> lock(expiredCallbackLock_);
+        for (const auto& record : keyInfoMap_) {
+            tasks.emplace_back(record.first, record.second);
+        }
+    }
+    for (const auto& task : tasks) {
+        int32_t remainTime = decisionMaker_->GetRemainingDelayTime(task.second, task.first);
+        if (remainTime <= 0) {
+            BGTASK_LOGW("Transient task overtime, force cancel requestId: %{public}d, remainTime: %{public}d",
+                task.first, remainTime);
+            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::BACKGROUND_TASK, "BGTASK_ERR",
+                HiviewDFX::HiSysEvent::EventType::STATISTIC,
+                "APP_UID", std::vector<int32_t>{task.second->GetUid()},
+                "APP_PID", std::vector<int32_t>{task.second->GetPid()},
+                "APP_NAME", std::vector<std::string>{task.second->GetPkg()},
+                "UIABILITY_IDENTITY", std::vector<int32_t>{-1},
+                "MODULE_NAME", std::vector<std::string>{"BgTransientTaskMgr"},
+                "FUNC_NAME", std::vector<std::string>{"CheckAndCancelOvertimeTasks"},
+                "ERR_CODE", std::vector<int32_t>{remainTime},
+                "ERR_MSG", std::vector<std::string>{"Transient task overtime, force cancelled by guard"});
+            ForceCancelSuspendDelay(task.first);
+        }
+    }
+    BGTASK_LOGI("Finish checking overtime transient tasks");
 }
 
 ErrCode BgTransientTaskMgr::GetRemainingDelayTime(int32_t requestId, int32_t &delayTime)
