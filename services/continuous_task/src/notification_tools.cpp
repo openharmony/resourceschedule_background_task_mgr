@@ -119,6 +119,16 @@ Notification::NotificationRequest CreateNotificationRequest(
     return notificationRequest;
 }
 
+static std::shared_ptr<Notification::NotificationNormalContent> CreateNotificationNormalContent(
+    const std::string &appName, const std::string &prompt)
+{
+    std::shared_ptr<Notification::NotificationNormalContent> normalContent =
+        std::make_shared<Notification::NotificationNormalContent>();
+    normalContent->SetTitle(appName);
+    normalContent->SetText(prompt);
+    return normalContent;
+}
+
 static void SetProgressNotification(const std::shared_ptr<ProgressInfo> &progressInfo,
     Notification::NotificationRequest& notificationRequest)
 {
@@ -126,25 +136,31 @@ static void SetProgressNotification(const std::shared_ptr<ProgressInfo> &progres
         BGTASK_LOGE("progressInfo is nullptr");
         return;
     }
+    std::string title = progressInfo->GetTitle();
+    std::string fileName = progressInfo->GetFileName();
+    int32_t progressValue = progressInfo->GetProgressValue();
+    if (progressValue < MIN_PROGRESS_VALUE) {
+        Notification::NotificationHelper::UpdateNotificationTimerByUid(notificationRequest.GetOwnerUid(), true);
+        notificationRequest.SetSlotType(Notification::NotificationConstant::SlotType::SERVICE_REMINDER);
+        notificationRequest.SetContent(std::make_shared<Notification::NotificationContent>(
+            CreateNotificationNormalContent(title, fileName)));
+        notificationRequest.SetUnremovable(true);
+        notificationRequest.SetNotificationControlFlags(SOUND_FLAG | VIBRATION_FLAG);
+        return;
+    }
     auto notificationTemplate = std::make_shared<Notification::NotificationTemplate>();
     notificationTemplate->SetTemplateName("downloadTemplate");
     auto templateData = std::make_shared<AAFwk::WantParams>();
-    templateData->SetParam("title", AAFwk::String::Box(progressInfo->GetTitle()));
-    templateData->SetParam("fileName", AAFwk::String::Box(progressInfo->GetFileName()));
-    if (progressInfo->GetProgressValue() >= MIN_PROGRESS_VALUE &&
-        progressInfo->GetProgressValue() < MAX_PROGRESS_VALUE) {
-        templateData->SetParam("progressValue", AAFwk::Integer::Box(progressInfo->GetProgressValue()));
-    } else if (progressInfo->GetProgressValue() == MAX_PROGRESS_VALUE) {
-        templateData->SetParam("progressValue", AAFwk::Integer::Box(MAX_PROGRESS_VALUE));
+    templateData->SetParam("title", AAFwk::String::Box(title));
+    templateData->SetParam("fileName", AAFwk::String::Box(fileName));
+    templateData->SetParam("progressValue", AAFwk::Integer::Box(progressValue));
+    notificationTemplate->SetTemplateData(templateData);
+    notificationRequest.SetTemplate(notificationTemplate);
+    if (progressValue == MAX_PROGRESS_VALUE) {
         if (progressInfo->IsMute()) {
             notificationRequest.SetNotificationControlFlags(SOUND_FLAG | VIBRATION_FLAG);
         }
-    } else {
-        templateData->SetParam("progressValue", AAFwk::Integer::Box(MAX_PROGRESS_VALUE));
-        notificationRequest.SetNotificationControlFlags(SOUND_FLAG | VIBRATION_FLAG);
     }
-    notificationTemplate->SetTemplateData(templateData);
-    notificationRequest.SetTemplate(notificationTemplate);
 }
 
 static void SetNotificationSlotType(const std::shared_ptr<ContinuousTaskRecord> &continuousTaskRecord,
@@ -440,16 +456,6 @@ WEAK_FUNC ErrCode NotificationTools::PublishSubNotification(const std::shared_pt
 }
 
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
-static std::shared_ptr<Notification::NotificationNormalContent> CreateNotificationNormalContent(
-    const std::string &appName, const std::string &prompt)
-{
-    std::shared_ptr<Notification::NotificationNormalContent> normalContent =
-        std::make_shared<Notification::NotificationNormalContent>();
-    normalContent->SetTitle(appName);
-    normalContent->SetText(prompt);
-    return normalContent;
-}
-
 static bool SetActionButton(const std::shared_ptr<BannerNotificationRecord> &bannerNotification,
     const std::string& buttonName, Notification::NotificationRequest& notificationRequest,
     const int32_t btnTypeValue, const std::string &label)
