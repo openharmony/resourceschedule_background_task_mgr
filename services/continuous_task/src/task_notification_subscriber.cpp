@@ -82,6 +82,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         payload["eventName"] = eventName;
         ReportDataInProcess(ResourceSchedule::ResType::RES_TYPE_LIVE_VIEW_EVENT,
             ResourceSchedule::ResType::LiveViewState::LIVE_VIEW_EXIT, payload);
+        HandleReportAdjustEvent(creatorUid);
     }
 }
 
@@ -118,6 +119,7 @@ void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::
         ResourceSchedule::ResType::LiveViewState::LIVE_VIEW_ENTER :
         ResourceSchedule::ResType::LiveViewState::LIVE_VIEW_EXIT;
     ReportDataInProcess(type, value, payload);
+    HandleReportAdjustEvent(creatorUid);
 }
 
 void TaskNotificationSubscriber::OnUpdate(

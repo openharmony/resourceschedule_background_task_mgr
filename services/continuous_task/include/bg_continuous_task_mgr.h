@@ -168,6 +168,8 @@ public:
         int32_t appIndex);
     ErrCode NotifyAudioStart(const int32_t uid);
     std::shared_ptr<AppExecFwk::EventHandler> GetHandler() const;
+    void HandleReportAdjustEvent(int32_t uid);
+
 private:
     void HandleRemoveTaskByMode(uint32_t mode);
     void PostRemoveTaskByMode(uint32_t mode);
@@ -311,6 +313,12 @@ private:
     void HandleSuspendContinuousTaskByStandby(int32_t uid, int32_t pid, int32_t mode, const std::string &key);
     void HandleActiveContinuousTaskByStandby(int32_t uid, int32_t pid, const std::string &key);
     std::string GetAbilityNamePid(const sptr<ContinuousTaskParamForInner> &taskParam, int32_t pid, int32_t callingUid);
+    void HandleReportAdjustEventInner(int32_t uid);
+    bool CheckLiveViewAndMediaControllerByUid(int32_t uid, bool &liveViewState,bool &mediaControllerState);
+    void ReportTaskAdjustEventByTask(const std::shared_ptr<ContinuousTaskRecord> record,
+        ContinuousTaskEventTriggerType changeEventType);
+    bool CheckReportTaskAdjustEvent(int32_t uid);
+    void ReportTaskAdjustEventByUid(int32_t uid);
 
 #ifdef HAS_OS_ACCOUNT_CAR
     void ClearBgOsAccountTaskInCar();
