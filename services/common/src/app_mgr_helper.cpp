@@ -117,3 +117,137 @@ bool AppMgrHelper::Connect()
 }
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
+
+bool BgContinuousTaskMgr::CheckLiveViewAndMediaControllerByUid(int32_t uid, bool &liveViewState,
+    bool &mediaControllerState)
+{
+#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
+    std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
+    if (Notification::NotificationHelper::GetActiveNotifications(notificationRequests) != ERR_OK) {
+        BGTASK_LOGE("GetActiveNotifications fail.");
+        return false;
+    }
+    for (Notification::NotificationRequest *var : notificationRequests) {
+        if (!var) {
+            BGTASK_LOGE("var is null.");
+            return false;
+        }
+        auto notificationType = var->GetNotificationType();
+        if ((uid == var->GetOwnerUid()) && notificationType == Notification::NotificationContent::Type::LIVE_VIEW) {
+            liveViewState = true;
+        }
+    }
+#endif
+    auto iter = avSessionNotification_.find(uid);
+    if (iter != avSessionNotification_.end()) {
+        mediaControllerState = iter->second;
+    }
+    return true;
+}
+
+void BgContinuousTaskMgr::ReportTaskAdjustEventByUid(int32_t uid)
+{
+    bool liveViewState = false;
+    bool mediaControllerState = false;
+    if (!CheckLiveViewAndMediaControllerByUid(uid, liveViewState, mediaControllerState)) {
+        return;
+    }
+    nlohmann::json payload = nlohmann::json::object();
+    payload["uid"] = uid;
+    payload["liveViewState"] = liveViewState;
+    payload["mediaControllerState"] = mediaControllerState;
+    auto pidForModes = nlohmann::json::array();
+    std::map<pid_t, std::set<uint32_t>> pidModeMap;
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (task.second == nullptr || task.second->GetUid() != uid) {
+            continue;
+        }
+        pid_t pid = task.second->pid_;
+        const auto bgModeIds = task.second->bgModeIds_;
+        auto modeSet = pidModeMap[pid];
+        for (uint32_t mode : bgModeIds) {
+            modeSet.insert(mode);
+        }
+    }
+    nlohmann::json result = nlohmann::json::array();
+    for (auto &[pid, modeSet] : pidModeMap) {
+        nlohmann::json item;
+        nlohmann::json modes = nlohmann::json::array();
+        for (uint32_t mode : modeSet) {
+            modes.push_back(mode);
+        }
+        item[std::to_string(pid)] = modes;
+        pidForModes.push_back(item);
+    }
+    payload["pidForModes"] = pidForModes;
+    ReportDataInProcess(ResourceSchedule::ResType::RES_TYPE_BGTASK_ADJUST_EVENT, -1, payload);
+}
+
+void BgContinuousTaskMgr::ReportTaskAdjustEventByTask(const std::shared_ptr<ContinuousTaskRecord> record,
+    ContinuousTaskEventTriggerType changeEventType)
+{
+    bool liveViewState = false;
+    bool mediaControllerState = false;
+    if (!CheckLiveViewAndMediaControllerByUid(record->uid_, liveViewState, mediaControllerState)) {
+        return;
+    }
+    nlohmann::json payload = nlohmann::json::object();
+    payload["uid"] = record->uid_;
+    payload["liveViewState"] = liveViewState;
+    payload["mediaControllerState"] = mediaControllerState;
+    auto pidForModes = nlohmann::json::array();
+    std::map<pid_t, std::set<uint32_t>> pidModeMap;
+    std::string taskInfoMapKey = std::to_string(record->uid_) + SEPARATOR
+        + record->abilityName_ + SEPARATOR + std::to_string(record->abilityId_);
+    if (record->isByRequestObject_) {
+        taskInfoMapKey = taskInfoMapKey + SEPARATOR + std::to_string(record->continuousTaskId_);
+    }
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (task.second == nullptr || task.second->GetUid() != record->uid_) {
+            continue;
+        }
+        pid_t pid = task.second->pid_;
+        auto bgModeIds = task.second->bgModeIds_;
+        auto modeSet = pidModeMap[pid];
+        if (task.first == taskInfoMapKey) {
+            if (changeEventType == ContinuousTaskEventTriggerType::TASK_CANCEL ||
+                changeEventType == ContinuousTaskEventTriggerType::TASK_SUSPEND) {
+                continue;
+            } else if (changeEventType == ContinuousTaskEventTriggerType::TASK_UPDATE) {
+                bgModeIds = record->bgModeIds_;
+            }
+        }
+        for (uint32_t mode : bgModeIds) {
+            modeSet.insert(mode);
+        }
+    }
+    nlohmann::json result = nlohmann::json::array();
+    for (auto &[pid, modeSet] : pidModeMap) {
+        nlohmann::json item;
+        nlohmann::json modes = nlohmann::json::array();
+        for (uint32_t mode : modeSet) {
+            modes.push_back(mode);
+        }
+        item[std::to_string(pid)] = modes;
+        pidForModes.push_back(item);
+    }
+    payload["pidForModes"] = pidForModes;
+    ReportDataInProcess(ResourceSchedule::ResType::RES_TYPE_BGTASK_ADJUST_EVENT, -1, payload);
+}
+
+bool BgContinuousTaskMgr::CheckReportTaskAdjustEvent(int32_t uid)
+{
+    const std::vector<uint32_t> checkMode = {
+        BackgroundMode::USB_CONNECTION
+    };
+    for (const auto &task : continuousTaskInfosMap_) {
+        if (task.second == nullptr || task.second->GetUid() != uid) {
+            continue;
+        }
+        const std::vector<uint32_t> bgModeIds = task.second->bgModeIds_;
+        if (CommonUtils::CheckApplyMode(checkMode, bgModeIds)) {
+            return true;
+        }
+    }
+    return false;
+}
