@@ -319,6 +319,7 @@ private:
         ContinuousTaskEventTriggerType changeEventType);
     bool CheckReportTaskAdjustEvent(int32_t uid);
     void ReportTaskAdjustEventByUid(int32_t uid);
+    void ReportTaskAdjustEvent(const std::map<pid_t, std::set<uint32_t>> &pidModeMap, nlohmann::json &payload);
 
 #ifdef HAS_OS_ACCOUNT_CAR
     void ClearBgOsAccountTaskInCar();
