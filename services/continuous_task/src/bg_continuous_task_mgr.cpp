@@ -2546,7 +2546,6 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
 
     // 只有播音类型长时任务，并且没有AVSession通知
     if (!isPublish && record->bgModeIds_.size() == 1 && record->bgModeIds_[0] == BackgroundMode::AUDIO_PLAYBACK) {
-        BGTASK_LOGI("avsession not exist, send continuousTask notification uid: %{public}d", uid);
         result = SendContinuousTaskNotification(record);
         RefreshTaskRecord();
         RemoveAudioPlaybackDelayTask(uid);
