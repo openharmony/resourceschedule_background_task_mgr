@@ -4790,9 +4790,6 @@ void BgContinuousTaskMgr::ReportTaskAdjustEventByUid(int32_t uid)
 void BgContinuousTaskMgr::ReportTaskAdjustEventByTask(const std::shared_ptr<ContinuousTaskRecord> record,
     ContinuousTaskEventTriggerType changeEventType)
 {
-    if (!CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::USB_CONNECTION)) {
-        return;
-    }
     bool liveViewState = false;
     bool mediaControllerState = false;
     if (!CheckLiveViewAndMediaControllerByUid(record->uid_, liveViewState, mediaControllerState)) {
