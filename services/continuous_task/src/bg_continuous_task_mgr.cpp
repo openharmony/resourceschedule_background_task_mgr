@@ -2512,9 +2512,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
 ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish)
 {
     BGTASK_LOGI("AVSessionNotifyUpdateNotification start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
-    if (CheckReportTaskAdjustEvent(uid)) {
-        ReportTaskAdjustEventByUid(uid);
-    }
+    ReportTaskAdjustEventByUid(uid);
     avSessionNotification_[uid] = isPublish;
     if (isPublish) {
         RemoveAudioPlaybackDelayTask(uid);
@@ -4763,6 +4761,9 @@ bool BgContinuousTaskMgr::CheckLiveViewAndMediaControllerByUid(int32_t uid, bool
 
 void BgContinuousTaskMgr::ReportTaskAdjustEventByUid(int32_t uid)
 {
+    if (!CheckReportTaskAdjustEvent(uid)) {
+        return;
+    }
     bool liveViewState = false;
     bool mediaControllerState = false;
     if (!CheckLiveViewAndMediaControllerByUid(uid, liveViewState, mediaControllerState)) {
@@ -4869,17 +4870,9 @@ void BgContinuousTaskMgr::HandleReportAdjustEvent(int32_t uid)
         return;
     }
     handler_->PostSyncTask([this, uid]() {
-        this->HandleReportAdjustEventInner(uid);
+        this->ReportTaskAdjustEventByUid(uid);
         }, AppExecFwk::EventQueue::Priority::HIGH);
 }
-
-void BgContinuousTaskMgr::HandleReportAdjustEventInner(int32_t uid)
-{
-    if (CheckReportTaskAdjustEvent(uid)) {
-        ReportTaskAdjustEventByUid(uid);
-    }
-}
-
 
 void BgContinuousTaskMgr::HisysEventRequestAuth(const std::shared_ptr<BannerNotificationRecord> authRecord)
 {
