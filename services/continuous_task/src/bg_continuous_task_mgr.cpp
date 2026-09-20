@@ -1199,8 +1199,8 @@ ErrCode BgContinuousTaskMgr::UpdateBackgroundRunningByTaskIdInner(int32_t uid,
         BGTASK_LOGE("update task fail, taskId: %{public}d", taskParam->updateTaskId_);
         return ERR_BGTASK_CONTINUOUS_TASKID_INVALID;
     }
-    auto findTask = [continuousTaskId](const auto &target) {
-        return continuousTaskId == target.second->continuousTaskId_ && uid == target.second->uid_&&
+    auto findTask = [continuousTaskId, uid](const auto &target) {
+        return continuousTaskId == target.second->continuousTaskId_ && uid == target.second->uid_ &&
             target.second->isByRequestObject_;
     };
     auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findTask);
@@ -1904,7 +1904,7 @@ ErrCode BgContinuousTaskMgr::StopBackgroundRunningInner(int32_t uid, const std::
     BgTaskHiTraceChain traceChain(__func__);
     if (continuousTaskId != -1) {
         // 新接口取消
-        auto findTask = [continuousTaskId](const auto &target) {
+        auto findTask = [continuousTaskId, uid](const auto &target) {
             return continuousTaskId == target.second->continuousTaskId_ && uid == target.second->uid_;
         };
         auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(),
