@@ -98,7 +98,7 @@ static const char *g_taskPromptResNames[] = {
     "ohos_bgmode_prompt_default_value",
     "ohos_bgmode_prompt_nearlink",
     "ohos_bgmode_prompt_default_value",
-    "ohos_bgmode_prompt_usb"
+    "ohos_bgsubmode_prompt_usb"
 };
 
 static const char *g_taskPromptResNamesSubMode[] = {
@@ -2506,6 +2506,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
         std::lock_guard<std::mutex> lock(delayTasksMutex_);
         delayTasks_.insert(uid);
     }
+    HandleReportAdjustEvent(uid);
     return result;
 }
 
@@ -4200,7 +4201,7 @@ bool BgContinuousTaskMgr::CheckLiveViewInfo(std::shared_ptr<ContinuousTaskRecord
     if (CommonUtils::CheckExistMode(record->bgModeIds_, BackgroundMode::USB_CONNECTION)) {
         bool liveViewState = false;
         bool mediaControllerState = false;
-        CheckLiveViewAndMediaControllerByUid(record->uid_, liveViewState, mediaControllerState);
+        GetLiveViewAndMediaControllerByUid(record->uid_, liveViewState, mediaControllerState);
         if ((liveViewState || mediaControllerState) &&
             !CommonUtils::CheckExistOtherMode(record->bgModeIds_, BackgroundMode::USB_CONNECTION, g_liveViewTypes)) {
             return true;
@@ -4731,26 +4732,10 @@ void BgContinuousTaskMgr::OnBannerNotificationActionButtonClickInner(const int32
     }
 }
 
-bool BgContinuousTaskMgr::CheckLiveViewAndMediaControllerByUid(int32_t uid, bool &liveViewState,
+void BgContinuousTaskMgr::GetLiveViewAndMediaControllerByUid(int32_t uid, bool &liveViewState,
     bool &mediaControllerState)
 {
-#ifdef DISTRIBUTED_NOTIFICATION_ENABLE
-    std::vector<sptr<Notification::NotificationRequest>> notificationRequests;
-    if (Notification::NotificationHelper::GetActiveNotifications(notificationRequests) != ERR_OK) {
-        BGTASK_LOGE("GetActiveNotifications fail.");
-        return false;
-    }
-    for (Notification::NotificationRequest *var : notificationRequests) {
-        if (!var) {
-            BGTASK_LOGE("var is null.");
-            return false;
-        }
-        auto notificationType = var->GetNotificationType();
-        if ((uid == var->GetOwnerUid()) && notificationType == Notification::NotificationContent::Type::LIVE_VIEW) {
-            liveViewState = true;
-        }
-    }
-#endif
+    liveViewState = BgtaskDataMgr::GetInstance()->CheckLiveViewInfoByUid(uid);
     auto iter = avSessionNotification_.find(uid);
     if (iter != avSessionNotification_.end()) {
         mediaControllerState = iter->second;
@@ -4765,9 +4750,7 @@ void BgContinuousTaskMgr::ReportTaskAdjustEventByUid(int32_t uid)
     }
     bool liveViewState = false;
     bool mediaControllerState = false;
-    if (!CheckLiveViewAndMediaControllerByUid(uid, liveViewState, mediaControllerState)) {
-        return;
-    }
+    GetLiveViewAndMediaControllerByUid(uid, liveViewState, mediaControllerState);
     nlohmann::json payload = nlohmann::json::object();
     payload["uid"] = uid;
     payload["liveViewState"] = liveViewState;
@@ -4778,7 +4761,7 @@ void BgContinuousTaskMgr::ReportTaskAdjustEventByUid(int32_t uid)
             continue;
         }
         pid_t pid = task.second->pid_;
-        const auto &bgModeIds = task.second->bgModeIds_;
+        const auto bgModeIds = task.second->bgModeIds_;
         auto &modeSet = pidModeMap[pid];
         for (uint32_t mode : bgModeIds) {
             modeSet.insert(mode);
@@ -4792,25 +4775,23 @@ void BgContinuousTaskMgr::ReportTaskAdjustEventByTask(const std::shared_ptr<Cont
 {
     bool liveViewState = false;
     bool mediaControllerState = false;
-    if (!CheckLiveViewAndMediaControllerByUid(record->uid_, liveViewState, mediaControllerState)) {
-        return;
-    }
+    GetLiveViewAndMediaControllerByUid(record->uid_, liveViewState, mediaControllerState);
     nlohmann::json payload = nlohmann::json::object();
     payload["uid"] = record->uid_;
     payload["liveViewState"] = liveViewState;
     payload["mediaControllerState"] = mediaControllerState;
     std::map<pid_t, std::set<uint32_t>> pidModeMap;
-    std::string taskInfoMapKey = std::to_string(record->uid_) + SEPARATOR
-        + record->abilityName_ + SEPARATOR + std::to_string(record->abilityId_);
+    std::string taskInfoMapKey = std::to_string(record->uid_) + SEPARATOR + record->abilityName_ +
+        SEPARATOR + std::to_string(record->abilityId_);
     if (record->isByRequestObject_) {
-        taskInfoMapKey = taskInfoMapKey + SEPARATOR + std::to_string(record->continuousTaskId_);
+        taskInfoMapKey += SEPARATOR + std::to_string(record->continuousTaskId_);
     }
     for (const auto &task : continuousTaskInfosMap_) {
         if (task.second == nullptr || task.second->GetUid() != record->uid_) {
             continue;
         }
         pid_t pid = task.second->pid_;
-        auto &bgModeIds = task.second->bgModeIds_;
+        auto bgModeIds = task.second->bgModeIds_;
         auto &modeSet = pidModeMap[pid];
         if (task.first == taskInfoMapKey) {
             if (changeEventType == ContinuousTaskEventTriggerType::TASK_CANCEL ||
@@ -4841,7 +4822,8 @@ void BgContinuousTaskMgr::ReportTaskAdjustEvent(const std::map<pid_t, std::set<u
         pidForModes.push_back(item);
     }
     payload["pidForModes"] = pidForModes;
-    BGTASK_LOGD("ReportTaskAdjustEvent info: %{public}s", payload.dump().c_str());
+    BGTASK_LOGD("ReportTaskAdjustEvent info: %{public}s",
+        payload.dump(-1, ' ', false, nlohmann::detail::error_handler_t::replace).c_str());
     ReportDataInProcess(ResourceSchedule::ResType::RES_TYPE_BGTASK_ADJUST_EVENT, -1, payload);
 }
 
@@ -4868,9 +4850,13 @@ void BgContinuousTaskMgr::HandleReportAdjustEvent(int32_t uid)
         BGTASK_LOGW("manager is not ready");
         return;
     }
-    handler_->PostSyncTask([this, uid]() {
-        this->ReportTaskAdjustEventByUid(uid);
-        }, AppExecFwk::EventQueue::Priority::HIGH);
+    auto task = [weak = weak_from_this(), uid] {
+        auto self = weak.lock();
+        if (self) {
+            self->ReportTaskAdjustEventByUid(uid);
+        }
+    }
+    handler_->PostTask(task);
 }
 
 void BgContinuousTaskMgr::HisysEventRequestAuth(const std::shared_ptr<BannerNotificationRecord> authRecord)

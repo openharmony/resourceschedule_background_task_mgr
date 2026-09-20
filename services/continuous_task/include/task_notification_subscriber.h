@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_SERVICES_CONTINUOUS_TASK_INCLUDE_NOTIFICATION_SUBSCRIBER_H
 
 #include "notification_helper.h"
+#include "bgtask_data_mgr.h"
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
@@ -50,6 +51,7 @@ private:
 
 private:
     static std::shared_ptr<BgContinuousTaskMgr> continuousTaskMgr_;
+    static std::shared_ptr<BgtaskDataMgr> bgtaskDataMgr_;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
