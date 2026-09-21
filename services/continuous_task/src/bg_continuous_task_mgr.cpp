@@ -4740,7 +4740,6 @@ void BgContinuousTaskMgr::GetLiveViewAndMediaControllerByUid(int32_t uid, bool &
     if (iter != avSessionNotification_.end()) {
         mediaControllerState = iter->second;
     }
-    return true;
 }
 
 void BgContinuousTaskMgr::ReportTaskAdjustEventByUid(int32_t uid)
