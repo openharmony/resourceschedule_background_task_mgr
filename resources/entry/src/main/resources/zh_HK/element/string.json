@@ -251,6 +251,20 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_usb",
+            "value":"正在運行 USB 連接任務，刪除通知後任務將停止。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_usb",
+            "value":"USB 連接",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
