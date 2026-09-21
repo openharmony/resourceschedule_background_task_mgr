@@ -163,6 +163,14 @@
         {
             "name":"text_banner_notification_allow_background_keepalive",
             "value":"[TS_1208333]_Allow %s to run in the background?"
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_usb",
+            "value":"[TS_1254799]_A USB connection task is in progress. Closing this notification will end it."
+        },
+        {
+            "name":"notification_text_usb",
+            "value":"[TS_1254798]_USB connection"
         }
     ]
 }
