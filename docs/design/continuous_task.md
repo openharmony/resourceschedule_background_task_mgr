@@ -109,6 +109,7 @@ SA --> App : 返回
 - API23版本新增`obtainAllContinuousTasks`，支持系统应用获取全量长时任务信息的能力
 - API26版本新增支持星闪类型长时任务（`MODE_NEARLINK`）
 - 7.0版本新增 `SuspendContinuousTask` / `ActiveContinuousTask` 暂停/激活机制，长时任务因为使用不当临时被系统暂停时通知挂起，恢复后通知激活。
+- 7.1版本新增支持USB类型长时任务（`MODE_USB_CONNECTION`）及对应的暂停原因、取消原因。
 
 ## 特殊场景任务授权实现
 

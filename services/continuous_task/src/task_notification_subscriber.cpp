@@ -47,6 +47,8 @@ static constexpr int32_t CAPSULE_STATUS_ACTIVE = 1;
 std::shared_ptr<BgContinuousTaskMgr> TaskNotificationSubscriber::continuousTaskMgr_
     = BgContinuousTaskMgr::GetInstance();
 
+std::shared_ptr<BgtaskDataMgr> TaskNotificationSubscriber::bgtaskDataMgr_ = BgtaskDataMgr::GetInstance();
+
 TaskNotificationSubscriber::TaskNotificationSubscriber() {}
 
 TaskNotificationSubscriber::~TaskNotificationSubscriber() {}
@@ -73,6 +75,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         std::string eventName = "";
         int32_t capsuleStatus = 0;
         GetLiveViewExtraInfo(request, eventName, capsuleStatus);
+        bgtaskDataMgr_->RemoveLiveViewInfo(creatorUid, eventName);
         if (eventName == NAVIGATION || eventName == PROGRESS) {
             continuousTaskMgr_->SetLiveViewInfo(creatorUid, false, eventName);
             continuousTaskMgr_->SendNotificationByLiveViewCancel(creatorUid);
@@ -82,6 +85,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         payload["eventName"] = eventName;
         ReportDataInProcess(ResourceSchedule::ResType::RES_TYPE_LIVE_VIEW_EVENT,
             ResourceSchedule::ResType::LiveViewState::LIVE_VIEW_EXIT, payload);
+        continuousTaskMgr_->HandleReportAdjustEvent(creatorUid);
     }
 }
 
@@ -106,6 +110,7 @@ void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::
     std::string eventName = "";
     int32_t capsuleStatus = 0;
     GetLiveViewExtraInfo(request, eventName, capsuleStatus);
+    bgtaskDataMgr_->AddLiveViewInfo(creatorUid, eventName);
     if (capsuleStatus == CAPSULE_STATUS_ACTIVE && (eventName == NAVIGATION || eventName == PROGRESS)) {
         continuousTaskMgr_->SetLiveViewInfo(creatorUid, true, eventName);
         continuousTaskMgr_->CancelBgTaskNotification(creatorUid);
@@ -118,6 +123,7 @@ void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::
         ResourceSchedule::ResType::LiveViewState::LIVE_VIEW_ENTER :
         ResourceSchedule::ResType::LiveViewState::LIVE_VIEW_EXIT;
     ReportDataInProcess(type, value, payload);
+    continuousTaskMgr_->HandleReportAdjustEvent(creatorUid);
 }
 
 void TaskNotificationSubscriber::OnUpdate(

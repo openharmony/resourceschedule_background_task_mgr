@@ -261,7 +261,7 @@
             }
         },
         {
-            "name":"ohos_bgmode_prompt_usb",
+            "name":"ohos_bgsubmode_prompt_usb",
             "value":"正在运行USB任务，删除通知后任务将停止"
         },
         {

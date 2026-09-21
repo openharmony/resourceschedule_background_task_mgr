@@ -273,7 +273,7 @@
             }
         },
         {
-            "name":"ohos_bgmode_prompt_usb",
+            "name":"ohos_bgsubmode_prompt_usb",
             "value":"A USB task is in progress. Closing this notification will end it."
         },
         {
