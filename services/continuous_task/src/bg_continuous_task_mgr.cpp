@@ -4854,7 +4854,7 @@ void BgContinuousTaskMgr::HandleReportAdjustEvent(int32_t uid)
         if (self) {
             self->ReportTaskAdjustEventByUid(uid);
         }
-    }
+    };
     handler_->PostTask(task);
 }
 

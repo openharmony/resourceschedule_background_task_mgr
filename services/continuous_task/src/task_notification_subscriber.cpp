@@ -75,7 +75,7 @@ void TaskNotificationSubscriber::OnCanceled(const std::shared_ptr<Notification::
         std::string eventName = "";
         int32_t capsuleStatus = 0;
         GetLiveViewExtraInfo(request, eventName, capsuleStatus);
-        bgtaskDataMgr_->RemoveLiveViewInfo(uid, eventName);
+        bgtaskDataMgr_->RemoveLiveViewInfo(creatorUid, eventName);
         if (eventName == NAVIGATION || eventName == PROGRESS) {
             continuousTaskMgr_->SetLiveViewInfo(creatorUid, false, eventName);
             continuousTaskMgr_->SendNotificationByLiveViewCancel(creatorUid);
@@ -110,7 +110,7 @@ void TaskNotificationSubscriber::OnConsumed(const std::shared_ptr<Notification::
     std::string eventName = "";
     int32_t capsuleStatus = 0;
     GetLiveViewExtraInfo(request, eventName, capsuleStatus);
-    bgtaskDataMgr_->AddLiveViewInfo(uid, eventName);
+    bgtaskDataMgr_->AddLiveViewInfo(creatorUid, eventName);
     if (capsuleStatus == CAPSULE_STATUS_ACTIVE && (eventName == NAVIGATION || eventName == PROGRESS)) {
         continuousTaskMgr_->SetLiveViewInfo(creatorUid, true, eventName);
         continuousTaskMgr_->CancelBgTaskNotification(creatorUid);
