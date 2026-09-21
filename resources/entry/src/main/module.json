@@ -1,7 +1,7 @@
 {
   "module": {
     "name": "entry",
-    "type": "feature",
+    "type": "entry",
     "srcEntrance": "./ets/Application/AbilityStage.ts",
     "description": "$string:entry_desc",
     "mainElement": "MainAbility",
