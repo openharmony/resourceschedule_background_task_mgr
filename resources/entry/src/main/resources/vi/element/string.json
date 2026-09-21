@@ -251,6 +251,20 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_usb",
+            "value":"Đang thực hiện một tác vụ kết nối USB. Đóng thông báo này sẽ kết thúc tác vụ đó.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_usb",
+            "value":"Kết nối USB",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
