@@ -19,6 +19,8 @@
 #include <cstdint>
 #include <mutex>
 #include <list>
+#include <unordered_map>
+#include <unordered_set>
 #include "singleton.h"
 
 namespace OHOS {
@@ -54,6 +56,9 @@ public:
     void OnAppStopped(int32_t uid);
     void OnRemoveSystemAbility(int32_t said);
     void ClearAll();
+    void AddLiveViewInfo(int32_t uid, const std::string &eventName);
+    void RemoveLiveViewInfo(int32_t uid, const std::string &eventName);
+    bool CheckLiveViewInfoByUid(int32_t uid);
 
 private:
     void RemoveMultiDeviceInfoByUid(int32_t uid);
@@ -63,6 +68,7 @@ private:
     std::mutex dataMutex_;
     std::list<std::shared_ptr<AudioInfo>> audioPlayerInfos_ {};
     std::list<std::shared_ptr<MultiDeviceInfo>> multiDeviceInfo_ {};
+    std::unordered_map<int32_t, std::unordered_set<std::string>> allLiveViewInfo_ {};
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

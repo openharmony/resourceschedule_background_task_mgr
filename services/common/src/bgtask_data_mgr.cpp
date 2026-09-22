@@ -172,5 +172,27 @@ void BgtaskDataMgr::ClearAll()
     audioPlayerInfos_.clear();
     multiDeviceInfo_.clear();
 }
+
+void BgtaskDataMgr::AddLiveViewInfo(int32_t uid, const std::string &eventName)
+{
+    std::lock_guard<std::mutex> lock(dataMutex_);
+    allLiveViewInfo_[uid].emplace(eventName);
+}
+
+void BgtaskDataMgr::RemoveLiveViewInfo(int32_t uid, const std::string &eventName)
+{
+    std::lock_guard<std::mutex> lock(dataMutex_);
+    allLiveViewInfo_[uid].erase(eventName);
+    if (allLiveViewInfo_[uid].empty()) {
+        allLiveViewInfo_.erase(uid);
+    }
+}
+
+bool BgtaskDataMgr::CheckLiveViewInfoByUid(int32_t uid)
+{
+    std::lock_guard<std::mutex> lock(dataMutex_);
+    auto record = allLiveViewInfo_.find(uid);
+    return record != allLiveViewInfo_.end();
+}
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
