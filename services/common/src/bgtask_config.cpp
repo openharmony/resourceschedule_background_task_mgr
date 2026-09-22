@@ -91,7 +91,7 @@ void BgtaskConfig::ParseTransientTaskExemptedQuatoList(const nlohmann::json &jso
         transientTaskExemptedQuatoList_.insert(app);
     }
     for (const auto &app : transientTaskExemptedQuatoList_) {
-        BGTASK_LOGI("ParseTransientTaskExemptedQuatoList: %{public}s.", app.c_str());
+        BGTASK_LOGI("app:%{public}s.", app.c_str());
     }
 }
 

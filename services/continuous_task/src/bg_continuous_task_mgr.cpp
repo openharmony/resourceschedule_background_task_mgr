@@ -2081,7 +2081,7 @@ void BgContinuousTaskMgr::StopContinuousTask(int32_t uid, int32_t pid, uint32_t 
 
 void BgContinuousTaskMgr::HandleStopContinuousTask(int32_t uid, int32_t pid, uint32_t taskType, const std::string &key)
 {
-    BGTASK_LOGI("StopContinuousTask taskType: %{public}d, key %{public}s", taskType, key.c_str());
+    BGTASK_LOGI("taskType: %{public}d, key %{public}s", taskType, key.c_str());
     if (taskType == BackgroundMode::DATA_TRANSFER) {
         RemoveContinuousTaskRecordByUidAndMode(uid, taskType);
         return;
@@ -2245,7 +2245,7 @@ void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, c
             ++iter;
             continue;
         }
-        BGTASK_LOGI("ActiveContinuousTask uid: %{public}d, pid: %{public}d", uid, pid);
+        BGTASK_LOGI("uid: %{public}d, pid: %{public}d", uid, pid);
         iter->second->suspendState_ = false;
         iter->second->isStandby_ = false;
         OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_ACTIVE);
@@ -2272,7 +2272,7 @@ void BgContinuousTaskMgr::HandleActiveContinuousTaskByStandby(int32_t uid, int32
             BGTASK_LOGW("active uid or standbySuspend fail, task: %{public}s", key.c_str());
             continue;
         }
-        BGTASK_LOGI("HandleActiveContinuousTaskByStandby uid: %{public}d, pid: %{public}d", uid, pid);
+        BGTASK_LOGI("uid: %{public}d, pid: %{public}d", uid, pid);
         iter.second->isStandby_ = true;
         iter.second->isStandbySuspend_ = false;
         OnContinuousTaskChanged(iter.second, ContinuousTaskEventTriggerType::TASK_ACTIVE);
@@ -2513,7 +2513,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotification(int32_t uid, int3
 
 ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid, int32_t pid, bool isPublish)
 {
-    BGTASK_LOGI("AVSessionNotifyUpdateNotification start, uid: %{public}d, isPublish: %{public}d", uid, isPublish);
+    BGTASK_LOGI("uid: %{public}d, isPublish: %{public}d", uid, isPublish);
     ReportTaskAdjustEventByUid(uid);
     avSessionNotification_[uid] = isPublish;
     if (isPublish) {
@@ -2792,7 +2792,7 @@ void BgContinuousTaskMgr::SetReason(const std::string &mapKey, int32_t reason, i
     record->reason_ = reason;
     if (detailedCancelReason != ContinuousTaskCancelReason::INVALID_REASON) {
         record->detailedCancelReason_ = detailedCancelReason;
-        BGTASK_LOGI("SetReason detailedCancelReason: %{public}d", detailedCancelReason);
+        BGTASK_LOGI("detailedCancelReason: %{public}d", detailedCancelReason);
     }
 }
 
@@ -2907,7 +2907,7 @@ void BgContinuousTaskMgr::OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> 
     auto iter = bgTaskSubscribers_.begin();
     while (iter != bgTaskSubscribers_.end()) {
         if ((*iter)->subscriber_->AsObject() == objectProxy) {
-            BGTASK_LOGI("OnRemoteSubscriberDiedInner erase it");
+            BGTASK_LOGI("subscriber:%{public}d died", (*iter)->pid_);
             iter = bgTaskSubscribers_.erase(iter);
         } else {
             iter++;
@@ -2939,7 +2939,7 @@ void BgContinuousTaskMgr::OnAppStopped(int32_t uid)
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->uid_ == uid) {
             auto record = iter->second;
-            BGTASK_LOGI("OnAppStopped uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
+            BGTASK_LOGI("uid: %{public}d, bundleName: %{public}s abilityName: %{public}s"
                 "bgModeId: %{public}d, abilityId: %{public}d", uid, record->bundleName_.c_str(),
                 record->abilityName_.c_str(), record->bgModeId_, record->abilityId_);
             record->reason_ = SYSTEM_CANCEL;

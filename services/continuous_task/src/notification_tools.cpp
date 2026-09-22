@@ -237,7 +237,7 @@ WEAK_FUNC ErrCode NotificationTools::CancelNotification(const std::string &label
 {
 #ifdef DISTRIBUTED_NOTIFICATION_ENABLE
     if (Notification::NotificationHelper::CancelNotification(label, id) != ERR_OK) {
-        BGTASK_LOGE("CancelNotification error label %{public}s, id %{public}d", label.c_str(), id);
+        BGTASK_LOGE("error label %{public}s, id %{public}d", label.c_str(), id);
         return ERR_BGTASK_NOTIFICATION_ERR;
     }
 #endif
