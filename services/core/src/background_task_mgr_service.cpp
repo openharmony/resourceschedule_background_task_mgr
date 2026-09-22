@@ -126,6 +126,7 @@ void BackgroundTaskMgrService::OnAddSystemAbility(int32_t systemAbilityId, const
 void BackgroundTaskMgrService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
     BgTaskHiTraceChain traceChain(__func__);
+    BGTASK_LOGI("saId:%{public}d", systemAbilityId);
     DelayedSingleton<BgEfficiencyResourcesMgr>::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
     BgContinuousTaskMgr::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
     DelayedSingleton<BgTransientTaskMgr>::GetInstance()->OnRemoveSystemAbility(systemAbilityId, deviceId);
@@ -448,7 +449,7 @@ ErrCode BackgroundTaskMgrService::SubscribeBackgroundTask(
             return ERR_BGTASK_SYS_NOT_READY;
         }
     }
-    BGTASK_LOGW("subscribe background task success");
+    BGTASK_LOGD("subscribe background task success");
     return ERR_OK;
 }
 

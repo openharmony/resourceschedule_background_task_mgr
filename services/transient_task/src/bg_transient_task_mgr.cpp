@@ -180,8 +180,7 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
         BGTASK_LOGI("Request suspend delay failed, calling info is illegal.");
         return ret;
     }
-    BGTASK_LOGI("request suspend delay pkg : %{public}s, reason : %{public}s, uid : %{public}d, pid : %{public}d",
-        name.c_str(), Str16ToStr8(reason).c_str(), uid, pid);
+    BGTASK_LOGD("request suspend delay pkg:%{public}s, uid:%{public}d, pid:%{public}d", name.c_str(), uid, pid);
 
     auto infoEx = make_shared<DelaySuspendInfoEx>(pid);
     delayInfo = infoEx;
@@ -200,11 +199,12 @@ ErrCode BgTransientTaskMgr::RequestSuspendDelay(const std::u16string& reason,
     auto keyInfo = make_shared<KeyInfo>(name, uid, pid);
     ret = decisionMaker_->Decide(keyInfo, infoEx);
     if (ret != ERR_OK) {
-        BGTASK_LOGI("%{public}s request suspend failed.", name.c_str());
+        BGTASK_LOGD("%{public}s request suspend failed.", name.c_str());
         return ret;
     }
-    BGTASK_LOGI("request suspend success, pkg : %{public}s, uid : %{public}d, pid : %{public}d, requestId: %{public}d,"
-        "delayTime: %{public}d", name.c_str(), uid, pid, infoEx->GetRequestId(), infoEx->GetActualDelayTime());
+    BGTASK_LOGI("request suspend success, pkg:%{public}s uid:%{public}d pid:%{public}d requestId:%{public}d "
+        "delayTime:%{public}d reason:%{public}s,", name.c_str(), uid, pid, infoEx->GetRequestId(),
+        infoEx->GetActualDelayTime(), Str16ToStr8(reason).c_str());
     expiredCallbackMap_[infoEx->GetRequestId()] = callback;
     keyInfoMap_[infoEx->GetRequestId()] = keyInfo;
     if (callbackDeathRecipient_ != nullptr) {
@@ -636,7 +636,7 @@ ErrCode BgTransientTaskMgr::SubscribeBackgroundTask(const sptr<IBackgroundTaskSu
             remote->AddDeathRecipient(susriberDeathRecipient_);
         }
         subscriberList_.emplace_back(subscriber);
-        BGTASK_LOGI("subscribe transient task success.");
+        BGTASK_LOGD("subscribe transient task success.");
     });
     return ERR_OK;
 }
@@ -801,7 +801,7 @@ void BgTransientTaskMgr::OnAppCacheStateChanged(int32_t uid, int32_t pid, const 
     }
     lock_guard<mutex> lock(expiredCallbackLock_);
     for (auto &requestId : requestIdList) {
-        BGTASK_LOGI("OnAppCacheStateChanged cancel task, bundlename: %{public}s, uid: %{public}d, pid: %{public}d,"
+        BGTASK_LOGI("cancel task, bundlename: %{public}s, uid: %{public}d, pid: %{public}d,"
             " requestId: %{public}d.", bundleName.c_str(), uid, pid, requestId);
         CancelSuspendDelayLocked(requestId);
     }

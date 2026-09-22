@@ -78,7 +78,7 @@ __attribute__((no_sanitize("cfi"))) void AuthCallbackInstance::OnExpired() {}
 
 __attribute__((no_sanitize("cfi"))) void AuthCallbackInstance::OnExpiredAuth(int32_t authResult)
 {
-    BGTASK_LOGI("OnExpiredAuth authresult: %{public}d", authResult);
+    BGTASK_LOGI("authresult: %{public}d", authResult);
     std::lock_guard<std::mutex> lock(authCallbackLock_);
     auto findCallback = std::find_if(authCallbackInstances_.begin(), authCallbackInstances_.end(),
         [&](const auto& callbackInstance) { return callbackInstance.get() == this; }

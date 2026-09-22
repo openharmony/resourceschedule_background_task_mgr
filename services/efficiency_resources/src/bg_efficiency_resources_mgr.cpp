@@ -109,7 +109,7 @@ void BgEfficiencyResourcesMgr::InitNecessaryState()
 
 void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
-    BGTASK_LOGI("add system ability, systemAbilityId : %{public}d", systemAbilityId);
+    BGTASK_LOGD("add system ability, systemAbilityId : %{public}d", systemAbilityId);
     std::lock_guard<std::mutex> lock(sysAbilityLock_);
     switch (systemAbilityId) {
         case APP_MGR_SERVICE_ID:
@@ -125,10 +125,10 @@ void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const
             dependsReady_ |= RES_SCHED_SYS_READY;
             break;
         default:
-            break;
+            return;
     }
     if (dependsReady_ == ALL_DEPENDS_READY) {
-        BGTASK_LOGI("necessary system service has been satisfied!");
+        BGTASK_LOGD("necessary system service has been satisfied!");
         auto task = [weak = weak_from_this()]() {
             auto self = weak.lock();
             if (!self) {
@@ -143,26 +143,26 @@ void BgEfficiencyResourcesMgr::OnAddSystemAbility(int32_t systemAbilityId, const
 
 void BgEfficiencyResourcesMgr::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
-    BGTASK_LOGI("remove system ability, systemAbilityId : %{public}d", systemAbilityId);
+    BGTASK_LOGD("remove system ability, systemAbilityId : %{public}d", systemAbilityId);
     std::lock_guard<std::mutex> lock(sysAbilityLock_);
     switch (systemAbilityId) {
         case APP_MGR_SERVICE_ID:
-            BGTASK_LOGI("app mgr service is removed!");
+            BGTASK_LOGD("app mgr service is removed!");
             dependsReady_ &= (~APP_MGR_READY);
             break;
         case BUNDLE_MGR_SERVICE_SYS_ABILITY_ID:
-            BGTASK_LOGI("bundle mgr service is removed!");
+            BGTASK_LOGD("bundle mgr service is removed!");
             dependsReady_ &= (~BUNDLE_MGR_READY);
             break;
         case RES_SCHED_SYS_ABILITY_ID:
-            BGTASK_LOGI("resource_schedule_service is removed!");
+            BGTASK_LOGD("resource_schedule_service is removed!");
             dependsReady_ &= (~RES_SCHED_SYS_READY);
             break;
         default:
-            break;
+            return;
     }
     if (dependsReady_ != ALL_DEPENDS_READY) {
-        BGTASK_LOGI("necessary system service has been unsatisfied");
+        BGTASK_LOGD("necessary system service has been unsatisfied");
         isSysReady_.store(false);
     }
 }

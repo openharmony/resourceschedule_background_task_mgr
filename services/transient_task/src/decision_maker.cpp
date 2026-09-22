@@ -170,7 +170,7 @@ ErrCode DecisionMaker::CheckQuotaTime(const std::shared_ptr<PkgDelaySuspendInfo>
         }
     }
     if (ret != ERR_OK) {
-        BGTASK_LOGE("Request not allow by its info");
+        BGTASK_LOGE("%{public}s not allow request, %{public}d", name.c_str(), ret);
         return ret;
     }
     return ERR_OK;
@@ -360,7 +360,7 @@ bool DecisionMaker::CanStartAccountingLocked(const std::shared_ptr<PkgDelaySuspe
     int32_t uid = pkgInfo->GetUid();
     if (!deviceInfoManager_->IsScreenOn()) {
         std::string bundleName = pkgInfo->GetPkg();
-        BGTASK_LOGI("device is screen off, uid: %{public}d, bunleName: %{public}s start account.",
+        BGTASK_LOGD("device is screen off, uid: %{public}d, bunleName: %{public}s start account.",
             uid, bundleName.c_str());
         return true;
     }
@@ -459,7 +459,7 @@ void DecisionMaker::HandleScreenOff()
             continue;
         }
         if (CanStartAccountingLocked(pkgInfo)) {
-            BGTASK_LOGI("screen is off and uid: %{public}d is not freeze, start accounting", pkgInfo->GetUid());
+            BGTASK_LOGD("screen is off and uid: %{public}d is not freeze, start accounting", pkgInfo->GetUid());
             pkgInfo->StartAccounting();
         }
     }
