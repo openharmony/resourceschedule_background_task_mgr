@@ -251,6 +251,20 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_usb",
+            "value":"USB ချိတ်ဆက်မှု အလုပ်ကို လုပ်ဆောင်နေဆဲ ဖြစ်သည်။ ဤအသိပေးချက်ကို ပိတ်လိုက်လျှင် ယင်းအလုပ် အဆုံးသတ်သွားပါမည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_usb",
+            "value":"USB ချိတ်ဆက်မှု",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

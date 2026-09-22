@@ -251,6 +251,20 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_usb",
+            "value":"È in corso un'attività di connessione USB. Se chiudi questa notifica, terminerà.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_usb",
+            "value":"Connessione USB",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

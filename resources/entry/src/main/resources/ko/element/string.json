@@ -251,6 +251,20 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_usb",
+            "value":"USB 연결 작업이 진행 중입니다. 이 알림을 닫으면 종료됩니다.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_usb",
+            "value":"USB 연결",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

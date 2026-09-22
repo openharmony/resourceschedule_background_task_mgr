@@ -251,6 +251,20 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_usb",
+            "value":"هناك عملية اتصال عبر USB جارية، وإغلاق هذا الإشعار سيؤدي إلى إنهائها.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_usb",
+            "value":"اتصال عبر USB",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -251,6 +251,20 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"ohos_bgsubmode_prompt_usb",
+            "value":"Tugas koneksi USB sedang berlangsung. Menutup notifikasi ini akan mengakhirinya.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"notification_text_usb",
+            "value":"Koneksi USB",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

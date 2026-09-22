@@ -262,11 +262,17 @@
         },
         {
             "name":"ohos_bgsubmode_prompt_usb",
-            "value":"正在运行USB任务，删除通知后任务将停止"
+            "value":"正在运行 USB 连接任务，删除通知后任务将停止。",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"notification_text_usb",
-            "value":"USB"
+            "value":"USB 连接",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
