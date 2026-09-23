@@ -1451,8 +1451,9 @@ ErrCode BgContinuousTaskMgr::StartBackgroundRunningInner(std::shared_ptr<Continu
             return ret;
         }
     }
-    if (continuousTaskInfosMap_.find(taskInfoMapKey) != continuousTaskInfosMap_.end()) {
-        if (continuousTaskRecord->suspendState_) {
+    auto existIter = continuousTaskInfosMap_.find(taskInfoMapKey);
+    if (existIter != continuousTaskInfosMap_.end()) {
+        if (existIter->second->suspendState_) {
             HandleActiveContinuousTask(continuousTaskRecord->uid_, continuousTaskRecord->pid_, taskInfoMapKey);
             return ERR_OK;
         }
@@ -2229,38 +2230,32 @@ void BgContinuousTaskMgr::ActiveContinuousTask(int32_t uid, int32_t pid, const s
 
 void BgContinuousTaskMgr::HandleActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key)
 {
-    auto findTask = [uid](const auto &target) {
-        return uid == target.second->uid_ && target.second->suspendState_;
-    };
-    auto findTaskIter = find_if(continuousTaskInfosMap_.begin(), continuousTaskInfosMap_.end(), findTask);
-    if (findTaskIter == continuousTaskInfosMap_.end()) {
-        return;
-    }
     std::string notificationLabel = "default";
     int32_t notificationId = ILLEGAL_NOTIFICATION_ID;
     std::vector<int32_t> notificationOldIds {};
-    auto iter = continuousTaskInfosMap_.begin();
-    while (iter != continuousTaskInfosMap_.end()) {
-        if (iter->second->GetUid() != uid || !iter->second->suspendState_) {
-            ++iter;
+    bool needRefreshRecord = false;
+    for (auto &iter : continuousTaskInfosMap_) {
+        auto &record = iter.second;
+        if (record->GetUid() != uid) {
             continue;
         }
-        BGTASK_LOGI("uid: %{public}d, pid: %{public}d", uid, pid);
-        iter->second->suspendState_ = false;
-        iter->second->isStandby_ = false;
-        OnContinuousTaskChanged(iter->second, ContinuousTaskEventTriggerType::TASK_ACTIVE);
-        if (iter->second->notificationId_ != -1) {
-            if (notificationId == ILLEGAL_NOTIFICATION_ID ||
-                CommonUtils::CheckExistNotification(notificationOldIds, iter->second->notificationId_)) {
-                notificationOldIds.push_back(iter->second->notificationId_);
-                HandleActiveNotification(iter->second);
-                notificationLabel = iter->second->notificationLabel_;
-                notificationId = iter->second->notificationId_;
-            } else {
-                iter->second->notificationLabel_ = notificationLabel;
-                iter->second->notificationId_ = notificationId;
-            }
+        BGTASK_LOGI("uid:%{public}d pid:%{public}d state:%{public}d_%{public}d", uid, pid, record->suspendState_,
+            record->audioDetectFail_);
+        if (record->suspendState_) {
+            record->audioDetectFail_ = false;
+            record->suspendState_ = false;
+            record->isStandby_ = false;
+            OnContinuousTaskChanged(record, ContinuousTaskEventTriggerType::TASK_ACTIVE);
+            RecoveryNotification(record, notificationLabel, notificationId, notificationOldIds);
+            needRefreshRecord = true;
+        } else if (record->audioDetectFail_) {
+            record->audioDetectFail_ = false;
+            NotifySubscriberAudioTaskStart(record);
+            RecoveryNotification(record, notificationLabel, notificationId, notificationOldIds);
+            needRefreshRecord = true;
         }
+    }
+    if (needRefreshRecord) {
         RefreshTaskRecord();
     }
 }
@@ -2290,6 +2285,23 @@ void BgContinuousTaskMgr::HandleActiveNotification(std::shared_ptr<ContinuousTas
         SendLiveViewAndOtherNotification(record);
     } else {
         SendContinuousTaskNotification(record);
+    }
+}
+
+void BgContinuousTaskMgr::RecoveryNotification(std::shared_ptr<ContinuousTaskRecord> &record,
+    std::string &notificationLabel, int32_t &notificationId, std::vector<int32_t> &notificationOldIds)
+{
+    if (record->notificationId_ != -1) {
+        if (notificationId == ILLEGAL_NOTIFICATION_ID ||
+            !CommonUtils::CheckExistId(notificationOldIds, record->notificationId_)) {
+            notificationOldIds.push_back(record->notificationId_);
+            HandleActiveNotification(record);
+            notificationLabel = record->notificationLabel_;
+            notificationId = record->notificationId_;
+        } else {
+            record->notificationLabel_ = notificationLabel;
+            record->notificationId_ = notificationId;
+        }
     }
 }
 
@@ -2533,8 +2545,7 @@ ErrCode BgContinuousTaskMgr::AVSessionNotifyUpdateNotificationInner(int32_t uid,
 
     // 应用退后台删除播控，退后台在60s后检测avsession，在65s后发送通知，当avsession检测失败且未取消长时任务时，不发通知
     // 解决删除播控通知后（avsession停流，存在长时任务场景）仍显示长时任务通知的体验问题
-    if (!findUidIter->second->audioDetectState_) {
-        findUidIter->second->audioDetectState_ = true;
+    if (findUidIter->second->audioDetectFail_) {
         RemoveAudioPlaybackDelayTask(uid);
         return ERR_OK;
     }
@@ -2596,32 +2607,68 @@ void BgContinuousTaskMgr::SuspendContinuousAudioTask(int32_t uid)
     handler_->PostTask(task);
 }
 
-void BgContinuousTaskMgr::SendAudioCallBackTaskState(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo)
+std::shared_ptr<ContinuousTaskCallbackInfo> BgContinuousTaskMgr::MakeCallbackInfo(
+    const std::shared_ptr<ContinuousTaskRecord> record)
 {
-    if (continuousTaskInfo == nullptr) {
-        return;
+    if (record == nullptr) {
+        return nullptr;
     }
+    auto callback = std::make_shared<ContinuousTaskCallbackInfo>(record->GetBgModeId(), record->GetUid(),
+        record->GetPid(), record->GetAbilityName(), record->IsFromWebview(), record->isBatchApi_, record->bgModeIds_,
+        record->abilityId_, record->fullTokenId_);
+    callback->SetContinuousTaskId(record->continuousTaskId_);
+    callback->SetCancelReason(record->reason_);
+    callback->SetDetailedCancelReason(record->detailedCancelReason_);
+    callback->SetSuspendState(record->suspendState_);
+    callback->SetSuspendReason(record->suspendReason_);
+    callback->SetByRequestObject(record->isByRequestObject_);
+    callback->SetBundleName(record->bundleName_);
+    callback->SetUserId(record->userId_);
+    callback->SetAppIndex(record->appIndex_);
+    callback->SetNotificationId(record->notificationId_);
+    callback->SetBackgroundSubModes(record->bgSubModeIds_);
+    if (record->wantAgentInfo_ != nullptr) {
+        callback->SetWantAgentBundleName(record->wantAgentInfo_->bundleName_);
+        callback->SetWantAgentAbilityName(record->wantAgentInfo_->abilityName_);
+    }
+    callback->SetStandby(record->isStandby_);
+    callback->SetFromComponent(record->isFromComponent_);
+    return callback;
+}
+
+void BgContinuousTaskMgr::NotifySubscriberAudioTaskStop(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo)
+{
     if (bgTaskSubscribers_.empty()) {
         return;
     }
-    std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo =
-        std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskInfo->GetBgModeId(),
-        continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName(),
-        continuousTaskInfo->IsFromWebview(), continuousTaskInfo->isBatchApi_, continuousTaskInfo->bgModeIds_,
-        continuousTaskInfo->abilityId_, continuousTaskInfo->fullTokenId_);
-    continuousTaskCallbackInfo->SetContinuousTaskId(continuousTaskInfo->continuousTaskId_);
-    continuousTaskCallbackInfo->SetCancelReason(continuousTaskInfo->reason_);
-    continuousTaskCallbackInfo->SetSuspendState(continuousTaskInfo->suspendState_);
-    continuousTaskCallbackInfo->SetSuspendReason(continuousTaskInfo->suspendReason_);
-    continuousTaskCallbackInfo->SetByRequestObject(continuousTaskInfo->isByRequestObject_);
-    continuousTaskCallbackInfo->SetBundleName(continuousTaskInfo->bundleName_);
-    continuousTaskCallbackInfo->SetUserId(continuousTaskInfo->userId_);
-    continuousTaskCallbackInfo->SetAppIndex(continuousTaskInfo->appIndex_);
+    auto continuousTaskCallbackInfo = MakeCallbackInfo(continuousTaskInfo);
+    if (continuousTaskCallbackInfo == nullptr) {
+        return;
+    }
     const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
     for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
         if ((*iter)->isHap_ && (*iter)->subscriber_) {
             if (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) {
                 (*iter)->subscriber_->OnContinuousTaskStop(taskCallbackInfoRef);
+            }
+        }
+    }
+}
+
+void BgContinuousTaskMgr::NotifySubscriberAudioTaskStart(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo)
+{
+    if (bgTaskSubscribers_.empty()) {
+        return;
+    }
+    auto continuousTaskCallbackInfo = MakeCallbackInfo(continuousTaskInfo);
+    if (continuousTaskCallbackInfo == nullptr) {
+        return;
+    }
+    const ContinuousTaskCallbackInfo& taskCallbackInfoRef = *continuousTaskCallbackInfo;
+    for (auto iter = bgTaskSubscribers_.begin(); iter != bgTaskSubscribers_.end(); ++iter) {
+        if ((*iter)->isHap_ && (*iter)->subscriber_) {
+            if (((*iter)->flag_ & SUBSCRIBER_BACKGROUND_TASK_STATE) > 0) {
+                (*iter)->subscriber_->OnContinuousTaskStart(taskCallbackInfoRef);
             }
         }
     }
@@ -2633,11 +2680,11 @@ void BgContinuousTaskMgr::HandleSuspendContinuousAudioTask(int32_t uid)
     while (iter != continuousTaskInfosMap_.end()) {
         if (iter->second->GetUid() == uid &&
             CommonUtils::CheckExistMode(iter->second->bgModeIds_, BackgroundMode::AUDIO_PLAYBACK)) {
-            iter->second->audioDetectState_ = false;
+            iter->second->audioDetectFail_ = true;
             NotificationTools::GetInstance()->CancelNotification(iter->second->GetNotificationLabel(),
                 iter->second->GetNotificationId());
             if (!IsExistCallback(uid, CONTINUOUS_TASK_SUSPEND)) {
-                SendAudioCallBackTaskState(iter->second);
+                NotifySubscriberAudioTaskStop(iter->second);
                 iter++;
                 continue;
             }
@@ -3217,28 +3264,7 @@ void BgContinuousTaskMgr::OnContinuousTaskChanged(const std::shared_ptr<Continuo
         return;
     }
 
-    std::shared_ptr<ContinuousTaskCallbackInfo> continuousTaskCallbackInfo
-        = std::make_shared<ContinuousTaskCallbackInfo>(continuousTaskInfo->GetBgModeId(),
-        continuousTaskInfo->GetUid(), continuousTaskInfo->GetPid(), continuousTaskInfo->GetAbilityName(),
-        continuousTaskInfo->IsFromWebview(), continuousTaskInfo->isBatchApi_, continuousTaskInfo->bgModeIds_,
-        continuousTaskInfo->abilityId_, continuousTaskInfo->fullTokenId_);
-    continuousTaskCallbackInfo->SetContinuousTaskId(continuousTaskInfo->continuousTaskId_);
-    continuousTaskCallbackInfo->SetCancelReason(continuousTaskInfo->reason_);
-    continuousTaskCallbackInfo->SetDetailedCancelReason(continuousTaskInfo->detailedCancelReason_);
-    continuousTaskCallbackInfo->SetSuspendState(continuousTaskInfo->suspendState_);
-    continuousTaskCallbackInfo->SetSuspendReason(continuousTaskInfo->suspendReason_);
-    continuousTaskCallbackInfo->SetByRequestObject(continuousTaskInfo->isByRequestObject_);
-    continuousTaskCallbackInfo->SetBundleName(continuousTaskInfo->bundleName_);
-    continuousTaskCallbackInfo->SetUserId(continuousTaskInfo->userId_);
-    continuousTaskCallbackInfo->SetAppIndex(continuousTaskInfo->appIndex_);
-    continuousTaskCallbackInfo->SetNotificationId(continuousTaskInfo->notificationId_);
-    continuousTaskCallbackInfo->SetBackgroundSubModes(continuousTaskInfo->bgSubModeIds_);
-    if (continuousTaskInfo->wantAgentInfo_ != nullptr) {
-        continuousTaskCallbackInfo->SetWantAgentBundleName(continuousTaskInfo->wantAgentInfo_->bundleName_);
-        continuousTaskCallbackInfo->SetWantAgentAbilityName(continuousTaskInfo->wantAgentInfo_->abilityName_);
-    }
-    continuousTaskCallbackInfo->SetStandby(continuousTaskInfo->isStandby_);
-    continuousTaskCallbackInfo->SetFromComponent(continuousTaskInfo->isFromComponent_);
+    auto continuousTaskCallbackInfo = MakeCallbackInfo(continuousTaskInfo);
     NotifySubscribers(changeEventType, continuousTaskCallbackInfo);
     ReportHisysEvent(changeEventType, continuousTaskInfo);
     ReportTaskAdjustEventByTask(continuousTaskInfo, changeEventType);

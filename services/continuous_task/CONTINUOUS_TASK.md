@@ -89,7 +89,7 @@ continuous_task/
 | `combinedNotificationTaskId_` | `int32_t` | 组合通知的任务ID，关联组合通知中的主任务 |
 | `isByRequestObject_` | `bool` | 是否通过ContinuousTaskRequest对象申请，新API调用方式 |
 | `appIndex_` | `int32_t` | 应用索引，多实例应用中区分不同实例 |
-| `audioDetectState_` | `bool` | 音频检测状态，标记是否启用音频活动检测机制 |
+| `audioDetectFail_` | `bool` | 音频检测失败标记，audio suspend 取消通知后置 true，active 恢复通知后置 false |
 | `progressInfo_` | `std::shared_ptr<ProgressInfo>` | 申请长时任务包含得通知信息，用来区分发送通知得类型及样式 |
 
 ### 3.3 NotificationTools
