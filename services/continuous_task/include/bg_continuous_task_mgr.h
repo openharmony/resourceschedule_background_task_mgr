@@ -233,6 +233,8 @@ private:
     void HandleSuspendContinuousAudioTask(int32_t uid);
     void HandleActiveContinuousTask(int32_t uid, int32_t pid, const std::string &key);
     void HandleActiveNotification(std::shared_ptr<ContinuousTaskRecord> record);
+    void RecoveryNotification(std::shared_ptr<ContinuousTaskRecord> &record, std::string &notificationLabel,
+        int32_t &notificationId, std::vector<int32_t> &notificationOldIds);
     void OnRemoteSubscriberDiedInner(const wptr<IRemoteObject> &object);
     void OnContinuousTaskChanged(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo,
         ContinuousTaskEventTriggerType changeEventType);
@@ -301,7 +303,9 @@ private:
     ErrCode CheckTaskAuthResultInner(const std::string &bundleName, int32_t userId, int32_t appIndex);
     ErrCode SetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam);
     ErrCode GetBackgroundTaskStateInner(std::shared_ptr<BackgroundTaskStateInfo> taskParam, uint32_t &authResult);
-    void SendAudioCallBackTaskState(const std::shared_ptr<ContinuousTaskRecord> continuousTaskInfo);
+    void NotifySubscriberAudioTaskStop(const std::shared_ptr<ContinuousTaskRecord> record);
+    void NotifySubscriberAudioTaskStart(const std::shared_ptr<ContinuousTaskRecord> record);
+    std::shared_ptr<ContinuousTaskCallbackInfo> MakeCallbackInfo(const std::shared_ptr<ContinuousTaskRecord> record);
     bool CheckApplySpecial(const std::string &bundleName, int32_t &userId, bool checkPermission = true);
     ErrCode SendNotificationByDeteTaskInner(const std::set<std::string> &taskKeys);
     void SendNotificationByDeteTaskDelay(const std::string &taskKey, int32_t uid);

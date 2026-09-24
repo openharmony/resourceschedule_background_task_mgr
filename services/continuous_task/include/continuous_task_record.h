@@ -108,7 +108,7 @@ private:
     int32_t combinedNotificationTaskId_ {-1};
     bool isByRequestObject_ {false};
     int32_t appIndex_ {-1};
-    bool audioDetectState_ {true};
+    bool audioDetectFail_ {false};
     bool audioPlayState_ {true};
     bool isStandby_ {false};
     bool isStandbySuspend_ {false};

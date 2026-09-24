@@ -120,6 +120,7 @@ void BgContinuousTaskMgrTest::TearDown()
     dumpOption.emplace_back("--cancel_all");
     std::vector<string> dumpInfo;
     bgContinuousTaskMgr_->ShellDump(dumpOption, dumpInfo);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_.clear();
 }
 
 class TestBackgroundTaskSubscriber : public BackgroundTaskSubscriber {
@@ -1476,10 +1477,60 @@ HWTEST_F(BgContinuousTaskMgrTest, AVSessionNotifyUpdateNotification_004, TestSiz
     uid = 1;
     std::shared_ptr<ContinuousTaskRecord> continuousTaskRecord1 = std::make_shared<ContinuousTaskRecord>();
     continuousTaskRecord1->uid_ = uid;
-    continuousTaskRecord1->audioDetectState_ = false;
+    continuousTaskRecord1->audioDetectFail_ = true;
     continuousTaskRecord1->bgModeIds_.push_back(BGMODE_AUDIO_PLAYBACK_ID);
     bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = continuousTaskRecord1;
     EXPECT_EQ(bgContinuousTaskMgr_->AVSessionNotifyUpdateNotificationInner(uid, pid, false), ERR_OK);
+}
+
+/**
+ * @tc.name: HandleActiveContinuousTask_RestoreAudioNotification_001
+ * @tc.desc: test audio suspend without subscriber then active restores notification.
+ * @tc.type: FUNC
+ * @tc.require: issueICT1ZV
+ */
+HWTEST_F(BgContinuousTaskMgrTest, HandleActiveContinuousTask_RestoreAudioNotification_001, TestSize.Level1)
+{
+    std::shared_ptr<ContinuousTaskRecord> record = std::make_shared<ContinuousTaskRecord>();
+    record->uid_ = TEST_NUM_ONE;
+    record->bgModeId_ = BGMODE_AUDIO_PLAYBACK_ID;
+    record->bgModeIds_.push_back(BGMODE_AUDIO_PLAYBACK_ID);
+    record->notificationId_ = 1;
+    bgContinuousTaskMgr_->continuousTaskInfosMap_["key1"] = record;
+
+    bgContinuousTaskMgr_->HandleSuspendContinuousAudioTask(TEST_NUM_ONE);
+    EXPECT_TRUE(record->audioDetectFail_);
+    EXPECT_FALSE(record->suspendState_);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 1);
+
+    bgContinuousTaskMgr_->HandleActiveContinuousTask(TEST_NUM_ONE, TEST_NUM_ONE, "key1");
+    EXPECT_FALSE(record->audioDetectFail_);
+    EXPECT_EQ((int32_t)bgContinuousTaskMgr_->continuousTaskInfosMap_.size(), 1);
+}
+
+/**
+ * @tc.name: HandleActiveContinuousTask_RestoreSuspendedTask_001
+ * @tc.desc: test StartBackgroundRunningInner triggers active when existing task is suspended.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BgContinuousTaskMgrTest, HandleActiveContinuousTask_RestoreSuspendedTask_001, TestSize.Level1)
+{
+    auto taskRecord = CreateTestTaskRecord(10001, "com.test.bundle", "EntryAbility",
+        static_cast<uint32_t>(BackgroundMode::AUDIO_PLAYBACK));
+    taskRecord->isFromWebview_ = true;
+
+    auto existRecord = CreateTestTaskRecord(10001, "com.test.bundle", "EntryAbility",
+        static_cast<uint32_t>(BackgroundMode::AUDIO_PLAYBACK));
+    existRecord->suspendState_ = true;
+    std::string mapKey = std::to_string(existRecord->uid_) + SEPARATOR + existRecord->abilityName_ +
+        SEPARATOR + std::to_string(existRecord->abilityId_);
+    bgContinuousTaskMgr_->continuousTaskInfosMap_[mapKey] = existRecord;
+
+    ErrCode result = bgContinuousTaskMgr_->StartBackgroundRunningInner(taskRecord);
+
+    EXPECT_EQ(result, ERR_OK);
+    EXPECT_FALSE(existRecord->suspendState_);
 }
 
 /**
