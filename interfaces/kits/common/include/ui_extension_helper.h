@@ -16,6 +16,8 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_COMMON_INCLUDE_UI_EXTENSION_HELPER_H
 #define FOUNDATION_RESOURCESCHEDULE_BACKGROUND_TASK_MGR_INTERFACES_KITS_COMMON_INCLUDE_UI_EXTENSION_HELPER_H
 
+#include <mutex>
+
 #include "singleton.h"
 #include "ui_content.h"
 #include "ability.h"
@@ -55,6 +57,7 @@ public:
 
 private:
     std::shared_ptr<ModalExtensionCallback> modalExtCallback_ {nullptr};
+    std::mutex modalExtCallbackLock_;
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

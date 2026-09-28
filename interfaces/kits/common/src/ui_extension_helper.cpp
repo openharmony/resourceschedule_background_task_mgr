@@ -61,7 +61,6 @@ bool UIExtensionHelper::CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::
     uiExtCallback->SetAbilityContext(abilityContext);
     std::string bundleName = abilityContext->GetBundleName();
     uiExtCallback->SetBundleName(bundleName);
-    SetModalExtensionCallback(uiExtCallback);
 
     Ace::ModalUIExtensionCallbacks uiExtensionCallbacks = {
         .onRelease = std::bind(&ModalExtensionCallback::OnRelease, uiExtCallback, std::placeholders::_1),
@@ -82,16 +81,19 @@ bool UIExtensionHelper::CreateUIExtension(std::shared_ptr<OHOS::AbilityRuntime::
         return false;
     }
     uiExtCallback->SetSessionId(sessionId);
+    SetModalExtensionCallback(uiExtCallback);
     return true;
 }
 
 std::shared_ptr<ModalExtensionCallback> UIExtensionHelper::GetModalExtensionCallback()
 {
+    std::lock_guard<std::mutex> lock(modalExtCallbackLock_);
     return modalExtCallback_;
 }
 
 void UIExtensionHelper::SetModalExtensionCallback(std::shared_ptr<ModalExtensionCallback> modalExtCallback)
 {
+    std::lock_guard<std::mutex> lock(modalExtCallbackLock_);
     modalExtCallback_ = modalExtCallback;
 }
 
