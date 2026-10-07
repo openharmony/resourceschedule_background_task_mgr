@@ -16,14 +16,29 @@
 #include "background_mode.h"
 #include "bg_continuous_task_dumper.h"
 #include "bg_continuous_task_mgr.h"
+#include <charconv>
 #include <sstream>
-#include "common_utils.h"
+#include <system_error>
 
 namespace OHOS {
 namespace BackgroundTaskMgr {
 namespace {
 static constexpr int32_t MAX_DUMP_INNER_PARAM_NUMS = 4;
 static constexpr int32_t MAX_DUMP_PARAM_NUMS = 3;
+
+static bool ParseDumpInt32(const std::string &text, int32_t &out)
+{
+    if (text.empty()) {
+        return false;
+    }
+    int32_t value = 0;
+    auto [ptr, ec] = std::from_chars(text.data(), text.data() + text.size(), value);
+    if (ec != std::errc{} || ptr != text.data() + text.size()) {
+        return false;
+    }
+    out = value;
+    return true;
+}
 }
 
 BgContinuousTaskDumper::BgContinuousTaskDumper() {}
@@ -57,8 +72,9 @@ void BgContinuousTaskDumper::DebugContinuousTask(const std::vector<std::string> 
     int32_t uid = 1;
     if (dumpOption.size() == MAX_DUMP_INNER_PARAM_NUMS + 1) {
         std::string uidStr = dumpOption[MAX_DUMP_INNER_PARAM_NUMS].c_str();
-        if (CommonUtils::CheckStrToNum(uidStr)) {
-            uid = std::atoi(uidStr.c_str());
+        if (!ParseDumpInt32(uidStr, uid) || uid < 0) {
+            dumpInfo.emplace_back("param invaild\n");
+            return;
         }
     }
     sptr<ContinuousTaskParamForInner> taskParam = sptr<ContinuousTaskParamForInner>(
@@ -79,8 +95,8 @@ void BgContinuousTaskDumper::DumpGetTask(const std::vector<std::string> &dumpOpt
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
-    int32_t uid = std::atoi(dumpOption[MAX_DUMP_PARAM_NUMS - 1].c_str());
-    if (uid < 0) {
+    int32_t uid = 0;
+    if (!ParseDumpInt32(dumpOption[MAX_DUMP_PARAM_NUMS - 1], uid) || uid < 0) {
         dumpInfo.emplace_back("param invaild\n");
         return;
     }
